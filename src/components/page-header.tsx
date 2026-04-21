@@ -5,7 +5,7 @@ type Crumb = { href?: string; label: string };
 
 type Props = {
   title: string;
-  description?: string;
+  description?: React.ReactNode;
   breadcrumbs?: Crumb[];
   actions?: React.ReactNode;
 };
