@@ -10,9 +10,9 @@ import { Badge } from "@/components/ui/badge";
 
 const PHASES = [
   { num: 1, title: "기반 구축", status: "done" },
-  { num: 2, title: "인증 & 레이아웃", status: "in_progress" },
-  { num: 3, title: "DB 스키마", status: "pending" },
-  { num: 4, title: "교육원·요양원 CRUD", status: "pending" },
+  { num: 2, title: "인증 & 레이아웃", status: "done" },
+  { num: 3, title: "DB 스키마", status: "done" },
+  { num: 4, title: "교육원·요양원 CRUD", status: "in_progress" },
   { num: 5, title: "고객관리 핵심", status: "pending" },
   { num: 6, title: "정산 모듈", status: "pending" },
   { num: 7, title: "알림발송", status: "pending" },
