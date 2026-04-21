@@ -222,3 +222,84 @@ export const statusFlagsSchema = z.object({
 });
 
 export type StatusFlagsInput = z.input<typeof statusFlagsSchema>;
+
+// =============================================================================
+// 결제 스키마 (Phase 6)
+// =============================================================================
+
+const positiveInt = z
+  .union([z.string().trim(), z.number()])
+  .transform((v) => {
+    if (v === "" || v === null || v === undefined) return 0;
+    const n = typeof v === "number" ? v : Number(String(v).replace(/,/g, ""));
+    return Number.isFinite(n) ? Math.max(0, Math.round(n)) : 0;
+  });
+
+// 예약 결제
+export const reservationPaymentSchema = z.object({
+  amount: positiveInt,
+  payment_date: optionalDate,
+  refund_amount: positiveInt.default(0),
+  refund_date: optionalDate,
+  refund_reason: z
+    .union([
+      z.enum([
+        "중도탈락_매출인식",
+        "교육생환급_공제없음",
+        "소개비_공제",
+        "교육원섭외실패_환불",
+      ]),
+      z.literal(""),
+      z.null(),
+    ])
+    .transform((v) => (v === "" || v === null ? null : v))
+    .nullable()
+    .optional(),
+});
+
+export type ReservationPaymentInput = z.input<typeof reservationPaymentSchema>;
+export type ReservationPaymentOutput = z.output<typeof reservationPaymentSchema>;
+
+// 소개비
+export const commissionPaymentSchema = z.object({
+  training_center_id: z.string().min(1, "교육원을 선택하세요."),
+  total_amount: positiveInt,
+  deduction_amount: positiveInt.default(0),
+  received_date: optionalDate,
+  tax_invoice_issued: z.boolean().default(false),
+  tax_invoice_date: optionalDate,
+  status: z.enum(["pending", "notified", "completed"]).default("pending"),
+});
+
+export type CommissionPaymentInput = z.input<typeof commissionPaymentSchema>;
+export type CommissionPaymentOutput = z.output<typeof commissionPaymentSchema>;
+
+// 이벤트 결제
+export const eventPaymentSchema = z.object({
+  event_type: z.string().min(1, "이벤트 종류를 선택하세요."),
+  amount: positiveInt.default(0),
+  gift_type: optionalString,
+  friend_customer_id: optionalString,
+  gift_given: z.boolean().default(false),
+  gift_given_date: optionalDate,
+});
+
+export type EventPaymentInput = z.input<typeof eventPaymentSchema>;
+export type EventPaymentOutput = z.output<typeof eventPaymentSchema>;
+
+// 웰컴팩 결제 (3회차 upsert)
+export const welcomePackPaymentSchema = z.object({
+  total_price: positiveInt.default(1500000),
+  discount_amount: positiveInt.default(0),
+  reservation_amount: positiveInt.default(0),
+  reservation_date: optionalDate,
+  interim_amount: positiveInt.default(0),
+  interim_date: optionalDate,
+  balance_amount: positiveInt.default(0),
+  balance_date: optionalDate,
+  sales_reported: z.boolean().default(false),
+  sales_reported_date: optionalDate,
+});
+
+export type WelcomePackPaymentInput = z.input<typeof welcomePackPaymentSchema>;
+export type WelcomePackPaymentOutput = z.output<typeof welcomePackPaymentSchema>;

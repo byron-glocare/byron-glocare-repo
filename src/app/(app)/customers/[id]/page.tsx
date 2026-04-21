@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/page-header";
 import { CustomerBasicForm } from "@/components/customer-basic-form";
 import { CustomerProgressTab } from "@/components/customer-progress-tab";
 import { CustomerConsultationsTab } from "@/components/customer-consultations-tab";
-import { ComingSoon } from "@/components/coming-soon";
+import { CustomerSettlementTab } from "@/components/customer-settlement-tab";
 import {
   Tabs,
   TabsContent,
@@ -37,12 +37,16 @@ export default async function CustomerDetailPage({
   const [
     { data: status },
     { data: consultations },
-    { data: reservationPayments },
-    { data: welcomePackPayment },
+    { data: reservationPaymentsFull },
+    { data: welcomePackPaymentFull },
+    { data: commissionPayments },
+    { data: eventPayments },
     { data: smsMessages },
     { data: centers },
     { data: classes },
     { data: homes },
+    { data: allCustomers },
+    { data: settingsRows },
   ] = await Promise.all([
     supabase
       .from("customer_statuses")
@@ -56,13 +60,24 @@ export default async function CustomerDetailPage({
       .order("created_at", { ascending: false }),
     supabase
       .from("reservation_payments")
-      .select("payment_date")
-      .eq("customer_id", id),
+      .select("*")
+      .eq("customer_id", id)
+      .order("created_at", { ascending: false }),
     supabase
       .from("welcome_pack_payments")
-      .select("reservation_date")
+      .select("*")
       .eq("customer_id", id)
       .maybeSingle(),
+    supabase
+      .from("commission_payments")
+      .select("*")
+      .eq("customer_id", id)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("event_payments")
+      .select("*")
+      .eq("customer_id", id)
+      .order("created_at", { ascending: false }),
     supabase
       .from("sms_messages")
       .select("message_type")
@@ -77,7 +92,15 @@ export default async function CustomerDetailPage({
       .order("year", { ascending: false })
       .order("month", { ascending: false }),
     supabase.from("care_homes").select("id, code, name, region").order("name"),
+    supabase
+      .from("customers")
+      .select("id, code, name_kr, name_vi")
+      .order("code"),
+    supabase.from("system_settings").select("key, value"),
   ]);
+
+  const reservationPayments = reservationPaymentsFull ?? [];
+  const welcomePackPayment = welcomePackPaymentFull ?? null;
 
   // status가 혹시 누락됐다면 default로 채움
   const effectiveStatus = status ?? {
@@ -97,10 +120,16 @@ export default async function CustomerDetailPage({
   const summary = computeCustomerStatus({
     customer,
     status: effectiveStatus,
-    reservationPayments: reservationPayments ?? [],
-    welcomePackPayment: welcomePackPayment ?? null,
+    reservationPayments,
+    welcomePackPayment,
     smsMessages: smsMessages ?? [],
   });
+
+  // system_settings 를 key→value 맵으로
+  const settings: Record<string, import("@/types/database").Json | undefined> = {};
+  for (const row of settingsRows ?? []) {
+    settings[row.key] = row.value;
+  }
 
   const age = customer.birth_year
     ? new Date().getFullYear() - customer.birth_year
@@ -163,8 +192,8 @@ export default async function CustomerDetailPage({
               inputs={{
                 customer,
                 status: effectiveStatus,
-                reservationPayments: reservationPayments ?? [],
-                welcomePackPayment: welcomePackPayment ?? null,
+                reservationPayments,
+                welcomePackPayment,
                 smsMessages: smsMessages ?? [],
               }}
             />
@@ -178,9 +207,15 @@ export default async function CustomerDetailPage({
           </TabsContent>
 
           <TabsContent value="settlement" className="mt-6">
-            <ComingSoon
-              phase="Phase 6"
-              description="예약 결제 · 소개비 · 이벤트(친구 소개 양방향) · 웰컴팩(3회차 분할) 4종 정산"
+            <CustomerSettlementTab
+              customer={customer}
+              reservationPayments={reservationPayments}
+              commissionPayments={commissionPayments ?? []}
+              eventPayments={eventPayments ?? []}
+              welcomePackPayment={welcomePackPayment}
+              trainingCenters={centers ?? []}
+              customerOptions={(allCustomers ?? []).filter((c) => c.id !== customer.id)}
+              settings={settings}
             />
           </TabsContent>
         </Tabs>
