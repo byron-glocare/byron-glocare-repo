@@ -1,6 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/page-header";
-import { StatusOptionsManager } from "@/components/settings/status-options-manager";
 import { SystemSettingsManager } from "@/components/settings/system-settings-manager";
 import { AccountsManager } from "@/components/settings/accounts-manager";
 import { listAuthUsers } from "@/app/(app)/settings/actions";
@@ -13,18 +12,9 @@ export const dynamic = "force-dynamic";
 export default async function SettingsPage() {
   const supabase = await createClient();
 
-  const [
-    { data: statusOptions },
-    { data: settingsRows },
-    authUsersResult,
-    {
-      data: { user: currentUser },
-    },
-  ] = await Promise.all([
-    supabase
-      .from("status_options")
-      .select("*")
-      .order("display_order"),
+  const [{ data: settingsRows }, authUsersResult, {
+    data: { user: currentUser },
+  }] = await Promise.all([
     supabase.from("system_settings").select("key, value"),
     listAuthUsers(),
     supabase.auth.getUser(),
@@ -39,11 +29,10 @@ export default async function SettingsPage() {
     <>
       <PageHeader
         title="설정"
-        description="상태값 · 결제 기준값 · 계정 관리"
+        description="결제 기준값 · 계정 관리"
         breadcrumbs={[{ label: "설정" }]}
       />
       <div className="p-6 space-y-6">
-        <StatusOptionsManager options={statusOptions ?? []} />
         <SystemSettingsManager settings={settings} />
         {authUsersResult.ok ? (
           <AccountsManager
