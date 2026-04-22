@@ -692,6 +692,79 @@
 
 ---
 
-## 결과 요약
+## 결과 요약 (2026-04-22)
 
-(실행 후 업데이트)
+### 자동 검증 결과
+- ✅ TypeScript `tsc --noEmit` 에러 0
+- ✅ Vitest 93개 전부 통과 (customer-status 38 · settlement 26 · sms-templates 7 · dashboard 10 · format 12)
+- ✅ `next build` 프로덕션 빌드 성공 (16 routes)
+- ✅ DB 교차검증 `qa-verify.ts` 51/51 pass (단계·정산·버킷·분포·신규수·DB무결성)
+
+### 이 감사 라운드에서 추가로 발견·수정한 버그
+
+**보안 (Security)**
+11. `listAuthUsers()` 가 **auth 체크 없이 service_role 호출** — 미인증 상태로 전체 사용자 목록 유출 가능 → `requireAuth()` 가드 추가 (심각도: HIGH)
+12. 모든 Server Actions 에 **명시적 auth 체크 부재** (proxy.ts 1차 방어만 존재) — `require-auth.ts` 헬퍼 + 모든 action 에 적용 (정산, 교육원, 요양원, 고객, 상담, 설정, SMS)
+13. SMS body **2000자 초과 시 조용히 잘림** → 명시적 400 에러 반환
+
+**데이터 무결성 (Data Integrity)**
+14. `deleteTrainingCenter`: `commission_payments` 과거 이력 있을 때 FK RESTRICT → raw PG 에러 노출 → 사전 count 체크 + 친절한 에러 메시지
+15. **Timezone 버그**: `todayStr()`/`formatDate`/`formatDateTime`/`generateCustomerCode`/`/care-homes/[id]` 등 전부 서버 로컬 타임존 사용 → Vercel UTC 에서 KST 사용자에게 하루 어긋남 → 전부 `Asia/Seoul` 고정
+
+**UI/UX (UI)**
+16. **친구 소개 선택 후 친구 미선택 상태로 추가** → 친구 없는 일반 이벤트로 저장됨 → 명시적 검증 + 에러 토스트
+17. Customer 폼에서 **교육원 Select 동일 값 재선택 시** training_class_id 불필요 리셋
+18. **로고 이미지 aspect ratio 경고** (Next/Image) → 2:1 비율에 맞춰 width/height 재조정
+
+### 추가한 테스트
+- format.test.ts: 12개 (formatNumber/Currency/Date/DateTime/dash 모든 edge case)
+- dashboard.test.ts: 2개 (대기중 제외, 근무중 제외)
+- customer-status.test.ts: 2개 (자체취업 · 웰컴팩 대상 판정)
+- qa-verify.ts DB 무결성 섹션: 8개 (trigger 동작, orphan, generated column, 친구소개 양방향, refund 한도)
+
+### 누적 발견·수정 버그 개수
+- v1 QA: 10개
+- v2 감사: 8개 추가
+- **총 18개 이상**
+
+### 수동 브라우저 테스트 필요 항목
+인터랙티브 UI 는 실제 브라우저에서 확인 필요. 주요 시나리오:
+
+**로그인/세션**
+- 올바른/틀린 이메일·비밀번호 토스트
+- redirect 파라미터 내부 경로만 허용
+- 로그아웃
+
+**CRUD 전체 플로우**
+- 교육원/요양원/고객 등록·수정·삭제
+- 월별 개강 인라인 추가/삭제
+- 상담 일지 AI 번역 (Google Translate 키 유효 필요)
+
+**진행 단계**
+- 9개 수동 플래그 Switch 토글 + optimistic 롤백
+- 플래그 체인 차단 확인
+
+**정산**
+- 4종 결제 카드 각각 추가/수정/삭제
+- 친구 소개 양방향 등록
+- 웰컴팩 3회차 계산 + 지역 추천
+
+**SMS** (NHN 발신번호 심사 완료 후)
+- 신규 교육생 / 수수료 정산 2개 플로우
+- 미리보기 모달
+- 실제 발송 → 이력 기록
+
+**설정**
+- 결제 기준값 dirty 감지
+- 배열 옵션 추가/삭제
+- 계정 생성 / 비번 변경 / 비활성화
+
+**대시보드**
+- 작업 카드 8종 + 도넛 차트 + 신규 고객 카드
+
+### 알려진 제약
+- **대시보드 작업 카드** 클릭 시 `/customers` 로만 이동 (필터 딥링크 미구현)
+- **상담 일지 UI 에 작성자 이름 미표시** (DB 에는 author_id 저장)
+- **Server Action rate limiting 미구현** (내부 앱이라 허용)
+- **CSV/Excel export 미구현** (Supabase 대시보드 사용)
+- **audit 로그** 없음 (Supabase realtime 로 대체 가능)

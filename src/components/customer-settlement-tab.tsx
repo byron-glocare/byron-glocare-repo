@@ -790,6 +790,12 @@ function EventPaymentsCard({
     const amount = Number(form.get("amount")) || 0;
     const gift_type = (form.get("gift_type") as string) || null;
 
+    // 친구 소개 선택했는데 친구 미선택 → 거부
+    if (eventType === "친구 소개" && !friendId) {
+      toast.error("친구 소개 선택 시 친구 고객을 선택해주세요.");
+      return;
+    }
+
     startTransition(async () => {
       const result = await createEventPayment(customerId, {
         event_type: eventType,

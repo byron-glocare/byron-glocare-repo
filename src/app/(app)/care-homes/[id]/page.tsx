@@ -42,8 +42,13 @@ export default async function CareHomeDetailPage({
     .eq("care_home_id", id)
     .order("created_at", { ascending: false });
 
-  // 분류
-  const today = new Date().toISOString().slice(0, 10);
+  // 분류 (KST 기준 today)
+  const today = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Seoul",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
   const interviewing: CustomerRow[] = [];
   const working: CustomerRow[] = [];
   const completed: CustomerRow[] = [];

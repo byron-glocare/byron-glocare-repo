@@ -37,6 +37,14 @@ async function sendNhnLms(params: {
     return { ok: false, error: "유효한 전화번호 형식이 아닙니다." };
   }
 
+  // LMS 는 2000자(4000byte) 제한. 초과 시 조용히 잘리지 않고 명시적 에러.
+  if (params.body.length > 2000) {
+    return {
+      ok: false,
+      error: `메시지 길이가 ${params.body.length}자로 LMS 최대 2000자를 초과합니다.`,
+    };
+  }
+
   const url = `https://api-sms.cloud.toast.com/sms/v3.0/appKeys/${encodeURIComponent(appKey)}/sender/lms`;
   const res = await fetch(url, {
     method: "POST",
@@ -46,7 +54,7 @@ async function sendNhnLms(params: {
     },
     body: JSON.stringify({
       title: params.title.slice(0, 40),
-      body: params.body.slice(0, 2000),
+      body: params.body,
       sendNo: sendNo.replace(/[^0-9]/g, ""),
       recipientList: [{ recipientNo, countryCode: "82" }],
     }),

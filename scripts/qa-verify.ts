@@ -272,6 +272,86 @@ results.push({
 });
 
 // -----------------------------------------------------------------------------
+// DB 무결성 체크 — trigger / FK / orphan
+// -----------------------------------------------------------------------------
+
+const dbIntegrity: { label: string; result: Expect<unknown> }[] = [];
+
+// 1. 모든 customers 에 customer_statuses 레코드가 있는가 (insert 트리거 검증)
+const statusCustomerIds = new Set((statuses ?? []).map((s) => s.customer_id));
+const missingStatuses = (customers ?? []).filter((c) => !statusCustomerIds.has(c.id));
+dbIntegrity.push({
+  label: `모든 customer 에 customer_statuses 존재 (trigger 동작) — ${missingStatuses.length}명 누락`,
+  result: eq(missingStatuses.length, 0, missingStatuses.map((c) => c.code).join(",")),
+});
+
+// 2. customer_statuses 에 있는 모든 customer_id 가 customers 에 존재 (전체 비교)
+const allCustomersData = await supabase.from("customers").select("id");
+const allCustomerIds = new Set((allCustomersData.data ?? []).map((c) => c.id));
+const allStatusesData = await supabase.from("customer_statuses").select("customer_id");
+const orphanStatuses = (allStatusesData.data ?? []).filter(
+  (s) => !allCustomerIds.has(s.customer_id)
+);
+dbIntegrity.push({
+  label: `orphan customer_statuses 없음 (전체 customers 비교)`,
+  result: eq(orphanStatuses.length, 0),
+});
+
+// 3. welcome_pack_payments.final_amount = total_price - discount_amount (generated column)
+for (const w of welcome ?? []) {
+  const expected = Math.max(0, w.total_price - w.discount_amount);
+  dbIntegrity.push({
+    label: `welcome_pack[${w.customer_id.slice(0, 8)}] final_amount generated 정확`,
+    result: eq(w.final_amount, expected),
+  });
+}
+
+// 4. 친구 소개 양방향 레코드 무결성
+const friendEvents = (events ?? []).filter(
+  (e) => e.event_type === "친구 소개" && e.friend_customer_id
+);
+for (const fe of friendEvents) {
+  const reverse = friendEvents.find(
+    (e) =>
+      e.customer_id === fe.friend_customer_id && e.friend_customer_id === fe.customer_id
+  );
+  dbIntegrity.push({
+    label: `친구소개 양방향 무결성 ${fe.customer_id.slice(0, 8)} ↔ ${fe.friend_customer_id?.slice(0, 8)}`,
+    result: eq(!!reverse, true),
+  });
+}
+
+// 5. 각 reservation_payment 의 refund_amount <= amount
+for (const r of reservations ?? []) {
+  if (r.refund_amount > r.amount) {
+    dbIntegrity.push({
+      label: `reservation_payment refund_amount(${r.refund_amount}) <= amount(${r.amount})`,
+      result: eq(r.refund_amount <= r.amount, true),
+    });
+  }
+}
+
+// 6. commission_payments.received_amount = total_amount - deduction_amount (허용 오차 0)
+for (const cp of commissions ?? []) {
+  const expected = cp.total_amount - cp.deduction_amount;
+  if (cp.received_amount !== null && cp.received_amount !== expected) {
+    dbIntegrity.push({
+      label: `commission[${cp.id.slice(0, 8)}] received_amount(${cp.received_amount}) = total(${cp.total_amount}) - deduction(${cp.deduction_amount})`,
+      result: eq(cp.received_amount, expected),
+    });
+  }
+}
+
+// 7. 더미 데이터 개수
+const dummyCustomerCount = (customers ?? []).length;
+dbIntegrity.push({
+  label: `더미 customers 17명 (필요 시 dummy_data.sql 투입 확인)`,
+  result: eq(dummyCustomerCount, 17),
+});
+
+results.push({ section: "DB 무결성", cases: dbIntegrity });
+
+// -----------------------------------------------------------------------------
 // 출력
 // -----------------------------------------------------------------------------
 
