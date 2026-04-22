@@ -9,7 +9,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -41,12 +40,10 @@ export function AppHeader({ email }: Props) {
           <span>{email ?? "사용자"}</span>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuLabel className="text-xs text-muted-foreground">
-            로그인 계정
-          </DropdownMenuLabel>
-          <DropdownMenuLabel className="font-normal text-sm pt-0">
-            {email ?? "—"}
-          </DropdownMenuLabel>
+          <div className="px-2 py-1.5">
+            <div className="text-xs text-muted-foreground">로그인 계정</div>
+            <div className="text-sm mt-0.5 truncate">{email ?? "—"}</div>
+          </div>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
             <LogOut className="size-4" />

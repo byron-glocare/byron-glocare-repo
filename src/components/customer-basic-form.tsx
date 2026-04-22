@@ -42,7 +42,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValueMap,
 } from "@/components/ui/select";
 import {
   Dialog,
@@ -239,7 +239,10 @@ export function CustomerBasicForm({
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="선택" />
+                        <SelectValueMap
+                          map={{ [NONE_VALUE]: "—", "여": "여", "남": "남" }}
+                          placeholder="선택"
+                        />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -376,7 +379,10 @@ export function CustomerBasicForm({
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="선택" />
+                        <SelectValueMap
+                          map={{ [NONE_VALUE]: "—", "주간": "주간", "야간": "야간" }}
+                          placeholder="선택"
+                        />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -431,7 +437,18 @@ export function CustomerBasicForm({
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="선택" />
+                          <SelectValueMap
+                            map={{
+                              [NONE_VALUE]: "미매칭",
+                              ...Object.fromEntries(
+                                trainingCenters.map((tc) => [
+                                  tc.id,
+                                  `${tc.name}${tc.region ? ` (${tc.region})` : ""}`,
+                                ])
+                              ),
+                            }}
+                            placeholder="선택"
+                          />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -463,7 +480,16 @@ export function CustomerBasicForm({
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue
+                          <SelectValueMap
+                            map={{
+                              [NONE_VALUE]: "미선택",
+                              ...Object.fromEntries(
+                                filteredClasses.map((cls) => [
+                                  cls.id,
+                                  `${cls.year}년 ${cls.month}월 — ${cls.class_type === "weekday" ? "주간" : "야간"}${cls.start_date ? ` (${cls.start_date})` : ""}`,
+                                ])
+                              ),
+                            }}
                             placeholder={
                               !selectedCenterId
                                 ? "먼저 교육원 선택"
@@ -503,7 +529,18 @@ export function CustomerBasicForm({
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="선택" />
+                          <SelectValueMap
+                            map={{
+                              [NONE_VALUE]: "미매칭",
+                              ...Object.fromEntries(
+                                careHomes.map((ch) => [
+                                  ch.id,
+                                  `${ch.name}${ch.region ? ` (${ch.region})` : ""}`,
+                                ])
+                              ),
+                            }}
+                            placeholder="선택"
+                          />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -534,7 +571,15 @@ export function CustomerBasicForm({
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="선택" />
+                          <SelectValueMap
+                            map={{
+                              [NONE_VALUE]: "—",
+                              "교육": "교육",
+                              "웰컴팩": "웰컴팩",
+                              "교육+웰컴팩": "교육+웰컴팩",
+                            }}
+                            placeholder="선택"
+                          />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -710,7 +755,15 @@ export function CustomerBasicForm({
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="종료 아님" />
+                        <SelectValueMap
+                          map={{
+                            [NONE_VALUE]: "종료 아님",
+                            "요양보호사 직종변경": "요양보호사 직종변경",
+                            "귀국": "귀국",
+                            "연락두절": "연락두절",
+                          }}
+                          placeholder="종료 아님"
+                        />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>

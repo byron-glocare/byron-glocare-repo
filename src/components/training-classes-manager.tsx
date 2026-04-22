@@ -40,7 +40,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValueMap,
 } from "@/components/ui/select";
 import {
   Table,
@@ -183,7 +183,10 @@ export function TrainingClassesManager({ centerId, classes }: Props) {
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue />
+                        <SelectValueMap
+                          map={{ weekday: "주간", night: "야간" }}
+                          placeholder="선택"
+                        />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>

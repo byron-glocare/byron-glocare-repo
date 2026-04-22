@@ -61,7 +61,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValueMap,
 } from "@/components/ui/select";
 import {
   Table,
@@ -400,7 +400,16 @@ function ReservationPaymentsCard({
                         }
                       >
                         <SelectTrigger className="h-8">
-                          <SelectValue />
+                          <SelectValueMap
+                            map={{
+                              "__none__": "환불 없음",
+                              "중도탈락_매출인식": "중도탈락 → 매출 인식",
+                              "교육생환급_공제없음": "교육생 환급 (공제 없음)",
+                              "소개비_공제": "소개비 공제",
+                              "교육원섭외실패_환불": "교육원 섭외 실패 환불",
+                            }}
+                            placeholder="환불 없음"
+                          />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="__none__">환불 없음</SelectItem>
@@ -866,7 +875,10 @@ function EventPaymentsCard({
                 onValueChange={(v) => setEventType(v ?? eventTypes[0] ?? "")}
               >
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValueMap
+                    map={Object.fromEntries(eventTypes.map((t) => [t, t]))}
+                    placeholder="선택"
+                  />
                 </SelectTrigger>
                 <SelectContent>
                   {eventTypes.map((t) => (
@@ -903,7 +915,15 @@ function EventPaymentsCard({
                   onValueChange={(v) => setFriendId(v ?? "")}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="선택" />
+                    <SelectValueMap
+                      map={Object.fromEntries(
+                        customerOptions.map((c) => [
+                          c.id,
+                          `${c.code} · ${c.name_kr || c.name_vi || "(이름 없음)"}`,
+                        ])
+                      )}
+                      placeholder="선택"
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     {customerOptions.map((c) => (
@@ -1172,7 +1192,15 @@ function WelcomePackPaymentCard({
                     onValueChange={(v) => setInterim(Number(v))}
                   >
                     <SelectTrigger className="h-8">
-                      <SelectValue />
+                      <SelectValueMap
+                        map={{
+                          "0": "0원",
+                          "250000": "250,000원 (서울권)",
+                          "300000": "300,000원 (충청권)",
+                          "350000": "350,000원 (원거리)",
+                        }}
+                        placeholder="선택"
+                      />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="0">0원</SelectItem>

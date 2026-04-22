@@ -28,6 +28,30 @@ function SelectValue({ className, ...props }: SelectPrimitive.Value.Props) {
   )
 }
 
+/**
+ * 정적 값↔라벨 맵을 받아 자동 표시하는 SelectValue 래퍼.
+ * 예: <SelectValueMap map={{"a": "A", "b": "B"}} placeholder="선택" />
+ * 값이 맵에 없으면 placeholder 반환.
+ */
+function SelectValueMap({
+  className,
+  map,
+  placeholder,
+}: {
+  className?: string
+  map: Record<string, React.ReactNode>
+  placeholder?: React.ReactNode
+}) {
+  return (
+    <SelectPrimitive.Value
+      data-slot="select-value"
+      className={cn("flex flex-1 text-left", className)}
+    >
+      {(v) => (v !== null && v in map ? map[v] : placeholder ?? "")}
+    </SelectPrimitive.Value>
+  )
+}
+
 function SelectTrigger({
   className,
   size = "default",
@@ -198,4 +222,5 @@ export {
   SelectSeparator,
   SelectTrigger,
   SelectValue,
+  SelectValueMap,
 }
