@@ -50,7 +50,7 @@ export default async function CustomersPage({
       `
       id, code, name_vi, name_kr, phone, birth_year, visa_type,
       training_center_id, training_class_id, care_home_id,
-      is_waiting, termination_reason, legacy_status,
+      is_waiting, termination_reason, legacy_status, product_type,
       desired_region, updated_at, created_at,
       class_start_date, class_end_date,
       work_start_date, work_end_date, visa_change_date, interview_date,
@@ -62,9 +62,13 @@ export default async function CustomersPage({
 
   if (q) {
     // 이름, 코드, 전화번호 부분 검색
-    query = query.or(
-      `code.ilike.%${q}%,name_kr.ilike.%${q}%,name_vi.ilike.%${q}%,phone.ilike.%${q}%`
-    );
+    // PostgREST .or() 문자열 구분자(,)/그룹(,()) 문자는 쿼리를 깨뜨리므로 제거
+    const safeQ = q.replace(/[,()]/g, " ").trim();
+    if (safeQ) {
+      query = query.or(
+        `code.ilike.%${safeQ}%,name_kr.ilike.%${safeQ}%,name_vi.ilike.%${safeQ}%,phone.ilike.%${safeQ}%`
+      );
+    }
   }
   if (centerFilter) query = query.eq("training_center_id", centerFilter);
   if (careFilter) query = query.eq("care_home_id", careFilter);

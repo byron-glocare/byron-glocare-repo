@@ -193,6 +193,23 @@ export async function createEventPayment(
       return { ok: false, error: "자기 자신을 친구로 등록할 수 없습니다." };
     }
 
+    // 이미 양쪽 중 하나라도 이 조합의 친구 소개가 등록되어 있는지 확인 (중복 방지)
+    const { data: existing } = await supabase
+      .from("event_payments")
+      .select("id")
+      .eq("event_type", "친구 소개")
+      .or(
+        `and(customer_id.eq.${customerId},friend_customer_id.eq.${parsed.data.friend_customer_id}),and(customer_id.eq.${parsed.data.friend_customer_id},friend_customer_id.eq.${customerId})`
+      )
+      .limit(1);
+
+    if (existing && existing.length > 0) {
+      return {
+        ok: false,
+        error: "이미 이 친구와의 소개 이벤트가 등록되어 있습니다.",
+      };
+    }
+
     const { error } = await supabase.from("event_payments").insert([
       {
         customer_id: customerId,

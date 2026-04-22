@@ -38,7 +38,12 @@ type LoginValues = z.infer<typeof loginSchema>;
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get("redirect") ?? "/";
+  // Open-redirect 방지: 내부 경로(`/` 로 시작, `//` 로 시작하는 protocol-relative URL 제외)만 허용
+  const rawRedirect = searchParams.get("redirect") ?? "/";
+  const redirectTo =
+    rawRedirect.startsWith("/") && !rawRedirect.startsWith("//")
+      ? rawRedirect
+      : "/";
   const [submitting, setSubmitting] = useState(false);
 
   const form = useForm<LoginValues>({

@@ -291,17 +291,18 @@ export async function sendCommissionSettlementSms(input: {
     };
   }
 
-  // 각 소개비 레코드의 sms_sent_at + status
-  for (const c of commissions) {
-    await supabase
-      .from("commission_payments")
-      .update({
-        sms_sent_at: new Date().toISOString(),
-        status: "notified",
-      })
-      .eq("id", c.id)
-      .neq("status", "completed");
-  }
+  // 각 소개비 레코드의 sms_sent_at + status 를 한 번에 갱신 (completed 는 건드리지 않음)
+  await supabase
+    .from("commission_payments")
+    .update({
+      sms_sent_at: new Date().toISOString(),
+      status: "notified",
+    })
+    .in(
+      "id",
+      commissions.map((c) => c.id)
+    )
+    .neq("status", "completed");
 
   revalidatePath("/sms");
   revalidatePath("/sms/commission");

@@ -130,6 +130,30 @@ describe("computeTaskBuckets", () => {
     expect(rn?.customers[0].id).toBe(due.id);
   });
 
+  it("대기중 고객은 교육원 매칭 버킷에서 제외", () => {
+    const c = makeCustomer({
+      phone: "010-1234-5678",
+      name_kr: "대기고객",
+      is_waiting: true,
+      recontact_date: "2026-05-10",
+    });
+    const buckets = computeTaskBuckets(buildInputs([{ customer: c }]));
+    expect(buckets.find((b) => b.key === "center_matching")?.count).toBe(0);
+    expect(buckets.find((b) => b.key === "reservation_payment")?.count).toBe(0);
+  });
+
+  it("이미 근무 중인 고객은 '강의일정 확정 필요' 버킷에 들어가지 않음", () => {
+    const c = makeCustomer({
+      phone: "010-1234-5678",
+      name_kr: "근무중",
+      training_center_id: "tc-x",
+      training_class_id: null,
+      work_start_date: "2026-03-01",
+    });
+    const buckets = computeTaskBuckets(buildInputs([{ customer: c }]));
+    expect(buckets.find((b) => b.key === "class_matching")?.count).toBe(0);
+  });
+
   it("비자변경 '대기' 또는 '중' 이면 버킷에 포함", () => {
     const pending = makeCustomer({ work_start_date: "2026-04-15" }); // +30일 이전
     const inProgress = makeCustomer({ work_start_date: "2026-03-01" }); // +30일 이후, visa_change_date null

@@ -39,6 +39,7 @@ function buildInputs(overrides?: {
       work_end_date: null,
       visa_change_date: null,
       interview_date: null,
+      product_type: null,
       is_waiting: false,
       termination_reason: null,
       ...(overrides?.customer ?? {}),
@@ -308,15 +309,37 @@ describe("computeEmployment — §5.1.4", () => {
     expect(r.complete).toBe(true);
   });
 
-  it("웰컴팩 예약 포기 시 complete = false", () => {
+  it("웰컴팩 예약 포기 시 complete = false (웰컴팩 대상 상품)", () => {
     const r = computeEmployment(
       buildInputs({
-        customer: { care_home_id: "ch-1" },
+        customer: { care_home_id: "ch-1", product_type: "웰컴팩" },
         status: {
           interview_passed: true,
           welcome_pack_abandoned: true,
         } as any,
         welcomePackPayment: { reservation_date: "2026-03-01" },
+      })
+    );
+    expect(r.complete).toBe(false);
+  });
+
+  it("상품='교육' 고객(자체취업)은 웰컴팩 요건 없이도 complete", () => {
+    const r = computeEmployment(
+      buildInputs({
+        customer: { care_home_id: "ch-1", product_type: "교육" },
+        status: { interview_passed: true } as any,
+        welcomePackPayment: null, // 웰컴팩 예약 없음
+      })
+    );
+    expect(r.complete).toBe(true);
+  });
+
+  it("상품='웰컴팩' 이면 예약금 없으면 complete = false", () => {
+    const r = computeEmployment(
+      buildInputs({
+        customer: { care_home_id: "ch-1", product_type: "웰컴팩" },
+        status: { interview_passed: true } as any,
+        welcomePackPayment: null,
       })
     );
     expect(r.complete).toBe(false);

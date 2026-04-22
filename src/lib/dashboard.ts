@@ -123,13 +123,17 @@ export function computeTaskBuckets(inputs: DashboardInputs): TaskBucket[] {
   const enriched = enrich(inputs);
   const today = todayStr(inputs.today);
 
-  // 종료/대기 상태는 대부분 작업에서 제외
+  // 종료/드랍/포기 상태는 모든 작업에서 제외
   const isExcluded = (entry: ReturnType<typeof enrich>[number]) =>
     entry.summary.terminated ||
     entry.summary.training.dropped ||
     entry.status.intake_abandoned ||
     entry.status.study_abroad_consultation ||
     entry.status.training_reservation_abandoned;
+
+  // 대기중 고객은 "연락 필요" 이외 버킷에서 제외
+  const isPaused = (entry: ReturnType<typeof enrich>[number]) =>
+    entry.customer.is_waiting;
 
   const centerFinding: Pick<Customer, "id" | "code" | "name_kr" | "name_vi">[] = [];
   const centerMatching: typeof centerFinding = [];
@@ -143,57 +147,67 @@ export function computeTaskBuckets(inputs: DashboardInputs): TaskBucket[] {
   for (const e of enriched) {
     const brief = pickBrief(e.customer);
     const excluded = isExcluded(e);
+    const paused = isPaused(e);
 
-    // 7-2 교육원 발굴: 플래그 on
-    if (!excluded && e.status.training_center_finding) {
+    // 교육 관련 버킷은 현재 단계가 '교육예약중' 또는 '교육중' 일 때만 활성
+    const inEducationPhase =
+      e.summary.currentStage === "교육예약중" ||
+      e.summary.currentStage === "교육중";
+
+    // 7-2 교육원 발굴: 플래그 on (활성/비대기)
+    if (!excluded && !paused && e.status.training_center_finding) {
       centerFinding.push(brief);
     }
 
-    // 7-3 교육원 매칭: 접수 완료 AND training_center_id null
+    // 7-3 교육원 매칭: 교육 단계 AND training_center_id null AND 발굴 아님
     if (
       !excluded &&
-      e.summary.intake.complete &&
+      !paused &&
+      inEducationPhase &&
       !e.summary.trainingReservation.centerMatched &&
       !e.status.training_center_finding
     ) {
       centerMatching.push(brief);
     }
 
-    // 7-4 강의일정 확정: 접수 완료 AND training_class_id null (교육원 매칭됨 전제)
+    // 7-4 강의일정 확정: 교육 단계 + 교육원 매칭됨 + 강의 미확정
     if (
       !excluded &&
-      e.summary.intake.complete &&
+      !paused &&
+      inEducationPhase &&
       e.summary.trainingReservation.centerMatched &&
       !e.summary.trainingReservation.classMatched
     ) {
       classMatching.push(brief);
     }
 
-    // 7-5 예약금 입금: 접수 완료 AND 예약금 미입금
+    // 7-5 예약금 입금: 교육 단계 AND 예약금 미입금
     if (
       !excluded &&
-      e.summary.intake.complete &&
+      !paused &&
+      inEducationPhase &&
       !e.summary.trainingReservation.reservationPaid
     ) {
       reservationPayment.push(brief);
     }
 
-    // 7-6 강의 접수 메시지 발송: 접수 완료 AND SMS 미발송 AND 예약금 입금 완료
+    // 7-6 강의 접수 메시지 발송: 교육 단계 AND 예약금 입금 AND SMS 미발송
     if (
       !excluded &&
-      e.summary.intake.complete &&
+      !paused &&
+      inEducationPhase &&
       e.summary.trainingReservation.reservationPaid &&
       !e.summary.trainingReservation.smsSent
     ) {
       introSms.push(brief);
     }
 
-    // 7-7 요양원 발굴
-    if (!excluded && e.status.care_home_finding) {
+    // 7-7 요양원 발굴: 플래그 on (활성/비대기)
+    if (!excluded && !paused && e.status.care_home_finding) {
       careHomeFinding.push(brief);
     }
 
-    // 7-8 비자 변경: 대기 or 중
+    // 7-8 비자 변경: 대기 or 중 (종료 아닌 고객만)
     if (
       !e.summary.terminated &&
       (e.summary.work.visaChangePhase === "대기" ||
@@ -235,7 +249,6 @@ export type StageDistribution = {
 
 const STAGE_ORDER: StageSummary["currentStage"][] = [
   "접수중",
-  "접수완료_대기",
   "교육예약중",
   "교육중",
   "취업중",

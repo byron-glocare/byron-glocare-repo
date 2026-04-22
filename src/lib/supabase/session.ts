@@ -37,10 +37,16 @@ export async function updateSession(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
   const isAuthRoute = pathname.startsWith("/login");
+  const isApiRoute = pathname.startsWith("/api");
   const isPublicAsset =
     pathname.startsWith("/_next") ||
     pathname.startsWith("/favicon") ||
     pathname === "/glocare_logo.png";
+
+  // 미로그인 + API 라우트 → 401 JSON (리다이렉트 대신)
+  if (!user && isApiRoute) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   // 미로그인 + 보호 라우트 → /login
   if (!user && !isAuthRoute && !isPublicAsset) {

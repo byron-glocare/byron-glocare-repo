@@ -113,6 +113,7 @@ export type StatusInputs = {
     | "work_end_date"
     | "visa_change_date"
     | "interview_date"
+    | "product_type"
     | "is_waiting"
     | "termination_reason"
   >;
@@ -263,12 +264,20 @@ export function computeEmployment(
 
   const interviewPassed = status.interview_passed;
 
+  // 웰컴팩 대상자만 예약금 입금 요건 체크 (§11 "4-6.자체취업" 참고)
+  // 상품이 '교육' 또는 null 인 고객은 웰컴팩 미구매 → 예약금 요건 제외
+  const welcomePackTarget =
+    customer.product_type === "웰컴팩" ||
+    customer.product_type === "교육+웰컴팩";
+  const welcomePackRequirementMet = welcomePackTarget
+    ? welcomePackReservationPaid && !welcomePackAbandoned
+    : true;
+
   const complete =
     !careHomeFinding &&
     careHomeMatched &&
     interviewPassed &&
-    welcomePackReservationPaid &&
-    !welcomePackAbandoned;
+    welcomePackRequirementMet;
 
   return {
     welcomePackReservationPaid,
@@ -369,9 +378,29 @@ export function computeCustomerStatus(inputs: StatusInputs): StageSummary {
     // 취업 완료 상태지만 근무 시작 안 함
     currentStage = "취업중";
     label = "취업 완료 — 근무 대기";
-  } else if (training.complete) {
+  } else if (training.certificateAcquired) {
+    // 자격증 취득 → 취업 프로세스 진입 (강의 종료 여부 무관)
     currentStage = "취업중";
-    label = "취업 진행 중";
+    const isWelcomePackTarget =
+      inputs.customer.product_type === "웰컴팩" ||
+      inputs.customer.product_type === "교육+웰컴팩";
+    if (employment.careHomeFinding) {
+      label = "요양원 발굴 중";
+    } else if (!employment.careHomeMatched) {
+      label = "요양원 매칭 필요";
+    } else if (employment.interviewPhase === "전") {
+      label = "면접 대기";
+    } else if (employment.interviewPhase === "후" && !employment.interviewPassed) {
+      label = "면접 결과 대기";
+    } else if (
+      isWelcomePackTarget &&
+      !employment.welcomePackReservationPaid &&
+      !employment.welcomePackAbandoned
+    ) {
+      label = "웰컴팩 예약 대기";
+    } else {
+      label = "취업 진행 중";
+    }
   } else if (training.phase === "중") {
     currentStage = "교육중";
     label = "교육 중";

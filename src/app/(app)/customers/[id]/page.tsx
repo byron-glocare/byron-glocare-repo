@@ -18,12 +18,20 @@ import { formatDate, dash } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
+const VALID_TABS = ["basic", "progress", "consultations", "settlement"] as const;
+type TabKey = (typeof VALID_TABS)[number];
+
 export default async function CustomerDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ tab?: string }>;
 }) {
   const { id } = await params;
+  const sp = await searchParams;
+  const tab: TabKey =
+    VALID_TABS.includes(sp.tab as TabKey) ? (sp.tab as TabKey) : "basic";
   const supabase = await createClient();
 
   const { data: customer, error } = await supabase
@@ -167,7 +175,7 @@ export default async function CustomerDetailPage({
         }
       />
       <div className="p-6">
-        <Tabs defaultValue="basic" className="w-full">
+        <Tabs defaultValue={tab} className="w-full">
           <TabsList>
             <TabsTrigger value="basic">기본 정보</TabsTrigger>
             <TabsTrigger value="progress">진행 단계</TabsTrigger>
