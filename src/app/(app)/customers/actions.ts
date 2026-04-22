@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { requireAuth } from "@/lib/require-auth";
 import {
   customerSchema,
   consultationSchema,
@@ -23,9 +24,14 @@ export type ActionResult<T = unknown> =
 async function generateCustomerCode(
   supabase: Awaited<ReturnType<typeof createClient>>
 ): Promise<string> {
-  const now = new Date();
-  const yy = String(now.getFullYear()).slice(-2);
-  const mm = String(now.getMonth() + 1).padStart(2, "0");
+  // KST 기준 연·월로 CVN+YYMM 접두사 생성 (서버 timezone 무관)
+  const kst = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Seoul",
+    year: "2-digit",
+    month: "2-digit",
+  }).formatToParts(new Date());
+  const yy = kst.find((p) => p.type === "year")?.value ?? "00";
+  const mm = kst.find((p) => p.type === "month")?.value ?? "00";
   const prefix = `CVN${yy}${mm}`;
 
   const { data } = await supabase
@@ -80,12 +86,18 @@ async function applyCareHomeFindingAutoReset(
 // =============================================================================
 
 export async function createCustomer(input: CustomerInput) {
+  let supabase;
+  try {
+    ({ supabase } = await requireAuth());
+  } catch {
+    return { ok: false as const, error: "Unauthorized" };
+  }
+
   const parsed = customerSchema.safeParse(input);
   if (!parsed.success) {
     return { ok: false as const, error: parsed.error.issues[0].message };
   }
 
-  const supabase = await createClient();
   const code = await generateCustomerCode(supabase);
 
   const { data, error } = await supabase
@@ -122,12 +134,18 @@ export async function updateCustomer(
   id: string,
   input: CustomerInput
 ): Promise<ActionResult> {
+  let supabase;
+  try {
+    ({ supabase } = await requireAuth());
+  } catch {
+    return { ok: false, error: "Unauthorized" };
+  }
+
   const parsed = customerSchema.safeParse(input);
   if (!parsed.success) {
     return { ok: false, error: parsed.error.issues[0].message };
   }
 
-  const supabase = await createClient();
   const { error } = await supabase
     .from("customers")
     .update(parsed.data)
@@ -152,7 +170,13 @@ export async function updateCustomer(
 }
 
 export async function deleteCustomer(id: string): Promise<ActionResult> {
-  const supabase = await createClient();
+  let supabase;
+  try {
+    ({ supabase } = await requireAuth());
+  } catch {
+    return { ok: false, error: "Unauthorized" };
+  }
+
   const { error } = await supabase.from("customers").delete().eq("id", id);
   if (error) return { ok: false, error: error.message };
 
@@ -168,12 +192,18 @@ export async function updateStatusFlags(
   customerId: string,
   input: StatusFlagsInput
 ): Promise<ActionResult> {
+  let supabase;
+  try {
+    ({ supabase } = await requireAuth());
+  } catch {
+    return { ok: false, error: "Unauthorized" };
+  }
+
   const parsed = statusFlagsSchema.safeParse(input);
   if (!parsed.success) {
     return { ok: false, error: parsed.error.issues[0].message };
   }
 
-  const supabase = await createClient();
   const { error } = await supabase
     .from("customer_statuses")
     .update(parsed.data)
@@ -209,17 +239,19 @@ export async function createConsultation(
     };
   }
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  let user, supabase;
+  try {
+    ({ user, supabase } = await requireAuth());
+  } catch {
+    return { ok: false, error: "Unauthorized" };
+  }
 
   const { error } = await supabase.from("customer_consultations").insert({
     customer_id: customerId,
     consultation_type: parsed.data.consultation_type,
     content_vi: parsed.data.content_vi ?? null,
     content_kr: parsed.data.content_kr ?? null,
-    author_id: user?.id ?? null,
+    author_id: user.id,
   });
 
   if (error) return { ok: false, error: error.message };

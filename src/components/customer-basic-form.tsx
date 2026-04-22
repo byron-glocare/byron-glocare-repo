@@ -421,9 +421,12 @@ export function CustomerBasicForm({
                     <Select
                       value={field.value ?? NONE_VALUE}
                       onValueChange={(v) => {
-                        field.onChange(v === NONE_VALUE ? null : v);
-                        // 교육원 변경 시 강의일정 초기화
-                        form.setValue("training_class_id", null);
+                        const next = v === NONE_VALUE ? null : v;
+                        // 실제로 다른 교육원으로 변경된 경우에만 강의일정 리셋
+                        if (next !== field.value) {
+                          form.setValue("training_class_id", null);
+                        }
+                        field.onChange(next);
                       }}
                     >
                       <FormControl>

@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { requireAuth } from "@/lib/require-auth";
 import { careHomeSchema, type CareHomeInput } from "@/lib/validators";
 
 export type ActionResult<T = unknown> =
@@ -10,12 +10,18 @@ export type ActionResult<T = unknown> =
   | { ok: false; error: string };
 
 export async function createCareHome(input: CareHomeInput) {
+  let supabase;
+  try {
+    ({ supabase } = await requireAuth());
+  } catch {
+    return { ok: false as const, error: "Unauthorized" };
+  }
+
   const parsed = careHomeSchema.safeParse(input);
   if (!parsed.success) {
     return { ok: false as const, error: parsed.error.issues[0].message };
   }
 
-  const supabase = await createClient();
   const { data, error } = await supabase
     .from("care_homes")
     .insert(parsed.data)
@@ -32,12 +38,18 @@ export async function updateCareHome(
   id: string,
   input: CareHomeInput
 ): Promise<ActionResult> {
+  let supabase;
+  try {
+    ({ supabase } = await requireAuth());
+  } catch {
+    return { ok: false, error: "Unauthorized" };
+  }
+
   const parsed = careHomeSchema.safeParse(input);
   if (!parsed.success) {
     return { ok: false, error: parsed.error.issues[0].message };
   }
 
-  const supabase = await createClient();
   const { error } = await supabase
     .from("care_homes")
     .update(parsed.data)
@@ -51,7 +63,12 @@ export async function updateCareHome(
 }
 
 export async function deleteCareHome(id: string): Promise<ActionResult> {
-  const supabase = await createClient();
+  let supabase;
+  try {
+    ({ supabase } = await requireAuth());
+  } catch {
+    return { ok: false, error: "Unauthorized" };
+  }
 
   const { count } = await supabase
     .from("customers")

@@ -142,11 +142,14 @@ export type StatusInputs = {
 
 function todayStr(override?: string): string {
   if (override) return override;
-  const d = new Date();
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const dd = String(d.getDate()).padStart(2, "0");
-  return `${yyyy}-${mm}-${dd}`;
+  // 서버 timezone 과 무관하게 KST 기준 날짜 (운영 기준)
+  // en-CA 로케일 → "YYYY-MM-DD" 포맷
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Seoul",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
 }
 
 function notBlank(v: string | null | undefined): boolean {

@@ -23,9 +23,8 @@ export function AppSidebar() {
         <Image
           src="/glocare_logo.png"
           alt="Glocare"
-          width={120}
+          width={56}
           height={28}
-          className="h-7 w-auto"
           priority
         />
       </Link>

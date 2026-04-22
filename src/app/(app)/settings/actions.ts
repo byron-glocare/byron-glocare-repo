@@ -1,7 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createClient, createAdminClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
+import { requireAuth } from "@/lib/require-auth";
 import type { Json } from "@/types/database";
 
 export type ActionResult<T = unknown> =
@@ -16,16 +17,18 @@ export async function updateSystemSetting(
   key: string,
   value: Json
 ): Promise<ActionResult> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  let user, supabase;
+  try {
+    ({ user, supabase } = await requireAuth());
+  } catch {
+    return { ok: false, error: "Unauthorized" };
+  }
 
   const { error } = await supabase.from("system_settings").upsert(
     {
       key,
       value,
-      updated_by: user?.id,
+      updated_by: user.id,
       updated_at: new Date().toISOString(),
     },
     { onConflict: "key" }
@@ -52,6 +55,13 @@ export async function listAuthUsers(): Promise<
     }[]
   >
 > {
+  // service_role 을 사용하므로 반드시 인증된 사용자만 호출 가능해야 함
+  try {
+    await requireAuth();
+  } catch {
+    return { ok: false, error: "Unauthorized" };
+  }
+
   try {
     const admin = createAdminClient();
     const { data, error } = await admin.auth.admin.listUsers({
@@ -86,11 +96,11 @@ export async function createAuthUser(input: {
   }
 
   // 로그인 사용자 확인 (인증된 사용자만 다른 사용자 생성 가능)
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return { ok: false, error: "Unauthorized" };
+  try {
+    await requireAuth();
+  } catch {
+    return { ok: false, error: "Unauthorized" };
+  }
 
   try {
     const admin = createAdminClient();
@@ -115,11 +125,12 @@ export async function toggleAuthUserBan(
   userId: string,
   banned: boolean
 ): Promise<ActionResult> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return { ok: false, error: "Unauthorized" };
+  let user;
+  try {
+    ({ user } = await requireAuth());
+  } catch {
+    return { ok: false, error: "Unauthorized" };
+  }
   if (user.id === userId) {
     return { ok: false, error: "본인 계정은 비활성화할 수 없습니다." };
   }
@@ -149,7 +160,12 @@ export async function updateOwnPassword(
     return { ok: false, error: "비밀번호는 6자 이상이어야 합니다." };
   }
 
-  const supabase = await createClient();
+  let supabase;
+  try {
+    ({ supabase } = await requireAuth());
+  } catch {
+    return { ok: false, error: "Unauthorized" };
+  }
   const { error } = await supabase.auth.updateUser({ password: newPassword });
   if (error) return { ok: false, error: error.message };
   return { ok: true, data: null };

@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createClient } from "@/lib/supabase/server";
+import { requireAuth } from "@/lib/require-auth";
 import {
   reservationPaymentSchema,
   commissionPaymentSchema,
@@ -32,7 +32,12 @@ export async function createReservationPayment(
   const parsed = reservationPaymentSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: parsed.error.issues[0].message };
 
-  const supabase = await createClient();
+  let supabase;
+  try {
+    ({ supabase } = await requireAuth());
+  } catch {
+    return { ok: false, error: "Unauthorized" };
+  }
   const { error } = await supabase.from("reservation_payments").insert({
     customer_id: customerId,
     ...parsed.data,
@@ -51,7 +56,12 @@ export async function updateReservationPayment(
   const parsed = reservationPaymentSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: parsed.error.issues[0].message };
 
-  const supabase = await createClient();
+  let supabase;
+  try {
+    ({ supabase } = await requireAuth());
+  } catch {
+    return { ok: false, error: "Unauthorized" };
+  }
   const { error } = await supabase
     .from("reservation_payments")
     .update(parsed.data)
@@ -66,7 +76,12 @@ export async function deleteReservationPayment(
   paymentId: string,
   customerId: string
 ): Promise<ActionResult> {
-  const supabase = await createClient();
+  let supabase;
+  try {
+    ({ supabase } = await requireAuth());
+  } catch {
+    return { ok: false, error: "Unauthorized" };
+  }
   const { error } = await supabase
     .from("reservation_payments")
     .delete()
@@ -93,7 +108,12 @@ export async function createCommissionPayment(
     parsed.data.deduction_amount
   );
 
-  const supabase = await createClient();
+  let supabase;
+  try {
+    ({ supabase } = await requireAuth());
+  } catch {
+    return { ok: false, error: "Unauthorized" };
+  }
   const { error } = await supabase.from("commission_payments").insert({
     customer_id: customerId,
     training_center_id: parsed.data.training_center_id,
@@ -136,7 +156,12 @@ export async function updateCommissionPayment(
     status = "completed";
   }
 
-  const supabase = await createClient();
+  let supabase;
+  try {
+    ({ supabase } = await requireAuth());
+  } catch {
+    return { ok: false, error: "Unauthorized" };
+  }
   const { error } = await supabase
     .from("commission_payments")
     .update({
@@ -162,7 +187,12 @@ export async function deleteCommissionPayment(
   paymentId: string,
   customerId: string
 ): Promise<ActionResult> {
-  const supabase = await createClient();
+  let supabase;
+  try {
+    ({ supabase } = await requireAuth());
+  } catch {
+    return { ok: false, error: "Unauthorized" };
+  }
   const { error } = await supabase
     .from("commission_payments")
     .delete()
@@ -185,7 +215,12 @@ export async function createEventPayment(
   const parsed = eventPaymentSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: parsed.error.issues[0].message };
 
-  const supabase = await createClient();
+  let supabase;
+  try {
+    ({ supabase } = await requireAuth());
+  } catch {
+    return { ok: false, error: "Unauthorized" };
+  }
 
   // 친구 소개인 경우 양쪽 customer 에 생성
   if (parsed.data.event_type === "친구 소개" && parsed.data.friend_customer_id) {
@@ -261,7 +296,12 @@ export async function updateEventPayment(
   const parsed = eventPaymentSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: parsed.error.issues[0].message };
 
-  const supabase = await createClient();
+  let supabase;
+  try {
+    ({ supabase } = await requireAuth());
+  } catch {
+    return { ok: false, error: "Unauthorized" };
+  }
   const { error } = await supabase
     .from("event_payments")
     .update({
@@ -283,7 +323,12 @@ export async function deleteEventPayment(
   paymentId: string,
   customerId: string
 ): Promise<ActionResult> {
-  const supabase = await createClient();
+  let supabase;
+  try {
+    ({ supabase } = await requireAuth());
+  } catch {
+    return { ok: false, error: "Unauthorized" };
+  }
   const { error } = await supabase
     .from("event_payments")
     .delete()
@@ -314,7 +359,12 @@ export async function upsertWelcomePackPayment(
   );
 
   // DB 에 final_amount 는 generated column, balance_amount 는 저장
-  const supabase = await createClient();
+  let supabase;
+  try {
+    ({ supabase } = await requireAuth());
+  } catch {
+    return { ok: false, error: "Unauthorized" };
+  }
 
   const row = {
     customer_id: customerId,
@@ -345,7 +395,12 @@ export async function upsertWelcomePackPayment(
 export async function deleteWelcomePackPayment(
   customerId: string
 ): Promise<ActionResult> {
-  const supabase = await createClient();
+  let supabase;
+  try {
+    ({ supabase } = await requireAuth());
+  } catch {
+    return { ok: false, error: "Unauthorized" };
+  }
   const { error } = await supabase
     .from("welcome_pack_payments")
     .delete()
