@@ -16,7 +16,10 @@ import {
 } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
 import { dash } from "@/lib/format";
-import { computeCustomerStatus } from "@/lib/customer-status";
+import {
+  computeCustomerStatus,
+  type StageSummary,
+} from "@/lib/customer-status";
 
 export const dynamic = "force-dynamic";
 
@@ -101,8 +104,35 @@ export default async function CustomersPage({
     return { customer: c, summary };
   });
 
+  // 현재 단계 드롭다운은 대분류 대신 세부 라벨 (summary.label) 로 필터.
+  // 옵션은 현재 q/center/care 필터 결과에 실제로 존재하는 라벨로 한정해
+  // "결과가 없는 옵션" 을 보여주지 않는다.
+  const STAGE_ORDER_MAP: Record<StageSummary["currentStage"], number> = {
+    접수중: 1,
+    접수완료_대기: 2,
+    교육예약중: 3,
+    교육중: 4,
+    취업중: 5,
+    근무중: 6,
+    근무종료: 7,
+    대기중: 8,
+    종료: 9,
+  };
+  const uniqueLabels = new Map<string, StageSummary["currentStage"]>();
+  for (const x of withStage) {
+    if (x.summary && !uniqueLabels.has(x.summary.label)) {
+      uniqueLabels.set(x.summary.label, x.summary.currentStage);
+    }
+  }
+  const labelOptions = Array.from(uniqueLabels.entries())
+    .sort((a, b) => {
+      const diff = STAGE_ORDER_MAP[a[1]] - STAGE_ORDER_MAP[b[1]];
+      return diff !== 0 ? diff : a[0].localeCompare(b[0], "ko");
+    })
+    .map(([label]) => label);
+
   const filtered = stageFilter
-    ? withStage.filter((x) => x.summary?.currentStage === stageFilter)
+    ? withStage.filter((x) => x.summary?.label === stageFilter)
     : withStage;
 
   const count = filtered.length;
@@ -191,17 +221,19 @@ export default async function CustomersPage({
             <select
               name="stage"
               defaultValue={stageFilter}
-              className="h-8 rounded-md border border-input bg-background px-2 text-sm min-w-28"
+              className="h-8 rounded-md border border-input bg-background px-2 text-sm min-w-44"
             >
               <option value="">전체</option>
-              <option value="접수중">접수중</option>
-              <option value="교육예약중">교육예약중</option>
-              <option value="교육중">교육중</option>
-              <option value="취업중">취업중</option>
-              <option value="근무중">근무중</option>
-              <option value="근무종료">근무종료</option>
-              <option value="대기중">대기중</option>
-              <option value="종료">종료</option>
+              {/* 현재 필터 결과에 존재하지 않는 이전 선택값도 유지해 URL 이
+                  깨지지 않도록 보존 */}
+              {stageFilter && !labelOptions.includes(stageFilter) && (
+                <option value={stageFilter}>{stageFilter}</option>
+              )}
+              {labelOptions.map((label) => (
+                <option key={label} value={label}>
+                  {label}
+                </option>
+              ))}
             </select>
           </div>
           <button
