@@ -386,11 +386,13 @@ function defaultStatus(customerId: string) {
     intake_abandoned: false,
     study_abroad_consultation: false,
     training_center_finding: false,
+    class_schedule_confirmation_needed: false,
     training_reservation_abandoned: false,
     certificate_acquired: false,
     training_dropped: false,
     welcome_pack_abandoned: false,
     care_home_finding: false,
+    resume_sent: false,
     interview_passed: false,
     updated_at: new Date().toISOString(),
   };

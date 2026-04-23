@@ -213,11 +213,13 @@ export const statusFlagsSchema = z.object({
   intake_abandoned: z.boolean(),
   study_abroad_consultation: z.boolean(),
   training_center_finding: z.boolean(),
+  class_schedule_confirmation_needed: z.boolean(),
   training_reservation_abandoned: z.boolean(),
   certificate_acquired: z.boolean(),
   training_dropped: z.boolean(),
   welcome_pack_abandoned: z.boolean(),
   care_home_finding: z.boolean(),
+  resume_sent: z.boolean(),
   interview_passed: z.boolean(),
 });
 

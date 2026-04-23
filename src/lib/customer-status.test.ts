@@ -48,11 +48,13 @@ function buildInputs(overrides?: {
       intake_abandoned: false,
       study_abroad_consultation: false,
       training_center_finding: false,
+      class_schedule_confirmation_needed: false,
       training_reservation_abandoned: false,
       certificate_acquired: false,
       training_dropped: false,
       welcome_pack_abandoned: false,
       care_home_finding: false,
+      resume_sent: false,
       interview_passed: false,
       ...(overrides?.status ?? {}),
     },
@@ -166,12 +168,14 @@ describe("computeTrainingReservation — §5.1.2", () => {
           training_class_id: "tcls-1",
         },
         reservationPayments: [{ payment_date: "2026-04-01" }],
+        smsMessages: [{ message_type: "new_student" }],
       })
     );
     expect(r.complete).toBe(true);
     expect(r.centerMatched).toBe(true);
     expect(r.classMatched).toBe(true);
     expect(r.reservationPaid).toBe(true);
+    expect(r.smsSent).toBe(true);
   });
 
   it("교육원 발굴 플래그 true면 complete = false", () => {
@@ -550,5 +554,87 @@ describe("computeCustomerStatus — 통합", () => {
     );
     expect(r.currentStage).toBe("교육예약중");
     expect(r.label).toBe("교육원 발굴 중");
+  });
+
+  it("교육원 매칭 됐지만 강의 일정 확인 필요 → '강의 일정 확인'", () => {
+    const r = computeCustomerStatus(
+      buildInputs({
+        customer: {
+          name_kr: "홍",
+          phone: "010-0000-0000",
+          training_center_id: "tc-1",
+        },
+        status: { class_schedule_confirmation_needed: true } as any,
+      })
+    );
+    expect(r.currentStage).toBe("교육예약중");
+    expect(r.label).toBe("강의 일정 확인");
+  });
+
+  it("예약금 입금까지 완료 + 메시지 미발송 → '강의 접수 메시지 발송 대기'", () => {
+    const r = computeCustomerStatus(
+      buildInputs({
+        customer: {
+          name_kr: "홍",
+          phone: "010-0000-0000",
+          training_center_id: "tc-1",
+          training_class_id: "cls-1",
+        },
+        reservationPayments: [{ payment_date: "2026-04-01" }],
+      })
+    );
+    expect(r.trainingReservation.complete).toBe(false);
+    expect(r.currentStage).toBe("교육예약중");
+    expect(r.label).toBe("강의 접수 메시지 발송 대기");
+  });
+
+  it("자격증 취득 + 요양원 매칭됨 + 이력서 미발송 → '이력서 발송 대기'", () => {
+    const r = computeCustomerStatus(
+      buildInputs({
+        customer: {
+          name_kr: "홍",
+          phone: "010-0000-0000",
+          training_center_id: "tc-1",
+          training_class_id: "cls-1",
+          class_start_date: "2026-01-01",
+          class_end_date: "2026-03-01",
+          care_home_id: "ch-1",
+          product_type: "교육",
+        },
+        status: {
+          certificate_acquired: true,
+          resume_sent: false,
+        } as any,
+        today: "2026-04-01",
+      })
+    );
+    expect(r.currentStage).toBe("취업중");
+    expect(r.label).toBe("이력서 발송 대기");
+  });
+
+  it("취업 모든 체크포인트 완료 + 근무 미시작 → '근무 시작 대기'", () => {
+    const r = computeCustomerStatus(
+      buildInputs({
+        customer: {
+          name_kr: "홍",
+          phone: "010-0000-0000",
+          training_center_id: "tc-1",
+          training_class_id: "cls-1",
+          class_start_date: "2026-01-01",
+          class_end_date: "2026-03-01",
+          care_home_id: "ch-1",
+          interview_date: "2026-03-15",
+          product_type: "교육",
+        },
+        status: {
+          certificate_acquired: true,
+          resume_sent: true,
+          interview_passed: true,
+        } as any,
+        today: "2026-04-01",
+      })
+    );
+    expect(r.currentStage).toBe("취업중");
+    expect(r.label).toBe("근무 시작 대기");
   });
 });

@@ -36,21 +36,27 @@ const FLAG_LABELS: Record<FlagKey, string> = {
   intake_abandoned: "접수포기",
   study_abroad_consultation: "유학상담으로 전환",
   training_center_finding: "교육원 발굴 중",
+  class_schedule_confirmation_needed: "강의 일정 확인",
   training_reservation_abandoned: "교육 예약포기",
   certificate_acquired: "자격증 취득",
   training_dropped: "교육 드랍",
   welcome_pack_abandoned: "웰컴팩 예약포기",
   care_home_finding: "요양원 발굴 중",
+  resume_sent: "이력서 발송",
   interview_passed: "면접 합격",
 };
 
 const FLAG_HINTS: Partial<Record<FlagKey, string>> = {
   training_center_finding: "교육원 매칭하면 자동으로 해제됩니다.",
+  class_schedule_confirmation_needed:
+    "강의 일정 정보가 없어 교육원에 확인이 필요합니다.",
   care_home_finding: "요양원 매칭하면 자동으로 해제됩니다.",
   intake_abandoned: "체크 시 이후 모든 단계 판정이 중지됩니다.",
   study_abroad_consultation: "유학으로 전환 → 이후 단계 중지.",
   training_reservation_abandoned: "체크 시 이후 단계 중지.",
   training_dropped: "교육 중 이탈 — 이후 모든 단계 중지.",
+  welcome_pack_abandoned: "체크 시 취업 단계가 종료 처리됩니다.",
+  resume_sent: "요양원에 이력서를 보냈으면 ON.",
 };
 
 export function CustomerProgressTab({ customerId, inputs }: Props) {
@@ -60,12 +66,15 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
     intake_abandoned: inputs.status.intake_abandoned,
     study_abroad_consultation: inputs.status.study_abroad_consultation,
     training_center_finding: inputs.status.training_center_finding,
+    class_schedule_confirmation_needed:
+      inputs.status.class_schedule_confirmation_needed,
     training_reservation_abandoned:
       inputs.status.training_reservation_abandoned,
     certificate_acquired: inputs.status.certificate_acquired,
     training_dropped: inputs.status.training_dropped,
     welcome_pack_abandoned: inputs.status.welcome_pack_abandoned,
     care_home_finding: inputs.status.care_home_finding,
+    resume_sent: inputs.status.resume_sent,
     interview_passed: inputs.status.interview_passed,
   });
 
@@ -158,11 +167,22 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
           <AutoRow label="교육원 매칭">
             <BoolPill v={summary.trainingReservation.centerMatched} />
           </AutoRow>
+          <ManualRow
+            flag="class_schedule_confirmation_needed"
+            checked={optimistic.class_schedule_confirmation_needed}
+            onChange={(v) =>
+              handleToggle("class_schedule_confirmation_needed", v)
+            }
+            pending={pending}
+          />
           <AutoRow label="강의일정 확정">
             <BoolPill v={summary.trainingReservation.classMatched} />
           </AutoRow>
           <AutoRow label="예약금 입금">
             <BoolPill v={summary.trainingReservation.reservationPaid} />
+          </AutoRow>
+          <AutoRow label="강의 접수 메시지 발송">
+            <BoolPill v={summary.trainingReservation.smsSent} />
           </AutoRow>
           <ManualRow
             flag="training_reservation_abandoned"
@@ -170,9 +190,6 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
             onChange={(v) => handleToggle("training_reservation_abandoned", v)}
             pending={pending}
           />
-          <AutoRow label="강의 접수 메시지 발송">
-            <BoolPill v={summary.trainingReservation.smsSent} />
-          </AutoRow>
         </StageCard>
 
         <StageCard title="교육" complete={summary.training.complete}>
@@ -203,15 +220,6 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
         </StageCard>
 
         <StageCard title="취업" complete={summary.employment.complete}>
-          <AutoRow label="웰컴팩 예약금 입금">
-            <BoolPill v={summary.employment.welcomePackReservationPaid} />
-          </AutoRow>
-          <ManualRow
-            flag="welcome_pack_abandoned"
-            checked={optimistic.welcome_pack_abandoned}
-            onChange={(v) => handleToggle("welcome_pack_abandoned", v)}
-            pending={pending}
-          />
           <ManualRow
             flag="care_home_finding"
             checked={optimistic.care_home_finding}
@@ -221,9 +229,12 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
           <AutoRow label="요양원 매칭">
             <BoolPill v={summary.employment.careHomeMatched} />
           </AutoRow>
-          <AutoRow label="이력서 발송">
-            <BoolPill v={summary.employment.resumeSent} />
-          </AutoRow>
+          <ManualRow
+            flag="resume_sent"
+            checked={optimistic.resume_sent}
+            onChange={(v) => handleToggle("resume_sent", v)}
+            pending={pending}
+          />
           <AutoRow label="면접 전/후">
             {summary.employment.interviewPhase ? (
               <Badge variant="outline">{summary.employment.interviewPhase}</Badge>
@@ -235,6 +246,15 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
             flag="interview_passed"
             checked={optimistic.interview_passed}
             onChange={(v) => handleToggle("interview_passed", v)}
+            pending={pending}
+          />
+          <AutoRow label="웰컴팩 예약금 입금">
+            <BoolPill v={summary.employment.welcomePackReservationPaid} />
+          </AutoRow>
+          <ManualRow
+            flag="welcome_pack_abandoned"
+            checked={optimistic.welcome_pack_abandoned}
+            onChange={(v) => handleToggle("welcome_pack_abandoned", v)}
             pending={pending}
           />
         </StageCard>

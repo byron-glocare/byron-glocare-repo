@@ -51,6 +51,7 @@ export type StageSummary = {
   trainingReservation: {
     centerFinding: boolean;
     centerMatched: boolean;
+    classScheduleConfirmationNeeded: boolean;
     classMatched: boolean;
     reservationPaid: boolean;
     abandoned: boolean;
@@ -122,11 +123,13 @@ export type StatusInputs = {
     | "intake_abandoned"
     | "study_abroad_consultation"
     | "training_center_finding"
+    | "class_schedule_confirmation_needed"
     | "training_reservation_abandoned"
     | "certificate_acquired"
     | "training_dropped"
     | "welcome_pack_abandoned"
     | "care_home_finding"
+    | "resume_sent"
     | "interview_passed"
   >;
   reservationPayments: Pick<ReservationPayment, "payment_date">[];
@@ -201,6 +204,8 @@ export function computeTrainingReservation(
 
   const centerFinding = status.training_center_finding;
   const centerMatched = !!customer.training_center_id;
+  const classScheduleConfirmationNeeded =
+    status.class_schedule_confirmation_needed;
   const classMatched = !!customer.training_class_id;
   const reservationPaid = reservationPayments.some((p) => notBlank(p.payment_date));
   const abandoned = status.training_reservation_abandoned;
@@ -208,14 +213,17 @@ export function computeTrainingReservation(
 
   const complete =
     !centerFinding &&
+    !classScheduleConfirmationNeeded &&
     !abandoned &&
     centerMatched &&
     classMatched &&
-    reservationPaid;
+    reservationPaid &&
+    smsSent;
 
   return {
     centerFinding,
     centerMatched,
+    classScheduleConfirmationNeeded,
     classMatched,
     reservationPaid,
     abandoned,
@@ -250,7 +258,7 @@ export function computeTraining(inputs: StatusInputs): StageSummary["training"] 
 export function computeEmployment(
   inputs: StatusInputs
 ): StageSummary["employment"] {
-  const { customer, status, welcomePackPayment, smsMessages } = inputs;
+  const { customer, status, welcomePackPayment } = inputs;
   const today = todayStr(inputs.today);
 
   const welcomePackReservationPaid =
@@ -258,7 +266,8 @@ export function computeEmployment(
   const welcomePackAbandoned = status.welcome_pack_abandoned;
   const careHomeFinding = status.care_home_finding;
   const careHomeMatched = !!customer.care_home_id;
-  const resumeSent = smsMessages.some((m) => m.message_type === "resume_sent");
+  // 이력서 발송은 2026-04-23 이후 수동 플래그 (sms_messages 파생에서 전환)
+  const resumeSent = status.resume_sent;
 
   let interviewPhase: "전" | "후" | null = null;
   if (customer.interview_date) {
@@ -349,7 +358,18 @@ export function computeCustomerStatus(inputs: StatusInputs): StageSummary {
   const waiting = inputs.customer.is_waiting;
   const terminated = !!inputs.customer.termination_reason;
 
-  // 현재 머물러 있는 대분류 결정 — 가장 진척된 단계 기준
+  // ---------------------------------------------------------------------------
+  // 현재 단계 결정 — 우선순위 cascade
+  //
+  // 각 단계 안의 세부 라벨은 "체크포인트 순서상 미완료인 것" 중 가장 나중
+  // 위치의 것을 보여준다. 포기/드랍 등 터미널 플래그는 화면상 스위치 위치가
+  // 체크포인트 체인의 중간/아래에 있더라도 판정 로직에서는 해당 단계의
+  // 최고 우선순위로 동작 (ON = 그 단계 즉시 종료).
+  // ---------------------------------------------------------------------------
+  const isWelcomePackTarget =
+    inputs.customer.product_type === "웰컴팩" ||
+    inputs.customer.product_type === "교육+웰컴팩";
+
   let currentStage: StageSummary["currentStage"];
   let label = "";
 
@@ -367,7 +387,7 @@ export function computeCustomerStatus(inputs: StatusInputs): StageSummary {
     label = "유학상담으로 전환";
   } else if (!intake.complete) {
     currentStage = "접수중";
-    label = `접수중 (기초정보: ${basicInfo})`;
+    label = `접수중 · 기초정보 ${basicInfo}`;
   } else if (training.dropped) {
     currentStage = "종료";
     label = "교육 드랍";
@@ -377,40 +397,51 @@ export function computeCustomerStatus(inputs: StatusInputs): StageSummary {
   } else if (work.workPhase === "중") {
     currentStage = "근무중";
     label = `근무 중 · 비자변경 ${work.visaChangePhase ?? "—"}`;
-  } else if (employment.complete) {
-    // 취업 완료 상태지만 근무 시작 안 함
+  } else if (employment.complete && training.certificateAcquired) {
+    // 취업 단계의 모든 체크포인트가 충족됐지만 근무 시작 전
     currentStage = "취업중";
-    label = "취업 완료 — 근무 대기";
+    label = "근무 시작 대기";
   } else if (training.certificateAcquired) {
-    // 자격증 취득 → 취업 프로세스 진입 (강의 종료 여부 무관)
+    // 자격증 취득 → 취업 단계 진입
     currentStage = "취업중";
-    const isWelcomePackTarget =
-      inputs.customer.product_type === "웰컴팩" ||
-      inputs.customer.product_type === "교육+웰컴팩";
-    if (employment.careHomeFinding) {
+    if (isWelcomePackTarget && employment.welcomePackAbandoned) {
+      currentStage = "종료";
+      label = "웰컴팩 예약 포기";
+    } else if (employment.careHomeFinding) {
       label = "요양원 발굴 중";
     } else if (!employment.careHomeMatched) {
       label = "요양원 매칭 필요";
+    } else if (!employment.resumeSent) {
+      label = "이력서 발송 대기";
+    } else if (employment.interviewPhase === null) {
+      label = "면접 일정 확정 필요";
     } else if (employment.interviewPhase === "전") {
       label = "면접 대기";
-    } else if (employment.interviewPhase === "후" && !employment.interviewPassed) {
+    } else if (!employment.interviewPassed) {
       label = "면접 결과 대기";
     } else if (
       isWelcomePackTarget &&
-      !employment.welcomePackReservationPaid &&
-      !employment.welcomePackAbandoned
+      !employment.welcomePackReservationPaid
     ) {
-      label = "웰컴팩 예약 대기";
+      label = "웰컴팩 예약금 입금 대기";
     } else {
       label = "취업 진행 중";
     }
-  } else if (training.phase === "중") {
-    currentStage = "교육중";
-    label = "교육 중";
   } else if (trainingReservation.complete) {
+    // 교육 예약 완료 → 교육 단계 진입. 미완료 체크포인트 순서 기반 라벨.
     currentStage = "교육중";
-    label = training.phase === "전" ? "교육 대기 중" : "교육 진행";
+    if (training.phase === null) {
+      label = "강의일정 확인 필요";
+    } else if (training.phase === "전") {
+      label = "교육 대기";
+    } else if (training.phase === "중") {
+      label = "교육 중";
+    } else {
+      // 강의 종료 — 자격증 취득 대기
+      label = "자격증 취득 대기";
+    }
   } else {
+    // 교육 예약 단계
     currentStage = "교육예약중";
     if (trainingReservation.abandoned) {
       currentStage = "종료";
@@ -419,12 +450,16 @@ export function computeCustomerStatus(inputs: StatusInputs): StageSummary {
       label = "교육원 발굴 중";
     } else if (!trainingReservation.centerMatched) {
       label = "교육원 매칭 필요";
+    } else if (trainingReservation.classScheduleConfirmationNeeded) {
+      label = "강의 일정 확인";
     } else if (!trainingReservation.classMatched) {
       label = "강의일정 확정 필요";
     } else if (!trainingReservation.reservationPaid) {
       label = "예약금 입금 대기";
+    } else if (!trainingReservation.smsSent) {
+      label = "강의 접수 메시지 발송 대기";
     } else {
-      label = "교육 예약 진행 중";
+      label = "교육 예약 완료";
     }
   }
 
