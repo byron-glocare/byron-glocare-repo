@@ -725,7 +725,15 @@
 ### 누적 발견·수정 버그 개수
 - v1 QA: 10개
 - v2 감사: 8개 추가
-- **총 18개 이상**
+- v2d (Claude Preview 브라우저 자동화): 2개 추가
+- **총 20개**
+
+### v2d 추가 발견 (브라우저 자동화 QA)
+Claude Preview 로 실제 화면을 열어 클릭·입력 테스트 중 발견:
+
+19. **[심각] Select 컴포넌트가 선택된 UUID 를 그대로 노출** — 고객 상세의 교육원·강의일정·요양원 Select 가 "7ece17c2-ec40..." UUID 를 보여주고 있었음. base-ui Select.Value 는 기본적으로 raw value 렌더. `SelectValueMap` 헬퍼 컴포넌트를 만들어 `{value → label}` 맵을 받아 자동 표시.
+
+20. **[치명] 헤더 드롭다운 열면 런타임 크래시** — `DropdownMenuLabel` 을 `<Menu.Group>` 없이 사용해 "MenuGroupRootContext is missing" 에러로 페이지 전체 빨간 오버레이. AppHeader 에서 Label 대신 일반 `<div>` 사용으로 교체.
 
 ### 수동 브라우저 테스트 필요 항목
 인터랙티브 UI 는 실제 브라우저에서 확인 필요. 주요 시나리오:
