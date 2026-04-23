@@ -76,12 +76,23 @@ export function AnalysisReviewDialog({
   const [pending, startTransition] = useTransition();
 
   // 각 제안 항목별 체크 상태 초기화
-  const customerKeys = Object.keys(
-    analysis.suggestions.customer
-  ) as (keyof ConsultationAnalysis["suggestions"]["customer"])[];
-  const flagKeys = Object.keys(
-    analysis.suggestions.status_flags
-  ) as (keyof ConsultationAnalysis["suggestions"]["status_flags"])[];
+  // null/undefined/빈 값인 제안은 제거 (Claude 가 필드만 반환하고 값을 비워둔 경우)
+  const customerKeys = (
+    Object.keys(
+      analysis.suggestions.customer
+    ) as (keyof ConsultationAnalysis["suggestions"]["customer"])[]
+  ).filter((k) => {
+    const v = analysis.suggestions.customer[k];
+    return v !== null && v !== undefined && v !== "";
+  });
+  const flagKeys = (
+    Object.keys(
+      analysis.suggestions.status_flags
+    ) as (keyof ConsultationAnalysis["suggestions"]["status_flags"])[]
+  ).filter((k) => {
+    const v = analysis.suggestions.status_flags[k];
+    return v !== null && v !== undefined;
+  });
 
   const initialChecks = useMemo(() => {
     const map: Record<string, boolean> = {};
