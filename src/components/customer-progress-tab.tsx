@@ -1,17 +1,20 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Check, CircleDashed, Loader2, Lock, X } from "lucide-react";
+import { Check, Lock, X } from "lucide-react";
 
-import { updateStatusFlags } from "@/app/(app)/customers/actions";
+import { updateProgressState } from "@/app/(app)/customers/actions";
 import {
   computeCustomerStatus,
   type StageSummary,
   type StatusInputs,
 } from "@/lib/customer-status";
-import type { StatusFlagsInput } from "@/lib/validators";
+import type {
+  ProgressStateInput,
+  StatusFlagsInput,
+} from "@/lib/validators";
 
 import { Badge } from "@/components/ui/badge";
 import {
@@ -23,7 +26,20 @@ import {
 } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValueMap,
+} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+
+// =============================================================================
+// Props / 상태 모델
+// =============================================================================
 
 type Props = {
   customerId: string;
@@ -32,16 +48,38 @@ type Props = {
 
 type FlagKey = keyof StatusFlagsInput;
 
+/**
+ * 수동 플래그 카테고리.
+ * - blocker : ON = "아직 해야 할 일" (amber)
+ * - milestone: ON = "완료" (초록), 쌍(X/O) 토글 UI
+ * - terminal : ON = "해당 단계 종결" (red thumb)
+ */
+type FlagCategory = "blocker" | "milestone" | "terminal";
+
+const CATEGORY: Record<FlagKey, FlagCategory> = {
+  intake_abandoned: "terminal",
+  study_abroad_consultation: "terminal",
+  training_center_finding: "blocker",
+  class_schedule_confirmation_needed: "blocker",
+  training_reservation_abandoned: "terminal",
+  certificate_acquired: "milestone",
+  training_dropped: "terminal",
+  welcome_pack_abandoned: "terminal",
+  care_home_finding: "blocker",
+  resume_sent: "milestone",
+  interview_passed: "milestone",
+};
+
 const FLAG_LABELS: Record<FlagKey, string> = {
   intake_abandoned: "접수포기",
   study_abroad_consultation: "유학상담으로 전환",
-  training_center_finding: "교육원 발굴 중",
-  class_schedule_confirmation_needed: "강의 일정 확인",
+  training_center_finding: "교육원 발굴 필요",
+  class_schedule_confirmation_needed: "강의 일정 확인 필요",
   training_reservation_abandoned: "교육 예약포기",
   certificate_acquired: "자격증 취득",
   training_dropped: "교육 드랍",
   welcome_pack_abandoned: "웰컴팩 예약포기",
-  care_home_finding: "요양원 발굴 중",
+  care_home_finding: "요양원 발굴 필요",
   resume_sent: "이력서 발송",
   interview_passed: "면접 합격",
 };
@@ -54,51 +92,135 @@ const FLAG_HINTS: Partial<Record<FlagKey, string>> = {
   intake_abandoned: "체크 시 이후 모든 단계 판정이 중지됩니다.",
   study_abroad_consultation: "유학으로 전환 → 이후 단계 중지.",
   training_reservation_abandoned: "체크 시 이후 단계 중지.",
-  training_dropped: "교육 중 이탈 — 이후 모든 단계 중지.",
-  welcome_pack_abandoned: "체크 시 취업 단계가 종료 처리됩니다.",
+  training_dropped: "교육 중 이탈 → 이후 단계 중지.",
+  welcome_pack_abandoned: "체크 시 취업 단계 종결.",
   resume_sent: "요양원에 이력서를 보냈으면 ON.",
 };
+
+// =============================================================================
+// 메인
+// =============================================================================
 
 export function CustomerProgressTab({ customerId, inputs }: Props) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
-  const [optimistic, setOptimistic] = useState<StatusFlagsInput>({
-    intake_abandoned: inputs.status.intake_abandoned,
-    study_abroad_consultation: inputs.status.study_abroad_consultation,
-    training_center_finding: inputs.status.training_center_finding,
-    class_schedule_confirmation_needed:
-      inputs.status.class_schedule_confirmation_needed,
-    training_reservation_abandoned:
-      inputs.status.training_reservation_abandoned,
-    certificate_acquired: inputs.status.certificate_acquired,
-    training_dropped: inputs.status.training_dropped,
-    welcome_pack_abandoned: inputs.status.welcome_pack_abandoned,
-    care_home_finding: inputs.status.care_home_finding,
-    resume_sent: inputs.status.resume_sent,
-    interview_passed: inputs.status.interview_passed,
-  });
+
+  // 진행 단계 탭에서 쓰는 "전체 상태" — 플래그 + 종료사유 + 대기 3종
+  const [state, setState] = useState<ProgressStateInput>(() => ({
+    flags: {
+      intake_abandoned: inputs.status.intake_abandoned,
+      study_abroad_consultation: inputs.status.study_abroad_consultation,
+      training_center_finding: inputs.status.training_center_finding,
+      class_schedule_confirmation_needed:
+        inputs.status.class_schedule_confirmation_needed,
+      training_reservation_abandoned:
+        inputs.status.training_reservation_abandoned,
+      certificate_acquired: inputs.status.certificate_acquired,
+      training_dropped: inputs.status.training_dropped,
+      welcome_pack_abandoned: inputs.status.welcome_pack_abandoned,
+      care_home_finding: inputs.status.care_home_finding,
+      resume_sent: inputs.status.resume_sent,
+      interview_passed: inputs.status.interview_passed,
+    },
+    termination_reason:
+      (inputs.customer.termination_reason as
+        | "요양보호사 직종변경"
+        | "귀국"
+        | "연락두절"
+        | null) ?? null,
+    is_waiting: inputs.customer.is_waiting,
+    recontact_date: inputs.customer.recontact_date ?? null,
+    waiting_memo: inputs.customer.waiting_memo ?? null,
+  }));
+
+  // 종료 상태 판정 (UI lock 용)
+  const anyTerminationOn = useMemo(() => {
+    const f = state.flags;
+    return (
+      !!state.termination_reason ||
+      f.intake_abandoned ||
+      f.study_abroad_consultation ||
+      f.training_reservation_abandoned ||
+      f.training_dropped ||
+      f.welcome_pack_abandoned
+    );
+  }, [state]);
 
   const summary = computeCustomerStatus({
     ...inputs,
-    status: { ...inputs.status, ...optimistic },
+    customer: {
+      ...inputs.customer,
+      termination_reason: state.termination_reason,
+      is_waiting: state.is_waiting,
+    },
+    status: { ...inputs.status, ...state.flags },
   });
 
-  function handleToggle(key: FlagKey, value: boolean) {
-    const next = { ...optimistic, [key]: value };
-    setOptimistic(next);
-
+  function save(next: ProgressStateInput, toastMsg: string) {
+    const prev = state;
+    setState(next);
     startTransition(async () => {
-      const result = await updateStatusFlags(customerId, next);
+      const result = await updateProgressState(customerId, next);
       if (result.ok) {
-        toast.success(
-          `${FLAG_LABELS[key]} ${value ? "ON" : "OFF"}`
-        );
+        toast.success(toastMsg);
         router.refresh();
       } else {
-        setOptimistic(optimistic); // 롤백
-        toast.error("변경 실패", { description: result.error });
+        setState(prev);
+        toast.error("저장 실패", { description: result.error });
       }
     });
+  }
+
+  /** 수동 플래그 토글. 해당 플래그가 terminal 이 아니고 lock 상태면 무시. */
+  function toggleFlag(key: FlagKey, value: boolean) {
+    const category = CATEGORY[key];
+    // lock 상태에선 terminal 플래그만 OFF 가능 (재해제). 다른 건 차단.
+    if (anyTerminationOn && category !== "terminal") return;
+    const next: ProgressStateInput = {
+      ...state,
+      flags: { ...state.flags, [key]: value },
+    };
+    save(next, `${FLAG_LABELS[key]} ${value ? "ON" : "OFF"}`);
+  }
+
+  function setTerminationReason(
+    value: "요양보호사 직종변경" | "귀국" | "연락두절" | null
+  ) {
+    const next: ProgressStateInput = { ...state, termination_reason: value };
+    save(next, value ? `근무 종료 사유: ${value}` : "근무 종료 해제");
+  }
+
+  function setWaiting(value: boolean) {
+    if (anyTerminationOn) return;
+    const next: ProgressStateInput = {
+      ...state,
+      is_waiting: value,
+      recontact_date: value ? state.recontact_date : null,
+      waiting_memo: value ? state.waiting_memo : null,
+    };
+    save(next, `대기중 ${value ? "ON" : "OFF"}`);
+  }
+
+  function setRecontactDate(value: string) {
+    const next: ProgressStateInput = {
+      ...state,
+      recontact_date: value || null,
+    };
+    setState(next);
+  }
+  function commitRecontactDate() {
+    save(state, "재연락일 저장");
+  }
+
+  function setWaitingMemo(value: string) {
+    const next: ProgressStateInput = {
+      ...state,
+      waiting_memo: value || null,
+    };
+    setState(next);
+  }
+  function commitWaitingMemo() {
+    save(state, "대기 메모 저장");
   }
 
   return (
@@ -108,17 +230,19 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
         <CardHeader>
           <CardTitle className="text-base">현재 단계 (자동 판정)</CardTitle>
           <CardDescription>
-            기초정보, 매칭, 결제, 일정, 수동 플래그를 종합해 런타임에 계산됩니다.
+            기초정보, 매칭, 결제, 일정, 수동 플래그를 종합해 런타임에 계산.
+            {anyTerminationOn && (
+              <span className="text-destructive ml-2">
+                · 종료 상태라 다른 스위치는 잠겨 있음
+              </span>
+            )}
           </CardDescription>
         </CardHeader>
         <CardContent className="flex items-center gap-3 flex-wrap">
           <CurrentStageBadge stage={summary.currentStage} />
           <span className="text-sm">{summary.label}</span>
           {pending && (
-            <span className="text-xs text-muted-foreground inline-flex items-center gap-1">
-              <Loader2 className="size-3 animate-spin" />
-              저장 중
-            </span>
+            <span className="text-xs text-muted-foreground">저장 중…</span>
           )}
         </CardContent>
       </Card>
@@ -140,16 +264,20 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
               {summary.intake.basicInfo}
             </Badge>
           </AutoRow>
-          <ManualRow
+          <ManualSwitchRow
             flag="intake_abandoned"
-            checked={optimistic.intake_abandoned}
-            onChange={(v) => handleToggle("intake_abandoned", v)}
+            value={state.flags.intake_abandoned}
+            locked={anyTerminationOn && !state.flags.intake_abandoned}
+            onChange={(v) => toggleFlag("intake_abandoned", v)}
             pending={pending}
           />
-          <ManualRow
+          <ManualSwitchRow
             flag="study_abroad_consultation"
-            checked={optimistic.study_abroad_consultation}
-            onChange={(v) => handleToggle("study_abroad_consultation", v)}
+            value={state.flags.study_abroad_consultation}
+            locked={
+              anyTerminationOn && !state.flags.study_abroad_consultation
+            }
+            onChange={(v) => toggleFlag("study_abroad_consultation", v)}
             pending={pending}
           />
         </StageCard>
@@ -158,20 +286,22 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
           title="교육 예약"
           complete={summary.trainingReservation.complete}
         >
-          <ManualRow
+          <ManualSwitchRow
             flag="training_center_finding"
-            checked={optimistic.training_center_finding}
-            onChange={(v) => handleToggle("training_center_finding", v)}
+            value={state.flags.training_center_finding}
+            locked={anyTerminationOn}
+            onChange={(v) => toggleFlag("training_center_finding", v)}
             pending={pending}
           />
           <AutoRow label="교육원 매칭">
             <BoolPill v={summary.trainingReservation.centerMatched} />
           </AutoRow>
-          <ManualRow
+          <ManualSwitchRow
             flag="class_schedule_confirmation_needed"
-            checked={optimistic.class_schedule_confirmation_needed}
+            value={state.flags.class_schedule_confirmation_needed}
+            locked={anyTerminationOn}
             onChange={(v) =>
-              handleToggle("class_schedule_confirmation_needed", v)
+              toggleFlag("class_schedule_confirmation_needed", v)
             }
             pending={pending}
           />
@@ -184,10 +314,13 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
           <AutoRow label="강의 접수 메시지 발송">
             <BoolPill v={summary.trainingReservation.smsSent} />
           </AutoRow>
-          <ManualRow
+          <ManualSwitchRow
             flag="training_reservation_abandoned"
-            checked={optimistic.training_reservation_abandoned}
-            onChange={(v) => handleToggle("training_reservation_abandoned", v)}
+            value={state.flags.training_reservation_abandoned}
+            locked={
+              anyTerminationOn && !state.flags.training_reservation_abandoned
+            }
+            onChange={(v) => toggleFlag("training_reservation_abandoned", v)}
             pending={pending}
           />
         </StageCard>
@@ -205,61 +338,72 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
               </span>
             )}
           </AutoRow>
-          <ManualRow
-            flag="training_dropped"
-            checked={optimistic.training_dropped}
-            onChange={(v) => handleToggle("training_dropped", v)}
+          <MilestoneRow
+            flag="certificate_acquired"
+            value={state.flags.certificate_acquired}
+            locked={anyTerminationOn}
+            onChange={(v) => toggleFlag("certificate_acquired", v)}
             pending={pending}
           />
-          <ManualRow
-            flag="certificate_acquired"
-            checked={optimistic.certificate_acquired}
-            onChange={(v) => handleToggle("certificate_acquired", v)}
+          <ManualSwitchRow
+            flag="training_dropped"
+            value={state.flags.training_dropped}
+            locked={anyTerminationOn && !state.flags.training_dropped}
+            onChange={(v) => toggleFlag("training_dropped", v)}
             pending={pending}
           />
         </StageCard>
 
         <StageCard title="취업" complete={summary.employment.complete}>
-          <ManualRow
+          <ManualSwitchRow
             flag="care_home_finding"
-            checked={optimistic.care_home_finding}
-            onChange={(v) => handleToggle("care_home_finding", v)}
+            value={state.flags.care_home_finding}
+            locked={anyTerminationOn}
+            onChange={(v) => toggleFlag("care_home_finding", v)}
             pending={pending}
           />
           <AutoRow label="요양원 매칭">
             <BoolPill v={summary.employment.careHomeMatched} />
           </AutoRow>
-          <ManualRow
+          <MilestoneRow
             flag="resume_sent"
-            checked={optimistic.resume_sent}
-            onChange={(v) => handleToggle("resume_sent", v)}
+            value={state.flags.resume_sent}
+            locked={anyTerminationOn}
+            onChange={(v) => toggleFlag("resume_sent", v)}
             pending={pending}
           />
           <AutoRow label="면접 전/후">
             {summary.employment.interviewPhase ? (
-              <Badge variant="outline">{summary.employment.interviewPhase}</Badge>
+              <Badge variant="outline">
+                {summary.employment.interviewPhase}
+              </Badge>
             ) : (
               <span className="text-xs text-muted-foreground">면접일 필요</span>
             )}
           </AutoRow>
-          <ManualRow
+          <MilestoneRow
             flag="interview_passed"
-            checked={optimistic.interview_passed}
-            onChange={(v) => handleToggle("interview_passed", v)}
+            value={state.flags.interview_passed}
+            locked={anyTerminationOn}
+            onChange={(v) => toggleFlag("interview_passed", v)}
             pending={pending}
           />
           <AutoRow label="웰컴팩 예약금 입금">
             <BoolPill v={summary.employment.welcomePackReservationPaid} />
           </AutoRow>
-          <ManualRow
+          <ManualSwitchRow
             flag="welcome_pack_abandoned"
-            checked={optimistic.welcome_pack_abandoned}
-            onChange={(v) => handleToggle("welcome_pack_abandoned", v)}
+            value={state.flags.welcome_pack_abandoned}
+            locked={anyTerminationOn && !state.flags.welcome_pack_abandoned}
+            onChange={(v) => toggleFlag("welcome_pack_abandoned", v)}
             pending={pending}
           />
         </StageCard>
 
-        <StageCard title="근무" complete={summary.work.workPhase === "종료"}>
+        <StageCard
+          title="근무"
+          complete={summary.work.workPhase === "종료"}
+        >
           <AutoRow label="근무 전/중/종료">
             {summary.work.workPhase ? (
               <Badge variant="outline">{summary.work.workPhase}</Badge>
@@ -278,6 +422,95 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
               </span>
             )}
           </AutoRow>
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <Label className="text-sm">근무 종료</Label>
+              <p className="text-xs text-muted-foreground">
+                체크 시 이 고객은 "종료" 로 분류됩니다.
+              </p>
+            </div>
+            <Select
+              value={state.termination_reason ?? NONE_VALUE}
+              onValueChange={(v) =>
+                setTerminationReason(
+                  v === NONE_VALUE
+                    ? null
+                    : (v as "요양보호사 직종변경" | "귀국" | "연락두절")
+                )
+              }
+              disabled={pending}
+            >
+              <SelectTrigger className="w-44 shrink-0">
+                <SelectValueMap
+                  map={{
+                    [NONE_VALUE]: "해당없음",
+                    "요양보호사 직종변경": "직종변경",
+                    귀국: "귀국",
+                    연락두절: "연락두절",
+                  }}
+                  placeholder="해당없음"
+                />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={NONE_VALUE}>해당없음</SelectItem>
+                <SelectItem value="요양보호사 직종변경">
+                  요양보호사 직종변경
+                </SelectItem>
+                <SelectItem value="귀국">귀국</SelectItem>
+                <SelectItem value="연락두절">연락두절</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </StageCard>
+
+        {/* 대기 섹션 — 맨 마지막 */}
+        <StageCard title="대기" complete={false}>
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <Label className="text-sm">대기중</Label>
+              <p className="text-xs text-muted-foreground">
+                단계 무관, 일시 홀딩 시 사용.
+              </p>
+            </div>
+            <Switch
+              checked={state.is_waiting}
+              onCheckedChange={setWaiting}
+              disabled={pending || anyTerminationOn}
+              className="shrink-0"
+            />
+          </div>
+          {state.is_waiting && (
+            <>
+              <div>
+                <Label className="text-xs text-muted-foreground">
+                  재연락일
+                </Label>
+                <Input
+                  type="date"
+                  value={state.recontact_date ?? ""}
+                  onChange={(e) => setRecontactDate(e.target.value)}
+                  onBlur={commitRecontactDate}
+                  disabled={pending}
+                />
+              </div>
+              <div>
+                <Label className="text-xs text-muted-foreground">
+                  메모{" "}
+                  <span className="text-[11px]">
+                    (최대 500자 · 포커스 잃으면 저장)
+                  </span>
+                </Label>
+                <Textarea
+                  value={state.waiting_memo ?? ""}
+                  onChange={(e) => setWaitingMemo(e.target.value)}
+                  onBlur={commitWaitingMemo}
+                  rows={2}
+                  maxLength={500}
+                  disabled={pending}
+                />
+              </div>
+            </>
+          )}
         </StageCard>
       </div>
     </div>
@@ -285,8 +518,10 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
 }
 
 // =============================================================================
-// 하위 컴포넌트
+// 공통 UI 파트
 // =============================================================================
+
+const NONE_VALUE = "__none__";
 
 function CurrentStageBadge({
   stage,
@@ -323,15 +558,10 @@ function StageCard({
     <Card>
       <CardHeader className="flex-row items-center justify-between">
         <CardTitle className="text-base">{title}</CardTitle>
-        {complete ? (
+        {complete && (
           <Badge className="bg-success/10 text-success border-success/20">
             <Check className="size-3" />
             완료
-          </Badge>
-        ) : (
-          <Badge variant="outline" className="text-muted-foreground">
-            <CircleDashed className="size-3" />
-            진행중
           </Badge>
         )}
       </CardHeader>
@@ -340,6 +570,7 @@ function StageCard({
   );
 }
 
+/** 완전 자동 행 (읽기 전용). 잠금 아이콘은 텍스트 끝으로. */
 function AutoRow({
   label,
   children,
@@ -350,25 +581,36 @@ function AutoRow({
   return (
     <div className="flex items-center justify-between gap-3 text-sm">
       <div className="flex items-center gap-1.5 text-muted-foreground">
-        <Lock className="size-3" />
         <span>{label}</span>
+        <Lock className="size-3" />
       </div>
       {children}
     </div>
   );
 }
 
-function ManualRow({
+/** 수동 스위치 행 — blocker / terminal 구분은 스위치 thumb 색으로. */
+function ManualSwitchRow({
   flag,
-  checked,
+  value,
+  locked,
   onChange,
   pending,
 }: {
   flag: FlagKey;
-  checked: boolean;
+  value: boolean;
+  locked: boolean;
   onChange: (v: boolean) => void;
   pending: boolean;
 }) {
+  const category = CATEGORY[flag];
+  // 색상 토큰: blocker=amber(warning), terminal=red(destructive)
+  const onClass =
+    category === "blocker"
+      ? "data-[state=checked]:bg-warning"
+      : category === "terminal"
+        ? "data-[state=checked]:bg-destructive"
+        : "";
   return (
     <div className="flex items-start justify-between gap-3">
       <div className="min-w-0">
@@ -378,21 +620,84 @@ function ManualRow({
         )}
       </div>
       <Switch
-        checked={checked}
+        checked={value}
         onCheckedChange={onChange}
-        disabled={pending}
-        className="shrink-0"
+        disabled={pending || locked}
+        className={cn("shrink-0", onClass)}
       />
     </div>
   );
 }
 
+/**
+ * 마일스톤 행 — X / O 쌍이 나란히 보이고 활성 상태만 컬러. 클릭으로 토글.
+ * 자동 읽기 전용 필드와 시각적 일관성 유지를 위해 BoolPill 과 유사한 스타일.
+ */
+function MilestoneRow({
+  flag,
+  value,
+  locked,
+  onChange,
+  pending,
+}: {
+  flag: FlagKey;
+  value: boolean;
+  locked: boolean;
+  onChange: (v: boolean) => void;
+  pending: boolean;
+}) {
+  const disabled = pending || locked;
+  return (
+    <div className="flex items-start justify-between gap-3">
+      <div className="min-w-0">
+        <Label className="text-sm">{FLAG_LABELS[flag]}</Label>
+        {FLAG_HINTS[flag] && (
+          <p className="text-xs text-muted-foreground">{FLAG_HINTS[flag]}</p>
+        )}
+      </div>
+      <div className="inline-flex rounded-md overflow-hidden border border-border shrink-0">
+        <button
+          type="button"
+          onClick={() => !disabled && value !== false && onChange(false)}
+          disabled={disabled}
+          aria-pressed={!value}
+          className={cn(
+            "inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium transition-colors",
+            !value
+              ? "bg-destructive/10 text-destructive"
+              : "bg-transparent text-muted-foreground/60 hover:bg-muted",
+            disabled && "opacity-60 cursor-not-allowed"
+          )}
+        >
+          <X className="size-3" />
+          아니오
+        </button>
+        <button
+          type="button"
+          onClick={() => !disabled && value !== true && onChange(true)}
+          disabled={disabled}
+          aria-pressed={value}
+          className={cn(
+            "inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium transition-colors border-l border-border",
+            value
+              ? "bg-success/10 text-success"
+              : "bg-transparent text-muted-foreground/60 hover:bg-muted",
+            disabled && "opacity-60 cursor-not-allowed"
+          )}
+        >
+          <Check className="size-3" />예
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/** 기존 BoolPill — 자동 행에서 예/아니오 한쪽만 표시. */
 function BoolPill({ v }: { v: boolean }) {
   if (v) {
     return (
       <Badge className="bg-success/10 text-success border-success/20">
-        <Check className="size-3" />
-        예
+        <Check className="size-3" />예
       </Badge>
     );
   }

@@ -21,8 +21,6 @@ import type { TrainingCenter, TrainingClass, CareHome } from "@/types/database";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
 import {
   Card,
   CardContent,
@@ -120,8 +118,6 @@ export function CustomerBasicForm({
   const filteredClasses = trainingClasses.filter(
     (c) => c.training_center_id === selectedCenterId
   );
-
-  const isWaiting = form.watch("is_waiting");
 
   function onSubmit(values: CustomerOutput) {
     startTransition(async () => {
@@ -678,109 +674,7 @@ export function CustomerBasicForm({
           </CardContent>
         </Card>
 
-        {/* 대기 · 종료 */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">대기 · 종료</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <FormField
-              control={form.control}
-              name="is_waiting"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-md border border-border p-3">
-                  <div>
-                    <FormLabel className="text-sm">대기 상태</FormLabel>
-                    <p className="text-xs text-muted-foreground">
-                      체크 시 재연락일·메모 필수
-                    </p>
-                  </div>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            {isWaiting && (
-              <div className="grid gap-4 sm:grid-cols-2">
-                <FormField
-                  control={form.control}
-                  name="recontact_date"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>재연락일</FormLabel>
-                      <FormControl>
-                        <Input type="date" {...field} value={field.value ?? ""} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="waiting_memo"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        메모 <span className="text-xs text-muted-foreground">(최대 500자)</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Textarea
-                          {...field}
-                          value={field.value ?? ""}
-                          rows={2}
-                          maxLength={500}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            )}
-            <FormField
-              control={form.control}
-              name="termination_reason"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>종료 사유</FormLabel>
-                  <Select
-                    value={field.value ?? NONE_VALUE}
-                    onValueChange={(v) =>
-                      field.onChange(v === NONE_VALUE ? null : v)
-                    }
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValueMap
-                          map={{
-                            [NONE_VALUE]: "종료 아님",
-                            "요양보호사 직종변경": "요양보호사 직종변경",
-                            "귀국": "귀국",
-                            "연락두절": "연락두절",
-                          }}
-                          placeholder="종료 아님"
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value={NONE_VALUE}>종료 아님</SelectItem>
-                      <SelectItem value="요양보호사 직종변경">
-                        요양보호사 직종변경
-                      </SelectItem>
-                      <SelectItem value="귀국">귀국</SelectItem>
-                      <SelectItem value="연락두절">연락두절</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </CardContent>
-        </Card>
+        {/* 대기 상태 / 종료 사유는 진행 단계 탭에서 관리 (2026-04-23 이동) */}
 
         {/* 액션 */}
         <div className="flex items-center justify-between">

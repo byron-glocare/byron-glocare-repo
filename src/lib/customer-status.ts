@@ -116,6 +116,8 @@ export type StatusInputs = {
     | "interview_date"
     | "product_type"
     | "is_waiting"
+    | "recontact_date"
+    | "waiting_memo"
     | "termination_reason"
   >;
   status: Pick<

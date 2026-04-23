@@ -50,7 +50,8 @@ export default async function CustomersPage({
       `
       id, code, name_vi, name_kr, phone, birth_year, visa_type,
       training_center_id, training_class_id, care_home_id,
-      is_waiting, termination_reason, legacy_status, product_type,
+      is_waiting, recontact_date, waiting_memo,
+      termination_reason, legacy_status, product_type,
       desired_region, updated_at, created_at,
       class_start_date, class_end_date,
       work_start_date, work_end_date, visa_change_date, interview_date,
@@ -234,7 +235,10 @@ export default async function CustomersPage({
                           <TableCell>
                             <Link href={`/customers/${c.id}`} className="block">
                               {summary && (
-                                <StageBadge stage={summary.currentStage} />
+                                <StageBadge
+                                  stage={summary.currentStage}
+                                  label={summary.label}
+                                />
                               )}
                             </Link>
                           </TableCell>
@@ -324,8 +328,10 @@ export default async function CustomersPage({
 
 function StageBadge({
   stage,
+  label,
 }: {
   stage: ReturnType<typeof computeCustomerStatus>["currentStage"];
+  label: string;
 }) {
   const cls =
     stage === "종료"
@@ -337,9 +343,12 @@ function StageBadge({
           : stage === "근무중" || stage === "취업중"
             ? "bg-success/10 text-success border-success/20"
             : "bg-info/10 text-info border-info/20";
+  // 종료/대기중은 단순 표기, 그 외 단계는 세부 label 을 그대로 노출
+  const text =
+    stage === "종료" || stage === "대기중" ? stage : label;
   return (
     <Badge variant="outline" className={cls}>
-      {stage}
+      {text}
     </Badge>
   );
 }

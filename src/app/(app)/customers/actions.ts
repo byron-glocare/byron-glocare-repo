@@ -8,9 +8,11 @@ import {
   customerSchema,
   consultationSchema,
   statusFlagsSchema,
+  progressStateSchema,
   type CustomerInput,
   type ConsultationInput,
   type StatusFlagsInput,
+  type ProgressStateInput,
 } from "@/lib/validators";
 
 export type ActionResult<T = unknown> =
@@ -212,6 +214,53 @@ export async function updateStatusFlags(
   if (error) return { ok: false, error: error.message };
 
   revalidatePath(`/customers/${customerId}`);
+  return { ok: true, data: null };
+}
+
+/**
+ * 진행 단계 탭 전용 통합 저장.
+ * customer_statuses 플래그 + customers 의 termination_reason / is_waiting /
+ * recontact_date / waiting_memo 를 한 번에 갱신.
+ */
+export async function updateProgressState(
+  customerId: string,
+  input: ProgressStateInput
+): Promise<ActionResult> {
+  let supabase;
+  try {
+    ({ supabase } = await requireAuth());
+  } catch {
+    return { ok: false, error: "Unauthorized" };
+  }
+
+  const parsed = progressStateSchema.safeParse(input);
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.issues[0].message };
+  }
+  const { flags, termination_reason, is_waiting, recontact_date, waiting_memo } =
+    parsed.data;
+
+  const [flagRes, custRes] = await Promise.all([
+    supabase
+      .from("customer_statuses")
+      .update(flags)
+      .eq("customer_id", customerId),
+    supabase
+      .from("customers")
+      .update({
+        termination_reason,
+        is_waiting,
+        recontact_date,
+        waiting_memo,
+      })
+      .eq("id", customerId),
+  ]);
+
+  if (flagRes.error) return { ok: false, error: flagRes.error.message };
+  if (custRes.error) return { ok: false, error: custRes.error.message };
+
+  revalidatePath(`/customers/${customerId}`);
+  revalidatePath("/customers");
   return { ok: true, data: null };
 }
 

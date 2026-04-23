@@ -41,6 +41,8 @@ function buildInputs(overrides?: {
       interview_date: null,
       product_type: null,
       is_waiting: false,
+      recontact_date: null,
+      waiting_memo: null,
       termination_reason: null,
       ...(overrides?.customer ?? {}),
     },

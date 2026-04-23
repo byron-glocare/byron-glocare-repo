@@ -225,6 +225,25 @@ export const statusFlagsSchema = z.object({
 
 export type StatusFlagsInput = z.input<typeof statusFlagsSchema>;
 
+/**
+ * 진행 단계 탭 전용 — customer_statuses 플래그 + customers 의
+ * termination_reason / is_waiting / recontact_date / waiting_memo 를 함께 저장.
+ */
+export const progressStateSchema = z.object({
+  flags: statusFlagsSchema,
+  termination_reason: z
+    .enum(["요양보호사 직종변경", "귀국", "연락두절"])
+    .nullable(),
+  is_waiting: z.boolean(),
+  recontact_date: z.string().nullable(),
+  waiting_memo: z
+    .string()
+    .max(500, "메모는 500자 이내로 입력하세요.")
+    .nullable(),
+});
+
+export type ProgressStateInput = z.input<typeof progressStateSchema>;
+
 // =============================================================================
 // 결제 스키마 (Phase 6)
 // =============================================================================
