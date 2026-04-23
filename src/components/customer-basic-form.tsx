@@ -62,6 +62,13 @@ type Props = {
     "id" | "training_center_id" | "year" | "month" | "class_type" | "start_date"
   >[];
   careHomes: Pick<CareHome, "id" | "code" | "name" | "region">[];
+  /**
+   * 요양원 / 근무 관련 필드 잠금 여부.
+   * 진행 단계 탭의 종료 플래그 (웰컴팩 예약포기, 교육 드랍, 근무 종료 등)
+   * 가 ON 인 경우 페이지에서 계산해 전달. 잠기면 요양원/면접/근무/비자변경
+   * 관련 필드가 모두 disabled.
+   */
+  careHomeLocked?: boolean;
 };
 
 const EMPTY: CustomerInput = {
@@ -104,6 +111,7 @@ export function CustomerBasicForm({
   trainingCenters,
   trainingClasses,
   careHomes,
+  careHomeLocked = false,
 }: Props) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -522,6 +530,7 @@ export function CustomerBasicForm({
                       onValueChange={(v) =>
                         field.onChange(v === NONE_VALUE ? null : v)
                       }
+                      disabled={careHomeLocked}
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -549,6 +558,11 @@ export function CustomerBasicForm({
                         ))}
                       </SelectContent>
                     </Select>
+                    {careHomeLocked && (
+                      <p className="text-xs text-muted-foreground">
+                        취업/근무 단계가 잠겨있어 수정할 수 없습니다.
+                      </p>
+                    )}
                     <FormMessage />
                   </FormItem>
                 )}
@@ -625,7 +639,12 @@ export function CustomerBasicForm({
                   <FormItem>
                     <FormLabel>면접일</FormLabel>
                     <FormControl>
-                      <Input type="date" {...field} value={field.value ?? ""} />
+                      <Input
+                        type="date"
+                        {...field}
+                        value={field.value ?? ""}
+                        disabled={careHomeLocked}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -638,7 +657,12 @@ export function CustomerBasicForm({
                   <FormItem>
                     <FormLabel>근무 시작일</FormLabel>
                     <FormControl>
-                      <Input type="date" {...field} value={field.value ?? ""} />
+                      <Input
+                        type="date"
+                        {...field}
+                        value={field.value ?? ""}
+                        disabled={careHomeLocked}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -651,7 +675,12 @@ export function CustomerBasicForm({
                   <FormItem>
                     <FormLabel>근무 종료일</FormLabel>
                     <FormControl>
-                      <Input type="date" {...field} value={field.value ?? ""} />
+                      <Input
+                        type="date"
+                        {...field}
+                        value={field.value ?? ""}
+                        disabled={careHomeLocked}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -664,7 +693,12 @@ export function CustomerBasicForm({
                   <FormItem>
                     <FormLabel>비자 변경일</FormLabel>
                     <FormControl>
-                      <Input type="date" {...field} value={field.value ?? ""} />
+                      <Input
+                        type="date"
+                        {...field}
+                        value={field.value ?? ""}
+                        disabled={careHomeLocked}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

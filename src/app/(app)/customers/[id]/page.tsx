@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { computeCustomerStatus } from "@/lib/customer-status";
+import { isCareHomeSectionLocked } from "@/lib/stage-locks";
 import { formatDate, dash } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
@@ -135,6 +136,12 @@ export default async function CustomerDetailPage({
     smsMessages: smsMessages ?? [],
   });
 
+  // 기본 정보 탭의 요양원 섹션 잠금 여부 — 진행 단계 탭의 종료 플래그 스코프와 공유
+  const careHomeLocked = isCareHomeSectionLocked({
+    flags: effectiveStatus,
+    termination_reason: customer.termination_reason,
+  });
+
   // system_settings 를 key→value 맵으로
   const settings: Record<string, import("@/types/database").Json | undefined> = {};
   for (const row of settingsRows ?? []) {
@@ -213,6 +220,7 @@ export default async function CustomerDetailPage({
               trainingCenters={centers ?? []}
               trainingClasses={classes ?? []}
               careHomes={homes ?? []}
+              careHomeLocked={careHomeLocked}
             />
           </TabsContent>
 

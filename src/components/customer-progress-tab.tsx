@@ -10,6 +10,10 @@ import {
   computeCustomerStatus,
   type StatusInputs,
 } from "@/lib/customer-status";
+import {
+  computeLockedStages as computeLockedStagesShared,
+  type LockStage,
+} from "@/lib/stage-locks";
 import type {
   ProgressStateInput,
   StatusFlagsInput,
@@ -97,23 +101,10 @@ const FLAG_HINTS: Partial<Record<FlagKey, string>> = {
 };
 
 /**
- * 잠금 스코프 계산용 — 각 플래그가 속한 단계.
- * 종료 플래그가 ON 이면 "그 단계(자신 제외) + 이후 단계 전부" 가 잠금.
+ * 각 수동 플래그가 속한 단계. UI 에서 `isFlagLocked` 계산 시 사용.
+ * 잠금 로직 자체는 src/lib/stage-locks.ts 에서 공유.
  */
-type StageKey =
-  | "intake"
-  | "training_reservation"
-  | "training"
-  | "employment"
-  | "work";
-
-const STAGE_ORDER: StageKey[] = [
-  "intake",
-  "training_reservation",
-  "training",
-  "employment",
-  "work",
-];
+type StageKey = LockStage;
 
 const FLAG_STAGE: Record<FlagKey, StageKey> = {
   intake_abandoned: "intake",
@@ -129,45 +120,11 @@ const FLAG_STAGE: Record<FlagKey, StageKey> = {
   welcome_pack_abandoned: "employment",
 };
 
-/**
- * 주어진 state 에서 어느 단계들이 잠겨야 하는지 계산.
- * - termination_reason set → 모든 단계 잠금 (전역 종료)
- * - stage-local terminal ON → 그 단계 + 이후 단계 잠금
- */
-function computeLockedStages(
-  state: ProgressStateInput
-): { lockedStages: Set<StageKey>; terminalSource: FlagKey | "termination" | null } {
-  if (state.termination_reason) {
-    return {
-      lockedStages: new Set(STAGE_ORDER),
-      terminalSource: "termination",
-    };
-  }
-  const terminalsInOrder: FlagKey[] = [
-    "intake_abandoned",
-    "study_abroad_consultation",
-    "training_reservation_abandoned",
-    "training_dropped",
-    "welcome_pack_abandoned",
-  ];
-  let earliestStageIdx = Infinity;
-  let source: FlagKey | null = null;
-  for (const f of terminalsInOrder) {
-    if (state.flags[f]) {
-      const idx = STAGE_ORDER.indexOf(FLAG_STAGE[f]);
-      if (idx < earliestStageIdx) {
-        earliestStageIdx = idx;
-        source = f;
-      }
-    }
-  }
-  if (source === null) {
-    return { lockedStages: new Set(), terminalSource: null };
-  }
-  return {
-    lockedStages: new Set(STAGE_ORDER.slice(earliestStageIdx)),
-    terminalSource: source,
-  };
+function computeLockedStages(state: ProgressStateInput) {
+  return computeLockedStagesShared({
+    flags: state.flags,
+    termination_reason: state.termination_reason,
+  });
 }
 
 // =============================================================================
