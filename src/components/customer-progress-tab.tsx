@@ -96,6 +96,80 @@ const FLAG_HINTS: Partial<Record<FlagKey, string>> = {
   resume_sent: "요양원에 이력서를 보냈으면 ON.",
 };
 
+/**
+ * 잠금 스코프 계산용 — 각 플래그가 속한 단계.
+ * 종료 플래그가 ON 이면 "그 단계(자신 제외) + 이후 단계 전부" 가 잠금.
+ */
+type StageKey =
+  | "intake"
+  | "training_reservation"
+  | "training"
+  | "employment"
+  | "work";
+
+const STAGE_ORDER: StageKey[] = [
+  "intake",
+  "training_reservation",
+  "training",
+  "employment",
+  "work",
+];
+
+const FLAG_STAGE: Record<FlagKey, StageKey> = {
+  intake_abandoned: "intake",
+  study_abroad_consultation: "intake",
+  training_center_finding: "training_reservation",
+  class_schedule_confirmation_needed: "training_reservation",
+  training_reservation_abandoned: "training_reservation",
+  certificate_acquired: "training",
+  training_dropped: "training",
+  care_home_finding: "employment",
+  resume_sent: "employment",
+  interview_passed: "employment",
+  welcome_pack_abandoned: "employment",
+};
+
+/**
+ * 주어진 state 에서 어느 단계들이 잠겨야 하는지 계산.
+ * - termination_reason set → 모든 단계 잠금 (전역 종료)
+ * - stage-local terminal ON → 그 단계 + 이후 단계 잠금
+ */
+function computeLockedStages(
+  state: ProgressStateInput
+): { lockedStages: Set<StageKey>; terminalSource: FlagKey | "termination" | null } {
+  if (state.termination_reason) {
+    return {
+      lockedStages: new Set(STAGE_ORDER),
+      terminalSource: "termination",
+    };
+  }
+  const terminalsInOrder: FlagKey[] = [
+    "intake_abandoned",
+    "study_abroad_consultation",
+    "training_reservation_abandoned",
+    "training_dropped",
+    "welcome_pack_abandoned",
+  ];
+  let earliestStageIdx = Infinity;
+  let source: FlagKey | null = null;
+  for (const f of terminalsInOrder) {
+    if (state.flags[f]) {
+      const idx = STAGE_ORDER.indexOf(FLAG_STAGE[f]);
+      if (idx < earliestStageIdx) {
+        earliestStageIdx = idx;
+        source = f;
+      }
+    }
+  }
+  if (source === null) {
+    return { lockedStages: new Set(), terminalSource: null };
+  }
+  return {
+    lockedStages: new Set(STAGE_ORDER.slice(earliestStageIdx)),
+    terminalSource: source,
+  };
+}
+
 // =============================================================================
 // 메인
 // =============================================================================
@@ -142,18 +216,32 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
     [state]
   );
 
-  // 종료 상태 판정 (UI lock 용). 저장 전 로컬 state 기준이라 즉시 반영.
-  const anyTerminationOn = useMemo(() => {
-    const f = state.flags;
-    return (
-      !!state.termination_reason ||
-      f.intake_abandoned ||
-      f.study_abroad_consultation ||
-      f.training_reservation_abandoned ||
-      f.training_dropped ||
-      f.welcome_pack_abandoned
-    );
-  }, [state]);
+  // 단계별 잠금 스코프 — 종료 플래그가 ON 이면 해당 단계(자신 제외) + 하위 잠금.
+  const { lockedStages, terminalSource } = useMemo(
+    () => computeLockedStages(state),
+    [state]
+  );
+
+  /** 개별 플래그가 잠겼는지. 본인이 ON 된 terminal 인 경우는 풀림 (OFF 가능). */
+  const isFlagLocked = (key: FlagKey): boolean => {
+    // 켜져 있는 terminal 본인은 항상 편집 가능
+    if (terminalSource === key) return false;
+    return lockedStages.has(FLAG_STAGE[key]);
+  };
+
+  /**
+   * 단계 카드가 회색 tint 되는 조건 — lockedStages 포함된 단계 전부.
+   * 카드 안에 편집 가능한 스위치 (예: 웰컴팩 예약포기 스위치 자신) 가
+   * 살아있어도 카드 자체는 tint 해서 "이 단계가 종결됨" 을 시각적으로 표시.
+   * Tint 는 opacity 만 낮추므로 실제 클릭은 그대로 가능.
+   */
+  const isStageCardLocked = (stage: StageKey): boolean => lockedStages.has(stage);
+
+  // 근무 카드는 termination_reason dropdown 을 포함. dropdown 은 항상 편집 가능.
+  // termination_reason 이 set 된 경우 근무 카드는 "전역 종료" 상태라서 tint O.
+  const isWorkCardLocked = lockedStages.has("work");
+  // 대기 잠금 — 최종 종료(termination_reason) 때만.
+  const waitingLocked = terminalSource === "termination";
 
   const summary = computeCustomerStatus({
     ...inputs,
@@ -167,8 +255,7 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
 
   /** 수동 플래그 토글 — 로컬 state 만 업데이트. 저장은 저장 버튼으로. */
   function toggleFlag(key: FlagKey, value: boolean) {
-    const category = CATEGORY[key];
-    if (anyTerminationOn && category !== "terminal") return;
+    if (isFlagLocked(key)) return;
     setState((prev) => ({
       ...prev,
       flags: { ...prev.flags, [key]: value },
@@ -182,7 +269,7 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
   }
 
   function setWaiting(value: boolean) {
-    if (anyTerminationOn) return;
+    if (waitingLocked) return;
     setState((prev) => ({
       ...prev,
       is_waiting: value,
@@ -222,9 +309,13 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
       {/* 저장 바 */}
       <div className="flex items-center justify-between gap-2 pb-1">
         <div className="text-xs text-muted-foreground">
-          {anyTerminationOn ? (
+          {terminalSource === "termination" ? (
             <span className="text-destructive">
-              종료 상태 — 종료 스위치 외의 다른 필드는 잠겨 있음
+              근무 종료 상태 — 모든 단계가 잠겼습니다
+            </span>
+          ) : terminalSource ? (
+            <span className="text-destructive">
+              {FLAG_LABELS[terminalSource as FlagKey]} ON — 이후 단계가 잠겼습니다
             </span>
           ) : dirty ? (
             <span>변경사항 저장 대기</span>
@@ -261,7 +352,11 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
 
       {/* 단계별 상세 */}
       <div className="grid gap-4 lg:grid-cols-2">
-        <StageCard title="접수" complete={summary.intake.complete}>
+        <StageCard
+          title="접수"
+          complete={summary.intake.complete}
+          locked={isStageCardLocked("intake")}
+        >
           <AutoRow label="기초정보">
             <Badge
               variant="outline"
@@ -279,16 +374,14 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
           <ManualSwitchRow
             flag="intake_abandoned"
             value={state.flags.intake_abandoned}
-            locked={anyTerminationOn && !state.flags.intake_abandoned}
+            locked={isFlagLocked("intake_abandoned")}
             onChange={(v) => toggleFlag("intake_abandoned", v)}
             pending={pending}
           />
           <ManualSwitchRow
             flag="study_abroad_consultation"
             value={state.flags.study_abroad_consultation}
-            locked={
-              anyTerminationOn && !state.flags.study_abroad_consultation
-            }
+            locked={isFlagLocked("study_abroad_consultation")}
             onChange={(v) => toggleFlag("study_abroad_consultation", v)}
             pending={pending}
           />
@@ -297,11 +390,12 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
         <StageCard
           title="교육 예약"
           complete={summary.trainingReservation.complete}
+          locked={isStageCardLocked("training_reservation")}
         >
           <ManualSwitchRow
             flag="training_center_finding"
             value={state.flags.training_center_finding}
-            locked={anyTerminationOn}
+            locked={isFlagLocked("training_center_finding")}
             onChange={(v) => toggleFlag("training_center_finding", v)}
             pending={pending}
           />
@@ -311,7 +405,7 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
           <ManualSwitchRow
             flag="class_schedule_confirmation_needed"
             value={state.flags.class_schedule_confirmation_needed}
-            locked={anyTerminationOn}
+            locked={isFlagLocked("class_schedule_confirmation_needed")}
             onChange={(v) =>
               toggleFlag("class_schedule_confirmation_needed", v)
             }
@@ -329,15 +423,17 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
           <ManualSwitchRow
             flag="training_reservation_abandoned"
             value={state.flags.training_reservation_abandoned}
-            locked={
-              anyTerminationOn && !state.flags.training_reservation_abandoned
-            }
+            locked={isFlagLocked("training_reservation_abandoned")}
             onChange={(v) => toggleFlag("training_reservation_abandoned", v)}
             pending={pending}
           />
         </StageCard>
 
-        <StageCard title="교육" complete={summary.training.complete}>
+        <StageCard
+          title="교육"
+          complete={summary.training.complete}
+          locked={isStageCardLocked("training")}
+        >
           <AutoRow label="메시지 발송">
             <BoolPill v={summary.training.smsSent} />
           </AutoRow>
@@ -353,24 +449,28 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
           <MilestoneRow
             flag="certificate_acquired"
             value={state.flags.certificate_acquired}
-            locked={anyTerminationOn}
+            locked={isFlagLocked("certificate_acquired")}
             onChange={(v) => toggleFlag("certificate_acquired", v)}
             pending={pending}
           />
           <ManualSwitchRow
             flag="training_dropped"
             value={state.flags.training_dropped}
-            locked={anyTerminationOn && !state.flags.training_dropped}
+            locked={isFlagLocked("training_dropped")}
             onChange={(v) => toggleFlag("training_dropped", v)}
             pending={pending}
           />
         </StageCard>
 
-        <StageCard title="취업" complete={summary.employment.complete}>
+        <StageCard
+          title="취업"
+          complete={summary.employment.complete}
+          locked={isStageCardLocked("employment")}
+        >
           <ManualSwitchRow
             flag="care_home_finding"
             value={state.flags.care_home_finding}
-            locked={anyTerminationOn}
+            locked={isFlagLocked("care_home_finding")}
             onChange={(v) => toggleFlag("care_home_finding", v)}
             pending={pending}
           />
@@ -380,7 +480,7 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
           <MilestoneRow
             flag="resume_sent"
             value={state.flags.resume_sent}
-            locked={anyTerminationOn}
+            locked={isFlagLocked("resume_sent")}
             onChange={(v) => toggleFlag("resume_sent", v)}
             pending={pending}
           />
@@ -396,7 +496,7 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
           <MilestoneRow
             flag="interview_passed"
             value={state.flags.interview_passed}
-            locked={anyTerminationOn}
+            locked={isFlagLocked("interview_passed")}
             onChange={(v) => toggleFlag("interview_passed", v)}
             pending={pending}
           />
@@ -406,7 +506,7 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
           <ManualSwitchRow
             flag="welcome_pack_abandoned"
             value={state.flags.welcome_pack_abandoned}
-            locked={anyTerminationOn && !state.flags.welcome_pack_abandoned}
+            locked={isFlagLocked("welcome_pack_abandoned")}
             onChange={(v) => toggleFlag("welcome_pack_abandoned", v)}
             pending={pending}
           />
@@ -415,6 +515,7 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
         <StageCard
           title="근무"
           complete={summary.work.workPhase === "종료"}
+          locked={isWorkCardLocked}
         >
           <AutoRow label="근무 전/중/종료">
             {summary.work.workPhase ? (
@@ -476,7 +577,7 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
         </StageCard>
 
         {/* 대기 섹션 — 맨 마지막 */}
-        <StageCard title="대기" complete={false}>
+        <StageCard title="대기" complete={false} locked={waitingLocked}>
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               <Label className="text-sm">대기중</Label>
@@ -487,7 +588,7 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
             <Switch
               checked={state.is_waiting}
               onCheckedChange={setWaiting}
-              disabled={pending || anyTerminationOn}
+              disabled={pending || waitingLocked}
               className="shrink-0"
             />
           </div>
@@ -501,7 +602,7 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
                   type="date"
                   value={state.recontact_date ?? ""}
                   onChange={(e) => setRecontactDate(e.target.value)}
-                  disabled={pending}
+                  disabled={pending || waitingLocked}
                 />
               </div>
               <div>
@@ -513,7 +614,7 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
                   onChange={(e) => setWaitingMemo(e.target.value)}
                   rows={2}
                   maxLength={500}
-                  disabled={pending}
+                  disabled={pending || waitingLocked}
                 />
               </div>
             </>
@@ -533,26 +634,50 @@ const NONE_VALUE = "__none__";
 function StageCard({
   title,
   complete,
+  locked,
   children,
 }: {
   title: string;
   complete: boolean;
+  locked?: boolean;
   children: React.ReactNode;
 }) {
+  // locked 가 complete 보다 우선 (종료된 단계는 완료 tint 보다 잠금 tint 노출)
   return (
     <Card
       className={cn(
         "transition-colors",
-        complete && "bg-success/5 border-success/30"
+        locked
+          ? "bg-muted/40 border-border/50 opacity-70"
+          : complete
+            ? "bg-success/5 border-success/30"
+            : ""
       )}
     >
       <CardHeader className="flex-row items-center justify-between">
-        <CardTitle className="text-base">{title}</CardTitle>
-        {complete && (
-          <Badge className="bg-success/10 text-success border-success/20">
-            <Check className="size-3" />
-            완료
+        <CardTitle
+          className={cn(
+            "text-base",
+            locked && "text-muted-foreground"
+          )}
+        >
+          {title}
+        </CardTitle>
+        {locked ? (
+          <Badge
+            variant="outline"
+            className="bg-muted text-muted-foreground border-border"
+          >
+            <Lock className="size-3" />
+            잠김
           </Badge>
+        ) : (
+          complete && (
+            <Badge className="bg-success/10 text-success border-success/20">
+              <Check className="size-3" />
+              완료
+            </Badge>
+          )
         )}
       </CardHeader>
       <CardContent className="space-y-3">{children}</CardContent>
