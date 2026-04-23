@@ -178,11 +178,31 @@ export default async function CustomerDetailPage({
       />
       <div className="p-6">
         <Tabs defaultValue={tab} className="w-full">
-          <TabsList>
-            <TabsTrigger value="basic">기본 정보</TabsTrigger>
-            <TabsTrigger value="progress">진행 단계</TabsTrigger>
-            <TabsTrigger value="consultations">상담 일지</TabsTrigger>
-            <TabsTrigger value="settlement">정산</TabsTrigger>
+          <TabsList className="grid grid-cols-4 w-full h-10">
+            <TabsTrigger
+              value="basic"
+              className="text-sm data-active:bg-primary data-active:text-primary-foreground data-active:font-semibold"
+            >
+              기본 정보
+            </TabsTrigger>
+            <TabsTrigger
+              value="progress"
+              className="text-sm data-active:bg-primary data-active:text-primary-foreground data-active:font-semibold"
+            >
+              진행 단계
+            </TabsTrigger>
+            <TabsTrigger
+              value="consultations"
+              className="text-sm data-active:bg-primary data-active:text-primary-foreground data-active:font-semibold"
+            >
+              상담 일지
+            </TabsTrigger>
+            <TabsTrigger
+              value="settlement"
+              className="text-sm data-active:bg-primary data-active:text-primary-foreground data-active:font-semibold"
+            >
+              정산
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="basic" className="mt-6">

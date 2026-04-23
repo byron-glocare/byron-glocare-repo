@@ -1,14 +1,13 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Check, Lock, X } from "lucide-react";
+import { Check, Loader2, Lock, Save, Undo2, X } from "lucide-react";
 
 import { updateProgressState } from "@/app/(app)/customers/actions";
 import {
   computeCustomerStatus,
-  type StageSummary,
   type StatusInputs,
 } from "@/lib/customer-status";
 import type {
@@ -17,10 +16,10 @@ import type {
 } from "@/lib/validators";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -101,12 +100,8 @@ const FLAG_HINTS: Partial<Record<FlagKey, string>> = {
 // 메인
 // =============================================================================
 
-export function CustomerProgressTab({ customerId, inputs }: Props) {
-  const router = useRouter();
-  const [pending, startTransition] = useTransition();
-
-  // 진행 단계 탭에서 쓰는 "전체 상태" — 플래그 + 종료사유 + 대기 3종
-  const [state, setState] = useState<ProgressStateInput>(() => ({
+function buildInitialState(inputs: StatusInputs): ProgressStateInput {
+  return {
     flags: {
       intake_abandoned: inputs.status.intake_abandoned,
       study_abroad_consultation: inputs.status.study_abroad_consultation,
@@ -131,9 +126,23 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
     is_waiting: inputs.customer.is_waiting,
     recontact_date: inputs.customer.recontact_date ?? null,
     waiting_memo: inputs.customer.waiting_memo ?? null,
-  }));
+  };
+}
 
-  // 종료 상태 판정 (UI lock 용)
+export function CustomerProgressTab({ customerId, inputs }: Props) {
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+
+  // 초기 (DB 기준) state — 저장 후 이 값으로 갱신
+  const initialRef = useRef<ProgressStateInput>(buildInitialState(inputs));
+  const [state, setState] = useState<ProgressStateInput>(() => initialRef.current);
+
+  const dirty = useMemo(
+    () => JSON.stringify(state) !== JSON.stringify(initialRef.current),
+    [state]
+  );
+
+  // 종료 상태 판정 (UI lock 용). 저장 전 로컬 state 기준이라 즉시 반영.
   const anyTerminationOn = useMemo(() => {
     const f = state.flags;
     return (
@@ -156,96 +165,99 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
     status: { ...inputs.status, ...state.flags },
   });
 
-  function save(next: ProgressStateInput, toastMsg: string) {
-    const prev = state;
-    setState(next);
-    startTransition(async () => {
-      const result = await updateProgressState(customerId, next);
-      if (result.ok) {
-        toast.success(toastMsg);
-        router.refresh();
-      } else {
-        setState(prev);
-        toast.error("저장 실패", { description: result.error });
-      }
-    });
-  }
-
-  /** 수동 플래그 토글. 해당 플래그가 terminal 이 아니고 lock 상태면 무시. */
+  /** 수동 플래그 토글 — 로컬 state 만 업데이트. 저장은 저장 버튼으로. */
   function toggleFlag(key: FlagKey, value: boolean) {
     const category = CATEGORY[key];
-    // lock 상태에선 terminal 플래그만 OFF 가능 (재해제). 다른 건 차단.
     if (anyTerminationOn && category !== "terminal") return;
-    const next: ProgressStateInput = {
-      ...state,
-      flags: { ...state.flags, [key]: value },
-    };
-    save(next, `${FLAG_LABELS[key]} ${value ? "ON" : "OFF"}`);
+    setState((prev) => ({
+      ...prev,
+      flags: { ...prev.flags, [key]: value },
+    }));
   }
 
   function setTerminationReason(
     value: "요양보호사 직종변경" | "귀국" | "연락두절" | null
   ) {
-    const next: ProgressStateInput = { ...state, termination_reason: value };
-    save(next, value ? `근무 종료 사유: ${value}` : "근무 종료 해제");
+    setState((prev) => ({ ...prev, termination_reason: value }));
   }
 
   function setWaiting(value: boolean) {
     if (anyTerminationOn) return;
-    const next: ProgressStateInput = {
-      ...state,
+    setState((prev) => ({
+      ...prev,
       is_waiting: value,
-      recontact_date: value ? state.recontact_date : null,
-      waiting_memo: value ? state.waiting_memo : null,
-    };
-    save(next, `대기중 ${value ? "ON" : "OFF"}`);
+      recontact_date: value ? prev.recontact_date : null,
+      waiting_memo: value ? prev.waiting_memo : null,
+    }));
   }
 
   function setRecontactDate(value: string) {
-    const next: ProgressStateInput = {
-      ...state,
-      recontact_date: value || null,
-    };
-    setState(next);
-  }
-  function commitRecontactDate() {
-    save(state, "재연락일 저장");
+    setState((prev) => ({ ...prev, recontact_date: value || null }));
   }
 
   function setWaitingMemo(value: string) {
-    const next: ProgressStateInput = {
-      ...state,
-      waiting_memo: value || null,
-    };
-    setState(next);
+    setState((prev) => ({ ...prev, waiting_memo: value || null }));
   }
-  function commitWaitingMemo() {
-    save(state, "대기 메모 저장");
+
+  function handleSave() {
+    const snapshot = state;
+    startTransition(async () => {
+      const result = await updateProgressState(customerId, snapshot);
+      if (result.ok) {
+        toast.success("저장되었습니다.");
+        initialRef.current = snapshot;
+        router.refresh();
+      } else {
+        toast.error("저장 실패", { description: result.error });
+      }
+    });
+  }
+
+  function handleReset() {
+    setState(initialRef.current);
   }
 
   return (
-    <div className="space-y-6">
-      {/* 현재 단계 요약 */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">현재 단계 (자동 판정)</CardTitle>
-          <CardDescription>
-            기초정보, 매칭, 결제, 일정, 수동 플래그를 종합해 런타임에 계산.
-            {anyTerminationOn && (
-              <span className="text-destructive ml-2">
-                · 종료 상태라 다른 스위치는 잠겨 있음
-              </span>
-            )}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex items-center gap-3 flex-wrap">
-          <CurrentStageBadge stage={summary.currentStage} />
-          <span className="text-sm">{summary.label}</span>
-          {pending && (
-            <span className="text-xs text-muted-foreground">저장 중…</span>
+    <div className="space-y-4">
+      {/* 저장 바 */}
+      <div className="flex items-center justify-between gap-2 pb-1">
+        <div className="text-xs text-muted-foreground">
+          {anyTerminationOn ? (
+            <span className="text-destructive">
+              종료 상태 — 종료 스위치 외의 다른 필드는 잠겨 있음
+            </span>
+          ) : dirty ? (
+            <span>변경사항 저장 대기</span>
+          ) : (
+            <span>변경사항 없음</span>
           )}
-        </CardContent>
-      </Card>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={handleReset}
+            disabled={!dirty || pending}
+          >
+            <Undo2 className="size-4" />
+            되돌리기
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            onClick={handleSave}
+            disabled={!dirty || pending}
+          >
+            {pending ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <Save className="size-4" />
+            )}
+            저장
+          </Button>
+        </div>
+      </div>
 
       {/* 단계별 상세 */}
       <div className="grid gap-4 lg:grid-cols-2">
@@ -489,21 +501,16 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
                   type="date"
                   value={state.recontact_date ?? ""}
                   onChange={(e) => setRecontactDate(e.target.value)}
-                  onBlur={commitRecontactDate}
                   disabled={pending}
                 />
               </div>
               <div>
                 <Label className="text-xs text-muted-foreground">
-                  메모{" "}
-                  <span className="text-[11px]">
-                    (최대 500자 · 포커스 잃으면 저장)
-                  </span>
+                  메모 <span className="text-[11px]">(최대 500자)</span>
                 </Label>
                 <Textarea
                   value={state.waiting_memo ?? ""}
                   onChange={(e) => setWaitingMemo(e.target.value)}
-                  onBlur={commitWaitingMemo}
                   rows={2}
                   maxLength={500}
                   disabled={pending}
@@ -523,28 +530,6 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
 
 const NONE_VALUE = "__none__";
 
-function CurrentStageBadge({
-  stage,
-}: {
-  stage: StageSummary["currentStage"];
-}) {
-  const cls =
-    stage === "종료"
-      ? "bg-destructive/10 text-destructive border-destructive/20"
-      : stage === "대기중"
-        ? "bg-warning/10 text-warning border-warning/20"
-        : stage === "근무종료"
-          ? "bg-muted text-muted-foreground border-border"
-          : stage === "근무중" || stage === "취업중"
-            ? "bg-success/10 text-success border-success/20"
-            : "bg-info/10 text-info border-info/20";
-  return (
-    <Badge variant="outline" className={cn("text-sm px-3 py-1", cls)}>
-      {stage}
-    </Badge>
-  );
-}
-
 function StageCard({
   title,
   complete,
@@ -555,7 +540,12 @@ function StageCard({
   children: React.ReactNode;
 }) {
   return (
-    <Card>
+    <Card
+      className={cn(
+        "transition-colors",
+        complete && "bg-success/5 border-success/30"
+      )}
+    >
       <CardHeader className="flex-row items-center justify-between">
         <CardTitle className="text-base">{title}</CardTitle>
         {complete && (
