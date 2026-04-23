@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Plus, Search } from "lucide-react";
+import { MessageSquarePlus, Plus, Search } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/page-header";
@@ -99,10 +99,19 @@ export default async function CustomersPage({
         description={`전체 ${count ?? 0}명`}
         breadcrumbs={[{ label: "고객관리" }]}
         actions={
-          <Link href="/customers/new" className={buttonVariants()}>
-            <Plus className="size-4" />
-            신규 고객 등록
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/consultations/new"
+              className={buttonVariants({ variant: "outline" })}
+            >
+              <MessageSquarePlus className="size-4" />
+              상담 일지 작성
+            </Link>
+            <Link href="/customers/new" className={buttonVariants()}>
+              <Plus className="size-4" />
+              신규 고객 등록
+            </Link>
+          </div>
         }
       />
       <div className="p-6 space-y-4">
@@ -189,10 +198,9 @@ export default async function CustomersPage({
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-36">코드</TableHead>
-                      <TableHead className="w-36">현재 단계</TableHead>
                       <TableHead className="w-32">베트남 이름</TableHead>
                       <TableHead className="w-28">한국 이름</TableHead>
+                      <TableHead className="w-40">현재 단계</TableHead>
                       <TableHead className="w-16">나이</TableHead>
                       <TableHead className="w-36">전화</TableHead>
                       <TableHead className="w-20">비자</TableHead>
@@ -224,24 +232,6 @@ export default async function CustomersPage({
                         : null;
                       return (
                         <TableRow key={c.id}>
-                          <TableCell className="font-mono text-xs">
-                            <Link
-                              href={`/customers/${c.id}`}
-                              className="hover:text-primary"
-                            >
-                              {c.code}
-                            </Link>
-                          </TableCell>
-                          <TableCell>
-                            <Link href={`/customers/${c.id}`} className="block">
-                              {summary && (
-                                <StageBadge
-                                  stage={summary.currentStage}
-                                  label={summary.label}
-                                />
-                              )}
-                            </Link>
-                          </TableCell>
                           <TableCell className="font-medium">
                             <Link
                               href={`/customers/${c.id}`}
@@ -253,6 +243,16 @@ export default async function CustomersPage({
                           <TableCell>
                             <Link href={`/customers/${c.id}`} className="block">
                               {dash(c.name_kr)}
+                            </Link>
+                          </TableCell>
+                          <TableCell>
+                            <Link href={`/customers/${c.id}`} className="block">
+                              {summary && (
+                                <StageBadge
+                                  stage={summary.currentStage}
+                                  label={summary.label}
+                                />
+                              )}
                             </Link>
                           </TableCell>
                           <TableCell>

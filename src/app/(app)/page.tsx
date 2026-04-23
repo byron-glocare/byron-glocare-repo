@@ -1,3 +1,6 @@
+import Link from "next/link";
+import { MessageSquarePlus, UserPlus } from "lucide-react";
+
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/page-header";
 import { TaskCards } from "@/components/dashboard/task-cards";
@@ -8,6 +11,7 @@ import {
   computeStageDistribution,
   computeNewCustomerCounts,
 } from "@/lib/dashboard";
+import { buttonVariants } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -62,6 +66,21 @@ export default async function DashboardPage() {
         description={`전체 ${totalCustomers}명 · 처리해야 할 작업과 단계별 분포를 한눈에 확인합니다.`}
       />
       <div className="p-6 space-y-6">
+        {/* 빠른 작업 버튼 */}
+        <div className="flex flex-wrap items-center gap-2">
+          <Link href="/customers/new" className={buttonVariants()}>
+            <UserPlus className="size-4" />
+            신규 고객 추가
+          </Link>
+          <Link
+            href="/consultations/new"
+            className={buttonVariants({ variant: "outline" })}
+          >
+            <MessageSquarePlus className="size-4" />
+            상담 일지 작성
+          </Link>
+        </div>
+
         {/* 처리 작업 8종 */}
         <section className="space-y-3">
           <div className="flex items-center justify-between">
