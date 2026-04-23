@@ -21,26 +21,48 @@ export const dynamic = "force-dynamic";
 export default async function TrainingCentersPage() {
   const supabase = await createClient();
 
-  // 교육원 + 소속 교육생 수 (집계)
+  // 교육원 목록
   const { data: centers, error } = await supabase
     .from("training_centers")
-    .select("id, code, region, name, director_name, phone, tuition_fee_2026, naeil_card_eligible")
+    .select("id, region, name, director_name, phone, tuition_fee_2026, naeil_card_eligible")
     .order("name", { ascending: true });
 
-  // 별도 쿼리: 교육원별 customer count
-  const { data: counts } = await supabase
+  // 교육원별 "실제 등록 교육생" 수 집계.
+  // - training_center_id 가 설정된 고객만
+  // - 종료/포기/드랍 상태는 제외 (진행 중인 교육생만 카운트)
+  const { data: enrolled } = await supabase
     .from("customers")
-    .select("training_center_id")
+    .select(
+      `
+      training_center_id,
+      termination_reason,
+      customer_statuses ( intake_abandoned, study_abroad_consultation,
+        training_reservation_abandoned, training_dropped )
+      `
+    )
     .not("training_center_id", "is", null);
 
   const countMap = new Map<string, number>();
-  for (const row of counts ?? []) {
-    if (row.training_center_id) {
-      countMap.set(
-        row.training_center_id,
-        (countMap.get(row.training_center_id) ?? 0) + 1
-      );
+  for (const row of enrolled ?? []) {
+    if (!row.training_center_id) continue;
+    if (row.termination_reason) continue;
+    // customer_statuses 는 1:1 관계 — supabase-js 가 배열 또는 객체로 반환.
+    const s = Array.isArray(row.customer_statuses)
+      ? row.customer_statuses[0]
+      : row.customer_statuses;
+    if (
+      s &&
+      (s.intake_abandoned ||
+        s.study_abroad_consultation ||
+        s.training_reservation_abandoned ||
+        s.training_dropped)
+    ) {
+      continue;
     }
+    countMap.set(
+      row.training_center_id,
+      (countMap.get(row.training_center_id) ?? 0) + 1
+    );
   }
 
   return (
@@ -76,9 +98,8 @@ export default async function TrainingCentersPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-32">코드</TableHead>
-                  <TableHead className="w-24">지역</TableHead>
                   <TableHead>이름</TableHead>
+                  <TableHead className="w-24">지역</TableHead>
                   <TableHead className="w-28">원장</TableHead>
                   <TableHead className="w-36">연락처</TableHead>
                   <TableHead className="w-28 text-right">2026 수강료</TableHead>
@@ -89,25 +110,17 @@ export default async function TrainingCentersPage() {
               <TableBody>
                 {centers.map((c) => (
                   <TableRow key={c.id} className="cursor-pointer">
-                    <TableCell className="font-mono text-xs">
-                      <Link
-                        href={`/training-centers/${c.id}`}
-                        className="hover:text-primary"
-                      >
-                        {dash(c.code)}
-                      </Link>
-                    </TableCell>
-                    <TableCell>
-                      <Link href={`/training-centers/${c.id}`} className="block">
-                        {dash(c.region)}
-                      </Link>
-                    </TableCell>
                     <TableCell className="font-medium">
                       <Link
                         href={`/training-centers/${c.id}`}
                         className="hover:text-primary"
                       >
                         {c.name}
+                      </Link>
+                    </TableCell>
+                    <TableCell>
+                      <Link href={`/training-centers/${c.id}`} className="block">
+                        {dash(c.region)}
                       </Link>
                     </TableCell>
                     <TableCell>
