@@ -12,7 +12,9 @@ export type SmsActionResult =
   | { ok: false; error: string };
 
 // =============================================================================
-// NHN Cloud LMS 호출 래퍼 — 환경변수 체크 + 실제 전송
+// NHN Cloud MMS 호출 래퍼 — 환경변수 체크 + 실제 전송
+// 이 계정은 /sender/lms 가 비활성이고 /sender/mms 가 장문(2000byte) 역할을 대신함.
+// 상세: memory/nhn_sms_debug.md 참고
 // =============================================================================
 
 async function sendNhnLms(params: {
@@ -23,6 +25,9 @@ async function sendNhnLms(params: {
   const appKey = process.env.NHN_SMS_APP_KEY;
   const secretKey = process.env.NHN_SMS_SECRET_KEY;
   const sendNo = process.env.NHN_SMS_SEND_NO;
+  const baseUrl = (
+    process.env.NHN_SMS_API_URL ?? "https://sms.api.nhncloudservice.com"
+  ).replace(/\/+$/, "");
 
   if (!appKey || !secretKey || !sendNo) {
     return {
@@ -37,15 +42,16 @@ async function sendNhnLms(params: {
     return { ok: false, error: "유효한 전화번호 형식이 아닙니다." };
   }
 
-  // LMS 는 2000자(4000byte) 제한. 초과 시 조용히 잘리지 않고 명시적 에러.
-  if (params.body.length > 2000) {
+  // MMS 는 본문 2000 byte 제한 (한글 UTF-8 기준 약 666자).
+  const bodyBytes = new TextEncoder().encode(params.body).length;
+  if (bodyBytes > 2000) {
     return {
       ok: false,
-      error: `메시지 길이가 ${params.body.length}자로 LMS 최대 2000자를 초과합니다.`,
+      error: `메시지 본문이 ${bodyBytes} byte 로 MMS 최대 2000 byte 를 초과합니다. (${params.body.length}자)`,
     };
   }
 
-  const url = `https://api-sms.cloud.toast.com/sms/v3.0/appKeys/${encodeURIComponent(appKey)}/sender/lms`;
+  const url = `${baseUrl}/sms/v3.0/appKeys/${encodeURIComponent(appKey)}/sender/mms`;
   const res = await fetch(url, {
     method: "POST",
     headers: {

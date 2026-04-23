@@ -17,13 +17,22 @@ import { createClient } from "@/lib/supabase/server";
  *  1. 인증 사용자 확인
  *  2. NHN_SMS_* 환경변수 존재 확인
  *  3. 전화번호 정규화 (하이픈·공백 제거)
- *  4. LMS 엔드포인트 호출 (본문 45자 초과도 안전하게 수용)
+ *  4. MMS 엔드포인트 호출 (장문 2000byte 수용, 이미지 없이도 동작)
  *  5. 성공 시 sms_messages 테이블에 기록
  *
- * NHN Cloud SMS v3.0 LMS 엔드포인트:
- *   POST https://api-sms.cloud.toast.com/sms/v3.0/appKeys/{appKey}/sender/lms
+ * NHN Cloud SMS v3.0 MMS 엔드포인트:
+ *   POST {NHN_SMS_API_URL}/sms/v3.0/appKeys/{appKey}/sender/mms
  *   Headers: Content-Type: application/json, X-Secret-Key: {secretKey}
  *   Body: { title, body, sendNo, recipientList: [{ recipientNo, countryCode: "82" }] }
+ *
+ * Base URL 은 Console → Notification > SMS → URL & Appkey 화면에 표시된 값을 사용.
+ * 구 Toast 계정: https://api-sms.cloud.toast.com
+ * 신 NHN Cloud 계정: https://sms.api.nhncloudservice.com
+ *
+ * 왜 LMS 대신 MMS?
+ *   - 이 계정은 /sender/lms 엔드포인트가 비활성 (-9998 Not found)
+ *   - /sender/mms 는 이미지 없이 텍스트만 보내도 정상 동작 → 장문 용도로 사용
+ *   - 요금도 LMS/MMS 동일 과금 구간
  */
 export async function POST(request: Request) {
   // 1. 인증
@@ -39,6 +48,9 @@ export async function POST(request: Request) {
   const appKey = process.env.NHN_SMS_APP_KEY;
   const secretKey = process.env.NHN_SMS_SECRET_KEY;
   const sendNo = process.env.NHN_SMS_SEND_NO;
+  const apiBase = (
+    process.env.NHN_SMS_API_URL ?? "https://sms.api.nhncloudservice.com"
+  ).replace(/\/+$/, "");
   if (!appKey || !secretKey || !sendNo) {
     return NextResponse.json(
       {
@@ -91,8 +103,8 @@ export async function POST(request: Request) {
     );
   }
 
-  // 4. NHN Cloud LMS 호출
-  const url = `https://api-sms.cloud.toast.com/sms/v3.0/appKeys/${encodeURIComponent(appKey)}/sender/lms`;
+  // 4. NHN Cloud MMS 호출 (장문, 이미지 없이 텍스트만)
+  const url = `${apiBase}/sms/v3.0/appKeys/${encodeURIComponent(appKey)}/sender/mms`;
   const nhnResponse = await fetch(url, {
     method: "POST",
     headers: {
