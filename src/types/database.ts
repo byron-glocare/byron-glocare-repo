@@ -331,6 +331,7 @@ export type Database = {
           consultation_type: ConsultationType;
           content_vi: string | null;
           content_kr: string | null;
+          tags: string[];
           author_id: string | null;
           created_at: string;
         };
@@ -340,6 +341,7 @@ export type Database = {
           consultation_type: ConsultationType;
           content_vi?: string | null;
           content_kr?: string | null;
+          tags?: string[];
           author_id?: string | null;
           created_at?: string;
         };

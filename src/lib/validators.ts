@@ -205,6 +205,25 @@ export const consultationSchema = z.object({
 export type ConsultationInput = z.input<typeof consultationSchema>;
 export type ConsultationOutput = z.output<typeof consultationSchema>;
 
+/**
+ * 신규 상담 일지 입력 — 단일 content 필드.
+ * 서버가 언어를 감지해 content_vi / content_kr 로 분리 저장 + tags 추출.
+ */
+export const consultationWriteSchema = z.object({
+  customer_id: z.uuid(),
+  consultation_type: z.enum(["training_center", "care_home"]),
+  content: z.string().min(1, "상담 내용을 입력해주세요.").max(4000),
+});
+
+export type ConsultationWriteInput = z.input<typeof consultationWriteSchema>;
+
+export const consultationUpdateSchema = z.object({
+  consultation_id: z.uuid(),
+  content: z.string().min(1, "상담 내용을 입력해주세요.").max(4000),
+});
+
+export type ConsultationUpdateInput = z.input<typeof consultationUpdateSchema>;
+
 // =============================================================================
 // 진행 단계 플래그 (customer_statuses)
 // =============================================================================

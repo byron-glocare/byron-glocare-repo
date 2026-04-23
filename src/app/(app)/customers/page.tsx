@@ -39,11 +39,13 @@ export default async function CustomersPage({
   const q = sp.q?.trim() ?? "";
   const centerFilter = sp.center?.trim() ?? "";
   const careFilter = sp.care?.trim() ?? "";
+  const stageFilter = sp.stage?.trim() ?? "";
   const page = Math.max(1, parseInt(sp.page ?? "1", 10) || 1);
 
   const supabase = await createClient();
 
-  // 검색 쿼리 생성
+  // DB 레벨 필터 (q / center / care) 적용 후 모든 결과 가져옴.
+  // stage 필터는 currentStage 가 런타임 계산이라 후처리로 수행.
   let query = supabase
     .from("customers")
     .select(
@@ -56,14 +58,11 @@ export default async function CustomersPage({
       class_start_date, class_end_date,
       work_start_date, work_end_date, visa_change_date, interview_date,
       address, gender
-      `,
-      { count: "exact" }
+      `
     )
     .order("created_at", { ascending: false });
 
   if (q) {
-    // 이름, 코드, 전화번호 부분 검색
-    // PostgREST .or() 문자열 구분자(,)/그룹(,()) 문자는 쿼리를 깨뜨리므로 제거
     const safeQ = q.replace(/[,()]/g, " ").trim();
     if (safeQ) {
       query = query.or(
@@ -74,11 +73,8 @@ export default async function CustomersPage({
   if (centerFilter) query = query.eq("training_center_id", centerFilter);
   if (careFilter) query = query.eq("care_home_id", careFilter);
 
-  const from = (page - 1) * PAGE_SIZE;
-  const to = from + PAGE_SIZE - 1;
-  const { data: customers, count, error } = await query.range(from, to);
+  const { data: allMatched, error } = await query;
 
-  // 교육원 / 요양원 / 상태 계산 위해 보조 데이터
   const [{ data: centers }, { data: homes }, { data: statuses }] =
     await Promise.all([
       supabase.from("training_centers").select("id, name, region"),
@@ -90,7 +86,30 @@ export default async function CustomersPage({
   const homeMap = new Map((homes ?? []).map((h) => [h.id, h]));
   const statusMap = new Map((statuses ?? []).map((s) => [s.customer_id, s]));
 
-  const totalPages = Math.max(1, Math.ceil((count ?? 0) / PAGE_SIZE));
+  // 현재 단계 계산 + stage 필터 적용
+  const withStage = (allMatched ?? []).map((c) => {
+    const status = statusMap.get(c.id);
+    const summary = status
+      ? computeCustomerStatus({
+          customer: c,
+          status,
+          reservationPayments: [],
+          welcomePackPayment: null,
+          smsMessages: [],
+        })
+      : null;
+    return { customer: c, summary };
+  });
+
+  const filtered = stageFilter
+    ? withStage.filter((x) => x.summary?.currentStage === stageFilter)
+    : withStage;
+
+  const count = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(count / PAGE_SIZE));
+  const pageStart = (page - 1) * PAGE_SIZE;
+  const pageEnd = pageStart + PAGE_SIZE;
+  const customers = filtered.slice(pageStart, pageEnd);
 
   return (
     <>
@@ -165,13 +184,33 @@ export default async function CustomersPage({
               ))}
             </select>
           </div>
+          <div>
+            <label className="text-xs text-muted-foreground block mb-1">
+              현재 단계
+            </label>
+            <select
+              name="stage"
+              defaultValue={stageFilter}
+              className="h-8 rounded-md border border-input bg-background px-2 text-sm min-w-28"
+            >
+              <option value="">전체</option>
+              <option value="접수중">접수중</option>
+              <option value="교육예약중">교육예약중</option>
+              <option value="교육중">교육중</option>
+              <option value="취업중">취업중</option>
+              <option value="근무중">근무중</option>
+              <option value="근무종료">근무종료</option>
+              <option value="대기중">대기중</option>
+              <option value="종료">종료</option>
+            </select>
+          </div>
           <button
             type="submit"
-            className={buttonVariants({ variant: "outline" })}
+            className={buttonVariants()}
           >
             적용
           </button>
-          {(q || centerFilter || careFilter) && (
+          {(q || centerFilter || careFilter || stageFilter) && (
             <Link
               href="/customers"
               className={buttonVariants({ variant: "ghost" })}
@@ -187,7 +226,7 @@ export default async function CustomersPage({
           </Card>
         ) : !customers || customers.length === 0 ? (
           <Card className="p-12 text-center text-sm text-muted-foreground">
-            {q || centerFilter || careFilter
+            {q || centerFilter || careFilter || stageFilter
               ? "조건에 맞는 고객이 없습니다."
               : "등록된 고객이 없습니다."}
           </Card>
@@ -210,22 +249,12 @@ export default async function CustomersPage({
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {customers.map((c) => {
-                      const status = statusMap.get(c.id);
+                    {customers.map(({ customer: c, summary }) => {
                       const center = c.training_center_id
                         ? centerMap.get(c.training_center_id)
                         : null;
                       const home = c.care_home_id
                         ? homeMap.get(c.care_home_id)
-                        : null;
-                      const summary = status
-                        ? computeCustomerStatus({
-                            customer: c,
-                            status,
-                            reservationPayments: [],
-                            welcomePackPayment: null,
-                            smsMessages: [],
-                          })
                         : null;
                       const age = c.birth_year
                         ? new Date().getFullYear() - c.birth_year
@@ -302,6 +331,7 @@ export default async function CustomersPage({
                   q={q}
                   center={centerFilter}
                   care={careFilter}
+                  stage={stageFilter}
                 >
                   이전
                 </PageLink>
@@ -314,6 +344,7 @@ export default async function CustomersPage({
                   q={q}
                   center={centerFilter}
                   care={careFilter}
+                  stage={stageFilter}
                 >
                   다음
                 </PageLink>
@@ -359,6 +390,7 @@ function PageLink({
   q,
   center,
   care,
+  stage,
   children,
 }: {
   to: number;
@@ -366,6 +398,7 @@ function PageLink({
   q: string;
   center: string;
   care: string;
+  stage: string;
   children: React.ReactNode;
 }) {
   if (disabled) {
@@ -379,6 +412,7 @@ function PageLink({
   if (q) params.set("q", q);
   if (center) params.set("center", center);
   if (care) params.set("care", care);
+  if (stage) params.set("stage", stage);
   params.set("page", String(to));
   return (
     <Link

@@ -2,17 +2,25 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+
 import { createClient } from "@/lib/supabase/server";
 import { requireAuth } from "@/lib/require-auth";
+import { isVietnamese, translateToKorean } from "@/lib/translate";
+import { analyzeConsultation } from "@/lib/analyze-consultation";
+import type { ConsultationAnalysis } from "@/lib/consultation-tags";
 import {
   customerSchema,
   consultationSchema,
   statusFlagsSchema,
   progressStateSchema,
+  consultationWriteSchema,
+  consultationUpdateSchema,
   type CustomerInput,
   type ConsultationInput,
   type StatusFlagsInput,
   type ProgressStateInput,
+  type ConsultationWriteInput,
+  type ConsultationUpdateInput,
 } from "@/lib/validators";
 
 export type ActionResult<T = unknown> =
@@ -268,6 +276,10 @@ export async function updateProgressState(
 // 상담 일지
 // =============================================================================
 
+/**
+ * (레거시) 베트남어/한국어 두 필드 분리 입력.
+ * 신규 UI 는 createConsultationWithAnalysis 사용 권장.
+ */
 export async function createConsultation(
   customerId: string,
   input: ConsultationInput
@@ -277,7 +289,6 @@ export async function createConsultation(
     return { ok: false, error: parsed.error.issues[0].message };
   }
 
-  // 두 언어 모두 비어있으면 거부
   if (
     !parsed.data.content_vi?.trim() &&
     !parsed.data.content_kr?.trim()
@@ -307,4 +318,249 @@ export async function createConsultation(
 
   revalidatePath(`/customers/${customerId}`);
   return { ok: true, data: null };
+}
+
+// =============================================================================
+// 상담 일지 (신규) — 단일 content 입력 + 자동 번역 + AI 분석
+// =============================================================================
+
+/**
+ * 본문을 감지해 content_vi / content_kr 로 분리.
+ * 베트남어 감지 시 Google Translate 로 한국어 동시 저장.
+ */
+async function prepareConsultationContent(
+  content: string
+): Promise<{ content_vi: string | null; content_kr: string | null }> {
+  const trimmed = content.trim();
+  if (isVietnamese(trimmed)) {
+    const translated = await translateToKorean(trimmed);
+    return {
+      content_vi: trimmed,
+      // 번역 실패 시 원문과 동일 반환 — kr 에도 원문을 넣어두고 사용자가 편집 가능
+      content_kr: translated,
+    };
+  }
+  return { content_vi: null, content_kr: trimmed };
+}
+
+/**
+ * Claude Haiku 호출로 상담 분석. 실패 시 null — 상담 저장 자체는 계속.
+ */
+async function runConsultationAnalysis(
+  content: string,
+  consultation_type: "training_center" | "care_home"
+): Promise<ConsultationAnalysis | null> {
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) return null;
+  return analyzeConsultation(apiKey, content, consultation_type);
+}
+
+/**
+ * 신규 상담 작성. 저장 후 분석 결과(suggestions) 를 반환 →
+ * 클라이언트가 검토 다이얼로그로 사용자 승인 후 applyAnalysisSuggestions 호출.
+ */
+export async function createConsultationWithAnalysis(
+  input: ConsultationWriteInput
+): Promise<
+  ActionResult<{
+    consultation_id: string;
+    analysis: ConsultationAnalysis | null;
+  }>
+> {
+  const parsed = consultationWriteSchema.safeParse(input);
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.issues[0].message };
+  }
+
+  let user, supabase;
+  try {
+    ({ user, supabase } = await requireAuth());
+  } catch {
+    return { ok: false, error: "Unauthorized" };
+  }
+
+  const { customer_id, consultation_type, content } = parsed.data;
+
+  // 번역 + 분석을 병렬
+  const [prepared, analysis] = await Promise.all([
+    prepareConsultationContent(content),
+    runConsultationAnalysis(content, consultation_type),
+  ]);
+
+  const { data, error } = await supabase
+    .from("customer_consultations")
+    .insert({
+      customer_id,
+      consultation_type,
+      content_vi: prepared.content_vi,
+      content_kr: prepared.content_kr,
+      tags: analysis?.tags ?? [],
+      author_id: user.id,
+    })
+    .select("id")
+    .single();
+
+  if (error || !data) {
+    return { ok: false, error: error?.message ?? "저장 실패" };
+  }
+
+  revalidatePath(`/customers/${customer_id}`);
+  return {
+    ok: true,
+    data: { consultation_id: data.id, analysis },
+  };
+}
+
+/**
+ * 기존 상담 수정. 본문만 갱신 — consultation_type / customer_id 는 불변.
+ * 저장 후 분석 다시 돌림 (태그/suggestions 갱신).
+ */
+export async function updateConsultation(
+  input: ConsultationUpdateInput
+): Promise<ActionResult<{ analysis: ConsultationAnalysis | null }>> {
+  const parsed = consultationUpdateSchema.safeParse(input);
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.issues[0].message };
+  }
+
+  let supabase;
+  try {
+    ({ supabase } = await requireAuth());
+  } catch {
+    return { ok: false, error: "Unauthorized" };
+  }
+
+  const { consultation_id, content } = parsed.data;
+
+  // 기존 레코드 조회 — consultation_type 과 customer_id 필요
+  const { data: existing, error: fetchError } = await supabase
+    .from("customer_consultations")
+    .select("customer_id, consultation_type")
+    .eq("id", consultation_id)
+    .single();
+  if (fetchError || !existing) {
+    return { ok: false, error: "상담 일지를 찾을 수 없습니다." };
+  }
+
+  const [prepared, analysis] = await Promise.all([
+    prepareConsultationContent(content),
+    runConsultationAnalysis(
+      content,
+      existing.consultation_type as "training_center" | "care_home"
+    ),
+  ]);
+
+  const { error } = await supabase
+    .from("customer_consultations")
+    .update({
+      content_vi: prepared.content_vi,
+      content_kr: prepared.content_kr,
+      tags: analysis?.tags ?? [],
+    })
+    .eq("id", consultation_id);
+
+  if (error) return { ok: false, error: error.message };
+
+  revalidatePath(`/customers/${existing.customer_id}`);
+  return { ok: true, data: { analysis } };
+}
+
+// =============================================================================
+// AI 제안 적용 (customer + status_flags 일괄 업데이트, 화이트리스트 검증)
+// =============================================================================
+
+/**
+ * 분석 결과 중 사용자가 체크한 항목만 반영해 customer / customer_statuses
+ * 를 업데이트. 화이트리스트 외 필드는 서버에서 무시.
+ */
+export async function applyAnalysisSuggestions(
+  customerId: string,
+  selected: {
+    customer?: Partial<ConsultationAnalysis["suggestions"]["customer"]>;
+    status_flags?: Partial<ConsultationAnalysis["suggestions"]["status_flags"]>;
+  }
+): Promise<ActionResult<{ applied: number }>> {
+  let supabase;
+  try {
+    ({ supabase } = await requireAuth());
+  } catch {
+    return { ok: false, error: "Unauthorized" };
+  }
+
+  // 서버측 화이트리스트 재검증 (클라 조작 방어)
+  const customerWhitelist = [
+    "topik_level",
+    "visa_type",
+    "desired_region",
+    "desired_period",
+    "desired_time",
+    "birth_year",
+  ] as const;
+  const flagWhitelist = [
+    "intake_abandoned",
+    "study_abroad_consultation",
+    "training_center_finding",
+    "class_schedule_confirmation_needed",
+    "training_reservation_abandoned",
+    "certificate_acquired",
+    "training_dropped",
+    "welcome_pack_abandoned",
+    "care_home_finding",
+    "resume_sent",
+    "interview_passed",
+  ] as const;
+
+  type CustomerPatch = Partial<
+    Pick<
+      ConsultationAnalysis["suggestions"]["customer"],
+      (typeof customerWhitelist)[number]
+    >
+  >;
+  type FlagsPatch = Partial<
+    Pick<
+      ConsultationAnalysis["suggestions"]["status_flags"],
+      (typeof flagWhitelist)[number]
+    >
+  >;
+
+  const customerPatch: CustomerPatch = {};
+  for (const k of customerWhitelist) {
+    const v = selected.customer?.[k];
+    if (v !== undefined) {
+      // 런타임 화이트리스트 + TS 키별 매핑은 assign 으로 처리
+      (customerPatch as Record<string, unknown>)[k] = v;
+    }
+  }
+  const flagsPatch: FlagsPatch = {};
+  for (const k of flagWhitelist) {
+    const v = selected.status_flags?.[k];
+    if (v !== undefined) {
+      (flagsPatch as Record<string, unknown>)[k] = v;
+    }
+  }
+
+  const applied =
+    Object.keys(customerPatch).length + Object.keys(flagsPatch).length;
+  if (applied === 0) {
+    return { ok: true, data: { applied: 0 } };
+  }
+
+  if (Object.keys(customerPatch).length > 0) {
+    const { error } = await supabase
+      .from("customers")
+      .update(customerPatch)
+      .eq("id", customerId);
+    if (error) return { ok: false, error: error.message };
+  }
+  if (Object.keys(flagsPatch).length > 0) {
+    const { error } = await supabase
+      .from("customer_statuses")
+      .update(flagsPatch)
+      .eq("customer_id", customerId);
+    if (error) return { ok: false, error: error.message };
+  }
+
+  revalidatePath(`/customers/${customerId}`);
+  revalidatePath("/customers");
+  return { ok: true, data: { applied } };
 }

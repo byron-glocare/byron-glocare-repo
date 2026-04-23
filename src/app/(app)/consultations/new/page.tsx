@@ -1,10 +1,29 @@
-import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/page-header";
-import { buttonVariants } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { ConsultationForm } from "@/components/consultation-form";
 
-// TODO(C3): 이 페이지를 모달로 대체 — 고객 검색 + 상담 작성 + AI 자동 분석/적용
-export default function ConsultationsNewPage() {
+export const dynamic = "force-dynamic";
+
+type SearchParams = Promise<{ customer_id?: string }>;
+
+/**
+ * 상담 일지 신규 작성 페이지.
+ * - /consultations/new?customer_id=xxx 로 특정 고객 pre-fill
+ * - 저장 시 AI 가 상담 내용 분석 → 태그 저장 + 업데이트 제안 다이얼로그
+ */
+export default async function NewConsultationPage({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}) {
+  const sp = await searchParams;
+  const supabase = await createClient();
+
+  const { data: customers } = await supabase
+    .from("customers")
+    .select("id, code, name_vi, name_kr, phone")
+    .order("created_at", { ascending: false });
+
   return (
     <>
       <PageHeader
@@ -15,15 +34,11 @@ export default function ConsultationsNewPage() {
         ]}
       />
       <div className="p-6">
-        <Card className="p-12 text-center space-y-3">
-          <p className="text-sm text-muted-foreground">
-            상담 일지 작성 모달은 곧 연결됩니다. 지금은 고객을 먼저 선택한 뒤
-            상세 페이지의 <b>상담 일지</b> 탭에서 작성해주세요.
-          </p>
-          <Link href="/customers" className={buttonVariants()}>
-            고객관리로 이동
-          </Link>
-        </Card>
+        <ConsultationForm
+          mode="create"
+          customers={customers ?? []}
+          prefillCustomerId={sp.customer_id}
+        />
       </div>
     </>
   );
