@@ -48,6 +48,13 @@ export type CustomerListFilters = {
   center?: string;
   care?: string;
   page?: string;
+  /**
+   * 종료된 고객 표시 방식:
+   *   - undefined/"active" (기본): 진행 중인 고객만 (종료 제외)
+   *   - "all": 전체
+   *   - "terminated": 종료된 고객만
+   */
+  view?: string;
 };
 
 export type CustomerListProps = {
@@ -77,6 +84,9 @@ export async function CustomerListPanel({
   const centerFilter = fixed?.trainingCenterId ?? filters.center?.trim() ?? "";
   const careFilter = fixed?.careHomeId ?? filters.care?.trim() ?? "";
   const stageFilter = filters.stage?.trim() ?? "";
+  const viewRaw = (filters.view ?? "").trim();
+  const view: "active" | "all" | "terminated" =
+    viewRaw === "all" || viewRaw === "terminated" ? viewRaw : "active";
   const page = Math.max(1, parseInt(filters.page ?? "1", 10) || 1);
 
   const supabase = await createClient();
@@ -135,8 +145,19 @@ export async function CustomerListPanel({
     return { customer: c, summary };
   });
 
+  // 종료 여부에 따른 1차 필터 (view).
+  // - active: 종료 단계 제외
+  // - all: 모두
+  // - terminated: 종료 단계만
+  const viewFiltered = withStage.filter((x) => {
+    const isTerminated = x.summary?.currentStage === "종료";
+    if (view === "active") return !isTerminated;
+    if (view === "terminated") return isTerminated;
+    return true;
+  });
+
   const uniqueLabels = new Map<string, StageSummary["currentStage"]>();
-  for (const x of withStage) {
+  for (const x of viewFiltered) {
     if (x.summary && !uniqueLabels.has(x.summary.label)) {
       uniqueLabels.set(x.summary.label, x.summary.currentStage);
     }
@@ -149,8 +170,8 @@ export async function CustomerListPanel({
     .map(([label]) => label);
 
   const filtered = stageFilter
-    ? withStage.filter((x) => x.summary?.label === stageFilter)
-    : withStage;
+    ? viewFiltered.filter((x) => x.summary?.label === stageFilter)
+    : viewFiltered;
 
   const count = filtered.length;
   const totalPages = Math.max(1, Math.ceil(count / PAGE_SIZE));
@@ -164,6 +185,7 @@ export async function CustomerListPanel({
   const hasAnyUserFilter = !!(
     q ||
     stageFilter ||
+    view !== "active" ||
     (filters.center && !hiddenCenter) ||
     (filters.care && !hiddenCare)
   );
@@ -259,6 +281,20 @@ export async function CustomerListPanel({
                 {label}
               </option>
             ))}
+          </select>
+        </div>
+        <div>
+          <label className="text-xs text-muted-foreground block mb-1">
+            종료 포함
+          </label>
+          <select
+            name="view"
+            defaultValue={view}
+            className="h-8 rounded-md border border-input bg-background px-2 text-sm min-w-28"
+          >
+            <option value="active">진행 중만</option>
+            <option value="all">전체</option>
+            <option value="terminated">종료만</option>
           </select>
         </div>
         <button type="submit" className={buttonVariants()}>
@@ -388,6 +424,7 @@ export async function CustomerListPanel({
                 href={buildUrl({
                   q,
                   stage: stageFilter,
+                  view: view === "active" ? "" : view,
                   ...(hiddenCenter ? {} : { center: filters.center ?? "" }),
                   ...(hiddenCare ? {} : { care: filters.care ?? "" }),
                   page: String(page - 1),
@@ -403,6 +440,7 @@ export async function CustomerListPanel({
                 href={buildUrl({
                   q,
                   stage: stageFilter,
+                  view: view === "active" ? "" : view,
                   ...(hiddenCenter ? {} : { center: filters.center ?? "" }),
                   ...(hiddenCare ? {} : { care: filters.care ?? "" }),
                   page: String(page + 1),
