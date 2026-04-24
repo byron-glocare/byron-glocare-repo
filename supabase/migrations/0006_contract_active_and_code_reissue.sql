@@ -6,6 +6,11 @@
 -- 2. customers / training_centers / care_homes 의 code 를 KST 기준
 --    created_at 의 YYMM + 월별 순번 3자리로 일괄 재발급.
 --    prefix: CVN (고객), TC (교육원), CH (요양원)
+--
+-- 재발급은 2-step: UNIQUE 제약이 row-by-row 로 즉시 검증되므로
+-- 기존 code 와 새 code 가 같은 값을 순환 참조할 때 중간에 충돌한다.
+-- 그래서 1) 먼저 임시 prefix (TMP-{uuid}) 로 전부 비켜놓고
+-- 2) 그 다음 최종 code 로 덮어쓴다.
 -- =============================================================================
 
 begin;
@@ -29,8 +34,15 @@ comment on column public.training_centers.contract_active is
   '교육원 계약 체결 여부. ON = 계약 완료.';
 
 -- -----------------------------------------------------------------------------
--- 2. code 재발급
+-- 2. code 재발급 (2-step)
 -- -----------------------------------------------------------------------------
+
+-- step 1: 임시 prefix 로 비켜놓기 (id 기반이라 유일성 보장)
+update public.customers        set code = 'TMP-' || id::text;
+update public.training_centers set code = 'TMP-' || id::text;
+update public.care_homes       set code = 'TMP-' || id::text;
+
+-- step 2: 최종 code 재발급
 
 -- 고객 — CVN + YYMM + 월별 순번 3자리
 with ordered as (
