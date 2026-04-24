@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { RegionSelect } from "@/components/region-select";
 import {
   Card,
   CardContent,
@@ -50,10 +51,11 @@ type Props = {
   mode: "create" | "edit";
   centerId?: string;
   defaultValues?: Partial<TrainingCenterInput>;
+  /** 2-col 그리드와 메모 사이에 삽입할 컨텐츠 (월별 개강 등) */
+  extraContent?: ReactNode;
 };
 
 const EMPTY: TrainingCenterInput = {
-  code: null,
   name: "",
   region: null,
   address: null,
@@ -67,11 +69,16 @@ const EMPTY: TrainingCenterInput = {
   tuition_fee_2026: null,
   class_hours: null,
   naeil_card_eligible: false,
-  contract_status: null,
+  contract_active: false,
   notes: null,
 };
 
-export function TrainingCenterForm({ mode, centerId, defaultValues }: Props) {
+export function TrainingCenterForm({
+  mode,
+  centerId,
+  defaultValues,
+  extraContent,
+}: Props) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [deleting, setDeleting] = useState(false);
@@ -141,42 +148,22 @@ export function TrainingCenterForm({ mode, centerId, defaultValues }: Props) {
                   </FormItem>
                 )}
               />
-              <div className="grid sm:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="code"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>코드</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          value={field.value ?? ""}
-                          placeholder="GPCD002"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="region"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>지역</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          value={field.value ?? ""}
-                          placeholder="서울 / 경기 / 충남..."
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+              <FormField
+                control={form.control}
+                name="region"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>지역</FormLabel>
+                    <FormControl>
+                      <RegionSelect
+                        value={field.value ?? ""}
+                        onChange={(v) => field.onChange(v === "" ? null : v)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="address"
@@ -209,18 +196,21 @@ export function TrainingCenterForm({ mode, centerId, defaultValues }: Props) {
               />
               <FormField
                 control={form.control}
-                name="contract_status"
+                name="contract_active"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>계약 상태</FormLabel>
+                  <FormItem className="flex flex-row items-center justify-between rounded-md border border-border p-3">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-sm">계약 상태</FormLabel>
+                      <div className="text-xs text-muted-foreground">
+                        ON = 계약 완료
+                      </div>
+                    </div>
                     <FormControl>
-                      <Input
-                        {...field}
-                        value={field.value ?? ""}
-                        placeholder="예: 계약 완료 / 계약중"
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
                       />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -389,6 +379,9 @@ export function TrainingCenterForm({ mode, centerId, defaultValues }: Props) {
             </CardContent>
           </Card>
         </div>
+
+        {/* 월별 개강정보 등 외부에서 주입하는 컨텐츠 */}
+        {extraContent}
 
         {/* 메모 */}
         <Card>

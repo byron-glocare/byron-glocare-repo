@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/page-header";
 import { buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -15,21 +16,51 @@ import {
 } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
 import { dash, formatCurrency } from "@/lib/format";
+import { REGION1_OPTIONS } from "@/lib/region-options";
 
 export const dynamic = "force-dynamic";
 
-export default async function TrainingCentersPage() {
+type SearchParams = Promise<{
+  q?: string;
+  region?: string;
+}>;
+
+export default async function TrainingCentersPage({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}) {
+  const sp = await searchParams;
+  const q = sp.q?.trim() ?? "";
+  const regionFilter = sp.region?.trim() ?? "";
+
   const supabase = await createClient();
 
-  // 교육원 목록
-  const { data: centers, error } = await supabase
+  // 교육원 목록 — q/region 필터 DB 레벨 적용
+  let query = supabase
     .from("training_centers")
-    .select("id, region, name, director_name, phone, tuition_fee_2026, naeil_card_eligible")
+    .select(
+      "id, region, name, director_name, phone, tuition_fee_2026, naeil_card_eligible, contract_active"
+    )
     .order("name", { ascending: true });
 
+  if (q) {
+    const safeQ = q.replace(/[,()]/g, " ").trim();
+    if (safeQ) {
+      query = query.or(
+        `name.ilike.%${safeQ}%,director_name.ilike.%${safeQ}%,phone.ilike.%${safeQ}%,region.ilike.%${safeQ}%`
+      );
+    }
+  }
+  if (regionFilter) {
+    // 1단계만 필터 (시·도) — region 문자열이 "대구 달서구" 처럼 저장되어
+    // 있으므로 "대구%" 로 prefix 일치
+    query = query.ilike("region", `${regionFilter}%`);
+  }
+
+  const { data: centers, error } = await query;
+
   // 교육원별 "실제 등록 교육생" 수 집계.
-  // - training_center_id 가 설정된 고객만
-  // - 종료/포기/드랍 상태는 제외 (진행 중인 교육생만 카운트)
   const { data: enrolled } = await supabase
     .from("customers")
     .select(
@@ -46,7 +77,6 @@ export default async function TrainingCentersPage() {
   for (const row of enrolled ?? []) {
     if (!row.training_center_id) continue;
     if (row.termination_reason) continue;
-    // customer_statuses 는 1:1 관계 — supabase-js 가 배열 또는 객체로 반환.
     const s = Array.isArray(row.customer_statuses)
       ? row.customer_statuses[0]
       : row.customer_statuses;
@@ -65,6 +95,8 @@ export default async function TrainingCentersPage() {
     );
   }
 
+  const hasAnyFilter = !!(q || regionFilter);
+
   return (
     <>
       <PageHeader
@@ -78,20 +110,71 @@ export default async function TrainingCentersPage() {
           </Link>
         }
       />
-      <div className="p-6">
+      <div className="p-6 space-y-4">
+        <form method="get" className="flex flex-wrap gap-2 items-end">
+          <div className="flex-1 min-w-60">
+            <label className="text-xs text-muted-foreground block mb-1">
+              검색 (이름 · 원장 · 연락처 · 지역)
+            </label>
+            <div className="relative">
+              <Search className="size-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+              <Input
+                name="q"
+                defaultValue={q}
+                placeholder="교육원 이름 / 원장 / 010..."
+                className="pl-8"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="text-xs text-muted-foreground block mb-1">
+              지역
+            </label>
+            <select
+              name="region"
+              defaultValue={regionFilter}
+              className="h-8 rounded-md border border-input bg-background px-2 text-sm min-w-28"
+            >
+              <option value="">전체</option>
+              {REGION1_OPTIONS.map((r) => (
+                <option key={r} value={r}>
+                  {r}
+                </option>
+              ))}
+            </select>
+          </div>
+          <button type="submit" className={buttonVariants()}>
+            적용
+          </button>
+          {hasAnyFilter && (
+            <Link
+              href="/training-centers"
+              className={buttonVariants({ variant: "ghost" })}
+            >
+              초기화
+            </Link>
+          )}
+        </form>
+
         {error ? (
           <Card className="p-6 text-sm text-destructive">
             데이터를 불러오지 못했습니다: {error.message}
           </Card>
         ) : !centers || centers.length === 0 ? (
           <Card className="p-12 text-center text-sm text-muted-foreground">
-            등록된 교육원이 없습니다.{" "}
-            <Link
-              href="/training-centers/new"
-              className="text-primary hover:underline"
-            >
-              첫 교육원 등록하기 →
-            </Link>
+            {hasAnyFilter ? (
+              "조건에 맞는 교육원이 없습니다."
+            ) : (
+              <>
+                등록된 교육원이 없습니다.{" "}
+                <Link
+                  href="/training-centers/new"
+                  className="text-primary hover:underline"
+                >
+                  첫 교육원 등록하기 →
+                </Link>
+              </>
+            )}
           </Card>
         ) : (
           <Card className="overflow-hidden p-0">
@@ -105,6 +188,7 @@ export default async function TrainingCentersPage() {
                   <TableHead className="w-28 text-right">2026 수강료</TableHead>
                   <TableHead className="w-24 text-center">교육생</TableHead>
                   <TableHead className="w-28 text-center">내일배움</TableHead>
+                  <TableHead className="w-24 text-center">계약</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -150,6 +234,17 @@ export default async function TrainingCentersPage() {
                         {c.naeil_card_eligible ? (
                           <Badge className="bg-success/10 text-success border-success/20">
                             가능
+                          </Badge>
+                        ) : (
+                          <span className="text-xs text-muted-foreground">—</span>
+                        )}
+                      </Link>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Link href={`/training-centers/${c.id}`} className="block">
+                        {c.contract_active ? (
+                          <Badge className="bg-success/10 text-success border-success/20">
+                            ON
                           </Badge>
                         ) : (
                           <span className="text-xs text-muted-foreground">—</span>

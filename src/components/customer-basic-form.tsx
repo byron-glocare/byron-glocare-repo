@@ -21,6 +21,7 @@ import type { TrainingCenter, TrainingClass, CareHome } from "@/types/database";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { RegionSelect } from "@/components/region-select";
 import {
   Card,
   CardContent,
@@ -406,7 +407,10 @@ export function CustomerBasicForm({
                 <FormItem>
                   <FormLabel>희망 지역</FormLabel>
                   <FormControl>
-                    <Input {...field} value={field.value ?? ""} />
+                    <RegionSelect
+                      value={field.value ?? ""}
+                      onChange={(v) => field.onChange(v === "" ? null : v)}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAuth } from "@/lib/require-auth";
+import { generateCode } from "@/lib/code-generator";
 import {
   trainingCenterSchema,
   trainingClassSchema,
@@ -31,9 +32,11 @@ export async function createTrainingCenter(input: TrainingCenterInput) {
     return { ok: false as const, error: "Unauthorized" };
   }
 
+  const code = await generateCode(supabase, "training_centers");
+
   const { data, error } = await supabase
     .from("training_centers")
-    .insert(parsed.data)
+    .insert({ ...parsed.data, code })
     .select("id")
     .single();
 

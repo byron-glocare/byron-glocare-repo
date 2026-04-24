@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAuth } from "@/lib/require-auth";
+import { generateCode } from "@/lib/code-generator";
 import { careHomeSchema, type CareHomeInput } from "@/lib/validators";
 
 export type ActionResult<T = unknown> =
@@ -22,9 +23,11 @@ export async function createCareHome(input: CareHomeInput) {
     return { ok: false as const, error: parsed.error.issues[0].message };
   }
 
+  const code = await generateCode(supabase, "care_homes");
+
   const { data, error } = await supabase
     .from("care_homes")
-    .insert(parsed.data)
+    .insert({ ...parsed.data, code })
     .select("id")
     .single();
 

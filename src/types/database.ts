@@ -68,7 +68,7 @@ export type Database = {
       training_centers: {
         Row: {
           id: string;
-          code: string | null;
+          code: string;
           name: string;
           region: string | null;
           address: string | null;
@@ -82,14 +82,14 @@ export type Database = {
           tuition_fee_2026: number | null;
           class_hours: string | null;
           naeil_card_eligible: boolean;
-          contract_status: string | null;
+          contract_active: boolean;
           notes: string | null;
           created_at: string;
           updated_at: string;
         };
         Insert: {
           id?: string;
-          code?: string | null;
+          code: string;
           name: string;
           region?: string | null;
           address?: string | null;
@@ -103,7 +103,7 @@ export type Database = {
           tuition_fee_2026?: number | null;
           class_hours?: string | null;
           naeil_card_eligible?: boolean;
-          contract_status?: string | null;
+          contract_active?: boolean;
           notes?: string | null;
           created_at?: string;
           updated_at?: string;
@@ -153,7 +153,7 @@ export type Database = {
       care_homes: {
         Row: {
           id: string;
-          code: string | null;
+          code: string;
           name: string;
           region: string | null;
           address: string | null;
@@ -168,7 +168,7 @@ export type Database = {
         };
         Insert: {
           id?: string;
-          code?: string | null;
+          code: string;
           name: string;
           region?: string | null;
           address?: string | null;

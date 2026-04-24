@@ -28,7 +28,7 @@ export const optionalNumber = z
 // =============================================================================
 
 export const trainingCenterSchema = z.object({
-  code: optionalString,
+  // code 는 서버가 자동 발급 (TC + YYMM + 순번)
   name: z.string().trim().min(1, "교육원 이름은 필수입니다."),
   region: optionalString,
   address: optionalString,
@@ -42,7 +42,7 @@ export const trainingCenterSchema = z.object({
   tuition_fee_2026: optionalNumber,
   class_hours: optionalString,
   naeil_card_eligible: z.boolean().default(false),
-  contract_status: optionalString,
+  contract_active: z.boolean().default(false),
   notes: optionalString,
 });
 
@@ -70,7 +70,7 @@ export type TrainingClassOutput = z.output<typeof trainingClassSchema>;
 // =============================================================================
 
 export const careHomeSchema = z.object({
-  code: optionalString,
+  // code 는 서버가 자동 발급 (CH + YYMM + 순번)
   name: z.string().trim().min(1, "요양원 이름은 필수입니다."),
   region: optionalString,
   address: optionalString,

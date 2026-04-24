@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
 import { requireAuth } from "@/lib/require-auth";
+import { generateCode } from "@/lib/code-generator";
 import { isVietnamese, translateToKorean } from "@/lib/translate";
 import { analyzeConsultation } from "@/lib/analyze-consultation";
 import type { ConsultationAnalysis } from "@/lib/consultation-tags";
@@ -26,40 +27,6 @@ import {
 export type ActionResult<T = unknown> =
   | { ok: true; data: T }
   | { ok: false; error: string };
-
-// =============================================================================
-// 고객 코드 자동 발급 — CVN + YYMM + 순번 3자리
-// =============================================================================
-
-async function generateCustomerCode(
-  supabase: Awaited<ReturnType<typeof createClient>>
-): Promise<string> {
-  // KST 기준 연·월로 CVN+YYMM 접두사 생성 (서버 timezone 무관)
-  const kst = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Asia/Seoul",
-    year: "2-digit",
-    month: "2-digit",
-  }).formatToParts(new Date());
-  const yy = kst.find((p) => p.type === "year")?.value ?? "00";
-  const mm = kst.find((p) => p.type === "month")?.value ?? "00";
-  const prefix = `CVN${yy}${mm}`;
-
-  const { data } = await supabase
-    .from("customers")
-    .select("code")
-    .ilike("code", `${prefix}%`)
-    .order("code", { ascending: false })
-    .limit(1);
-
-  let next = 1;
-  if (data && data.length > 0) {
-    const last = data[0].code;
-    const lastNum = parseInt(last.slice(prefix.length), 10);
-    if (Number.isFinite(lastNum)) next = lastNum + 1;
-  }
-
-  return `${prefix}${String(next).padStart(3, "0")}`;
-}
 
 // =============================================================================
 // 교육원 매칭 시 '교육원 발굴' 플래그 자동 리셋 (§5.1.2)
@@ -108,7 +75,7 @@ export async function createCustomer(input: CustomerInput) {
     return { ok: false as const, error: parsed.error.issues[0].message };
   }
 
-  const code = await generateCustomerCode(supabase);
+  const code = await generateCode(supabase, "customers");
 
   const { data, error } = await supabase
     .from("customers")

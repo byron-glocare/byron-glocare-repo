@@ -21,6 +21,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { RegionSelect } from "@/components/region-select";
 import {
   Card,
   CardContent,
@@ -52,7 +53,6 @@ type Props = {
 };
 
 const EMPTY: CareHomeInput = {
-  code: null,
   name: "",
   region: null,
   address: null,
@@ -131,42 +131,22 @@ export function CareHomeForm({ mode, homeId, defaultValues }: Props) {
                   </FormItem>
                 )}
               />
-              <div className="grid sm:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="code"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>코드</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          value={field.value ?? ""}
-                          placeholder="CH0001"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="region"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>지역</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          value={field.value ?? ""}
-                          placeholder="서울 / 경기 / ..."
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+              <FormField
+                control={form.control}
+                name="region"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>지역</FormLabel>
+                    <FormControl>
+                      <RegionSelect
+                        value={field.value ?? ""}
+                        onChange={(v) => field.onChange(v === "" ? null : v)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="address"
