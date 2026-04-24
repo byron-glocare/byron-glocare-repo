@@ -4,18 +4,13 @@ import { revalidatePath } from "next/cache";
 import { requireAuth } from "@/lib/require-auth";
 import {
   reservationPaymentSchema,
-  commissionPaymentSchema,
   eventPaymentSchema,
   welcomePackPaymentSchema,
   type ReservationPaymentInput,
-  type CommissionPaymentInput,
   type EventPaymentInput,
   type WelcomePackPaymentInput,
 } from "@/lib/validators";
-import {
-  computeCommissionReceived,
-  computeWelcomePackAmounts,
-} from "@/lib/settlement";
+import { computeWelcomePackAmounts } from "@/lib/settlement";
 
 export type ActionResult<T = unknown> =
   | { ok: true; data: T }
@@ -93,116 +88,10 @@ export async function deleteReservationPayment(
 }
 
 // =============================================================================
-// 소개비
+// 소개비 — 고객 단건 CRUD 는 제거됨 (0007 이후).
+// 소개비는 /settlements 페이지에서 교육원×월 단위로 일괄 완료/되돌리기.
+// 관련 서버 액션은 app/(app)/settlements/actions.ts 참조.
 // =============================================================================
-
-export async function createCommissionPayment(
-  customerId: string,
-  input: CommissionPaymentInput
-): Promise<ActionResult> {
-  const parsed = commissionPaymentSchema.safeParse(input);
-  if (!parsed.success) return { ok: false, error: parsed.error.issues[0].message };
-
-  const received = computeCommissionReceived(
-    parsed.data.total_amount,
-    parsed.data.deduction_amount
-  );
-
-  let supabase;
-  try {
-    ({ supabase } = await requireAuth());
-  } catch {
-    return { ok: false, error: "Unauthorized" };
-  }
-  const { error } = await supabase.from("commission_payments").insert({
-    customer_id: customerId,
-    training_center_id: parsed.data.training_center_id,
-    total_amount: parsed.data.total_amount,
-    deduction_amount: parsed.data.deduction_amount,
-    received_amount: received,
-    received_date: parsed.data.received_date,
-    tax_invoice_issued: parsed.data.tax_invoice_issued,
-    tax_invoice_date: parsed.data.tax_invoice_date,
-    status: parsed.data.status,
-  });
-  if (error) return { ok: false, error: error.message };
-
-  revalidatePath(`/customers/${customerId}`);
-  revalidatePath("/settlements");
-  return { ok: true, data: null };
-}
-
-export async function updateCommissionPayment(
-  paymentId: string,
-  customerId: string,
-  input: CommissionPaymentInput
-): Promise<ActionResult> {
-  const parsed = commissionPaymentSchema.safeParse(input);
-  if (!parsed.success) return { ok: false, error: parsed.error.issues[0].message };
-
-  const received = computeCommissionReceived(
-    parsed.data.total_amount,
-    parsed.data.deduction_amount
-  );
-
-  // 입금 + 세금계산서 모두 완료 시 자동으로 status='completed' 로 올림
-  let status = parsed.data.status;
-  if (
-    parsed.data.received_date &&
-    parsed.data.tax_invoice_issued &&
-    parsed.data.tax_invoice_date &&
-    status !== "completed"
-  ) {
-    status = "completed";
-  }
-
-  let supabase;
-  try {
-    ({ supabase } = await requireAuth());
-  } catch {
-    return { ok: false, error: "Unauthorized" };
-  }
-  const { error } = await supabase
-    .from("commission_payments")
-    .update({
-      training_center_id: parsed.data.training_center_id,
-      total_amount: parsed.data.total_amount,
-      deduction_amount: parsed.data.deduction_amount,
-      received_amount: received,
-      received_date: parsed.data.received_date,
-      tax_invoice_issued: parsed.data.tax_invoice_issued,
-      tax_invoice_date: parsed.data.tax_invoice_date,
-      status,
-    })
-    .eq("id", paymentId);
-
-  if (error) return { ok: false, error: error.message };
-
-  revalidatePath(`/customers/${customerId}`);
-  revalidatePath("/settlements");
-  return { ok: true, data: null };
-}
-
-export async function deleteCommissionPayment(
-  paymentId: string,
-  customerId: string
-): Promise<ActionResult> {
-  let supabase;
-  try {
-    ({ supabase } = await requireAuth());
-  } catch {
-    return { ok: false, error: "Unauthorized" };
-  }
-  const { error } = await supabase
-    .from("commission_payments")
-    .delete()
-    .eq("id", paymentId);
-  if (error) return { ok: false, error: error.message };
-
-  revalidatePath(`/customers/${customerId}`);
-  revalidatePath("/settlements");
-  return { ok: true, data: null };
-}
 
 // =============================================================================
 // 이벤트 결제 (친구 소개는 양방향 생성)

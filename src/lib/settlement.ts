@@ -29,7 +29,8 @@ export type SettlementSummary = {
 export function computeSettlementSummary(inputs: {
   customer: Pick<Customer, "product_type">;
   reservationPayments: Pick<ReservationPayment, "payment_date">[];
-  commissionPayments: Pick<CommissionPayment, "status">[];
+  /** commission_payments row 존재 자체가 "완료" 신호 (0007 이후 구조) */
+  commissionPayments: Pick<CommissionPayment, "id">[];
   eventPayments: Pick<EventPayment, "gift_given">[];
   welcomePackPayment: Pick<WelcomePackPayment, "sales_reported"> | null;
 }): SettlementSummary {
@@ -43,15 +44,9 @@ export function computeSettlementSummary(inputs: {
     ? "완료"
     : "미완료";
 
-  // 소개비: 레코드가 있고 status='completed' 인 게 하나라도 있으면 완료
-  let commission: SettlementFlag;
-  if (commissionPayments.length === 0) {
-    commission = "미완료";
-  } else {
-    commission = commissionPayments.every((c) => c.status === "completed")
-      ? "완료"
-      : "미완료";
-  }
+  // 소개비: commission_payments row 존재 시 완료 (0007 재설계 — row = 완료 표식)
+  const commission: SettlementFlag =
+    commissionPayments.length > 0 ? "완료" : "미완료";
 
   // 이벤트: 레코드 없으면 대상아님. 있으면 모두 gift_given 이어야 완료.
   let event: SettlementFlag;
@@ -78,10 +73,9 @@ export function computeSettlementSummary(inputs: {
 }
 
 // =============================================================================
-// §5.3 — 소개비 정산 대상 선정 (월말 기준)
-//
-//   주간반: class_start_date + 45일이 포함된 월의 고객
-//   야간반: class_start_date + 75일이 포함된 월의 고객
+// §5.3 — 소개비 정산 대상 선정 (월말 기준) — DEPRECATED
+// 새 로직은 lib/commission.ts (offset 50/80 + 월 첫날 포맷).
+// 아래는 기존 /settlements 페이지 호환을 위해 유지 (점차 제거 예정).
 // =============================================================================
 
 export function commissionSettlementMonth(
@@ -90,7 +84,7 @@ export function commissionSettlementMonth(
 ): { year: number; month: number } | null {
   if (!classStartDate || !classType) return null;
 
-  const offsetDays = classType === "weekday" ? 45 : 75;
+  const offsetDays = classType === "weekday" ? 50 : 80;
   const d = new Date(classStartDate);
   d.setDate(d.getDate() + offsetDays);
 

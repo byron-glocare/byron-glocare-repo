@@ -202,8 +202,8 @@ update customer_statuses set certificate_acquired = true where customer_id = c08
 insert into reservation_payments (customer_id, amount, payment_date)
 values (c08, 100000, current_date - 50);
 
-insert into commission_payments (customer_id, training_center_id, total_amount, deduction_amount, received_amount, status)
-values (c08, tc_chungnam, 300000, 35000, 265000, 'pending');
+-- commission_payments 시드 제거: 0007 이후 스키마 변경 (settlement_month 등
+-- 컬럼 구조가 바뀌었음). 정산 완료 기록은 /settlements 페이지에서 생성.
 
 -- ---- c09: 교육 드랍 ----
 insert into customers (code, name_vi, name_kr, phone, birth_year, visa_type,

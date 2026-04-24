@@ -43,6 +43,7 @@ export const trainingCenterSchema = z.object({
   class_hours: optionalString,
   naeil_card_eligible: z.boolean().default(false),
   contract_active: z.boolean().default(false),
+  deduct_reservation_by_default: z.boolean().default(true),
   notes: optionalString,
 });
 
@@ -300,19 +301,7 @@ export const reservationPaymentSchema = z.object({
 export type ReservationPaymentInput = z.input<typeof reservationPaymentSchema>;
 export type ReservationPaymentOutput = z.output<typeof reservationPaymentSchema>;
 
-// 소개비
-export const commissionPaymentSchema = z.object({
-  training_center_id: z.string().min(1, "교육원을 선택하세요."),
-  total_amount: positiveInt,
-  deduction_amount: positiveInt.default(0),
-  received_date: optionalDate,
-  tax_invoice_issued: z.boolean().default(false),
-  tax_invoice_date: optionalDate,
-  status: z.enum(["pending", "notified", "completed"]).default("pending"),
-});
-
-export type CommissionPaymentInput = z.input<typeof commissionPaymentSchema>;
-export type CommissionPaymentOutput = z.output<typeof commissionPaymentSchema>;
+// 소개비 — 0007 이후 제거 (교육원×월 단위 일괄 처리. /settlements 페이지).
 
 // 이벤트 결제
 export const eventPaymentSchema = z.object({

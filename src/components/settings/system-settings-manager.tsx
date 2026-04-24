@@ -37,10 +37,15 @@ export function SystemSettingsManager({ settings }: Props) {
         {/* 숫자 설정 */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <NumberSetting
-            settingKey="training_reservation_fee"
+            settingKey="education_reservation_amount"
             label="교육 예약금"
             suffix="원"
-            value={toNumber(settings.training_reservation_fee, 35000)}
+            value={toNumber(
+              settings.education_reservation_amount ??
+                settings.training_reservation_fee,
+              35000
+            )}
+            hint="소개비 정산 시 기본 공제 금액"
           />
           <NumberSetting
             settingKey="welcome_pack_reservation_fee"
@@ -72,13 +77,14 @@ export function SystemSettingsManager({ settings }: Props) {
             settingKey="commission_settle_days_weekday"
             label="소개비 정산일 (주간)"
             suffix="일"
-            value={toNumber(settings.commission_settle_days_weekday, 45)}
+            value={toNumber(settings.commission_settle_days_weekday, 50)}
+            hint="개강일로부터 경과 일수 — 이 날짜가 속한 달이 정산월"
           />
           <NumberSetting
             settingKey="commission_settle_days_night"
             label="소개비 정산일 (야간)"
             suffix="일"
-            value={toNumber(settings.commission_settle_days_night, 75)}
+            value={toNumber(settings.commission_settle_days_night, 80)}
           />
         </div>
 

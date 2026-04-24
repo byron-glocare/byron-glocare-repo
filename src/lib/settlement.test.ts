@@ -40,24 +40,24 @@ describe("computeSettlementSummary — §5.2", () => {
     expect(r.reservation).toBe("완료");
   });
 
-  it("소개비 레코드 모두 completed 일 때만 완료", () => {
+  it("소개비 레코드가 있으면 완료 (0007 이후 row 존재 = 완료 표식)", () => {
+    const none = computeSettlementSummary({
+      customer: { product_type: "교육" },
+      reservationPayments: [],
+      commissionPayments: [],
+      eventPayments: [],
+      welcomePackPayment: null,
+    });
+    expect(none.commission).toBe("미완료");
+
     const some = computeSettlementSummary({
       customer: { product_type: "교육" },
       reservationPayments: [],
-      commissionPayments: [{ status: "completed" }, { status: "pending" }],
+      commissionPayments: [{ id: "commission-1" }],
       eventPayments: [],
       welcomePackPayment: null,
     });
-    expect(some.commission).toBe("미완료");
-
-    const all = computeSettlementSummary({
-      customer: { product_type: "교육" },
-      reservationPayments: [],
-      commissionPayments: [{ status: "completed" }, { status: "completed" }],
-      eventPayments: [],
-      welcomePackPayment: null,
-    });
-    expect(all.commission).toBe("완료");
+    expect(some.commission).toBe("완료");
   });
 
   it("이벤트 레코드 있고 모두 gift_given 이면 완료", () => {
@@ -118,21 +118,14 @@ describe("computeSettlementSummary — §5.2", () => {
 // §5.3 — 소개비 정산 대상 월
 // =============================================================================
 
-describe("commissionSettlementMonth — §5.3", () => {
-  it("주간반 3월 15일 개강 → 4월 정산 대상", () => {
-    // 3월 15일 + 45일 = 4월 29일
-    const r = commissionSettlementMonth("2026-03-15", "weekday");
+describe("commissionSettlementMonth — §5.3 (0007 이후 50/80일)", () => {
+  it("주간반 3월 10일 개강 → 50일 뒤 4월 29일 → 4월", () => {
+    const r = commissionSettlementMonth("2026-03-10", "weekday");
     expect(r).toEqual({ year: 2026, month: 4 });
   });
 
-  it("야간반 2월 15일 개강 → 5월 정산 대상", () => {
-    // 2월 15일 + 75일 = 5월 1일
-    const r = commissionSettlementMonth("2026-02-15", "night");
-    expect(r).toEqual({ year: 2026, month: 5 });
-  });
-
-  it("주간반 경계: 3월 17일 + 45일 = 5월 1일 → 5월", () => {
-    const r = commissionSettlementMonth("2026-03-17", "weekday");
+  it("야간반 2월 10일 개강 → 80일 뒤 5월 1일 → 5월", () => {
+    const r = commissionSettlementMonth("2026-02-10", "night");
     expect(r).toEqual({ year: 2026, month: 5 });
   });
 
@@ -143,13 +136,13 @@ describe("commissionSettlementMonth — §5.3", () => {
 
   it("isCommissionSettlementTargetFor 일치 판정", () => {
     expect(
-      isCommissionSettlementTargetFor("2026-03-15", "weekday", 2026, 4)
+      isCommissionSettlementTargetFor("2026-03-10", "weekday", 2026, 4)
     ).toBe(true);
     expect(
-      isCommissionSettlementTargetFor("2026-03-15", "weekday", 2026, 3)
+      isCommissionSettlementTargetFor("2026-03-10", "weekday", 2026, 3)
     ).toBe(false);
     expect(
-      isCommissionSettlementTargetFor("2026-02-15", "night", 2026, 5)
+      isCommissionSettlementTargetFor("2026-02-10", "night", 2026, 5)
     ).toBe(true);
   });
 });

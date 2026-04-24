@@ -83,6 +83,7 @@ export type Database = {
           class_hours: string | null;
           naeil_card_eligible: boolean;
           contract_active: boolean;
+          deduct_reservation_by_default: boolean;
           notes: string | null;
           created_at: string;
           updated_at: string;
@@ -104,6 +105,7 @@ export type Database = {
           class_hours?: string | null;
           naeil_card_eligible?: boolean;
           contract_active?: boolean;
+          deduct_reservation_by_default?: boolean;
           notes?: string | null;
           created_at?: string;
           updated_at?: string;
@@ -401,14 +403,10 @@ export type Database = {
           id: string;
           customer_id: string;
           training_center_id: string;
-          total_amount: number;
-          deduction_amount: number;
-          received_amount: number | null;
-          received_date: string | null;
-          tax_invoice_issued: boolean;
-          tax_invoice_date: string | null;
-          sms_sent_at: string | null;
-          status: CommissionStatus;
+          settlement_month: string; // YYYY-MM-01
+          total_amount: number; // 수강료 × 25%
+          deduction_amount: number; // 공제된 교육 예약금
+          completed_at: string;
           created_at: string;
           updated_at: string;
         };
@@ -416,14 +414,10 @@ export type Database = {
           id?: string;
           customer_id: string;
           training_center_id: string;
+          settlement_month: string;
           total_amount: number;
           deduction_amount?: number;
-          received_amount?: number | null;
-          received_date?: string | null;
-          tax_invoice_issued?: boolean;
-          tax_invoice_date?: string | null;
-          sms_sent_at?: string | null;
-          status?: CommissionStatus;
+          completed_at?: string;
           created_at?: string;
           updated_at?: string;
         };

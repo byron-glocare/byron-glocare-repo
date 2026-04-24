@@ -20,9 +20,6 @@ import {
   createReservationPayment,
   updateReservationPayment,
   deleteReservationPayment,
-  createCommissionPayment,
-  updateCommissionPayment,
-  deleteCommissionPayment,
   createEventPayment,
   deleteEventPayment,
   upsertWelcomePackPayment,
@@ -113,8 +110,9 @@ export function CustomerSettlementTab({
     welcomePackPayment,
   });
 
+  // education_reservation_amount (신규) 우선, 없으면 legacy training_reservation_fee
   const trainingReservationFee = toNumber(
-    settings.training_reservation_fee,
+    settings.education_reservation_amount ?? settings.training_reservation_fee,
     35000
   );
   const welcomePackReservationFee = toNumber(
@@ -156,22 +154,18 @@ export function CustomerSettlementTab({
         </CardContent>
       </Card>
 
-      {/* 예약 결제 */}
+      {/* 교육 예약금 — product_type 에 따라 활성 */}
       <ReservationPaymentsCard
         customerId={customer.id}
         payments={reservationPayments}
         defaultAmount={trainingReservationFee}
-        welcomePackAmount={welcomePackReservationFee}
+        productType={customer.product_type}
+        welcomePackReservationPaid={!!welcomePackPayment?.reservation_date}
       />
 
-      {/* 소개비 */}
-      <CommissionPaymentsCard
-        customerId={customer.id}
-        customer={customer}
-        payments={commissionPayments}
-        trainingCenters={trainingCenters}
-        reservationPayments={reservationPayments}
-      />
+      {/* 소개비(commission_payments) 는 /settlements 페이지에서 교육원×월
+          단위로 관리 — 여기 UI 없음. 정산 요약 뱃지는 위쪽에서 commissionPayments
+          prop 을 받아 자동 계산. */}
 
       {/* 이벤트 */}
       <EventPaymentsCard
@@ -237,13 +231,27 @@ function ReservationPaymentsCard({
   customerId,
   payments,
   defaultAmount,
-  welcomePackAmount,
+  productType,
+  welcomePackReservationPaid,
 }: {
   customerId: string;
   payments: ReservationPayment[];
   defaultAmount: number;
-  welcomePackAmount: number;
+  productType: Customer["product_type"];
+  welcomePackReservationPaid: boolean;
 }) {
+  // 교육 예약금 활성 조건:
+  //  - product_type 이 "교육" 또는 "교육+웰컴팩" (웰컴팩 only 는 비활성)
+  //  - 웰컴팩 예약금 미납 (납부했으면 교육 예약금 면제)
+  const productAllowsEducation =
+    productType === "교육" || productType === "교육+웰컴팩";
+  const exemptByWelcomePack = welcomePackReservationPaid;
+  const addDisabled = !productAllowsEducation || exemptByWelcomePack;
+  const disabledReason = !productAllowsEducation
+    ? `상품 '${productType ?? "없음"}' — 교육 예약금 대상 아님`
+    : exemptByWelcomePack
+      ? "웰컴팩 예약금 납부로 교육 예약금 면제"
+      : null;
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [showAdd, setShowAdd] = useState(false);
@@ -320,11 +328,13 @@ function ReservationPaymentsCard({
         <div>
           <CardTitle className="text-base flex items-center gap-2">
             <Receipt className="size-4" />
-            예약 결제
+            교육 예약금
           </CardTitle>
           <CardDescription>
-            교육 예약금 {formatCurrency(defaultAmount)} / 웰컴팩 예약금{" "}
-            {formatCurrency(welcomePackAmount)}
+            기본 금액 {formatCurrency(defaultAmount)}
+            {disabledReason && (
+              <span className="ml-2 text-warning">· {disabledReason}</span>
+            )}
           </CardDescription>
         </div>
         <Button
@@ -332,6 +342,7 @@ function ReservationPaymentsCard({
           variant="outline"
           size="sm"
           onClick={() => setShowAdd((v) => !v)}
+          disabled={addDisabled}
         >
           <Plus className="size-3" />
           추가
@@ -479,289 +490,6 @@ function ReservationPaymentsCard({
         )}
       </CardContent>
     </Card>
-  );
-}
-
-// =============================================================================
-// 소개비 카드
-// =============================================================================
-
-function CommissionPaymentsCard({
-  customerId,
-  customer,
-  payments,
-  trainingCenters,
-  reservationPayments,
-}: {
-  customerId: string;
-  customer: Customer;
-  payments: CommissionPayment[];
-  trainingCenters: Pick<TrainingCenter, "id" | "name" | "region">[];
-  reservationPayments: ReservationPayment[];
-}) {
-  const router = useRouter();
-  const [pending, startTransition] = useTransition();
-  const [showAdd, setShowAdd] = useState(false);
-
-  // 소개비 공제 예정액 = reservation_payments 중 refund_reason='소개비_공제' 이면서 amount !== 100000
-  const deductionSuggestion = reservationPayments
-    .filter(
-      (r) => r.refund_reason === "소개비_공제" && r.amount !== 100000
-    )
-    .reduce((s, r) => s + r.amount, 0);
-
-  function onAdd(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const form = new FormData(e.currentTarget);
-    const training_center_id =
-      (form.get("training_center_id") as string) ||
-      customer.training_center_id ||
-      "";
-    const total_amount = Number(form.get("total_amount")) || 0;
-    const deduction_amount =
-      Number(form.get("deduction_amount")) || 0;
-
-    if (!training_center_id) {
-      toast.error("교육원을 선택하세요.");
-      return;
-    }
-
-    startTransition(async () => {
-      const result = await createCommissionPayment(customerId, {
-        training_center_id,
-        total_amount,
-        deduction_amount,
-        received_date: null,
-        tax_invoice_issued: false,
-        tax_invoice_date: null,
-        status: "pending",
-      });
-      if (result.ok) {
-        toast.success("소개비가 추가되었습니다.");
-        setShowAdd(false);
-        router.refresh();
-      } else {
-        toast.error("추가 실패", { description: result.error });
-      }
-    });
-  }
-
-  async function onPatch(p: CommissionPayment, patch: Partial<CommissionPayment>) {
-    startTransition(async () => {
-      const result = await updateCommissionPayment(p.id, customerId, {
-        training_center_id: patch.training_center_id ?? p.training_center_id,
-        total_amount: patch.total_amount ?? p.total_amount,
-        deduction_amount: patch.deduction_amount ?? p.deduction_amount,
-        received_date:
-          patch.received_date !== undefined ? patch.received_date : p.received_date,
-        tax_invoice_issued:
-          patch.tax_invoice_issued !== undefined
-            ? patch.tax_invoice_issued
-            : p.tax_invoice_issued,
-        tax_invoice_date:
-          patch.tax_invoice_date !== undefined
-            ? patch.tax_invoice_date
-            : p.tax_invoice_date,
-        status: patch.status ?? p.status,
-      });
-      if (result.ok) {
-        toast.success("저장되었습니다.");
-        router.refresh();
-      } else {
-        toast.error("저장 실패", { description: result.error });
-      }
-    });
-  }
-
-  async function onDelete(id: string) {
-    const result = await deleteCommissionPayment(id, customerId);
-    if (result.ok) {
-      toast.success("삭제되었습니다.");
-      router.refresh();
-    } else {
-      toast.error("삭제 실패", { description: result.error });
-    }
-  }
-
-  return (
-    <Card>
-      <CardHeader className="flex-row items-center justify-between">
-        <div>
-          <CardTitle className="text-base flex items-center gap-2">
-            <Receipt className="size-4" />
-            소개비
-          </CardTitle>
-          <CardDescription>
-            교육원 수령 · 공제 · 세금계산서 현황
-          </CardDescription>
-        </div>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => setShowAdd((v) => !v)}
-        >
-          <Plus className="size-3" />
-          추가
-        </Button>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {showAdd && (
-          <form
-            onSubmit={onAdd}
-            className="grid sm:grid-cols-4 gap-3 items-end rounded-md border border-border p-3 bg-muted/30"
-          >
-            <div className="sm:col-span-2">
-              <Label className="text-xs">교육원</Label>
-              <select
-                name="training_center_id"
-                defaultValue={customer.training_center_id ?? ""}
-                className="h-9 w-full rounded-md border border-input bg-background px-2 text-sm"
-              >
-                <option value="">선택</option>
-                {trainingCenters.map((tc) => (
-                  <option key={tc.id} value={tc.id}>
-                    {tc.name}
-                    {tc.region ? ` (${tc.region})` : ""}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <Label className="text-xs">총액</Label>
-              <Input type="number" name="total_amount" min={0} />
-            </div>
-            <div>
-              <Label className="text-xs">
-                공제 (추천 {formatCurrency(deductionSuggestion)})
-              </Label>
-              <Input
-                type="number"
-                name="deduction_amount"
-                min={0}
-                defaultValue={deductionSuggestion}
-              />
-            </div>
-            <Button type="submit" disabled={pending} className="sm:col-span-4">
-              {pending && <Loader2 className="size-4 animate-spin" />}
-              등록
-            </Button>
-          </form>
-        )}
-
-        {payments.length === 0 ? (
-          <p className="text-sm text-muted-foreground py-6 text-center border border-dashed border-border rounded-md">
-            소개비 정산 레코드가 없습니다.
-          </p>
-        ) : (
-          <div className="overflow-x-auto rounded-md border border-border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-40">교육원</TableHead>
-                  <TableHead className="w-28 text-right">총액</TableHead>
-                  <TableHead className="w-24 text-right">공제</TableHead>
-                  <TableHead className="w-28 text-right">수령액</TableHead>
-                  <TableHead className="w-32">입금일</TableHead>
-                  <TableHead className="w-24 text-center">세금계산서</TableHead>
-                  <TableHead className="w-32">세금계산서일</TableHead>
-                  <TableHead className="w-24">상태</TableHead>
-                  <TableHead className="w-14" />
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {payments.map((p) => {
-                  const center = trainingCenters.find(
-                    (c) => c.id === p.training_center_id
-                  );
-                  return (
-                    <TableRow key={p.id}>
-                      <TableCell className="text-sm">
-                        {center?.name ?? p.training_center_id}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {formatCurrency(p.total_amount)}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {formatCurrency(p.deduction_amount)}
-                      </TableCell>
-                      <TableCell className="text-right font-medium">
-                        {formatCurrency(p.received_amount)}
-                      </TableCell>
-                      <TableCell>
-                        <Input
-                          type="date"
-                          defaultValue={p.received_date ?? ""}
-                          className="h-8"
-                          onBlur={(e) => {
-                            const v = e.target.value || null;
-                            if (v !== p.received_date) onPatch(p, { received_date: v });
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <Switch
-                          checked={p.tax_invoice_issued}
-                          onCheckedChange={(v) =>
-                            onPatch(p, { tax_invoice_issued: v })
-                          }
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Input
-                          type="date"
-                          defaultValue={p.tax_invoice_date ?? ""}
-                          className="h-8"
-                          onBlur={(e) => {
-                            const v = e.target.value || null;
-                            if (v !== p.tax_invoice_date)
-                              onPatch(p, { tax_invoice_date: v });
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <CommissionStatusBadge status={p.status} />
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => onDelete(p.id)}
-                          className="text-destructive hover:text-destructive hover:bg-destructive/5"
-                        >
-                          <Trash2 className="size-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </div>
-        )}
-      </CardContent>
-    </Card>
-  );
-}
-
-function CommissionStatusBadge({
-  status,
-}: {
-  status: CommissionPayment["status"];
-}) {
-  const cls =
-    status === "completed"
-      ? "bg-success/10 text-success border-success/20"
-      : status === "notified"
-        ? "bg-info/10 text-info border-info/20"
-        : "bg-muted text-muted-foreground border-border";
-  const label =
-    status === "completed" ? "완료" : status === "notified" ? "발송됨" : "대기";
-  return (
-    <Badge variant="outline" className={cls}>
-      {label}
-    </Badge>
   );
 }
 
