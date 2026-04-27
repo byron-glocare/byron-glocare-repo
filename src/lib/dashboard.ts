@@ -100,6 +100,7 @@ function defaultStatus(customerId: string): CustomerStatus {
     training_center_finding: false,
     class_schedule_confirmation_needed: false,
     training_reservation_abandoned: false,
+    class_intake_sms_sent: false,
     certificate_acquired: false,
     training_dropped: false,
     welcome_pack_abandoned: false,

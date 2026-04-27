@@ -127,6 +127,7 @@ export type StatusInputs = {
     | "training_center_finding"
     | "class_schedule_confirmation_needed"
     | "training_reservation_abandoned"
+    | "class_intake_sms_sent"
     | "certificate_acquired"
     | "training_dropped"
     | "welcome_pack_abandoned"
@@ -202,7 +203,7 @@ export function computeBasicInfo(
 export function computeTrainingReservation(
   inputs: StatusInputs
 ): StageSummary["trainingReservation"] {
-  const { customer, status, reservationPayments, smsMessages } = inputs;
+  const { customer, status, reservationPayments } = inputs;
 
   const centerFinding = status.training_center_finding;
   const centerMatched = !!customer.training_center_id;
@@ -211,16 +212,11 @@ export function computeTrainingReservation(
   const classMatched = !!customer.training_class_id;
   const reservationPaid = reservationPayments.some((p) => notBlank(p.payment_date));
   const abandoned = status.training_reservation_abandoned;
-  const smsSent = smsMessages.some((m) => m.message_type === "new_student");
+  // 0008 이후: sms_messages 자동 판정 → 수기 플래그로 전환
+  const smsSent = status.class_intake_sms_sent;
 
-  const complete =
-    !centerFinding &&
-    !classScheduleConfirmationNeeded &&
-    !abandoned &&
-    centerMatched &&
-    classMatched &&
-    reservationPaid &&
-    smsSent;
+  // 4가지 모두 yes 면 완료 (사용자 정의)
+  const complete = centerMatched && classMatched && reservationPaid && smsSent;
 
   return {
     centerFinding,
@@ -236,10 +232,11 @@ export function computeTrainingReservation(
 
 /** §5.1.3 교육 단계 */
 export function computeTraining(inputs: StatusInputs): StageSummary["training"] {
-  const { customer, status, smsMessages } = inputs;
+  const { customer, status } = inputs;
   const today = todayStr(inputs.today);
 
-  const smsSent = smsMessages.some((m) => m.message_type === "new_student");
+  // smsSent 는 trainingReservation 의 동일 플래그 (한 곳에서만 관리)
+  const smsSent = status.class_intake_sms_sent;
   const dropped = status.training_dropped;
   const certificateAcquired = status.certificate_acquired;
 
@@ -250,8 +247,8 @@ export function computeTraining(inputs: StatusInputs): StageSummary["training"] 
     else phase = "중";
   }
 
-  const complete =
-    !dropped && smsSent && phase === "완료" && certificateAcquired;
+  // 자격증 취득되면 완료 (사용자 정의)
+  const complete = certificateAcquired;
 
   return { smsSent, phase, dropped, certificateAcquired, complete };
 }
@@ -278,20 +275,17 @@ export function computeEmployment(
 
   const interviewPassed = status.interview_passed;
 
-  // 웰컴팩 대상자만 예약금 입금 요건 체크 (§11 "4-6.자체취업" 참고)
-  // 상품이 '교육' 또는 null 인 고객은 웰컴팩 미구매 → 예약금 요건 제외
+  // 웰컴팩 대상자만 예약금 입금 요건 체크
   const welcomePackTarget =
     customer.product_type === "웰컴팩" ||
     customer.product_type === "교육+웰컴팩";
   const welcomePackRequirementMet = welcomePackTarget
-    ? welcomePackReservationPaid && !welcomePackAbandoned
+    ? welcomePackReservationPaid
     : true;
 
+  // 요양원 매칭 + 면접합격 + 웰컴팩 예약금 (대상자만) 모두 yes 면 완료
   const complete =
-    !careHomeFinding &&
-    careHomeMatched &&
-    interviewPassed &&
-    welcomePackRequirementMet;
+    careHomeMatched && interviewPassed && welcomePackRequirementMet;
 
   return {
     welcomePackReservationPaid,

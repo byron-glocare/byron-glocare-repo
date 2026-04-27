@@ -52,6 +52,7 @@ function buildInputs(overrides?: {
       training_center_finding: false,
       class_schedule_confirmation_needed: false,
       training_reservation_abandoned: false,
+      class_intake_sms_sent: false,
       certificate_acquired: false,
       training_dropped: false,
       welcome_pack_abandoned: false,
@@ -162,15 +163,15 @@ describe("computeBasicInfo — §5.1.1", () => {
 // =============================================================================
 
 describe("computeTrainingReservation — §5.1.2", () => {
-  it("모든 조건 만족 시 complete = true", () => {
+  it("4가지 조건 모두 만족 시 complete = true (교육원·강의·예약금·SMS)", () => {
     const r = computeTrainingReservation(
       buildInputs({
         customer: {
           training_center_id: "tc-1",
           training_class_id: "tcls-1",
         },
+        status: { class_intake_sms_sent: true } as any,
         reservationPayments: [{ payment_date: "2026-04-01" }],
-        smsMessages: [{ message_type: "new_student" }],
       })
     );
     expect(r.complete).toBe(true);
@@ -180,35 +181,25 @@ describe("computeTrainingReservation — §5.1.2", () => {
     expect(r.smsSent).toBe(true);
   });
 
-  it("교육원 발굴 플래그 true면 complete = false", () => {
+  it("4가지 중 하나 (예: SMS) 미충족 시 complete = false", () => {
     const r = computeTrainingReservation(
       buildInputs({
-        status: { training_center_finding: true } as any,
         customer: {
           training_center_id: "tc-1",
           training_class_id: "tcls-1",
         },
+        // class_intake_sms_sent 기본값 false
         reservationPayments: [{ payment_date: "2026-04-01" }],
       })
     );
     expect(r.complete).toBe(false);
-    expect(r.centerFinding).toBe(true);
+    expect(r.smsSent).toBe(false);
   });
 
-  it("예약 포기 시 complete = false", () => {
+  it("smsSent 는 0008 이후 수기 플래그 (status.class_intake_sms_sent)", () => {
     const r = computeTrainingReservation(
       buildInputs({
-        status: { training_reservation_abandoned: true } as any,
-      })
-    );
-    expect(r.abandoned).toBe(true);
-    expect(r.complete).toBe(false);
-  });
-
-  it("SMS 발송 이력이 있으면 smsSent = true", () => {
-    const r = computeTrainingReservation(
-      buildInputs({
-        smsMessages: [{ message_type: "new_student" }],
+        status: { class_intake_sms_sent: true } as any,
       })
     );
     expect(r.smsSent).toBe(true);
@@ -279,7 +270,22 @@ describe("computeTraining — §5.1.3", () => {
     expect(r.complete).toBe(true);
   });
 
-  it("교육 드랍 플래그 시 complete = false", () => {
+  it("자격증 미취득 시 complete = false", () => {
+    const r = computeTraining(
+      buildInputs({
+        customer: {
+          class_start_date: "2026-02-01",
+          class_end_date: "2026-03-15",
+        },
+        status: { certificate_acquired: false } as any,
+        today: "2026-04-21",
+      })
+    );
+    expect(r.complete).toBe(false);
+    expect(r.certificateAcquired).toBe(false);
+  });
+
+  it("교육 드랍 플래그 — 완료와는 별개 (terminal 잠금은 stage-locks 책임)", () => {
     const r = computeTraining(
       buildInputs({
         customer: {
@@ -290,11 +296,11 @@ describe("computeTraining — §5.1.3", () => {
           certificate_acquired: true,
           training_dropped: true,
         } as any,
-        smsMessages: [{ message_type: "new_student" }],
         today: "2026-04-21",
       })
     );
-    expect(r.complete).toBe(false);
+    // 자격증 취득 = complete=true. 드랍 여부와 무관.
+    expect(r.complete).toBe(true);
     expect(r.dropped).toBe(true);
   });
 });
@@ -315,7 +321,7 @@ describe("computeEmployment — §5.1.4", () => {
     expect(r.complete).toBe(true);
   });
 
-  it("웰컴팩 예약 포기 시 complete = false (웰컴팩 대상 상품)", () => {
+  it("웰컴팩 예약 포기 + 예약금 입금 — 포기는 terminal 책임, complete 와 별개", () => {
     const r = computeEmployment(
       buildInputs({
         customer: { care_home_id: "ch-1", product_type: "웰컴팩" },
@@ -326,7 +332,9 @@ describe("computeEmployment — §5.1.4", () => {
         welcomePackPayment: { reservation_date: "2026-03-01" },
       })
     );
-    expect(r.complete).toBe(false);
+    // welcomePackReservationPaid=true 이면 complete=true. 포기는 stage-locks 가 잠금.
+    expect(r.complete).toBe(true);
+    expect(r.welcomePackAbandoned).toBe(true);
   });
 
   it("상품='교육' 고객(자체취업)은 웰컴팩 요건 없이도 complete", () => {
@@ -351,7 +359,7 @@ describe("computeEmployment — §5.1.4", () => {
     expect(r.complete).toBe(false);
   });
 
-  it("요양원 발굴 중 플래그 true면 complete = false", () => {
+  it("요양원 발굴 중 플래그는 careHomeFinding 만 노출, complete 직접 영향 없음", () => {
     const r = computeEmployment(
       buildInputs({
         customer: { care_home_id: "ch-1" },
@@ -362,7 +370,10 @@ describe("computeEmployment — §5.1.4", () => {
         welcomePackPayment: { reservation_date: "2026-03-01" },
       })
     );
-    expect(r.complete).toBe(false);
+    // care_home_id 설정 → careHomeMatched=true → complete=true.
+    // care_home_finding 은 자동 reset 트리거 대상 (서버 액션이 처리).
+    expect(r.complete).toBe(true);
+    expect(r.careHomeFinding).toBe(true);
   });
 
   it("면접일 이전 → interviewPhase = '전'", () => {

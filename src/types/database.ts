@@ -289,6 +289,7 @@ export type Database = {
           training_center_finding: boolean;
           class_schedule_confirmation_needed: boolean;
           training_reservation_abandoned: boolean;
+          class_intake_sms_sent: boolean;
           certificate_acquired: boolean;
           training_dropped: boolean;
           welcome_pack_abandoned: boolean;
@@ -304,6 +305,7 @@ export type Database = {
           training_center_finding?: boolean;
           class_schedule_confirmation_needed?: boolean;
           training_reservation_abandoned?: boolean;
+          class_intake_sms_sent?: boolean;
           certificate_acquired?: boolean;
           training_dropped?: boolean;
           welcome_pack_abandoned?: boolean;

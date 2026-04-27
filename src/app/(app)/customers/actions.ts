@@ -224,6 +224,38 @@ export async function updateStatusFlags(
 }
 
 /**
+ * 강의 접수 메시지 발송 플래그 일괄 변경.
+ * SMS 자동 발송 성공 후 팝업에서 확인 시 호출.
+ */
+export async function setClassIntakeSmsSent(
+  customerIds: string[],
+  value: boolean
+): Promise<ActionResult<{ updated: number }>> {
+  if (customerIds.length === 0) {
+    return { ok: false, error: "대상 고객이 없습니다." };
+  }
+  let supabase;
+  try {
+    ({ supabase } = await requireAuth());
+  } catch {
+    return { ok: false, error: "Unauthorized" };
+  }
+
+  const { error, count } = await supabase
+    .from("customer_statuses")
+    .update({ class_intake_sms_sent: value }, { count: "exact" })
+    .in("customer_id", customerIds);
+
+  if (error) return { ok: false, error: error.message };
+
+  revalidatePath("/customers");
+  for (const id of customerIds) {
+    revalidatePath(`/customers/${id}`);
+  }
+  return { ok: true, data: { updated: count ?? 0 } };
+}
+
+/**
  * 진행 단계 탭 전용 통합 저장.
  * customer_statuses 플래그 + customers 의 termination_reason / is_waiting /
  * recontact_date / waiting_memo 를 한 번에 갱신.

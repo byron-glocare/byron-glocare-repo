@@ -257,6 +257,7 @@ export const statusFlagsSchema = z.object({
   training_center_finding: z.boolean(),
   class_schedule_confirmation_needed: z.boolean(),
   training_reservation_abandoned: z.boolean(),
+  class_intake_sms_sent: z.boolean(),
   certificate_acquired: z.boolean(),
   training_dropped: z.boolean(),
   welcome_pack_abandoned: z.boolean(),

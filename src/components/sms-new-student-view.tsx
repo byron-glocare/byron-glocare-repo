@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Eye, Loader2, Send } from "lucide-react";
 
 import { sendNewStudentSms } from "@/app/(app)/sms/actions";
+import { setClassIntakeSmsSent } from "@/app/(app)/customers/actions";
 
 import {
   Card,
@@ -145,6 +146,9 @@ function CenterGroupCard({
   );
   const [previewOpen, setPreviewOpen] = useState(false);
   const [pending, startTransition] = useTransition();
+  // 발송 후 "강의 접수 메시지 발송 플래그 ON 으로 변경할까요?" 확인 다이얼로그
+  const [sentPromptIds, setSentPromptIds] = useState<string[] | null>(null);
+  const [flagPending, startFlagTransition] = useTransition();
 
   const selectedStudents = pendingStudents.filter((p) =>
     selectedIds.includes(p.id)
@@ -205,9 +209,10 @@ function CenterGroupCard({
     }
 
     startTransition(async () => {
+      const ids = selectedStudents.map((s) => s.id);
       const result = await sendNewStudentSms({
         centerId: center.id,
-        customerIds: selectedStudents.map((s) => s.id),
+        customerIds: ids,
         extraNote: note,
       });
       if (result.ok) {
@@ -219,10 +224,37 @@ function CenterGroupCard({
           );
         }
         setPreviewOpen(false);
-        onSent();
+        // 진행 단계의 "강의 접수 메시지 발송" 플래그를 자동 ON 할지 물어봄
+        setSentPromptIds(ids);
       } else {
         toast.error("발송 실패", { description: result.error });
       }
+    });
+  }
+
+  function handleConfirmFlag(value: boolean) {
+    if (!sentPromptIds || sentPromptIds.length === 0) {
+      setSentPromptIds(null);
+      onSent();
+      return;
+    }
+    if (!value) {
+      // 사용자가 "아니오" — 플래그 변경 안 함
+      setSentPromptIds(null);
+      onSent();
+      return;
+    }
+    startFlagTransition(async () => {
+      const result = await setClassIntakeSmsSent(sentPromptIds, true);
+      if (result.ok) {
+        toast.success(
+          `${result.data.updated}명의 '강의 접수 메시지 발송' 플래그 ON`
+        );
+      } else {
+        toast.error("플래그 변경 실패", { description: result.error });
+      }
+      setSentPromptIds(null);
+      onSent();
     });
   }
 
@@ -354,6 +386,45 @@ function CenterGroupCard({
             <Button type="button" onClick={handleSend} disabled={pending}>
               {pending ? <Loader2 className="size-3 animate-spin" /> : <Send className="size-3" />}
               이대로 발송
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* 발송 후 진행 단계 플래그 ON 확인 */}
+      <Dialog
+        open={sentPromptIds !== null}
+        onOpenChange={(v) => {
+          if (!v) handleConfirmFlag(false);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>진행 단계 플래그 변경?</DialogTitle>
+            <DialogDescription>
+              발송한 {sentPromptIds?.length ?? 0}명의 진행 단계 탭에서{" "}
+              <span className="font-medium text-foreground">
+                강의 접수 메시지 발송
+              </span>{" "}
+              플래그를 ON 으로 변경할까요?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => handleConfirmFlag(false)}
+              disabled={flagPending}
+            >
+              아니오
+            </Button>
+            <Button
+              type="button"
+              onClick={() => handleConfirmFlag(true)}
+              disabled={flagPending}
+            >
+              {flagPending && <Loader2 className="size-3 animate-spin" />}
+              예, 변경
             </Button>
           </DialogFooter>
         </DialogContent>

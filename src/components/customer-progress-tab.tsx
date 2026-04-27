@@ -83,6 +83,7 @@ const CATEGORY: Record<FlagKey, FlagCategory> = {
   training_center_finding: "blocker",
   class_schedule_confirmation_needed: "blocker",
   training_reservation_abandoned: "terminal",
+  class_intake_sms_sent: "milestone",
   certificate_acquired: "milestone",
   training_dropped: "terminal",
   welcome_pack_abandoned: "terminal",
@@ -97,6 +98,7 @@ const FLAG_LABELS: Record<FlagKey, string> = {
   training_center_finding: "교육원 발굴 필요",
   class_schedule_confirmation_needed: "강의 일정 확인 필요",
   training_reservation_abandoned: "교육 예약포기",
+  class_intake_sms_sent: "강의 접수 메시지 발송",
   certificate_acquired: "자격증 취득",
   training_dropped: "교육 드랍",
   welcome_pack_abandoned: "웰컴팩 예약포기",
@@ -130,6 +132,7 @@ const FLAG_STAGE: Record<FlagKey, StageKey> = {
   training_center_finding: "training_reservation",
   class_schedule_confirmation_needed: "training_reservation",
   training_reservation_abandoned: "training_reservation",
+  class_intake_sms_sent: "training_reservation",
   certificate_acquired: "training",
   training_dropped: "training",
   care_home_finding: "employment",
@@ -163,6 +166,7 @@ function buildInitialState(inputs: StatusInputs): ProgressStateInput {
         inputs.status.class_schedule_confirmation_needed,
       training_reservation_abandoned:
         inputs.status.training_reservation_abandoned,
+      class_intake_sms_sent: inputs.status.class_intake_sms_sent,
       certificate_acquired: inputs.status.certificate_acquired,
       training_dropped: inputs.status.training_dropped,
       welcome_pack_abandoned: inputs.status.welcome_pack_abandoned,
@@ -434,9 +438,13 @@ export function CustomerProgressTab({
           <AutoRow label="예약금 입금">
             <BoolPill v={summary.trainingReservation.reservationPaid} />
           </AutoRow>
-          <AutoRow label="강의 접수 메시지 발송">
-            <BoolPill v={summary.trainingReservation.smsSent} />
-          </AutoRow>
+          <MilestoneRow
+            flag="class_intake_sms_sent"
+            value={state.flags.class_intake_sms_sent}
+            locked={isFlagLocked("class_intake_sms_sent")}
+            onChange={(v) => toggleFlag("class_intake_sms_sent", v)}
+            pending={pending}
+          />
           <ManualSwitchRow
             flag="training_reservation_abandoned"
             value={state.flags.training_reservation_abandoned}
