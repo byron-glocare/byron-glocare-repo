@@ -149,6 +149,9 @@ export function CustomerBasicForm({
   });
 
   const selectedCenterId = form.watch("training_center_id");
+  // 상품이 "웰컴팩" 단독이면 교육 미참여 → 교육원/강의일정 비활성화
+  const productType = form.watch("product_type");
+  const trainingDisabled = productType === "웰컴팩";
   const filteredClasses = trainingClasses.filter(
     (c) => c.training_center_id === selectedCenterId
   );
@@ -544,6 +547,7 @@ export function CustomerBasicForm({
                         }
                         field.onChange(next);
                       }}
+                      disabled={trainingDisabled}
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -571,6 +575,11 @@ export function CustomerBasicForm({
                         ))}
                       </SelectContent>
                     </Select>
+                    {trainingDisabled && (
+                      <p className="text-xs text-muted-foreground">
+                        상품 '웰컴팩' — 교육 대상 아님
+                      </p>
+                    )}
                     <FormMessage />
                   </FormItem>
                 )}
@@ -586,7 +595,11 @@ export function CustomerBasicForm({
                       onValueChange={(v) =>
                         field.onChange(v === NONE_VALUE ? null : v)
                       }
-                      disabled={!selectedCenterId || filteredClasses.length === 0}
+                      disabled={
+                        trainingDisabled ||
+                        !selectedCenterId ||
+                        filteredClasses.length === 0
+                      }
                     >
                       <FormControl>
                         <SelectTrigger>

@@ -8,7 +8,7 @@
  * progress tab 내부와 기본 정보 탭 (요양원 section) 양쪽에서 공유.
  */
 
-import type { CustomerStatus } from "@/types/database";
+import type { CustomerStatus, ProductType } from "@/types/database";
 
 export type LockStage =
   | "intake"
@@ -50,12 +50,15 @@ type LockInputs = {
     | "welcome_pack_abandoned"
   >;
   termination_reason: string | null;
+  /** 상품 유형 — "웰컴팩" 단독이면 교육 예약 + 교육 단계는 대상 아님 */
+  product_type?: ProductType | null;
 };
 
 export type LockResult = {
   lockedStages: Set<LockStage>;
-  /** 잠금을 유발한 소스. "termination" 이면 전역. FlagKey 이면 stage-local. */
-  terminalSource: FlagKey | "termination" | null;
+  /** 잠금을 유발한 소스. "termination" / "welcome_pack_only" 는 정책 기반.
+   *  FlagKey 이면 사용자가 ON 한 종료 플래그. */
+  terminalSource: FlagKey | "termination" | "welcome_pack_only" | null;
 };
 
 export function computeLockedStages(inputs: LockInputs): LockResult {
@@ -65,6 +68,11 @@ export function computeLockedStages(inputs: LockInputs): LockResult {
       terminalSource: "termination",
     };
   }
+
+  // 상품이 "웰컴팩" 단독이면 교육 예약 + 교육 단계는 거치지 않음
+  // (교육+웰컴팩 은 정상 진행)
+  const welcomePackOnly = inputs.product_type === "웰컴팩";
+
   const terminalsInOrder: FlagKey[] = [
     "intake_abandoned",
     "study_abroad_consultation",
@@ -83,13 +91,25 @@ export function computeLockedStages(inputs: LockInputs): LockResult {
       }
     }
   }
-  if (source === null) {
-    return { lockedStages: new Set(), terminalSource: null };
+
+  // 종료 플래그 기반 잠금
+  const lockedStages = new Set<LockStage>(
+    source === null ? [] : LOCK_STAGE_ORDER.slice(earliestStageIdx)
+  );
+
+  // 웰컴팩 단독: 교육 예약 + 교육 추가 잠금 (그러나 취업/근무 는 풀림)
+  if (welcomePackOnly) {
+    lockedStages.add("training_reservation");
+    lockedStages.add("training");
   }
-  return {
-    lockedStages: new Set(LOCK_STAGE_ORDER.slice(earliestStageIdx)),
-    terminalSource: source,
-  };
+
+  if (source !== null) {
+    return { lockedStages, terminalSource: source };
+  }
+  if (welcomePackOnly) {
+    return { lockedStages, terminalSource: "welcome_pack_only" };
+  }
+  return { lockedStages, terminalSource: null };
 }
 
 /** 기본 정보 탭의 요양원 섹션이 잠겨야 하는지 — employment 이상 잠기면 true. */

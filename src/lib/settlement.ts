@@ -37,16 +37,26 @@ export function computeSettlementSummary(inputs: {
   const { customer, reservationPayments, commissionPayments, eventPayments, welcomePackPayment } =
     inputs;
 
-  // 예약금: payment_date 있는 레코드 하나라도 존재
-  const reservation: SettlementFlag = reservationPayments.some((p) =>
-    notBlank(p.payment_date)
-  )
-    ? "완료"
-    : "미완료";
+  // 상품이 "웰컴팩" 단독이면 교육 미참여 → 교육 예약금/소개비는 대상 아님
+  const welcomePackOnly = customer.product_type === "웰컴팩";
 
-  // 소개비: commission_payments row 존재 시 완료 (0007 재설계 — row = 완료 표식)
-  const commission: SettlementFlag =
-    commissionPayments.length > 0 ? "완료" : "미완료";
+  // 예약금 (교육 예약금): 웰컴팩 단독이면 대상 아님
+  let reservation: SettlementFlag;
+  if (welcomePackOnly) {
+    reservation = "대상아님";
+  } else {
+    reservation = reservationPayments.some((p) => notBlank(p.payment_date))
+      ? "완료"
+      : "미완료";
+  }
+
+  // 소개비: 웰컴팩 단독이면 대상 아님
+  let commission: SettlementFlag;
+  if (welcomePackOnly) {
+    commission = "대상아님";
+  } else {
+    commission = commissionPayments.length > 0 ? "완료" : "미완료";
+  }
 
   // 이벤트: 레코드 없으면 대상아님. 있으면 모두 gift_given 이어야 완료.
   let event: SettlementFlag;

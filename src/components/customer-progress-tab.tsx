@@ -138,10 +138,14 @@ const FLAG_STAGE: Record<FlagKey, StageKey> = {
   welcome_pack_abandoned: "employment",
 };
 
-function computeLockedStages(state: ProgressStateInput) {
+function computeLockedStages(
+  state: ProgressStateInput,
+  productType: import("@/types/database").ProductType | null
+) {
   return computeLockedStagesShared({
     flags: state.flags,
     termination_reason: state.termination_reason,
+    product_type: productType,
   });
 }
 
@@ -221,10 +225,12 @@ export function CustomerProgressTab({
     [ref, state, customerId]
   );
 
-  // 단계별 잠금 스코프 — 종료 플래그가 ON 이면 해당 단계(자신 제외) + 하위 잠금.
+  // 단계별 잠금 스코프 — 종료 플래그가 ON 이면 해당 단계 + 하위 잠금,
+  // 상품이 "웰컴팩" 단독이면 교육 예약 + 교육 추가 잠금.
+  const productType = inputs.customer.product_type ?? null;
   const { lockedStages, terminalSource } = useMemo(
-    () => computeLockedStages(state),
-    [state]
+    () => computeLockedStages(state, productType),
+    [state, productType]
   );
 
   /** 개별 플래그가 잠겼는지. 본인이 ON 된 terminal 인 경우는 풀림 (OFF 가능). */
@@ -317,6 +323,10 @@ export function CustomerProgressTab({
           {terminalSource === "termination" ? (
             <span className="text-destructive">
               근무 종료 상태 — 모든 단계가 잠겼습니다
+            </span>
+          ) : terminalSource === "welcome_pack_only" ? (
+            <span className="text-muted-foreground">
+              상품 '웰컴팩' — 교육 예약 / 교육 단계 대상 아님
             </span>
           ) : terminalSource ? (
             <span className="text-destructive">
