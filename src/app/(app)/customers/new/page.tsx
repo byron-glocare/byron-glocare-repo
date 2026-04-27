@@ -15,7 +15,9 @@ export default async function NewCustomerPage() {
         .order("name"),
       supabase
         .from("training_classes")
-        .select("id, training_center_id, year, month, class_type, start_date")
+        .select(
+          "id, training_center_id, year, month, class_type, start_date, end_date"
+        )
         .order("year", { ascending: false })
         .order("month", { ascending: false }),
       supabase

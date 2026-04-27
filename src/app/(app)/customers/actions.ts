@@ -59,6 +59,28 @@ async function applyCareHomeFindingAutoReset(
 }
 
 // =============================================================================
+// training_class_id 로부터 class_start_date / class_end_date 파생.
+// 고객 폼에서 강의 날짜를 직접 입력하지 않고 교육원 강의 일정에서 끌어쓴다.
+// =============================================================================
+async function resolveClassDates(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  trainingClassId: string | null | undefined
+): Promise<{ class_start_date: string | null; class_end_date: string | null }> {
+  if (!trainingClassId) {
+    return { class_start_date: null, class_end_date: null };
+  }
+  const { data } = await supabase
+    .from("training_classes")
+    .select("start_date, end_date")
+    .eq("id", trainingClassId)
+    .maybeSingle();
+  return {
+    class_start_date: data?.start_date ?? null,
+    class_end_date: data?.end_date ?? null,
+  };
+}
+
+// =============================================================================
 // 고객 CRUD
 // =============================================================================
 
@@ -76,10 +98,14 @@ export async function createCustomer(input: CustomerInput) {
   }
 
   const code = await generateCode(supabase, "customers");
+  const classDates = await resolveClassDates(
+    supabase,
+    parsed.data.training_class_id
+  );
 
   const { data, error } = await supabase
     .from("customers")
-    .insert({ ...parsed.data, code })
+    .insert({ ...parsed.data, ...classDates, code })
     .select("id")
     .single();
 
@@ -123,9 +149,14 @@ export async function updateCustomer(
     return { ok: false, error: parsed.error.issues[0].message };
   }
 
+  const classDates = await resolveClassDates(
+    supabase,
+    parsed.data.training_class_id
+  );
+
   const { error } = await supabase
     .from("customers")
-    .update(parsed.data)
+    .update({ ...parsed.data, ...classDates })
     .eq("id", id);
 
   if (error) return { ok: false, error: error.message };

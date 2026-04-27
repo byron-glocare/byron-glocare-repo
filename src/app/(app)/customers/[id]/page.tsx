@@ -97,7 +97,9 @@ export default async function CustomerDetailPage({
       .order("name"),
     supabase
       .from("training_classes")
-      .select("id, training_center_id, year, month, class_type, start_date")
+      .select(
+        "id, training_center_id, year, month, class_type, start_date, end_date"
+      )
       .order("year", { ascending: false })
       .order("month", { ascending: false }),
     supabase.from("care_homes").select("id, code, name, region").order("name"),

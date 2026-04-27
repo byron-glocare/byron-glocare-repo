@@ -142,8 +142,8 @@ export const customerSchema = z
     care_home_id: optionalString,
 
     // 일정
-    class_start_date: optionalDate,
-    class_end_date: optionalDate,
+    // class_start_date / class_end_date 는 training_class_id 로부터 파생되며
+    // 서버 액션이 자동 동기화 — 폼/클라이언트에서 직접 쓰지 않음.
     work_start_date: optionalDate,
     work_end_date: optionalDate,
     visa_change_date: optionalDate,

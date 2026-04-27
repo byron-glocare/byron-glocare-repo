@@ -60,7 +60,13 @@ type Props = {
   trainingCenters: Pick<TrainingCenter, "id" | "code" | "name" | "region">[];
   trainingClasses: Pick<
     TrainingClass,
-    "id" | "training_center_id" | "year" | "month" | "class_type" | "start_date"
+    | "id"
+    | "training_center_id"
+    | "year"
+    | "month"
+    | "class_type"
+    | "start_date"
+    | "end_date"
   >[];
   careHomes: Pick<CareHome, "id" | "code" | "name" | "region">[];
   /**
@@ -89,8 +95,7 @@ const EMPTY: CustomerInput = {
   training_center_id: null,
   training_class_id: null,
   care_home_id: null,
-  class_start_date: null,
-  class_end_date: null,
+  // class_start_date / class_end_date 는 training_class 에서 파생 (서버가 동기화)
   work_start_date: null,
   work_end_date: null,
   visa_change_date: null,
@@ -419,13 +424,49 @@ export function CustomerBasicForm({
           </CardContent>
         </Card>
 
-        {/* 매칭 & 일정 */}
+        {/* 교육원 · 강의 */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">매칭 · 일정</CardTitle>
+            <CardTitle className="text-base">교육원 · 강의</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <FormField
+                control={form.control}
+                name="product_type"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>상품</FormLabel>
+                    <Select
+                      value={field.value ?? NONE_VALUE}
+                      onValueChange={(v) =>
+                        field.onChange(v === NONE_VALUE ? null : v)
+                      }
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValueMap
+                            map={{
+                              [NONE_VALUE]: "—",
+                              "교육": "교육",
+                              "웰컴팩": "웰컴팩",
+                              "교육+웰컴팩": "교육+웰컴팩",
+                            }}
+                            placeholder="선택"
+                          />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value={NONE_VALUE}>—</SelectItem>
+                        <SelectItem value="교육">교육</SelectItem>
+                        <SelectItem value="웰컴팩">웰컴팩</SelectItem>
+                        <SelectItem value="교육+웰컴팩">교육+웰컴팩</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="training_center_id"
@@ -523,119 +564,73 @@ export function CustomerBasicForm({
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="care_home_id"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>요양원</FormLabel>
-                    <Select
-                      value={field.value ?? NONE_VALUE}
-                      onValueChange={(v) =>
-                        field.onChange(v === NONE_VALUE ? null : v)
-                      }
-                      disabled={careHomeLocked}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValueMap
-                            map={{
-                              [NONE_VALUE]: "미매칭",
-                              ...Object.fromEntries(
-                                careHomes.map((ch) => [
-                                  ch.id,
-                                  `${ch.name}${ch.region ? ` (${ch.region})` : ""}`,
-                                ])
-                              ),
-                            }}
-                            placeholder="선택"
-                          />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value={NONE_VALUE}>미매칭</SelectItem>
-                        {careHomes.map((ch) => (
-                          <SelectItem key={ch.id} value={ch.id}>
-                            {ch.name}
-                            {ch.region ? ` (${ch.region})` : ""}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {careHomeLocked && (
-                      <p className="text-xs text-muted-foreground">
-                        취업/근무 단계가 잠겨있어 수정할 수 없습니다.
-                      </p>
-                    )}
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="product_type"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>상품</FormLabel>
-                    <Select
-                      value={field.value ?? NONE_VALUE}
-                      onValueChange={(v) =>
-                        field.onChange(v === NONE_VALUE ? null : v)
-                      }
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValueMap
-                            map={{
-                              [NONE_VALUE]: "—",
-                              "교육": "교육",
-                              "웰컴팩": "웰컴팩",
-                              "교육+웰컴팩": "교육+웰컴팩",
-                            }}
-                            placeholder="선택"
-                          />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value={NONE_VALUE}>—</SelectItem>
-                        <SelectItem value="교육">교육</SelectItem>
-                        <SelectItem value="웰컴팩">웰컴팩</SelectItem>
-                        <SelectItem value="교육+웰컴팩">교육+웰컴팩</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             </div>
+            {/* 선택된 강의의 시작/종료일 표시 (read-only — 교육원 마스터에서 관리) */}
+            <SelectedClassDateInfo
+              trainingClass={
+                filteredClasses.find(
+                  (c) => c.id === form.watch("training_class_id")
+                ) ?? null
+              }
+            />
+          </CardContent>
+        </Card>
 
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              <FormField
-                control={form.control}
-                name="class_start_date"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>강의 시작일</FormLabel>
+        {/* 요양원 · 취업 / 근무 */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">요양원 · 취업 / 근무</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <FormField
+              control={form.control}
+              name="care_home_id"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>요양원</FormLabel>
+                  <Select
+                    value={field.value ?? NONE_VALUE}
+                    onValueChange={(v) =>
+                      field.onChange(v === NONE_VALUE ? null : v)
+                    }
+                    disabled={careHomeLocked}
+                  >
                     <FormControl>
-                      <Input type="date" {...field} value={field.value ?? ""} />
+                      <SelectTrigger>
+                        <SelectValueMap
+                          map={{
+                            [NONE_VALUE]: "미매칭",
+                            ...Object.fromEntries(
+                              careHomes.map((ch) => [
+                                ch.id,
+                                `${ch.name}${ch.region ? ` (${ch.region})` : ""}`,
+                              ])
+                            ),
+                          }}
+                          placeholder="선택"
+                        />
+                      </SelectTrigger>
                     </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="class_end_date"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>강의 종료일</FormLabel>
-                    <FormControl>
-                      <Input type="date" {...field} value={field.value ?? ""} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                    <SelectContent>
+                      <SelectItem value={NONE_VALUE}>미매칭</SelectItem>
+                      {careHomes.map((ch) => (
+                        <SelectItem key={ch.id} value={ch.id}>
+                          {ch.name}
+                          {ch.region ? ` (${ch.region})` : ""}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {careHomeLocked && (
+                    <p className="text-xs text-muted-foreground">
+                      취업/근무 단계가 잠겨있어 수정할 수 없습니다.
+                    </p>
+                  )}
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <FormField
                 control={form.control}
                 name="interview_date"
@@ -768,5 +763,29 @@ export function CustomerBasicForm({
         </div>
       </form>
     </Form>
+  );
+}
+
+/**
+ * 선택한 강의의 시작/종료일 표시 (읽기 전용).
+ * 강의 날짜는 교육원 마스터 (training_classes) 에서만 관리되므로
+ * 고객 폼에서는 참고용 정보로만 노출.
+ */
+function SelectedClassDateInfo({
+  trainingClass,
+}: {
+  trainingClass: {
+    start_date: string | null;
+    end_date: string | null;
+  } | null;
+}) {
+  if (!trainingClass) return null;
+  return (
+    <div className="rounded-md border border-border bg-muted/30 px-3 py-2 text-xs text-muted-foreground flex items-center gap-4 flex-wrap">
+      <span className="font-medium text-foreground">강의 일정</span>
+      <span>시작 {trainingClass.start_date ?? "—"}</span>
+      <span>종료 {trainingClass.end_date ?? "—"}</span>
+      <span className="ml-auto">교육원 마스터에서 관리</span>
+    </div>
   );
 }
