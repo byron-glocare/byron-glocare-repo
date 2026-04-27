@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useImperativeHandle, useState, useTransition, type Ref } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -55,6 +55,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
+/** embedded 모드에서 부모(페이지)가 호출하는 imperative API */
+export type CustomerBasicFormHandle = {
+  submit: () => Promise<{ ok: boolean; error?: string }>;
+  reset: () => void;
+};
+
 type Props = {
   mode: "create" | "edit";
   customerId?: string;
@@ -78,6 +84,15 @@ type Props = {
    * 관련 필드가 모두 disabled.
    */
   careHomeLocked?: boolean;
+  /**
+   * 페이지 레벨 통합 저장에 embed 되는 경우 true.
+   * - 내부 저장/취소/삭제 버튼 숨김
+   * - submit / reset 은 ref 로 부모가 트리거
+   * - dirty 변경 시 onDirtyChange 콜백
+   */
+  embedded?: boolean;
+  ref?: Ref<CustomerBasicFormHandle>;
+  onDirtyChange?: (dirty: boolean) => void;
 };
 
 const EMPTY: CustomerInput = {
@@ -120,6 +135,9 @@ export function CustomerBasicForm({
   trainingClasses,
   careHomes,
   careHomeLocked = false,
+  embedded = false,
+  ref,
+  onDirtyChange,
 }: Props) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -135,7 +153,44 @@ export function CustomerBasicForm({
     (c) => c.training_center_id === selectedCenterId
   );
 
+  // dirty 변경을 부모에게 알림 (embedded 모드 전용)
+  const isDirty = form.formState.isDirty;
+  useEffect(() => {
+    if (embedded) onDirtyChange?.(isDirty);
+  }, [embedded, isDirty, onDirtyChange]);
+
+  // imperative API
+  useImperativeHandle(
+    ref,
+    () => ({
+      submit: async () => {
+        if (mode !== "edit" || !customerId) {
+          return { ok: false, error: "수정 모드 아님" };
+        }
+        // RHF validation 통과 후 updateCustomer 호출
+        const valid = await form.trigger();
+        if (!valid) {
+          const err = Object.values(form.formState.errors)[0];
+          return { ok: false, error: (err?.message as string) ?? "유효성 검사 실패" };
+        }
+        const values = form.getValues() as unknown as CustomerOutput;
+        const result = await updateCustomer(customerId, values);
+        if (result.ok) {
+          form.reset(form.getValues()); // dirty 초기화
+        }
+        return result.ok
+          ? { ok: true }
+          : { ok: false, error: result.error };
+      },
+      reset: () => {
+        form.reset();
+      },
+    }),
+    [ref, mode, customerId, form]
+  );
+
   function onSubmit(values: CustomerOutput) {
+    if (embedded) return; // embedded 는 부모가 ref.submit 으로 호출
     startTransition(async () => {
       if (mode === "create") {
         const result = await createCustomer(values);
@@ -715,58 +770,60 @@ export function CustomerBasicForm({
 
         {/* 대기 상태 / 종료 사유는 진행 단계 탭에서 관리 (2026-04-23 이동) */}
 
-        {/* 액션 */}
-        <div className="flex items-center justify-between">
-          {mode === "edit" && customerId ? (
-            <Dialog>
-              <DialogTrigger
-                className="inline-flex h-9 items-center gap-2 rounded-md border border-destructive/30 bg-card px-3 text-sm font-medium text-destructive hover:bg-destructive/5 transition-colors"
-                disabled={pending || deleting}
-              >
-                <Trash2 className="size-4" />
-                삭제
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>고객 삭제</DialogTitle>
-                  <DialogDescription>
-                    이 고객과 관련된 모든 데이터(상담 일지, 결제, SMS 이력 등)가
-                    함께 삭제됩니다. 되돌릴 수 없습니다.
-                  </DialogDescription>
-                </DialogHeader>
-                <DialogFooter>
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    onClick={handleDelete}
-                    disabled={deleting}
-                  >
-                    {deleting && <Loader2 className="size-4 animate-spin" />}
-                    {deleting ? "삭제 중…" : "확인 — 영구 삭제"}
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          ) : (
-            <span />
-          )}
+        {/* 액션 — embedded 모드에서는 페이지 레벨에서 통합 처리 */}
+        {!embedded && (
+          <div className="flex items-center justify-between">
+            {mode === "edit" && customerId ? (
+              <Dialog>
+                <DialogTrigger
+                  className="inline-flex h-9 items-center gap-2 rounded-md border border-destructive/30 bg-card px-3 text-sm font-medium text-destructive hover:bg-destructive/5 transition-colors"
+                  disabled={pending || deleting}
+                >
+                  <Trash2 className="size-4" />
+                  삭제
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>고객 삭제</DialogTitle>
+                    <DialogDescription>
+                      이 고객과 관련된 모든 데이터(상담 일지, 결제, SMS 이력 등)가
+                      함께 삭제됩니다. 되돌릴 수 없습니다.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter>
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      onClick={handleDelete}
+                      disabled={deleting}
+                    >
+                      {deleting && <Loader2 className="size-4 animate-spin" />}
+                      {deleting ? "삭제 중…" : "확인 — 영구 삭제"}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            ) : (
+              <span />
+            )}
 
-          <div className="flex gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => router.back()}
-              disabled={pending}
-            >
-              취소
-            </Button>
-            <Button type="submit" disabled={pending}>
-              {pending && <Loader2 className="size-4 animate-spin" />}
-              <Save className="size-4" />
-              {mode === "create" ? "등록" : "저장"}
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => router.back()}
+                disabled={pending}
+              >
+                취소
+              </Button>
+              <Button type="submit" disabled={pending}>
+                {pending && <Loader2 className="size-4 animate-spin" />}
+                <Save className="size-4" />
+                {mode === "create" ? "등록" : "저장"}
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
       </form>
     </Form>
   );

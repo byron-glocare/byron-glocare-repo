@@ -2,16 +2,7 @@ import { notFound } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/page-header";
-import { CustomerBasicForm } from "@/components/customer-basic-form";
-import { CustomerProgressTab } from "@/components/customer-progress-tab";
-import { CustomerConsultationsTab } from "@/components/customer-consultations-tab";
-import { CustomerSettlementTab } from "@/components/customer-settlement-tab";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+import { CustomerEditTabs } from "@/components/customer-edit-tabs";
 import { Badge } from "@/components/ui/badge";
 import { computeCustomerStatus } from "@/lib/customer-status";
 import { isCareHomeSectionLocked } from "@/lib/stage-locks";
@@ -163,111 +154,56 @@ export default async function CustomerDetailPage({
           { label: customer.code },
         ]}
         description={
-          <>
-            <div className="flex flex-wrap items-center gap-2 mt-1">
-              <Badge variant="outline" className="font-mono text-xs">
-                {customer.code}
+          <div className="flex flex-wrap items-center gap-2 mt-1">
+            <Badge variant="outline" className="font-mono text-xs">
+              {customer.code}
+            </Badge>
+            {summary.currentStage && (
+              <Badge variant="outline" className="text-xs">
+                {summary.label}
               </Badge>
-              {summary.currentStage && <StageChip label={summary.label} />}
+            )}
+            <span className="text-xs text-muted-foreground">
+              최초 등록 {formatDate(customer.created_at)} · 마지막 갱신{" "}
+              {formatDate(customer.updated_at)}
+            </span>
+            {age && (
+              <span className="text-xs text-muted-foreground">· {age}세</span>
+            )}
+            {customer.phone && (
               <span className="text-xs text-muted-foreground">
-                최초 등록 {formatDate(customer.created_at)} · 마지막 갱신{" "}
-                {formatDate(customer.updated_at)}
+                · {dash(customer.phone)}
               </span>
-              {age && (
-                <span className="text-xs text-muted-foreground">· {age}세</span>
-              )}
-              {customer.phone && (
-                <span className="text-xs text-muted-foreground">
-                  · {dash(customer.phone)}
-                </span>
-              )}
-            </div>
-          </>
+            )}
+          </div>
         }
       />
       <div className="p-6">
-        <Tabs defaultValue={tab} className="w-full">
-          <TabsList className="grid grid-cols-4 w-full h-10">
-            <TabsTrigger
-              value="basic"
-              className="text-sm data-active:bg-primary data-active:text-primary-foreground data-active:font-semibold"
-            >
-              기본 정보
-            </TabsTrigger>
-            <TabsTrigger
-              value="progress"
-              className="text-sm data-active:bg-primary data-active:text-primary-foreground data-active:font-semibold"
-            >
-              진행 단계
-            </TabsTrigger>
-            <TabsTrigger
-              value="consultations"
-              className="text-sm data-active:bg-primary data-active:text-primary-foreground data-active:font-semibold"
-            >
-              상담 일지
-            </TabsTrigger>
-            <TabsTrigger
-              value="settlement"
-              className="text-sm data-active:bg-primary data-active:text-primary-foreground data-active:font-semibold"
-            >
-              정산
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="basic" className="mt-6">
-            <CustomerBasicForm
-              mode="edit"
-              customerId={customer.id}
-              defaultValues={customer}
-              trainingCenters={centers ?? []}
-              trainingClasses={classes ?? []}
-              careHomes={homes ?? []}
-              careHomeLocked={careHomeLocked}
-            />
-          </TabsContent>
-
-          <TabsContent value="progress" className="mt-6">
-            <CustomerProgressTab
-              customerId={customer.id}
-              inputs={{
-                customer,
-                status: effectiveStatus,
-                reservationPayments,
-                welcomePackPayment,
-                smsMessages: smsMessages ?? [],
-              }}
-            />
-          </TabsContent>
-
-          <TabsContent value="consultations" className="mt-6">
-            <CustomerConsultationsTab
-              customerId={customer.id}
-              consultations={consultations ?? []}
-            />
-          </TabsContent>
-
-          <TabsContent value="settlement" className="mt-6">
-            <CustomerSettlementTab
-              customer={customer}
-              reservationPayments={reservationPayments}
-              commissionPayments={commissionPayments ?? []}
-              eventPayments={eventPayments ?? []}
-              welcomePackPayment={welcomePackPayment}
-              trainingCenters={centers ?? []}
-              customerOptions={(allCustomers ?? []).filter((c) => c.id !== customer.id)}
-              settings={settings}
-            />
-          </TabsContent>
-        </Tabs>
+        <CustomerEditTabs
+          initialTab={tab}
+          customer={customer}
+          consultations={consultations ?? []}
+          reservationPayments={reservationPayments}
+          welcomePackPayment={welcomePackPayment}
+          commissionPayments={commissionPayments ?? []}
+          eventPayments={eventPayments ?? []}
+          trainingCenters={centers ?? []}
+          trainingClasses={classes ?? []}
+          careHomes={homes ?? []}
+          customerOptions={(allCustomers ?? []).filter(
+            (c) => c.id !== customer.id
+          )}
+          progressInputs={{
+            customer,
+            status: effectiveStatus,
+            reservationPayments,
+            welcomePackPayment,
+            smsMessages: smsMessages ?? [],
+          }}
+          careHomeLocked={careHomeLocked}
+          settings={settings}
+        />
       </div>
     </>
-  );
-}
-
-function StageChip({ label }: { label: string }) {
-  return (
-    <Badge variant="outline" className="text-xs">
-      {label}
-    </Badge>
   );
 }

@@ -1,6 +1,14 @@
 "use client";
 
-import { useMemo, useRef, useState, useTransition } from "react";
+import {
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+  type Ref,
+} from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Check, Loader2, Lock, Save, Undo2, X } from "lucide-react";
@@ -45,9 +53,18 @@ import { cn } from "@/lib/utils";
 // Props / 상태 모델
 // =============================================================================
 
+export type CustomerProgressTabHandle = {
+  submit: () => Promise<{ ok: boolean; error?: string }>;
+  reset: () => void;
+};
+
 type Props = {
   customerId: string;
   inputs: StatusInputs;
+  /** 페이지 통합 저장 모드 — 내부 저장/되돌리기 버튼 숨김 */
+  embedded?: boolean;
+  ref?: Ref<CustomerProgressTabHandle>;
+  onDirtyChange?: (dirty: boolean) => void;
 };
 
 type FlagKey = keyof StatusFlagsInput;
@@ -161,7 +178,13 @@ function buildInitialState(inputs: StatusInputs): ProgressStateInput {
   };
 }
 
-export function CustomerProgressTab({ customerId, inputs }: Props) {
+export function CustomerProgressTab({
+  customerId,
+  inputs,
+  embedded = false,
+  ref,
+  onDirtyChange,
+}: Props) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 
@@ -172,6 +195,30 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
   const dirty = useMemo(
     () => JSON.stringify(state) !== JSON.stringify(initialRef.current),
     [state]
+  );
+
+  // dirty 변경을 부모에게 알림 (embedded 전용)
+  useEffect(() => {
+    if (embedded) onDirtyChange?.(dirty);
+  }, [embedded, dirty, onDirtyChange]);
+
+  // imperative API
+  useImperativeHandle(
+    ref,
+    () => ({
+      submit: async () => {
+        const snapshot = state;
+        const result = await updateProgressState(customerId, snapshot);
+        if (result.ok) {
+          initialRef.current = snapshot; // dirty 초기화
+        }
+        return result.ok ? { ok: true } : { ok: false, error: result.error };
+      },
+      reset: () => {
+        setState(initialRef.current);
+      },
+    }),
+    [ref, state, customerId]
   );
 
   // 단계별 잠금 스코프 — 종료 플래그가 ON 이면 해당 단계(자신 제외) + 하위 잠금.
@@ -264,7 +311,7 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
 
   return (
     <div className="space-y-4">
-      {/* 저장 바 */}
+      {/* 저장 바 — embedded 모드 (페이지 통합 저장) 에서는 안내 문구만 보여줌 */}
       <div className="flex items-center justify-between gap-2 pb-1">
         <div className="text-xs text-muted-foreground">
           {terminalSource === "termination" ? (
@@ -281,31 +328,33 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
             <span>변경사항 없음</span>
           )}
         </div>
-        <div className="flex items-center gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={handleReset}
-            disabled={!dirty || pending}
-          >
-            <Undo2 className="size-4" />
-            되돌리기
-          </Button>
-          <Button
-            type="button"
-            size="sm"
-            onClick={handleSave}
-            disabled={!dirty || pending}
-          >
-            {pending ? (
-              <Loader2 className="size-4 animate-spin" />
-            ) : (
-              <Save className="size-4" />
-            )}
-            저장
-          </Button>
-        </div>
+        {!embedded && (
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleReset}
+              disabled={!dirty || pending}
+            >
+              <Undo2 className="size-4" />
+              되돌리기
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              onClick={handleSave}
+              disabled={!dirty || pending}
+            >
+              {pending ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                <Save className="size-4" />
+              )}
+              저장
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* 단계별 상세 */}
