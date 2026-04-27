@@ -7,8 +7,10 @@ import { Loader2, Save, Search, User, X } from "lucide-react";
 
 import {
   createConsultationWithAnalysis,
+  createCustomer,
   updateConsultation,
 } from "@/app/(app)/customers/actions";
+import { asciiUpper } from "@/lib/name-utils";
 import type { ConsultationAnalysis } from "@/lib/consultation-tags";
 import type { Customer } from "@/types/database";
 
@@ -66,13 +68,29 @@ export function ConsultationForm(props: Props) {
   );
   const [query, setQuery] = useState("");
 
+  // 신규 / 기존 고객 모드. create 모드 + 미리지정된 customer 가 없을 때만 의미.
+  // prefillCustomerId 있으면 기존 모드로 시작.
+  const [customerMode, setCustomerMode] = useState<"new" | "existing">(
+    props.mode === "create" && !initialCustomer ? "new" : "existing"
+  );
+  // 신규 고객 입력 필드 (스텁 등록용)
+  const [newNameVi, setNewNameVi] = useState("");
+  const [newNameKr, setNewNameKr] = useState("");
+  const [newPhone, setNewPhone] = useState("");
+
   // 분석 검토 다이얼로그 상태
   const [review, setReview] = useState<{
     customerId: string;
     analysis: ConsultationAnalysis;
   } | null>(null);
 
-  const canSave = !!customer && content.trim().length > 0 && !pending;
+  const newCustomerHasMinInfo =
+    !!(newNameVi.trim() || newNameKr.trim() || newPhone.trim());
+  const canSave =
+    !pending &&
+    content.trim().length > 0 &&
+    (props.mode === "edit" ||
+      (customerMode === "existing" ? !!customer : newCustomerHasMinInfo));
 
   const filteredCustomers = useMemo<CustomerBrief[]>(() => {
     if (props.mode === "edit") return [];
@@ -91,14 +109,38 @@ export function ConsultationForm(props: Props) {
   }, [query, props]);
 
   function handleSave() {
-    if (!customer || !content.trim()) {
-      toast.error("고객과 상담 내용을 모두 입력해주세요.");
+    if (!content.trim()) {
+      toast.error("상담 내용을 입력해주세요.");
       return;
     }
     startTransition(async () => {
       if (props.mode === "create") {
+        // 신규 고객 모드 — 먼저 고객 생성 후 customer.id 사용
+        let customerId: string | undefined;
+        if (customerMode === "new" && !customer) {
+          if (!newCustomerHasMinInfo) {
+            toast.error("이름 또는 전화번호 중 하나는 입력해야 합니다.");
+            return;
+          }
+          const created = await createCustomer({
+            name_vi: newNameVi.trim() ? asciiUpper(newNameVi) : null,
+            name_kr: newNameKr.trim() || null,
+            phone: newPhone.trim() || null,
+          });
+          if (!created.ok) {
+            toast.error("고객 등록 실패", { description: created.error });
+            return;
+          }
+          customerId = created.data.id;
+        } else if (customer) {
+          customerId = customer.id;
+        } else {
+          toast.error("고객을 선택해주세요.");
+          return;
+        }
+
         const result = await createConsultationWithAnalysis({
-          customer_id: customer.id,
+          customer_id: customerId,
           consultation_type: consultationType,
           content: content.trim(),
         });
@@ -109,11 +151,12 @@ export function ConsultationForm(props: Props) {
         toast.success("상담 일지 저장 완료");
         const analysis = result.data.analysis;
         if (analysis && hasAnySuggestion(analysis)) {
-          setReview({ customerId: customer.id, analysis });
+          setReview({ customerId, analysis });
         } else {
-          navigateBackOrTo(router, `/customers/${customer.id}?tab=consultations`);
+          navigateBackOrTo(router, `/customers/${customerId}?tab=consultations`);
         }
       } else {
+        if (!customer) return;
         const result = await updateConsultation({
           consultation_id: props.consultationId,
           content: content.trim(),
@@ -153,8 +196,78 @@ export function ConsultationForm(props: Props) {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* 고객 선택 */}
-          {props.mode === "create" ? (
+          {/* 신규/기존 고객 선택 라디오 — create 모드 + 미선택 상태에서 노출 */}
+          {props.mode === "create" && !customer && (
+            <div>
+              <Label className="text-sm">고객 종류</Label>
+              <div className="flex gap-4 mt-2">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="customer-mode"
+                    value="new"
+                    checked={customerMode === "new"}
+                    onChange={() => setCustomerMode("new")}
+                  />
+                  <span className="text-sm">신규 고객</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="customer-mode"
+                    value="existing"
+                    checked={customerMode === "existing"}
+                    onChange={() => {
+                      setCustomerMode("existing");
+                      setNewNameVi("");
+                      setNewNameKr("");
+                      setNewPhone("");
+                    }}
+                  />
+                  <span className="text-sm">기존 고객</span>
+                </label>
+              </div>
+            </div>
+          )}
+
+          {/* 신규 고객 모드 — 최소 정보 입력 */}
+          {props.mode === "create" && !customer && customerMode === "new" && (
+            <div className="space-y-3 rounded-md border border-border p-3 bg-muted/30">
+              <div className="text-xs text-muted-foreground">
+                최소 1개 (이름 또는 전화) 입력 후 저장하면 고객도 함께 등록됩니다.
+              </div>
+              <div className="grid sm:grid-cols-3 gap-3">
+                <div>
+                  <Label className="text-xs">베트남 이름 (영문)</Label>
+                  <Input
+                    value={newNameVi}
+                    onChange={(e) => setNewNameVi(asciiUpper(e.target.value))}
+                    placeholder="PHAM THI DUNG"
+                    autoFocus
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs">한국 이름</Label>
+                  <Input
+                    value={newNameKr}
+                    onChange={(e) => setNewNameKr(e.target.value)}
+                    placeholder="팜 티 중"
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs">전화번호</Label>
+                  <Input
+                    value={newPhone}
+                    onChange={(e) => setNewPhone(e.target.value)}
+                    placeholder="010-0000-0000"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 기존 고객 검색 / 선택 */}
+          {props.mode === "create" && customerMode === "existing" ? (
             customer ? (
               <div>
                 <Label className="text-sm">고객</Label>
@@ -230,7 +343,10 @@ export function ConsultationForm(props: Props) {
                 </div>
               </div>
             )
-          ) : (
+          ) : null}
+
+          {/* 수정 모드 — 고객 read-only 표시 */}
+          {props.mode === "edit" && (
             <div>
               <Label className="text-sm">고객</Label>
               <div className="flex items-center gap-2 mt-1 px-3 py-2 rounded-md border border-border bg-muted/30">

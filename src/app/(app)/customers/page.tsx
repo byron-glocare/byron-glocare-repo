@@ -22,8 +22,8 @@ export default async function CustomersPage({
   return (
     <>
       <PageHeader
-        title="고객관리"
-        breadcrumbs={[{ label: "고객관리" }]}
+        title="교육생"
+        breadcrumbs={[{ label: "교육생" }]}
         actions={
           <div className="flex items-center gap-2">
             <Link

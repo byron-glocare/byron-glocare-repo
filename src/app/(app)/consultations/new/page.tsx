@@ -29,7 +29,7 @@ export default async function NewConsultationPage({
       <PageHeader
         title="상담 일지 작성"
         breadcrumbs={[
-          { href: "/customers", label: "고객관리" },
+          { href: "/customers", label: "교육생" },
           { label: "상담 일지 작성" },
         ]}
       />

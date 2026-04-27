@@ -151,7 +151,7 @@ export default async function CustomerDetailPage({
       <PageHeader
         title={customer.name_vi || customer.name_kr || "(이름 없음)"}
         breadcrumbs={[
-          { href: "/customers", label: "고객관리" },
+          { href: "/customers", label: "교육생" },
           { label: customer.code },
         ]}
         description={

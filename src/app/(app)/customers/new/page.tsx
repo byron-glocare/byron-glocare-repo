@@ -32,7 +32,7 @@ export default async function NewCustomerPage() {
         title="신규 고객 등록"
         description="저장하면 CVN + YYMM + 순번 3자리 형식의 코드가 자동 발급됩니다."
         breadcrumbs={[
-          { href: "/customers", label: "고객관리" },
+          { href: "/customers", label: "교육생" },
           { label: "등록" },
         ]}
       />
