@@ -12,6 +12,28 @@ export const optionalString = z
   .nullable()
   .optional();
 
+/**
+ * 베트남어 이름 전용 — ASCII 영문 대문자로 정규화 후 저장.
+ *  - "Phạm Thị Dung" → "PHAM THI DUNG"
+ *  - 빈 문자열 → null
+ *
+ * 폼 onChange 에서도 미리 변환하지만, DB 저장 시점에 다시 한 번 보장.
+ */
+export const asciiUpperOptionalString = z
+  .string()
+  .trim()
+  .transform((v) => {
+    if (v === "") return null;
+    // Đ/đ 는 NFD 분해 안 되므로 명시적 변환
+    const replaced = v.replace(/Đ/g, "D").replace(/đ/g, "d");
+    return replaced
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "") // combining diacritical marks 제거
+      .toUpperCase();
+  })
+  .nullable()
+  .optional();
+
 /** "" → null, 아니면 number */
 export const optionalNumber = z
   .union([z.string().trim(), z.number()])
@@ -110,7 +132,7 @@ const optionalIntYear = z
 export const customerSchema = z
   .object({
     // 개인정보
-    name_vi: optionalString,
+    name_vi: asciiUpperOptionalString,
     name_kr: optionalString,
     address: optionalString,
     gender: z
