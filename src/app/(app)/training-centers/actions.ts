@@ -43,7 +43,7 @@ export async function createTrainingCenter(input: TrainingCenterInput) {
   if (error) return { ok: false as const, error: error.message };
 
   revalidatePath("/training-centers");
-  redirect(`/training-centers/${data.id}`);
+  return { ok: true as const, data: { id: data.id as string } };
 }
 
 export async function updateTrainingCenter(

@@ -20,6 +20,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { navigateBackOrTo } from "@/lib/navigate-back";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { RegionSelect } from "@/components/region-select";
@@ -93,15 +94,17 @@ export function TrainingCenterForm({
     startTransition(async () => {
       if (mode === "create") {
         const result = await createTrainingCenter(values);
-        // create는 성공 시 redirect 되므로 여기 도달하면 에러
-        if (result && !result.ok) {
+        if (!result.ok) {
           toast.error("등록 실패", { description: result.error });
+          return;
         }
+        toast.success("등록되었습니다.");
+        navigateBackOrTo(router, "/training-centers");
       } else if (centerId) {
         const result = await updateTrainingCenter(centerId, values);
         if (result.ok) {
           toast.success("저장되었습니다.");
-          router.refresh();
+          navigateBackOrTo(router, "/training-centers");
         } else {
           toast.error("저장 실패", { description: result.error });
         }

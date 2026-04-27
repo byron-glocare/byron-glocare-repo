@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Check, Loader2, Lock, Save, Undo2, X } from "lucide-react";
 
 import { updateProgressState } from "@/app/(app)/customers/actions";
+import { navigateBackOrTo } from "@/lib/navigate-back";
 import {
   computeCustomerStatus,
   type StatusInputs,
@@ -250,7 +251,7 @@ export function CustomerProgressTab({ customerId, inputs }: Props) {
       if (result.ok) {
         toast.success("저장되었습니다.");
         initialRef.current = snapshot;
-        router.refresh();
+        navigateBackOrTo(router, "/customers");
       } else {
         toast.error("저장 실패", { description: result.error });
       }

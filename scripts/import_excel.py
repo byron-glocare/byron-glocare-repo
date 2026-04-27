@@ -21,11 +21,30 @@ from __future__ import annotations
 import datetime
 import re
 import sys
+import unicodedata
 import uuid
 from collections import defaultdict
 from pathlib import Path
 
 import openpyxl
+
+
+def to_ascii_upper(s: str | None) -> str | None:
+    """베트남어 + 한국어 혼용 문자열을 ASCII 영문 대문자로.
+    Diacritics 제거 (NFD → strip combining), Đ→D / đ→d 처리, uppercase.
+    """
+    if s is None:
+        return None
+    s = str(s).strip()
+    if not s:
+        return None
+    # Đ/đ are special — they don't decompose in NFD
+    s = s.replace("Đ", "D").replace("đ", "d")
+    # NFD: split base char + combining marks
+    nfd = unicodedata.normalize("NFD", s)
+    # Drop combining marks (category Mn)
+    ascii_only = "".join(ch for ch in nfd if unicodedata.category(ch) != "Mn")
+    return ascii_only.upper()
 
 
 # =============================================================================
@@ -505,7 +524,7 @@ def read_customers(wb, centers: list[dict], homes: list[dict], classes: list[dic
         excel_status = to_str(row[2].value if len(row) > 2 else None)  # col 3
         flags_extra = STATUS_FLAGS.get(excel_status, {}) if excel_status else {}
 
-        name_vi = to_str(row[4].value if len(row) > 4 else None)
+        name_vi = to_ascii_upper(to_str(row[4].value if len(row) > 4 else None))
         name_kr = to_str(row[5].value if len(row) > 5 else None)
         address = to_str(row[6].value if len(row) > 6 else None)
         gender = parse_gender(row[7].value if len(row) > 7 else None)

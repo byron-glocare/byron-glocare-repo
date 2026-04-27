@@ -19,6 +19,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
 import { AnalysisReviewDialog } from "@/components/analysis-review-dialog";
+import { navigateBackOrTo } from "@/lib/navigate-back";
 
 type CustomerBrief = Pick<
   Customer,
@@ -110,7 +111,7 @@ export function ConsultationForm(props: Props) {
         if (analysis && hasAnySuggestion(analysis)) {
           setReview({ customerId: customer.id, analysis });
         } else {
-          router.push(`/customers/${customer.id}?tab=consultations`);
+          navigateBackOrTo(router, `/customers/${customer.id}?tab=consultations`);
         }
       } else {
         const result = await updateConsultation({
@@ -126,7 +127,7 @@ export function ConsultationForm(props: Props) {
         if (analysis && hasAnySuggestion(analysis)) {
           setReview({ customerId: customer.id, analysis });
         } else {
-          router.push(`/customers/${customer.id}?tab=consultations`);
+          navigateBackOrTo(router, `/customers/${customer.id}?tab=consultations`);
         }
       }
     });
@@ -139,7 +140,7 @@ export function ConsultationForm(props: Props) {
       if (applied) {
         toast.success("AI 제안이 고객 정보에 반영됐습니다.");
       }
-      router.push(`/customers/${customerId}?tab=consultations`);
+      navigateBackOrTo(router, `/customers/${customerId}?tab=consultations`);
     }
   }
 

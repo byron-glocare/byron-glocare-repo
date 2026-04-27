@@ -34,7 +34,7 @@ export async function createCareHome(input: CareHomeInput) {
   if (error) return { ok: false as const, error: error.message };
 
   revalidatePath("/care-homes");
-  redirect(`/care-homes/${data.id}`);
+  return { ok: true as const, data: { id: data.id as string } };
 }
 
 export async function updateCareHome(

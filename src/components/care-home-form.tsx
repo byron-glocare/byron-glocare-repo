@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { RegionSelect } from "@/components/region-select";
+import { navigateBackOrTo } from "@/lib/navigate-back";
 import {
   Card,
   CardContent,
@@ -78,14 +79,17 @@ export function CareHomeForm({ mode, homeId, defaultValues }: Props) {
     startTransition(async () => {
       if (mode === "create") {
         const result = await createCareHome(values);
-        if (result && !result.ok) {
+        if (!result.ok) {
           toast.error("등록 실패", { description: result.error });
+          return;
         }
+        toast.success("등록되었습니다.");
+        navigateBackOrTo(router, "/care-homes");
       } else if (homeId) {
         const result = await updateCareHome(homeId, values);
         if (result.ok) {
           toast.success("저장되었습니다.");
-          router.refresh();
+          navigateBackOrTo(router, "/care-homes");
         } else {
           toast.error("저장 실패", { description: result.error });
         }

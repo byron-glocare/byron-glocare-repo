@@ -22,6 +22,8 @@ import type { TrainingCenter, TrainingClass, CareHome } from "@/types/database";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { RegionSelect } from "@/components/region-select";
+import { navigateBackOrTo } from "@/lib/navigate-back";
+import { asciiUpper } from "@/lib/name-utils";
 import {
   Card,
   CardContent,
@@ -142,12 +144,12 @@ export function CustomerBasicForm({
           return;
         }
         toast.success("등록되었습니다.");
-        navigateBack(router);
+        navigateBackOrTo(router, "/customers");
       } else if (customerId) {
         const result = await updateCustomer(customerId, values);
         if (result.ok) {
           toast.success("저장되었습니다.");
-          navigateBack(router);
+          navigateBackOrTo(router, "/customers");
         } else {
           toast.error("저장 실패", { description: result.error });
         }
@@ -179,12 +181,13 @@ export function CustomerBasicForm({
               name="name_vi"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>베트남 이름</FormLabel>
+                  <FormLabel>베트남 이름 (영문 대문자)</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       value={field.value ?? ""}
-                      placeholder="Phạm Thị Dung"
+                      onChange={(e) => field.onChange(asciiUpper(e.target.value))}
+                      placeholder="PHAM THI DUNG"
                     />
                   </FormControl>
                   <FormMessage />
@@ -767,18 +770,6 @@ export function CustomerBasicForm({
       </form>
     </Form>
   );
-}
-
-/**
- * 저장 후 이전 화면으로 돌아가기. 히스토리가 비어있으면 (직접 URL 접근 등)
- * /customers 리스트로 폴백.
- */
-function navigateBack(router: ReturnType<typeof useRouter>) {
-  if (typeof window !== "undefined" && window.history.length > 1) {
-    router.back();
-  } else {
-    router.push("/customers");
-  }
 }
 
 /**
