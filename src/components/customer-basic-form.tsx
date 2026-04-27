@@ -137,14 +137,17 @@ export function CustomerBasicForm({
     startTransition(async () => {
       if (mode === "create") {
         const result = await createCustomer(values);
-        if (result && !result.ok) {
+        if (!result.ok) {
           toast.error("등록 실패", { description: result.error });
+          return;
         }
+        toast.success("등록되었습니다.");
+        navigateBack(router);
       } else if (customerId) {
         const result = await updateCustomer(customerId, values);
         if (result.ok) {
           toast.success("저장되었습니다.");
-          router.refresh();
+          navigateBack(router);
         } else {
           toast.error("저장 실패", { description: result.error });
         }
@@ -764,6 +767,18 @@ export function CustomerBasicForm({
       </form>
     </Form>
   );
+}
+
+/**
+ * 저장 후 이전 화면으로 돌아가기. 히스토리가 비어있으면 (직접 URL 접근 등)
+ * /customers 리스트로 폴백.
+ */
+function navigateBack(router: ReturnType<typeof useRouter>) {
+  if (typeof window !== "undefined" && window.history.length > 1) {
+    router.back();
+  } else {
+    router.push("/customers");
+  }
 }
 
 /**

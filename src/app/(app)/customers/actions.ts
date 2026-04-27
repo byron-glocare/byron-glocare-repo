@@ -130,7 +130,7 @@ export async function createCustomer(input: CustomerInput) {
   }
 
   revalidatePath("/customers");
-  redirect(`/customers/${data.id}`);
+  return { ok: true as const, data: { id: data.id as string } };
 }
 
 export async function updateCustomer(
