@@ -44,14 +44,9 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     label: "유학생",
     items: [
-      { href: "/students", label: "유학생", icon: Plane, disabled: true },
-      { href: "/universities", label: "대학교", icon: School, disabled: true },
-      {
-        href: "/study-centers",
-        label: "유학센터",
-        icon: Building2,
-        disabled: true,
-      },
+      { href: "/students", label: "유학생", icon: Plane },
+      { href: "/universities", label: "대학교", icon: School },
+      { href: "/study-centers", label: "유학센터", icon: Building2 },
     ],
   },
   {

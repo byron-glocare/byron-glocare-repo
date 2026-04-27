@@ -590,6 +590,303 @@ export type Database = {
         Update: Partial<Database["public"]["Tables"]["system_settings"]["Insert"]>;
         Relationships: [];
       };
+
+      // =====================================================================
+      // 유학 도메인 (0009)
+      // =====================================================================
+      universities: {
+        Row: {
+          id: number;
+          active: boolean;
+          name_ko: string;
+          name_vi: string | null;
+          region_ko: string | null;
+          region_vi: string | null;
+          logo_url: string | null;
+          photo_url: string | null;
+          website_url: string | null;
+          desc_ko: string | null;
+          desc_vi: string | null;
+          class_days_ko: string | null;
+          class_days_vi: string | null;
+          transport_bus: boolean;
+          transport_subway: boolean;
+          transport_train: boolean;
+          transport_desc_ko: string | null;
+          transport_desc_vi: string | null;
+          dormitory: boolean;
+          dormitory_desc_ko: string | null;
+          dormitory_desc_vi: string | null;
+          strengths: string | null;
+          tags_ko: string | null;
+          tags_vi: string | null;
+          categories: string | null;
+          emoji: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: number;
+          active?: boolean;
+          name_ko: string;
+          name_vi?: string | null;
+          region_ko?: string | null;
+          region_vi?: string | null;
+          logo_url?: string | null;
+          photo_url?: string | null;
+          website_url?: string | null;
+          desc_ko?: string | null;
+          desc_vi?: string | null;
+          class_days_ko?: string | null;
+          class_days_vi?: string | null;
+          transport_bus?: boolean;
+          transport_subway?: boolean;
+          transport_train?: boolean;
+          transport_desc_ko?: string | null;
+          transport_desc_vi?: string | null;
+          dormitory?: boolean;
+          dormitory_desc_ko?: string | null;
+          dormitory_desc_vi?: string | null;
+          strengths?: string | null;
+          tags_ko?: string | null;
+          tags_vi?: string | null;
+          categories?: string | null;
+          emoji?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["universities"]["Insert"]>;
+        Relationships: [];
+      };
+
+      departments: {
+        Row: {
+          id: number;
+          university_id: number;
+          active: boolean;
+          icon: string | null;
+          name_ko: string;
+          name_vi: string | null;
+          category: string | null;
+          degree_years: number | null;
+          tuition_ko: string | null;
+          tuition_vi: string | null;
+          scholarship_ko: string | null;
+          scholarship_vi: string | null;
+          dept_url: string | null;
+          badge: string | null;
+          case_ids: string | null;
+          course: string | null;
+          sort_order: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: number;
+          university_id: number;
+          active?: boolean;
+          icon?: string | null;
+          name_ko: string;
+          name_vi?: string | null;
+          category?: string | null;
+          degree_years?: number | null;
+          tuition_ko?: string | null;
+          tuition_vi?: string | null;
+          scholarship_ko?: string | null;
+          scholarship_vi?: string | null;
+          dept_url?: string | null;
+          badge?: string | null;
+          case_ids?: string | null;
+          course?: string | null;
+          sort_order?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["departments"]["Insert"]>;
+        Relationships: [
+          {
+            foreignKeyName: "departments_university_id_fkey";
+            columns: ["university_id"];
+            referencedRelation: "universities";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+
+      study_centers: {
+        Row: {
+          id: number;
+          active: boolean;
+          flag: string | null;
+          name_ko: string | null;
+          name_vi: string;
+          city_ko: string | null;
+          city_vi: string | null;
+          address: string | null;
+          phone: string | null;
+          email: string | null;
+          desc_ko: string | null;
+          desc_vi: string | null;
+          students_ko: string | null;
+          students_vi: string | null;
+          years_ko: string | null;
+          years_vi: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: number;
+          active?: boolean;
+          flag?: string | null;
+          name_ko?: string | null;
+          name_vi: string;
+          city_ko?: string | null;
+          city_vi?: string | null;
+          address?: string | null;
+          phone?: string | null;
+          email?: string | null;
+          desc_ko?: string | null;
+          desc_vi?: string | null;
+          students_ko?: string | null;
+          students_vi?: string | null;
+          years_ko?: string | null;
+          years_vi?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["study_centers"]["Insert"]>;
+        Relationships: [];
+      };
+
+      study_cases: {
+        Row: {
+          id: number;
+          active: boolean;
+          tiktok_url: string | null;
+          tiktok_thumb: string | null;
+          hero: boolean;
+          category_ko: string | null;
+          category_vi: string | null;
+          title_ko: string | null;
+          title_vi: string | null;
+          desc_ko: string | null;
+          desc_vi: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: number;
+          active?: boolean;
+          tiktok_url?: string | null;
+          tiktok_thumb?: string | null;
+          hero?: boolean;
+          category_ko?: string | null;
+          category_vi?: string | null;
+          title_ko?: string | null;
+          title_vi?: string | null;
+          desc_ko?: string | null;
+          desc_vi?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["study_cases"]["Insert"]>;
+        Relationships: [];
+      };
+
+      study_contacts: {
+        Row: {
+          id: number;
+          submitted_at: string;
+          name: string | null;
+          phone: string | null;
+          email: string | null;
+          age: number | null;
+          dept: string | null;
+          center: string | null;
+          recruiting: string | null;
+          message: string | null;
+          status: "미확인" | "연락완료" | "등록완료";
+          memo: string | null;
+        };
+        Insert: {
+          id?: number;
+          submitted_at?: string;
+          name?: string | null;
+          phone?: string | null;
+          email?: string | null;
+          age?: number | null;
+          dept?: string | null;
+          center?: string | null;
+          recruiting?: string | null;
+          message?: string | null;
+          status?: "미확인" | "연락완료" | "등록완료";
+          memo?: string | null;
+        };
+        Update: Partial<Database["public"]["Tables"]["study_contacts"]["Insert"]>;
+        Relationships: [];
+      };
+
+      study_channels: {
+        Row: {
+          id: number;
+          active: boolean;
+          type: string | null;
+          icon: string | null;
+          name_ko: string | null;
+          name_vi: string | null;
+          desc_ko: string | null;
+          desc_vi: string | null;
+          handle: string | null;
+          url: string | null;
+          sort_order: number;
+          memo: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: number;
+          active?: boolean;
+          type?: string | null;
+          icon?: string | null;
+          name_ko?: string | null;
+          name_vi?: string | null;
+          desc_ko?: string | null;
+          desc_vi?: string | null;
+          handle?: string | null;
+          url?: string | null;
+          sort_order?: number;
+          memo?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["study_channels"]["Insert"]>;
+        Relationships: [];
+      };
+
+      study_insurance_claims: {
+        Row: {
+          id: number;
+          submitted_at: string;
+          name: string | null;
+          alien_no: string | null;
+          zalo: string | null;
+          marketing: string | null;
+          status: "미확인" | "연락완료" | "등록완료";
+          memo: string | null;
+        };
+        Insert: {
+          id?: number;
+          submitted_at?: string;
+          name?: string | null;
+          alien_no?: string | null;
+          zalo?: string | null;
+          marketing?: string | null;
+          status?: "미확인" | "연락완료" | "등록완료";
+          memo?: string | null;
+        };
+        Update: Partial<Database["public"]["Tables"]["study_insurance_claims"]["Insert"]>;
+        Relationships: [];
+      };
     };
     Views: { [_ in never]: never };
     Functions: { [_ in never]: never };
