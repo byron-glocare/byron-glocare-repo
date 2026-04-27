@@ -18,14 +18,15 @@ export function AppSidebar() {
     <aside className="hidden md:flex md:w-60 shrink-0 flex-col border-r border-border bg-sidebar">
       <Link
         href="/"
-        className="flex h-16 items-center gap-2 px-5 border-b border-border"
+        className="flex h-20 items-center gap-2 px-5 border-b border-border"
       >
         <Image
           src="/glocare_logo.png"
           alt="Glocare"
-          width={56}
-          height={28}
+          width={140}
+          height={70}
           priority
+          className="h-auto w-auto max-h-14"
         />
       </Link>
       <nav className="flex-1 overflow-y-auto p-3 space-y-1">
