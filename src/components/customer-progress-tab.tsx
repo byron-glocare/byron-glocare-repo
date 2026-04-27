@@ -441,9 +441,8 @@ export function CustomerProgressTab({
           complete={summary.training.complete}
           locked={isStageCardLocked("training")}
         >
-          <AutoRow label="메시지 발송">
-            <BoolPill v={summary.training.smsSent} />
-          </AutoRow>
+          {/* 메시지 발송은 교육 예약 단계의 "강의 접수 메시지 발송" 과 동일
+              (둘 다 new_student SMS 기준) — 중복 표시 제거 */}
           <AutoRow label="교육 전/중/완료">
             {summary.training.phase ? (
               <Badge variant="outline">{summary.training.phase}</Badge>
