@@ -3,19 +3,30 @@
 import { useState } from "react";
 
 /**
- * TikTok CDN 은 Referer 기반 hotlink 차단을 자주 걸기 때문에
- * referrerPolicy="no-referrer" 로 시도 → 실패 시 코랄 그라데이션 fallback.
+ * TikTok 썸네일.
+ *
+ * 우선순위:
+ *  1) videoUrl 이 있으면 → /api/tt-thumb?url=... 프록시 사용 (oEmbed 통해 자동 추출)
+ *  2) src 만 있으면 → 직접 + referrerPolicy="no-referrer"
+ *  3) 둘 다 실패하면 → 코랄 그라데이션 fallback
  */
 export function TikTokThumb({
   src,
+  videoUrl,
   alt,
 }: {
-  src: string | null | undefined;
+  src?: string | null;
+  videoUrl?: string | null;
   alt: string;
 }) {
   const [failed, setFailed] = useState(false);
 
-  if (!src || failed) {
+  const useProxy = !!videoUrl;
+  const finalSrc = useProxy
+    ? `/api/tt-thumb?url=${encodeURIComponent(videoUrl)}`
+    : src || null;
+
+  if (!finalSrc || failed) {
     return (
       <div
         style={{
@@ -38,9 +49,9 @@ export function TikTokThumb({
   return (
     /* eslint-disable-next-line @next/next/no-img-element */
     <img
-      src={src}
+      src={finalSrc}
       alt={alt}
-      referrerPolicy="no-referrer"
+      referrerPolicy={useProxy ? undefined : "no-referrer"}
       loading="lazy"
       onError={() => setFailed(true)}
     />

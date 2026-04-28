@@ -68,7 +68,7 @@ export function Hero({
               className="hero-vid-card"
               aria-label={v.title}
             >
-              <TikTokThumb src={v.thumb} alt={v.title} />
+              <TikTokThumb src={v.thumb} videoUrl={v.url} alt={v.title} />
               <div className="vid-play">
                 <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
                   <circle cx="32" cy="32" r="28" fill="rgba(255,255,255,0.92)" />

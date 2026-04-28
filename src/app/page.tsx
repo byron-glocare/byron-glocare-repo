@@ -21,7 +21,7 @@ export default async function HomePage() {
   const ss = getSectionStrings(locale);
 
   const [
-    { data: heroCases },
+    { data: heroCasesPrimary },
     { data: cases },
     { data: universities },
     { data: departments },
@@ -59,7 +59,12 @@ export default async function HomePage() {
       .order("id"),
   ]);
 
-  const heroVideos = (heroCases ?? []).map((c) => ({
+  // hero=true 인 사례를 우선 사용. 없으면 최신 3개로 fallback (페이지가 비지 않게).
+  const heroSource =
+    heroCasesPrimary && heroCasesPrimary.length > 0
+      ? heroCasesPrimary
+      : (cases ?? []).slice(0, 3);
+  const heroVideos = heroSource.map((c) => ({
     id: c.id,
     title:
       locale === "vi"

@@ -42,7 +42,7 @@ export function Cases({
               aria-label={c.title}
             >
               <div className="case-vid">
-                <TikTokThumb src={c.thumb} alt={c.title} />
+                <TikTokThumb src={c.thumb} videoUrl={c.url} alt={c.title} />
                 <div className="case-vid-play">
                   <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
                     <circle
