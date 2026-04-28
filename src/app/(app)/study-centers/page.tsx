@@ -46,14 +46,19 @@ export default async function StudyCentersPage() {
           </Card>
         ) : !centers || centers.length === 0 ? (
           <Card className="p-12 text-center text-sm text-muted-foreground">
-            등록된 센터가 없습니다.
+            등록된 센터가 없습니다.{" "}
+            <Link
+              href="/study-centers/new"
+              className="text-primary hover:underline"
+            >
+              첫 센터 등록하기 →
+            </Link>
           </Card>
         ) : (
           <Card className="overflow-hidden p-0">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-12">#</TableHead>
                   <TableHead>센터명 (베)</TableHead>
                   <TableHead>센터명 (한)</TableHead>
                   <TableHead className="w-32">도시</TableHead>
@@ -65,55 +70,65 @@ export default async function StudyCentersPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {centers.map((c) => (
-                  <TableRow key={c.id} className="hover:bg-muted/30">
-                    <TableCell className="font-mono text-xs text-muted-foreground">
-                      <Link
-                        href={`/study-centers/${c.id}`}
-                        className="hover:text-primary"
-                      >
-                        {c.id}
-                      </Link>
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      {c.flag && <span className="mr-1">{c.flag}</span>}
-                      <Link
-                        href={`/study-centers/${c.id}`}
-                        className="hover:text-primary"
-                      >
-                        {c.name_vi}
-                      </Link>
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {dash(c.name_ko)}
-                    </TableCell>
-                    <TableCell className="text-sm">
-                      {dash(c.city_ko ?? c.city_vi)}
-                    </TableCell>
-                    <TableCell className="text-xs">{dash(c.phone)}</TableCell>
-                    <TableCell className="text-xs">{dash(c.email)}</TableCell>
-                    <TableCell className="text-xs">
-                      {dash(c.students_ko ?? c.students_vi)}
-                    </TableCell>
-                    <TableCell className="text-xs">
-                      {dash(c.years_ko ?? c.years_vi)}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      {c.active ? (
-                        <Badge className="bg-success/10 text-success border-success/20">
-                          활성
-                        </Badge>
-                      ) : (
-                        <Badge
-                          variant="outline"
-                          className="text-muted-foreground"
-                        >
-                          숨김
-                        </Badge>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {centers.map((c) => {
+                  const href = `/study-centers/${c.id}`;
+                  return (
+                    <TableRow key={c.id} className="cursor-pointer">
+                      <TableCell className="font-medium">
+                        <Link href={href} className="hover:text-primary">
+                          {c.flag && <span className="mr-1">{c.flag}</span>}
+                          {c.name_vi}
+                        </Link>
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        <Link href={href} className="block">
+                          {dash(c.name_ko)}
+                        </Link>
+                      </TableCell>
+                      <TableCell className="text-sm">
+                        <Link href={href} className="block">
+                          {dash(c.city_ko ?? c.city_vi)}
+                        </Link>
+                      </TableCell>
+                      <TableCell className="text-xs">
+                        <Link href={href} className="block">
+                          {dash(c.phone)}
+                        </Link>
+                      </TableCell>
+                      <TableCell className="text-xs">
+                        <Link href={href} className="block">
+                          {dash(c.email)}
+                        </Link>
+                      </TableCell>
+                      <TableCell className="text-xs">
+                        <Link href={href} className="block">
+                          {dash(c.students_ko ?? c.students_vi)}
+                        </Link>
+                      </TableCell>
+                      <TableCell className="text-xs">
+                        <Link href={href} className="block">
+                          {dash(c.years_ko ?? c.years_vi)}
+                        </Link>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <Link href={href} className="block">
+                          {c.active ? (
+                            <Badge className="bg-success/10 text-success border-success/20">
+                              활성
+                            </Badge>
+                          ) : (
+                            <Badge
+                              variant="outline"
+                              className="text-muted-foreground"
+                            >
+                              숨김
+                            </Badge>
+                          )}
+                        </Link>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </Card>

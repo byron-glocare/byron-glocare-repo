@@ -98,14 +98,19 @@ export default async function DepartmentsPage({
           </Card>
         ) : !depts || depts.length === 0 ? (
           <Card className="p-12 text-center text-sm text-muted-foreground">
-            등록된 학과가 없습니다.
+            등록된 학과가 없습니다.{" "}
+            <Link
+              href="/departments/new"
+              className="text-primary hover:underline"
+            >
+              첫 학과 등록하기 →
+            </Link>
           </Card>
         ) : (
           <Card className="overflow-hidden p-0">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-12">#</TableHead>
                   <TableHead className="w-12">아이콘</TableHead>
                   <TableHead>학과명</TableHead>
                   <TableHead className="w-44">대학</TableHead>
@@ -118,28 +123,22 @@ export default async function DepartmentsPage({
               <TableBody>
                 {depts.map((d) => {
                   const uni = uniMap.get(d.university_id);
+                  const href = `/departments/${d.id}`;
                   return (
-                    <TableRow key={d.id} className="hover:bg-muted/30">
-                      <TableCell className="font-mono text-xs text-muted-foreground">
-                        <Link
-                          href={`/departments/${d.id}`}
-                          className="hover:text-primary"
-                        >
-                          {d.id}
+                    <TableRow key={d.id} className="cursor-pointer">
+                      <TableCell>
+                        <Link href={href} className="block">
+                          {d.icon ?? "📚"}
                         </Link>
                       </TableCell>
-                      <TableCell>{d.icon ?? "📚"}</TableCell>
                       <TableCell>
-                        <Link
-                          href={`/departments/${d.id}`}
-                          className="hover:text-primary font-medium"
-                        >
+                        <Link href={href} className="hover:text-primary font-medium">
                           {d.name_ko}
                         </Link>
                         {d.name_vi && (
-                          <div className="text-xs text-muted-foreground">
+                          <Link href={href} className="block text-xs text-muted-foreground">
                             {d.name_vi}
-                          </div>
+                          </Link>
                         )}
                       </TableCell>
                       <TableCell className="text-xs">
@@ -147,30 +146,40 @@ export default async function DepartmentsPage({
                           href={`/universities/${d.university_id}`}
                           className="hover:text-primary"
                         >
-                          {uni ? `${uni.emoji ?? "🎓"} ${uni.name_ko}` : `#${d.university_id}`}
+                          {uni
+                            ? `${uni.emoji ?? "🎓"} ${uni.name_ko}`
+                            : `#${d.university_id}`}
                         </Link>
                       </TableCell>
                       <TableCell className="text-xs text-muted-foreground">
-                        {dash(d.course)}
+                        <Link href={href} className="block">
+                          {dash(d.course)}
+                        </Link>
                       </TableCell>
                       <TableCell className="text-center">
-                        {d.badge ? (
-                          <Badge variant="outline">{d.badge}</Badge>
-                        ) : (
-                          "—"
-                        )}
+                        <Link href={href} className="block">
+                          {d.badge ? (
+                            <Badge variant="outline">{d.badge}</Badge>
+                          ) : (
+                            <span className="text-xs text-muted-foreground">—</span>
+                          )}
+                        </Link>
                       </TableCell>
                       <TableCell className="text-center text-xs text-muted-foreground">
-                        {d.sort_order}
+                        <Link href={href} className="block">
+                          {d.sort_order}
+                        </Link>
                       </TableCell>
                       <TableCell className="text-center">
-                        {d.active ? (
-                          <Badge className="bg-success/10 text-success border-success/20">
-                            활성
-                          </Badge>
-                        ) : (
-                          <Badge variant="outline">숨김</Badge>
-                        )}
+                        <Link href={href} className="block">
+                          {d.active ? (
+                            <Badge className="bg-success/10 text-success border-success/20">
+                              활성
+                            </Badge>
+                          ) : (
+                            <Badge variant="outline">숨김</Badge>
+                          )}
+                        </Link>
                       </TableCell>
                     </TableRow>
                   );

@@ -111,7 +111,6 @@ export default async function UniversityEditPage({
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-12">#</TableHead>
                   <TableHead className="w-12">아이콘</TableHead>
                   <TableHead>학과명</TableHead>
                   <TableHead className="w-28">코스</TableHead>
@@ -121,54 +120,61 @@ export default async function UniversityEditPage({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {depts.map((d) => (
-                  <TableRow key={d.id} className="hover:bg-muted/30">
-                    <TableCell className="font-mono text-xs text-muted-foreground">
-                      <Link
-                        href={`/departments/${d.id}`}
-                        className="hover:text-primary"
-                      >
-                        {d.id}
-                      </Link>
-                    </TableCell>
-                    <TableCell>{d.icon ?? "📚"}</TableCell>
-                    <TableCell>
-                      <Link
-                        href={`/departments/${d.id}`}
-                        className="hover:text-primary font-medium"
-                      >
-                        {d.name_ko}
-                      </Link>
-                      {d.name_vi && (
-                        <div className="text-xs text-muted-foreground">
-                          {d.name_vi}
-                        </div>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-xs text-muted-foreground">
-                      {dash(d.course)}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      {d.badge ? (
-                        <Badge variant="outline">{d.badge}</Badge>
-                      ) : (
-                        "—"
-                      )}
-                    </TableCell>
-                    <TableCell className="text-center text-xs text-muted-foreground">
-                      {d.sort_order}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      {d.active ? (
-                        <Badge className="bg-success/10 text-success border-success/20">
-                          활성
-                        </Badge>
-                      ) : (
-                        <Badge variant="outline">숨김</Badge>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {depts.map((d) => {
+                  const href = `/departments/${d.id}`;
+                  return (
+                    <TableRow key={d.id} className="cursor-pointer">
+                      <TableCell>
+                        <Link href={href} className="block">
+                          {d.icon ?? "📚"}
+                        </Link>
+                      </TableCell>
+                      <TableCell>
+                        <Link href={href} className="hover:text-primary font-medium">
+                          {d.name_ko}
+                        </Link>
+                        {d.name_vi && (
+                          <Link
+                            href={href}
+                            className="block text-xs text-muted-foreground"
+                          >
+                            {d.name_vi}
+                          </Link>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-xs text-muted-foreground">
+                        <Link href={href} className="block">
+                          {dash(d.course)}
+                        </Link>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <Link href={href} className="block">
+                          {d.badge ? (
+                            <Badge variant="outline">{d.badge}</Badge>
+                          ) : (
+                            <span className="text-xs text-muted-foreground">—</span>
+                          )}
+                        </Link>
+                      </TableCell>
+                      <TableCell className="text-center text-xs text-muted-foreground">
+                        <Link href={href} className="block">
+                          {d.sort_order}
+                        </Link>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <Link href={href} className="block">
+                          {d.active ? (
+                            <Badge className="bg-success/10 text-success border-success/20">
+                              활성
+                            </Badge>
+                          ) : (
+                            <Badge variant="outline">숨김</Badge>
+                          )}
+                        </Link>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           )}

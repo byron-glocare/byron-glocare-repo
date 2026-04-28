@@ -59,14 +59,19 @@ export default async function UniversitiesPage() {
           </Card>
         ) : !universities || universities.length === 0 ? (
           <Card className="p-12 text-center text-sm text-muted-foreground">
-            등록된 대학이 없습니다.
+            등록된 대학이 없습니다.{" "}
+            <Link
+              href="/universities/new"
+              className="text-primary hover:underline"
+            >
+              첫 대학 등록하기 →
+            </Link>
           </Card>
         ) : (
           <Card className="overflow-hidden p-0">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-12">#</TableHead>
                   <TableHead>이름 (한)</TableHead>
                   <TableHead>이름 (베)</TableHead>
                   <TableHead className="w-32">지역</TableHead>
@@ -76,52 +81,57 @@ export default async function UniversitiesPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {universities.map((u) => (
-                  <TableRow key={u.id} className="hover:bg-muted/30">
-                    <TableCell className="font-mono text-xs text-muted-foreground">
-                      <Link
-                        href={`/universities/${u.id}`}
-                        className="hover:text-primary"
-                      >
-                        {u.id}
-                      </Link>
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      {u.emoji && <span className="mr-1">{u.emoji}</span>}
-                      <Link
-                        href={`/universities/${u.id}`}
-                        className="hover:text-primary"
-                      >
-                        {u.name_ko}
-                      </Link>
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {dash(u.name_vi)}
-                    </TableCell>
-                    <TableCell className="text-sm">
-                      {dash(u.region_ko)}
-                    </TableCell>
-                    <TableCell className="text-xs text-muted-foreground">
-                      {dash(u.categories)}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <Badge variant="secondary">
-                        {deptCount.get(u.id) ?? 0}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-center">
-                      {u.active ? (
-                        <Badge className="bg-success/10 text-success border-success/20">
-                          활성
-                        </Badge>
-                      ) : (
-                        <Badge variant="outline" className="text-muted-foreground">
-                          숨김
-                        </Badge>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {universities.map((u) => {
+                  const href = `/universities/${u.id}`;
+                  return (
+                    <TableRow key={u.id} className="cursor-pointer">
+                      <TableCell className="font-medium">
+                        <Link href={href} className="hover:text-primary">
+                          {u.emoji && <span className="mr-1">{u.emoji}</span>}
+                          {u.name_ko}
+                        </Link>
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        <Link href={href} className="block">
+                          {dash(u.name_vi)}
+                        </Link>
+                      </TableCell>
+                      <TableCell className="text-sm">
+                        <Link href={href} className="block">
+                          {dash(u.region_ko)}
+                        </Link>
+                      </TableCell>
+                      <TableCell className="text-xs text-muted-foreground">
+                        <Link href={href} className="block">
+                          {dash(u.categories)}
+                        </Link>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <Link href={href} className="block">
+                          <Badge variant="secondary">
+                            {deptCount.get(u.id) ?? 0}
+                          </Badge>
+                        </Link>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <Link href={href} className="block">
+                          {u.active ? (
+                            <Badge className="bg-success/10 text-success border-success/20">
+                              활성
+                            </Badge>
+                          ) : (
+                            <Badge
+                              variant="outline"
+                              className="text-muted-foreground"
+                            >
+                              숨김
+                            </Badge>
+                          )}
+                        </Link>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </Card>
