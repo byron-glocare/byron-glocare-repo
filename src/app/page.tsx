@@ -27,16 +27,19 @@ export default async function HomePage() {
     { data: departments },
     { data: centers },
   ] = await Promise.all([
+    // Hero 영역: hero 가 'N' 이 아닌 것 (= '1', '2', ...) — 값 오름차순
     supabase
       .from("study_cases")
       .select("id, title_ko, title_vi, tiktok_thumb, tiktok_url, hero")
-      .eq("hero", true)
-      .limit(3),
+      .neq("hero", "N")
+      .order("hero", { ascending: true }),
+    // Cases 그리드: hero = 'N'
     supabase
       .from("study_cases")
       .select(
         "id, title_ko, title_vi, category_ko, category_vi, tiktok_thumb, tiktok_url"
       )
+      .eq("hero", "N")
       .order("id", { ascending: false })
       .limit(8),
     supabase

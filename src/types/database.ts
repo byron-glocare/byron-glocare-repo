@@ -764,7 +764,8 @@ export type Database = {
           active: boolean;
           tiktok_url: string | null;
           tiktok_thumb: string | null;
-          hero: boolean;
+          /** 노출 위치: '1'/'2'/... (Hero 영역 순서) | 'N' (Cases 그리드) */
+          hero: string;
           category_ko: string | null;
           category_vi: string | null;
           title_ko: string | null;
@@ -779,7 +780,7 @@ export type Database = {
           active?: boolean;
           tiktok_url?: string | null;
           tiktok_thumb?: string | null;
-          hero?: boolean;
+          hero?: string;
           category_ko?: string | null;
           category_vi?: string | null;
           title_ko?: string | null;
