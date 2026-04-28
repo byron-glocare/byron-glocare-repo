@@ -1,5 +1,6 @@
 import {
   Building2,
+  Film,
   GraduationCap,
   Hospital,
   LayoutDashboard,
@@ -47,6 +48,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { href: "/students", label: "유학생", icon: Plane },
       { href: "/universities", label: "대학교", icon: School },
       { href: "/study-centers", label: "유학센터", icon: Building2 },
+      { href: "/study-cases", label: "사례", icon: Film },
     ],
   },
   {

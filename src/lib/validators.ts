@@ -355,3 +355,32 @@ export const welcomePackPaymentSchema = z.object({
 
 export type WelcomePackPaymentInput = z.input<typeof welcomePackPaymentSchema>;
 export type WelcomePackPaymentOutput = z.output<typeof welcomePackPaymentSchema>;
+
+// =============================================================================
+// 유학 — 취업 사례 (study_cases)
+// =============================================================================
+
+/**
+ * hero 노출 위치 코드:
+ *   '1', '2', '3', ... → 홈페이지 Hero 영역, 값 순서대로 노출
+ *   'N'                → Hero 아래 Cases 그리드 (기본값)
+ */
+export const studyCaseSchema = z.object({
+  active: z.boolean().default(true),
+  tiktok_url: optionalString,
+  tiktok_thumb: optionalString,
+  hero: z
+    .string()
+    .trim()
+    .transform((v) => (v === "" ? "N" : v))
+    .default("N"),
+  category_ko: optionalString,
+  category_vi: optionalString,
+  title_ko: optionalString,
+  title_vi: optionalString,
+  desc_ko: optionalString,
+  desc_vi: optionalString,
+});
+
+export type StudyCaseInput = z.input<typeof studyCaseSchema>;
+export type StudyCaseOutput = z.output<typeof studyCaseSchema>;
