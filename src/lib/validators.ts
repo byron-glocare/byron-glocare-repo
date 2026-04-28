@@ -384,3 +384,143 @@ export const studyCaseSchema = z.object({
 
 export type StudyCaseInput = z.input<typeof studyCaseSchema>;
 export type StudyCaseOutput = z.output<typeof studyCaseSchema>;
+
+// =============================================================================
+// 유학 — 대학교 (universities)
+// =============================================================================
+
+export const universitySchema = z.object({
+  active: z.boolean().default(true),
+  name_ko: z.string().trim().min(1, "대학명(한)은 필수입니다."),
+  name_vi: optionalString,
+  region_ko: optionalString,
+  region_vi: optionalString,
+  logo_url: optionalString,
+  photo_url: optionalString,
+  website_url: optionalString,
+  desc_ko: optionalString,
+  desc_vi: optionalString,
+  class_days_ko: optionalString,
+  class_days_vi: optionalString,
+  transport_bus: z.boolean().default(false),
+  transport_subway: z.boolean().default(false),
+  transport_train: z.boolean().default(false),
+  transport_desc_ko: optionalString,
+  transport_desc_vi: optionalString,
+  dormitory: z.boolean().default(false),
+  dormitory_desc_ko: optionalString,
+  dormitory_desc_vi: optionalString,
+  strengths: optionalString,
+  tags_ko: optionalString,
+  tags_vi: optionalString,
+  categories: optionalString,
+  emoji: optionalString,
+});
+
+export type UniversityInput = z.input<typeof universitySchema>;
+export type UniversityOutput = z.output<typeof universitySchema>;
+
+// =============================================================================
+// 유학 — 학과 (departments)
+// =============================================================================
+
+export const departmentSchema = z.object({
+  university_id: z.number().int().positive("대학을 선택해주세요."),
+  active: z.boolean().default(true),
+  icon: optionalString,
+  name_ko: z.string().trim().min(1, "학과명(한)은 필수입니다."),
+  name_vi: optionalString,
+  category: optionalString,
+  degree_years: z
+    .union([z.string().trim(), z.number(), z.null()])
+    .transform((v) => {
+      if (v === null || v === undefined || v === "") return null;
+      const n = typeof v === "number" ? v : Number(v);
+      return Number.isFinite(n) ? Math.trunc(n) : null;
+    })
+    .nullable()
+    .optional(),
+  tuition_ko: optionalString,
+  tuition_vi: optionalString,
+  scholarship_ko: optionalString,
+  scholarship_vi: optionalString,
+  dept_url: optionalString,
+  badge: optionalString,
+  case_ids: optionalString,
+  course: optionalString, // 'direct' | 'language' | etc
+  sort_order: z
+    .union([z.string().trim(), z.number()])
+    .transform((v) => {
+      if (v === "" || v === null || v === undefined) return 0;
+      const n = typeof v === "number" ? v : Number(v);
+      return Number.isFinite(n) ? Math.trunc(n) : 0;
+    })
+    .default(0),
+});
+
+export type DepartmentInput = z.input<typeof departmentSchema>;
+export type DepartmentOutput = z.output<typeof departmentSchema>;
+
+// =============================================================================
+// 유학 — 유학센터 (study_centers)
+// =============================================================================
+
+export const studyCenterSchema = z.object({
+  active: z.boolean().default(true),
+  flag: optionalString,
+  name_ko: optionalString,
+  name_vi: z.string().trim().min(1, "센터명(베)은 필수입니다."),
+  city_ko: optionalString,
+  city_vi: optionalString,
+  address: optionalString,
+  phone: optionalString,
+  email: optionalString,
+  desc_ko: optionalString,
+  desc_vi: optionalString,
+  students_ko: optionalString,
+  students_vi: optionalString,
+  years_ko: optionalString,
+  years_vi: optionalString,
+});
+
+export type StudyCenterInput = z.input<typeof studyCenterSchema>;
+export type StudyCenterOutput = z.output<typeof studyCenterSchema>;
+
+// =============================================================================
+// 유학 — SNS 채널 (study_channels)
+// =============================================================================
+
+export const studyChannelSchema = z.object({
+  active: z.boolean().default(true),
+  type: optionalString, // tiktok / facebook / instagram / website / youtube / kakao
+  icon: optionalString,
+  name_ko: optionalString,
+  name_vi: optionalString,
+  desc_ko: optionalString,
+  desc_vi: optionalString,
+  handle: optionalString,
+  url: optionalString,
+  sort_order: z
+    .union([z.string().trim(), z.number()])
+    .transform((v) => {
+      if (v === "" || v === null || v === undefined) return 0;
+      const n = typeof v === "number" ? v : Number(v);
+      return Number.isFinite(n) ? Math.trunc(n) : 0;
+    })
+    .default(0),
+  memo: optionalString,
+});
+
+export type StudyChannelInput = z.input<typeof studyChannelSchema>;
+export type StudyChannelOutput = z.output<typeof studyChannelSchema>;
+
+// =============================================================================
+// 유학 — 상담/보험 신청 inbox status update
+// =============================================================================
+
+export const studyInboxStatusSchema = z.object({
+  status: z.enum(["미확인", "연락완료", "등록완료"]),
+  memo: optionalString,
+});
+
+export type StudyInboxStatusInput = z.input<typeof studyInboxStatusSchema>;

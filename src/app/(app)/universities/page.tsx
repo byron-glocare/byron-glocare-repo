@@ -1,8 +1,10 @@
 import Link from "next/link";
+import { Plus } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
+import { buttonVariants } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -31,7 +33,6 @@ export default async function UniversitiesPage() {
       .select("university_id, active"),
   ]);
 
-  // 학과 수 (active=true 만)
   const deptCount = new Map<number, number>();
   for (const d of depts ?? []) {
     if (!d.active) continue;
@@ -44,6 +45,12 @@ export default async function UniversitiesPage() {
         title="대학교"
         description="유학 도메인 — 한국 협력 대학 마스터 데이터"
         breadcrumbs={[{ label: "대학교" }]}
+        actions={
+          <Link href="/universities/new" className={buttonVariants()}>
+            <Plus className="size-4" />
+            대학 등록
+          </Link>
+        }
       />
       <div className="p-6 space-y-4">
         {error ? (
@@ -52,8 +59,7 @@ export default async function UniversitiesPage() {
           </Card>
         ) : !universities || universities.length === 0 ? (
           <Card className="p-12 text-center text-sm text-muted-foreground">
-            등록된 대학이 없습니다. 마이그레이션 0009 + 데이터 임포트 SQL 을
-            실행했는지 확인하세요.
+            등록된 대학이 없습니다.
           </Card>
         ) : (
           <Card className="overflow-hidden p-0">
@@ -71,24 +77,23 @@ export default async function UniversitiesPage() {
               </TableHeader>
               <TableBody>
                 {universities.map((u) => (
-                  <TableRow key={u.id}>
+                  <TableRow key={u.id} className="hover:bg-muted/30">
                     <TableCell className="font-mono text-xs text-muted-foreground">
-                      {u.id}
+                      <Link
+                        href={`/universities/${u.id}`}
+                        className="hover:text-primary"
+                      >
+                        {u.id}
+                      </Link>
                     </TableCell>
                     <TableCell className="font-medium">
                       {u.emoji && <span className="mr-1">{u.emoji}</span>}
-                      {u.website_url ? (
-                        <a
-                          href={u.website_url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="hover:text-primary"
-                        >
-                          {u.name_ko}
-                        </a>
-                      ) : (
-                        u.name_ko
-                      )}
+                      <Link
+                        href={`/universities/${u.id}`}
+                        className="hover:text-primary"
+                      >
+                        {u.name_ko}
+                      </Link>
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">
                       {dash(u.name_vi)}
@@ -121,10 +126,6 @@ export default async function UniversitiesPage() {
             </Table>
           </Card>
         )}
-
-        <p className="text-xs text-muted-foreground px-1">
-          ※ 편집·등록 UI 는 다음 단계에서 추가 예정. 현재는 읽기 전용.
-        </p>
       </div>
     </>
   );

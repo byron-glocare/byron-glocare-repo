@@ -1,6 +1,10 @@
+import Link from "next/link";
+import { Plus } from "lucide-react";
+
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
+import { buttonVariants } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -28,6 +32,12 @@ export default async function StudyCentersPage() {
         title="유학센터"
         description="유학 도메인 — 베트남 협력 유학 센터"
         breadcrumbs={[{ label: "유학센터" }]}
+        actions={
+          <Link href="/study-centers/new" className={buttonVariants()}>
+            <Plus className="size-4" />
+            센터 등록
+          </Link>
+        }
       />
       <div className="p-6 space-y-4">
         {error ? (
@@ -56,13 +66,23 @@ export default async function StudyCentersPage() {
               </TableHeader>
               <TableBody>
                 {centers.map((c) => (
-                  <TableRow key={c.id}>
+                  <TableRow key={c.id} className="hover:bg-muted/30">
                     <TableCell className="font-mono text-xs text-muted-foreground">
-                      {c.id}
+                      <Link
+                        href={`/study-centers/${c.id}`}
+                        className="hover:text-primary"
+                      >
+                        {c.id}
+                      </Link>
                     </TableCell>
                     <TableCell className="font-medium">
                       {c.flag && <span className="mr-1">{c.flag}</span>}
-                      {c.name_vi}
+                      <Link
+                        href={`/study-centers/${c.id}`}
+                        className="hover:text-primary"
+                      >
+                        {c.name_vi}
+                      </Link>
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">
                       {dash(c.name_ko)}
@@ -98,10 +118,6 @@ export default async function StudyCentersPage() {
             </Table>
           </Card>
         )}
-
-        <p className="text-xs text-muted-foreground px-1">
-          ※ 편집·등록 UI 는 다음 단계에서 추가 예정. 현재는 읽기 전용.
-        </p>
       </div>
     </>
   );

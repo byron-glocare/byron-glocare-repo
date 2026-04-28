@@ -1,4 +1,5 @@
 import {
+  BookOpen,
   Building2,
   Film,
   GraduationCap,
@@ -6,6 +7,7 @@ import {
   LayoutDashboard,
   MessageSquare,
   Plane,
+  Radio,
   Receipt,
   School,
   Settings,
@@ -47,8 +49,10 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [
       { href: "/students", label: "유학생", icon: Plane },
       { href: "/universities", label: "대학교", icon: School },
+      { href: "/departments", label: "학과", icon: BookOpen },
       { href: "/study-centers", label: "유학센터", icon: Building2 },
       { href: "/study-cases", label: "사례", icon: Film },
+      { href: "/study-channels", label: "SNS 채널", icon: Radio },
     ],
   },
   {

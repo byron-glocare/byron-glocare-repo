@@ -16,6 +16,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
+import {
+  StudyStatusEditor,
+  MemoEditor,
+} from "@/components/study-inbox-row";
 import { dash, formatDate } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
@@ -107,7 +111,8 @@ export default async function StudentsPage({
                       <TableHead className="w-32">희망 학과</TableHead>
                       <TableHead className="w-32">소개 센터</TableHead>
                       <TableHead>메시지</TableHead>
-                      <TableHead className="w-24 text-center">상태</TableHead>
+                      <TableHead className="w-32 text-center">상태</TableHead>
+                      <TableHead className="w-44">메모</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -137,8 +142,21 @@ export default async function StudentsPage({
                         <TableCell className="text-xs text-muted-foreground truncate max-w-md">
                           {c.message}
                         </TableCell>
-                        <TableCell className="text-center">
-                          <StatusBadge status={c.status} />
+                        <TableCell>
+                          <StudyStatusEditor
+                            kind="contact"
+                            id={c.id}
+                            initialStatus={c.status}
+                            initialMemo={c.memo}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <MemoEditor
+                            kind="contact"
+                            id={c.id}
+                            status={c.status}
+                            initialMemo={c.memo}
+                          />
                         </TableCell>
                       </TableRow>
                     ))}
@@ -163,8 +181,8 @@ export default async function StudentsPage({
                       <TableHead className="w-40">외국인등록번호</TableHead>
                       <TableHead className="w-32">Zalo</TableHead>
                       <TableHead className="w-24 text-center">마케팅 동의</TableHead>
-                      <TableHead className="w-24 text-center">상태</TableHead>
-                      <TableHead>메모</TableHead>
+                      <TableHead className="w-32 text-center">상태</TableHead>
+                      <TableHead className="w-44">메모</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -189,11 +207,21 @@ export default async function StudentsPage({
                             <span className="text-xs text-muted-foreground">—</span>
                           )}
                         </TableCell>
-                        <TableCell className="text-center">
-                          <StatusBadge status={c.status} />
+                        <TableCell>
+                          <StudyStatusEditor
+                            kind="claim"
+                            id={c.id}
+                            initialStatus={c.status}
+                            initialMemo={c.memo}
+                          />
                         </TableCell>
-                        <TableCell className="text-xs text-muted-foreground">
-                          {dash(c.memo)}
+                        <TableCell>
+                          <MemoEditor
+                            kind="claim"
+                            id={c.id}
+                            status={c.status}
+                            initialMemo={c.memo}
+                          />
                         </TableCell>
                       </TableRow>
                     ))}
@@ -203,29 +231,7 @@ export default async function StudentsPage({
             )}
           </TabsContent>
         </Tabs>
-
-        <p className="text-xs text-muted-foreground mt-4 px-1">
-          ※ 상태 변경 / 메모 편집 UI 는 다음 단계 추가 예정.
-        </p>
       </div>
     </>
-  );
-}
-
-function StatusBadge({
-  status,
-}: {
-  status: "미확인" | "연락완료" | "등록완료";
-}) {
-  const cls =
-    status === "등록완료"
-      ? "bg-success/10 text-success border-success/20"
-      : status === "연락완료"
-        ? "bg-info/10 text-info border-info/20"
-        : "bg-warning/10 text-warning border-warning/20";
-  return (
-    <Badge variant="outline" className={cls}>
-      {status}
-    </Badge>
   );
 }
