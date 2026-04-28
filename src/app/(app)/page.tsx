@@ -1,11 +1,21 @@
 import Link from "next/link";
-import { MessageSquarePlus, UserPlus } from "lucide-react";
+import {
+  BookOpen,
+  Building2,
+  Film,
+  MessageCircle,
+  MessageSquarePlus,
+  School,
+  ShieldCheck,
+  UserPlus,
+} from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/page-header";
 import { TaskCards } from "@/components/dashboard/task-cards";
 import { StageDistributionChart } from "@/components/dashboard/stage-distribution";
 import { NewCustomersCard } from "@/components/dashboard/new-customers-card";
+import { StudyStatsCards } from "@/components/dashboard/study-stats-cards";
 import {
   computeTaskBuckets,
   computeStageDistribution,
@@ -31,6 +41,14 @@ export default async function DashboardPage() {
     { data: reservationPayments },
     { data: welcomePackPayments },
     { data: smsMessages },
+    { count: uniCount },
+    { count: deptCount },
+    { count: centerCount },
+    { count: caseCount },
+    { count: contactsTotal },
+    { count: contactsPending },
+    { count: claimsTotal },
+    { count: claimsPending },
   ] = await Promise.all([
     supabase.from("customers").select("*"),
     supabase.from("customer_statuses").select("*"),
@@ -43,6 +61,34 @@ export default async function DashboardPage() {
     supabase
       .from("sms_messages")
       .select("target_customer_id, message_type"),
+    supabase
+      .from("universities")
+      .select("id", { count: "exact", head: true })
+      .eq("active", true),
+    supabase
+      .from("departments")
+      .select("id", { count: "exact", head: true })
+      .eq("active", true),
+    supabase
+      .from("study_centers")
+      .select("id", { count: "exact", head: true })
+      .eq("active", true),
+    supabase
+      .from("study_cases")
+      .select("id", { count: "exact", head: true })
+      .eq("active", true),
+    supabase.from("study_contacts").select("id", { count: "exact", head: true }),
+    supabase
+      .from("study_contacts")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "미확인"),
+    supabase
+      .from("study_insurance_claims")
+      .select("id", { count: "exact", head: true }),
+    supabase
+      .from("study_insurance_claims")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "미확인"),
   ]);
 
   const inputs = {
@@ -58,6 +104,47 @@ export default async function DashboardPage() {
   const newCustomerCounts = computeNewCustomerCounts(customers ?? []);
 
   const totalCustomers = customers?.length ?? 0;
+
+  const studyStats = [
+    {
+      href: "/universities",
+      label: "대학교",
+      icon: School,
+      count: uniCount ?? 0,
+    },
+    {
+      href: "/departments",
+      label: "학과",
+      icon: BookOpen,
+      count: deptCount ?? 0,
+    },
+    {
+      href: "/study-centers",
+      label: "유학센터",
+      icon: Building2,
+      count: centerCount ?? 0,
+    },
+    {
+      href: "/study-cases",
+      label: "사례",
+      icon: Film,
+      count: caseCount ?? 0,
+    },
+    {
+      href: "/students?tab=contacts",
+      label: "상담",
+      icon: MessageCircle,
+      count: contactsTotal ?? 0,
+      pending: contactsPending ?? 0,
+    },
+    {
+      href: "/students?tab=insurance",
+      label: "보험",
+      icon: ShieldCheck,
+      count: claimsTotal ?? 0,
+      pending: claimsPending ?? 0,
+    },
+  ];
 
   return (
     <>
@@ -107,6 +194,19 @@ export default async function DashboardPage() {
 
           <NewCustomersCard {...newCustomerCounts} />
         </div>
+
+        {/* 유학생 도메인 stats */}
+        <section className="space-y-3 pt-2">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-medium text-muted-foreground">
+              유학생 도메인
+            </h2>
+            <span className="text-xs text-muted-foreground">
+              ※ 활성 데이터 기준 · 우측 상단 숫자는 미확인 inbox
+            </span>
+          </div>
+          <StudyStatsCards stats={studyStats} />
+        </section>
       </div>
     </>
   );
