@@ -194,12 +194,18 @@ def convert_centers_row(row: dict) -> dict | None:
 def convert_cases_row(row: dict) -> dict | None:
     if not row.get("id"):
         return None
+    # hero: 노출 위치 코드 — '1', '2' (Hero 영역 순서), 'N' (아래 cases 그리드)
+    hero_raw = row.get("hero")
+    if hero_raw is None or str(hero_raw).strip() == "":
+        hero = "N"
+    else:
+        hero = str(hero_raw).strip()
     return {
         "id": to_int(row.get("id")),
         "active": yn_to_bool(row.get("active")),
         "tiktok_url": to_str(row.get("tiktok_url")),
         "tiktok_thumb": to_str(row.get("tiktok_thumb")),
-        "hero": yn_to_bool(row.get("hero")),
+        "hero": hero,
         "category_ko": to_str(row.get("category_ko")),
         "category_vi": to_str(row.get("category_vi")),
         "title_ko": to_str(row.get("title_ko")),
