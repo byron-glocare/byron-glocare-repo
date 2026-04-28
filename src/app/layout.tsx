@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Be_Vietnam_Pro, Noto_Sans_KR, Noto_Serif_KR } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
 
@@ -7,18 +7,30 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { getLocale } from "@/lib/i18n";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const beVietnam = Be_Vietnam_Pro({
+  subsets: ["latin", "vietnamese"],
+  weight: ["300", "400", "600", "700", "800"],
+  style: ["normal", "italic"],
+  display: "swap",
+  variable: "--font-be-vietnam",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const notoSansKr = Noto_Sans_KR({
   subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  display: "swap",
+  variable: "--font-noto-kr",
+});
+
+const notoSerifKr = Noto_Serif_KR({
+  subsets: ["latin"],
+  weight: ["400", "700", "900"],
+  display: "swap",
+  variable: "--font-noto-serif-kr",
 });
 
 export const metadata: Metadata = {
-  title: "Glocare — 베트남 학생 한국 유학",
+  title: "GLOCARE — Du học Hàn Quốc có việc làm đảm bảo",
   description:
     "Glocare đồng hành cùng học sinh Việt Nam du học Hàn Quốc — trường đại học, ngành học, hỗ trợ visa, việc làm.",
 };
@@ -32,11 +44,11 @@ export default async function RootLayout({
   return (
     <html
       lang={locale}
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${beVietnam.variable} ${notoSansKr.variable} ${notoSerifKr.variable}`}
     >
-      <body className="min-h-full flex flex-col bg-background text-foreground">
-        <SiteHeader />
-        <main className="flex-1">{children}</main>
+      <body>
+        <SiteHeader locale={locale} />
+        <main>{children}</main>
         <SiteFooter />
         <Toaster richColors position="top-center" />
       </body>
