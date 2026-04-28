@@ -135,6 +135,12 @@ const universities = {
     tabLangSub: "유학 전과정과 취업까지 경험하는 최고의 코스!",
     badgeHot: "인기",
     badgeGood: "추천",
+    modalTitle: "학과 안내",
+    modalTuition: "등록금",
+    modalScholarship: "장학금",
+    modalDegree: "수학 기간",
+    modalDeptLink: "학과 홈페이지",
+    modalStrengths: "특징",
   },
   vi: {
     eyebrow: "Trường ĐH & Ngành học",
@@ -151,6 +157,12 @@ const universities = {
     tabLangSub: "Trải nghiệm toàn bộ du học và việc làm!",
     badgeHot: "HOT",
     badgeGood: "Tốt",
+    modalTitle: "Chi tiết ngành học",
+    modalTuition: "Học phí",
+    modalScholarship: "Học bổng",
+    modalDegree: "Thời gian học",
+    modalDeptLink: "Trang ngành học",
+    modalStrengths: "Đặc điểm",
   },
 };
 
@@ -421,6 +433,24 @@ const floating = {
   },
 };
 
+const insurancePopup = {
+  ko: {
+    badge: "미수령 보험금 안내",
+    title: "한국에서 일하셨나요?<br>미수령 보험금을 찾아보세요.",
+    desc: "한국에서 근무하신 분이라면 반드시 가입해야 하는 보험의 미수령 보험금이 적립되어 있을 수 있습니다. 지금 바로 확인하고 환급받으세요.",
+    cta: "무료로 환급 가능여부 조회하기 →",
+    skip: "오늘 하루 보지 않기",
+  },
+  vi: {
+    badge: "Thông báo bảo hiểm chưa nhận",
+    title:
+      "Bạn đã từng làm việc tại Hàn Quốc?<br>Hãy kiểm tra khoản bảo hiểm chưa nhận.",
+    desc: "Nếu bạn đã làm việc tại Hàn Quốc, có thể bạn đang có khoản bảo hiểm bắt buộc chưa được nhận. Kiểm tra và nhận hoàn tiền ngay bây giờ.",
+    cta: "Kiểm tra miễn phí khả năng hoàn tiền →",
+    skip: "Không hiển thị hôm nay",
+  },
+};
+
 export function getSectionStrings(locale: Locale) {
   return {
     apply: apply[locale],
@@ -429,5 +459,6 @@ export function getSectionStrings(locale: Locale) {
     insuranceRefund: insuranceRefund[locale],
     insuranceInfo: insuranceInfo[locale],
     floating: floating[locale],
+    insurancePopup: insurancePopup[locale],
   };
 }

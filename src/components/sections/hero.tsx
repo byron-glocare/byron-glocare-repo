@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { TikTokThumb } from "@/components/tiktok-thumb";
 import type { Dict } from "@/lib/i18n";
 
 type HeroVideo = {
@@ -67,19 +68,7 @@ export function Hero({
               className="hero-vid-card"
               aria-label={v.title}
             >
-              {v.thumb ? (
-                /* eslint-disable-next-line @next/next/no-img-element */
-                <img src={v.thumb} alt={v.title} />
-              ) : (
-                <div
-                  style={{
-                    width: "100%",
-                    aspectRatio: "9/16",
-                    background:
-                      "linear-gradient(135deg,var(--coral-pale),var(--coral-soft))",
-                  }}
-                />
-              )}
+              <TikTokThumb src={v.thumb} alt={v.title} />
               <div className="vid-play">
                 <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
                   <circle cx="32" cy="32" r="28" fill="rgba(255,255,255,0.92)" />

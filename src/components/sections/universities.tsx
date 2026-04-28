@@ -9,6 +9,10 @@ type Department = {
   name: string;
   badge: string | null;
   course: string | null;
+  degree_years: number | null;
+  tuition: string;
+  scholarship: string;
+  dept_url: string | null;
 };
 
 export type UniversityCard = {
@@ -17,6 +21,7 @@ export type UniversityCard = {
   name: string;
   region: string;
   tags: string[];
+  strengths: string;
   departments: Department[];
 };
 
@@ -34,6 +39,12 @@ type Strings = {
   tabLangSub: string;
   badgeHot: string;
   badgeGood: string;
+  modalTitle: string;
+  modalTuition: string;
+  modalScholarship: string;
+  modalDegree: string;
+  modalDeptLink: string;
+  modalStrengths: string;
 };
 
 export function Universities({
@@ -44,6 +55,7 @@ export function Universities({
   strings: Strings;
 }) {
   const [course, setCourse] = useState<"direct" | "language">("direct");
+  const [openId, setOpenId] = useState<number | null>(null);
 
   const filtered = useMemo(() => {
     return universities
@@ -55,6 +67,8 @@ export function Universities({
       }))
       .filter((u) => u.departments.length > 0);
   }, [universities, course]);
+
+  const opened = openId == null ? null : universities.find((u) => u.id === openId) ?? null;
 
   return (
     <section id="universities" className="section">
@@ -97,7 +111,11 @@ export function Universities({
 
         <div className="uni-grid">
           {filtered.map((u) => (
-            <div key={u.id} className="uni-card">
+            <div
+              key={u.id}
+              className="uni-card"
+              onClick={() => setOpenId(u.id)}
+            >
               <div className="uni-head">
                 <div className="uni-ico">{u.emoji}</div>
                 <div>
@@ -132,6 +150,94 @@ export function Universities({
             </div>
           ))}
         </div>
+      </div>
+
+      <div
+        className={`overlay${opened ? " on" : ""}`}
+        onClick={(e) => {
+          if (e.target === e.currentTarget) setOpenId(null);
+        }}
+      >
+        {opened && (
+          <div className="modal" style={{ maxWidth: 600 }}>
+            <div className="modal-hd">
+              <h3>
+                {opened.emoji} {opened.name} — {strings.modalTitle}
+              </h3>
+              <button
+                type="button"
+                className="modal-x"
+                onClick={() => setOpenId(null)}
+              >
+                ✕
+              </button>
+            </div>
+            <div className="modal-bd">
+              {opened.strengths && (
+                <div
+                  style={{
+                    marginBottom: "1.2rem",
+                    padding: "0.9rem 1.1rem",
+                    background: "var(--coral-pale)",
+                    border: "1px solid var(--coral-soft)",
+                    borderRadius: 10,
+                    fontSize: "0.85rem",
+                    color: "var(--ink-mid)",
+                    lineHeight: 1.6,
+                  }}
+                >
+                  <strong style={{ color: "var(--coral-d)" }}>
+                    {strings.modalStrengths}:
+                  </strong>{" "}
+                  {opened.strengths}
+                </div>
+              )}
+
+              {opened.departments.map((d) => (
+                <div key={d.id} className="mdept">
+                  <div className="mdept-ico">{d.icon || "📚"}</div>
+                  <div style={{ flex: 1 }}>
+                    <div className="mdept-name">{d.name}</div>
+                    <div className="mdept-desc">
+                      {d.degree_years != null && (
+                        <div>
+                          {strings.modalDegree}: {d.degree_years}년
+                        </div>
+                      )}
+                      {d.tuition && (
+                        <div>
+                          {strings.modalTuition}: {d.tuition}
+                        </div>
+                      )}
+                      {d.scholarship && (
+                        <div>
+                          {strings.modalScholarship}: {d.scholarship}
+                        </div>
+                      )}
+                      {d.dept_url && (
+                        <div style={{ marginTop: "0.4rem" }}>
+                          <a
+                            href={d.dept_url}
+                            target="_blank"
+                            rel="noreferrer"
+                            style={{
+                              color: "var(--coral)",
+                              fontWeight: 600,
+                              textDecoration: "underline",
+                              fontSize: "0.78rem",
+                            }}
+                          >
+                            {strings.modalDeptLink} →
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

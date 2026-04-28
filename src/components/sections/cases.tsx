@@ -1,3 +1,4 @@
+import { TikTokThumb } from "@/components/tiktok-thumb";
 import type { Dict, Locale } from "@/lib/i18n";
 
 type CaseCard = {
@@ -41,19 +42,7 @@ export function Cases({
               aria-label={c.title}
             >
               <div className="case-vid">
-                {c.thumb ? (
-                  /* eslint-disable-next-line @next/next/no-img-element */
-                  <img src={c.thumb} alt={c.title} />
-                ) : (
-                  <div
-                    style={{
-                      width: "100%",
-                      aspectRatio: "9/16",
-                      background:
-                        "linear-gradient(135deg,var(--coral-pale),var(--coral-soft))",
-                    }}
-                  />
-                )}
+                <TikTokThumb src={c.thumb} alt={c.title} />
                 <div className="case-vid-play">
                   <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
                     <circle

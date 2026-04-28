@@ -7,6 +7,7 @@ import { InsuranceRefund } from "@/components/sections/insurance-refund";
 import { Recruiting } from "@/components/sections/recruiting";
 import { Universities, type UniversityCard } from "@/components/sections/universities";
 import { FloatingButtons } from "@/components/floating-buttons";
+import { InsurancePopup } from "@/components/insurance-popup";
 import { createClient } from "@/lib/supabase/server";
 import { getDict, getLocale } from "@/lib/i18n";
 import { getSectionStrings } from "@/lib/section-strings";
@@ -41,13 +42,13 @@ export default async function HomePage() {
     supabase
       .from("universities")
       .select(
-        "id, name_ko, name_vi, region_ko, region_vi, emoji, tags_ko, tags_vi"
+        "id, name_ko, name_vi, region_ko, region_vi, emoji, tags_ko, tags_vi, strengths"
       )
       .order("id"),
     supabase
       .from("departments")
       .select(
-        "id, university_id, icon, name_ko, name_vi, badge, course, sort_order"
+        "id, university_id, icon, name_ko, name_vi, badge, course, sort_order, degree_years, tuition_ko, tuition_vi, scholarship_ko, scholarship_vi, dept_url"
       )
       .order("sort_order"),
     supabase
@@ -95,6 +96,16 @@ export default async function HomePage() {
             : (d.name_ko ?? ""),
         badge: d.badge,
         course: d.course,
+        degree_years: d.degree_years,
+        tuition:
+          locale === "vi"
+            ? (d.tuition_vi ?? d.tuition_ko ?? "")
+            : (d.tuition_ko ?? ""),
+        scholarship:
+          locale === "vi"
+            ? (d.scholarship_vi ?? d.scholarship_ko ?? "")
+            : (d.scholarship_ko ?? ""),
+        dept_url: d.dept_url,
       }));
     const tagsRaw = locale === "vi" ? u.tags_vi : u.tags_ko;
     const tags = tagsRaw
@@ -109,6 +120,7 @@ export default async function HomePage() {
           ? (u.region_vi ?? u.region_ko ?? "")
           : (u.region_ko ?? ""),
       tags,
+      strengths: u.strengths ?? "",
       departments: uniDepts,
     };
   });
@@ -142,6 +154,7 @@ export default async function HomePage() {
       <InsuranceRefund strings={ss.insuranceRefund} />
       <InsuranceInfo strings={ss.insuranceInfo} />
       <FloatingButtons strings={ss.floating} />
+      <InsurancePopup strings={ss.insurancePopup} />
     </>
   );
 }
