@@ -59,12 +59,8 @@ export default async function HomePage() {
       .order("id"),
   ]);
 
-  // hero=true 인 사례를 우선 사용. 없으면 최신 3개로 fallback (페이지가 비지 않게).
-  const heroSource =
-    heroCasesPrimary && heroCasesPrimary.length > 0
-      ? heroCasesPrimary
-      : (cases ?? []).slice(0, 3);
-  const heroVideos = heroSource.map((c) => ({
+  // study_cases.hero=true 인 사례만 Hero 우측에 노출 (admin 에서 큐레이션).
+  const heroVideos = (heroCasesPrimary ?? []).map((c) => ({
     id: c.id,
     title:
       locale === "vi"
