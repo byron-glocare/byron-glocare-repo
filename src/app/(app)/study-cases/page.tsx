@@ -172,7 +172,7 @@ function HeroBadge({ hero }: { hero: string }) {
     );
   }
   return (
-    <Badge className="bg-coral/10 text-primary border-primary/30">
+    <Badge className="bg-primary/10 text-primary border-primary/30">
       Hero {hero}
     </Badge>
   );
