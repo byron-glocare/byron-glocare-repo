@@ -35,8 +35,40 @@ const koDict = {
 
   // Home
   "home.heading": "외국인 요양보호사 자격 취득 지원 서비스",
+  "home.tagline": "거주지 인근 교육원 연계 · 베트남어 자료 · 취업 + 비자까지",
   "home.cta.training": "요양보호사 교육 신청",
   "home.cta.partner": "글로케어 제휴 문의",
+
+  // KPI
+  "kpi.students": "전체 교육생",
+  "kpi.working": "현직 근무자",
+  "kpi.training_centers": "제휴 교육원",
+  "kpi.care_homes": "제휴 요양원",
+  "kpi.universities": "제휴 대학교",
+
+  // USP (4 강점)
+  "usp.local.title": "거주지 인근 교육원 연계",
+  "usp.local.desc": "전국 협력 교육원 중 가까운 곳을 매칭",
+  "usp.material.title": "베트남어 보충자료",
+  "usp.material.desc": "주요 개념·의학용어 베트남어 풀이 제공",
+  "usp.job.title": "맞춤형 취업 지원",
+  "usp.job.desc": "지역·근무시간 고려한 요양원 매칭",
+  "usp.visa.title": "전담 행정사 비자 처리",
+  "usp.visa.desc": "쉽고 빠른 비자 변경·연장 업무",
+
+  // Feature cards
+  "feature.about.title": "글로케어 소개",
+  "feature.about.desc": "회사 역할과 비전",
+  "feature.videos.title": "동영상 교육",
+  "feature.videos.desc": "베트남어 보충 자료 영상",
+  "feature.cbt.title": "CBT 문제풀이",
+  "feature.cbt.desc": "1,688 문제 · 챕터별 학습",
+  "feature.partners.title": "파트너스",
+  "feature.partners.desc": "제휴 요양원·교육원·대학",
+  "feature.ambassador.title": "엠버서더",
+  "feature.ambassador.desc": "혜택과 카톡방 입장 코드",
+  "feature.resume.title": "이력서 만들기",
+  "feature.resume.desc": "AI 가 양식에 맞춰 PDF 생성",
 
   // Login
   "login.title": "로그인",
@@ -75,8 +107,38 @@ const viDict: DictShape = {
   "common.optional": "Tùy chọn",
 
   "home.heading": "Dịch vụ hỗ trợ lấy chứng chỉ Điều dưỡng viên cho người nước ngoài",
+  "home.tagline":
+    "Kết nối trung tâm đào tạo gần nơi cư trú · Tài liệu tiếng Việt · Hỗ trợ việc làm + visa",
   "home.cta.training": "Đăng ký khóa đào tạo",
   "home.cta.partner": "Liên hệ hợp tác",
+
+  "kpi.students": "Tổng học viên",
+  "kpi.working": "Đang làm việc",
+  "kpi.training_centers": "Trung tâm đào tạo",
+  "kpi.care_homes": "Viện dưỡng lão hợp tác",
+  "kpi.universities": "Đại học hợp tác",
+
+  "usp.local.title": "Trung tâm đào tạo gần bạn",
+  "usp.local.desc": "Ghép nối trung tâm gần nơi cư trú trong mạng lưới toàn quốc",
+  "usp.material.title": "Tài liệu tiếng Việt",
+  "usp.material.desc": "Giải thích thuật ngữ y học và khái niệm chính bằng tiếng Việt",
+  "usp.job.title": "Hỗ trợ việc làm cá nhân hóa",
+  "usp.job.desc": "Ghép nối viện dưỡng lão theo khu vực và giờ làm việc",
+  "usp.visa.title": "Xử lý visa qua chuyên viên",
+  "usp.visa.desc": "Đổi và gia hạn visa nhanh chóng, thuận tiện",
+
+  "feature.about.title": "Giới thiệu GLOCARE",
+  "feature.about.desc": "Vai trò và tầm nhìn của công ty",
+  "feature.videos.title": "Video đào tạo",
+  "feature.videos.desc": "Video tài liệu bổ sung tiếng Việt",
+  "feature.cbt.title": "Luyện thi CBT",
+  "feature.cbt.desc": "1.688 câu hỏi · Học theo chương",
+  "feature.partners.title": "Đối tác",
+  "feature.partners.desc": "Viện dưỡng lão · Trung tâm · Đại học",
+  "feature.ambassador.title": "Đại sứ",
+  "feature.ambassador.desc": "Quyền lợi và mã vào nhóm KakaoTalk",
+  "feature.resume.title": "Tạo CV",
+  "feature.resume.desc": "AI tạo CV theo mẫu chuẩn dạng PDF",
 
   "login.title": "Đăng nhập",
   "login.desc": "Đăng nhập nhanh bằng tài khoản SNS",
