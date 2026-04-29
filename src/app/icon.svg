@@ -1,0 +1,10 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Lighter coral cross (BEHIND, only shows in the gap) -->
+  <rect x="42" y="22" width="16" height="56" fill="#FFB3B3"/>
+  <rect x="22" y="42" width="56" height="16" fill="#FFB3B3"/>
+  <!-- 4 coral lobes (rounded squares 2×2, IN FRONT) -->
+  <rect x="6" y="6" width="40" height="40" rx="14" fill="#F25C5C"/>
+  <rect x="54" y="6" width="40" height="40" rx="14" fill="#F25C5C"/>
+  <rect x="6" y="54" width="40" height="40" rx="14" fill="#F25C5C"/>
+  <rect x="54" y="54" width="40" height="40" rx="14" fill="#F25C5C"/>
+</svg>
