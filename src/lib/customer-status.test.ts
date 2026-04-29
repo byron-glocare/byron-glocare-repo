@@ -204,6 +204,33 @@ describe("computeTrainingReservation — §5.1.2", () => {
     );
     expect(r.smsSent).toBe(true);
   });
+
+  it("웰컴팩 예약금만 내도 교육 예약금 OK 처리", () => {
+    const r = computeTrainingReservation(
+      buildInputs({
+        customer: {
+          training_center_id: "tc-1",
+          training_class_id: "tcls-1",
+        },
+        status: { class_intake_sms_sent: true } as any,
+        reservationPayments: [], // 교육 예약금 없음
+        welcomePackPayment: { reservation_date: "2026-04-15" },
+      })
+    );
+    expect(r.reservationPaid).toBe(true);
+    expect(r.complete).toBe(true);
+  });
+
+  it("교육·웰컴팩 둘 다 없으면 reservationPaid = false", () => {
+    const r = computeTrainingReservation(
+      buildInputs({
+        reservationPayments: [],
+        welcomePackPayment: null,
+      })
+    );
+    expect(r.reservationPaid).toBe(false);
+    expect(r.complete).toBe(false);
+  });
 });
 
 // =============================================================================
