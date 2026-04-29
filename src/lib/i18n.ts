@@ -70,6 +70,88 @@ const koDict = {
   "feature.resume.title": "이력서 만들기",
   "feature.resume.desc": "AI 가 양식에 맞춰 PDF 생성",
 
+  // About page
+  "about.eyebrow": "글로케어 소개",
+  "about.headline": "외국인 요양보호사와\n끝까지 함께 합니다",
+  "about.intro":
+    "글로케어는 외국인 요양보호사 자격 취득부터 취업, 비자 연장까지 단계별로 안내합니다.",
+  "about.audience.title": "이런 분들을 위한 서비스입니다",
+  "about.audience.marriage.title": "결혼이민자",
+  "about.audience.marriage.desc":
+    "시부모님이 치매나 거동이 불편한 장기요양 등급자이신가요? 매달 최대 100여만원까지 정부 지원을 받으면서 안정적인 일자리를 공급 받을 수 있는 요양보호사를 소개합니다.",
+  "about.audience.student.title": "유학생",
+  "about.audience.student.desc":
+    "이제 한국 생활이 재미있어지고 아르바이트도 할만한데 계속 거주할 수 있는 E-7(취업) 비자로 변경이 어려우시죠? 안정적인 한국 거주와 일자리도 쉽게 찾을 수 있는 요양보호사를 소개합니다.",
+  "about.ceo.eyebrow": "CEO 인사말",
+  "about.ceo.title": "CEO 인사말",
+  "about.ceo.body":
+    "안녕하세요 글로케어 대표 홍강식입니다.\n\n고령화 저출산으로 점점 늘어나는 요양서비스 수요와 갈수록 심화되어가는 요양보호사의 공급 부족을 해결하기 위해 외국인 요양보호사 양성이 보다 절실해 지고 있습니다.\n\n외국인 요양보호사 양성 정책에 적극적으로 대응하여 보다 많은 글로벌 인재들이 한국에서 성장할 수 있도록 최선을 다하겠습니다.",
+  "about.ceo.signature": "글로케어 대표 홍강식 · HONG KANG SIK · CEO",
+
+  // Modals — training signup
+  "modal.training.title": "요양보호사 교육 신청",
+  "modal.training.subtitle":
+    "기본 정보를 입력해주세요. 담당자가 곧 연락드립니다.",
+  "modal.training.name": "이름",
+  "modal.training.namePh": "홍길동 / NGUYEN VAN A",
+  "modal.training.phone": "전화번호",
+  "modal.training.phonePh": "010-xxxx-xxxx",
+  "modal.training.email": "이메일 (선택)",
+  "modal.training.emailPh": "name@example.com",
+  "modal.training.region": "거주 지역",
+  "modal.training.regionPh": "서울 / 경기 / 부산 ...",
+  "modal.training.topik": "TOPIK 등급",
+  "modal.training.topikPh": "선택해주세요",
+  "modal.training.visa": "비자 종류",
+  "modal.training.visaPh": "선택해주세요",
+  "modal.training.message": "메모 (선택)",
+  "modal.training.messagePh": "추가 문의 사항",
+  "modal.training.submit": "신청하기",
+  "modal.training.success": "신청이 접수되었습니다.",
+  "modal.training.needLogin":
+    "교육 신청 전 SNS 로그인이 필요합니다. 로그인 페이지로 이동합니다.",
+
+  // Modals — partnership
+  "modal.partnership.title": "글로케어 제휴 문의",
+  "modal.partnership.subtitle":
+    "교육원·요양원·기업 등 협력 제안을 환영합니다.",
+  "modal.partnership.name": "담당자",
+  "modal.partnership.company": "회사/기관명",
+  "modal.partnership.companyPh": "회사명",
+  "modal.partnership.phone": "연락처 (선택)",
+  "modal.partnership.email": "이메일",
+  "modal.partnership.emailPh": "name@company.com",
+  "modal.partnership.message": "제안 내용",
+  "modal.partnership.messagePh": "협력하고 싶은 분야를 알려주세요",
+  "modal.partnership.submit": "보내기",
+  "modal.partnership.success": "제휴 문의가 접수되었습니다.",
+
+  // Ambassador
+  "ambassador.eyebrow": "엠버서더",
+  "ambassador.title": "엠버서더 혜택",
+  "ambassador.intro":
+    "글로케어 엠버서더로 활동하시면 카카오톡방에서 다른 교육생들과 정보를 공유하고, 먼저 자격증을 취득한 선배들의 도움을 받을 수 있습니다.",
+  "ambassador.code.label": "카톡방 입장 코드",
+  "ambassador.code.empty": "(미설정 — 관리자에게 문의)",
+  "ambassador.qr.label": "카톡방 QR",
+  "ambassador.qr.empty": "(QR 준비 중)",
+  "ambassador.benefits.title": "주요 혜택",
+
+  // Partners
+  "partners.eyebrow": "파트너스",
+  "partners.title": "글로케어 파트너",
+  "partners.intro":
+    "교육생을 위한 협력 요양원·교육원·대학 정보입니다. 자세한 상담은 글로케어로 문의해주세요.",
+  "partners.tab.training_centers": "교육원",
+  "partners.tab.care_homes": "요양원",
+  "partners.tab.universities": "대학",
+  "partners.empty": "등록된 정보가 없습니다.",
+
+  // Terms / Privacy
+  "terms.title": "이용약관",
+  "privacy.title": "개인정보 처리방침",
+  "legal.last_updated": "최종 수정일",
+
   // Login
   "login.title": "로그인",
   "login.desc": "SNS 계정으로 간편 로그인",
@@ -139,6 +221,83 @@ const viDict: DictShape = {
   "feature.ambassador.desc": "Quyền lợi và mã vào nhóm KakaoTalk",
   "feature.resume.title": "Tạo CV",
   "feature.resume.desc": "AI tạo CV theo mẫu chuẩn dạng PDF",
+
+  "about.eyebrow": "Giới thiệu GLOCARE",
+  "about.headline":
+    "Đồng hành cùng điều dưỡng viên\nngười nước ngoài đến cùng",
+  "about.intro":
+    "GLOCARE hướng dẫn từng bước — từ chứng chỉ điều dưỡng viên đến việc làm và gia hạn visa cho người nước ngoài.",
+  "about.audience.title": "Dịch vụ dành cho",
+  "about.audience.marriage.title": "Phụ nữ kết hôn nhập cư",
+  "about.audience.marriage.desc":
+    "Bố mẹ chồng bị Alzheimer hoặc vận động khó khăn, được xếp hạng chăm sóc dài hạn? Chúng tôi giới thiệu nghề điều dưỡng viên với hỗ trợ chính phủ tới hơn 1 triệu won mỗi tháng.",
+  "about.audience.student.title": "Du học sinh",
+  "about.audience.student.desc":
+    "Cuộc sống Hàn Quốc đang thú vị nhưng khó đổi sang visa E-7 để ở lại lâu dài? Chúng tôi giới thiệu công việc điều dưỡng viên giúp bạn ở lại và làm việc ổn định.",
+  "about.ceo.eyebrow": "Lời chào của CEO",
+  "about.ceo.title": "Lời chào của CEO",
+  "about.ceo.body":
+    "Xin chào, tôi là Hong Kang Sik, Giám đốc GLOCARE.\n\nNhu cầu chăm sóc tăng dần do già hóa và mức sinh thấp, trong khi nguồn cung điều dưỡng viên ngày càng thiếu hụt — việc đào tạo điều dưỡng viên người nước ngoài trở nên cấp thiết hơn bao giờ hết.\n\nGLOCARE sẽ chủ động ứng phó với chính sách đào tạo điều dưỡng viên người nước ngoài, để nhiều nhân tài toàn cầu có thể phát triển tại Hàn Quốc.",
+  "about.ceo.signature": "Đại diện GLOCARE · HONG KANG SIK · CEO",
+
+  "modal.training.title": "Đăng ký khóa đào tạo điều dưỡng viên",
+  "modal.training.subtitle":
+    "Vui lòng nhập thông tin cơ bản. Nhân viên sẽ liên hệ với bạn.",
+  "modal.training.name": "Họ tên",
+  "modal.training.namePh": "NGUYEN VAN A / 응우옌 반 안",
+  "modal.training.phone": "Số điện thoại",
+  "modal.training.phonePh": "010-xxxx-xxxx",
+  "modal.training.email": "Email (tùy chọn)",
+  "modal.training.emailPh": "name@example.com",
+  "modal.training.region": "Khu vực cư trú",
+  "modal.training.regionPh": "Seoul / Gyeonggi / Busan ...",
+  "modal.training.topik": "Cấp độ TOPIK",
+  "modal.training.topikPh": "Vui lòng chọn",
+  "modal.training.visa": "Loại visa",
+  "modal.training.visaPh": "Vui lòng chọn",
+  "modal.training.message": "Ghi chú (tùy chọn)",
+  "modal.training.messagePh": "Câu hỏi bổ sung",
+  "modal.training.submit": "Gửi đăng ký",
+  "modal.training.success": "Đã tiếp nhận đăng ký.",
+  "modal.training.needLogin":
+    "Vui lòng đăng nhập SNS trước. Đang chuyển đến trang đăng nhập.",
+
+  "modal.partnership.title": "Liên hệ hợp tác GLOCARE",
+  "modal.partnership.subtitle":
+    "Chào mừng đề xuất hợp tác từ trung tâm đào tạo, viện dưỡng lão, doanh nghiệp.",
+  "modal.partnership.name": "Người phụ trách",
+  "modal.partnership.company": "Tên công ty / tổ chức",
+  "modal.partnership.companyPh": "Tên công ty",
+  "modal.partnership.phone": "Liên hệ (tùy chọn)",
+  "modal.partnership.email": "Email",
+  "modal.partnership.emailPh": "name@company.com",
+  "modal.partnership.message": "Nội dung đề xuất",
+  "modal.partnership.messagePh": "Hãy cho biết lĩnh vực bạn muốn hợp tác",
+  "modal.partnership.submit": "Gửi",
+  "modal.partnership.success": "Đã tiếp nhận đề xuất hợp tác.",
+
+  "ambassador.eyebrow": "Đại sứ",
+  "ambassador.title": "Quyền lợi Đại sứ GLOCARE",
+  "ambassador.intro":
+    "Tham gia làm đại sứ GLOCARE, bạn có thể chia sẻ thông tin với các học viên khác và nhận hỗ trợ từ các tiền bối đã có chứng chỉ.",
+  "ambassador.code.label": "Mã vào nhóm KakaoTalk",
+  "ambassador.code.empty": "(Chưa thiết lập — vui lòng liên hệ)",
+  "ambassador.qr.label": "QR vào nhóm",
+  "ambassador.qr.empty": "(Đang chuẩn bị QR)",
+  "ambassador.benefits.title": "Quyền lợi chính",
+
+  "partners.eyebrow": "Đối tác",
+  "partners.title": "Đối tác GLOCARE",
+  "partners.intro":
+    "Thông tin trung tâm đào tạo · viện dưỡng lão · đại học hợp tác. Liên hệ GLOCARE để được tư vấn chi tiết.",
+  "partners.tab.training_centers": "Trung tâm đào tạo",
+  "partners.tab.care_homes": "Viện dưỡng lão",
+  "partners.tab.universities": "Đại học",
+  "partners.empty": "Chưa có thông tin.",
+
+  "terms.title": "Điều khoản sử dụng",
+  "privacy.title": "Chính sách bảo mật",
+  "legal.last_updated": "Cập nhật lần cuối",
 
   "login.title": "Đăng nhập",
   "login.desc": "Đăng nhập nhanh bằng tài khoản SNS",

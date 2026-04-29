@@ -891,6 +891,71 @@ export type Database = {
         Update: Partial<Database["public"]["Tables"]["study_insurance_claims"]["Insert"]>;
         Relationships: [];
       };
+
+      // =====================================================================
+      // 요양보호사 홈페이지 도메인 (0011 마이그레이션)
+      // =====================================================================
+      caregiver_contacts: {
+        Row: {
+          id: number;
+          submitted_at: string;
+          kind: string;
+          name: string;
+          phone: string | null;
+          email: string | null;
+          message: string | null;
+          status: string;
+          memo: string | null;
+          auth_user_id: string | null;
+          region: string | null;
+          topik_level: string | null;
+          visa_type: string | null;
+          company: string | null;
+        };
+        Insert: {
+          id?: number;
+          submitted_at?: string;
+          kind: string;
+          name: string;
+          phone?: string | null;
+          email?: string | null;
+          message?: string | null;
+          status?: string;
+          memo?: string | null;
+          auth_user_id?: string | null;
+          region?: string | null;
+          topik_level?: string | null;
+          visa_type?: string | null;
+          company?: string | null;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["caregiver_contacts"]["Insert"]
+        >;
+        Relationships: [];
+      };
+
+      ambassador_config: {
+        Row: {
+          id: number;
+          entry_code: string | null;
+          kakao_qr_url: string | null;
+          benefits_ko: string | null;
+          benefits_vi: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          id?: number;
+          entry_code?: string | null;
+          kakao_qr_url?: string | null;
+          benefits_ko?: string | null;
+          benefits_vi?: string | null;
+          updated_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["ambassador_config"]["Insert"]
+        >;
+        Relationships: [];
+      };
     };
     Views: { [_ in never]: never };
     Functions: { [_ in never]: never };

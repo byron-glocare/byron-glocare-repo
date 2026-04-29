@@ -11,6 +11,8 @@ import {
   Stethoscope,
 } from "lucide-react";
 
+import { TrainingSignupTrigger } from "@/components/training-signup-modal";
+import { PartnershipTrigger } from "@/components/partnership-modal";
 import { createClient } from "@/lib/supabase/server";
 import { getDict } from "@/lib/i18n";
 
@@ -144,12 +146,47 @@ export default async function HomePage() {
               justifyContent: "center",
             }}
           >
-            <Link href="/about#training" className="btn-coral">
-              {t["home.cta.training"]}
-            </Link>
-            <Link href="/about#partner" className="btn-ghost">
-              {t["home.cta.partner"]}
-            </Link>
+            <TrainingSignupTrigger
+              label={t["home.cta.training"]}
+              strings={{
+                title: t["modal.training.title"],
+                subtitle: t["modal.training.subtitle"],
+                name: t["modal.training.name"],
+                namePh: t["modal.training.namePh"],
+                phone: t["modal.training.phone"],
+                phonePh: t["modal.training.phonePh"],
+                email: t["modal.training.email"],
+                emailPh: t["modal.training.emailPh"],
+                region: t["modal.training.region"],
+                regionPh: t["modal.training.regionPh"],
+                topik: t["modal.training.topik"],
+                topikPh: t["modal.training.topikPh"],
+                visa: t["modal.training.visa"],
+                visaPh: t["modal.training.visaPh"],
+                message: t["modal.training.message"],
+                messagePh: t["modal.training.messagePh"],
+                submit: t["modal.training.submit"],
+                success: t["modal.training.success"],
+                needLogin: t["modal.training.needLogin"],
+              }}
+            />
+            <PartnershipTrigger
+              label={t["home.cta.partner"]}
+              strings={{
+                title: t["modal.partnership.title"],
+                subtitle: t["modal.partnership.subtitle"],
+                name: t["modal.partnership.name"],
+                company: t["modal.partnership.company"],
+                companyPh: t["modal.partnership.companyPh"],
+                phone: t["modal.partnership.phone"],
+                email: t["modal.partnership.email"],
+                emailPh: t["modal.partnership.emailPh"],
+                message: t["modal.partnership.message"],
+                messagePh: t["modal.partnership.messagePh"],
+                submit: t["modal.partnership.submit"],
+                success: t["modal.partnership.success"],
+              }}
+            />
           </div>
         </div>
       </section>
