@@ -139,24 +139,24 @@ function confirmationEmail({
   </div>
 
   <h2 style="font-size:18px;font-weight:700;margin:0 0 16px">
-    안녕하세요 ${safeName}님 / Xin chào ${safeName},
+    Xin chào ${safeName} / 안녕하세요 ${safeName}님,
   </h2>
 
   <div style="background:#FFF7F5;border:1px solid #FFE0E0;border-radius:10px;padding:16px 20px;margin-bottom:20px">
-    <p style="margin:0 0 8px;font-weight:700;color:#1c1c1e">${ko.lead}</p>
-    <p style="margin:0;color:#3a3a3c;font-size:14px">${ko.reply}</p>
+    <p style="margin:0 0 8px;font-weight:700;color:#1c1c1e">${vi.lead}</p>
+    <p style="margin:0;color:#3a3a3c;font-size:14px">${vi.reply}</p>
   </div>
 
   <div style="background:#FFF7F5;border:1px solid #FFE0E0;border-radius:10px;padding:16px 20px;margin-bottom:24px">
-    <p style="margin:0 0 8px;font-weight:700;color:#1c1c1e">${vi.lead}</p>
-    <p style="margin:0;color:#3a3a3c;font-size:14px">${vi.reply}</p>
+    <p style="margin:0 0 8px;font-weight:700;color:#1c1c1e">${ko.lead}</p>
+    <p style="margin:0;color:#3a3a3c;font-size:14px">${ko.reply}</p>
   </div>
 
   <hr style="border:none;border-top:1px solid #f0eded;margin:24px 0">
 
   <p style="color:#aeaeb2;font-size:12px;line-height:1.6;margin:0 0 8px">
-    이 메일은 발신 전용입니다. 답장은 처리되지 않습니다.<br>
-    Đây là email tự động — vui lòng không trả lời.
+    Đây là email tự động — vui lòng không trả lời.<br>
+    이 메일은 발신 전용입니다. 답장은 처리되지 않습니다.
   </p>
 
   <p style="color:#6e6e73;font-size:12px;margin:16px 0 0">
