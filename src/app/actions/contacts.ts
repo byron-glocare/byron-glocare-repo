@@ -56,8 +56,11 @@ export async function submitContact(
   if (error) return { ok: false, error: error.message };
 
   // 운영자 알림
+  const isPartnerSubmit = data.recruiting === "partner";
   await sendOperatorNotification({
-    subject: `[글로케어] 새 상담 신청: ${data.name}`,
+    subject: isPartnerSubmit
+      ? `[글로케어] 새 제휴 문의: ${data.name}`
+      : `[글로케어] 새 상담 신청: ${data.name}`,
     html: `
       <h2>새 상담 신청이 접수되었습니다</h2>
       <table cellpadding="6" style="border-collapse:collapse;border:1px solid #eee">
@@ -76,23 +79,93 @@ export async function submitContact(
     `,
   });
 
-  // 고객 confirmation
+  // 고객 confirmation (이메일 입력 시에만)
   if (data.email) {
+    const isPartner = data.recruiting === "partner";
     await sendCustomerConfirmation({
       to: data.email,
-      subject: "[Glocare] Đã nhận đăng ký tư vấn / 상담 신청 접수",
-      html: `
-        <p>Xin chào ${escape(data.name)},</p>
-        <p>Đăng ký tư vấn của bạn đã được tiếp nhận. Chúng tôi sẽ sớm liên hệ.</p>
-        <p>안녕하세요 ${escape(data.name)}님,<br>
-        상담 신청이 정상 접수되었습니다. 곧 연락드리겠습니다.</p>
-        <hr>
-        <p style="color:#888;font-size:12px">Glocare · help@glocare.co.kr</p>
-      `,
+      subject: isPartner
+        ? "[GLOCARE] Đã nhận đề nghị hợp tác / 제휴 문의가 접수되었습니다"
+        : "[GLOCARE] Đã nhận đăng ký tư vấn / 상담 신청이 접수되었습니다",
+      html: confirmationEmail({
+        name: data.name,
+        kind: isPartner ? "partner" : "consultation",
+      }),
     });
   }
 
   return { ok: true };
+}
+
+/**
+ * 접수 확인 이메일 템플릿 (한·베 병기, 발신 전용 안내 포함).
+ */
+function confirmationEmail({
+  name,
+  kind,
+}: {
+  name: string;
+  kind: "consultation" | "partner";
+}): string {
+  const safeName = escape(name);
+  const ko = {
+    consultation: {
+      lead: "상담 신청이 정상 접수되었습니다.",
+      reply: "담당자가 확인 후 <strong>5 영업일 이내</strong>에 회신드리겠습니다.",
+    },
+    partner: {
+      lead: "제휴 문의가 정상 접수되었습니다.",
+      reply: "담당자가 확인 후 <strong>5 영업일 이내</strong>에 회신드리겠습니다.",
+    },
+  }[kind];
+  const vi = {
+    consultation: {
+      lead: "Đăng ký tư vấn của bạn đã được tiếp nhận.",
+      reply:
+        "Nhân viên phụ trách sẽ liên hệ bạn trong vòng <strong>5 ngày làm việc</strong>.",
+    },
+    partner: {
+      lead: "Đề nghị hợp tác của bạn đã được tiếp nhận.",
+      reply:
+        "Nhân viên phụ trách sẽ liên hệ bạn trong vòng <strong>5 ngày làm việc</strong>.",
+    },
+  }[kind];
+
+  return `
+<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#1c1c1e;line-height:1.6">
+
+  <div style="font-family:'Noto Serif KR',serif;font-size:1.4rem;font-weight:900;color:#F25C5C;letter-spacing:-0.5px;margin-bottom:24px">
+    GLOCARE
+  </div>
+
+  <h2 style="font-size:18px;font-weight:700;margin:0 0 16px">
+    안녕하세요 ${safeName}님 / Xin chào ${safeName},
+  </h2>
+
+  <div style="background:#FFF7F5;border:1px solid #FFE0E0;border-radius:10px;padding:16px 20px;margin-bottom:20px">
+    <p style="margin:0 0 8px;font-weight:700;color:#1c1c1e">${ko.lead}</p>
+    <p style="margin:0;color:#3a3a3c;font-size:14px">${ko.reply}</p>
+  </div>
+
+  <div style="background:#FFF7F5;border:1px solid #FFE0E0;border-radius:10px;padding:16px 20px;margin-bottom:24px">
+    <p style="margin:0 0 8px;font-weight:700;color:#1c1c1e">${vi.lead}</p>
+    <p style="margin:0;color:#3a3a3c;font-size:14px">${vi.reply}</p>
+  </div>
+
+  <hr style="border:none;border-top:1px solid #f0eded;margin:24px 0">
+
+  <p style="color:#aeaeb2;font-size:12px;line-height:1.6;margin:0 0 8px">
+    이 메일은 발신 전용입니다. 답장은 처리되지 않습니다.<br>
+    Đây là email tự động — vui lòng không trả lời.
+  </p>
+
+  <p style="color:#6e6e73;font-size:12px;margin:16px 0 0">
+    <strong>GLOCARE</strong> · help@glocare.co.kr<br>
+    <a href="https://youstudyinkorea.com" style="color:#F25C5C;text-decoration:none">youstudyinkorea.com</a>
+  </p>
+
+</div>
+  `.trim();
 }
 
 // =============================================================================
