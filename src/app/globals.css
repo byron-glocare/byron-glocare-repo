@@ -1,0 +1,263 @@
+@import "tailwindcss";
+
+/* =============================================================================
+ * Glocare Caregiver — 디자인 토큰 (유학 사이트와 동일 시스템)
+ * ===========================================================================*/
+
+:root {
+  --coral:      #F25C5C;
+  --coral-d:    #D94646;
+  --coral-l:    #FF8080;
+  --coral-pale: #FFF0F0;
+  --coral-soft: #FFE0E0;
+  --peach:      #FFF7F5;
+  --white:      #FFFFFF;
+  --ink:        #1C1C1E;
+  --ink-mid:    #3A3A3C;
+  --ink-light:  #6E6E73;
+  --ink-xlight: #AEAEB2;
+  --border:     #F0EDED;
+  --border-d:   #E8E0DF;
+  --green:      #2D9E6B;
+  --blue:       #3B82C4;
+  --yellow:     #F5A623;
+  --navy:       #0F2D52;
+  --bg:         #F9F7F5;
+}
+
+@theme inline {
+  --color-coral: var(--coral);
+  --color-coral-d: var(--coral-d);
+  --color-coral-l: var(--coral-l);
+  --color-coral-pale: var(--coral-pale);
+  --color-coral-soft: var(--coral-soft);
+  --color-peach: var(--peach);
+  --color-ink: var(--ink);
+  --color-ink-mid: var(--ink-mid);
+  --color-ink-light: var(--ink-light);
+  --color-ink-xlight: var(--ink-xlight);
+  --color-border-soft: var(--border);
+  --color-border-deep: var(--border-d);
+  --color-green: var(--green);
+  --color-blue: var(--blue);
+  --color-yellow: var(--yellow);
+  --color-navy: var(--navy);
+  --font-sans: var(--font-be-vietnam), var(--font-noto-kr), sans-serif;
+  --font-serif: var(--font-noto-serif-kr), serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-be-vietnam), var(--font-noto-kr), sans-serif;
+  background: var(--white);
+  color: var(--ink);
+  overflow-x: hidden;
+}
+
+a { text-decoration: none; color: inherit; }
+
+/* ── LANG BAR ── */
+.lang-bar {
+  background: var(--coral);
+  padding: 6px 20px;
+  display: flex; justify-content: flex-end; align-items: center; gap: 8px;
+}
+.lang-btn {
+  background: transparent; border: 1.5px solid rgba(255,255,255,0.5);
+  color: rgba(255,255,255,0.8);
+  font-size: 0.75rem; font-weight: 700; letter-spacing: 0.5px;
+  padding: 4px 12px; border-radius: 20px; cursor: pointer;
+  transition: all 0.2s; font-family: inherit;
+}
+.lang-btn.on {
+  background: var(--white); color: var(--coral);
+  border-color: var(--white);
+}
+.lang-btn:hover:not(.on) { color: var(--white); border-color: var(--white); }
+
+/* ── NAV (sticky tabs) ── */
+nav.site-nav {
+  position: sticky; top: 0; z-index: 500;
+  background: rgba(255,255,255,0.96);
+  backdrop-filter: blur(16px);
+  border-bottom: 1.5px solid var(--border);
+  padding: 8px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px 0;
+  min-height: 66px;
+}
+.nav-logo {
+  display: flex; align-items: center;
+  flex-shrink: 0;
+  padding: 4px 0;
+}
+.nav-logo .logo-text {
+  font-family: var(--font-noto-serif-kr), serif;
+  font-size: 1.4rem; font-weight: 900;
+  color: var(--coral); letter-spacing: -0.5px;
+}
+.nav-tabs {
+  display: flex; gap: 0.4rem; list-style: none; align-items: center;
+  justify-content: center; flex-wrap: wrap;
+}
+.nav-tabs a {
+  color: var(--ink-mid);
+  font-size: 0.82rem; font-weight: 600;
+  padding: 7px 14px;
+  border-radius: 8px;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.nav-tabs a:hover { background: var(--coral-pale); color: var(--coral); }
+.nav-tabs a.active {
+  background: var(--coral); color: var(--white);
+  box-shadow: 0 2px 8px rgba(242,92,92,0.25);
+}
+
+/* ── BUTTONS ── */
+.btn-coral {
+  background: var(--coral); color: var(--white);
+  padding: 12px 28px; border-radius: 8px;
+  font-weight: 700; font-size: 0.92rem;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  box-shadow: 0 6px 20px rgba(242,92,92,0.28);
+  border: none; cursor: pointer; font-family: inherit;
+  transition: all 0.2s;
+}
+.btn-coral:hover { background: var(--coral-d); transform: translateY(-2px); box-shadow: 0 10px 28px rgba(242,92,92,0.35); }
+.btn-coral:disabled { background: var(--ink-xlight); cursor: not-allowed; box-shadow: none; transform: none; }
+
+.btn-ghost {
+  border: 2px solid var(--border-d); color: var(--ink-mid);
+  padding: 12px 28px; border-radius: 8px;
+  font-weight: 600; font-size: 0.92rem;
+  background: transparent; cursor: pointer; font-family: inherit;
+  transition: all 0.2s;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+}
+.btn-ghost:hover { border-color: var(--coral); color: var(--coral); }
+
+/* ── PAGE / SECTION ── */
+.page-wrap {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 2.5rem 20px;
+}
+.page-title {
+  font-family: var(--font-noto-serif-kr), serif;
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-weight: 900;
+  color: var(--ink);
+  margin-bottom: 0.4rem;
+  line-height: 1.25;
+}
+.page-title em { color: var(--coral); font-style: normal; }
+.page-desc {
+  font-size: 0.95rem;
+  color: var(--ink-light);
+  line-height: 1.7;
+  margin-bottom: 2rem;
+  max-width: 720px;
+}
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--coral-pale);
+  color: var(--coral-d);
+  font-size: 0.72rem; font-weight: 800;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  padding: 5px 14px; border-radius: 20px;
+  margin-bottom: 1rem;
+  border: 1px solid var(--coral-soft);
+}
+
+/* ── CARDS ── */
+.card {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 1.5rem;
+  transition: all 0.2s;
+}
+.card:hover { box-shadow: 0 10px 32px rgba(242,92,92,0.08); border-color: var(--coral-soft); }
+
+/* ── FORMS ── */
+.field-label {
+  display: block;
+  font-size: 0.78rem; font-weight: 700;
+  color: var(--ink-mid);
+  margin-bottom: 0.4rem;
+  letter-spacing: 0.2px;
+}
+.field-input, .field-select, .field-textarea {
+  width: 100%;
+  background: var(--white);
+  border: 1.5px solid var(--border-d);
+  border-radius: 8px;
+  padding: 11px 14px;
+  font-size: 0.88rem;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.2s;
+  font-family: inherit;
+}
+.field-input::placeholder { color: var(--ink-xlight); }
+.field-input:focus, .field-select:focus, .field-textarea:focus {
+  border-color: var(--coral);
+  box-shadow: 0 0 0 3px rgba(242,92,92,0.1);
+}
+.field-textarea { resize: vertical; min-height: 90px; }
+.field-hint { font-size: 0.72rem; color: var(--ink-xlight); margin-top: 4px; }
+
+/* ── FOOTER ── */
+footer.site-footer {
+  background: var(--ink);
+  padding: 3rem 20px;
+  margin-top: 4rem;
+}
+.foot-inner {
+  max-width: 1160px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr;
+  gap: 3rem;
+}
+.foot-logo .logo-text {
+  font-family: var(--font-noto-serif-kr), serif;
+  font-size: 1.2rem; font-weight: 900;
+  color: var(--white); letter-spacing: -0.5px;
+  margin-bottom: 0.9rem; display: inline-block;
+}
+.foot-p { font-size: 0.81rem; color: rgba(255,255,255,0.35); line-height: 1.75; }
+.foot-h { font-size: 0.77rem; font-weight: 800; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 0.9rem; }
+.foot-ul { list-style: none; }
+.foot-ul li { font-size: 0.81rem; color: rgba(255,255,255,0.35); padding: 4px 0; cursor: pointer; transition: color 0.2s; }
+.foot-ul li:hover { color: var(--coral-l); }
+.foot-bot {
+  max-width: 1160px;
+  margin: 2rem auto 0;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 0.76rem; color: rgba(255,255,255,0.25);
+  flex-wrap: wrap; gap: 1rem;
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fadeUp 0.5s ease both; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 639px) {
+  nav.site-nav { padding: 6px 12px; min-height: 56px; }
+  .nav-tabs { gap: 0.2rem; width: 100%; justify-content: flex-start; overflow-x: auto; }
+  .nav-tabs::-webkit-scrollbar { display: none; }
+  .nav-tabs a { padding: 6px 12px; font-size: 0.78rem; }
+  .page-wrap { padding: 1.5rem 16px; }
+  .foot-inner { grid-template-columns: 1fr; gap: 1.6rem; }
+  .foot-bot { flex-direction: column; gap: 0.5rem; text-align: center; }
+}
