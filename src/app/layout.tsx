@@ -6,6 +6,8 @@ import "./globals.css";
 import { LangBar } from "@/components/lang-bar";
 import { SiteNav } from "@/components/site-nav";
 import { SiteFooter } from "@/components/site-footer";
+import { UnmappedBanner } from "@/components/unmapped-banner";
+import { getAuthState } from "@/lib/auth";
 import { getLocale, getDictByLocale } from "@/lib/i18n";
 
 const beVietnam = Be_Vietnam_Pro({
@@ -43,9 +45,8 @@ export default async function RootLayout({
 }>) {
   const locale = await getLocale();
   const t = getDictByLocale(locale);
-
-  // TODO: Supabase auth 적용 후 실제 인증 상태로 교체
-  const authed = false;
+  const auth = await getAuthState();
+  const authed = auth.kind !== "guest";
 
   const tabs = [
     { href: "/", label: t["nav.home"] },
@@ -66,6 +67,7 @@ export default async function RootLayout({
       <body>
         <LangBar locale={locale} />
         <SiteNav tabs={tabs} loginLabel={t["nav.login"]} authed={authed} />
+        {auth.kind === "unmapped" && <UnmappedBanner locale={locale} />}
         <main>{children}</main>
         <SiteFooter />
         <Toaster richColors position="top-center" />

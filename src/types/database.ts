@@ -220,6 +220,8 @@ export type Database = {
           recontact_date: string | null;
           waiting_memo: string | null;
           termination_reason: TerminationReason | null;
+          /** Supabase Auth user 매핑 (caregiver homepage 0011 마이그레이션) */
+          auth_user_id: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -254,6 +256,7 @@ export type Database = {
           recontact_date?: string | null;
           waiting_memo?: string | null;
           termination_reason?: TerminationReason | null;
+          auth_user_id?: string | null;
           created_at?: string;
           updated_at?: string;
         };
