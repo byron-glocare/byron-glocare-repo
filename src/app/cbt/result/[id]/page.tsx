@@ -273,41 +273,86 @@ export default async function CbtResultPage({
                 </details>
               )}
 
-              {/* 보기 해설 */}
-              {Object.keys(explanations).length > 0 && (
-                <details style={{ marginTop: "0.4rem" }}>
-                  <summary
-                    style={{
-                      cursor: "pointer",
-                      fontSize: "0.8rem",
-                      fontWeight: 700,
-                      color: "var(--coral)",
-                      padding: "0.4rem 0",
-                    }}
-                  >
-                    💬 {t["cbt.result.explanation"]}
-                  </summary>
-                  <div
-                    style={{
-                      fontSize: "0.82rem",
-                      color: "var(--ink-mid)",
-                      lineHeight: 1.7,
-                      padding: "0.6rem 0",
-                    }}
-                  >
-                    {Object.entries(explanations)
-                      .filter(([, v]) => v && v.trim())
-                      .map(([n, v]) => (
-                        <div key={n} style={{ marginBottom: "0.5rem" }}>
-                          <strong>({n})</strong>{" "}
-                          <span style={{ whiteSpace: "pre-line" }}>{v}</span>
-                        </div>
-                      ))}
-                  </div>
-                </details>
-              )}
+              {/* 보기 해설 — 새 구조 (ko/vi 분리) 우선, 구 구조 (mixed) fallback */}
+              {(() => {
+                const ce = q.choice_explanations as
+                  | Record<string, string>
+                  | { ko?: Record<string, string>; vi?: Record<string, string> }
+                  | null;
+                if (!ce) return null;
 
-              {/* 핵심 용어 */}
+                const isNewFormat =
+                  typeof ce === "object" && ("ko" in ce || "vi" in ce);
+                const koDict = isNewFormat
+                  ? ((ce as { ko?: Record<string, string> }).ko ?? {})
+                  : (ce as Record<string, string>);
+                const viDict = isNewFormat
+                  ? ((ce as { vi?: Record<string, string> }).vi ?? {})
+                  : {};
+
+                const koEntries = Object.entries(koDict)
+                  .filter(([, v]) => v && v.trim())
+                  .sort(([a], [b]) => parseInt(a) - parseInt(b));
+                const viEntries = Object.entries(viDict)
+                  .filter(([, v]) => v && v.trim())
+                  .sort(([a], [b]) => parseInt(a) - parseInt(b));
+
+                if (koEntries.length === 0 && viEntries.length === 0) return null;
+
+                return (
+                  <details style={{ marginTop: "0.4rem" }}>
+                    <summary
+                      style={{
+                        cursor: "pointer",
+                        fontSize: "0.8rem",
+                        fontWeight: 700,
+                        color: "var(--coral)",
+                        padding: "0.4rem 0",
+                      }}
+                    >
+                      💬 {t["cbt.result.explanation"]}
+                    </summary>
+                    <div
+                      style={{
+                        fontSize: "0.82rem",
+                        color: "var(--ink-mid)",
+                        lineHeight: 1.7,
+                        padding: "0.6rem 0",
+                      }}
+                    >
+                      {koEntries.length > 0 && (
+                        <div style={{ marginBottom: "1rem" }}>
+                          {koEntries.map(([n, v]) => (
+                            <div key={n} style={{ marginBottom: "0.4rem" }}>
+                              <strong>({n})</strong>{" "}
+                              <span style={{ whiteSpace: "pre-line" }}>{v}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      {viEntries.length > 0 && (
+                        <div
+                          style={{
+                            paddingTop: "0.7rem",
+                            borderTop: "1px dashed var(--border)",
+                            color: "var(--ink-light)",
+                            fontStyle: "italic",
+                          }}
+                        >
+                          {viEntries.map(([n, v]) => (
+                            <div key={n} style={{ marginBottom: "0.4rem" }}>
+                              <strong>({n})</strong>{" "}
+                              <span style={{ whiteSpace: "pre-line" }}>{v}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </details>
+                );
+              })()}
+
+              {/* 핵심 용어 — 새 구조 ({term_ko, def_vi}) 우선, 구 구조 fallback */}
               {keyTerms.length > 0 && (
                 <details style={{ marginTop: "0.4rem" }}>
                   <summary
@@ -333,30 +378,22 @@ export default async function CbtResultPage({
                       <div
                         key={i}
                         style={{
-                          marginBottom: "0.7rem",
-                          padding: "0.6rem 0.8rem",
+                          marginBottom: "0.5rem",
+                          padding: "0.5rem 0.8rem",
                           background: "var(--peach)",
-                          borderRadius: 8,
+                          borderRadius: 6,
+                          display: "flex",
+                          gap: "0.5rem",
+                          alignItems: "baseline",
                         }}
                       >
-                        {kt.term_ko && (
-                          <div>
-                            <strong>{kt.term_ko}</strong>
-                            {kt.def_ko && <>: {kt.def_ko}</>}
-                          </div>
-                        )}
-                        {kt.term_vi && (
-                          <div
-                            style={{
-                              color: "var(--ink-light)",
-                              marginTop: 2,
-                              fontStyle: "italic",
-                            }}
-                          >
-                            <strong>{kt.term_vi}</strong>
-                            {kt.def_vi && <>: {kt.def_vi}</>}
-                          </div>
-                        )}
+                        <strong style={{ color: "var(--ink)" }}>
+                          {kt.term_ko}
+                        </strong>
+                        <span style={{ color: "var(--ink-light)" }}>:</span>
+                        <span style={{ color: "var(--ink-mid)" }}>
+                          {kt.def_vi ?? kt.def_ko ?? ""}
+                        </span>
                       </div>
                     ))}
                   </div>

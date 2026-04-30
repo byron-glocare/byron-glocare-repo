@@ -1,0 +1,262 @@
+{
+  "1740": {
+    "intent_ko": "치매 대상자 주보호자의 돌봄 스트레스와 감정을 공감하고 지지하는 요양보호사의 적절한 의사소통 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về phương pháp giao tiếp phù hợp của người chăm sóc để thấu hiểu và hỗ trợ cảm xúc, căng thẳng chăm sóc của người chăm sóc chính bệnh nhân Alzheimer",
+    "choice_explanations": {
+      "1": {
+        "ko": "가족 간 갈등을 조장하는 표현으로 부적절합니다. 요양보호사는 가족 관계를 악화시키지 않고 중립적 태도를 유지해야 합니다.",
+        "vi": "Cách nói này kích động mâu thuẫn gia đình nên không phù hợp. Người chăm sóc phải giữ thái độ trung lập, không làm xấu đi mối quan hệ gia đình."
+      },
+      "2": {
+        "ko": "정답입니다. 주보호자의 감정을 인정하고 공감하는 경청의 자세입니다. 돌봄 스트레스를 받는 보호자에게 가장 먼저 필요한 것은 감정적 지지와 이해입니다. '속상하시겠어요'라는 표현으로 보호자의 힘든 감정을 인정하고 공감함으로써 정서적 안정을 돕습니다.",
+        "vi": "Đáp án đúng. Đây là thái độ lắng nghe, thừa nhận và thấu hiểu cảm xúc của người chăm sóc chính. Điều người chăm sóc đang chịu căng thẳng cần đầu tiên là sự hỗ trợ và thấu hiểu về mặt cảm xúc. Bằng cách nói 'Chắc chị buồn lắm nhỉ', người chăm sóc thừa nhận và đồng cảm với cảm xúc khó khăn, giúp ổn định tinh thần."
+      },
+      "3": {
+        "ko": "가족 구성원을 비난하는 표현으로 부적절합니다. 요양보호사는 가족 간 갈등에 편을 들지 않고 객관적 태도를 유지해야 합니다.",
+        "vi": "Cách nói này chỉ trích thành viên gia đình nên không phù hợp. Người chăm sóc không nên thiên vị trong mâu thuẫn gia đình mà phải giữ thái độ khách quan."
+      },
+      "4": {
+        "ko": "주보호자의 어려움을 무시하고 참으라는 강요로 부적절합니다. 돌봄 스트레스를 경시하면 보호자의 소진을 악화시킬 수 있습니다.",
+        "vi": "Cách nói này bỏ qua khó khăn của người chăm sóc chính và ép phải chịu đựng nên không phù hợp. Coi nhẹ căng thẳng chăm sóc có thể làm trầm trọng thêm sự kiệt sức của người chăm sóc."
+      },
+      "5": {
+        "ko": "요양보호사가 가족 문제에 직접 개입하겠다는 것으로 전문적 역할 범위를 벗어납니다. 가족 관계는 가족 스스로 해결하도록 지지하는 것이 적절합니다.",
+        "vi": "Cách này cho thấy người chăm sóc sẽ trực tiếp can thiệp vào vấn đề gia đình, vượt quá phạm vi vai trò chuyên môn. Việc phù hợp là hỗ trợ để gia đình tự giải quyết mối quan hệ."
+      }
+    },
+    "key_terms": [
+      {
+        "term_ko": "주보호자",
+        "term_vi": "Người chăm sóc chính",
+        "def_ko": "환자를 가장 많이 돌보고 책임지는 주된 보호자",
+        "def_vi": "Người chịu trách nhiệm chính và chăm sóc bệnh nhân nhiều nhất"
+      },
+      {
+        "term_ko": "돌봄 스트레스",
+        "term_vi": "Căng thẳng chăm sóc",
+        "def_ko": "환자를 장기간 돌보면서 신체적·정서적으로 받는 부담과 압박감",
+        "def_vi": "Gánh nặng và áp lực về thể chất, tinh thần khi chăm sóc bệnh nhân trong thời gian dài"
+      },
+      {
+        "term_ko": "공감",
+        "term_vi": "Đồng cảm",
+        "def_ko": "상대방의 감정과 입장을 이해하고 함께 느끼는 것",
+        "def_vi": "Hiểu và cùng cảm nhận cảm xúc, hoàn cảnh của đối phương"
+      },
+      {
+        "term_ko": "경청",
+        "term_vi": "Lắng nghe",
+        "def_ko": "상대방의 말을 주의 깊게 듣고 이해하려는 태도",
+        "def_vi": "Thái độ chú ý lắng nghe và cố gắng hiểu lời nói của đối phương"
+      }
+    ]
+  },
+  "1739": {
+    "intent_ko": "치매 대상자가 환각(없는 사람을 보는 증상)을 보일 때 올바른 대처 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về cách xử lý đúng khi người bệnh Alzheimer có ảo giác (triệu chứng nhìn thấy người không tồn tại)",
+    "choice_explanations": {
+      "1": {
+        "ko": "환각을 부정하면 대상자는 '나를 믿지 않는구나'라고 느껴 불안과 혼란이 더 커집니다. 치매 환자에게는 그것이 '진짜'이므로 부정하지 않는 것이 원칙입니다.",
+        "vi": "Nếu phủ nhận ảo giác, bệnh nhân sẽ cảm thấy 'họ không tin tôi' và lo lắng, hoang mang sẽ tăng lên. Đối với người bệnh Alzheimer, đó là 'thật' nên nguyên tắc là không phủ nhận."
+      },
+      "2": {
+        "ko": "같이 소리치면 흥분 상태가 증폭되고 공격적 행동으로 이어질 수 있어 위험합니다.",
+        "vi": "Nếu hét cùng, trạng thái kích động sẽ tăng lên và có thể dẫn đến hành vi hung hăng, rất nguy hiểm."
+      },
+      "3": {
+        "ko": "혼내려 왔다고 말하면 공포와 피해망상이 심해져 상황이 악화됩니다.",
+        "vi": "Nếu nói rằng đến để la mắng, nỗi sợ hãi và hoang tưởng bị hại sẽ trầm trọng hơn, làm tình huống tồi tệ hơn."
+      },
+      "4": {
+        "ko": "【정답】 간식 제공이나 좋아하는 활동으로 주의를 다른 곳으로 돌리는 '전환 요법'이 치매 환각 대처의 핵심입니다. 환각에서 벗어나게 하고 안정을 찾도록 돕는 가장 효과적이고 안전한 방법입니다.",
+        "vi": "【Đáp án đúng】 'Liệu pháp chuyển hướng' - chuyển sự chú ý sang nơi khác bằng cách cung cấp đồ ăn nhẹ hoặc hoạt động yêu thích là cốt lõi trong xử lý ảo giác ở bệnh Alzheimer. Đây là cách hiệu quả và an toàn nhất giúp bệnh nhân thoát khỏi ảo giác và tìm lại sự ổn định."
+      },
+      "5": {
+        "ko": "'기운이 없어서'라고 설명하면 대상자가 자신의 상태를 걱정하게 되어 불안이 증가합니다.",
+        "vi": "Nếu giải thích rằng 'do mệt mỏi', bệnh nhân sẽ lo lắng về tình trạng của mình và sự bất an sẽ tăng lên."
+      }
+    },
+    "key_terms": [
+      {
+        "term_ko": "치매",
+        "term_vi": "bệnh Alzheimer / sa sút trí tuệ",
+        "def_ko": "기억력, 사고력, 판단력 등 인지 기능이 점차 떨어지는 뇌 질환",
+        "def_vi": "Bệnh não khiến các chức năng nhận thức như trí nhớ, tư duy, phán đoán dần suy giảm"
+      },
+      {
+        "term_ko": "환각",
+        "term_vi": "ảo giác",
+        "def_ko": "실제로 없는 것을 보거나 듣는 증상 (치매에서 흔히 나타남)",
+        "def_vi": "Triệu chứng nhìn thấy hoặc nghe thấy thứ không thực sự tồn tại (thường gặp ở bệnh Alzheimer)"
+      },
+      {
+        "term_ko": "전환 요법",
+        "term_vi": "liệu pháp chuyển hướng",
+        "def_ko": "문제 행동이 나타날 때 주의를 다른 활동으로 돌려 진정시키는 치매 돌봄 기법",
+        "def_vi": "Kỹ thuật chăm sóc bệnh Alzheimer - khi có hành vi vấn đề, chuyển sự chú ý sang hoạt động khác để làm dịu"
+      },
+      {
+        "term_ko": "피해망상",
+        "term_vi": "hoang tưởng bị hại",
+        "def_ko": "자신이 해를 입거나 공격받는다고 잘못 믿는 증상 (치매 환자에게 흔함)",
+        "def_vi": "Triệu chứng tin sai rằng bản thân đang bị hại hoặc bị tấn công (phổ biến ở bệnh nhân Alzheimer)"
+      }
+    ]
+  },
+  "1738": {
+    "intent_ko": "치매 대상자가 물건을 잃어버렸다고 의심하며 가족을 비난할 때 적절한 대처방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về phương pháp ứng phó phù hợp khi người bị sa sút trí tuệ nghi ngờ mất đồ và đổ lỗi cho gia đình",
+    "choice_explanations": {
+      "1": {
+        "ko": "대상자의 감정을 무시하고 비난하는 태도입니다. '또 의심하시네요'는 대상자를 비판하여 감정을 상하게 하고 증상을 악화시킬 수 있습니다.",
+        "vi": "Đây là thái độ phớt lờ và chỉ trích cảm xúc của người bệnh. 'Lại nghi ngờ nữa rồi' có thể làm tổn thương cảm xúc và làm triệu chứng trầm trọng hơn."
+      },
+      "2": {
+        "ko": "다른 물건을 언급하여 주제를 돌리려는 시도이지만, 대상자의 현재 감정과 호소를 인정하지 않아 부적절합니다.",
+        "vi": "Cố gắng chuyển hướng chủ đề bằng cách đề cập đến đồ vật khác, nhưng không thừa nhận cảm xúc và lời than phiền hiện tại của người bệnh nên không phù hợp."
+      },
+      "3": {
+        "ko": "대상자의 자율성을 제한하고 무능력하다고 암시하여 자존감을 낮출 수 있습니다. 또한 며느리에 대한 의심 문제를 해결하지 못합니다.",
+        "vi": "Hạn chế quyền tự chủ của người bệnh và ám chỉ họ không có năng lực, có thể làm giảm lòng tự trọng. Ngoài ra không giải quyết được vấn đề nghi ngờ con dâu."
+      },
+      "4": {
+        "ko": "사실을 직접 지적하며 '왜 그렇게 의심이 많으세요?'라고 비난하여 대상자를 방어적으로 만들고 감정을 악화시킵니다.",
+        "vi": "Chỉ ra sự thật trực tiếp và chỉ trích 'Sao hay nghi ngờ vậy?' khiến người bệnh phòng thủ và làm cảm xúc tồi tệ hơn."
+      },
+      "5": {
+        "ko": "대상자의 감정(속상함)을 먼저 공감하고 인정한 후, 함께 문제를 해결하려는 협력적 접근입니다. 치매 대상자의 정신행동증상 대처의 핵심 원칙인 '감정 공감 → 협력적 문제해결'을 따르는 가장 적절한 방법입니다.",
+        "vi": "Đồng cảm và thừa nhận cảm xúc của người bệnh (buồn bã) trước, sau đó tiếp cận hợp tác để cùng giải quyết vấn đề. Đây là phương pháp phù hợp nhất theo nguyên tắc cốt lõi ứng phó với triệu chứng hành vi tâm thần của người sa sút trí tuệ: 'Đồng cảm cảm xúc → Giải quyết vấn đề cùng nhau'."
+      }
+    },
+    "key_terms": [
+      {
+        "term_ko": "치매",
+        "term_vi": "sa sút trí tuệ",
+        "def_ko": "기억력, 판단력 등 인지기능이 점진적으로 감소하는 뇌질환",
+        "def_vi": "Bệnh não làm giảm dần các chức năng nhận thức như trí nhớ, khả năng phán đoán"
+      },
+      {
+        "term_ko": "정신행동증상",
+        "term_vi": "triệu chứng hành vi tâm thần",
+        "def_ko": "치매 환자에게 나타나는 망상, 환각, 초조, 우울 등의 정신적·행동적 문제",
+        "def_vi": "Các vấn đề tâm lý và hành vi như hoang tưởng, ảo giác, bồn chồn, trầm cảm xuất hiện ở bệnh nhân sa sút trí tuệ"
+      },
+      {
+        "term_ko": "대상자",
+        "term_vi": "đối tượng / người được chăm sóc",
+        "def_ko": "요양 서비스를 받는 노인이나 환자",
+        "def_vi": "Người cao tuổi hoặc bệnh nhân nhận dịch vụ chăm sóc dư양양"
+      },
+      {
+        "term_ko": "공감",
+        "term_vi": "đồng cảm",
+        "def_ko": "상대방의 감정과 상황을 이해하고 함께 느끼는 것",
+        "def_vi": "Hiểu và cùng cảm nhận cảm xúc và tình huống của người khác"
+      }
+    ]
+  },
+  "1737": {
+    "intent_ko": "치매 대상자가 배설 실수를 인지하지 못할 때 적절한 의사소통 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về phương pháp giao tiếp phù hợp khi người bệnh mất trí nhớ không nhận thức được việc đại tiện nhầm",
+    "choice_explanations": {
+      "1": {
+        "ko": "냄새에 대해 직접적으로 언급하면 대상자에게 수치심과 불안감을 유발합니다. 치매 환자는 감정적으로 민감하므로 부정적 표현을 피해야 합니다.",
+        "vi": "Nói trực tiếp về mùi hôi sẽ gây ra cảm giác xấu hổ và lo lắng cho đối tượng. Bệnh nhân mất trí nhớ rất nhạy cảm về mặt cảm xúc nên phải tránh các biểu hiện tiêu cực."
+      },
+      "2": {
+        "ko": "'왜 자꾸 실수하느냐'며 책임을 묻는 것은 치매 환자의 자존감을 상하게 하고 공격적 반응을 유발할 수 있습니다. 치매로 인해 인지 기능이 저하되어 스스로 통제할 수 없는 상황입니다.",
+        "vi": "Việc hỏi 'tại sao cứ làm sai' và đặt trách nhiệm sẽ làm tổn thương lòng tự trọng của bệnh nhân mất trí nhớ và có thể gây ra phản ứng hung hăng. Do mất trí nhớ, chức năng nhận thức suy giảm nên họ không thể tự kiểm soát được."
+      },
+      "3": {
+        "ko": "조용하고 부드러운 어조로 말하면 대상자의 존엄성을 지키면서 상황을 해결할 수 있습니다. 치매 환자는 말의 내용보다 태도와 어조에 더 민감하게 반응하므로, 차분하고 존중하는 태도가 협조를 이끌어냅니다.",
+        "vi": "Nói bằng giọng điệu nhẹ nhàng và êm ái sẽ giải quyết được tình huống trong khi vẫn giữ được phẩm giá của đối tượng. Bệnh nhân mất trí nhớ phản ứng nhạy cảm hơn với thái độ và giọng điệu hơn là nội dung lời nói, nên thái độ bình tĩnh và tôn trọng sẽ dẫn đến sự hợp tác."
+      },
+      "4": {
+        "ko": "'말씀을 하셔야지'라며 비난하는 것은 대상자가 스스로 통제할 수 없는 상황에 대해 책임을 묻는 것입니다. 이는 좌절감과 부정적 감정을 초래합니다.",
+        "vi": "Việc khiển trách bằng cách nói 'phải nói chứ' là đặt trách nhiệm cho tình huống mà đối tượng không thể tự kiểm soát. Điều này gây ra cảm giác thất vọng và cảm xúc tiêu cực."
+      },
+      "5": {
+        "ko": "배설 실수의 원인을 식사량 탓으로 돌리는 것은 부적절합니다. 치매로 인한 인지 저하가 원인이며, 영양 섭취를 줄이면 건강에 해롭습니다.",
+        "vi": "Việc đổ lỗi nguyên nhân đại tiện nhầm cho lượng thức ăn là không phù hợp. Nguyên nhân là do suy giảm nhận thức vì mất trí nhớ, và giảm dinh dưỡng sẽ có hại cho sức khỏe."
+      }
+    },
+    "key_terms": [
+      {
+        "term_ko": "치매",
+        "term_vi": "mất trí nhớ",
+        "def_ko": "기억력, 판단력, 언어능력 등 인지 기능이 점차 저하되어 일상생활에 지장을 주는 질환",
+        "def_vi": "Bệnh làm suy giảm dần các chức năng nhận thức như trí nhớ, khả năng phán đoán, ngôn ngữ và gây trở ngại cho sinh hoạt hàng ngày"
+      },
+      {
+        "term_ko": "배설",
+        "term_vi": "đại tiện/tiểu tiện",
+        "def_ko": "대변이나 소변을 몸 밖으로 내보내는 생리 현상",
+        "def_vi": "Hiện tượng sinh lý đào thải phân hoặc nước tiểu ra khỏi cơ thể"
+      },
+      {
+        "term_ko": "인지",
+        "term_vi": "nhận thức",
+        "def_ko": "생각하고 기억하고 판단하는 정신적 능력",
+        "def_vi": "Khả năng tinh thần để suy nghĩ, ghi nhớ và phán đoán"
+      },
+      {
+        "term_ko": "자존감",
+        "term_vi": "lòng tự trọng",
+        "def_ko": "자기 자신을 존중하고 가치 있게 여기는 마음",
+        "def_vi": "Tâm lý tôn trọng và coi trọng bản thân mình"
+      }
+    ]
+  },
+  "1736": {
+    "intent_ko": "치매 대상자가 식사 후에도 계속 먹으려 할 때 적절한 대처 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về phương pháp đối phó phù hợp khi người bị mất trí nhớ tiếp tục muốn ăn sau khi đã ăn xong",
+    "choice_explanations": {
+      "1": {
+        "ko": "치매 환자는 최근 기억을 잘 기억하지 못하므로 '방금 드렸다'고 말하면 혼란과 불안감만 증가합니다. 사실을 지적하는 것은 효과적인 대처법이 아닙니다.",
+        "vi": "Bệnh nhân mất trí nhớ không nhớ được ký ức gần đây, nên nếu nói 'Tôi vừa mới cho ăn rồi' sẽ chỉ làm tăng thêm sự nhầm lẫn và lo lắng. Chỉ ra sự thật không phải là cách đối phó hiệu quả."
+      },
+      "2": {
+        "ko": "거절과 무관심을 표현하면 대상자가 실망하고 불안해하며, 증상이 더 악화될 수 있습니다.",
+        "vi": "Nếu thể hiện sự từ chối và thờ ơ, người bệnh sẽ thất vọng và lo lắng, triệu chứng có thể trở nên tồi tệ hơn."
+      },
+      "3": {
+        "ko": "치매 대상자의 요구를 일단 수용하면서('조금만 기다려 주세요') 다른 활동(화초 닦기)으로 주의를 전환시키는 것이 가장 효과적입니다. 이는 대상자를 존중하고 불안을 줄이며, 반복적인 요구 행동을 자연스럽게 잊게 만듭니다.",
+        "vi": "Cách hiệu quả nhất là chấp nhận yêu cầu của người bị mất trí nhớ ('Xin chờ một chút') trong khi chuyển hướng sự chú ý sang hoạt động khác (lau cây). Điều này tôn trọng người bệnh, giảm lo lắng và khiến họ tự nhiên quên đi hành vi yêu cầu lặp đi lặp lại."
+      },
+      "4": {
+        "ko": "부정적인 표현('너무 많이 드셔서')은 대상자의 자존감을 상하게 하고 기분을 나쁘게 만듭니다.",
+        "vi": "Biểu hiện tiêu cực ('ăn quá nhiều') làm tổn thương lòng tự trọng của người bệnh và làm họ khó chịu."
+      },
+      "5": {
+        "ko": "가족을 언급하며 제한하는 것은 대상자에게 죄책감과 혼란을 주며, 가족 관계에 대한 불안을 유발할 수 있습니다.",
+        "vi": "Đề cập đến gia đình để hạn chế gây cảm giác tội lỗi và nhầm lẫn cho người bệnh, có thể gây lo lắng về mối quan hệ gia đình."
+      }
+    },
+    "key_terms": [
+      {
+        "term_ko": "치매",
+        "term_vi": "mất trí nhớ/sa sút trí tuệ",
+        "def_ko": "기억력, 판단력 등 인지 기능이 점차 저하되어 일상생활에 장애가 생기는 질환",
+        "def_vi": "Bệnh làm suy giảm dần các chức năng nhận thức như trí nhớ, khả năng phán đoán và gây cản trở cuộc sống hàng ngày"
+      },
+      {
+        "term_ko": "대상자",
+        "term_vi": "đối tượng chăm sóc",
+        "def_ko": "요양보호 서비스를 받는 사람, 환자",
+        "def_vi": "Người nhận dịch vụ chăm sóc dài hạn, bệnh nhân"
+      },
+      {
+        "term_ko": "주의 전환",
+        "term_vi": "chuyển hướng chú ý",
+        "def_ko": "관심이나 집중을 다른 대상이나 활동으로 옮기게 하는 방법",
+        "def_vi": "Phương pháp khiến sự quan tâm hoặc tập trung chuyển sang đối tượng hoặc hoạt động khác"
+      },
+      {
+        "term_ko": "인지 기능",
+        "term_vi": "chức năng nhận thức",
+        "def_ko": "기억, 판단, 이해 등 정보를 처리하고 이해하는 뇌의 능력",
+        "def_vi": "Khả năng của não bộ xử lý và hiểu thông tin như trí nhớ, phán đoán, hiểu biết"
+      }
+    ]
+  }
+}

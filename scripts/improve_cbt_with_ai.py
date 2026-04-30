@@ -104,18 +104,30 @@ def sql_jsonb(obj):
 
 
 SYSTEM_PROMPT = """너는 한국 요양보호사 자격시험 CBT 해설 작가야.
-대상 학습자는 TOPIK 3-4 급 베트남인 — 한국어를 어느 정도 알지만 의학·전문용어는 어려워.
+대상 학습자는 TOPIK 3-4 급 베트남인 — 한국어 학습 중이라 한국어와 베트남어를 분리해서 보여줘야 함.
 
 각 문제에 대해 다음을 JSON 으로 반환:
-1. intent_ko / intent_vi — 이 문제가 무엇을 묻는지 한 줄 요약 (한국어 + 베트남어)
-2. choice_explanations — 보기별 해설 (한국어 + 베트남어), 1→5 순서
-   - 정답 보기는 반드시 자세히 (왜 옳은지, 핵심 원리)
-   - 오답 보기는 의미 있을 때만 (잘못된 이유). 순서·매칭 문제처럼 보기별 차이가 무의미하면 SKIP (해당 보기 키 자체를 생략)
-   - 절대 "이건 정답이 아닙니다" 같은 무의미한 해설 금지
-3. key_terms — 한국어 의학·전문 용어 중 TOPIK 3-4 가 모를 단어 2-5 개
-   - 일상 단어는 제외 (예: 사람, 식사, 집)
-   - 전문 용어 우선 (예: 욕창, 흡인, 도뇨, 관장, 인지장애)
-   - 각 용어: term_ko / term_vi / def_ko / def_vi
+
+1. intent_ko / intent_vi — 이 문제가 무엇을 묻는지 한 줄 요약
+   - 한국어와 베트남어 별도로 작성
+
+2. choice_explanations — 보기별 해설. 한국어 블록과 베트남어 블록을 완전히 분리:
+   {
+     "ko": {"1": "한국어 해설", "2": "...", ...},
+     "vi": {"1": "Vietnamese explanation", "2": "...", ...}
+   }
+   규칙:
+   - 정답 보기는 자세히 (왜 옳은지, 핵심 원리)
+   - 정답 보기의 해설 맨 앞에 ★ 표시 (한국어·베트남어 둘 다)
+   - 오답 보기는 의미 있을 때만 짧게 (잘못된 이유). 순서·매칭 문제처럼 보기별 차이가 무의미하면 해당 키 자체를 생략 (ko·vi 양쪽 다 동일하게)
+   - "이건 정답이 아닙니다" 같은 무의미한 해설 금지
+   - 1→5 키 순서대로
+
+3. key_terms — TOPIK 3-4 베트남인이 모를 의학·전문 용어 2-5 개
+   - 일상 단어 제외 (사람, 식사, 집 등)
+   - 전문 용어 우선 (욕창, 흡인, 도뇨, 관장, 인지장애 등)
+   - 형식: {"term_ko": "한글 용어", "def_vi": "Vietnamese definition (간단히)"}
+   - term_ko 는 한글 그대로, def_vi 는 베트남어로 의미만 짧게
 
 순수 JSON 만 반환 (마크다운 ```json 등 감싸지 말 것)."""
 
@@ -146,18 +158,27 @@ def build_user_prompt(qid, chapter, question, choices, answer_idx, raw_expl, raw
   "intent_ko": "...",
   "intent_vi": "...",
   "choice_explanations": {{
-    "1": {{"ko": "...", "vi": "..."}},
-    "2": {{"ko": "...", "vi": "..."}},
-    "3": {{"ko": "...", "vi": "..."}},
-    "4": {{"ko": "...", "vi": "..."}},
-    "5": {{"ko": "...", "vi": "..."}}
+    "ko": {{
+      "1": "한국어 해설",
+      "2": "...",
+      "{answer_idx}": "★ 정답 한국어 해설 (자세히)"
+    }},
+    "vi": {{
+      "1": "Vietnamese explanation",
+      "2": "...",
+      "{answer_idx}": "★ Vietnamese explanation for the correct answer (in detail)"
+    }}
   }},
   "key_terms": [
-    {{"term_ko": "...", "term_vi": "...", "def_ko": "...", "def_vi": "..."}}
+    {{"term_ko": "주보호자", "def_vi": "Người chăm sóc chính"}}
   ]
 }}
 
-(보기 해설 중 의미 없는 항목은 키 자체를 생략. 예: "2", "3" 키 없이 "1", "4", "5" 만 반환 가능)"""
+규칙:
+- ko / vi 블록 분리 — 한국어 학습자가 한국어 먼저 읽고 베트남어로 확인하는 흐름
+- 정답 ({answer_idx}번) 의 해설은 ★ 로 시작 (한국어·베트남어 둘 다)
+- 무의미한 보기는 키 자체 생략 (ko·vi 양쪽 동일하게 — 예: "2" 생략하면 vi 의 "2" 도 생략)
+- key_terms 는 [{{term_ko, def_vi}}] 형식만 — term_ko 는 한글 그대로, def_vi 는 짧은 베트남어 정의"""
 
 
 def call_claude(client, qid, chapter, question, choices, answer_idx, raw_expl, raw_terms, max_retries=3):
@@ -165,7 +186,7 @@ def call_claude(client, qid, chapter, question, choices, answer_idx, raw_expl, r
     for attempt in range(max_retries):
         try:
             msg = client.messages.create(
-                model="claude-3-5-sonnet-latest",
+                model="claude-sonnet-4-5",
                 max_tokens=2048,
                 system=SYSTEM_PROMPT,
                 messages=[
@@ -195,23 +216,43 @@ def call_claude(client, qid, chapter, question, choices, answer_idx, raw_expl, r
     raise last_err if last_err else RuntimeError("call_claude failed")
 
 
-def merge_explanations_to_one_per_choice(choice_expl_dict):
-    """{"1": {"ko": ..., "vi": ...}, ...} → {"1": "한국어\\nVietnamese", ...}
-    DB 의 기존 컬럼 (jsonb of {choice: text}) 와 호환 위해."""
-    if not choice_expl_dict:
-        return {}
-    out = {}
-    for k in sorted(choice_expl_dict.keys(), key=lambda x: int(x) if str(x).isdigit() else 99):
-        v = choice_expl_dict[k]
-        if isinstance(v, dict):
-            ko = v.get("ko", "").strip()
-            vi = v.get("vi", "").strip()
-            if not ko and not vi:
-                continue
-            out[str(k)] = f"{ko}\n{vi}".strip()
-        elif isinstance(v, str) and v.strip():
-            out[str(k)] = v.strip()
-    return out
+def normalize_explanations(choice_expl):
+    """입력: {"ko": {"1": ..., ...}, "vi": {"1": ..., ...}}
+    출력: 동일한 구조, 단 1→5 키 순서 정렬 + 빈 값 제거.
+    """
+    if not choice_expl or not isinstance(choice_expl, dict):
+        return None
+    ko_dict = choice_expl.get("ko") or {}
+    vi_dict = choice_expl.get("vi") or {}
+
+    def clean(d):
+        out = {}
+        for k in sorted(d.keys(), key=lambda x: int(x) if str(x).isdigit() else 99):
+            v = d.get(k)
+            if isinstance(v, str) and v.strip():
+                out[str(k)] = v.strip()
+        return out
+
+    ko_clean = clean(ko_dict)
+    vi_clean = clean(vi_dict)
+    if not ko_clean and not vi_clean:
+        return None
+    return {"ko": ko_clean, "vi": vi_clean}
+
+
+def normalize_key_terms(terms):
+    """[{term_ko, def_vi}, ...] — 한·베 분리 형식만 유지."""
+    if not terms or not isinstance(terms, list):
+        return None
+    out = []
+    for t in terms:
+        if not isinstance(t, dict):
+            continue
+        term_ko = (t.get("term_ko") or "").strip()
+        def_vi = (t.get("def_vi") or "").strip()
+        if term_ko and def_vi:
+            out.append({"term_ko": term_ko, "def_vi": def_vi})
+    return out or None
 
 
 def main():
@@ -333,14 +374,14 @@ def main():
             qid = int(qid_str)
             intent_ko = ai.get("intent_ko")
             intent_vi = ai.get("intent_vi")
-            ce = merge_explanations_to_one_per_choice(ai.get("choice_explanations", {}))
-            key_terms = ai.get("key_terms", []) or None
+            ce = normalize_explanations(ai.get("choice_explanations"))
+            key_terms = normalize_key_terms(ai.get("key_terms"))
 
             out.write(
                 f"update public.cbt_questions set "
                 f"intent_ko = {sql_str(intent_ko)}, "
                 f"intent_vi = {sql_str(intent_vi)}, "
-                f"choice_explanations = {sql_jsonb(ce or None)}, "
+                f"choice_explanations = {sql_jsonb(ce)}, "
                 f"key_terms = {sql_jsonb(key_terms)} "
                 f"where id = {qid};\n"
             )
