@@ -86,7 +86,10 @@ def sql_jsonb(obj):
 
 
 def parse_intent(text_block):
-    """'문제 의도 Ý định của câu hỏi\n한국어\n베트남어\n\n보기 해설...'
+    """'문제 의도 ...\\n한국어[\\n베트남어]\\n\\n보기 해설...'
+    원본은 두 가지 포맷이 섞여 있음:
+      - 포맷 A: '문제 의도 Ý định của câu hỏi\\n한국어\\n베트남어' (소수)
+      - 포맷 B: '문제 의도\\n한국어' (다수, 베트남어 없음)
     → (intent_ko, intent_vi, choice_explanations dict)"""
     if not text_block:
         return None, None, None
@@ -104,15 +107,36 @@ def parse_intent(text_block):
     else:
         intent_section = s
 
-    # 의도: "문제 의도 Ý định của câu hỏi\n<ko>\n<vi>"
-    if "Ý định" in intent_section:
-        after_header = intent_section.split("Ý định của câu hỏi", 1)
-        body = after_header[1] if len(after_header) > 1 else after_header[0]
-        lines = [l.strip() for l in body.strip().split("\n") if l.strip()]
-        if len(lines) >= 1:
-            intent_ko = lines[0]
-        if len(lines) >= 2:
-            intent_vi = lines[1]
+    # 의도 — "문제 의도" 헤더 (한·베 둘 다, 또는 한국어만) 제거 후 본문 추출
+    body = intent_section
+    if "Ý định của câu hỏi" in body:
+        body = body.split("Ý định của câu hỏi", 1)[1]
+    elif "문제 의도" in body:
+        body = body.split("문제 의도", 1)[1]
+
+    # body 의 paragraph 단위 (빈 줄 기준) — 첫 단락이 의도
+    paragraphs = re.split(r"\n\s*\n", body.strip())
+    if paragraphs and paragraphs[0].strip():
+        first_para = paragraphs[0].strip()
+        # 단락 안의 줄들 — 한·베 분리
+        para_lines = [l.strip() for l in first_para.split("\n") if l.strip()]
+        if len(para_lines) == 1:
+            # 한 줄만 있으면 한국어
+            intent_ko = para_lines[0]
+        elif len(para_lines) >= 2:
+            # 두 줄 이상 — 한국어 / 베트남어 추정
+            # 한글 (가-힣) 포함 여부로 판단
+            first_has_ko = bool(re.search(r"[가-힣]", para_lines[0]))
+            second_has_ko = bool(re.search(r"[가-힣]", para_lines[1]))
+            if first_has_ko and not second_has_ko:
+                intent_ko = para_lines[0]
+                intent_vi = para_lines[1]
+            elif not first_has_ko and second_has_ko:
+                intent_vi = para_lines[0]
+                intent_ko = para_lines[1]
+            else:
+                # 둘 다 한글이면 합치기 (또는 첫 줄)
+                intent_ko = "\n".join(para_lines)
 
     # 보기 해설: "(1) ko\nvi\n(2) ko\nvi\n..."
     if explanation_section:
