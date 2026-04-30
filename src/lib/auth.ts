@@ -1,7 +1,13 @@
 /**
  * Auth 유틸리티 — 현재 로그인 사용자 + 매핑된 customer 조회.
+ *
+ * ⚠️ 개발 단계: BYPASS_GATES=true 로 멤버십 게이트 + 매핑 강제 모두 우회.
+ *    런칭 전에 false 로 변경하면 정상 권한 체크 활성.
  */
 import { createClient } from "@/lib/supabase/server";
+
+// TODO: 런칭 전 false 로 변경 (멤버십 권한 체크 활성)
+const BYPASS_GATES = true;
 
 export type AuthState =
   | { kind: "guest" }
@@ -43,6 +49,24 @@ export async function getAuthState(): Promise<AuthState> {
     .maybeSingle();
 
   if (!customer) {
+    // ⚠️ 개발 모드: 매핑 안 됐어도 mapped 처럼 처리 (UI 테스트용)
+    if (BYPASS_GATES) {
+      const meta = (user.user_metadata ?? {}) as Record<string, string>;
+      return {
+        kind: "mapped",
+        userId: user.id,
+        email: user.email ?? null,
+        customer: {
+          id: `DEV_${user.id.slice(0, 8)}`,
+          code: "DEV",
+          name_kr: meta.full_name ?? meta.name ?? null,
+          name_vi: null,
+          phone: null,
+          email: user.email ?? null,
+          product_type: "교육+웰컴팩", // 모든 권한
+        },
+      };
+    }
     return {
       kind: "unmapped",
       userId: user.id,
@@ -76,6 +100,9 @@ export function hasFeatureAccess(
   productType: "교육" | "웰컴팩" | "교육+웰컴팩" | null,
   feature: MembershipFeature
 ): boolean {
+  // ⚠️ 개발 모드: 모든 기능 접근 허용
+  if (BYPASS_GATES) return true;
+
   if (!productType) return false;
   switch (feature) {
     case "videos":
