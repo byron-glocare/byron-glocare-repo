@@ -1,9 +1,7 @@
-import { getDict, getLocale } from "@/lib/i18n";
+import { getDict } from "@/lib/i18n";
 
 export default async function TermsPage() {
   const t = await getDict();
-  const locale = await getLocale();
-  const isVi = locale === "vi";
 
   return (
     <div className="page-wrap" style={{ maxWidth: 760 }}>
@@ -13,7 +11,7 @@ export default async function TermsPage() {
         className="page-desc"
         style={{ fontSize: "0.82rem", color: "var(--ink-xlight)" }}
       >
-        {t["legal.last_updated"]}: 2026-04-29
+        공고일자: 2025년 9월 11일 · 시행일자: 2025년 9월 11일
       </p>
 
       <div
@@ -24,82 +22,115 @@ export default async function TermsPage() {
           marginTop: "2rem",
         }}
       >
-        <Section title={isVi ? "Điều 1. Mục đích" : "제1조 (목적)"}>
-          {isVi
-            ? "Điều khoản này quy định các điều kiện sử dụng dịch vụ web (sau đây gọi là 'Dịch vụ') do GLOCARE (sau đây gọi là 'Công ty') cung cấp."
-            : "본 약관은 글로케어(이하 '회사')가 제공하는 웹 서비스(이하 '서비스')의 이용 조건을 규정합니다."}
-        </Section>
+        <Article title="제1조 (목적)">
+          본 약관은 ㈜글로케어가 제공하는 글로케어 및 관련 서비스의 이용과 관련하여 회사와 이용자의 권리, 의무 및 책임사항을 규정합니다.
+        </Article>
 
-        <Section
-          title={isVi ? "Điều 2. Định nghĩa" : "제2조 (용어의 정의)"}
-        >
-          {isVi
-            ? "1. 'Thành viên' là người đã đăng ký tài khoản và sử dụng Dịch vụ.\n2. 'Tài khoản SNS' là tài khoản đăng nhập qua Google, Facebook và các nhà cung cấp khác."
-            : "1. '회원'은 본 서비스에 가입하여 이용하는 자입니다.\n2. 'SNS 계정'은 Google, Facebook 등 외부 인증 제공자를 통한 로그인 계정을 말합니다."}
-        </Section>
+        <Article title="제2조 (이용자의 정의)">
+          {`① '이용자'란 본 약관에 동의하고 서비스를 이용하는 회원 또는 비회원을 통칭합니다.
+② '회원 이용자'란 가입 양식을 기입하고 버튼을 누르는 방법으로 계정을 생성한 이용자입니다.
+③ '비회원 이용자'란 계정을 생성하지 않은 상태로 서비스를 이용하는 이용자입니다.`}
+        </Article>
 
-        <Section
-          title={
-            isVi
-              ? "Điều 3. Đăng ký và quản lý thành viên"
-              : "제3조 (회원 가입 및 관리)"
-          }
-        >
-          {isVi
-            ? "Thành viên đăng ký bằng cách đăng nhập SNS. Thành viên có nghĩa vụ cung cấp thông tin chính xác và cập nhật khi có thay đổi."
-            : "회원은 SNS 로그인 방식으로 가입할 수 있으며, 정확한 정보를 제공할 의무가 있습니다."}
-        </Section>
+        <Article title="제3조 (계정 생성)">
+          {`① 이용자는 가입 양식을 기입하고 버튼을 누르는 방법으로 계정을 생성할 수 있습니다.
+② 회사는 '허위, 기재누락, 오기가 있는 경우' 등에 해당하지 않는 한 계정 생성을 허용합니다.
+③ 변경사항이 발생한 경우 즉시 정정 기재해야 합니다.`}
+        </Article>
 
-        <Section
-          title={isVi ? "Điều 4. Quyền và nghĩa vụ" : "제4조 (회원의 의무)"}
-        >
-          {isVi
-            ? "Thành viên không được sử dụng Dịch vụ vào mục đích trái pháp luật, không được giả mạo thông tin, không được xâm phạm quyền của người khác."
-            : "회원은 본 서비스를 불법적인 목적으로 사용하거나, 타인의 정보를 도용하거나, 타인의 권리를 침해해서는 안 됩니다."}
-        </Section>
+        <Article title="제4조 (서비스의 제공)">
+          {`회사가 제공하는 서비스는 다음과 같습니다.
+① 영상 제공 서비스
+② 커뮤니티 서비스
+③ 학원 등 정보 검색 서비스
+④ 기타 자체 개발 또는 협력을 통한 서비스`}
+        </Article>
 
-        <Section
-          title={
-            isVi
-              ? "Điều 5. Hủy bỏ và chấm dứt"
-              : "제5조 (서비스 이용 중지 및 해지)"
-          }
-        >
-          {isVi
-            ? "Công ty có thể tạm dừng hoặc chấm dứt dịch vụ đối với thành viên vi phạm điều khoản. Thành viên có thể yêu cầu xóa tài khoản bất cứ lúc nào."
-            : "회사는 약관을 위반한 회원에 대해 서비스 이용을 중지하거나 해지할 수 있습니다. 회원은 언제든 탈퇴를 요청할 수 있습니다."}
-        </Section>
+        <Article title="제5조 (서비스의 중단 및 변경)">
+          {`① 회사는 365일 24시간 서비스 제공을 위해 노력하나, '컴퓨터 설비의 보수, 고장, 통신 두절' 등의 사유 발생 시 제한 또는 중단할 수 있습니다.
+② 예측 가능한 경우 상당 기간 전 안내하고, 예측 불가능한 경우 지체 없이 설명합니다.`}
+        </Article>
 
-        <Section
-          title={
-            isVi ? "Điều 6. Miễn trừ trách nhiệm" : "제6조 (책임 제한)"
-          }
-        >
-          {isVi
-            ? "Công ty không chịu trách nhiệm về các thiệt hại do sự cố kỹ thuật, lỗi dữ liệu hoặc nguyên nhân bất khả kháng."
-            : "회사는 천재지변, 시스템 장애 등 불가항력적 사유로 인한 피해에 대해 책임을 지지 않습니다."}
-        </Section>
+        <Article title="제6조 (회원 탈퇴 및 자격 상실 등)">
+          {`① 이용자는 언제든 탈퇴를 요청할 수 있으며 회사는 즉시 절차를 밟습니다.
+② 탈퇴 후 로그인이 불가능하나 작성한 게시물은 삭제되지 않습니다.
+③ 허위 등록, 질서 위협, 법령 위반 등의 사유로 자격을 제한·정지·상실시킬 수 있습니다.`}
+        </Article>
 
-        <p
-          style={{
-            marginTop: "2.5rem",
-            padding: "1rem",
-            background: "var(--peach)",
-            borderRadius: 10,
-            fontSize: "0.82rem",
-            color: "var(--ink-light)",
-          }}
-        >
-          {isVi
-            ? "* Điều khoản chi tiết hơn sẽ được cập nhật. Vui lòng liên hệ help@glocare.co.kr nếu có câu hỏi."
-            : "* 더 상세한 약관은 추후 업데이트 됩니다. 문의는 help@glocare.co.kr 으로 부탁드립니다."}
-        </p>
+        <Article title="제7조 (이용자에 대한 통지)">
+          회사의 전체 이용자 대상 통지는 7일 이상 공지사항 게시판에 게시함으로써 개별 통지에 갈음할 수 있습니다.
+        </Article>
+
+        <Article title="제8조 (계정 이용자의 정보)">
+          회사는 계정 생성 시 이름, 휴대폰, 이메일 등 개인정보를 수집하며, 세부 항목은 개인정보처리방침에서 고지합니다.
+        </Article>
+
+        <Article title="제9조 (회사의 의무)">
+          {`① 회사는 법령 준수 및 안정적 서비스 제공을 노력합니다.
+② 안전하고 편리한 시스템을 구축합니다.
+③ 비합의 광고성 이메일을 발송하지 않습니다.
+④ 회사의 과실로 인한 손해는 배상하나, 천재지변 또는 이용자의 고의·과실로 인한 손해는 책임을 부담하지 않습니다.`}
+        </Article>
+
+        <Article title="제10조 (계정 이용자의 식별 코드 및 비밀번호에 대한 의무)">
+          {`① 계정 이용자가 식별 코드와 비밀번호 관리 책임을 집니다.
+② 제3자에게 이용하게 해서는 안 됩니다.
+③ 도난당하거나 제3자 사용을 인지할 시 즉시 회사에 통보해야 합니다.`}
+        </Article>
+
+        <Article title="제11조 (이용자의 의무)">
+          {`이용자는 다음 행위를 금지합니다.
+① 허위 내용 등록
+② 지적재산권 침해
+③ 다른 이용자 식별 코드 도용
+④ 불법 정보 게시
+⑤ 타인 명의 도용
+⑥ 바이러스·악성 코드 전송
+⑦ 스토킹 등 괴롭힘
+⑧ 개인정보 침해·명예훼손
+⑨ 광고·음란물·청소년 유해매체 게시
+⑩ 공지사항 규정 위반
+⑪ 자동화된 수단(매크로, 봇, 스크래퍼 등)을 활용하여 비정상적으로 이용
+⑫ 허가하지 않은 자동화된 수단을 이용한 계정 신청·로그인·콘텐츠 생성
+⑬ AI 학습 목적의 콘텐츠 수집
+⑭ 서비스 취지에 부합하지 않은 이용·어뷰징`}
+        </Article>
+
+        <Article title="제12조 (공개 게시물의 삭제 또는 이용 제한)">
+          {`① 비방·중상모략, 음란물·욕설, 범죄 관련, 저작권 침해, 종교·정치 분쟁, 사생활 침해, 중복 게시, 미승인 광고 등의 내용은 접근 차단 또는 삭제할 수 있습니다.
+② 법적 조치와 동시 삭제 요청 시 법적 결과 때까지 접근을 잠정 제한할 수 있습니다.`}
+        </Article>
+
+        <Article title="제13조 (저작권의 귀속 및 콘텐츠의 이용)">
+          {`① 회사 저작물의 저작권은 회사에 귀속합니다.
+② 이용자는 제공 정보를 회사의 사전 승낙 없이 복제, 전송, 출판, 배포, 방송, 기타 방법에 의하여 영리목적으로 이용하는 것을 금지합니다.
+③ 이용자 게시 콘텐츠는 이용자에게 귀속하나, 회사는 서비스 운영, 전시, 전송, 배포, 홍보, AI 학습 등의 목적으로 이용자 동의 없이 저작권법에 따라 콘텐츠를 사용할 수 있습니다.`}
+        </Article>
+
+        <Article title="제14조 (크롤링 및 인공지능 학습)">
+          {`① 본 서비스의 크롤링은 명시적으로 금지합니다.
+② AI 학습 데이터 활용 시 사전 합의 필수이며, 공익·비영리 목적도 동의 필수입니다. 위반 시 민형사상 책임을 물을 수 있습니다.`}
+        </Article>
+
+        <Article title="제15조 (약관의 개정)">
+          {`① 회사는 관련 법령 범위 내에서 약관 개정이 가능합니다.
+② 불리한 개정은 적용 14일 전 공지합니다.
+③ 이용자는 거부 권리가 있으며, 공지 후 14일 내 거부 표명 가능합니다. 14일 내 거부하지 않으면 동의로 간주합니다.`}
+        </Article>
+
+        <Article title="제16조 (재판관할)">
+          분쟁은 대한민국 법을 적용하며, 한국 법원에 제기합니다.
+        </Article>
+
+        <Article title="제17조 (개정 전 고지의무)">
+          약관 추가, 삭제, 수정 시 최소 7일 전 공지사항을 통해 사전 공지합니다.
+        </Article>
       </div>
     </div>
   );
 }
 
-function Section({
+function Article({
   title,
   children,
 }: {
@@ -111,7 +142,7 @@ function Section({
       <h3
         style={{
           fontFamily: "var(--font-noto-serif-kr), serif",
-          fontSize: "1.05rem",
+          fontSize: "1rem",
           fontWeight: 800,
           color: "var(--ink)",
           marginBottom: "0.6rem",
