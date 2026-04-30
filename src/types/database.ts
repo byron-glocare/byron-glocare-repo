@@ -956,6 +956,74 @@ export type Database = {
         >;
         Relationships: [];
       };
+
+      cbt_questions: {
+        Row: {
+          id: number;
+          active: boolean;
+          chapter: string;
+          question: string;
+          choices: string[];
+          answer_index: number;
+          intent_ko: string | null;
+          intent_vi: string | null;
+          choice_explanations: Record<string, string> | null;
+          key_terms: Array<{
+            term_ko?: string;
+            term_vi?: string;
+            def_ko?: string;
+            def_vi?: string;
+          }> | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: number;
+          active?: boolean;
+          chapter: string;
+          question: string;
+          choices: string[];
+          answer_index: number;
+          intent_ko?: string | null;
+          intent_vi?: string | null;
+          choice_explanations?: Record<string, string> | null;
+          key_terms?: Array<{
+            term_ko?: string;
+            term_vi?: string;
+            def_ko?: string;
+            def_vi?: string;
+          }> | null;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["cbt_questions"]["Insert"]>;
+        Relationships: [];
+      };
+
+      cbt_attempts: {
+        Row: {
+          id: number;
+          user_id: string;
+          started_at: string;
+          finished_at: string | null;
+          question_ids: number[];
+          answers: Record<string, number>;
+          score: number | null;
+          total: number;
+          chapter_filter: string | null;
+        };
+        Insert: {
+          id?: number;
+          user_id: string;
+          started_at?: string;
+          finished_at?: string | null;
+          question_ids: number[];
+          answers?: Record<string, number>;
+          score?: number | null;
+          total?: number;
+          chapter_filter?: string | null;
+        };
+        Update: Partial<Database["public"]["Tables"]["cbt_attempts"]["Insert"]>;
+        Relationships: [];
+      };
     };
     Views: { [_ in never]: never };
     Functions: { [_ in never]: never };
