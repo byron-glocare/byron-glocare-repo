@@ -152,6 +152,74 @@ const koDict = {
   "privacy.title": "개인정보 처리방침",
   "legal.last_updated": "최종 수정일",
 
+  // Resume
+  "resume.eyebrow": "이력서 만들기",
+  "resume.title": "AI 가 정리해주는 요양보호사 이력서",
+  "resume.intro":
+    "기본 정보와 경험을 자유롭게 적으면 AI 가 정리하여 PDF 이력서를 만들어드립니다.",
+  "resume.list.title": "내 이력서",
+  "resume.list.empty": "아직 만든 이력서가 없습니다.",
+  "resume.list.new": "+ 새 이력서 만들기",
+  "resume.list.status.draft": "작성 중",
+  "resume.list.status.generating": "생성 중...",
+  "resume.list.status.ready": "완성",
+  "resume.list.status.failed": "실패",
+  "resume.locked.title": "멤버십 전용",
+  "resume.locked.desc":
+    "이력서 만들기는 '웰컴팩' 또는 '교육+웰컴팩' 회원에게만 제공됩니다.",
+  "resume.locked.cta": "교육 신청하기",
+
+  // Resume form
+  "resume.form.section.basic": "기본 정보",
+  "resume.form.section.profile": "추가 정보",
+  "resume.form.section.education": "학력",
+  "resume.form.section.experience": "경력 (선택)",
+  "resume.form.section.certs": "자격증 / 수상 (선택)",
+  "resume.form.section.skills": "기술 / 어학",
+  "resume.form.section.activities": "기타 활동 (선택)",
+  "resume.form.section.intro": "자기소개",
+  "resume.form.agree": "개인정보 수집 및 이용에 동의합니다 *",
+  "resume.form.name_vi": "이름 (베트남어) *",
+  "resume.form.name_vi_ph": "NGUYEN VAN A",
+  "resume.form.name_ko": "이름 (한글) *",
+  "resume.form.name_ko_ph": "응우옌 반 안",
+  "resume.form.birth": "생년월일",
+  "resume.form.phone": "한국 전화번호 *",
+  "resume.form.phone_ph": "010-1234-5678",
+  "resume.form.email": "이메일 *",
+  "resume.form.email_ph": "name@example.com",
+  "resume.form.address": "한국 내 주소",
+  "resume.form.address_ph": "서울시 광진구 능동로 120, 창의관 202호",
+  "resume.form.photo": "이력서 사진 (선택)",
+  "resume.form.photo_hint": "정면 얼굴 사진 권장 (JPG/PNG)",
+  "resume.form.motto": "어떤 요양보호사가 되고 싶은가요?",
+  "resume.form.motto_ph":
+    "예) 어르신의 불편함을 먼저 찾아내는 꼼꼼한 요양보호사",
+  "resume.form.education_ph":
+    "예) 한국대학교 / 경영학과 / 2023년 졸업\n예) 한국대학교 대학원 / 경제학과 석사 / 2025년 졸업(예정)",
+  "resume.form.experience_ph":
+    "근무지 / 기간 / 담당 / 업무상세\n예) 글로케어 / 24년 5월 - 25년 10월 / 홍보담당 / 틱톡 영상제작, 베트남어 번역",
+  "resume.form.certs_ph":
+    "이름 / 발급기관 / 취득일\n예) 요양보호사 자격증 / 한국보건의료인국가시험원 / 25년 8월\n예) TOPIK 4급 / 국제국립교육원 / 25년 8월",
+  "resume.form.skills_ph":
+    "명칭 / 수준\n예) 한국어 / 일상대화 가능\n예) 베트남어 / 모국어\n예) 문서작성 (워드, 엑셀) / 중간",
+  "resume.form.activities_ph":
+    "활동명 / 기간 / 기관 / 상세\n예) 요양원 봉사활동 / 25년 1월 ~ 26년 3월 / 한국 요양원 / 매주 일요일, 어르신 식사 보조",
+  "resume.form.episode": "교육·실습 에피소드",
+  "resume.form.episode_ph":
+    "요양보호사가 되고 싶다고 느낀 구체적인 사례나 경험을 자유롭게 작성해주세요. AI 가 자기소개로 다듬어 드립니다.",
+  "resume.form.submit": "이력서 만들기",
+  "resume.form.submitting": "AI 가 작성 중... (10-30초)",
+
+  // Resume view
+  "resume.view.download": "PDF 다운로드",
+  "resume.view.delete": "삭제",
+  "resume.view.delete_confirm": "이 이력서를 삭제하시겠습니까?",
+  "resume.view.failed":
+    "이력서 생성에 실패했습니다. 다시 만들어 주세요.",
+  "resume.view.generating":
+    "AI 가 이력서를 작성 중입니다. 잠시 후 새로고침 해주세요.",
+
   // Videos
   "videos.eyebrow": "동영상 교육",
   "videos.title": "베트남어 보충 자료 영상",
@@ -346,6 +414,71 @@ const viDict: DictShape = {
   "terms.title": "Điều khoản sử dụng",
   "privacy.title": "Chính sách bảo mật",
   "legal.last_updated": "Cập nhật lần cuối",
+
+  "resume.eyebrow": "Tạo CV",
+  "resume.title": "AI tạo CV Điều dưỡng viên cho bạn",
+  "resume.intro":
+    "Hãy điền thông tin và trải nghiệm — AI sẽ chỉnh sửa và tạo CV PDF theo mẫu chuẩn.",
+  "resume.list.title": "CV của tôi",
+  "resume.list.empty": "Chưa có CV nào.",
+  "resume.list.new": "+ Tạo CV mới",
+  "resume.list.status.draft": "Bản nháp",
+  "resume.list.status.generating": "Đang tạo...",
+  "resume.list.status.ready": "Hoàn tất",
+  "resume.list.status.failed": "Thất bại",
+  "resume.locked.title": "Chỉ dành cho thành viên",
+  "resume.locked.desc":
+    "Tạo CV chỉ dành cho thành viên 'Welcome Pack' hoặc 'Đào tạo + Welcome Pack'.",
+  "resume.locked.cta": "Đăng ký khóa đào tạo",
+
+  "resume.form.section.basic": "Thông tin cơ bản",
+  "resume.form.section.profile": "Thông tin bổ sung",
+  "resume.form.section.education": "Học vấn",
+  "resume.form.section.experience": "Kinh nghiệm (tùy chọn)",
+  "resume.form.section.certs": "Chứng chỉ / Giải thưởng (tùy chọn)",
+  "resume.form.section.skills": "Kỹ năng / Ngoại ngữ",
+  "resume.form.section.activities": "Hoạt động khác (tùy chọn)",
+  "resume.form.section.intro": "Giới thiệu bản thân",
+  "resume.form.agree": "Tôi đồng ý thu thập và sử dụng thông tin cá nhân *",
+  "resume.form.name_vi": "Họ tên (tiếng Việt) *",
+  "resume.form.name_vi_ph": "NGUYEN VAN A",
+  "resume.form.name_ko": "Họ tên (Hangul) *",
+  "resume.form.name_ko_ph": "응우옌 반 안",
+  "resume.form.birth": "Ngày sinh",
+  "resume.form.phone": "Số điện thoại Hàn Quốc *",
+  "resume.form.phone_ph": "010-1234-5678",
+  "resume.form.email": "Email *",
+  "resume.form.email_ph": "name@example.com",
+  "resume.form.address": "Địa chỉ tại Hàn Quốc",
+  "resume.form.address_ph": "Seoul Gwangjin-gu Neungdong-ro 120, Tòa Sáng tạo P.202",
+  "resume.form.photo": "Ảnh CV (tùy chọn)",
+  "resume.form.photo_hint": "Khuyến nghị ảnh chính diện (JPG/PNG)",
+  "resume.form.motto": "Bạn muốn trở thành điều dưỡng viên thế nào?",
+  "resume.form.motto_ph":
+    "Ví dụ: Điều dưỡng viên tỉ mỉ luôn nhận ra trước nhất những bất tiện của người cao tuổi",
+  "resume.form.education_ph":
+    "Ví dụ: Đại học Hàn Quốc / Khoa Quản trị / Tốt nghiệp 2023\nVí dụ: Cao học Đại học Hàn Quốc / Thạc sĩ Kinh tế / Dự kiến tốt nghiệp 2025",
+  "resume.form.experience_ph":
+    "Nơi làm / Thời gian / Vị trí / Chi tiết công việc\nVí dụ: GLOCARE / 5/2024 - 10/2025 / Marketing / Sản xuất video TikTok, dịch tiếng Việt",
+  "resume.form.certs_ph":
+    "Tên / Cơ quan cấp / Ngày cấp\nVí dụ: Chứng chỉ Điều dưỡng viên / Korea Health Personnel Licensing Examination Institute / 8/2025\nVí dụ: TOPIK Cấp 4 / Viện Giáo dục Quốc tế / 8/2025",
+  "resume.form.skills_ph":
+    "Tên / Trình độ\nVí dụ: Tiếng Hàn / Giao tiếp hàng ngày\nVí dụ: Tiếng Việt / Tiếng mẹ đẻ\nVí dụ: Soạn thảo văn bản (Word, Excel) / Trung cấp",
+  "resume.form.activities_ph":
+    "Tên hoạt động / Thời gian / Tổ chức / Chi tiết\nVí dụ: Tình nguyện viện dưỡng lão / 1/2025 - 3/2026 / Viện dưỡng lão Hàn Quốc / Mỗi Chủ nhật, hỗ trợ ăn uống cho người cao tuổi",
+  "resume.form.episode": "Kỷ niệm / kinh nghiệm khi học hoặc thực tập",
+  "resume.form.episode_ph":
+    "Vui lòng viết tự do về trải nghiệm hoặc ví dụ cụ thể khiến bạn muốn trở thành điều dưỡng viên. AI sẽ chỉnh sửa thành phần giới thiệu bản thân.",
+  "resume.form.submit": "Tạo CV",
+  "resume.form.submitting": "AI đang viết... (10-30s)",
+
+  "resume.view.download": "Tải PDF",
+  "resume.view.delete": "Xóa",
+  "resume.view.delete_confirm": "Bạn muốn xóa CV này?",
+  "resume.view.failed":
+    "Tạo CV thất bại. Vui lòng thử lại.",
+  "resume.view.generating":
+    "AI đang tạo CV. Vui lòng tải lại trang sau ít phút.",
 
   "videos.eyebrow": "Video đào tạo",
   "videos.title": "Video tài liệu bổ sung tiếng Việt",

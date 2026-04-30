@@ -957,6 +957,71 @@ export type Database = {
         Relationships: [];
       };
 
+      resumes: {
+        Row: {
+          id: number;
+          user_id: string;
+          agree_terms: boolean;
+          name_vi: string | null;
+          name_ko: string | null;
+          birth_date: string | null;
+          phone: string | null;
+          email: string | null;
+          address_ko: string | null;
+          education_raw: string | null;
+          experience_raw: string | null;
+          certificates_raw: string | null;
+          skills_raw: string | null;
+          activities_raw: string | null;
+          motto: string | null;
+          episode: string | null;
+          photo_url: string | null;
+          ai_education: unknown;
+          ai_experience: unknown;
+          ai_certificates: unknown;
+          ai_skills: unknown;
+          ai_activities: unknown;
+          ai_self_intro: string | null;
+          pdf_url: string | null;
+          status: string;
+          generated_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: number;
+          user_id: string;
+          agree_terms?: boolean;
+          name_vi?: string | null;
+          name_ko?: string | null;
+          birth_date?: string | null;
+          phone?: string | null;
+          email?: string | null;
+          address_ko?: string | null;
+          education_raw?: string | null;
+          experience_raw?: string | null;
+          certificates_raw?: string | null;
+          skills_raw?: string | null;
+          activities_raw?: string | null;
+          motto?: string | null;
+          episode?: string | null;
+          photo_url?: string | null;
+          ai_education?: unknown;
+          ai_experience?: unknown;
+          ai_certificates?: unknown;
+          ai_skills?: unknown;
+          ai_activities?: unknown;
+          ai_self_intro?: string | null;
+          pdf_url?: string | null;
+          status?: string;
+          generated_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["resumes"]["Insert"]>;
+        Relationships: [];
+      };
+
       videos: {
         Row: {
           id: number;
