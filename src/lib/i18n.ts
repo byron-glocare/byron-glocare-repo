@@ -152,6 +152,22 @@ const koDict = {
   "privacy.title": "개인정보 처리방침",
   "legal.last_updated": "최종 수정일",
 
+  // Videos
+  "videos.eyebrow": "동영상 교육",
+  "videos.title": "베트남어 보충 자료 영상",
+  "videos.intro":
+    "주요 개념과 의학용어를 베트남어로 설명한 보충 영상입니다. 시청 여부가 자동 저장됩니다.",
+  "videos.tag.all": "전체",
+  "videos.watched": "시청 완료",
+  "videos.unwatched": "미시청",
+  "videos.empty": "등록된 영상이 없습니다.",
+  "videos.locked.title": "멤버십 전용",
+  "videos.locked.desc":
+    "동영상 교육은 '교육' 또는 '교육+웰컴팩' 회원에게만 제공됩니다.",
+  "videos.player.back": "← 목록으로",
+  "videos.player.mark_watched": "시청 완료 표시",
+  "videos.player.unmark_watched": "시청 표시 해제",
+
   // CBT
   "cbt.eyebrow": "CBT 문제풀이",
   "cbt.title": "요양보호사 자격 시험 대비",
@@ -330,6 +346,21 @@ const viDict: DictShape = {
   "terms.title": "Điều khoản sử dụng",
   "privacy.title": "Chính sách bảo mật",
   "legal.last_updated": "Cập nhật lần cuối",
+
+  "videos.eyebrow": "Video đào tạo",
+  "videos.title": "Video tài liệu bổ sung tiếng Việt",
+  "videos.intro":
+    "Video bổ sung giải thích các khái niệm chính và thuật ngữ y học bằng tiếng Việt. Trạng thái đã xem được tự động lưu.",
+  "videos.tag.all": "Tất cả",
+  "videos.watched": "Đã xem",
+  "videos.unwatched": "Chưa xem",
+  "videos.empty": "Chưa có video.",
+  "videos.locked.title": "Chỉ dành cho thành viên",
+  "videos.locked.desc":
+    "Video đào tạo chỉ dành cho thành viên 'Đào tạo' hoặc 'Đào tạo + Welcome Pack'.",
+  "videos.player.back": "← Về danh sách",
+  "videos.player.mark_watched": "Đánh dấu đã xem",
+  "videos.player.unmark_watched": "Bỏ đánh dấu",
 
   "cbt.eyebrow": "Luyện thi CBT",
   "cbt.title": "Ôn thi chứng chỉ Điều dưỡng viên",

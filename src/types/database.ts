@@ -957,6 +957,58 @@ export type Database = {
         Relationships: [];
       };
 
+      videos: {
+        Row: {
+          id: number;
+          active: boolean;
+          vimeo_id: string;
+          title_ko: string | null;
+          title_vi: string | null;
+          desc_ko: string | null;
+          desc_vi: string | null;
+          tags: string[];
+          duration_seconds: number | null;
+          thumbnail_url: string | null;
+          sort_order: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: number;
+          active?: boolean;
+          vimeo_id: string;
+          title_ko?: string | null;
+          title_vi?: string | null;
+          desc_ko?: string | null;
+          desc_vi?: string | null;
+          tags?: string[];
+          duration_seconds?: number | null;
+          thumbnail_url?: string | null;
+          sort_order?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["videos"]["Insert"]>;
+        Relationships: [];
+      };
+
+      video_views: {
+        Row: {
+          id: number;
+          user_id: string;
+          video_id: number;
+          watched_at: string;
+        };
+        Insert: {
+          id?: number;
+          user_id: string;
+          video_id: number;
+          watched_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["video_views"]["Insert"]>;
+        Relationships: [];
+      };
+
       cbt_questions: {
         Row: {
           id: number;
