@@ -27,6 +27,8 @@ import {
   computeCustomerStatus,
   type StageSummary,
 } from "@/lib/customer-status";
+import { computeTaskBuckets, type TaskBucket } from "@/lib/dashboard";
+import { X } from "lucide-react";
 
 const PAGE_SIZE = 50;
 
@@ -55,6 +57,11 @@ export type CustomerListFilters = {
    *   - "terminated": 종료된 고객만
    */
   view?: string;
+  /**
+   * 대시보드 "처리해야 할 작업" 카드에서 진입 시 적용되는 버킷 필터.
+   * computeTaskBuckets 의 key 와 동일.
+   */
+  bucket?: string;
 };
 
 export type CustomerListProps = {
@@ -87,9 +94,52 @@ export async function CustomerListPanel({
   const viewRaw = (filters.view ?? "").trim();
   const view: "active" | "all" | "terminated" =
     viewRaw === "all" || viewRaw === "terminated" ? viewRaw : "active";
+  const bucketFilter = filters.bucket?.trim() ?? "";
   const page = Math.max(1, parseInt(filters.page ?? "1", 10) || 1);
 
   const supabase = await createClient();
+
+  // bucket 필터 — 대시보드 task bucket 키로 진입 시 해당 작업이 필요한 고객 ID set 계산
+  let bucketCustomerIds: Set<string> | null = null;
+  let bucketLabel: string | null = null;
+  if (bucketFilter) {
+    const [
+      { data: bAllCustomers },
+      { data: bAllStatuses },
+      { data: bAllReservations },
+      { data: bAllWelcomePack },
+      { data: bAllSms },
+    ] = await Promise.all([
+      supabase.from("customers").select("*"),
+      supabase.from("customer_statuses").select("*"),
+      supabase
+        .from("reservation_payments")
+        .select("customer_id, payment_date"),
+      supabase
+        .from("welcome_pack_payments")
+        .select("customer_id, reservation_date"),
+      supabase
+        .from("sms_messages")
+        .select("target_customer_id, message_type"),
+    ]);
+    const buckets = computeTaskBuckets({
+      customers: bAllCustomers ?? [],
+      statuses: bAllStatuses ?? [],
+      reservationPayments: bAllReservations ?? [],
+      welcomePackPayments: bAllWelcomePack ?? [],
+      smsMessages: bAllSms ?? [],
+    });
+    const matched = buckets.find(
+      (b) => b.key === (bucketFilter as TaskBucket["key"])
+    );
+    if (matched) {
+      bucketCustomerIds = new Set(matched.customers.map((c) => c.id));
+      bucketLabel = matched.label;
+    } else {
+      // 모르는 키 — 모두 차단
+      bucketCustomerIds = new Set();
+    }
+  }
 
   let query = supabase
     .from("customers")
@@ -145,11 +195,12 @@ export async function CustomerListPanel({
     return { customer: c, summary };
   });
 
-  // 종료 여부에 따른 1차 필터 (view).
+  // 종료 여부에 따른 1차 필터 (view) + bucket 필터.
   // - active: 종료 단계 제외
   // - all: 모두
   // - terminated: 종료 단계만
   const viewFiltered = withStage.filter((x) => {
+    if (bucketCustomerIds && !bucketCustomerIds.has(x.customer.id)) return false;
     const isTerminated = x.summary?.currentStage === "종료";
     if (view === "active") return !isTerminated;
     if (view === "terminated") return isTerminated;
@@ -186,6 +237,7 @@ export async function CustomerListPanel({
     q ||
     stageFilter ||
     view !== "active" ||
+    bucketFilter ||
     (filters.center && !hiddenCenter) ||
     (filters.care && !hiddenCare)
   );
@@ -205,12 +257,35 @@ export async function CustomerListPanel({
 
   return (
     <div className="space-y-4">
+      {/* bucket 필터가 활성일 때 — 어떤 작업으로 필터됐는지 시각적 표시 */}
+      {bucketFilter && (
+        <div className="flex items-center gap-2 text-sm">
+          <span className="text-muted-foreground">처리 작업 필터:</span>
+          <Badge
+            variant="outline"
+            className="bg-primary/10 text-primary border-primary/20"
+          >
+            {bucketLabel ?? bucketFilter}
+          </Badge>
+          <Link
+            href={buildUrl({})}
+            className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+          >
+            <X className="size-3" />
+            해제
+          </Link>
+        </div>
+      )}
       {/* 검색 + 필터 */}
       <form method="get" action={basePath} className="flex flex-wrap gap-2 items-end">
         {/* preservedParams 를 hidden 으로 유지 */}
         {Object.entries(preservedParams).map(([k, v]) => (
           <input key={k} type="hidden" name={k} value={v} />
         ))}
+        {/* bucket 필터가 있으면 검색/필터 변경 시에도 유지 (해제 링크로만 풀림) */}
+        {bucketFilter && (
+          <input type="hidden" name="bucket" value={bucketFilter} />
+        )}
         <div className="flex-1 min-w-60">
           <label className="text-xs text-muted-foreground block mb-1">
             검색 (코드 · 이름 · 전화)
@@ -425,6 +500,7 @@ export async function CustomerListPanel({
                   q,
                   stage: stageFilter,
                   view: view === "active" ? "" : view,
+                  bucket: bucketFilter,
                   ...(hiddenCenter ? {} : { center: filters.center ?? "" }),
                   ...(hiddenCare ? {} : { care: filters.care ?? "" }),
                   page: String(page - 1),
@@ -441,6 +517,7 @@ export async function CustomerListPanel({
                   q,
                   stage: stageFilter,
                   view: view === "active" ? "" : view,
+                  bucket: bucketFilter,
                   ...(hiddenCenter ? {} : { center: filters.center ?? "" }),
                   ...(hiddenCare ? {} : { care: filters.care ?? "" }),
                   page: String(page + 1),

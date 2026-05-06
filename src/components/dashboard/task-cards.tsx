@@ -435,16 +435,5 @@ function TaskCardDraggable({
 }
 
 function hrefFor(key: TaskBucket["key"]): string {
-  switch (key) {
-    case "center_finding":
-    case "center_matching":
-    case "class_matching":
-    case "reservation_payment":
-    case "intro_sms":
-    case "care_home_finding":
-    case "visa_change":
-    case "recontact_needed":
-    default:
-      return "/customers";
-  }
+  return `/customers?bucket=${key}`;
 }
