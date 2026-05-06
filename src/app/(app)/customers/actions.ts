@@ -29,6 +29,27 @@ export type ActionResult<T = unknown> =
   | { ok: false; error: string };
 
 // =============================================================================
+// 베트남 이름 중복 체크 — name_vi 가 ASCII 대문자 변환 후 정확히 일치하면 차단.
+// customerSchema 의 asciiUpperOptionalString 이 이미 trim + asciiUpper 를 적용하므로
+// parsed.data.name_vi 그대로 비교하면 된다.
+// =============================================================================
+async function findDuplicateNameViId(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  nameVi: string | null | undefined,
+  excludeCustomerId?: string
+): Promise<string | null> {
+  if (!nameVi) return null;
+  let query = supabase
+    .from("customers")
+    .select("id")
+    .eq("name_vi", nameVi)
+    .limit(1);
+  if (excludeCustomerId) query = query.neq("id", excludeCustomerId);
+  const { data } = await query;
+  return data && data.length > 0 ? (data[0].id as string) : null;
+}
+
+// =============================================================================
 // 교육원 매칭 시 '교육원 발굴' 플래그 자동 리셋 (§5.1.2)
 // =============================================================================
 async function applyCenterFindingAutoReset(
@@ -97,6 +118,15 @@ export async function createCustomer(input: CustomerInput) {
     return { ok: false as const, error: parsed.error.issues[0].message };
   }
 
+  // 베트남 이름 중복 차단
+  const duplicateId = await findDuplicateNameViId(supabase, parsed.data.name_vi);
+  if (duplicateId) {
+    return {
+      ok: false as const,
+      error: `동일한 베트남 이름의 고객이 이미 등록되어 있습니다: ${parsed.data.name_vi}`,
+    };
+  }
+
   const code = await generateCode(supabase, "customers");
   const classDates = await resolveClassDates(
     supabase,
@@ -147,6 +177,19 @@ export async function updateCustomer(
   const parsed = customerSchema.safeParse(input);
   if (!parsed.success) {
     return { ok: false, error: parsed.error.issues[0].message };
+  }
+
+  // 베트남 이름 중복 차단 — 자기 자신은 제외
+  const duplicateId = await findDuplicateNameViId(
+    supabase,
+    parsed.data.name_vi,
+    id
+  );
+  if (duplicateId) {
+    return {
+      ok: false,
+      error: `동일한 베트남 이름의 고객이 이미 등록되어 있습니다: ${parsed.data.name_vi}`,
+    };
   }
 
   const classDates = await resolveClassDates(
