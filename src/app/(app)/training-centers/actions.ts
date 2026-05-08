@@ -125,6 +125,20 @@ export async function deleteTrainingCenter(
 // 월별 개강 (training_classes) CRUD
 // =============================================================================
 
+/**
+ * start_date 가 있으면 거기서 year/month 를 강제로 덮어써 일관성 보장.
+ * (폼은 start_date 입력 시 자동 setValue 하지만, 클라가 mismatch 를 보내도
+ *  서버가 신뢰 가능한 값으로 정렬.)
+ */
+function syncYearMonthFromStart<
+  T extends { start_date?: string | null; year: number; month: number }
+>(data: T): T {
+  if (!data.start_date) return data;
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(data.start_date);
+  if (!m) return data;
+  return { ...data, year: Number(m[1]), month: Number(m[2]) };
+}
+
 export async function createTrainingClass(
   trainingCenterId: string,
   input: TrainingClassInput
@@ -141,9 +155,11 @@ export async function createTrainingClass(
     return { ok: false, error: parsed.error.issues[0].message };
   }
 
+  const synced = syncYearMonthFromStart(parsed.data);
+
   const { error } = await supabase
     .from("training_classes")
-    .insert({ ...parsed.data, training_center_id: trainingCenterId });
+    .insert({ ...synced, training_center_id: trainingCenterId });
 
   if (error) return { ok: false, error: error.message };
 
@@ -168,9 +184,11 @@ export async function updateTrainingClass(
     return { ok: false, error: parsed.error.issues[0].message };
   }
 
+  const synced = syncYearMonthFromStart(parsed.data);
+
   const { error } = await supabase
     .from("training_classes")
-    .update(parsed.data)
+    .update(synced)
     .eq("id", classId);
 
   if (error) return { ok: false, error: error.message };

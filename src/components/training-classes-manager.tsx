@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -76,7 +76,31 @@ export function TrainingClassesManager({ centerId, classes }: Props) {
     },
   });
 
+  // 시작일 + 구분 변경 시 종료일 / year / month 자동 파생.
+  // - 주간(weekday): 시작일 + 2개월
+  // - 야간(night):   시작일 + 3개월
+  // - 종료일은 자동으로 들어가지만 사용자가 그 후 직접 수정 가능.
+  //   다만 시작일 또는 구분을 다시 바꾸면 종료일도 다시 덮어쓰기 됨 (의도).
+  // year/month 는 DB 컬럼 유지를 위해 시작일에서 항상 자동 채움.
+  const startDate = form.watch("start_date");
+  const classType = form.watch("class_type");
+  useEffect(() => {
+    if (!startDate) return;
+    const d = parseLocalDate(startDate);
+    if (!d) return;
+    form.setValue("year", d.getFullYear(), { shouldDirty: true });
+    form.setValue("month", d.getMonth() + 1, { shouldDirty: true });
+    const months = classType === "weekday" ? 2 : 3;
+    form.setValue("end_date", formatLocalDate(addMonths(d, months)), {
+      shouldDirty: true,
+    });
+  }, [startDate, classType, form]);
+
   function onAdd(values: TrainingClassOutput) {
+    if (!values.start_date) {
+      toast.error("시작일을 입력해주세요.");
+      return;
+    }
     startTransition(async () => {
       const result = await createTrainingClass(centerId, values);
       if (result.ok) {
@@ -131,52 +155,8 @@ export function TrainingClassesManager({ centerId, classes }: Props) {
          */}
         <Form {...form}>
           <div
-            className="grid grid-cols-2 sm:grid-cols-7 gap-3 items-end"
+            className="grid grid-cols-2 sm:grid-cols-5 gap-3 items-end"
           >
-            <FormField
-              control={form.control}
-              name="year"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>연</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      min={2020}
-                      max={2100}
-                      {...field}
-                      onChange={(e) => {
-                        const n = e.target.valueAsNumber;
-                        field.onChange(Number.isNaN(n) ? 0 : n);
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="month"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>월</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      min={1}
-                      max={12}
-                      {...field}
-                      onChange={(e) => {
-                        const n = e.target.valueAsNumber;
-                        field.onChange(Number.isNaN(n) ? 0 : n);
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
             <FormField
               control={form.control}
               name="class_type"
@@ -209,7 +189,9 @@ export function TrainingClassesManager({ centerId, classes }: Props) {
               name="start_date"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>시작일</FormLabel>
+                  <FormLabel>
+                    시작일 <span className="text-destructive">*</span>
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="date"
@@ -226,7 +208,12 @@ export function TrainingClassesManager({ centerId, classes }: Props) {
               name="end_date"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>종료일</FormLabel>
+                  <FormLabel>
+                    종료일{" "}
+                    <span className="text-xs text-muted-foreground font-normal">
+                      (자동 · 수정가능)
+                    </span>
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="date"
@@ -336,4 +323,32 @@ export function TrainingClassesManager({ centerId, classes }: Props) {
       </CardContent>
     </Card>
   );
+}
+
+// =============================================================================
+// 날짜 유틸 (로컬 시간 기준 — UTC 변환으로 인한 하루 밀림 방지)
+// =============================================================================
+
+function parseLocalDate(s: string): Date | null {
+  // "YYYY-MM-DD" 만 처리. 시간을 00:00 로컬로 고정.
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
+  if (!m) return null;
+  const y = Number(m[1]);
+  const mo = Number(m[2]);
+  const d = Number(m[3]);
+  const date = new Date(y, mo - 1, d);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function formatLocalDate(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+function addMonths(d: Date, months: number): Date {
+  // JS Date 의 setMonth 는 day overflow 시 다음 달로 넘김.
+  // 예: 1/31 + 1m → 3/3 (2월에 31일 없음) — 일반적 교육 일정 정밀도에선 OK.
+  return new Date(d.getFullYear(), d.getMonth() + months, d.getDate());
 }
