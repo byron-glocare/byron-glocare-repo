@@ -72,6 +72,7 @@ const EMPTY: TrainingCenterInput = {
   naeil_card_eligible: false,
   contract_active: false,
   deduct_reservation_by_default: true,
+  website_url: null,
   notes: null,
 };
 
@@ -192,6 +193,24 @@ export function TrainingCenterForm({
                         {...field}
                         value={field.value ?? ""}
                         placeholder="000-00-00000"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="website_url"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>웹사이트</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        value={field.value ?? ""}
+                        type="url"
+                        placeholder="https://example.com"
                       />
                     </FormControl>
                     <FormMessage />
