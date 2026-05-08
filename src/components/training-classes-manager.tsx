@@ -121,10 +121,16 @@ export function TrainingClassesManager({ centerId, classes }: Props) {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* 추가 폼 */}
+        {/* 추가 폼.
+         *
+         * NOTE: 이 컴포넌트는 TrainingCenterForm 의 outer <form> 안에 extraContent
+         * 로 주입된다. HTML 에서 nested <form> 은 invalid 라 안쪽 form 의 submit
+         * 이 outer form 으로 가버리는 버그가 있었다 (2026-05-08).
+         * → 안쪽은 <div> 로 두고, "추가" 버튼만 type="button" + onClick 으로
+         *   form.handleSubmit(onAdd) 호출. RHF validation/submit 흐름은 동일.
+         */}
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onAdd)}
+          <div
             className="grid grid-cols-2 sm:grid-cols-7 gap-3 items-end"
           >
             <FormField
@@ -249,7 +255,11 @@ export function TrainingClassesManager({ centerId, classes }: Props) {
                 </FormItem>
               )}
             />
-            <Button type="submit" disabled={pending}>
+            <Button
+              type="button"
+              onClick={form.handleSubmit(onAdd)}
+              disabled={pending}
+            >
               {pending ? (
                 <Loader2 className="size-4 animate-spin" />
               ) : (
@@ -257,7 +267,7 @@ export function TrainingClassesManager({ centerId, classes }: Props) {
               )}
               추가
             </Button>
-          </form>
+          </div>
         </Form>
 
         {/* 목록 */}
