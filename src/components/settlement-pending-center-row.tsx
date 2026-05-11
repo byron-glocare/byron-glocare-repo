@@ -4,7 +4,7 @@ import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
-import { Check, ChevronDown, ChevronRight, Loader2 } from "lucide-react";
+import { Ban, Check, ChevronDown, ChevronRight, Loader2 } from "lucide-react";
 
 import { completeSettlementBatch } from "@/app/(app)/settlements/actions";
 import { Button } from "@/components/ui/button";
@@ -71,11 +71,12 @@ export function SettlementPendingCenterRow({
     return { deduction, net };
   }, [overrides, rows]);
 
-  function handleComplete() {
+  function submitBatch(status: "completed" | "abandoned") {
     startTransition(async () => {
       const result = await completeSettlementBatch({
         settlement_month: settlementMonth,
         training_center_id: center.id,
+        status,
         items: rows.map((r) => ({
           customer_id: r.customerId,
           total_amount: r.tuitionBase,
@@ -86,12 +87,32 @@ export function SettlementPendingCenterRow({
         })),
       });
       if (!result.ok) {
-        toast.error("완료 처리 실패", { description: result.error });
+        toast.error(
+          status === "completed" ? "완료 처리 실패" : "수금 포기 처리 실패",
+          { description: result.error }
+        );
         return;
       }
-      toast.success(`${result.data.inserted}건 정산 완료로 표시됨`);
+      toast.success(
+        status === "completed"
+          ? `${result.data.inserted}건 정산 완료로 표시됨`
+          : `${result.data.inserted}건 수금 포기 처리됨`
+      );
       router.refresh();
     });
+  }
+
+  function handleComplete() {
+    submitBatch("completed");
+  }
+  function handleAbandon() {
+    if (
+      !confirm(
+        `${center.name} ${rows.length}건을 "수금 포기" 로 처리하시겠습니까?\n정산 예정 목록에서 제외됩니다 (완료 내역에 별도 표시).`
+      )
+    )
+      return;
+    submitBatch("abandoned");
   }
 
   return (
@@ -136,6 +157,17 @@ export function SettlementPendingCenterRow({
           <div className="text-base font-semibold">
             {formatCurrency(liveTotals.net)}
           </div>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            onClick={handleAbandon}
+            disabled={pending}
+            className="text-destructive border-destructive/30 hover:bg-destructive/5 hover:text-destructive"
+          >
+            <Ban className="size-4" />
+            수금 포기
+          </Button>
           <Button
             type="button"
             size="sm"

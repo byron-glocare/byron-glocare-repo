@@ -23,6 +23,13 @@ export const dynamic = "force-dynamic";
 type SearchParams = Promise<{
   q?: string;
   region?: string;
+  /**
+   * 제휴 상태 필터:
+   *  - undefined/"" (기본) : 전체
+   *  - "active"            : 제휴중 (partnership_terminated=false)
+   *  - "terminated"        : 제휴 종료 (partnership_terminated=true)
+   */
+  status?: string;
 }>;
 
 export default async function TrainingCentersPage({
@@ -33,14 +40,17 @@ export default async function TrainingCentersPage({
   const sp = await searchParams;
   const q = sp.q?.trim() ?? "";
   const regionFilter = sp.region?.trim() ?? "";
+  const statusRaw = (sp.status ?? "").trim();
+  const statusFilter: "all" | "active" | "terminated" =
+    statusRaw === "active" || statusRaw === "terminated" ? statusRaw : "all";
 
   const supabase = await createClient();
 
-  // 교육원 목록 — q/region 필터 DB 레벨 적용
+  // 교육원 목록 — q/region/status 필터 DB 레벨 적용
   let query = supabase
     .from("training_centers")
     .select(
-      "id, region, name, director_name, phone, tuition_fee_2026, naeil_card_eligible, contract_active"
+      "id, region, name, director_name, phone, tuition_fee_2026, naeil_card_eligible, contract_active, partnership_terminated"
     )
     .order("name", { ascending: true });
 
@@ -56,6 +66,11 @@ export default async function TrainingCentersPage({
     // 1단계만 필터 (시·도) — region 문자열이 "대구 달서구" 처럼 저장되어
     // 있으므로 "대구%" 로 prefix 일치
     query = query.ilike("region", `${regionFilter}%`);
+  }
+  if (statusFilter === "active") {
+    query = query.eq("partnership_terminated", false);
+  } else if (statusFilter === "terminated") {
+    query = query.eq("partnership_terminated", true);
   }
 
   const { data: centers, error } = await query;
@@ -95,7 +110,7 @@ export default async function TrainingCentersPage({
     );
   }
 
-  const hasAnyFilter = !!(q || regionFilter);
+  const hasAnyFilter = !!(q || regionFilter || statusFilter !== "all");
 
   return (
     <>
@@ -141,6 +156,20 @@ export default async function TrainingCentersPage({
                   {r}
                 </option>
               ))}
+            </select>
+          </div>
+          <div>
+            <label className="text-xs text-muted-foreground block mb-1">
+              상태
+            </label>
+            <select
+              name="status"
+              defaultValue={statusFilter}
+              className="h-8 rounded-md border border-input bg-background px-2 text-sm min-w-28"
+            >
+              <option value="all">전체</option>
+              <option value="active">제휴중</option>
+              <option value="terminated">제휴 종료</option>
             </select>
           </div>
           <button type="submit" className={buttonVariants()}>
@@ -197,9 +226,17 @@ export default async function TrainingCentersPage({
                     <TableCell className="font-medium">
                       <Link
                         href={`/training-centers/${c.id}`}
-                        className="hover:text-primary"
+                        className="hover:text-primary inline-flex items-center gap-2"
                       >
-                        {c.name}
+                        <span>{c.name}</span>
+                        {c.partnership_terminated && (
+                          <Badge
+                            variant="outline"
+                            className="text-[10px] py-0 px-1.5 bg-destructive/10 text-destructive border-destructive/20"
+                          >
+                            제휴 종료
+                          </Badge>
+                        )}
                       </Link>
                     </TableCell>
                     <TableCell>

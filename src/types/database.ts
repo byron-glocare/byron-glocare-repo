@@ -83,6 +83,7 @@ export type Database = {
           class_hours: string | null;
           naeil_card_eligible: boolean;
           contract_active: boolean;
+          partnership_terminated: boolean;
           deduct_reservation_by_default: boolean;
           website_url: string | null;
           notes: string | null;
@@ -106,6 +107,7 @@ export type Database = {
           class_hours?: string | null;
           naeil_card_eligible?: boolean;
           contract_active?: boolean;
+          partnership_terminated?: boolean;
           deduct_reservation_by_default?: boolean;
           website_url?: string | null;
           notes?: string | null;
@@ -410,6 +412,7 @@ export type Database = {
           settlement_month: string; // YYYY-MM-01
           total_amount: number; // 수강료 × 25%
           deduction_amount: number; // 공제된 교육 예약금
+          status: "completed" | "abandoned"; // 0011: completed=정상 수금, abandoned=수금 포기
           completed_at: string;
           created_at: string;
           updated_at: string;
@@ -421,6 +424,7 @@ export type Database = {
           settlement_month: string;
           total_amount: number;
           deduction_amount?: number;
+          status?: "completed" | "abandoned";
           completed_at?: string;
           created_at?: string;
           updated_at?: string;

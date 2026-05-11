@@ -38,6 +38,7 @@ type Props = {
   centerId: string;
   centerName: string;
   settlementMonth: string; // YYYY-MM-01
+  status: "completed" | "abandoned";
   rows: HistoryRow[];
   totalBase: number;
   totalDeduction: number;
@@ -49,6 +50,7 @@ export function SettlementHistoryRow({
   centerId,
   centerName,
   settlementMonth,
+  status,
   rows,
   totalBase,
   totalDeduction,
@@ -59,10 +61,13 @@ export function SettlementHistoryRow({
   const [expanded, setExpanded] = useState(false);
   const [pending, startTransition] = useTransition();
 
+  const isAbandoned = status === "abandoned";
+
   function handleRevert() {
+    const label = isAbandoned ? "수금 포기" : "정산";
     if (
       !confirm(
-        `${centerName} - ${settlementMonth.slice(0, 7)} 정산 ${rows.length}건을 되돌리시겠습니까?`
+        `${centerName} - ${settlementMonth.slice(0, 7)} ${label} ${rows.length}건을 되돌리시겠습니까?`
       )
     )
       return;
@@ -71,6 +76,7 @@ export function SettlementHistoryRow({
       const result = await revertSettlementBatch({
         settlement_month: settlementMonth,
         training_center_id: centerId,
+        status,
       });
       if (!result.ok) {
         toast.error("되돌리기 실패", { description: result.error });
@@ -104,11 +110,26 @@ export function SettlementHistoryRow({
           <Badge variant="outline" className="text-xs font-mono">
             {settlementMonth.slice(0, 7)}
           </Badge>
+          {isAbandoned ? (
+            <Badge
+              variant="outline"
+              className="text-xs bg-destructive/10 text-destructive border-destructive/20"
+            >
+              수금 포기
+            </Badge>
+          ) : (
+            <Badge
+              variant="outline"
+              className="text-xs bg-success/10 text-success border-success/20"
+            >
+              완료
+            </Badge>
+          )}
           <Badge variant="secondary" className="text-xs">
             {rows.length}명
           </Badge>
           <span className="text-xs text-muted-foreground">
-            완료 {formatDate(completedAt.slice(0, 10))}
+            처리 {formatDate(completedAt.slice(0, 10))}
           </span>
         </button>
 

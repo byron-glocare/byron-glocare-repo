@@ -65,6 +65,7 @@ export const trainingCenterSchema = z.object({
   class_hours: optionalString,
   naeil_card_eligible: z.boolean().default(false),
   contract_active: z.boolean().default(false),
+  partnership_terminated: z.boolean().default(false),
   deduct_reservation_by_default: z.boolean().default(true),
   website_url: optionalString,
   notes: optionalString,

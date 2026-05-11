@@ -71,6 +71,7 @@ const EMPTY: TrainingCenterInput = {
   class_hours: null,
   naeil_card_eligible: false,
   contract_active: false,
+  partnership_terminated: false,
   deduct_reservation_by_default: true,
   website_url: null,
   notes: null,
@@ -226,6 +227,26 @@ export function TrainingCenterForm({
                       <FormLabel className="text-sm">계약 상태</FormLabel>
                       <div className="text-xs text-muted-foreground">
                         ON = 계약 완료
+                      </div>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="partnership_terminated"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-md border border-border p-3">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-sm">제휴 종료</FormLabel>
+                      <div className="text-xs text-muted-foreground">
+                        ON = 제휴 종료 (리스트 필터 용도)
                       </div>
                     </div>
                     <FormControl>

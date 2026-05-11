@@ -89,7 +89,7 @@ export default async function SettlementsPage({
     supabase
       .from("commission_payments")
       .select(
-        "id, customer_id, training_center_id, settlement_month, total_amount, deduction_amount, completed_at"
+        "id, customer_id, training_center_id, settlement_month, total_amount, deduction_amount, status, completed_at"
       ),
     supabase.from("system_settings").select("key, value"),
   ]);
@@ -217,6 +217,8 @@ export default async function SettlementsPage({
     centerId: string;
     centerName: string;
     settlementMonth: string;
+    /** 'completed' = 정상 수금, 'abandoned' = 수금 포기 */
+    status: "completed" | "abandoned";
     rows: HistoryRow[];
     totalBase: number;
     totalDeduction: number;
@@ -235,7 +237,11 @@ export default async function SettlementsPage({
     if (!center) continue;
     const customer = customerLookup.get(commission.customer_id);
 
-    const key = `${commission.training_center_id}::${commission.settlement_month}`;
+    const status = (commission.status ?? "completed") as
+      | "completed"
+      | "abandoned";
+    // 같은 month 라도 status 가 다르면 별도 group 으로 표시.
+    const key = `${commission.training_center_id}::${commission.settlement_month}::${status}`;
     const row: HistoryRow = {
       customerId: commission.customer_id,
       customerName: customer
@@ -260,6 +266,7 @@ export default async function SettlementsPage({
         centerId: commission.training_center_id,
         centerName: center.name,
         settlementMonth: commission.settlement_month,
+        status,
         rows: [row],
         totalBase: row.totalAmount,
         totalDeduction: row.deductionAmount,
@@ -269,9 +276,12 @@ export default async function SettlementsPage({
     }
   }
 
-  const historyGroups = Array.from(historyByKey.values()).sort((a, b) =>
-    a.centerName.localeCompare(b.centerName, "ko")
-  );
+  const historyGroups = Array.from(historyByKey.values()).sort((a, b) => {
+    const nameCmp = a.centerName.localeCompare(b.centerName, "ko");
+    if (nameCmp !== 0) return nameCmp;
+    // 완료 먼저, 포기 나중
+    return a.status === b.status ? 0 : a.status === "completed" ? -1 : 1;
+  });
 
   // 월 셀렉터 옵션 — 이번 달 기준 ±6개월
   const monthOptions: string[] = [];
@@ -388,10 +398,11 @@ export default async function SettlementsPage({
             ) : (
               historyGroups.map((group) => (
                 <SettlementHistoryRow
-                  key={`${group.centerId}-${group.settlementMonth}`}
+                  key={`${group.centerId}-${group.settlementMonth}-${group.status}`}
                   centerId={group.centerId}
                   centerName={group.centerName}
                   settlementMonth={group.settlementMonth}
+                  status={group.status}
                   rows={group.rows}
                   totalBase={group.totalBase}
                   totalDeduction={group.totalDeduction}
