@@ -169,6 +169,7 @@ export type Database = {
           contact_phone: string | null;
           bed_capacity: string | null;
           partnership_notes: string | null;
+          partnership_terminated: boolean;
           created_at: string;
           updated_at: string;
         };
@@ -184,6 +185,7 @@ export type Database = {
           contact_phone?: string | null;
           bed_capacity?: string | null;
           partnership_notes?: string | null;
+          partnership_terminated?: boolean;
           created_at?: string;
           updated_at?: string;
         };

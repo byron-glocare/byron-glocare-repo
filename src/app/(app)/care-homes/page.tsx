@@ -23,6 +23,13 @@ export const dynamic = "force-dynamic";
 type SearchParams = Promise<{
   q?: string;
   region?: string;
+  /**
+   * 제휴 상태 필터:
+   *  - undefined/"" (기본) : 전체
+   *  - "active"            : 제휴중 (partnership_terminated=false)
+   *  - "terminated"        : 제휴 종료 (partnership_terminated=true)
+   */
+  status?: string;
 }>;
 
 export default async function CareHomesPage({
@@ -33,13 +40,16 @@ export default async function CareHomesPage({
   const sp = await searchParams;
   const q = sp.q?.trim() ?? "";
   const regionFilter = sp.region?.trim() ?? "";
+  const statusRaw = (sp.status ?? "").trim();
+  const statusFilter: "all" | "active" | "terminated" =
+    statusRaw === "active" || statusRaw === "terminated" ? statusRaw : "all";
 
   const supabase = await createClient();
 
   let query = supabase
     .from("care_homes")
     .select(
-      "id, name, region, contact_person, contact_phone, bed_capacity, partnership_notes"
+      "id, name, region, contact_person, contact_phone, bed_capacity, partnership_notes, partnership_terminated"
     )
     .order("name", { ascending: true });
 
@@ -53,6 +63,11 @@ export default async function CareHomesPage({
   }
   if (regionFilter) {
     query = query.ilike("region", `${regionFilter}%`);
+  }
+  if (statusFilter === "active") {
+    query = query.eq("partnership_terminated", false);
+  } else if (statusFilter === "terminated") {
+    query = query.eq("partnership_terminated", true);
   }
 
   const { data: homes, error } = await query;
@@ -69,7 +84,7 @@ export default async function CareHomesPage({
     }
   }
 
-  const hasAnyFilter = !!(q || regionFilter);
+  const hasAnyFilter = !!(q || regionFilter || statusFilter !== "all");
 
   return (
     <>
@@ -115,6 +130,20 @@ export default async function CareHomesPage({
                   {r}
                 </option>
               ))}
+            </select>
+          </div>
+          <div>
+            <label className="text-xs text-muted-foreground block mb-1">
+              상태
+            </label>
+            <select
+              name="status"
+              defaultValue={statusFilter}
+              className="h-8 rounded-md border border-input bg-background px-2 text-sm min-w-28"
+            >
+              <option value="all">전체</option>
+              <option value="active">제휴중</option>
+              <option value="terminated">제휴 종료</option>
             </select>
           </div>
           <button type="submit" className={buttonVariants()}>
@@ -170,9 +199,17 @@ export default async function CareHomesPage({
                     <TableCell className="font-medium">
                       <Link
                         href={`/care-homes/${h.id}`}
-                        className="hover:text-primary"
+                        className="hover:text-primary inline-flex items-center gap-2"
                       >
-                        {h.name}
+                        <span>{h.name}</span>
+                        {h.partnership_terminated && (
+                          <Badge
+                            variant="outline"
+                            className="text-[10px] py-0 px-1.5 bg-destructive/10 text-destructive border-destructive/20"
+                          >
+                            제휴 종료
+                          </Badge>
+                        )}
                       </Link>
                     </TableCell>
                     <TableCell>

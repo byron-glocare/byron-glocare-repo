@@ -21,6 +21,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import { RegionSelect } from "@/components/region-select";
 import { navigateBackOrTo } from "@/lib/navigate-back";
 import {
@@ -63,6 +64,7 @@ const EMPTY: CareHomeInput = {
   contact_phone: null,
   bed_capacity: null,
   partnership_notes: null,
+  partnership_terminated: false,
 };
 
 export function CareHomeForm({ mode, homeId, defaultValues }: Props) {
@@ -259,14 +261,35 @@ export function CareHomeForm({ mode, homeId, defaultValues }: Props) {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">제휴 메모</CardTitle>
+            <CardTitle className="text-base">제휴</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
+            <FormField
+              control={form.control}
+              name="partnership_terminated"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-md border border-border p-3">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-sm">제휴 종료</FormLabel>
+                    <div className="text-xs text-muted-foreground">
+                      ON = 제휴 종료 (리스트 필터 용도)
+                    </div>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="partnership_notes"
               render={({ field }) => (
                 <FormItem>
+                  <FormLabel className="text-sm">제휴 메모</FormLabel>
                   <FormControl>
                     <Textarea
                       {...field}

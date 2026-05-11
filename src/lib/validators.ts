@@ -105,6 +105,7 @@ export const careHomeSchema = z.object({
   contact_phone: optionalString,
   bed_capacity: optionalString,
   partnership_notes: optionalString,
+  partnership_terminated: z.boolean().default(false),
 });
 
 export type CareHomeInput = z.input<typeof careHomeSchema>;
