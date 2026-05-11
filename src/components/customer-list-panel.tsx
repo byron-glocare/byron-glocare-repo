@@ -99,48 +99,6 @@ export async function CustomerListPanel({
 
   const supabase = await createClient();
 
-  // bucket 필터 — 대시보드 task bucket 키로 진입 시 해당 작업이 필요한 고객 ID set 계산
-  let bucketCustomerIds: Set<string> | null = null;
-  let bucketLabel: string | null = null;
-  if (bucketFilter) {
-    const [
-      { data: bAllCustomers },
-      { data: bAllStatuses },
-      { data: bAllReservations },
-      { data: bAllWelcomePack },
-      { data: bAllSms },
-    ] = await Promise.all([
-      supabase.from("customers").select("*"),
-      supabase.from("customer_statuses").select("*"),
-      supabase
-        .from("reservation_payments")
-        .select("customer_id, payment_date"),
-      supabase
-        .from("welcome_pack_payments")
-        .select("customer_id, reservation_date"),
-      supabase
-        .from("sms_messages")
-        .select("target_customer_id, message_type"),
-    ]);
-    const buckets = computeTaskBuckets({
-      customers: bAllCustomers ?? [],
-      statuses: bAllStatuses ?? [],
-      reservationPayments: bAllReservations ?? [],
-      welcomePackPayments: bAllWelcomePack ?? [],
-      smsMessages: bAllSms ?? [],
-    });
-    const matched = buckets.find(
-      (b) => b.key === (bucketFilter as TaskBucket["key"])
-    );
-    if (matched) {
-      bucketCustomerIds = new Set(matched.customers.map((c) => c.id));
-      bucketLabel = matched.label;
-    } else {
-      // 모르는 키 — 모두 차단
-      bucketCustomerIds = new Set();
-    }
-  }
-
   let query = supabase
     .from("customers")
     .select(
@@ -168,18 +126,88 @@ export async function CustomerListPanel({
   if (centerFilter) query = query.eq("training_center_id", centerFilter);
   if (careFilter) query = query.eq("care_home_id", careFilter);
 
-  const { data: allMatched, error } = await query;
-
-  const [{ data: centers }, { data: homes }, { data: statuses }] =
-    await Promise.all([
-      supabase.from("training_centers").select("id, name, region"),
-      supabase.from("care_homes").select("id, name, region"),
-      supabase.from("customer_statuses").select("*"),
-    ]);
+  // stage 자동 판정에 reservation/welcomePack/sms 데이터가 모두 필요.
+  // (예전엔 빈 배열로 넘겨서 "예약금 입금 대기" 같은 단계가 잘못 표시됨.)
+  const [
+    { data: allMatched, error },
+    { data: centers },
+    { data: homes },
+    { data: statuses },
+    { data: allReservations },
+    { data: allWelcomePack },
+    { data: allSms },
+  ] = await Promise.all([
+    query,
+    supabase.from("training_centers").select("id, name, region"),
+    supabase.from("care_homes").select("id, name, region"),
+    supabase.from("customer_statuses").select("*"),
+    supabase
+      .from("reservation_payments")
+      .select("customer_id, payment_date"),
+    supabase
+      .from("welcome_pack_payments")
+      .select("customer_id, reservation_date"),
+    supabase
+      .from("sms_messages")
+      .select("target_customer_id, message_type"),
+  ]);
 
   const centerMap = new Map((centers ?? []).map((c) => [c.id, c]));
   const homeMap = new Map((homes ?? []).map((h) => [h.id, h]));
   const statusMap = new Map((statuses ?? []).map((s) => [s.customer_id, s]));
+
+  // customer 별 매핑 — 한 고객당 reservation 여러 건 가능
+  const reservationsByCustomer = new Map<
+    string,
+    { payment_date: string | null }[]
+  >();
+  for (const r of allReservations ?? []) {
+    const arr = reservationsByCustomer.get(r.customer_id) ?? [];
+    arr.push({ payment_date: r.payment_date });
+    reservationsByCustomer.set(r.customer_id, arr);
+  }
+  const welcomeByCustomer = new Map<
+    string,
+    { reservation_date: string | null }
+  >();
+  for (const w of allWelcomePack ?? []) {
+    welcomeByCustomer.set(w.customer_id, { reservation_date: w.reservation_date });
+  }
+  const smsByCustomer = new Map<string, { message_type: string }[]>();
+  for (const m of allSms ?? []) {
+    if (!m.target_customer_id || !m.message_type) continue;
+    const arr = smsByCustomer.get(m.target_customer_id) ?? [];
+    arr.push({ message_type: m.message_type });
+    smsByCustomer.set(m.target_customer_id, arr);
+  }
+
+  // bucket 필터 — 대시보드 task bucket 키로 진입 시 해당 작업이 필요한 고객 ID set 계산.
+  // 위에서 fetch 한 reservations/welcome/sms/statuses 를 재사용 (중복 fetch 방지),
+  // customers 만 전체 fetch 추가.
+  let bucketCustomerIds: Set<string> | null = null;
+  let bucketLabel: string | null = null;
+  if (bucketFilter) {
+    const { data: bAllCustomers } = await supabase
+      .from("customers")
+      .select("*");
+    const buckets = computeTaskBuckets({
+      customers: bAllCustomers ?? [],
+      statuses: statuses ?? [],
+      reservationPayments: allReservations ?? [],
+      welcomePackPayments: allWelcomePack ?? [],
+      smsMessages: allSms ?? [],
+    });
+    const matched = buckets.find(
+      (b) => b.key === (bucketFilter as TaskBucket["key"])
+    );
+    if (matched) {
+      bucketCustomerIds = new Set(matched.customers.map((c) => c.id));
+      bucketLabel = matched.label;
+    } else {
+      // 모르는 키 — 모두 차단
+      bucketCustomerIds = new Set();
+    }
+  }
 
   const withStage = (allMatched ?? []).map((c) => {
     const status = statusMap.get(c.id);
@@ -187,9 +215,9 @@ export async function CustomerListPanel({
       ? computeCustomerStatus({
           customer: c,
           status,
-          reservationPayments: [],
-          welcomePackPayment: null,
-          smsMessages: [],
+          reservationPayments: reservationsByCustomer.get(c.id) ?? [],
+          welcomePackPayment: welcomeByCustomer.get(c.id) ?? null,
+          smsMessages: smsByCustomer.get(c.id) ?? [],
         })
       : null;
     return { customer: c, summary };
