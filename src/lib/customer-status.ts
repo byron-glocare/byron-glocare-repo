@@ -203,14 +203,19 @@ export function computeBasicInfo(
 export function computeTrainingReservation(
   inputs: StatusInputs
 ): StageSummary["trainingReservation"] {
-  const { customer, status, reservationPayments } = inputs;
+  const { customer, status, reservationPayments, welcomePackPayment } = inputs;
 
   const centerFinding = status.training_center_finding;
   const centerMatched = !!customer.training_center_id;
   const classScheduleConfirmationNeeded =
     status.class_schedule_confirmation_needed;
   const classMatched = !!customer.training_class_id;
-  const reservationPaid = reservationPayments.some((p) => notBlank(p.payment_date));
+  // 웰컴팩 예약금이 잡혀있으면 교육 예약금은 면제 → 입금된 것으로 간주.
+  // (정산 로직 commission.ts 와 동일한 기준)
+  const welcomePackBooked = !!welcomePackPayment?.reservation_date;
+  const reservationPaid =
+    welcomePackBooked ||
+    reservationPayments.some((p) => notBlank(p.payment_date));
   const abandoned = status.training_reservation_abandoned;
   // 0008 이후: sms_messages 자동 판정 → 수기 플래그로 전환
   const smsSent = status.class_intake_sms_sent;
