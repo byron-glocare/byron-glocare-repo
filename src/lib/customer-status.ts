@@ -403,14 +403,23 @@ export function computeCustomerStatus(inputs: StatusInputs): StageSummary {
   } else if (work.workPhase === "중") {
     currentStage = "근무중";
     label = `근무 중 · 비자변경 ${work.visaChangePhase ?? "—"}`;
-  } else if (employment.complete && training.certificateAcquired) {
+  } else if (
+    employment.complete &&
+    training.certificateAcquired &&
+    inputs.customer.product_type !== "교육"
+  ) {
     // 취업 단계의 모든 체크포인트가 충족됐지만 근무 시작 전
+    // 단, 교육만 신청 고객은 아래 cascade 의 자동 종료 분기로 보냄
     currentStage = "취업중";
     label = "근무 시작 대기";
   } else if (training.certificateAcquired) {
     // 자격증 취득 → 취업 단계 진입
     currentStage = "취업중";
-    if (isWelcomePackTarget && employment.welcomePackAbandoned) {
+    if (inputs.customer.product_type === "교육") {
+      // 교육만 신청 (웰컴팩 미신청) → 자격증 취득 = 우리 흐름 종료
+      currentStage = "종료";
+      label = "교육 완료 (웰컴팩 미신청)";
+    } else if (isWelcomePackTarget && employment.welcomePackAbandoned) {
       currentStage = "종료";
       label = "웰컴팩 예약 포기";
     } else if (employment.careHomeFinding) {

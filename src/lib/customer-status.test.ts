@@ -615,7 +615,9 @@ describe("computeCustomerStatus — 통합", () => {
           class_start_date: "2026-01-01",
           class_end_date: "2026-03-01",
           care_home_id: "ch-1",
-          product_type: "교육",
+          // 웰컴팩 미신청 (product_type='교육') 은 자격증 취득 시 종료 처리되므로
+          // 취업 단계 cascade 검증에는 '교육+웰컴팩' 로 진행 흐름 사용
+          product_type: "교육+웰컴팩",
         },
         status: {
           certificate_acquired: true,
@@ -640,17 +642,40 @@ describe("computeCustomerStatus — 통합", () => {
           class_end_date: "2026-03-01",
           care_home_id: "ch-1",
           interview_date: "2026-03-15",
-          product_type: "교육",
+          product_type: "교육+웰컴팩",
         },
         status: {
           certificate_acquired: true,
           resume_sent: true,
           interview_passed: true,
         } as any,
+        welcomePackPayment: { reservation_date: "2026-03-20" },
         today: "2026-04-01",
       })
     );
     expect(r.currentStage).toBe("취업중");
     expect(r.label).toBe("근무 시작 대기");
+  });
+
+  it("교육만 신청 (product_type='교육') + 자격증 취득 → 종료 (웰컴팩 미신청)", () => {
+    const r = computeCustomerStatus(
+      buildInputs({
+        customer: {
+          name_kr: "홍",
+          phone: "010-0000-0000",
+          training_center_id: "tc-1",
+          training_class_id: "cls-1",
+          class_start_date: "2026-01-01",
+          class_end_date: "2026-03-01",
+          product_type: "교육",
+        },
+        status: {
+          certificate_acquired: true,
+        } as any,
+        today: "2026-04-01",
+      })
+    );
+    expect(r.currentStage).toBe("종료");
+    expect(r.label).toBe("교육 완료 (웰컴팩 미신청)");
   });
 });
