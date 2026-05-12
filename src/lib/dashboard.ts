@@ -188,14 +188,13 @@ export function computeTaskBuckets(inputs: DashboardInputs): TaskBucket[] {
       centerMatching.push(brief);
     }
 
-    // 7-4 강의일정 확정 필요 (label="강의일정 확정 필요")
+    // 7-4 강의 일정 확인 필요 — 수동 토글 (class_schedule_confirmation_needed) 기반.
+    // 교육원에 강의 일정 확인이 필요하다고 사용자가 명시한 고객만.
     if (
       !excluded &&
       !paused &&
       inEducationPhase &&
-      tr.centerMatched &&
-      !tr.classScheduleConfirmationNeeded &&
-      !tr.classMatched
+      tr.classScheduleConfirmationNeeded
     ) {
       classMatching.push(brief);
     }
@@ -254,7 +253,7 @@ export function computeTaskBuckets(inputs: DashboardInputs): TaskBucket[] {
   return [
     { key: "center_finding", label: "교육원 발굴 필요", customers: centerFinding, count: centerFinding.length },
     { key: "center_matching", label: "교육원 매칭 필요", customers: centerMatching, count: centerMatching.length },
-    { key: "class_matching", label: "강의일정 확정 필요", customers: classMatching, count: classMatching.length },
+    { key: "class_matching", label: "강의 일정 확인 필요", customers: classMatching, count: classMatching.length },
     { key: "reservation_payment", label: "예약금 입금 대기", customers: reservationPayment, count: reservationPayment.length },
     { key: "intro_sms", label: "강의 접수 메시지 발송", customers: introSms, count: introSms.length },
     { key: "care_home_finding", label: "요양원 발굴 필요", customers: careHomeFinding, count: careHomeFinding.length },
