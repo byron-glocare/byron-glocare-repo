@@ -286,6 +286,9 @@ export function CustomerEditTabs({
             trainingCenters={trainingCenters}
             trainingClasses={trainingClasses}
             careHomes={careHomes}
+            customerOptions={customerOptions}
+            careHomeLocked={careHomeLocked}
+            settings={settings}
           />
         </TabsContent>
       </Tabs>
