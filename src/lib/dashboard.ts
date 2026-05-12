@@ -272,6 +272,8 @@ export type StageDistribution = {
   count: number;
 }[];
 
+// "종료" 는 단계 분포에서 제외 (사용자 요청 — 진행 중인 분포만 보고 싶음).
+// 누적 통계는 별도 카드에 있고, 종료 고객은 거기서 잡힘.
 const STAGE_ORDER: StageSummary["currentStage"][] = [
   "접수중",
   "교육예약중",
@@ -280,7 +282,6 @@ const STAGE_ORDER: StageSummary["currentStage"][] = [
   "근무중",
   "근무종료",
   "대기중",
-  "종료",
 ];
 
 export function computeStageDistribution(

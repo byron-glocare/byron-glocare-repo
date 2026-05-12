@@ -193,7 +193,8 @@ describe("computeStageDistribution", () => {
     );
     const stages = dist.map((d) => d.stage);
     expect(stages).toContain("대기중");
-    expect(stages).toContain("종료");
+    // 종료는 단계 분포에서 제외 (사용자 요청)
+    expect(stages).not.toContain("종료");
     // c1 은 기초정보 핵심(name+phone 있음) → 접수 완료 후 교육예약중
     expect(stages).toContain("교육예약중");
   });
