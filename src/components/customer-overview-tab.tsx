@@ -1,19 +1,18 @@
 "use client";
 
 /**
- * 통합 view — 진행 단계 / 기본 정보 / 상담 일지 / 정산 을 한 페이지에 모음.
+ * [시안] 5번째 탭 — 한 화면 통합 뷰.
+ * 4개 탭에 흩어진 정보를 영역별 collapsible 카드로 한 페이지에 모은다.
  *
  * 의도:
- *  - 평균 4개월 동안 자주 들어와 업데이트하는 관리자 워크플로
- *  - 탭 왔다갔다 없이 한 화면에서 흐름 파악 + 편집
- *  - 영역별 collapsible 로 스크롤 부담 줄임
- *  - 펼침/접힘 시 폼 state 유지 (display:hidden 으로만 숨김)
- *
- * 페이지 레벨 저장 (sticky bottom) 은 부모 (customer-edit-tabs) 가 담당.
- * 진행 단계 / 기본 정보 ref 는 부모로부터 받아서 forward.
+ *  - 평균 4개월 동안 자주 들락날락하며 업데이트하는 관리자가
+ *    "지금 이 사람 어디까지 왔지 / 뭐 해야 하지" 를 한눈에 파악
+ *  - 영역 닫기/열기로 스크롤 부담 줄임
+ *  - 편집 액션은 해당 탭으로 점프 (이 탭은 read-friendly 요약)
  */
 
-import { useState, type Ref } from "react";
+import { useState } from "react";
+import Link from "next/link";
 import {
   BookOpen,
   Briefcase,
@@ -22,6 +21,7 @@ import {
   ChevronRight,
   ClipboardList,
   GraduationCap,
+  Hospital,
   MessageCircle,
   Phone,
   Receipt,
@@ -33,6 +33,7 @@ import {
   computeCustomerStatus,
   type StatusInputs,
 } from "@/lib/customer-status";
+import { dash, formatCurrency, formatDate } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type {
   CareHome,
@@ -40,7 +41,6 @@ import type {
   Consultation,
   Customer,
   EventPayment,
-  Json,
   ReservationPayment,
   TrainingCenter,
   TrainingClass,
@@ -49,17 +49,7 @@ import type {
 
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-
-import {
-  CustomerBasicForm,
-  type CustomerBasicFormHandle,
-} from "@/components/customer-basic-form";
-import {
-  CustomerProgressTab,
-  type CustomerProgressTabHandle,
-} from "@/components/customer-progress-tab";
-import { CustomerConsultationsTab } from "@/components/customer-consultations-tab";
-import { CustomerSettlementTab } from "@/components/customer-settlement-tab";
+import { buttonVariants } from "@/components/ui/button";
 
 type Props = {
   customer: Customer;
@@ -69,32 +59,12 @@ type Props = {
   welcomePackPayment: WelcomePackPayment | null;
   commissionPayments: CommissionPayment[];
   eventPayments: EventPayment[];
-  trainingCenters: Pick<TrainingCenter, "id" | "code" | "name" | "region">[];
+  trainingCenters: Pick<TrainingCenter, "id" | "name" | "region">[];
   trainingClasses: Pick<
     TrainingClass,
-    | "id"
-    | "training_center_id"
-    | "year"
-    | "month"
-    | "class_type"
-    | "start_date"
-    | "end_date"
+    "id" | "year" | "month" | "class_type" | "start_date" | "end_date"
   >[];
-  careHomes: Pick<CareHome, "id" | "code" | "name" | "region">[];
-  customerOptions: {
-    id: string;
-    code: string;
-    name_kr: string | null;
-    name_vi: string | null;
-  }[];
-  careHomeLocked: boolean;
-  settings: Record<string, Json | undefined>;
-
-  // 페이지 레벨 통합 저장에 사용 — 부모(customer-edit-tabs) 가 ref forward
-  basicRef: Ref<CustomerBasicFormHandle>;
-  progressRef: Ref<CustomerProgressTabHandle>;
-  onBasicDirty: (dirty: boolean) => void;
-  onProgressDirty: (dirty: boolean) => void;
+  careHomes: Pick<CareHome, "id" | "name" | "region">[];
 };
 
 export function CustomerOverviewTab({
@@ -108,15 +78,18 @@ export function CustomerOverviewTab({
   trainingCenters,
   trainingClasses,
   careHomes,
-  customerOptions,
-  careHomeLocked,
-  settings,
-  basicRef,
-  progressRef,
-  onBasicDirty,
-  onProgressDirty,
 }: Props) {
   const summary = computeCustomerStatus(progressInputs);
+
+  const trainingCenter = customer.training_center_id
+    ? trainingCenters.find((c) => c.id === customer.training_center_id)
+    : null;
+  const trainingClass = customer.training_class_id
+    ? trainingClasses.find((c) => c.id === customer.training_class_id)
+    : null;
+  const careHome = customer.care_home_id
+    ? careHomes.find((c) => c.id === customer.care_home_id)
+    : null;
 
   return (
     <div className="space-y-4">
@@ -181,68 +154,292 @@ export function CustomerOverviewTab({
         <StageTrail summary={summary} />
       </Card>
 
-      {/* === 통합 폼 영역 === */}
+      {/* === 영역별 collapsible === */}
       <SectionCard
-        icon={<ClipboardList className="size-4" />}
-        title="진행 단계"
-        defaultOpen={true}
+        icon={<User className="size-4" />}
+        title="기본 정보 / 희망 조건"
+        defaultOpen={false}
+        editHref={`?tab=basic`}
       >
-        <CustomerProgressTab
-          customerId={customer.id}
-          inputs={progressInputs}
-          embedded
-          ref={progressRef}
-          onDirtyChange={onProgressDirty}
+        <DataGrid
+          rows={[
+            ["이름 (한)", customer.name_kr],
+            ["이름 (베)", customer.name_vi],
+            ["전화", customer.phone],
+            ["이메일", customer.email],
+            ["성별", customer.gender],
+            ["생년", customer.birth_year],
+            ["주소", customer.address],
+            ["비자", customer.visa_type],
+            ["TOPIK", customer.topik_level],
+            ["체류 남은기간", customer.stay_remaining],
+            ["희망 기간", customer.desired_period],
+            ["희망 시간대", customer.desired_time],
+            ["희망 지역", customer.desired_region],
+          ]}
         />
       </SectionCard>
 
       <SectionCard
-        icon={<User className="size-4" />}
-        title="기본 정보"
-        defaultOpen={false}
+        icon={<GraduationCap className="size-4" />}
+        title="교육"
+        subtitle={
+          summary.training.complete
+            ? "자격증 취득"
+            : summary.trainingReservation.complete
+              ? "교육 진행 중"
+              : "교육 예약 단계"
+        }
+        defaultOpen={
+          summary.currentStage === "교육예약중" ||
+          summary.currentStage === "교육중"
+        }
+        editHref={`?tab=basic`}
       >
-        <CustomerBasicForm
-          mode="edit"
-          customerId={customer.id}
-          defaultValues={customer}
-          trainingCenters={trainingCenters}
-          trainingClasses={trainingClasses}
-          careHomes={careHomes}
-          careHomeLocked={careHomeLocked}
-          embedded
-          ref={basicRef}
-          onDirtyChange={onBasicDirty}
+        <DataGrid
+          rows={[
+            [
+              "교육원",
+              trainingCenter
+                ? `${trainingCenter.name}${trainingCenter.region ? ` (${trainingCenter.region})` : ""}`
+                : null,
+            ],
+            [
+              "강의 일정",
+              trainingClass
+                ? `${trainingClass.year}년 ${trainingClass.month}월 — ${trainingClass.class_type === "weekday" ? "주간" : "야간"}`
+                : null,
+            ],
+            [
+              "강의 시작 — 종료",
+              trainingClass?.start_date && trainingClass?.end_date
+                ? `${trainingClass.start_date} ~ ${trainingClass.end_date}`
+                : null,
+            ],
+            ["교육 진행 phase", summary.training.phase ?? "—"],
+            [
+              "예약금 입금",
+              summary.trainingReservation.reservationPaid ? "✓" : "—",
+            ],
+            ["강의 접수 SMS 발송", summary.trainingReservation.smsSent ? "✓" : "—"],
+            ["자격증 취득", summary.training.certificateAcquired ? "✓" : "—"],
+            ["교육 드랍", summary.training.dropped ? "⚠" : "—"],
+          ]}
         />
+        {/* 예약금 결제 요약 */}
+        {reservationPayments.length > 0 && (
+          <div className="mt-3 border-t border-border pt-3">
+            <div className="text-xs font-medium text-muted-foreground mb-1.5">
+              교육 예약금 결제
+            </div>
+            <ul className="space-y-1 text-xs">
+              {reservationPayments.map((p) => (
+                <li
+                  key={p.id}
+                  className="flex items-center justify-between"
+                >
+                  <span>{formatDate(p.payment_date)}</span>
+                  <span className="font-mono">{formatCurrency(p.amount)}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </SectionCard>
+
+      <SectionCard
+        icon={<Hospital className="size-4" />}
+        title="취업"
+        subtitle={
+          summary.employment.complete
+            ? "취업 완료"
+            : summary.employment.careHomeMatched
+              ? "면접/이력서 진행"
+              : "요양원 매칭 단계"
+        }
+        defaultOpen={summary.currentStage === "취업중"}
+        editHref={`?tab=basic`}
+      >
+        <DataGrid
+          rows={[
+            [
+              "요양원",
+              careHome
+                ? `${careHome.name}${careHome.region ? ` (${careHome.region})` : ""}`
+                : null,
+            ],
+            ["건강검진 완료", progressInputs.status.health_check_completed ? "✓" : "—"],
+            ["요양원 발굴 중", progressInputs.status.care_home_finding ? "⏳" : "—"],
+            ["면접일", customer.interview_date],
+            ["면접 phase", summary.employment.interviewPhase ?? "—"],
+            ["이력서 발송", summary.employment.resumeSent ? "✓" : "—"],
+            ["면접 합격", summary.employment.interviewPassed ? "✓" : "—"],
+            [
+              "웰컴팩 예약금",
+              summary.employment.welcomePackReservationPaid ? "✓" : "—",
+            ],
+            [
+              "웰컴팩 예약 포기",
+              summary.employment.welcomePackAbandoned ? "⚠" : "—",
+            ],
+          ]}
+        />
+        {welcomePackPayment && (
+          <div className="mt-3 border-t border-border pt-3">
+            <div className="text-xs font-medium text-muted-foreground mb-1.5">
+              웰컴팩 결제
+            </div>
+            <ul className="space-y-1 text-xs">
+              <li className="flex items-center justify-between">
+                <span>예약금 입금일</span>
+                <span>{formatDate(welcomePackPayment.reservation_date)}</span>
+              </li>
+            </ul>
+          </div>
+        )}
+      </SectionCard>
+
+      <SectionCard
+        icon={<Briefcase className="size-4" />}
+        title="근무"
+        subtitle={summary.work.workPhase ?? "근무 시작 전"}
+        defaultOpen={
+          summary.currentStage === "근무중" ||
+          summary.currentStage === "근무종료"
+        }
+        editHref={`?tab=basic`}
+      >
+        <DataGrid
+          rows={[
+            ["근무 시작일", customer.work_start_date],
+            ["근무 종료일", customer.work_end_date],
+            ["근무 phase", summary.work.workPhase ?? "—"],
+            ["비자변경일", customer.visa_change_date],
+            ["비자변경 phase", summary.work.visaChangePhase ?? "—"],
+            ["종료 사유", customer.termination_reason],
+          ]}
+        />
+      </SectionCard>
+
+      <SectionCard
+        icon={<Receipt className="size-4" />}
+        title="정산 요약"
+        subtitle={`소개비 ${commissionPayments.length}건 · 친구소개 ${eventPayments.length}건`}
+        defaultOpen={false}
+        editHref={`?tab=settlement`}
+      >
+        {commissionPayments.length === 0 &&
+        eventPayments.length === 0 &&
+        !welcomePackPayment ? (
+          <div className="text-xs text-muted-foreground">정산 내역 없음</div>
+        ) : (
+          <div className="space-y-3 text-xs">
+            {commissionPayments.length > 0 && (
+              <div>
+                <div className="font-medium text-muted-foreground mb-1">
+                  교육원 소개비
+                </div>
+                <ul className="space-y-1">
+                  {commissionPayments.map((p) => (
+                    <li
+                      key={p.id}
+                      className="flex items-center justify-between"
+                    >
+                      <span>
+                        {p.settlement_month?.slice(0, 7)} ·{" "}
+                        <span
+                          className={
+                            p.status === "abandoned"
+                              ? "text-destructive"
+                              : "text-success"
+                          }
+                        >
+                          {p.status === "abandoned" ? "수금 포기" : "완료"}
+                        </span>
+                      </span>
+                      <span className="font-mono">
+                        {formatCurrency(
+                          Math.max(0, p.total_amount - p.deduction_amount)
+                        )}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {eventPayments.length > 0 && (
+              <div>
+                <div className="font-medium text-muted-foreground mb-1">
+                  친구 소개 / 이벤트
+                </div>
+                <ul className="space-y-1">
+                  {eventPayments.map((p) => (
+                    <li
+                      key={p.id}
+                      className="flex items-center justify-between"
+                    >
+                      <span>{p.event_type}</span>
+                      <span className="font-mono">
+                        {formatCurrency(p.amount)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
       </SectionCard>
 
       <SectionCard
         icon={<MessageCircle className="size-4" />}
         title="상담 일지"
         subtitle={`총 ${consultations.length}건`}
-        defaultOpen={false}
+        defaultOpen={true}
+        editHref={`?tab=consultations`}
       >
-        <CustomerConsultationsTab
-          customerId={customer.id}
-          consultations={consultations}
-        />
-      </SectionCard>
-
-      <SectionCard
-        icon={<Receipt className="size-4" />}
-        title="정산"
-        subtitle={`소개비 ${commissionPayments.length}건 · 친구소개 ${eventPayments.length}건`}
-        defaultOpen={false}
-      >
-        <CustomerSettlementTab
-          customer={customer}
-          reservationPayments={reservationPayments}
-          commissionPayments={commissionPayments}
-          eventPayments={eventPayments}
-          welcomePackPayment={welcomePackPayment}
-          trainingCenters={trainingCenters}
-          customerOptions={customerOptions}
-          settings={settings}
-        />
+        {consultations.length === 0 ? (
+          <div className="text-xs text-muted-foreground">상담 일지 없음</div>
+        ) : (
+          <ol className="space-y-3 border-l-2 border-border pl-4 ml-1">
+            {consultations.slice(0, 8).map((c) => (
+              <li key={c.id} className="relative">
+                <span className="absolute -left-[1.4rem] top-1 size-2.5 rounded-full bg-primary" />
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <span>{formatDate(c.created_at?.slice(0, 10) ?? "")}</span>
+                  {c.consultation_type && (
+                    <Badge variant="outline" className="text-[10px] py-0">
+                      {c.consultation_type === "training_center"
+                        ? "교육원"
+                        : "요양원"}
+                    </Badge>
+                  )}
+                </div>
+                <div className="mt-1 text-sm whitespace-pre-wrap line-clamp-3">
+                  {c.content_kr || c.content_vi || "—"}
+                </div>
+                {Array.isArray(c.tags) && c.tags.length > 0 && (
+                  <div className="mt-1 flex flex-wrap gap-1">
+                    {c.tags.slice(0, 5).map((t, i) => (
+                      <Badge
+                        key={`${c.id}-${i}`}
+                        variant="outline"
+                        className="text-[10px] py-0 bg-info/5 text-info border-info/20"
+                      >
+                        {String(t)}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+              </li>
+            ))}
+            {consultations.length > 8 && (
+              <li className="text-xs text-muted-foreground">
+                외 {consultations.length - 8}건 — 상담 일지 탭에서 전체 보기
+              </li>
+            )}
+          </ol>
+        )}
       </SectionCard>
     </div>
   );
@@ -252,21 +449,20 @@ export function CustomerOverviewTab({
 // 부속 컴포넌트
 // =============================================================================
 
-/**
- * Collapsible 카드. children 은 항상 mount — 펼침/접힘은 display 만 토글.
- * (폼 state / 입력 중인 값이 사라지지 않도록)
- */
 function SectionCard({
   icon,
   title,
   subtitle,
   defaultOpen = false,
+  editHref,
   children,
 }: {
   icon: React.ReactNode;
   title: string;
   subtitle?: string;
   defaultOpen?: boolean;
+  /** 클릭 시 해당 탭으로 점프 (?tab=...) */
+  editHref?: string;
   children: React.ReactNode;
 }) {
   const [open, setOpen] = useState(defaultOpen);
@@ -291,17 +487,47 @@ function SectionCard({
             <span className="text-xs text-muted-foreground">· {subtitle}</span>
           )}
         </div>
-      </button>
-      {/* 항상 mount — 폼 state 보존 */}
-      <div
-        className={cn(
-          "px-4 pb-4 pt-3 border-t border-border bg-muted/10",
-          !open && "hidden"
+        {editHref && (
+          <Link
+            href={editHref}
+            onClick={(e) => e.stopPropagation()}
+            className={cn(
+              buttonVariants({ variant: "ghost", size: "sm" }),
+              "h-7 px-2 text-xs"
+            )}
+          >
+            편집 탭으로 →
+          </Link>
         )}
-      >
-        {children}
-      </div>
+      </button>
+      {open && (
+        <div className="px-4 pb-4 pt-1 border-t border-border bg-muted/10">
+          {children}
+        </div>
+      )}
     </Card>
+  );
+}
+
+function DataGrid({ rows }: { rows: [string, React.ReactNode][] }) {
+  return (
+    <dl className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-1.5 text-sm">
+      {rows.map(([label, value]) => (
+        <div
+          key={label}
+          className="flex items-center justify-between gap-3 py-1 border-b border-border/50 last:border-0"
+        >
+          <dt className="text-xs text-muted-foreground shrink-0">{label}</dt>
+          <dd className="text-right truncate">
+            {value === null || value === undefined || value === "" ? (
+              <span className="text-muted-foreground/60">—</span>
+            ) : (
+              <span>{String(value)}</span>
+            )}
+          </dd>
+        </div>
+      ))}
+    </dl>
   );
 }
 
@@ -398,4 +624,3 @@ function StageTrail({
     </div>
   );
 }
-

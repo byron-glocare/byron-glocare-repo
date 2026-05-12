@@ -1,14 +1,15 @@
 "use client";
 
 /**
- * 고객 상세 페이지 — 통합 단일 view + 페이지 레벨 저장.
+ * 고객 상세 페이지 — 4탭 통합 + 페이지 레벨 저장 버튼.
  *
- * (이전 4탭 구조에서 통합. 진행 단계 / 기본 정보 / 상담 / 정산을 한 페이지의
- *  영역별 collapsible 카드로 모음. 진행 단계 + 기본 정보의 dirty 변경은 한 번에
- *  commit, 상담 / 정산은 자체 액션 즉시 저장.)
+ * 기본 정보 / 진행 단계 두 탭은 form 성격이라 변경사항을 페이지 레벨에서
+ * 모은다. 저장 버튼 한 번 누르면 두 탭의 dirty 변경을 일괄 commit.
+ *
+ * 상담 일지 / 정산 탭은 별도 entity (즉시 저장 유지) — 페이지 저장과 무관.
  *
  * 동작:
- *  - 영역 펼침/접힘 해도 폼 state 보존 (display 만 토글)
+ *  - 탭 이동해도 form state 보존 (Tabs.Panel keepMounted)
  *  - 페이지 이탈 시 dirty 면 브라우저 경고
  *  - 저장 후 이전 화면 복귀
  */
@@ -18,11 +19,26 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Loader2, Save, Trash2 } from "lucide-react";
 
-import type { CustomerBasicFormHandle } from "@/components/customer-basic-form";
-import type { CustomerProgressTabHandle } from "@/components/customer-progress-tab";
+import {
+  CustomerBasicForm,
+  type CustomerBasicFormHandle,
+} from "@/components/customer-basic-form";
+import {
+  CustomerProgressTab,
+  type CustomerProgressTabHandle,
+} from "@/components/customer-progress-tab";
+import { CustomerConsultationsTab } from "@/components/customer-consultations-tab";
+import { CustomerSettlementTab } from "@/components/customer-settlement-tab";
 import { CustomerOverviewTab } from "@/components/customer-overview-tab";
 
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 import {
   Dialog,
   DialogContent,
@@ -50,6 +66,12 @@ import type {
 } from "@/types/database";
 
 type Props = {
+  initialTab:
+    | "basic"
+    | "progress"
+    | "consultations"
+    | "settlement"
+    | "overview";
   customer: Customer;
   consultations: Consultation[];
   reservationPayments: ReservationPayment[];
@@ -80,6 +102,7 @@ type Props = {
 };
 
 export function CustomerEditTabs({
+  initialTab,
   customer,
   consultations,
   reservationPayments,
@@ -110,6 +133,7 @@ export function CustomerEditTabs({
     if (!dirty) return;
     const handler = (e: BeforeUnloadEvent) => {
       e.preventDefault();
+      // 일부 브라우저는 returnValue 가 truthy 여야 경고
       e.returnValue = "";
     };
     window.addEventListener("beforeunload", handler);
@@ -158,29 +182,113 @@ export function CustomerEditTabs({
       toast.error("삭제 실패", { description: result.error });
       setDeleting(false);
     }
+    // 성공 시 redirect 발생 (서버에서 redirect("/customers"))
   }
 
   return (
     <>
-      <CustomerOverviewTab
-        customer={customer}
-        progressInputs={progressInputs}
-        consultations={consultations}
-        reservationPayments={reservationPayments}
-        welcomePackPayment={welcomePackPayment}
-        commissionPayments={commissionPayments}
-        eventPayments={eventPayments}
-        trainingCenters={trainingCenters}
-        trainingClasses={trainingClasses}
-        careHomes={careHomes}
-        customerOptions={customerOptions}
-        careHomeLocked={careHomeLocked}
-        settings={settings}
-        basicRef={basicRef}
-        progressRef={progressRef}
-        onBasicDirty={setBasicDirty}
-        onProgressDirty={setProgressDirty}
-      />
+      <Tabs defaultValue={initialTab} className="w-full">
+        <TabsList className="grid grid-cols-5 w-full h-10">
+          <TabsTrigger
+            value="progress"
+            className="text-sm data-active:bg-primary data-active:text-primary-foreground data-active:font-semibold"
+          >
+            진행 단계
+            {progressDirty && <DirtyDot />}
+          </TabsTrigger>
+          <TabsTrigger
+            value="basic"
+            className="text-sm data-active:bg-primary data-active:text-primary-foreground data-active:font-semibold"
+          >
+            기본 정보
+            {basicDirty && <DirtyDot />}
+          </TabsTrigger>
+          <TabsTrigger
+            value="consultations"
+            className="text-sm data-active:bg-primary data-active:text-primary-foreground data-active:font-semibold"
+          >
+            상담 일지
+          </TabsTrigger>
+          <TabsTrigger
+            value="settlement"
+            className="text-sm data-active:bg-primary data-active:text-primary-foreground data-active:font-semibold"
+          >
+            정산
+          </TabsTrigger>
+          <TabsTrigger
+            value="overview"
+            className="text-sm data-active:bg-primary data-active:text-primary-foreground data-active:font-semibold"
+          >
+            한눈에 보기
+            <Badge
+              variant="outline"
+              className="ml-1.5 text-[9px] py-0 px-1 bg-info/10 text-info border-info/20"
+            >
+              시안
+            </Badge>
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="basic" className="mt-6" keepMounted>
+          <CustomerBasicForm
+            mode="edit"
+            customerId={customer.id}
+            defaultValues={customer}
+            trainingCenters={trainingCenters}
+            trainingClasses={trainingClasses}
+            careHomes={careHomes}
+            careHomeLocked={careHomeLocked}
+            embedded
+            ref={basicRef}
+            onDirtyChange={setBasicDirty}
+          />
+        </TabsContent>
+
+        <TabsContent value="progress" className="mt-6" keepMounted>
+          <CustomerProgressTab
+            customerId={customer.id}
+            inputs={progressInputs}
+            embedded
+            ref={progressRef}
+            onDirtyChange={setProgressDirty}
+          />
+        </TabsContent>
+
+        <TabsContent value="consultations" className="mt-6" keepMounted>
+          <CustomerConsultationsTab
+            customerId={customer.id}
+            consultations={consultations}
+          />
+        </TabsContent>
+
+        <TabsContent value="settlement" className="mt-6" keepMounted>
+          <CustomerSettlementTab
+            customer={customer}
+            reservationPayments={reservationPayments}
+            commissionPayments={commissionPayments}
+            eventPayments={eventPayments}
+            welcomePackPayment={welcomePackPayment}
+            trainingCenters={trainingCenters}
+            customerOptions={customerOptions}
+            settings={settings}
+          />
+        </TabsContent>
+
+        <TabsContent value="overview" className="mt-6" keepMounted>
+          <CustomerOverviewTab
+            customer={customer}
+            progressInputs={progressInputs}
+            consultations={consultations}
+            reservationPayments={reservationPayments}
+            welcomePackPayment={welcomePackPayment}
+            commissionPayments={commissionPayments}
+            eventPayments={eventPayments}
+            trainingCenters={trainingCenters}
+            trainingClasses={trainingClasses}
+            careHomes={careHomes}
+          />
+        </TabsContent>
+      </Tabs>
 
       {/* 페이지 레벨 액션 (sticky bottom) */}
       <div className="sticky bottom-0 -mx-6 mt-8 border-t border-border bg-background/95 backdrop-blur px-6 py-3 flex items-center justify-between gap-2">
@@ -243,5 +351,14 @@ export function CustomerEditTabs({
         </div>
       </div>
     </>
+  );
+}
+
+function DirtyDot() {
+  return (
+    <span
+      className="ml-1 inline-block size-1.5 rounded-full bg-warning"
+      aria-label="변경사항 있음"
+    />
   );
 }
