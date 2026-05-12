@@ -148,7 +148,7 @@ describe("computeTaskBuckets", () => {
     expect(buckets.find((b) => b.key === "reservation_payment")?.count).toBe(0);
   });
 
-  it("이미 근무 중인 고객은 '강의일정 확정 필요' 버킷에 들어가지 않음", () => {
+  it("이미 근무 중인 고객은 '강의 일정 확인 필요' 버킷에 들어가지 않음", () => {
     const c = makeCustomer({
       phone: "010-1234-5678",
       name_kr: "근무중",

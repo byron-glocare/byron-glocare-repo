@@ -466,7 +466,8 @@ export function computeCustomerStatus(inputs: StatusInputs): StageSummary {
     } else if (!trainingReservation.centerMatched) {
       label = "교육원 매칭 필요";
     } else if (trainingReservation.classScheduleConfirmationNeeded) {
-      label = "강의 일정 확인";
+      // 대시보드 task bucket 카드와 동일한 라벨 사용 (수동 토글 기반)
+      label = "강의 일정 확인 필요";
     } else if (!trainingReservation.classMatched) {
       label = "강의일정 확정 필요";
     } else if (!trainingReservation.reservationPaid) {
