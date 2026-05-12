@@ -302,7 +302,12 @@ export function computeStageDistribution(
 // =============================================================================
 
 /**
- * - trained: 강의가 한 번이라도 시작된 (training.phase === '중' or '완료') 고객 수
+ * 누적 통계 — 포기/종료 여부와 무관하게 "한 번이라도 그 단계에 도달한
+ * 모든 고객" 을 카운트.
+ *
+ * - trained: 강의가 한 번이라도 시작된 흔적
+ *     (training.phase === '중' or '완료' or training_dropped or certificate_acquired)
+ *     · class_start_date 가 NULL 이지만 dropped/certified 인 데이터 누락 케이스도 포함
  * - certified: customer_statuses.certificate_acquired = true 인 수
  * - working: 현재 근무 중 (work.workPhase === '중') 인 수
  */
@@ -315,7 +320,12 @@ export function computeCumulativeCounts(
   let working = 0;
   for (const e of enriched) {
     const phase = e.summary.training.phase;
-    if (phase === "중" || phase === "완료") trained++;
+    const everStartedTraining =
+      phase === "중" ||
+      phase === "완료" ||
+      e.status.training_dropped ||
+      e.status.certificate_acquired;
+    if (everStartedTraining) trained++;
     if (e.status.certificate_acquired) certified++;
     if (e.summary.work.workPhase === "중") working++;
   }
