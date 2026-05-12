@@ -40,9 +40,10 @@ export default async function TrainingCentersPage({
   const sp = await searchParams;
   const q = sp.q?.trim() ?? "";
   const regionFilter = sp.region?.trim() ?? "";
+  // 기본값 = '제휴중'. 사용자가 명시적으로 'all' 또는 'terminated' 를 골라야만 변경.
   const statusRaw = (sp.status ?? "").trim();
   const statusFilter: "all" | "active" | "terminated" =
-    statusRaw === "active" || statusRaw === "terminated" ? statusRaw : "all";
+    statusRaw === "all" || statusRaw === "terminated" ? statusRaw : "active";
 
   const supabase = await createClient();
 
@@ -110,7 +111,7 @@ export default async function TrainingCentersPage({
     );
   }
 
-  const hasAnyFilter = !!(q || regionFilter || statusFilter !== "all");
+  const hasAnyFilter = !!(q || regionFilter || statusFilter !== "active");
 
   return (
     <>

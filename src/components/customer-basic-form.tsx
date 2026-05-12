@@ -22,6 +22,7 @@ import type { TrainingCenter, TrainingClass, CareHome } from "@/types/database";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { RegionSelect } from "@/components/region-select";
+import { REGION1_OPTIONS } from "@/lib/region-options";
 import { navigateBackOrTo } from "@/lib/navigate-back";
 import { asciiUpper } from "@/lib/name-utils";
 import {
@@ -155,6 +156,15 @@ export function CustomerBasicForm({
   const filteredClasses = trainingClasses.filter(
     (c) => c.training_center_id === selectedCenterId
   );
+
+  // 교육원 select 의 표시 옵션을 좁히기 위한 지역 필터 (로컬 UI 전용 — 저장 X).
+  // 빈 문자열 = 전체. 사용자가 1단계 시·도 시 그 prefix 로 시작하는 region 만 노출.
+  const [centerRegionFilter, setCenterRegionFilter] = useState<string>("");
+  const visibleTrainingCenters = centerRegionFilter
+    ? trainingCenters.filter((tc) =>
+        (tc.region ?? "").startsWith(centerRegionFilter)
+      )
+    : trainingCenters;
 
   // dirty 변경을 부모에게 알림 (embedded 모드 전용)
   const isDirty = form.formState.isDirty;
@@ -537,44 +547,77 @@ export function CustomerBasicForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>교육원</FormLabel>
-                    <Select
-                      value={field.value ?? NONE_VALUE}
-                      onValueChange={(v) => {
-                        const next = v === NONE_VALUE ? null : v;
-                        // 실제로 다른 교육원으로 변경된 경우에만 강의일정 리셋
-                        if (next !== field.value) {
-                          form.setValue("training_class_id", null);
-                        }
-                        field.onChange(next);
-                      }}
-                      disabled={trainingDisabled}
-                    >
-                      <FormControl>
+                    {/* 지역 select (UI 전용 — 저장 X) + 교육원 select 두 칸 */}
+                    <div className="grid grid-cols-[10rem_1fr] gap-2">
+                      <Select
+                        value={centerRegionFilter || NONE_VALUE}
+                        onValueChange={(v) => {
+                          const safe = v ?? "";
+                          setCenterRegionFilter(
+                            safe === NONE_VALUE ? "" : safe
+                          );
+                        }}
+                        disabled={trainingDisabled}
+                      >
                         <SelectTrigger>
                           <SelectValueMap
                             map={{
-                              [NONE_VALUE]: "미매칭",
+                              [NONE_VALUE]: "지역 전체",
                               ...Object.fromEntries(
-                                trainingCenters.map((tc) => [
-                                  tc.id,
-                                  `${tc.name}${tc.region ? ` (${tc.region})` : ""}`,
-                                ])
+                                REGION1_OPTIONS.map((r) => [r, r])
                               ),
                             }}
-                            placeholder="선택"
+                            placeholder="지역"
                           />
                         </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value={NONE_VALUE}>미매칭</SelectItem>
-                        {trainingCenters.map((tc) => (
-                          <SelectItem key={tc.id} value={tc.id}>
-                            {tc.name}
-                            {tc.region ? ` (${tc.region})` : ""}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                        <SelectContent>
+                          <SelectItem value={NONE_VALUE}>지역 전체</SelectItem>
+                          {REGION1_OPTIONS.map((r) => (
+                            <SelectItem key={r} value={r}>
+                              {r}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Select
+                        value={field.value ?? NONE_VALUE}
+                        onValueChange={(v) => {
+                          const next = v === NONE_VALUE ? null : v;
+                          // 실제로 다른 교육원으로 변경된 경우에만 강의일정 리셋
+                          if (next !== field.value) {
+                            form.setValue("training_class_id", null);
+                          }
+                          field.onChange(next);
+                        }}
+                        disabled={trainingDisabled}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValueMap
+                              map={{
+                                [NONE_VALUE]: "미매칭",
+                                ...Object.fromEntries(
+                                  trainingCenters.map((tc) => [
+                                    tc.id,
+                                    `${tc.name}${tc.region ? ` (${tc.region})` : ""}`,
+                                  ])
+                                ),
+                              }}
+                              placeholder="선택"
+                            />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value={NONE_VALUE}>미매칭</SelectItem>
+                          {visibleTrainingCenters.map((tc) => (
+                            <SelectItem key={tc.id} value={tc.id}>
+                              {tc.name}
+                              {tc.region ? ` (${tc.region})` : ""}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                     {trainingDisabled && (
                       <p className="text-xs text-muted-foreground">
                         상품 '웰컴팩' — 교육 대상 아님
