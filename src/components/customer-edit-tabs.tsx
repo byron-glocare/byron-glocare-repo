@@ -29,8 +29,10 @@ import {
 } from "@/components/customer-progress-tab";
 import { CustomerConsultationsTab } from "@/components/customer-consultations-tab";
 import { CustomerSettlementTab } from "@/components/customer-settlement-tab";
+import { CustomerOverviewTab } from "@/components/customer-overview-tab";
 
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Tabs,
   TabsContent,
@@ -64,7 +66,12 @@ import type {
 } from "@/types/database";
 
 type Props = {
-  initialTab: "basic" | "progress" | "consultations" | "settlement";
+  initialTab:
+    | "basic"
+    | "progress"
+    | "consultations"
+    | "settlement"
+    | "overview";
   customer: Customer;
   consultations: Consultation[];
   reservationPayments: ReservationPayment[];
@@ -181,7 +188,7 @@ export function CustomerEditTabs({
   return (
     <>
       <Tabs defaultValue={initialTab} className="w-full">
-        <TabsList className="grid grid-cols-4 w-full h-10">
+        <TabsList className="grid grid-cols-5 w-full h-10">
           <TabsTrigger
             value="progress"
             className="text-sm data-active:bg-primary data-active:text-primary-foreground data-active:font-semibold"
@@ -207,6 +214,18 @@ export function CustomerEditTabs({
             className="text-sm data-active:bg-primary data-active:text-primary-foreground data-active:font-semibold"
           >
             정산
+          </TabsTrigger>
+          <TabsTrigger
+            value="overview"
+            className="text-sm data-active:bg-primary data-active:text-primary-foreground data-active:font-semibold"
+          >
+            한눈에 보기
+            <Badge
+              variant="outline"
+              className="ml-1.5 text-[9px] py-0 px-1 bg-info/10 text-info border-info/20"
+            >
+              시안
+            </Badge>
           </TabsTrigger>
         </TabsList>
 
@@ -252,6 +271,21 @@ export function CustomerEditTabs({
             trainingCenters={trainingCenters}
             customerOptions={customerOptions}
             settings={settings}
+          />
+        </TabsContent>
+
+        <TabsContent value="overview" className="mt-6" keepMounted>
+          <CustomerOverviewTab
+            customer={customer}
+            progressInputs={progressInputs}
+            consultations={consultations}
+            reservationPayments={reservationPayments}
+            welcomePackPayment={welcomePackPayment}
+            commissionPayments={commissionPayments}
+            eventPayments={eventPayments}
+            trainingCenters={trainingCenters}
+            trainingClasses={trainingClasses}
+            careHomes={careHomes}
           />
         </TabsContent>
       </Tabs>

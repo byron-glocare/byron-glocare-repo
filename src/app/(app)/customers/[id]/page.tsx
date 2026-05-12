@@ -10,7 +10,13 @@ import { formatDate, dash } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
-const VALID_TABS = ["basic", "progress", "consultations", "settlement"] as const;
+const VALID_TABS = [
+  "basic",
+  "progress",
+  "consultations",
+  "settlement",
+  "overview",
+] as const;
 type TabKey = (typeof VALID_TABS)[number];
 
 export default async function CustomerDetailPage({
