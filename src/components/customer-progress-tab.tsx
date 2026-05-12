@@ -79,6 +79,7 @@ type FlagCategory = "blocker" | "milestone" | "terminal";
 
 const CATEGORY: Record<FlagKey, FlagCategory> = {
   intake_abandoned: "terminal",
+  intake_confirmed: "milestone",
   study_abroad_consultation: "terminal",
   training_center_finding: "blocker",
   class_schedule_confirmation_needed: "blocker",
@@ -87,6 +88,7 @@ const CATEGORY: Record<FlagKey, FlagCategory> = {
   certificate_acquired: "milestone",
   training_dropped: "terminal",
   welcome_pack_abandoned: "terminal",
+  health_check_completed: "milestone",
   care_home_finding: "blocker",
   resume_sent: "milestone",
   interview_passed: "milestone",
@@ -94,6 +96,7 @@ const CATEGORY: Record<FlagKey, FlagCategory> = {
 
 const FLAG_LABELS: Record<FlagKey, string> = {
   intake_abandoned: "접수포기",
+  intake_confirmed: "등록",
   study_abroad_consultation: "유학상담으로 전환",
   training_center_finding: "교육원 발굴 필요",
   class_schedule_confirmation_needed: "강의 일정 확인 필요",
@@ -102,6 +105,7 @@ const FLAG_LABELS: Record<FlagKey, string> = {
   certificate_acquired: "자격증 취득",
   training_dropped: "교육 드랍",
   welcome_pack_abandoned: "웰컴팩 예약포기",
+  health_check_completed: "건강검진 완료",
   care_home_finding: "요양원 발굴 필요",
   resume_sent: "이력서 발송",
   interview_passed: "면접 합격",
@@ -128,6 +132,7 @@ type StageKey = LockStage;
 
 const FLAG_STAGE: Record<FlagKey, StageKey> = {
   intake_abandoned: "intake",
+  intake_confirmed: "intake",
   study_abroad_consultation: "intake",
   training_center_finding: "training_reservation",
   class_schedule_confirmation_needed: "training_reservation",
@@ -139,6 +144,7 @@ const FLAG_STAGE: Record<FlagKey, StageKey> = {
   resume_sent: "employment",
   interview_passed: "employment",
   welcome_pack_abandoned: "employment",
+  health_check_completed: "employment",
 };
 
 function computeLockedStages(
@@ -160,6 +166,7 @@ function buildInitialState(inputs: StatusInputs): ProgressStateInput {
   return {
     flags: {
       intake_abandoned: inputs.status.intake_abandoned,
+      intake_confirmed: inputs.status.intake_confirmed,
       study_abroad_consultation: inputs.status.study_abroad_consultation,
       training_center_finding: inputs.status.training_center_finding,
       class_schedule_confirmation_needed:
@@ -170,6 +177,7 @@ function buildInitialState(inputs: StatusInputs): ProgressStateInput {
       certificate_acquired: inputs.status.certificate_acquired,
       training_dropped: inputs.status.training_dropped,
       welcome_pack_abandoned: inputs.status.welcome_pack_abandoned,
+      health_check_completed: inputs.status.health_check_completed,
       care_home_finding: inputs.status.care_home_finding,
       resume_sent: inputs.status.resume_sent,
       interview_passed: inputs.status.interview_passed,
@@ -274,6 +282,21 @@ export function CustomerProgressTab({
     setState((prev) => ({
       ...prev,
       flags: { ...prev.flags, [key]: value },
+    }));
+  }
+
+  /**
+   * 접수 "등록" 결정 — intake_confirmed / intake_abandoned 두 boolean 을
+   * mutually exclusive 로 set. UI 의 3-state (예/아니오/미선택) 표현.
+   */
+  function setIntakeDecision(decision: "yes" | "no" | "none") {
+    setState((prev) => ({
+      ...prev,
+      flags: {
+        ...prev.flags,
+        intake_confirmed: decision === "yes",
+        intake_abandoned: decision === "no",
+      },
     }));
   }
 
@@ -392,11 +415,14 @@ export function CustomerProgressTab({
               {summary.intake.basicInfo}
             </Badge>
           </AutoRow>
-          <ManualSwitchRow
-            flag="intake_abandoned"
-            value={state.flags.intake_abandoned}
-            locked={isFlagLocked("intake_abandoned")}
-            onChange={(v) => toggleFlag("intake_abandoned", v)}
+          <IntakeDecisionRow
+            confirmed={state.flags.intake_confirmed}
+            abandoned={state.flags.intake_abandoned}
+            yesLocked={isFlagLocked("intake_confirmed")}
+            noLocked={isFlagLocked("intake_abandoned")}
+            onSelectYes={() => setIntakeDecision("yes")}
+            onSelectNo={() => setIntakeDecision("no")}
+            onClear={() => setIntakeDecision("none")}
             pending={pending}
           />
           <ManualSwitchRow
@@ -491,6 +517,13 @@ export function CustomerProgressTab({
           complete={summary.employment.complete}
           locked={isStageCardLocked("employment")}
         >
+          <MilestoneRow
+            flag="health_check_completed"
+            value={state.flags.health_check_completed}
+            locked={isFlagLocked("health_check_completed")}
+            onChange={(v) => toggleFlag("health_check_completed", v)}
+            pending={pending}
+          />
           <ManualSwitchRow
             flag="care_home_finding"
             value={state.flags.care_home_finding}
@@ -825,6 +858,86 @@ function MilestoneRow({
           )}
         >
           <Check className="size-3" />예
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * 접수 "등록" 결정 — 3-state (예/아니오/미선택). 활성 옵션을 다시 누르면
+ * 미선택으로 toggle off. yesLocked / noLocked 는 각각의 잠금 (단, 활성된 옵션은
+ * 항상 클릭 가능 — toggle off 위해).
+ */
+function IntakeDecisionRow({
+  confirmed,
+  abandoned,
+  yesLocked,
+  noLocked,
+  onSelectYes,
+  onSelectNo,
+  onClear,
+  pending,
+}: {
+  confirmed: boolean;
+  abandoned: boolean;
+  yesLocked: boolean;
+  noLocked: boolean;
+  onSelectYes: () => void;
+  onSelectNo: () => void;
+  onClear: () => void;
+  pending: boolean;
+}) {
+  const noDisabled = pending || (!abandoned && noLocked);
+  const yesDisabled = pending || (!confirmed && yesLocked);
+  return (
+    <div className="flex items-start justify-between gap-3">
+      <div className="min-w-0">
+        <Label className="text-sm">{FLAG_LABELS.intake_confirmed}</Label>
+        <p className="text-xs text-muted-foreground">
+          예 = 다음 단계로 진행 / 아니오 = 접수 포기 (종료)
+        </p>
+      </div>
+      <div className="inline-flex rounded-md overflow-hidden border border-border shrink-0">
+        <button
+          type="button"
+          onClick={() => {
+            if (pending) return;
+            if (abandoned) onClear();
+            else if (!noLocked) onSelectNo();
+          }}
+          disabled={noDisabled}
+          aria-pressed={abandoned}
+          className={cn(
+            "inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium transition-colors",
+            abandoned
+              ? "bg-destructive/10 text-destructive"
+              : "bg-transparent text-muted-foreground/60 hover:bg-muted",
+            noDisabled && "opacity-60 cursor-not-allowed"
+          )}
+        >
+          <X className="size-3" />
+          아니오 (포기)
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            if (pending) return;
+            if (confirmed) onClear();
+            else if (!yesLocked) onSelectYes();
+          }}
+          disabled={yesDisabled}
+          aria-pressed={confirmed}
+          className={cn(
+            "inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium transition-colors border-l border-border",
+            confirmed
+              ? "bg-success/10 text-success"
+              : "bg-transparent text-muted-foreground/60 hover:bg-muted",
+            yesDisabled && "opacity-60 cursor-not-allowed"
+          )}
+        >
+          <Check className="size-3" />
+          예 (진행)
         </button>
       </div>
     </div>

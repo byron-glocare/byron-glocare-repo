@@ -96,6 +96,7 @@ function defaultStatus(customerId: string): CustomerStatus {
   return {
     customer_id: customerId,
     intake_abandoned: false,
+    intake_confirmed: false,
     study_abroad_consultation: false,
     training_center_finding: false,
     class_schedule_confirmation_needed: false,
@@ -104,6 +105,7 @@ function defaultStatus(customerId: string): CustomerStatus {
     certificate_acquired: false,
     training_dropped: false,
     welcome_pack_abandoned: false,
+    health_check_completed: false,
     care_home_finding: false,
     resume_sent: false,
     interview_passed: false,
@@ -166,45 +168,61 @@ export function computeTaskBuckets(inputs: DashboardInputs): TaskBucket[] {
       centerFinding.push(brief);
     }
 
-    // 7-3 교육원 매칭: 교육 단계 AND training_center_id null AND 발굴 아님
+    // 7-3 ~ 7-6: stage label cascade 와 1:1 매칭되도록 좁힘.
+    // (이전 정의는 단일 조건만 봐서 다른 라벨의 고객까지 섞여 들어갔음.)
+    //
+    // customer-status.ts 의 라벨 결정 순서:
+    //   centerFinding → centerMatched → classScheduleConfirmationNeeded
+    //   → classMatched → reservationPaid → smsSent
+    // 이 cascade 의 각 "현재 미통과 지점" 이 그 카드의 정확한 모집단.
+    const tr = e.summary.trainingReservation;
+
+    // 7-3 교육원 매칭 필요 (label="교육원 매칭 필요")
     if (
       !excluded &&
       !paused &&
       inEducationPhase &&
-      !e.summary.trainingReservation.centerMatched &&
-      !e.status.training_center_finding
+      !e.status.training_center_finding &&
+      !tr.centerMatched
     ) {
       centerMatching.push(brief);
     }
 
-    // 7-4 강의일정 확정: 교육 단계 + 교육원 매칭됨 + 강의 미확정
+    // 7-4 강의일정 확정 필요 (label="강의일정 확정 필요")
     if (
       !excluded &&
       !paused &&
       inEducationPhase &&
-      e.summary.trainingReservation.centerMatched &&
-      !e.summary.trainingReservation.classMatched
+      tr.centerMatched &&
+      !tr.classScheduleConfirmationNeeded &&
+      !tr.classMatched
     ) {
       classMatching.push(brief);
     }
 
-    // 7-5 예약금 입금: 교육 단계 AND 예약금 미입금
+    // 7-5 예약금 입금 대기 (label="예약금 입금 대기")
     if (
       !excluded &&
       !paused &&
       inEducationPhase &&
-      !e.summary.trainingReservation.reservationPaid
+      tr.centerMatched &&
+      !tr.classScheduleConfirmationNeeded &&
+      tr.classMatched &&
+      !tr.reservationPaid
     ) {
       reservationPayment.push(brief);
     }
 
-    // 7-6 강의 접수 메시지 발송: 교육 단계 AND 예약금 입금 AND SMS 미발송
+    // 7-6 강의 접수 메시지 발송 대기 (label="강의 접수 메시지 발송 대기")
     if (
       !excluded &&
       !paused &&
       inEducationPhase &&
-      e.summary.trainingReservation.reservationPaid &&
-      !e.summary.trainingReservation.smsSent
+      tr.centerMatched &&
+      !tr.classScheduleConfirmationNeeded &&
+      tr.classMatched &&
+      tr.reservationPaid &&
+      !tr.smsSent
     ) {
       introSms.push(brief);
     }

@@ -23,7 +23,7 @@ export default async function CustomerDetailPage({
   const { id } = await params;
   const sp = await searchParams;
   const tab: TabKey =
-    VALID_TABS.includes(sp.tab as TabKey) ? (sp.tab as TabKey) : "basic";
+    VALID_TABS.includes(sp.tab as TabKey) ? (sp.tab as TabKey) : "progress";
   const supabase = await createClient();
 
   const { data: customer, error } = await supabase
@@ -108,6 +108,7 @@ export default async function CustomerDetailPage({
   const effectiveStatus = status ?? {
     customer_id: id,
     intake_abandoned: false,
+    intake_confirmed: false,
     study_abroad_consultation: false,
     training_center_finding: false,
     class_schedule_confirmation_needed: false,
@@ -116,6 +117,7 @@ export default async function CustomerDetailPage({
     certificate_acquired: false,
     training_dropped: false,
     welcome_pack_abandoned: false,
+    health_check_completed: false,
     care_home_finding: false,
     resume_sent: false,
     interview_passed: false,

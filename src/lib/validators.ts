@@ -256,6 +256,7 @@ export type ConsultationUpdateInput = z.input<typeof consultationUpdateSchema>;
 
 export const statusFlagsSchema = z.object({
   intake_abandoned: z.boolean(),
+  intake_confirmed: z.boolean(),
   study_abroad_consultation: z.boolean(),
   training_center_finding: z.boolean(),
   class_schedule_confirmation_needed: z.boolean(),
@@ -264,6 +265,7 @@ export const statusFlagsSchema = z.object({
   certificate_acquired: z.boolean(),
   training_dropped: z.boolean(),
   welcome_pack_abandoned: z.boolean(),
+  health_check_completed: z.boolean(),
   care_home_finding: z.boolean(),
   resume_sent: z.boolean(),
   interview_passed: z.boolean(),

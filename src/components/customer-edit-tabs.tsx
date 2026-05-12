@@ -183,18 +183,18 @@ export function CustomerEditTabs({
       <Tabs defaultValue={initialTab} className="w-full">
         <TabsList className="grid grid-cols-4 w-full h-10">
           <TabsTrigger
-            value="basic"
-            className="text-sm data-active:bg-primary data-active:text-primary-foreground data-active:font-semibold"
-          >
-            기본 정보
-            {basicDirty && <DirtyDot />}
-          </TabsTrigger>
-          <TabsTrigger
             value="progress"
             className="text-sm data-active:bg-primary data-active:text-primary-foreground data-active:font-semibold"
           >
             진행 단계
             {progressDirty && <DirtyDot />}
+          </TabsTrigger>
+          <TabsTrigger
+            value="basic"
+            className="text-sm data-active:bg-primary data-active:text-primary-foreground data-active:font-semibold"
+          >
+            기본 정보
+            {basicDirty && <DirtyDot />}
           </TabsTrigger>
           <TabsTrigger
             value="consultations"

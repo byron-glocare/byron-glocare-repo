@@ -291,6 +291,7 @@ export type Database = {
         Row: {
           customer_id: string;
           intake_abandoned: boolean;
+          intake_confirmed: boolean;
           study_abroad_consultation: boolean;
           training_center_finding: boolean;
           class_schedule_confirmation_needed: boolean;
@@ -299,6 +300,7 @@ export type Database = {
           certificate_acquired: boolean;
           training_dropped: boolean;
           welcome_pack_abandoned: boolean;
+          health_check_completed: boolean;
           care_home_finding: boolean;
           resume_sent: boolean;
           interview_passed: boolean;
@@ -307,6 +309,7 @@ export type Database = {
         Insert: {
           customer_id: string;
           intake_abandoned?: boolean;
+          intake_confirmed?: boolean;
           study_abroad_consultation?: boolean;
           training_center_finding?: boolean;
           class_schedule_confirmation_needed?: boolean;
@@ -315,6 +318,7 @@ export type Database = {
           certificate_acquired?: boolean;
           training_dropped?: boolean;
           welcome_pack_abandoned?: boolean;
+          health_check_completed?: boolean;
           care_home_finding?: boolean;
           resume_sent?: boolean;
           interview_passed?: boolean;

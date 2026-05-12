@@ -123,6 +123,7 @@ export type StatusInputs = {
   status: Pick<
     CustomerStatus,
     | "intake_abandoned"
+    | "intake_confirmed"
     | "study_abroad_consultation"
     | "training_center_finding"
     | "class_schedule_confirmation_needed"
@@ -131,6 +132,7 @@ export type StatusInputs = {
     | "certificate_acquired"
     | "training_dropped"
     | "welcome_pack_abandoned"
+    | "health_check_completed"
     | "care_home_finding"
     | "resume_sent"
     | "interview_passed"
@@ -345,8 +347,11 @@ export function computeCustomerStatus(inputs: StatusInputs): StageSummary {
     basicInfo,
     abandoned: inputs.status.intake_abandoned,
     studyAbroad: inputs.status.study_abroad_consultation,
+    // 사용자가 명시적으로 "등록 = 진행" (intake_confirmed) 을 누른 경우만 완료.
+    // 기초정보 핵심 충족은 그대로 전제 (이름/전화 미입력 시 의미 없음).
     complete:
       (basicInfo === "핵심" || basicInfo === "완벽") &&
+      inputs.status.intake_confirmed &&
       !inputs.status.intake_abandoned &&
       !inputs.status.study_abroad_consultation,
   };

@@ -56,6 +56,8 @@ function makeStatus(
   return {
     customer_id: customerId,
     intake_abandoned: false,
+    // 0013: 기본 시나리오에서는 등록(=진행) 결정된 상태로 가정
+    intake_confirmed: true,
     study_abroad_consultation: false,
     training_center_finding: false,
     class_schedule_confirmation_needed: false,
@@ -64,6 +66,7 @@ function makeStatus(
     certificate_acquired: false,
     training_dropped: false,
     welcome_pack_abandoned: false,
+    health_check_completed: false,
     care_home_finding: false,
     resume_sent: false,
     interview_passed: false,
