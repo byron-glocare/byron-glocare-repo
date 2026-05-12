@@ -15,11 +15,13 @@ import { PageHeader } from "@/components/page-header";
 import { TaskCards } from "@/components/dashboard/task-cards";
 import { StageDistributionChart } from "@/components/dashboard/stage-distribution";
 import { NewCustomersCard } from "@/components/dashboard/new-customers-card";
+import { CumulativeStatsCard } from "@/components/dashboard/cumulative-stats-card";
 import { StudyStatsCards } from "@/components/dashboard/study-stats-cards";
 import {
   computeTaskBuckets,
   computeStageDistribution,
   computeNewCustomerCounts,
+  computeCumulativeCounts,
 } from "@/lib/dashboard";
 import { buttonVariants } from "@/components/ui/button";
 import {
@@ -102,6 +104,7 @@ export default async function DashboardPage() {
   const taskBuckets = computeTaskBuckets(inputs);
   const stageDistribution = computeStageDistribution(inputs);
   const newCustomerCounts = computeNewCustomerCounts(customers ?? []);
+  const cumulativeCounts = computeCumulativeCounts(inputs);
 
   const totalCustomers = customers?.length ?? 0;
 
@@ -192,7 +195,10 @@ export default async function DashboardPage() {
             </CardContent>
           </Card>
 
-          <NewCustomersCard {...newCustomerCounts} />
+          <div className="space-y-6">
+            <NewCustomersCard {...newCustomerCounts} />
+            <CumulativeStatsCard {...cumulativeCounts} />
+          </div>
         </div>
 
         {/* 유학생 도메인 stats */}

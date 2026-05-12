@@ -298,6 +298,31 @@ export function computeStageDistribution(
 }
 
 // =============================================================================
+// 누적 통계 — 교육 / 자격증 / 근무
+// =============================================================================
+
+/**
+ * - trained: 강의가 한 번이라도 시작된 (training.phase === '중' or '완료') 고객 수
+ * - certified: customer_statuses.certificate_acquired = true 인 수
+ * - working: 현재 근무 중 (work.workPhase === '중') 인 수
+ */
+export function computeCumulativeCounts(
+  inputs: DashboardInputs
+): { trained: number; certified: number; working: number } {
+  const enriched = enrich(inputs);
+  let trained = 0;
+  let certified = 0;
+  let working = 0;
+  for (const e of enriched) {
+    const phase = e.summary.training.phase;
+    if (phase === "중" || phase === "완료") trained++;
+    if (e.status.certificate_acquired) certified++;
+    if (e.summary.work.workPhase === "중") working++;
+  }
+  return { trained, certified, working };
+}
+
+// =============================================================================
 // 신규 고객 수 (일간/주간/월간) — 최초 등록일 기준
 // =============================================================================
 
