@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Loader2, Plus, Trash2 } from "lucide-react";
+import { Loader2, Pencil, Plus, Save, Trash2, X } from "lucide-react";
 
 import {
   trainingClassSchema,
@@ -15,6 +15,7 @@ import {
 import {
   createTrainingClass,
   deleteTrainingClass,
+  updateTrainingClass,
 } from "@/app/(app)/training-centers/actions";
 import type { TrainingClass } from "@/types/database";
 
@@ -62,6 +63,8 @@ export function TrainingClassesManager({ centerId, classes }: Props) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  // 수정 중인 강의 id — null 이면 추가 모드
+  const [editingId, setEditingId] = useState<string | null>(null);
   const now = new Date();
 
   const form = useForm<TrainingClassInput, unknown, TrainingClassOutput>({
@@ -115,6 +118,62 @@ export function TrainingClassesManager({ centerId, classes }: Props) {
       } else {
         toast.error("추가 실패", { description: result.error });
       }
+    });
+  }
+
+  function onUpdate(values: TrainingClassOutput) {
+    if (!editingId) return;
+    if (!values.start_date) {
+      toast.error("시작일을 입력해주세요.");
+      return;
+    }
+    startTransition(async () => {
+      const result = await updateTrainingClass(editingId, centerId, values);
+      if (result.ok) {
+        toast.success(
+          "수정되었습니다. 연결된 교육생 정보도 같이 업데이트됨."
+        );
+        setEditingId(null);
+        form.reset({
+          year: now.getFullYear(),
+          month: now.getMonth() + 1,
+          class_type: "weekday",
+          start_date: null,
+          end_date: null,
+          notes: null,
+        });
+        router.refresh();
+      } else {
+        toast.error("수정 실패", { description: result.error });
+      }
+    });
+  }
+
+  function onEditStart(cls: TrainingClass) {
+    setEditingId(cls.id);
+    form.reset({
+      year: cls.year,
+      month: cls.month,
+      class_type: cls.class_type as "weekday" | "night",
+      start_date: cls.start_date,
+      end_date: cls.end_date,
+      notes: cls.notes,
+    });
+    // 폼 영역으로 스크롤 — 사용자가 한참 아래 행을 편집할 때 필요
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }
+
+  function onCancelEdit() {
+    setEditingId(null);
+    form.reset({
+      year: now.getFullYear(),
+      month: now.getMonth() + 1,
+      class_type: "weekday",
+      start_date: null,
+      end_date: null,
+      notes: null,
     });
   }
 
@@ -242,19 +301,52 @@ export function TrainingClassesManager({ centerId, classes }: Props) {
                 </FormItem>
               )}
             />
-            <Button
-              type="button"
-              onClick={form.handleSubmit(onAdd)}
-              disabled={pending}
-            >
-              {pending ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : (
-                <Plus className="size-4" />
-              )}
-              추가
-            </Button>
+            {editingId ? (
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  onClick={form.handleSubmit(onUpdate)}
+                  disabled={pending}
+                >
+                  {pending ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    <Save className="size-4" />
+                  )}
+                  수정
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={onCancelEdit}
+                  disabled={pending}
+                >
+                  <X className="size-4" />
+                  취소
+                </Button>
+              </div>
+            ) : (
+              <Button
+                type="button"
+                onClick={form.handleSubmit(onAdd)}
+                disabled={pending}
+              >
+                {pending ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <Plus className="size-4" />
+                )}
+                추가
+              </Button>
+            )}
           </div>
+          {editingId && (
+            <p className="mt-2 text-xs text-info">
+              💡 수정 모드 — 시작일/구분/종료일/비고 변경 후 [수정] 버튼.
+              연결된 교육생들의 강의 시작·종료일도 자동으로 같이
+              업데이트됩니다.
+            </p>
+          )}
         </Form>
 
         {/* 목록 */}
@@ -273,7 +365,7 @@ export function TrainingClassesManager({ centerId, classes }: Props) {
                   <TableHead className="w-32">시작일</TableHead>
                   <TableHead className="w-32">종료일</TableHead>
                   <TableHead>비고</TableHead>
-                  <TableHead className="w-16" />
+                  <TableHead className="w-28" />
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -299,20 +391,34 @@ export function TrainingClassesManager({ centerId, classes }: Props) {
                       {dash(cls.notes)}
                     </TableCell>
                     <TableCell>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => onDelete(cls.id)}
-                        disabled={deletingId === cls.id}
-                        className="text-destructive hover:text-destructive hover:bg-destructive/5"
-                      >
-                        {deletingId === cls.id ? (
-                          <Loader2 className="size-4 animate-spin" />
-                        ) : (
-                          <Trash2 className="size-4" />
-                        )}
-                      </Button>
+                      <div className="flex items-center gap-1">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => onEditStart(cls)}
+                          disabled={pending || editingId === cls.id}
+                          className="text-info hover:text-info hover:bg-info/5"
+                          title="편집"
+                        >
+                          <Pencil className="size-4" />
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => onDelete(cls.id)}
+                          disabled={deletingId === cls.id || editingId === cls.id}
+                          className="text-destructive hover:text-destructive hover:bg-destructive/5"
+                          title="삭제"
+                        >
+                          {deletingId === cls.id ? (
+                            <Loader2 className="size-4 animate-spin" />
+                          ) : (
+                            <Trash2 className="size-4" />
+                          )}
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}

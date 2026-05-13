@@ -193,7 +193,22 @@ export async function updateTrainingClass(
 
   if (error) return { ok: false, error: error.message };
 
+  // 이 강의를 연결한 모든 교육생의 class_start_date / class_end_date 동기화 —
+  // 수정한 일정이 자동으로 교육생 정보에도 반영. (이전엔 customer 저장 시점에만
+  // resolveClassDates 로 가져왔기 때문에 강의 일정만 수정하면 교육생 정보는
+  // 옛 날짜에 머물러 있는 문제 있었음.)
+  await supabase
+    .from("customers")
+    .update({
+      class_start_date: synced.start_date ?? null,
+      class_end_date: synced.end_date ?? null,
+    })
+    .eq("training_class_id", classId);
+
   revalidatePath(`/training-centers/${trainingCenterId}`);
+  // 교육생 목록 / 상세 / 대시보드도 영향 받을 수 있음
+  revalidatePath("/customers");
+  revalidatePath("/");
   return { ok: true, data: null };
 }
 
