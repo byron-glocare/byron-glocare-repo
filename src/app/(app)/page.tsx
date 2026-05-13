@@ -206,7 +206,7 @@ export default async function DashboardPage() {
             </CardContent>
           </Card>
 
-          <div className="space-y-6">
+          <div className="space-y-3">
             <NewCustomersCard {...newCustomerCounts} />
             <CumulativeStatsCard {...cumulativeCounts} />
             <PartnersStatsCard

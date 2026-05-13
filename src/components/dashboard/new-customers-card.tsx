@@ -31,8 +31,12 @@ function Metric({ label, value }: { label: string; value: number }) {
   return (
     <div>
       <div className="text-[11px] text-muted-foreground">{label}</div>
-      <div className="text-2xl font-semibold mt-0.5 tabular-nums">{value}</div>
-      <div className="text-[11px] text-muted-foreground">명</div>
+      <div className="text-2xl font-semibold tabular-nums leading-tight">
+        {value}
+        <span className="ml-1 text-xs text-muted-foreground font-normal">
+          명
+        </span>
+      </div>
     </div>
   );
 }
