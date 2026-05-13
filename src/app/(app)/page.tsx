@@ -16,6 +16,7 @@ import { TaskCards } from "@/components/dashboard/task-cards";
 import { StageDistributionChart } from "@/components/dashboard/stage-distribution";
 import { NewCustomersCard } from "@/components/dashboard/new-customers-card";
 import { CumulativeStatsCard } from "@/components/dashboard/cumulative-stats-card";
+import { PartnersStatsCard } from "@/components/dashboard/partners-stats-card";
 import { StudyStatsCards } from "@/components/dashboard/study-stats-cards";
 import {
   computeTaskBuckets,
@@ -51,6 +52,8 @@ export default async function DashboardPage() {
     { count: contactsPending },
     { count: claimsTotal },
     { count: claimsPending },
+    { count: trainingCenterActiveCount },
+    { count: careHomeActiveCount },
   ] = await Promise.all([
     supabase.from("customers").select("*"),
     supabase.from("customer_statuses").select("*"),
@@ -91,6 +94,14 @@ export default async function DashboardPage() {
       .from("study_insurance_claims")
       .select("id", { count: "exact", head: true })
       .eq("status", "미확인"),
+    supabase
+      .from("training_centers")
+      .select("id", { count: "exact", head: true })
+      .eq("partnership_terminated", false),
+    supabase
+      .from("care_homes")
+      .select("id", { count: "exact", head: true })
+      .eq("partnership_terminated", false),
   ]);
 
   const inputs = {
@@ -198,6 +209,10 @@ export default async function DashboardPage() {
           <div className="space-y-6">
             <NewCustomersCard {...newCustomerCounts} />
             <CumulativeStatsCard {...cumulativeCounts} />
+            <PartnersStatsCard
+              trainingCenters={trainingCenterActiveCount ?? 0}
+              careHomes={careHomeActiveCount ?? 0}
+            />
           </div>
         </div>
 
