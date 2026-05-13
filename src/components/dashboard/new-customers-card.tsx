@@ -9,14 +9,14 @@ type Props = {
 
 export function NewCustomersCard({ daily, weekly, monthly }: Props) {
   return (
-    <Card>
-      <CardHeader className="pb-2">
+    <Card size="sm">
+      <CardHeader>
         <CardTitle className="text-sm flex items-center gap-2">
           <CalendarDays className="size-4" />
           신규 고객 수
         </CardTitle>
       </CardHeader>
-      <CardContent className="pb-4">
+      <CardContent>
         <div className="grid grid-cols-3 gap-3">
           <Metric label="오늘 (24h)" value={daily} />
           <Metric label="지난 7일" value={weekly} />

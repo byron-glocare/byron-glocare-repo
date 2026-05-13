@@ -14,14 +14,14 @@ type Props = {
 
 export function PartnersStatsCard({ trainingCenters, careHomes }: Props) {
   return (
-    <Card>
-      <CardHeader className="pb-2">
+    <Card size="sm">
+      <CardHeader>
         <CardTitle className="text-sm flex items-center gap-2">
           <Handshake className="size-4" />
           제휴 업체
         </CardTitle>
       </CardHeader>
-      <CardContent className="pb-4">
+      <CardContent>
         <div className="grid grid-cols-2 gap-3">
           <Metric
             href="/training-centers?status=active"

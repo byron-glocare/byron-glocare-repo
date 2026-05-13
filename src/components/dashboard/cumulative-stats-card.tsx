@@ -14,14 +14,14 @@ type Props = {
 
 export function CumulativeStatsCard({ trained, certified, working }: Props) {
   return (
-    <Card>
-      <CardHeader className="pb-2">
+    <Card size="sm">
+      <CardHeader>
         <CardTitle className="text-sm flex items-center gap-2">
           <BookOpenCheck className="size-4" />
           누적 통계
         </CardTitle>
       </CardHeader>
-      <CardContent className="pb-4">
+      <CardContent>
         <div className="grid grid-cols-3 gap-3">
           <Metric
             icon={<BookOpenCheck className="size-3" />}
