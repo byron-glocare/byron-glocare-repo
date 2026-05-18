@@ -260,7 +260,7 @@ export default async function SettlementsPrintPage({
       <header className="mb-6 pb-4 border-b-2 border-gray-800">
         <div className="flex justify-between items-start">
           <div>
-            <h1 className="text-2xl font-bold mb-1">소개 수수료 정산서</h1>
+            <h1 className="text-2xl font-bold mb-1">글로케어 정산서</h1>
             <p className="text-xs text-gray-600">
               {COMPANY_INFO.companyName}
             </p>
