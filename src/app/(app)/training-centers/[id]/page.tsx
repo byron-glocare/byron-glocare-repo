@@ -114,6 +114,7 @@ export default async function TrainingCenterDetailPage({
               basePath={`/training-centers/${center.id}`}
               preservedParams={{ tab: "students" }}
               fixed={{ trainingCenterId: center.id }}
+              columnPreset="centerDetail"
             />
           </TabsContent>
         </Tabs>

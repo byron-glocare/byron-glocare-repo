@@ -193,6 +193,12 @@ export function CustomerEditTabs({
       <Tabs defaultValue={initialTab} className="w-full">
         <TabsList className="grid grid-cols-5 w-full h-10">
           <TabsTrigger
+            value="overview"
+            className="text-sm data-active:bg-primary data-active:text-primary-foreground data-active:font-semibold"
+          >
+            한눈에 보기
+          </TabsTrigger>
+          <TabsTrigger
             value="progress"
             className="text-sm data-active:bg-primary data-active:text-primary-foreground data-active:font-semibold"
           >
@@ -217,18 +223,6 @@ export function CustomerEditTabs({
             className="text-sm data-active:bg-primary data-active:text-primary-foreground data-active:font-semibold"
           >
             정산
-          </TabsTrigger>
-          <TabsTrigger
-            value="overview"
-            className="text-sm data-active:bg-primary data-active:text-primary-foreground data-active:font-semibold"
-          >
-            한눈에 보기
-            <Badge
-              variant="outline"
-              className="ml-1.5 text-[9px] py-0 px-1 bg-info/10 text-info border-info/20"
-            >
-              시안
-            </Badge>
           </TabsTrigger>
         </TabsList>
 

@@ -227,9 +227,9 @@ export function CustomerOverviewTab({
       <Card className="p-3 bg-info/5 border-info/30">
         <div className="flex items-center justify-between gap-3">
           <div className="text-xs text-muted-foreground">
-            <span className="font-medium text-info">시안</span> · 진행 단계와
-            기본 정보 영역에서 편집한 변경사항은 아래 저장 버튼을 눌러야
-            반영됩니다. 다른 탭과 동시 편집은 피해주세요.
+            진행 단계와 기본 정보 영역에서 편집한 변경사항은 우측 저장 버튼을
+            눌러야 반영됩니다. 다른 탭에서 같은 항목을 동시 편집하면 충돌
+            가능 — 한쪽에서만 작업해주세요.
           </div>
           <div className="flex items-center gap-2">
             <span className="text-xs text-muted-foreground">

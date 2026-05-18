@@ -78,6 +78,13 @@ export type CustomerListProps = {
   };
   /** 요약 스트립 표시 여부 (기본 true) */
   showSummary?: boolean;
+  /**
+   * 컬럼 프리셋:
+   *  - "default" (기본): 베트남 이름·한국 이름·단계·나이·전화·비자·지역·교육원·요양원
+   *  - "centerDetail": 교육원 상세에서 사용. 지역·나이·교육원 제거,
+   *                     상품·예약금·정산완료 추가
+   */
+  columnPreset?: "default" | "centerDetail";
 };
 
 export async function CustomerListPanel({
@@ -86,6 +93,7 @@ export async function CustomerListPanel({
   preservedParams = {},
   fixed,
   showSummary = true,
+  columnPreset = "default",
 }: CustomerListProps) {
   const q = filters.q?.trim() ?? "";
   const centerFilter = fixed?.trainingCenterId ?? filters.center?.trim() ?? "";
@@ -128,6 +136,7 @@ export async function CustomerListPanel({
 
   // stage 자동 판정에 reservation/welcomePack/sms 데이터가 모두 필요.
   // (예전엔 빈 배열로 넘겨서 "예약금 입금 대기" 같은 단계가 잘못 표시됨.)
+  // centerDetail preset 은 commission_payments 도 추가 fetch.
   const [
     { data: allMatched, error },
     { data: centers },
@@ -136,6 +145,7 @@ export async function CustomerListPanel({
     { data: allReservations },
     { data: allWelcomePack },
     { data: allSms },
+    { data: allCommissions },
   ] = await Promise.all([
     query,
     supabase.from("training_centers").select("id, name, region"),
@@ -150,7 +160,27 @@ export async function CustomerListPanel({
     supabase
       .from("sms_messages")
       .select("target_customer_id, message_type"),
+    columnPreset === "centerDetail"
+      ? supabase
+          .from("commission_payments")
+          .select("customer_id, status")
+      : Promise.resolve({ data: [] as { customer_id: string; status: string }[] }),
   ]);
+
+  // 정산 완료 / 수금 포기 여부 (customer 별)
+  const commissionStatusByCustomer = new Map<
+    string,
+    "completed" | "abandoned"
+  >();
+  for (const c of allCommissions ?? []) {
+    const prev = commissionStatusByCustomer.get(c.customer_id);
+    // 같은 customer 에 여러 row 가 있을 수 있음 — completed 우선
+    if (prev === "completed") continue;
+    commissionStatusByCustomer.set(
+      c.customer_id,
+      (c.status as "completed" | "abandoned") ?? "completed"
+    );
+  }
 
   const centerMap = new Map((centers ?? []).map((c) => [c.id, c]));
   const homeMap = new Map((homes ?? []).map((h) => [h.id, h]));
@@ -439,12 +469,31 @@ export async function CustomerListPanel({
                     <TableHead className="w-32">베트남 이름</TableHead>
                     <TableHead className="w-28">한국 이름</TableHead>
                     <TableHead className="w-40">현재 단계</TableHead>
-                    <TableHead className="w-16">나이</TableHead>
+                    {columnPreset === "default" && (
+                      <>
+                        <TableHead className="w-16">나이</TableHead>
+                      </>
+                    )}
                     <TableHead className="w-36">전화</TableHead>
                     <TableHead className="w-20">비자</TableHead>
-                    <TableHead className="w-24">지역</TableHead>
-                    <TableHead className="w-40">교육원</TableHead>
+                    {columnPreset === "default" && (
+                      <>
+                        <TableHead className="w-24">지역</TableHead>
+                        <TableHead className="w-40">교육원</TableHead>
+                      </>
+                    )}
                     <TableHead className="w-40">요양원</TableHead>
+                    {columnPreset === "centerDetail" && (
+                      <>
+                        <TableHead className="w-24">상품</TableHead>
+                        <TableHead className="w-20 text-center">
+                          예약금
+                        </TableHead>
+                        <TableHead className="w-24 text-center">
+                          정산
+                        </TableHead>
+                      </>
+                    )}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -458,6 +507,12 @@ export async function CustomerListPanel({
                     const age = c.birth_year
                       ? new Date().getFullYear() - c.birth_year
                       : null;
+                    const reservationPaid =
+                      (reservationsByCustomer.get(c.id) ?? []).some(
+                        (r) => r.payment_date && r.payment_date.trim()
+                      );
+                    const commissionStatus =
+                      commissionStatusByCustomer.get(c.id) ?? null;
                     return (
                       <TableRow key={c.id}>
                         <TableCell className="font-medium">
@@ -483,11 +538,13 @@ export async function CustomerListPanel({
                             )}
                           </Link>
                         </TableCell>
-                        <TableCell>
-                          <Link href={`/customers/${c.id}`} className="block">
-                            {age ?? "—"}
-                          </Link>
-                        </TableCell>
+                        {columnPreset === "default" && (
+                          <TableCell>
+                            <Link href={`/customers/${c.id}`} className="block">
+                              {age ?? "—"}
+                            </Link>
+                          </TableCell>
+                        )}
                         <TableCell>
                           <Link href={`/customers/${c.id}`} className="block">
                             {dash(c.phone)}
@@ -498,21 +555,90 @@ export async function CustomerListPanel({
                             {dash(c.visa_type)}
                           </Link>
                         </TableCell>
-                        <TableCell>
-                          <Link href={`/customers/${c.id}`} className="block">
-                            {dash(c.desired_region)}
-                          </Link>
-                        </TableCell>
-                        <TableCell className="text-sm">
-                          <Link href={`/customers/${c.id}`} className="block">
-                            {center ? center.name : "—"}
-                          </Link>
-                        </TableCell>
+                        {columnPreset === "default" && (
+                          <>
+                            <TableCell>
+                              <Link
+                                href={`/customers/${c.id}`}
+                                className="block"
+                              >
+                                {dash(c.desired_region)}
+                              </Link>
+                            </TableCell>
+                            <TableCell className="text-sm">
+                              <Link
+                                href={`/customers/${c.id}`}
+                                className="block"
+                              >
+                                {center ? center.name : "—"}
+                              </Link>
+                            </TableCell>
+                          </>
+                        )}
                         <TableCell className="text-sm">
                           <Link href={`/customers/${c.id}`} className="block">
                             {home ? home.name : "—"}
                           </Link>
                         </TableCell>
+                        {columnPreset === "centerDetail" && (
+                          <>
+                            <TableCell className="text-xs">
+                              <Link
+                                href={`/customers/${c.id}`}
+                                className="block"
+                              >
+                                {c.product_type ? (
+                                  <Badge
+                                    variant="outline"
+                                    className="text-[10px] py-0"
+                                  >
+                                    {c.product_type}
+                                  </Badge>
+                                ) : (
+                                  <span className="text-muted-foreground/60">
+                                    —
+                                  </span>
+                                )}
+                              </Link>
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <Link
+                                href={`/customers/${c.id}`}
+                                className="block"
+                              >
+                                {reservationPaid ? (
+                                  <Badge className="bg-success/10 text-success border-success/20">
+                                    입금
+                                  </Badge>
+                                ) : (
+                                  <span className="text-xs text-muted-foreground">
+                                    —
+                                  </span>
+                                )}
+                              </Link>
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <Link
+                                href={`/customers/${c.id}`}
+                                className="block"
+                              >
+                                {commissionStatus === "completed" ? (
+                                  <Badge className="bg-success/10 text-success border-success/20">
+                                    완료
+                                  </Badge>
+                                ) : commissionStatus === "abandoned" ? (
+                                  <Badge className="bg-destructive/10 text-destructive border-destructive/20">
+                                    포기
+                                  </Badge>
+                                ) : (
+                                  <span className="text-xs text-muted-foreground">
+                                    —
+                                  </span>
+                                )}
+                              </Link>
+                            </TableCell>
+                          </>
+                        )}
                       </TableRow>
                     );
                   })}

@@ -29,7 +29,7 @@ export default async function CustomerDetailPage({
   const { id } = await params;
   const sp = await searchParams;
   const tab: TabKey =
-    VALID_TABS.includes(sp.tab as TabKey) ? (sp.tab as TabKey) : "progress";
+    VALID_TABS.includes(sp.tab as TabKey) ? (sp.tab as TabKey) : "overview";
   const supabase = await createClient();
 
   const { data: customer, error } = await supabase
