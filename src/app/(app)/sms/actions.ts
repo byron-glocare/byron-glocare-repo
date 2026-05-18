@@ -242,28 +242,16 @@ export async function sendCommissionSms(input: {
   });
   if (!send.ok) return { ok: false, error: `발송 실패: ${send.error}` };
 
-  // 이력 — center 1 row + customer 별 1 row
-  const customerIds = input.customerIds ?? [];
-  const rows = [
-    {
-      message_type: "commission_settlement",
-      target_center_id: input.centerId,
-      target_customer_id: null,
-      content: input.body,
-      sent_by: user.id,
-    },
-    ...customerIds.map((cid) => ({
-      message_type: "commission_settlement",
-      target_center_id: input.centerId,
-      target_customer_id: cid,
-      content: input.body,
-      sent_by: user.id,
-    })),
-  ];
-
-  const { error: insertError } = await supabase
-    .from("sms_messages")
-    .insert(rows);
+  // 이력 — center 단위 1 row 만. (실제 NHN 발송도 1회 — 각 customer 별로
+  // row 만들면 이력 화면이 부풀려져 보이고, target_center_id 가 있으면 화면에
+  // '교육원: …' 으로만 표시되어 customer 정보 안 보임 — 의미 낮음.)
+  const { error: insertError } = await supabase.from("sms_messages").insert({
+    message_type: "commission_settlement",
+    target_center_id: input.centerId,
+    target_customer_id: null,
+    content: input.body,
+    sent_by: user.id,
+  });
   if (insertError) {
     return {
       ok: true,
