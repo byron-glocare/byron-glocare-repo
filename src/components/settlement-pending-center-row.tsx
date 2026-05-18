@@ -522,10 +522,7 @@ function SingleConfirmDialog({
   return (
     <Dialog>
       <DialogTrigger
-        className={cn(
-          buttonVariants({ size: "sm", variant: "ghost" }),
-          "text-success hover:text-success hover:bg-success/5"
-        )}
+        className={buttonVariants({ size: "sm", variant: "outline" })}
         disabled={pending}
       >
         <Check className="size-4" />
