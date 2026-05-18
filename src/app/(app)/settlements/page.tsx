@@ -20,12 +20,15 @@ import {
   makeCompletedMap,
   toMonthFirstDay,
 } from "@/lib/commission";
+import { computeSettlementSummary } from "@/lib/settlement";
+import { computeCustomerStatus } from "@/lib/customer-status";
 import { SettlementPendingCenterRow } from "@/components/settlement-pending-center-row";
 import { SettlementHistoryRow } from "@/components/settlement-history-row";
+import { SettlementByCustomerView } from "@/components/settlement-by-customer-view";
 
 export const dynamic = "force-dynamic";
 
-const VALID_TABS = ["pending", "history"] as const;
+const VALID_TABS = ["pending", "history", "customers"] as const;
 type TabKey = (typeof VALID_TABS)[number];
 
 type SearchParams = Promise<{
@@ -319,6 +322,161 @@ export default async function SettlementsPage({
     }
   }
 
+  // =============================================================================
+  // tab='customers' — 교육생별 정산 요약 row 계산
+  // =============================================================================
+  type ByCustomerRow = {
+    id: string;
+    code: string;
+    name_vi: string | null;
+    name_kr: string | null;
+    stageLabel: string;
+    stageKey: string;
+    centerName: string | null;
+    careHomeName: string | null;
+    reservation: "완료" | "미완료" | "대상아님";
+    commission: "완료" | "미완료" | "대상아님";
+    event: "완료" | "미완료" | "대상아님";
+    welcomePack: "완료" | "미완료" | "대상아님";
+  };
+
+  let byCustomerRows: ByCustomerRow[] = [];
+  if (tab === "customers") {
+    const [
+      { data: allCustomers },
+      { data: allStatuses },
+      { data: allHomes },
+      { data: allClasses },
+      { data: allSms },
+      { data: allReservations },
+      { data: allWelcomePack },
+      { data: allEvents },
+    ] = await Promise.all([
+      supabase.from("customers").select("*"),
+      supabase.from("customer_statuses").select("*"),
+      supabase.from("care_homes").select("id, name"),
+      supabase.from("training_classes").select("id, class_type, start_date"),
+      supabase
+        .from("sms_messages")
+        .select("target_customer_id, message_type"),
+      supabase.from("reservation_payments").select("*"),
+      supabase.from("welcome_pack_payments").select("*"),
+      supabase.from("event_payments").select("*"),
+    ]);
+
+    const allCenterMap = new Map((centers ?? []).map((c) => [c.id, c]));
+    const allHomeMap = new Map((allHomes ?? []).map((h) => [h.id, h]));
+    const allClassMap = new Map((allClasses ?? []).map((c) => [c.id, c]));
+    const allStatusMap = new Map(
+      (allStatuses ?? []).map((s) => [s.customer_id, s])
+    );
+    const reservationsByCustomer = new Map<
+      string,
+      typeof allReservations
+    >();
+    for (const r of allReservations ?? []) {
+      const arr = reservationsByCustomer.get(r.customer_id) ?? [];
+      arr.push(r);
+      reservationsByCustomer.set(r.customer_id, arr);
+    }
+    const commissionsByCustomer = new Map<
+      string,
+      typeof commissions
+    >();
+    for (const c of commissions ?? []) {
+      const arr = commissionsByCustomer.get(c.customer_id) ?? [];
+      arr.push(c);
+      commissionsByCustomer.set(c.customer_id, arr);
+    }
+    const eventsByCustomer = new Map<string, typeof allEvents>();
+    for (const e of allEvents ?? []) {
+      const arr = eventsByCustomer.get(e.customer_id) ?? [];
+      arr.push(e);
+      eventsByCustomer.set(e.customer_id, arr);
+    }
+    const welcomePackByCustomerFull = new Map(
+      (allWelcomePack ?? []).map((w) => [w.customer_id, w])
+    );
+    const smsByCustomer = new Map<string, typeof allSms>();
+    for (const m of allSms ?? []) {
+      if (!m.target_customer_id) continue;
+      const arr = smsByCustomer.get(m.target_customer_id) ?? [];
+      arr.push(m);
+      smsByCustomer.set(m.target_customer_id, arr);
+    }
+
+    byCustomerRows = (allCustomers ?? []).map((c) => {
+      const status = allStatusMap.get(c.id) ?? null;
+      const trainingClass = c.training_class_id
+        ? allClassMap.get(c.training_class_id) ?? null
+        : null;
+      const center = c.training_center_id
+        ? allCenterMap.get(c.training_center_id) ?? null
+        : null;
+      const home = c.care_home_id
+        ? allHomeMap.get(c.care_home_id) ?? null
+        : null;
+
+      const stage = computeCustomerStatus({
+        customer: c,
+        status: status ?? {
+          customer_id: c.id,
+          intake_abandoned: false,
+          intake_confirmed: false,
+          study_abroad_consultation: false,
+          training_center_finding: false,
+          class_schedule_confirmation_needed: false,
+          training_reservation_abandoned: false,
+          class_intake_sms_sent: false,
+          certificate_acquired: false,
+          training_dropped: false,
+          welcome_pack_abandoned: false,
+          health_check_completed: false,
+          care_home_finding: false,
+          resume_sent: false,
+          interview_passed: false,
+          updated_at: new Date().toISOString(),
+        },
+        reservationPayments: reservationsByCustomer.get(c.id) ?? [],
+        welcomePackPayment: welcomePackByCustomerFull.get(c.id) ?? null,
+        smsMessages: smsByCustomer.get(c.id) ?? [],
+      });
+
+      const summary = computeSettlementSummary({
+        customer: c,
+        reservationPayments: reservationsByCustomer.get(c.id) ?? [],
+        commissionPayments: commissionsByCustomer.get(c.id) ?? [],
+        eventPayments: eventsByCustomer.get(c.id) ?? [],
+        welcomePackPayment: welcomePackByCustomerFull.get(c.id) ?? null,
+      });
+
+      return {
+        id: c.id,
+        code: c.code,
+        name_vi: c.name_vi,
+        name_kr: c.name_kr,
+        stageLabel: stage.label,
+        stageKey: stage.currentStage,
+        centerName: center?.name ?? null,
+        careHomeName: home?.name ?? null,
+        reservation: summary.reservation,
+        commission: summary.commission,
+        event: summary.event,
+        welcomePack: summary.welcomePack,
+        // trainingClass is referenced for fetch consistency
+        _classType: trainingClass?.class_type ?? null,
+      } as ByCustomerRow;
+    });
+
+    // 정렬: 단계 우선 → 이름
+    byCustomerRows.sort((a, b) =>
+      (a.name_vi ?? a.name_kr ?? "").localeCompare(
+        b.name_vi ?? b.name_kr ?? "",
+        "ko"
+      )
+    );
+  }
+
   return (
     <>
       <PageHeader
@@ -328,7 +486,7 @@ export default async function SettlementsPage({
       />
       <div className="p-6">
         <Tabs defaultValue={tab} className="w-full">
-          <TabsList className="grid grid-cols-2 w-full h-10">
+          <TabsList className="grid grid-cols-3 w-full h-10">
             <TabsTrigger
               value="pending"
               className="text-sm data-active:bg-primary data-active:text-primary-foreground data-active:font-semibold"
@@ -343,6 +501,12 @@ export default async function SettlementsPage({
               className="text-sm data-active:bg-primary data-active:text-primary-foreground data-active:font-semibold"
             >
               완료 내역
+            </TabsTrigger>
+            <TabsTrigger
+              value="customers"
+              className="text-sm data-active:bg-primary data-active:text-primary-foreground data-active:font-semibold"
+            >
+              교육생별 정산
             </TabsTrigger>
           </TabsList>
 
@@ -435,6 +599,10 @@ export default async function SettlementsPage({
                 />
               ))
             )}
+          </TabsContent>
+
+          <TabsContent value="customers" className="mt-6 space-y-4">
+            <SettlementByCustomerView rows={byCustomerRows} />
           </TabsContent>
         </Tabs>
       </div>
