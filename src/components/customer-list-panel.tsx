@@ -242,9 +242,14 @@ export async function CustomerListPanel({
   let bucketCustomerIds: Set<string> | null = null;
   let bucketLabel: string | null = null;
   if (bucketFilter) {
-    const { data: bAllCustomers } = await supabase
-      .from("customers")
-      .select("*");
+    const [{ data: bAllCustomers }, { data: bReminders }] = await Promise.all([
+      supabase.from("customers").select("*"),
+      // recontact_needed bucket 계산에 필요 — 미완료 reminder 만 (도래 비교는 dashboard.ts 안에서)
+      supabase
+        .from("customer_reminders")
+        .select("customer_id, remind_date, completed")
+        .eq("completed", false),
+    ]);
     const buckets = computeTaskBuckets({
       customers: bAllCustomers ?? [],
       statuses: statuses ?? [],
@@ -253,6 +258,7 @@ export async function CustomerListPanel({
       smsMessages: allSms ?? [],
       trainingCenters: centers ?? [],
       trainingClasses: allClasses,
+      reminders: bReminders ?? [],
     });
     const matched = buckets.find(
       (b) => b.key === (bucketFilter as TaskBucket["key"])
