@@ -165,13 +165,15 @@
 }
 
 @media print {
-  /* 인쇄 시 사이드바/페이지 헤더/.no-print 모두 숨김 */
+  /* 인쇄 시 사이드바/AppHeader/.no-print 모두 숨김.
+     주의: print page 안의 <header> 는 숨기지 않아야 — 정산서 제목 등이 거기
+     들어가므로 [data-app-header] 같은 정확한 selector 사용. */
   body {
     background: white !important;
   }
   aside,
   [data-slot="sidebar"],
-  header,
+  [data-app-header],
   .no-print {
     display: none !important;
   }

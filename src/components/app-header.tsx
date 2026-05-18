@@ -33,7 +33,10 @@ export function AppHeader({ email }: Props) {
   }
 
   return (
-    <header className="h-16 shrink-0 border-b border-border bg-card flex items-center justify-end px-6 gap-3">
+    <header
+      data-app-header
+      className="h-16 shrink-0 border-b border-border bg-card flex items-center justify-end px-6 gap-3"
+    >
       <DropdownMenu>
         <DropdownMenuTrigger className="inline-flex h-9 items-center gap-2 rounded-md px-3 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring">
           <UserIcon className="size-4" />
