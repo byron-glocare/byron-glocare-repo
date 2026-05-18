@@ -524,8 +524,8 @@ export async function CustomerListPanel({
                         <TableHead className="w-20 text-center">
                           예약금
                         </TableHead>
-                        <TableHead className="w-24 text-center">
-                          정산
+                        <TableHead className="w-28 text-center">
+                          소개비 정산
                         </TableHead>
                       </>
                     )}
@@ -663,12 +663,15 @@ export async function CustomerListPanel({
                                   </Badge>
                                 ) : commissionStatus === "abandoned" ? (
                                   <Badge className="bg-destructive/10 text-destructive border-destructive/20">
-                                    포기
+                                    수금 포기
                                   </Badge>
                                 ) : (
-                                  <span className="text-xs text-muted-foreground">
-                                    —
-                                  </span>
+                                  <Badge
+                                    variant="outline"
+                                    className="text-muted-foreground"
+                                  >
+                                    미완료
+                                  </Badge>
                                 )}
                               </Link>
                             </TableCell>
