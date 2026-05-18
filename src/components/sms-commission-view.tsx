@@ -453,8 +453,8 @@ function GroupRow({ group }: { group: Group }) {
               <Textarea
                 value={smsBody}
                 onChange={(e) => setSmsBody(e.target.value)}
-                rows={Math.min(20, Math.max(10, smsBody.split("\n").length))}
-                className="font-mono text-xs leading-relaxed"
+                rows={12}
+                className="font-mono text-xs leading-relaxed max-h-[40vh] overflow-y-auto resize-none"
                 disabled={smsSending}
               />
               <p className="text-[11px] text-muted-foreground mt-1">
