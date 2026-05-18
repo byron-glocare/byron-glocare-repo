@@ -79,7 +79,15 @@ type Props = {
   welcomePackPayment: WelcomePackPayment | null;
   commissionPayments: CommissionPayment[];
   eventPayments: EventPayment[];
-  trainingCenters: Pick<TrainingCenter, "id" | "code" | "name" | "region">[];
+  trainingCenters: Pick<
+    TrainingCenter,
+    | "id"
+    | "code"
+    | "name"
+    | "region"
+    | "tuition_fee_2026"
+    | "deduct_reservation_by_default"
+  >[];
   trainingClasses: Pick<
     TrainingClass,
     | "id"

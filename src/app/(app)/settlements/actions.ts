@@ -80,6 +80,86 @@ const revertBatchSchema = z.object({
 
 export type RevertBatchInput = z.input<typeof revertBatchSchema>;
 
+// =============================================================================
+// 1건 단위 완료/포기 처리 — 교육생 단위 (settlement_month 호출자가 지정)
+// =============================================================================
+
+const singleSettleSchema = z.object({
+  customer_id: z.string().uuid(),
+  training_center_id: z.string().uuid(),
+  settlement_month: z.string().regex(/^\d{4}-\d{2}-01$/, "월 포맷은 YYYY-MM-01"),
+  total_amount: z.number().int().nonnegative(),
+  deduction_amount: z.number().int().nonnegative(),
+  status: z.enum(["completed", "abandoned"]).default("completed"),
+});
+
+export type SingleSettleInput = z.input<typeof singleSettleSchema>;
+
+/**
+ * 1건 정산 처리 (완료 또는 수금 포기). 같은 customer 의 기존 row 가 있으면
+ * unique constraint (customer_id) 위반 — 호출자가 사전 revert 또는 중복 처리.
+ */
+export async function settleSingleCustomer(
+  input: SingleSettleInput
+): Promise<ActionResult<{ id: string }>> {
+  const parsed = singleSettleSchema.safeParse(input);
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.issues[0].message };
+  }
+
+  let supabase;
+  try {
+    ({ supabase } = await requireAuth());
+  } catch {
+    return { ok: false, error: "Unauthorized" };
+  }
+
+  const { data, error } = await supabase
+    .from("commission_payments")
+    .insert({
+      customer_id: parsed.data.customer_id,
+      training_center_id: parsed.data.training_center_id,
+      settlement_month: parsed.data.settlement_month,
+      total_amount: parsed.data.total_amount,
+      deduction_amount: parsed.data.deduction_amount,
+      status: parsed.data.status,
+    })
+    .select("id")
+    .single();
+
+  if (error) return { ok: false, error: error.message };
+
+  revalidatePath("/settlements");
+  revalidatePath(`/customers/${parsed.data.customer_id}`);
+  return { ok: true, data: { id: data.id as string } };
+}
+
+/**
+ * 교육생의 기존 정산 row 삭제 (= revert) — 1건 단위.
+ * 같은 customer 에 status 가 다른 row 가 여러 개 있을 수 없음 (unique on customer_id).
+ */
+export async function revertSingleCustomer(
+  customerId: string
+): Promise<ActionResult<{ deleted: number }>> {
+  let supabase;
+  try {
+    ({ supabase } = await requireAuth());
+  } catch {
+    return { ok: false, error: "Unauthorized" };
+  }
+
+  const { error, count } = await supabase
+    .from("commission_payments")
+    .delete({ count: "exact" })
+    .eq("customer_id", customerId);
+
+  if (error) return { ok: false, error: error.message };
+
+  revalidatePath("/settlements");
+  revalidatePath(`/customers/${customerId}`);
+  return { ok: true, data: { deleted: count ?? 0 } };
+}
+
 export async function revertSettlementBatch(
   input: RevertBatchInput
 ): Promise<ActionResult<{ deleted: number }>> {

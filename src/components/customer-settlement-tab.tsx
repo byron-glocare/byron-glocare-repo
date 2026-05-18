@@ -81,7 +81,10 @@ type Props = {
   commissionPayments: CommissionPayment[];
   eventPayments: EventPayment[];
   welcomePackPayment: WelcomePackPayment | null;
-  trainingCenters: Pick<TrainingCenter, "id" | "name" | "region">[];
+  trainingCenters: Pick<
+    TrainingCenter,
+    "id" | "name" | "region" | "tuition_fee_2026" | "deduct_reservation_by_default"
+  >[];
   /** 친구 소개용 고객 목록 (id, code, name_kr, name_vi) */
   customerOptions: {
     id: string;
@@ -163,9 +166,18 @@ export function CustomerSettlementTab({
         welcomePackReservationPaid={!!welcomePackPayment?.reservation_date}
       />
 
-      {/* 소개비(commission_payments) 는 /settlements 페이지에서 교육원×월
-          단위로 관리 — 여기 UI 없음. 정산 요약 뱃지는 위쪽에서 commissionPayments
-          prop 을 받아 자동 계산. */}
+      {/* 소개비 정산 — customer 단위 완료/포기/되돌리기 (0019) */}
+      <CommissionPaymentCard
+        customer={customer}
+        trainingCenter={
+          trainingCenters.find((c) => c.id === customer.training_center_id) ??
+          null
+        }
+        commissionPayment={commissionPayments[0] ?? null}
+        reservationPayments={reservationPayments}
+        welcomePackPayment={welcomePackPayment}
+        educationReservationAmount={trainingReservationFee}
+      />
 
       {/* 이벤트 */}
       <EventPaymentsCard
@@ -755,7 +767,10 @@ function WelcomePackPaymentCard({
 }: {
   customer: Customer;
   payment: WelcomePackPayment | null;
-  trainingCenters: Pick<TrainingCenter, "id" | "name" | "region">[];
+  trainingCenters: Pick<
+    TrainingCenter,
+    "id" | "name" | "region" | "tuition_fee_2026" | "deduct_reservation_by_default"
+  >[];
   defaultTotalPrice: number;
   defaultDiscount: number;
   defaultReservation: number;
@@ -1024,4 +1039,252 @@ function toStringArray(v: Json | undefined, fallback: string[]): string[] {
     return v as string[];
   }
   return fallback;
+}
+
+// =============================================================================
+// 소개비 정산 카드 (0019 — customer 단위)
+// =============================================================================
+
+function CommissionPaymentCard({
+  customer,
+  trainingCenter,
+  commissionPayment,
+  reservationPayments,
+  welcomePackPayment,
+  educationReservationAmount,
+}: {
+  customer: Customer;
+  trainingCenter: Pick<
+    TrainingCenter,
+    "id" | "name" | "tuition_fee_2026" | "deduct_reservation_by_default"
+  > | null;
+  commissionPayment: CommissionPayment | null;
+  reservationPayments: ReservationPayment[];
+  welcomePackPayment: WelcomePackPayment | null;
+  educationReservationAmount: number;
+}) {
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+
+  // 교육원 미매칭 — 정산 자체 불가
+  if (!trainingCenter) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <Receipt className="size-4" />
+            소개비 정산
+          </CardTitle>
+          <CardDescription className="text-xs">
+            교육원이 매칭되지 않아 정산 대상 아님.
+          </CardDescription>
+        </CardHeader>
+      </Card>
+    );
+  }
+
+  // 자동 계산 (computeCommissionAmount 와 동일 로직 inline — circular import 회피)
+  const tuitionBase = Math.round(
+    (trainingCenter.tuition_fee_2026 ?? 0) * 0.25
+  );
+  const wantsDeduct = trainingCenter.deduct_reservation_by_default;
+  const paidReservation = reservationPayments.some(
+    (r) => r.payment_date && r.payment_date.trim()
+  );
+  const hasWelcomePackReservation = !!welcomePackPayment?.reservation_date;
+  let autoDeduction = 0;
+  let deductionReason = "공제 없음";
+  if (!wantsDeduct) {
+    deductionReason = "교육원 설정: 공제 안 함";
+  } else if (hasWelcomePackReservation) {
+    deductionReason = "웰컴팩 예약금으로 교육 예약금 면제";
+  } else if (!paidReservation) {
+    deductionReason = "교육 예약금 미납";
+  } else {
+    autoDeduction = educationReservationAmount;
+    deductionReason = "교육 예약금 공제";
+  }
+  const net = Math.max(0, tuitionBase - autoDeduction);
+
+  // 이미 정산된 경우 — 상태 표시 + 되돌리기
+  if (commissionPayment) {
+    const isAbandoned = commissionPayment.status === "abandoned";
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <Receipt className="size-4" />
+            소개비 정산
+            {isAbandoned ? (
+              <Badge className="bg-destructive/10 text-destructive border-destructive/20">
+                수금 포기
+              </Badge>
+            ) : (
+              <Badge className="bg-success/10 text-success border-success/20">
+                완료
+              </Badge>
+            )}
+          </CardTitle>
+          <CardDescription className="text-xs">
+            {commissionPayment.settlement_month?.slice(0, 7)} 처리 ·{" "}
+            {formatDate(commissionPayment.completed_at?.slice(0, 10) ?? "")}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-3 gap-3 text-sm mb-3">
+            <div>
+              <div className="text-xs text-muted-foreground">수강료 × 25%</div>
+              <div className="font-mono">
+                {formatCurrency(commissionPayment.total_amount)}
+              </div>
+            </div>
+            <div>
+              <div className="text-xs text-muted-foreground">공제</div>
+              <div className="font-mono">
+                −{formatCurrency(commissionPayment.deduction_amount)}
+              </div>
+            </div>
+            <div>
+              <div className="text-xs text-muted-foreground">순 정산액</div>
+              <div className="font-semibold font-mono">
+                {formatCurrency(
+                  Math.max(
+                    0,
+                    commissionPayment.total_amount -
+                      commissionPayment.deduction_amount
+                  )
+                )}
+              </div>
+            </div>
+          </div>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            onClick={() => {
+              if (!confirm("이 정산 처리를 되돌리시겠습니까? 정산 예정으로 돌아갑니다.")) return;
+              startTransition(async () => {
+                const { revertSingleCustomer } = await import(
+                  "@/app/(app)/settlements/actions"
+                );
+                const result = await revertSingleCustomer(customer.id);
+                if (!result.ok) {
+                  toast.error("되돌리기 실패", {
+                    description: result.error,
+                  });
+                  return;
+                }
+                toast.success("정산 예정으로 되돌렸습니다.");
+                router.refresh();
+              });
+            }}
+            disabled={pending}
+          >
+            {pending ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <X className="size-4" />
+            )}
+            되돌리기
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // 아직 정산 안 됨 — 자동 계산값 표시 + [완료] / [수금 포기]
+  function handleSettle(status: "completed" | "abandoned") {
+    const label = status === "completed" ? "정산 완료" : "수금 포기";
+    if (
+      !confirm(
+        `${customer.name_kr || customer.name_vi || "이 교육생"}을(를) "${label}" 처리합니다.\n수강료 25%: ${formatCurrency(tuitionBase)} / 공제: ${formatCurrency(autoDeduction)} / 순 정산액: ${formatCurrency(net)}`
+      )
+    ) {
+      return;
+    }
+    startTransition(async () => {
+      const { settleSingleCustomer } = await import(
+        "@/app/(app)/settlements/actions"
+      );
+      // settlement_month 자동 — 현재 KST 월
+      const now = new Date();
+      const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-01`;
+      const result = await settleSingleCustomer({
+        customer_id: customer.id,
+        training_center_id: trainingCenter!.id,
+        settlement_month: month,
+        total_amount: tuitionBase,
+        deduction_amount: autoDeduction,
+        status,
+      });
+      if (!result.ok) {
+        toast.error(`${label} 실패`, { description: result.error });
+        return;
+      }
+      toast.success(`${label} 처리됨`);
+      router.refresh();
+    });
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base flex items-center gap-2">
+          <Receipt className="size-4" />
+          소개비 정산
+          <Badge variant="outline" className="text-muted-foreground">
+            미완료
+          </Badge>
+        </CardTitle>
+        <CardDescription className="text-xs">
+          교육원 단위 정산은 정산 페이지에서 일괄 처리 가능. 여기서는 이 교육생만
+          단독 처리.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-3 gap-3 text-sm mb-3">
+          <div>
+            <div className="text-xs text-muted-foreground">수강료 × 25%</div>
+            <div className="font-mono">{formatCurrency(tuitionBase)}</div>
+          </div>
+          <div>
+            <div className="text-xs text-muted-foreground">
+              공제 ({deductionReason})
+            </div>
+            <div className="font-mono">−{formatCurrency(autoDeduction)}</div>
+          </div>
+          <div>
+            <div className="text-xs text-muted-foreground">순 정산액</div>
+            <div className="font-semibold font-mono">{formatCurrency(net)}</div>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button
+            type="button"
+            size="sm"
+            onClick={() => handleSettle("completed")}
+            disabled={pending}
+          >
+            {pending ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <Check className="size-4" />
+            )}
+            정산 완료
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            onClick={() => handleSettle("abandoned")}
+            disabled={pending}
+            className="text-destructive border-destructive/30 hover:bg-destructive/5 hover:text-destructive"
+          >
+            <MinusCircle className="size-4" />
+            수금 포기
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
 }

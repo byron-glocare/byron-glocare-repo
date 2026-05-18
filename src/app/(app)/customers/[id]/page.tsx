@@ -96,7 +96,9 @@ export default async function CustomerDetailPage({
       .eq("target_customer_id", id),
     supabase
       .from("training_centers")
-      .select("id, code, name, region, schedule_update_needed")
+      .select(
+        "id, code, name, region, schedule_update_needed, tuition_fee_2026, deduct_reservation_by_default"
+      )
       .order("name"),
     supabase
       .from("training_classes")

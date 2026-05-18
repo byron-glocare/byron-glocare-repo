@@ -72,9 +72,11 @@ export default async function SettlementsPage({
     supabase
       .from("training_centers")
       .select(
-        "id, name, code, region, tuition_fee_2026, deduct_reservation_by_default"
+        "id, name, code, region, tuition_fee_2026, deduct_reservation_by_default, business_number, director_name, email"
       ),
-    supabase.from("training_classes").select("id, class_type"),
+    supabase
+      .from("training_classes")
+      .select("id, class_type, start_date"),
     supabase
       .from("reservation_payments")
       .select("customer_id, amount, payment_date"),
@@ -130,12 +132,18 @@ export default async function SettlementsPage({
   }
   const completedMap = makeCompletedMap(commissions ?? []);
 
-  // 정산 예정 계산 (전체 미완료 + due <= 이번 달 말)
+  // 정산 예정 계산 — eligibility 통과 + 미완료 (도래 무관 전체).
+  // isDue 플래그로 체크박스 default 결정.
   type PendingRow = {
     customerId: string;
     customerName: string;
     customerCode: string;
+    classStartDate: string | null;
+    classTypeLabel: string | null;
+    tuitionFee: number;
     dueDate: string;
+    /** 정산 예정일 도래 여부 (오늘 < dueDate <= 이번 달 말) */
+    isDue: boolean;
     tuitionBase: number;
     defaultDeduction: number;
     deductionReason: string;
@@ -161,7 +169,7 @@ export default async function SettlementsPage({
     const elig = checkEligibility({ customer, status, trainingClass });
     if (!elig.eligible) continue;
     if (completedMap.has(customer.id)) continue;
-    if (!isPendingForMonth(elig.dueDate, currentMonth, false)) continue;
+    // 도래 무관 — 정산 안 끝난 모든 교육생 포함. 도래 여부는 isDue 로.
 
     const center = centerMap.get(customer.training_center_id);
     if (!center) continue;
@@ -173,29 +181,42 @@ export default async function SettlementsPage({
       educationReservationAmount,
     });
 
+    const isDue = isPendingForMonth(elig.dueDate, currentMonth, false);
+
     const row: PendingRow = {
       customerId: customer.id,
       customerName: customer.name_kr || customer.name_vi || "(이름 없음)",
       customerCode: customer.code,
+      classStartDate: trainingClass?.start_date ?? null,
+      classTypeLabel: trainingClass
+        ? trainingClass.class_type === "weekday"
+          ? "주간"
+          : "야간"
+        : null,
+      tuitionFee: center.tuition_fee_2026 ?? 0,
       dueDate: elig.dueDate,
+      isDue,
       tuitionBase: amount.tuitionBase,
       defaultDeduction: amount.defaultDeduction,
       deductionReason: amount.deductionReason,
     };
 
+    // 합계는 default 체크된 (isDue) 것만 — 도래 안 한 건 default 체크 OFF.
+    const addBase = row.isDue ? row.tuitionBase : 0;
+    const addDed = row.isDue ? row.defaultDeduction : 0;
     const group = pendingByCenter.get(center.id);
     if (group) {
       group.rows.push(row);
-      group.totalBase += row.tuitionBase;
-      group.totalDeduction += row.defaultDeduction;
-      group.totalNet += row.tuitionBase - row.defaultDeduction;
+      group.totalBase += addBase;
+      group.totalDeduction += addDed;
+      group.totalNet += addBase - addDed;
     } else {
       pendingByCenter.set(center.id, {
         center,
         rows: [row],
-        totalBase: row.tuitionBase,
-        totalDeduction: row.defaultDeduction,
-        totalNet: row.tuitionBase - row.defaultDeduction,
+        totalBase: addBase,
+        totalDeduction: addDed,
+        totalNet: addBase - addDed,
       });
     }
   }

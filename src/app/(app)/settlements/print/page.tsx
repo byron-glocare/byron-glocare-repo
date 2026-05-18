@@ -20,6 +20,12 @@ export const dynamic = "force-dynamic";
 type SearchParams = Promise<{
   center?: string;
   month?: string; // YYYY-MM
+  /**
+   * 선택된 교육생 + 공제 override.
+   * 형식: "id1:공제,id2:공제,..." (공제 0 이면 ":0")
+   * 비어있으면 자동 (default 정산 예정 + 도래한 교육생).
+   */
+  items?: string;
 }>;
 
 /**
@@ -39,6 +45,20 @@ export default async function SettlementsPrintPage({
   const month = sp.month
     ? toMonthFirstDay(sp.month + "-01")
     : kstCurrentMonthFirstDay();
+
+  // 사용자가 정산 예정 화면에서 선택/수정한 교육생 + 공제 override
+  // 형식: "id1:공제,id2:공제,..."
+  const itemsParam = sp.items?.trim();
+  let selectedOverrides: Map<string, number> | null = null;
+  if (itemsParam) {
+    selectedOverrides = new Map();
+    for (const tok of itemsParam.split(",")) {
+      const [id, dedStr] = tok.split(":");
+      if (!id) continue;
+      const ded = Number(dedStr ?? "");
+      selectedOverrides.set(id, Number.isFinite(ded) ? Math.max(0, ded) : 0);
+    }
+  }
 
   const supabase = await createClient();
 
@@ -145,7 +165,14 @@ export default async function SettlementsPrintPage({
     const elig = checkEligibility({ customer, status, trainingClass });
     if (!elig.eligible) continue;
     if (completedMap.has(customer.id)) continue;
-    if (!isPendingForMonth(elig.dueDate, month, false)) continue;
+
+    // selectedOverrides 가 있으면 선택된 customer 만 포함 + override 공제 적용.
+    // 없으면 default = 도래한 customer 만 + 자동 공제.
+    if (selectedOverrides) {
+      if (!selectedOverrides.has(customer.id)) continue;
+    } else {
+      if (!isPendingForMonth(elig.dueDate, month, false)) continue;
+    }
 
     const amount = computeCommissionAmount({
       center,
@@ -153,6 +180,10 @@ export default async function SettlementsPrintPage({
       welcomePackPayment: welcomePackByCustomer.get(customer.id) ?? null,
       educationReservationAmount,
     });
+
+    const deduction = selectedOverrides
+      ? selectedOverrides.get(customer.id) ?? amount.defaultDeduction
+      : amount.defaultDeduction;
 
     rows.push({
       customerId: customer.id,
@@ -164,8 +195,8 @@ export default async function SettlementsPrintPage({
           : "야간"
         : null,
       tuitionBase: amount.tuitionBase,
-      deduction: amount.defaultDeduction,
-      net: amount.tuitionBase - amount.defaultDeduction,
+      deduction,
+      net: amount.tuitionBase - deduction,
       deductionReason: amount.deductionReason,
     });
   }
@@ -210,6 +241,7 @@ export default async function SettlementsPrintPage({
       {/* print CSS — 사이드바/페이지 헤더는 별도 layout 에서 처리되므로 본 페이지는
           깔끔한 A4 컨테이너로 자체 디자인 */}
       <style>{`
+        @page { margin: 18mm 16mm; }
         @media print {
           body { background: white !important; }
           aside, [data-slot="sidebar"], header.sticky, .no-print { display: none !important; }
