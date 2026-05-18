@@ -79,7 +79,6 @@ stage 매핑 예시:
 - intake_abandoned: "접수 포기하겠다" / "상담 그만" 명시
 - study_abroad_consultation: "유학으로 전환" 명시
 - training_center_finding: "교육원 아직 못 찾음" / "교육원 발굴 요청" 명시 (ON)
-- class_schedule_confirmation_needed: "강의 일정 교육원에 문의 필요" / "강의 일정 확인 요청" 명시 (ON)
 - training_reservation_abandoned: "교육 예약 포기" 명시
 - certificate_acquired: "자격증 취득", "시험 합격" 명시 (ON)
 - training_dropped: "교육 중 그만둠", "교육 드랍" 명시 (ON)

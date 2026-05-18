@@ -140,6 +140,17 @@ export type StatusInputs = {
   reservationPayments: Pick<ReservationPayment, "payment_date">[];
   welcomePackPayment: Pick<WelcomePackPayment, "reservation_date"> | null;
   smsMessages: Pick<SmsMessage, "message_type">[];
+  /**
+   * 강의 일정 업데이트 필요 여부 (derived) — 0017.
+   * 호출 측에서 lib/training-class-schedule 의 customerScheduleStatus 결과를
+   * 주입. 기존 status.class_schedule_confirmation_needed 토글은 더 이상
+   * cascade 에 사용되지 않음 (legacy).
+   *
+   * - true  : 강의 일정 업데이트 필요 (교육원 단계에서 처리해야 함)
+   * - false : 완료 (강의 지정됐거나, 교육원이 미래 강의 보유)
+   * - 생략시 false 로 간주 (영향 없음).
+   */
+  scheduleNeedsUpdate?: boolean;
   /** 오늘 날짜 (YYYY-MM-DD) — 테스트에서 주입 가능 */
   today?: string;
 };
@@ -209,8 +220,10 @@ export function computeTrainingReservation(
 
   const centerFinding = status.training_center_finding;
   const centerMatched = !!customer.training_center_id;
+  // 0017: 교육원 단위 derived. 호출 측에서 customerScheduleStatus 결과 주입.
+  // legacy 컬럼 status.class_schedule_confirmation_needed 는 fallback 으로만.
   const classScheduleConfirmationNeeded =
-    status.class_schedule_confirmation_needed;
+    inputs.scheduleNeedsUpdate ?? status.class_schedule_confirmation_needed;
   const classMatched = !!customer.training_class_id;
   // 웰컴팩 예약금이 잡혀있으면 교육 예약금은 면제 → 입금된 것으로 간주.
   // (정산 로직 commission.ts 와 동일한 기준)

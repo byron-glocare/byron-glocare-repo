@@ -72,6 +72,7 @@ const EMPTY: TrainingCenterInput = {
   naeil_card_eligible: false,
   contract_active: false,
   partnership_terminated: false,
+  schedule_update_needed: false,
   deduct_reservation_by_default: true,
   website_url: null,
   notes: null,
@@ -247,6 +248,31 @@ export function TrainingCenterForm({
                       <FormLabel className="text-sm">제휴 종료</FormLabel>
                       <div className="text-xs text-muted-foreground">
                         ON = 제휴 종료 (리스트 필터 용도)
+                      </div>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="schedule_update_needed"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-md border border-border p-3">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-sm">
+                        강의 일정 업데이트 필요
+                      </FormLabel>
+                      <div className="text-xs text-muted-foreground">
+                        ON = 강의 미지정 교육생들에게 [업데이트 필요] 강제
+                        표시. 미래 강의 (오늘+10일 이후) 가 1개라도 등록되면
+                        자동으로 [완료] 가 되어야 의미가 있으므로, 강의
+                        등록 후 직접 OFF 해야 합니다.
                       </div>
                     </div>
                     <FormControl>

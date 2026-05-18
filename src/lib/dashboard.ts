@@ -8,10 +8,17 @@ import type {
   CustomerReminder,
   CustomerStatus,
   ReservationPayment,
+  TrainingCenter,
+  TrainingClass,
   WelcomePackPayment,
   SmsMessage,
 } from "@/types/database";
 import { computeCustomerStatus, type StageSummary } from "./customer-status";
+import {
+  centerScheduleNeedsUpdate,
+  countFutureClassesByCenter,
+  customerScheduleStatus,
+} from "./training-class-schedule";
 
 // =============================================================================
 // 입력 묶음
@@ -31,6 +38,13 @@ export type DashboardInputs = {
     CustomerReminder,
     "customer_id" | "remind_date" | "completed"
   >[];
+  /**
+   * 교육원 (id + schedule_update_needed). 강의 일정 업데이트 derived 계산에
+   * 사용.
+   */
+  trainingCenters?: Pick<TrainingCenter, "id" | "name" | "schedule_update_needed">[];
+  /** 강의 일정 (training_center_id + start_date). 미래 강의 카운트용. */
+  trainingClasses?: Pick<TrainingClass, "training_center_id" | "start_date">[];
   today?: string;
 };
 
@@ -83,11 +97,39 @@ function enrich(inputs: DashboardInputs) {
     else smsByCustomer.set(m.target_customer_id, [m]);
   }
 
+  // 0017: 교육원별 derived schedule 필요 여부
+  const centersById = new Map(
+    (inputs.trainingCenters ?? []).map((c) => [c.id, c])
+  );
+  const futureClassesByCenter = countFutureClassesByCenter(
+    inputs.trainingClasses ?? [],
+    inputs.today
+  );
+
   return inputs.customers.map((customer) => {
     const status = statusMap.get(customer.id) ?? defaultStatus(customer.id);
     const reservationPayments = reservationsByCustomer.get(customer.id) ?? [];
     const welcomePackPayment = welcomeByCustomer.get(customer.id) ?? null;
     const smsMessages = smsByCustomer.get(customer.id) ?? [];
+
+    // 교육원이 매칭됐을 때만 derived 계산. 미매칭이면 N/A.
+    let scheduleNeedsUpdate: boolean | undefined;
+    if (customer.training_center_id) {
+      const center = centersById.get(customer.training_center_id);
+      const centerNeedsUpdate = center
+        ? centerScheduleNeedsUpdate({
+            scheduleUpdateNeeded: center.schedule_update_needed,
+            hasFutureClass:
+              (futureClassesByCenter.get(customer.training_center_id) ?? 0) > 0,
+          })
+        : null;
+      const cs = customerScheduleStatus({
+        trainingCenterId: customer.training_center_id,
+        trainingClassId: customer.training_class_id,
+        centerNeedsUpdate,
+      });
+      scheduleNeedsUpdate = cs === "needs_update";
+    }
 
     const summary = computeCustomerStatus({
       customer,
@@ -95,6 +137,7 @@ function enrich(inputs: DashboardInputs) {
       reservationPayments,
       welcomePackPayment,
       smsMessages,
+      scheduleNeedsUpdate,
       today: inputs.today,
     });
     return { customer, status, summary };
@@ -197,8 +240,11 @@ export function computeTaskBuckets(inputs: DashboardInputs): TaskBucket[] {
       centerMatching.push(brief);
     }
 
-    // 7-4 강의 일정 확인 필요 — 수동 토글 (class_schedule_confirmation_needed) 기반.
-    // 교육원에 강의 일정 확인이 필요하다고 사용자가 명시한 고객만.
+    // 7-4 강의 일정 업데이트 필요 — 0017 derived (교육원 단위).
+    // tr.classScheduleConfirmationNeeded 는 호출 측 (page) 에서 주입된
+    // scheduleNeedsUpdate (= 교육원 schedule_update_needed=true 또는
+    // 교육원에 미래 강의 없음 + 교육생 강의 미지정) 결과.
+    // 카드 클릭 시 교육원 리스트로 이동 (TaskCards.hrefFor 분기).
     if (
       !excluded &&
       !paused &&
@@ -270,7 +316,7 @@ export function computeTaskBuckets(inputs: DashboardInputs): TaskBucket[] {
   return [
     { key: "center_finding", label: "교육원 발굴 필요", customers: centerFinding, count: centerFinding.length },
     { key: "center_matching", label: "교육원 매칭 필요", customers: centerMatching, count: centerMatching.length },
-    { key: "class_matching", label: "강의 일정 확인 필요", customers: classMatching, count: classMatching.length },
+    { key: "class_matching", label: "강의 일정 업데이트 필요", customers: classMatching, count: classMatching.length },
     { key: "reservation_payment", label: "예약금 입금 대기", customers: reservationPayment, count: reservationPayment.length },
     { key: "intro_sms", label: "강의 접수 메시지 발송", customers: introSms, count: introSms.length },
     { key: "care_home_finding", label: "요양원 발굴 필요", customers: careHomeFinding, count: careHomeFinding.length },

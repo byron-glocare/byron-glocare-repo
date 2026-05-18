@@ -61,7 +61,7 @@ const StatusSuggestionSchema = z
     intake_abandoned: z.boolean().optional(),
     study_abroad_consultation: z.boolean().optional(),
     training_center_finding: z.boolean().optional(),
-    class_schedule_confirmation_needed: z.boolean().optional(),
+    // class_schedule_confirmation_needed 제거 (0017) — 이제 교육원 단위 derived
     training_reservation_abandoned: z.boolean().optional(),
     certificate_acquired: z.boolean().optional(),
     training_dropped: z.boolean().optional(),

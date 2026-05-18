@@ -5,6 +5,11 @@ import { PageHeader } from "@/components/page-header";
 import { CustomerEditTabs } from "@/components/customer-edit-tabs";
 import { Badge } from "@/components/ui/badge";
 import { computeCustomerStatus } from "@/lib/customer-status";
+import {
+  centerScheduleNeedsUpdate,
+  countFutureClassesByCenter,
+  customerScheduleStatus,
+} from "@/lib/training-class-schedule";
 import { isCareHomeSectionLocked } from "@/lib/stage-locks";
 import { formatDate, dash } from "@/lib/format";
 
@@ -91,7 +96,7 @@ export default async function CustomerDetailPage({
       .eq("target_customer_id", id),
     supabase
       .from("training_centers")
-      .select("id, code, name, region")
+      .select("id, code, name, region, schedule_update_needed")
       .order("name"),
     supabase
       .from("training_classes")
@@ -138,12 +143,35 @@ export default async function CustomerDetailPage({
     updated_at: new Date().toISOString(),
   };
 
+  // 0017: 강의 일정 업데이트 필요 derived
+  const futureClassesByCenter = countFutureClassesByCenter(classes ?? []);
+  const matchedCenter = customer.training_center_id
+    ? (centers ?? []).find((c) => c.id === customer.training_center_id)
+    : null;
+  const centerNeedsUpdate =
+    matchedCenter && "schedule_update_needed" in matchedCenter
+      ? centerScheduleNeedsUpdate({
+          scheduleUpdateNeeded:
+            (matchedCenter as { schedule_update_needed: boolean })
+              .schedule_update_needed,
+          hasFutureClass:
+            (futureClassesByCenter.get(matchedCenter.id) ?? 0) > 0,
+        })
+      : null;
+  const scheduleNeedsUpdate =
+    customerScheduleStatus({
+      trainingCenterId: customer.training_center_id,
+      trainingClassId: customer.training_class_id,
+      centerNeedsUpdate,
+    }) === "needs_update";
+
   const summary = computeCustomerStatus({
     customer,
     status: effectiveStatus,
     reservationPayments,
     welcomePackPayment,
     smsMessages: smsMessages ?? [],
+    scheduleNeedsUpdate,
   });
 
   // 기본 정보 탭의 요양원 섹션 잠금 여부 — 진행 단계 탭의 종료 플래그 스코프와 공유
@@ -216,6 +244,7 @@ export default async function CustomerDetailPage({
             reservationPayments,
             welcomePackPayment,
             smsMessages: smsMessages ?? [],
+            scheduleNeedsUpdate,
           }}
           reminders={reminders}
           careHomeLocked={careHomeLocked}

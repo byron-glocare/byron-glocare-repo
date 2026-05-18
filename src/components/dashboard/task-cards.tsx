@@ -435,5 +435,9 @@ function TaskCardDraggable({
 }
 
 function hrefFor(key: TaskBucket["key"]): string {
+  // 강의 일정 업데이트 필요는 교육원 단위 — 교육원 리스트로 이동
+  if (key === "class_matching") {
+    return `/training-centers?schedule=needs_update`;
+  }
   return `/customers?bucket=${key}`;
 }

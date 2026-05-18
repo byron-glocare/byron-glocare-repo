@@ -17,6 +17,10 @@ import {
 import { Card } from "@/components/ui/card";
 import { dash, formatCurrency } from "@/lib/format";
 import { REGION1_OPTIONS } from "@/lib/region-options";
+import {
+  centerScheduleNeedsUpdate,
+  countFutureClassesByCenter,
+} from "@/lib/training-class-schedule";
 
 export const dynamic = "force-dynamic";
 
@@ -30,6 +34,13 @@ type SearchParams = Promise<{
    *  - "terminated"        : 제휴 종료 (partnership_terminated=true)
    */
   status?: string;
+  /**
+   * 강의 정보 필터 (0017 derived):
+   *  - undefined/"all" (기본) : 전체
+   *  - "ok"                   : 업데이트 완료
+   *  - "needs_update"         : 업데이트 필요
+   */
+  schedule?: string;
 }>;
 
 export default async function TrainingCentersPage({
@@ -44,14 +55,19 @@ export default async function TrainingCentersPage({
   const statusRaw = (sp.status ?? "").trim();
   const statusFilter: "all" | "active" | "terminated" =
     statusRaw === "all" || statusRaw === "terminated" ? statusRaw : "active";
+  const scheduleRaw = (sp.schedule ?? "").trim();
+  const scheduleFilter: "all" | "ok" | "needs_update" =
+    scheduleRaw === "ok" || scheduleRaw === "needs_update"
+      ? scheduleRaw
+      : "all";
 
   const supabase = await createClient();
 
-  // 교육원 목록 — q/region/status 필터 DB 레벨 적용
+  // 교육원 목록 — q/region/status 필터 DB 레벨 적용 (schedule 은 derived 라 메모리)
   let query = supabase
     .from("training_centers")
     .select(
-      "id, region, name, director_name, phone, tuition_fee_2026, naeil_card_eligible, contract_active, partnership_terminated"
+      "id, region, name, director_name, phone, tuition_fee_2026, naeil_card_eligible, contract_active, partnership_terminated, schedule_update_needed"
     )
     .order("name", { ascending: true });
 
@@ -75,6 +91,31 @@ export default async function TrainingCentersPage({
   }
 
   const { data: centers, error } = await query;
+
+  // 강의 일정 derived — 모든 강의 미래 카운트
+  const { data: allClasses } = await supabase
+    .from("training_classes")
+    .select("training_center_id, start_date");
+  const futureClassesByCenter = countFutureClassesByCenter(allClasses ?? []);
+
+  // 교육원별 derived schedule 상태
+  const scheduleStatusByCenter = new Map<string, boolean>(); // true = needs update
+  for (const c of centers ?? []) {
+    scheduleStatusByCenter.set(
+      c.id,
+      centerScheduleNeedsUpdate({
+        scheduleUpdateNeeded: c.schedule_update_needed,
+        hasFutureClass: (futureClassesByCenter.get(c.id) ?? 0) > 0,
+      })
+    );
+  }
+
+  // schedule 필터를 메모리 단계에서 적용
+  const visibleCenters = (centers ?? []).filter((c) => {
+    if (scheduleFilter === "all") return true;
+    const needs = scheduleStatusByCenter.get(c.id) ?? false;
+    return scheduleFilter === "needs_update" ? needs : !needs;
+  });
 
   // 교육원별 "실제 등록 교육생" 수 집계.
   const { data: enrolled } = await supabase
@@ -111,7 +152,12 @@ export default async function TrainingCentersPage({
     );
   }
 
-  const hasAnyFilter = !!(q || regionFilter || statusFilter !== "active");
+  const hasAnyFilter = !!(
+    q ||
+    regionFilter ||
+    statusFilter !== "active" ||
+    scheduleFilter !== "all"
+  );
 
   return (
     <>
@@ -173,6 +219,20 @@ export default async function TrainingCentersPage({
               <option value="terminated">제휴 종료</option>
             </select>
           </div>
+          <div>
+            <label className="text-xs text-muted-foreground block mb-1">
+              강의 정보
+            </label>
+            <select
+              name="schedule"
+              defaultValue={scheduleFilter}
+              className="h-8 rounded-md border border-input bg-background px-2 text-sm min-w-32"
+            >
+              <option value="all">전체</option>
+              <option value="ok">업데이트 완료</option>
+              <option value="needs_update">업데이트 필요</option>
+            </select>
+          </div>
           <button type="submit" className={buttonVariants()}>
             적용
           </button>
@@ -190,7 +250,7 @@ export default async function TrainingCentersPage({
           <Card className="p-6 text-sm text-destructive">
             데이터를 불러오지 못했습니다: {error.message}
           </Card>
-        ) : !centers || centers.length === 0 ? (
+        ) : !visibleCenters || visibleCenters.length === 0 ? (
           <Card className="p-12 text-center text-sm text-muted-foreground">
             {hasAnyFilter ? (
               "조건에 맞는 교육원이 없습니다."
@@ -217,12 +277,13 @@ export default async function TrainingCentersPage({
                   <TableHead className="w-36">연락처</TableHead>
                   <TableHead className="w-28 text-right">2026 수강료</TableHead>
                   <TableHead className="w-24 text-center">교육생</TableHead>
+                  <TableHead className="w-32 text-center">강의 정보</TableHead>
                   <TableHead className="w-28 text-center">내일배움</TableHead>
                   <TableHead className="w-24 text-center">계약</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {centers.map((c) => (
+                {visibleCenters.map((c) => (
                   <TableRow key={c.id} className="cursor-pointer">
                     <TableCell className="font-medium">
                       <Link
@@ -265,6 +326,19 @@ export default async function TrainingCentersPage({
                         <Badge variant="secondary">
                           {countMap.get(c.id) ?? 0}명
                         </Badge>
+                      </Link>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Link href={`/training-centers/${c.id}`} className="block">
+                        {scheduleStatusByCenter.get(c.id) ? (
+                          <Badge className="bg-destructive/10 text-destructive border-destructive/20">
+                            업데이트 필요
+                          </Badge>
+                        ) : (
+                          <Badge className="bg-success/10 text-success border-success/20">
+                            완료
+                          </Badge>
+                        )}
                       </Link>
                     </TableCell>
                     <TableCell className="text-center">

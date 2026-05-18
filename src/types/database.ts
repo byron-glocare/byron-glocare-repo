@@ -84,6 +84,7 @@ export type Database = {
           naeil_card_eligible: boolean;
           contract_active: boolean;
           partnership_terminated: boolean;
+          schedule_update_needed: boolean;
           deduct_reservation_by_default: boolean;
           website_url: string | null;
           notes: string | null;
@@ -108,6 +109,7 @@ export type Database = {
           naeil_card_eligible?: boolean;
           contract_active?: boolean;
           partnership_terminated?: boolean;
+          schedule_update_needed?: boolean;
           deduct_reservation_by_default?: boolean;
           website_url?: string | null;
           notes?: string | null;

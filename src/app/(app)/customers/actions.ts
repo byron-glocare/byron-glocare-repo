@@ -577,7 +577,7 @@ export async function applyAnalysisSuggestions(
     "intake_abandoned",
     "study_abroad_consultation",
     "training_center_finding",
-    "class_schedule_confirmation_needed",
+    // class_schedule_confirmation_needed 제거 (0017) — derived 로 이동
     "training_reservation_abandoned",
     "certificate_acquired",
     "training_dropped",

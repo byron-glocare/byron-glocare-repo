@@ -55,6 +55,8 @@ export default async function DashboardPage() {
     { count: trainingCenterActiveCount },
     { count: careHomeActiveCount },
     { data: reminders },
+    { data: tcSchedules },
+    { data: tcClasses },
   ] = await Promise.all([
     supabase.from("customers").select("*"),
     supabase.from("customer_statuses").select("*"),
@@ -107,6 +109,12 @@ export default async function DashboardPage() {
       .from("customer_reminders")
       .select("customer_id, remind_date, completed")
       .eq("completed", false),
+    supabase
+      .from("training_centers")
+      .select("id, name, schedule_update_needed"),
+    supabase
+      .from("training_classes")
+      .select("training_center_id, start_date"),
   ]);
 
   const inputs = {
@@ -116,6 +124,8 @@ export default async function DashboardPage() {
     welcomePackPayments: welcomePackPayments ?? [],
     smsMessages: smsMessages ?? [],
     reminders: reminders ?? [],
+    trainingCenters: tcSchedules ?? [],
+    trainingClasses: tcClasses ?? [],
   };
 
   const taskBuckets = computeTaskBuckets(inputs);

@@ -454,15 +454,18 @@ export function CustomerProgressTab({
           <AutoRow label="교육원 매칭">
             <BoolPill v={summary.trainingReservation.centerMatched} />
           </AutoRow>
-          <ManualSwitchRow
-            flag="class_schedule_confirmation_needed"
-            value={state.flags.class_schedule_confirmation_needed}
-            locked={isFlagLocked("class_schedule_confirmation_needed")}
-            onChange={(v) =>
-              toggleFlag("class_schedule_confirmation_needed", v)
-            }
-            pending={pending}
-          />
+          {/*
+            0017: 수동 토글 → 교육원 단위 derived 로 이동. 여기는 read-only
+            표시. 진짜 토글은 [교육원 상세] > '강의 일정 업데이트 필요' Switch
+            에 있음.
+          */}
+          <AutoRow label="강의 일정 업데이트 완료">
+            <ScheduleStatusBadge
+              needsUpdate={
+                summary.trainingReservation.classScheduleConfirmationNeeded
+              }
+            />
+          </AutoRow>
           <AutoRow label="강의일정 확정">
             <BoolPill v={summary.trainingReservation.classMatched} />
           </AutoRow>
@@ -968,6 +971,27 @@ function BoolPill({ v }: { v: boolean }) {
     <Badge variant="outline" className="text-muted-foreground">
       <X className="size-3" />
       아니오
+    </Badge>
+  );
+}
+
+/**
+ * 0017: '강의 일정 업데이트' 상태 표시. 토글이 아니라 derived 결과 read-only.
+ * needsUpdate = true 면 빨강 (필요), false 면 초록 (완료).
+ */
+function ScheduleStatusBadge({ needsUpdate }: { needsUpdate: boolean }) {
+  if (needsUpdate) {
+    return (
+      <Badge className="bg-destructive/10 text-destructive border-destructive/20">
+        <X className="size-3" />
+        업데이트 필요
+      </Badge>
+    );
+  }
+  return (
+    <Badge className="bg-success/10 text-success border-success/20">
+      <Check className="size-3" />
+      완료
     </Badge>
   );
 }

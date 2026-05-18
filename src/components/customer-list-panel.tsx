@@ -28,6 +28,11 @@ import {
   type StageSummary,
 } from "@/lib/customer-status";
 import { computeTaskBuckets, type TaskBucket } from "@/lib/dashboard";
+import {
+  centerScheduleNeedsUpdate,
+  countFutureClassesByCenter,
+  customerScheduleStatus,
+} from "@/lib/training-class-schedule";
 import { X } from "lucide-react";
 
 const PAGE_SIZE = 50;
@@ -146,9 +151,12 @@ export async function CustomerListPanel({
     { data: allWelcomePack },
     { data: allSms },
     { data: allCommissions },
+    { data: allClassesData },
   ] = await Promise.all([
     query,
-    supabase.from("training_centers").select("id, name, region"),
+    supabase
+      .from("training_centers")
+      .select("id, name, region, schedule_update_needed"),
     supabase.from("care_homes").select("id, name, region"),
     supabase.from("customer_statuses").select("*"),
     supabase
@@ -165,7 +173,24 @@ export async function CustomerListPanel({
           .from("commission_payments")
           .select("customer_id, status")
       : Promise.resolve({ data: [] as { customer_id: string; status: string }[] }),
+    supabase
+      .from("training_classes")
+      .select("training_center_id, start_date"),
   ]);
+  const allClasses = allClassesData ?? [];
+
+  // 0017: 교육원별 derived schedule 필요 여부
+  const futureClassesByCenter = countFutureClassesByCenter(allClasses);
+  const centerNeedsUpdateMap = new Map<string, boolean>();
+  for (const c of centers ?? []) {
+    centerNeedsUpdateMap.set(
+      c.id,
+      centerScheduleNeedsUpdate({
+        scheduleUpdateNeeded: c.schedule_update_needed,
+        hasFutureClass: (futureClassesByCenter.get(c.id) ?? 0) > 0,
+      })
+    );
+  }
 
   // 정산 완료 / 수금 포기 여부 (customer 별)
   const commissionStatusByCustomer = new Map<
@@ -226,6 +251,8 @@ export async function CustomerListPanel({
       reservationPayments: allReservations ?? [],
       welcomePackPayments: allWelcomePack ?? [],
       smsMessages: allSms ?? [],
+      trainingCenters: centers ?? [],
+      trainingClasses: allClasses,
     });
     const matched = buckets.find(
       (b) => b.key === (bucketFilter as TaskBucket["key"])
@@ -248,6 +275,14 @@ export async function CustomerListPanel({
           reservationPayments: reservationsByCustomer.get(c.id) ?? [],
           welcomePackPayment: welcomeByCustomer.get(c.id) ?? null,
           smsMessages: smsByCustomer.get(c.id) ?? [],
+          scheduleNeedsUpdate:
+            customerScheduleStatus({
+              trainingCenterId: c.training_center_id,
+              trainingClassId: c.training_class_id,
+              centerNeedsUpdate: c.training_center_id
+                ? centerNeedsUpdateMap.get(c.training_center_id) ?? null
+                : null,
+            }) === "needs_update",
         })
       : null;
     return { customer: c, summary };
