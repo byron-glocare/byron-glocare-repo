@@ -164,13 +164,15 @@ export default async function SettlementsPrintPage({
     const status = statusMap.get(customer.id) ?? null;
     const elig = checkEligibility({ customer, status, trainingClass });
     if (!elig.eligible) continue;
-    if (completedMap.has(customer.id)) continue;
 
     // selectedOverrides 가 있으면 선택된 customer 만 포함 + override 공제 적용.
-    // 없으면 default = 도래한 customer 만 + 자동 공제.
+    //   - confirmed/completed/abandoned 등 commission row 가 이미 있어도 강제 포함
+    //     (정산 확정된 항목을 발송용으로 다시 출력하기 위함)
+    // 없으면 default = commission row 없음 + 도래한 customer + 자동 공제.
     if (selectedOverrides) {
       if (!selectedOverrides.has(customer.id)) continue;
     } else {
+      if (completedMap.has(customer.id)) continue;
       if (!isPendingForMonth(elig.dueDate, month, false)) continue;
     }
 
