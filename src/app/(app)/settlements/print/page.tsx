@@ -240,10 +240,12 @@ export default async function SettlementsPrintPage({
     <div className="print-page bg-white text-black p-8 max-w-3xl mx-auto text-sm leading-relaxed">
       {/* print CSS — 사이드바/페이지 헤더는 별도 layout 에서 처리되므로 본 페이지는
           깔끔한 A4 컨테이너로 자체 디자인 */}
-      {/* @page 여백 + 인쇄 시 사이드바 숨김은 globals.css 에 정의됨 */}
+      {/* @page 여백 + 인쇄 시 사이드바 숨김은 globals.css 에 정의됨.
+          여기서는 컨테이너 max-width 만 인쇄 시 풀어줌 (p-8 패딩 유지 — Chrome 의
+          인쇄 다이얼로그에서 '여백: 없음' 을 골라도 이 패딩으로 여백 확보) */}
       <style>{`
         @media print {
-          .print-page { padding: 0 !important; max-width: 100% !important; }
+          .print-page { max-width: 100% !important; margin: 0 !important; }
         }
       `}</style>
 
