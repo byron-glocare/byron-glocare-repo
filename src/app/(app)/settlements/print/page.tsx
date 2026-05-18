@@ -240,11 +240,9 @@ export default async function SettlementsPrintPage({
     <div className="print-page bg-white text-black p-8 max-w-3xl mx-auto text-sm leading-relaxed">
       {/* print CSS — 사이드바/페이지 헤더는 별도 layout 에서 처리되므로 본 페이지는
           깔끔한 A4 컨테이너로 자체 디자인 */}
+      {/* @page 여백 + 인쇄 시 사이드바 숨김은 globals.css 에 정의됨 */}
       <style>{`
-        @page { margin: 18mm 16mm; }
         @media print {
-          body { background: white !important; }
-          aside, [data-slot="sidebar"], header.sticky, .no-print { display: none !important; }
           .print-page { padding: 0 !important; max-width: 100% !important; }
         }
       `}</style>

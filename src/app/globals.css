@@ -156,3 +156,23 @@
     @apply font-sans;
   }
 }
+
+/* 인쇄 시 페이지 여백 (A4 기준). 정산서 등 인쇄 페이지 좌우 절단 방지.
+   @page 룰은 head 안 또는 stylesheet 안에 있어야 브라우저가 적용 — 컴포넌트
+   내 inline <style> 은 무시될 수 있어 globals.css 에 둠. */
+@page {
+  margin: 18mm 16mm;
+}
+
+@media print {
+  /* 인쇄 시 사이드바/페이지 헤더/.no-print 모두 숨김 */
+  body {
+    background: white !important;
+  }
+  aside,
+  [data-slot="sidebar"],
+  header.sticky,
+  .no-print {
+    display: none !important;
+  }
+}
