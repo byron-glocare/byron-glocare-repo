@@ -1106,16 +1106,71 @@ function CommissionPaymentCard({
   }
   const net = Math.max(0, tuitionBase - autoDeduction);
 
-  // 이미 정산된 경우 — 상태 표시 + 되돌리기
+  // 이미 정산 row 가 있는 경우 — 상태 표시 + 액션
   if (commissionPayment) {
-    const isAbandoned = commissionPayment.status === "abandoned";
+    const status = commissionPayment.status;
+    const isAbandoned = status === "abandoned";
+    const isConfirmed = status === "confirmed";
+
+    function handleRevert() {
+      if (
+        !confirm(
+          isConfirmed
+            ? "확정을 되돌려 정산 예정으로 보냅니다. 진행하시겠습니까?"
+            : "이 정산 처리를 되돌리시겠습니까? 정산 예정으로 돌아갑니다."
+        )
+      ) {
+        return;
+      }
+      startTransition(async () => {
+        const { revertSingleCustomer } = await import(
+          "@/app/(app)/settlements/actions"
+        );
+        const result = await revertSingleCustomer(customer.id);
+        if (!result.ok) {
+          toast.error("되돌리기 실패", { description: result.error });
+          return;
+        }
+        toast.success("정산 예정으로 되돌렸습니다.");
+        router.refresh();
+      });
+    }
+
+    function handleCompleteFromConfirmed() {
+      if (!confirm("입금 확인 — 완료 처리합니다. 진행하시겠습니까?")) return;
+      startTransition(async () => {
+        const { revertSingleCustomer, settleSingleCustomer } = await import(
+          "@/app/(app)/settlements/actions"
+        );
+        await revertSingleCustomer(customer.id);
+        const result = await settleSingleCustomer({
+          customer_id: customer.id,
+          training_center_id: trainingCenter!.id,
+          settlement_month: commissionPayment!.settlement_month,
+          total_amount: commissionPayment!.total_amount,
+          deduction_amount: commissionPayment!.deduction_amount,
+          status: "completed",
+        });
+        if (!result.ok) {
+          toast.error("완료 처리 실패", { description: result.error });
+          return;
+        }
+        toast.success("정산 완료 처리됨");
+        router.refresh();
+      });
+    }
+
     return (
       <Card>
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
             <Receipt className="size-4" />
             소개비 정산
-            {isAbandoned ? (
+            {isConfirmed ? (
+              <Badge className="bg-info/10 text-info border-info/20">
+                확정 (발송 대기)
+              </Badge>
+            ) : isAbandoned ? (
               <Badge className="bg-destructive/10 text-destructive border-destructive/20">
                 수금 포기
               </Badge>
@@ -1157,36 +1212,37 @@ function CommissionPaymentCard({
               </div>
             </div>
           </div>
-          <Button
-            type="button"
-            size="sm"
-            variant="outline"
-            onClick={() => {
-              if (!confirm("이 정산 처리를 되돌리시겠습니까? 정산 예정으로 돌아갑니다.")) return;
-              startTransition(async () => {
-                const { revertSingleCustomer } = await import(
-                  "@/app/(app)/settlements/actions"
-                );
-                const result = await revertSingleCustomer(customer.id);
-                if (!result.ok) {
-                  toast.error("되돌리기 실패", {
-                    description: result.error,
-                  });
-                  return;
-                }
-                toast.success("정산 예정으로 되돌렸습니다.");
-                router.refresh();
-              });
-            }}
-            disabled={pending}
-          >
-            {pending ? (
-              <Loader2 className="size-4 animate-spin" />
-            ) : (
-              <X className="size-4" />
+          <div className="flex items-center gap-2">
+            {isConfirmed && (
+              <Button
+                type="button"
+                size="sm"
+                onClick={handleCompleteFromConfirmed}
+                disabled={pending}
+              >
+                {pending ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <Check className="size-4" />
+                )}
+                완료 처리
+              </Button>
             )}
-            되돌리기
-          </Button>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={handleRevert}
+              disabled={pending}
+            >
+              {pending ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                <X className="size-4" />
+              )}
+              되돌리기
+            </Button>
+          </div>
         </CardContent>
       </Card>
     );

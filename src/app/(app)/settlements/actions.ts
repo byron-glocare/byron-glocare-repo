@@ -21,7 +21,7 @@ const completeBatchSchema = z.object({
    * 'abandoned' = 수금 포기 — 정산 예정 목록에서 동일하게 제외되되,
    *               완료 내역에서는 별도 group/뱃지로 구분 표시.
    */
-  status: z.enum(["completed", "abandoned"]).default("completed"),
+  status: z.enum(["confirmed", "completed", "abandoned"]).default("completed"),
   items: z
     .array(
       z.object({
@@ -75,7 +75,7 @@ const revertBatchSchema = z.object({
   settlement_month: z.string().regex(/^\d{4}-\d{2}-01$/, "월 포맷은 YYYY-MM-01"),
   training_center_id: z.string().uuid(),
   /** 같은 월에 완료/포기가 섞여있을 수 있으므로 status 도 키에 포함. */
-  status: z.enum(["completed", "abandoned"]).default("completed"),
+  status: z.enum(["confirmed", "completed", "abandoned"]).default("completed"),
 });
 
 export type RevertBatchInput = z.input<typeof revertBatchSchema>;
@@ -90,7 +90,7 @@ const singleSettleSchema = z.object({
   settlement_month: z.string().regex(/^\d{4}-\d{2}-01$/, "월 포맷은 YYYY-MM-01"),
   total_amount: z.number().int().nonnegative(),
   deduction_amount: z.number().int().nonnegative(),
-  status: z.enum(["completed", "abandoned"]).default("completed"),
+  status: z.enum(["confirmed", "completed", "abandoned"]).default("completed"),
 });
 
 export type SingleSettleInput = z.input<typeof singleSettleSchema>;

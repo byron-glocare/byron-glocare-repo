@@ -254,6 +254,9 @@ export default async function SettlementsPage({
 
   for (const commission of commissions ?? []) {
     if (commission.settlement_month !== historyMonth) continue;
+    // 'confirmed' (정산 확정 — 발송 대기) 는 완료 내역에서 제외.
+    // /sms/commission 에서 별도 표시.
+    if (commission.status === "confirmed") continue;
     const center = centerMap.get(commission.training_center_id);
     if (!center) continue;
     const customer = customerLookup.get(commission.customer_id);

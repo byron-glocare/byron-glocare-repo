@@ -428,7 +428,8 @@ export type Database = {
           settlement_month: string; // YYYY-MM-01
           total_amount: number; // 수강료 × 25%
           deduction_amount: number; // 공제된 교육 예약금
-          status: "completed" | "abandoned"; // 0011: completed=정상 수금, abandoned=수금 포기
+          // 0011/0019: confirmed=정산 확정(발송 대기) / completed=수금 완료 / abandoned=수금 포기
+          status: "confirmed" | "completed" | "abandoned";
           completed_at: string;
           created_at: string;
           updated_at: string;
@@ -440,7 +441,7 @@ export type Database = {
           settlement_month: string;
           total_amount: number;
           deduction_amount?: number;
-          status?: "completed" | "abandoned";
+          status?: "confirmed" | "completed" | "abandoned";
           completed_at?: string;
           created_at?: string;
           updated_at?: string;

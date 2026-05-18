@@ -1,182 +1,117 @@
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/page-header";
-import {
-  checkEligibility,
-  computeCommissionAmount,
-  isPendingForMonth,
-  kstCurrentMonthFirstDay,
-  makeCompletedMap,
-  toMonthFirstDay,
-} from "@/lib/commission";
 import { buildCommissionNotificationMessage } from "@/lib/sms-templates";
 import { SmsCommissionView } from "@/components/sms-commission-view";
 
 export const dynamic = "force-dynamic";
 
-type SearchParams = Promise<{ month?: string }>;
-
-export default async function SmsCommissionPage({
-  searchParams,
-}: {
-  searchParams: SearchParams;
-}) {
-  const sp = await searchParams;
-  const month = sp.month
-    ? toMonthFirstDay(sp.month + "-01")
-    : kstCurrentMonthFirstDay();
-
+export default async function SmsCommissionPage() {
   const supabase = await createClient();
 
+  // 정산 확정된 row (status='confirmed') 만 — 0019.
+  // 확정 후 발송 대기 상태.
   const [
-    { data: customers },
+    { data: confirmedRows },
     { data: centers },
+    { data: customers },
     { data: classes },
-    { data: reservationPayments },
-    { data: welcomePackPayments },
-    { data: statuses },
-    { data: commissions },
-    { data: settingsRows },
   ] = await Promise.all([
-    supabase
-      .from("customers")
-      .select(
-        "id, code, name_kr, name_vi, product_type, training_center_id, training_class_id, class_start_date, termination_reason"
-      )
-      .not("training_center_id", "is", null)
-      .not("training_class_id", "is", null)
-      .not("class_start_date", "is", null),
-    supabase
-      .from("training_centers")
-      .select(
-        "id, name, region, business_number, director_name, email, tuition_fee_2026, deduct_reservation_by_default"
-      ),
-    supabase.from("training_classes").select("id, class_type, start_date"),
-    supabase
-      .from("reservation_payments")
-      .select("customer_id, amount, payment_date"),
-    supabase
-      .from("welcome_pack_payments")
-      .select("customer_id, reservation_date"),
-    supabase
-      .from("customer_statuses")
-      .select(
-        "customer_id, intake_abandoned, study_abroad_consultation, training_reservation_abandoned, training_dropped"
-      ),
     supabase
       .from("commission_payments")
       .select(
-        "id, customer_id, training_center_id, settlement_month, total_amount, deduction_amount, completed_at"
+        "id, customer_id, training_center_id, settlement_month, total_amount, deduction_amount, status"
+      )
+      .eq("status", "confirmed")
+      .order("settlement_month", { ascending: false }),
+    supabase
+      .from("training_centers")
+      .select(
+        "id, name, region, business_number, director_name, email, tuition_fee_2026"
       ),
-    supabase.from("system_settings").select("key, value"),
+    supabase
+      .from("customers")
+      .select(
+        "id, name_kr, name_vi, training_class_id, class_start_date"
+      ),
+    supabase
+      .from("training_classes")
+      .select("id, class_type, start_date"),
   ]);
 
-  const settingsMap = new Map<string, unknown>();
-  for (const row of settingsRows ?? []) settingsMap.set(row.key, row.value);
-  const educationReservationAmount =
-    typeof settingsMap.get("education_reservation_amount") === "number"
-      ? (settingsMap.get("education_reservation_amount") as number)
-      : typeof settingsMap.get("training_reservation_fee") === "number"
-        ? (settingsMap.get("training_reservation_fee") as number)
-        : 35000;
-
   const centerMap = new Map((centers ?? []).map((c) => [c.id, c]));
+  const customerMap = new Map((customers ?? []).map((c) => [c.id, c]));
   const classMap = new Map((classes ?? []).map((c) => [c.id, c]));
-  const statusMap = new Map(
-    (statuses ?? []).map((s) => [s.customer_id, s])
-  );
-  const reservationByCustomer = new Map<
-    string,
-    { amount: number; payment_date: string | null }[]
-  >();
-  for (const rp of reservationPayments ?? []) {
-    const arr = reservationByCustomer.get(rp.customer_id) ?? [];
-    arr.push({ amount: rp.amount, payment_date: rp.payment_date });
-    reservationByCustomer.set(rp.customer_id, arr);
-  }
-  const welcomePackByCustomer = new Map<
-    string,
-    { reservation_date: string | null }
-  >();
-  for (const wp of welcomePackPayments ?? []) {
-    welcomePackByCustomer.set(wp.customer_id, {
-      reservation_date: wp.reservation_date,
-    });
-  }
-  const completedMap = makeCompletedMap(commissions ?? []);
 
-  // 교육원별 그룹
+  // 교육원 + 월 단위로 그룹화
+  type Row = {
+    commissionId: string;
+    customerId: string;
+    customerName: string;
+    classStartDate: string | null;
+    classTypeLabel: string | null;
+    tuitionBase: number;
+    deduction: number;
+    net: number;
+  };
+
   type Group = {
     centerId: string;
     centerName: string;
     region: string | null;
-    rows: {
-      customerId: string;
-      customerName: string;
-      classStartDate: string | null;
-      classTypeLabel: string | null;
-      tuitionBase: number;
-      deduction: number;
-      net: number;
-      deductionReason: string;
-    }[];
+    settlementMonth: string;
+    rows: Row[];
     totals: { total: number; deduction: number; net: number };
     message: string;
   };
 
   const groupsMap = new Map<string, Group>();
-  for (const customer of customers ?? []) {
-    if (!customer.training_center_id) continue;
-    const trainingClass = customer.training_class_id
+  for (const cp of confirmedRows ?? []) {
+    const center = centerMap.get(cp.training_center_id);
+    if (!center) continue;
+    const customer = customerMap.get(cp.customer_id);
+    const trainingClass = customer?.training_class_id
       ? classMap.get(customer.training_class_id) ?? null
       : null;
-    const status = statusMap.get(customer.id) ?? null;
-    const elig = checkEligibility({ customer, status, trainingClass });
-    if (!elig.eligible) continue;
-    if (completedMap.has(customer.id)) continue;
-    if (!isPendingForMonth(elig.dueDate, month, false)) continue;
-    const center = centerMap.get(customer.training_center_id);
-    if (!center) continue;
 
-    const amount = computeCommissionAmount({
-      center,
-      reservationPayments: reservationByCustomer.get(customer.id) ?? [],
-      welcomePackPayment: welcomePackByCustomer.get(customer.id) ?? null,
-      educationReservationAmount,
-    });
-
-    const row = {
-      customerId: customer.id,
-      customerName: customer.name_kr || customer.name_vi || "(이름 없음)",
-      classStartDate: trainingClass?.start_date ?? null,
+    const row: Row = {
+      commissionId: cp.id,
+      customerId: cp.customer_id,
+      customerName: customer
+        ? customer.name_kr || customer.name_vi || "(이름 없음)"
+        : "(이름 없음)",
+      classStartDate:
+        trainingClass?.start_date ?? customer?.class_start_date ?? null,
       classTypeLabel: trainingClass
         ? trainingClass.class_type === "weekday"
           ? "주간"
           : "야간"
         : null,
-      tuitionBase: amount.tuitionBase,
-      deduction: amount.defaultDeduction,
-      net: amount.tuitionBase - amount.defaultDeduction,
-      deductionReason: amount.deductionReason,
+      tuitionBase: cp.total_amount,
+      deduction: cp.deduction_amount,
+      net: Math.max(0, cp.total_amount - cp.deduction_amount),
     };
 
-    const existing = groupsMap.get(center.id);
+    // group key: center × settlement_month
+    const key = `${cp.training_center_id}::${cp.settlement_month}`;
+    const existing = groupsMap.get(key);
     if (existing) {
       existing.rows.push(row);
       existing.totals.total += row.tuitionBase;
       existing.totals.deduction += row.deduction;
       existing.totals.net += row.net;
     } else {
-      groupsMap.set(center.id, {
+      groupsMap.set(key, {
         centerId: center.id,
         centerName: center.name,
         region: center.region,
+        settlementMonth: cp.settlement_month,
         rows: [row],
         totals: {
           total: row.tuitionBase,
           deduction: row.deduction,
           net: row.net,
         },
-        message: "", // 나중에 채움
+        message: "",
       });
     }
   }
@@ -185,10 +120,9 @@ export default async function SmsCommissionPage({
   for (const group of groupsMap.values()) {
     const center = centerMap.get(group.centerId);
     if (!center) continue;
-    const deductionRow = group.rows.find((r) => r.deduction > 0);
     group.message = buildCommissionNotificationMessage({
       center,
-      settlementMonth: month,
+      settlementMonth: group.settlementMonth,
       items: group.rows.map((r) => ({
         customerName: r.customerName,
         classStartDate: r.classStartDate,
@@ -200,40 +134,30 @@ export default async function SmsCommissionPage({
         deductionAmount: group.totals.deduction,
         receivedAmount: group.totals.net,
       },
-      deductionLabel: deductionRow?.deductionReason,
+      deductionLabel:
+        group.totals.deduction > 0 ? "교육 예약금" : undefined,
     });
   }
 
-  const groups = Array.from(groupsMap.values()).sort((a, b) =>
-    a.centerName.localeCompare(b.centerName, "ko")
-  );
-
-  // 월 옵션 — ±6개월
-  const monthOptions: string[] = [];
-  const now = new Date(kstCurrentMonthFirstDay() + "T00:00:00Z");
-  for (let i = -6; i <= 6; i++) {
-    const d = new Date(now);
-    d.setUTCMonth(d.getUTCMonth() + i);
-    const iso = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
-    monthOptions.push(iso);
-  }
+  const groups = Array.from(groupsMap.values()).sort((a, b) => {
+    // 월 desc 후 교육원 이름
+    const m = b.settlementMonth.localeCompare(a.settlementMonth);
+    if (m !== 0) return m;
+    return a.centerName.localeCompare(b.centerName, "ko");
+  });
 
   return (
     <>
       <PageHeader
         title="정산 내역 발송"
-        description="교육원에 보낼 소개 수수료 정산 안내문 — 본문 복사 + 정산서 PDF (인쇄 → PDF 저장) 으로 직접 전송하세요."
+        description="확정된 정산 내역 — 본문 복사 + 정산서 PDF 로 직접 전송하세요. 입금 받은 후 [완료 처리] 로 마무리."
         breadcrumbs={[
           { href: "/sms", label: "알림발송" },
           { label: "정산 내역" },
         ]}
       />
       <div className="p-6">
-        <SmsCommissionView
-          settlementMonth={month}
-          monthOptions={monthOptions}
-          groups={groups}
-        />
+        <SmsCommissionView groups={groups} />
       </div>
     </>
   );

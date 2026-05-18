@@ -8,7 +8,6 @@ import {
   Check,
   ChevronDown,
   ChevronRight,
-  Copy,
   FileText,
   Loader2,
   Settings2,
@@ -18,16 +17,11 @@ import {
   completeSettlementBatch,
   settleSingleCustomer,
 } from "@/app/(app)/settlements/actions";
-import {
-  buildCommissionNotificationMessage,
-  COMPANY_INFO,
-} from "@/lib/sms-templates";
 import { kstCurrentMonthFirstDay } from "@/lib/commission";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Table,
   TableBody,
@@ -89,7 +83,6 @@ export function SettlementPendingCenterRow({
   const router = useRouter();
   const [expanded, setExpanded] = useState(false);
   const [pending, startTransition] = useTransition();
-  const [confirmed, setConfirmed] = useState(false);
 
   // 체크박스 상태 — default 는 isDue
   const [checked, setChecked] = useState<Record<string, boolean>>(() => {
@@ -123,42 +116,8 @@ export function SettlementPendingCenterRow({
     return { base, deduction, net };
   }, [selectedRows, overrides]);
 
-  // SMS 본문 (확정 후 노출용)
-  const message = useMemo(() => {
-    const deductionRow = selectedRows.find(
-      (r) => (overrides[r.customerId] ?? r.defaultDeduction) > 0
-    );
-    return buildCommissionNotificationMessage({
-      center,
-      settlementMonth,
-      items: selectedRows.map((r) => ({
-        customerName: r.customerName,
-        classStartDate: r.classStartDate,
-        classTypeLabel: r.classTypeLabel,
-      })),
-      totals: {
-        tuitionSum: (center.tuition_fee_2026 ?? 0) * selectedRows.length,
-        totalAmount: liveTotals.base,
-        deductionAmount: liveTotals.deduction,
-        receivedAmount: liveTotals.net,
-      },
-      deductionLabel: deductionRow?.deductionReason,
-    });
-  }, [selectedRows, overrides, center, settlementMonth, liveTotals]);
-
-  const printHref = useMemo(() => {
-    const items = selectedRows
-      .map(
-        (r) =>
-          `${r.customerId}:${Math.max(0, Math.round(overrides[r.customerId] ?? r.defaultDeduction))}`
-      )
-      .join(",");
-    return `/settlements/print?center=${center.id}&month=${settlementMonth.slice(0, 7)}&items=${encodeURIComponent(items)}`;
-  }, [selectedRows, overrides, center.id, settlementMonth]);
-
   function setRowChecked(id: string, v: boolean) {
     setChecked((s) => ({ ...s, [id]: v }));
-    setConfirmed(false);
   }
 
   function handleBulkComplete() {
@@ -220,17 +179,36 @@ export function SettlementPendingCenterRow({
       toast.error("선택된 교육생이 없습니다.");
       return;
     }
-    setConfirmed(true);
-    toast.success("정산 내역이 확정되었습니다. 정산서 발송 가능합니다.");
-  }
-
-  async function handleCopy() {
-    try {
-      await navigator.clipboard.writeText(message);
-      toast.success("본문이 복사되었습니다. 카카오톡/이메일에 붙여넣기");
-    } catch {
-      toast.error("복사 실패");
+    if (
+      !confirm(
+        `선택한 ${selectedRows.length}명을 정산 확정합니다.\n확정된 항목은 정산 예정에서 빠지고 [정산 내역 발송] 페이지로 이동합니다.`
+      )
+    ) {
+      return;
     }
+    startTransition(async () => {
+      const result = await completeSettlementBatch({
+        settlement_month: settlementMonth,
+        training_center_id: center.id,
+        status: "confirmed",
+        items: selectedRows.map((r) => ({
+          customer_id: r.customerId,
+          total_amount: r.tuitionBase,
+          deduction_amount: Math.max(
+            0,
+            Math.round(overrides[r.customerId] ?? r.defaultDeduction)
+          ),
+        })),
+      });
+      if (!result.ok) {
+        toast.error("정산 확정 실패", { description: result.error });
+        return;
+      }
+      toast.success(
+        `${result.data.inserted}건 확정 처리됨. 정산 내역 발송 페이지로 이동합니다.`
+      );
+      router.push("/sms/commission");
+    });
   }
 
   return (
@@ -299,8 +277,7 @@ export function SettlementPendingCenterRow({
                         const m: Record<string, boolean> = {};
                         for (const r of rows) m[r.customerId] = next;
                         setChecked(m);
-                        setConfirmed(false);
-                      }}
+                                          }}
                       aria-label="전체 선택"
                     />
                   </TableHead>
@@ -376,8 +353,7 @@ export function SettlementPendingCenterRow({
                               ...s,
                               [r.customerId]: Number(e.target.value) || 0,
                             }));
-                            setConfirmed(false);
-                          }}
+                                                  }}
                           className="h-8 text-right font-mono"
                           disabled={!checked[r.customerId]}
                         />
@@ -454,51 +430,6 @@ export function SettlementPendingCenterRow({
             </div>
           </div>
 
-          {/* 확정 후 — 안내 + 본문 + 정산서 링크 */}
-          {confirmed && selectedRows.length > 0 && (
-            <Card className="p-4 bg-info/5 border-info/30 space-y-3">
-              <div className="text-sm">
-                <span className="font-semibold text-info">정산 내역이 확정되었습니다.</span>
-                <span className="text-muted-foreground ml-2">
-                  아래 본문 복사 + 정산서를 발송하세요. 입금 확인 후 [일괄 완료]
-                  또는 행별 [정산 완료] 로 마무리.
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="outline"
-                  onClick={handleCopy}
-                >
-                  <Copy className="size-4" />
-                  본문 복사
-                </Button>
-                <Link
-                  href={printHref}
-                  target="_blank"
-                  rel="noopener"
-                  className={cn(
-                    buttonVariants({ size: "sm", variant: "outline" }),
-                    "gap-2"
-                  )}
-                >
-                  <FileText className="size-4" />
-                  정산서 열기 (PDF)
-                </Link>
-                <div className="ml-auto text-xs text-muted-foreground">
-                  계좌: {COMPANY_INFO.bankName} {COMPANY_INFO.bankAccount}
-                </div>
-              </div>
-              <Textarea
-                value={message}
-                readOnly
-                rows={Math.min(28, Math.max(12, message.split("\n").length))}
-                className="font-mono text-xs leading-relaxed"
-                onFocus={(e) => e.target.select()}
-              />
-            </Card>
-          )}
         </div>
       )}
     </Card>
