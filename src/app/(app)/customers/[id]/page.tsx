@@ -53,6 +53,7 @@ export default async function CustomerDetailPage({
     { data: homes },
     { data: allCustomers },
     { data: settingsRows },
+    { data: remindersFull },
   ] = await Promise.all([
     supabase
       .from("customer_statuses")
@@ -105,10 +106,17 @@ export default async function CustomerDetailPage({
       .select("id, code, name_kr, name_vi")
       .order("code"),
     supabase.from("system_settings").select("key, value"),
+    supabase
+      .from("customer_reminders")
+      .select("*")
+      .eq("customer_id", id)
+      .order("completed", { ascending: true })
+      .order("remind_date", { ascending: true }),
   ]);
 
   const reservationPayments = reservationPaymentsFull ?? [];
   const welcomePackPayment = welcomePackPaymentFull ?? null;
+  const reminders = remindersFull ?? [];
 
   // status가 혹시 누락됐다면 default로 채움
   const effectiveStatus = status ?? {
@@ -209,6 +217,7 @@ export default async function CustomerDetailPage({
             welcomePackPayment,
             smsMessages: smsMessages ?? [],
           }}
+          reminders={reminders}
           careHomeLocked={careHomeLocked}
           settings={settings}
         />

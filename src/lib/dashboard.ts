@@ -5,6 +5,7 @@
 
 import type {
   Customer,
+  CustomerReminder,
   CustomerStatus,
   ReservationPayment,
   WelcomePackPayment,
@@ -22,6 +23,14 @@ export type DashboardInputs = {
   reservationPayments: Pick<ReservationPayment, "customer_id" | "payment_date">[];
   welcomePackPayments: Pick<WelcomePackPayment, "customer_id" | "reservation_date">[];
   smsMessages: Pick<SmsMessage, "target_customer_id" | "message_type">[];
+  /**
+   * 챙길 일정 (customer_reminders). 미완료 + remind_date 도래한 고객은
+   * recontact_needed 버킷에도 자동 포함.
+   */
+  reminders?: Pick<
+    CustomerReminder,
+    "customer_id" | "remind_date" | "completed"
+  >[];
   today?: string;
 };
 
@@ -240,12 +249,20 @@ export function computeTaskBuckets(inputs: DashboardInputs): TaskBucket[] {
       visaChange.push(brief);
     }
 
-    // 7-9 연락 필요: is_waiting + recontact_date <= today
-    if (
+    // 7-9 연락 필요:
+    //   (a) is_waiting + recontact_date 도래 (기존), 또는
+    //   (b) customer_reminders 중 미완료 + remind_date 도래 (0016)
+    const waitingDue =
       e.customer.is_waiting &&
       e.customer.recontact_date &&
-      e.customer.recontact_date <= today
-    ) {
+      e.customer.recontact_date <= today;
+    const reminderDue = (inputs.reminders ?? []).some(
+      (r) =>
+        r.customer_id === e.customer.id &&
+        !r.completed &&
+        r.remind_date <= today
+    );
+    if (waitingDue || reminderDue) {
       recontactNeeded.push(brief);
     }
   }

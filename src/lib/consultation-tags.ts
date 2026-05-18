@@ -74,6 +74,19 @@ const StatusSuggestionSchema = z
 
 export type StatusSuggestion = z.infer<typeof StatusSuggestionSchema>;
 
+/**
+ * 챙길 일정 (customer_reminders) 제안. 상담 내용에서 "X 날에 Y 챙기자"
+ * 같은 후속 약속이 명확히 언급된 경우에만.
+ */
+const ReminderSuggestionSchema = z.object({
+  remind_date: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "날짜는 YYYY-MM-DD"),
+  content: z.string().min(1).max(200),
+});
+
+export type ReminderSuggestion = z.infer<typeof ReminderSuggestionSchema>;
+
 // =============================================================================
 // Claude API 응답 스키마
 // =============================================================================
@@ -85,6 +98,7 @@ export type StatusSuggestion = z.infer<typeof StatusSuggestionSchema>;
  * - suggestions: 상담에서 명확히 언급된 정보만. 추측 금지.
  *   - customer: 기본 정보 후보
  *   - status_flags: 수동 플래그 후보
+ *   - reminders: 챙길 일정 후보 (날짜 명시된 후속 약속만)
  */
 export const consultationAnalysisSchema = z.object({
   stages: z.array(z.enum(STAGES)).min(1),
@@ -93,8 +107,9 @@ export const consultationAnalysisSchema = z.object({
     .object({
       customer: CustomerSuggestionSchema.default({}),
       status_flags: StatusSuggestionSchema.default({}),
+      reminders: z.array(ReminderSuggestionSchema).max(5).default([]),
     })
-    .default({ customer: {}, status_flags: {} }),
+    .default({ customer: {}, status_flags: {}, reminders: [] }),
 });
 
 export type ConsultationAnalysis = z.infer<typeof consultationAnalysisSchema>;

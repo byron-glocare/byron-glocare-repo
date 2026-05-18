@@ -45,6 +45,7 @@ import type {
   CommissionPayment,
   Consultation,
   Customer,
+  CustomerReminder,
   EventPayment,
   Json,
   ReservationPayment,
@@ -94,6 +95,7 @@ type Props = {
     name_kr: string | null;
     name_vi: string | null;
   }[];
+  reminders: CustomerReminder[];
   careHomeLocked: boolean;
   settings: Record<string, Json | undefined>;
 };
@@ -110,6 +112,7 @@ export function CustomerOverviewTab({
   trainingClasses,
   careHomes,
   customerOptions,
+  reminders,
   careHomeLocked,
   settings,
 }: Props) {
@@ -261,6 +264,7 @@ export function CustomerOverviewTab({
         <CustomerProgressTab
           customerId={customer.id}
           inputs={progressInputs}
+          reminders={reminders}
           embedded
           ref={progressRef}
           onDirtyChange={setProgressDirty}

@@ -27,6 +27,8 @@ import type {
   ProgressStateInput,
   StatusFlagsInput,
 } from "@/lib/validators";
+import type { CustomerReminder } from "@/types/database";
+import { CustomerRemindersPanel } from "@/components/customer-reminders-panel";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -61,6 +63,8 @@ export type CustomerProgressTabHandle = {
 type Props = {
   customerId: string;
   inputs: StatusInputs;
+  /** 챙길 일정 — 페이지 (server) 에서 fetch 해서 전달, 자체 액션으로 즉시 저장 */
+  reminders?: CustomerReminder[];
   /** 페이지 통합 저장 모드 — 내부 저장/되돌리기 버튼 숨김 */
   embedded?: boolean;
   ref?: Ref<CustomerProgressTabHandle>;
@@ -197,6 +201,7 @@ function buildInitialState(inputs: StatusInputs): ProgressStateInput {
 export function CustomerProgressTab({
   customerId,
   inputs,
+  reminders = [],
   embedded = false,
   ref,
   onDirtyChange,
@@ -678,6 +683,12 @@ export function CustomerProgressTab({
           )}
         </StageCard>
       </div>
+
+      {/* 챙길 일정 — 대기중과 별개. 자체 즉시 저장. */}
+      <CustomerRemindersPanel
+        customerId={customerId}
+        reminders={reminders}
+      />
     </div>
   );
 }

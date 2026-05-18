@@ -529,3 +529,19 @@ export const studyInboxStatusSchema = z.object({
 });
 
 export type StudyInboxStatusInput = z.input<typeof studyInboxStatusSchema>;
+
+// =============================================================================
+// 교육생 챙길 일정 (customer_reminders) — 0016
+// =============================================================================
+
+export const customerReminderSchema = z.object({
+  remind_date: z
+    .string()
+    .trim()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "날짜 형식은 YYYY-MM-DD"),
+  content: z.string().trim().min(1, "내용을 입력해주세요."),
+  completed: z.boolean().default(false),
+});
+
+export type CustomerReminderInput = z.input<typeof customerReminderSchema>;
+export type CustomerReminderOutput = z.output<typeof customerReminderSchema>;

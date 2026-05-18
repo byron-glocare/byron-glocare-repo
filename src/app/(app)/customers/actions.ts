@@ -16,12 +16,14 @@ import {
   progressStateSchema,
   consultationWriteSchema,
   consultationUpdateSchema,
+  customerReminderSchema,
   type CustomerInput,
   type ConsultationInput,
   type StatusFlagsInput,
   type ProgressStateInput,
   type ConsultationWriteInput,
   type ConsultationUpdateInput,
+  type CustomerReminderInput,
 } from "@/lib/validators";
 
 export type ActionResult<T = unknown> =
@@ -551,11 +553,13 @@ export async function applyAnalysisSuggestions(
   selected: {
     customer?: Partial<ConsultationAnalysis["suggestions"]["customer"]>;
     status_flags?: Partial<ConsultationAnalysis["suggestions"]["status_flags"]>;
+    /** AI 가 추출한 챙길 일정 중 사용자가 승인한 것들 — 그대로 insert */
+    reminders?: ConsultationAnalysis["suggestions"]["reminders"];
   }
 ): Promise<ActionResult<{ applied: number }>> {
-  let supabase;
+  let user, supabase;
   try {
-    ({ supabase } = await requireAuth());
+    ({ user, supabase } = await requireAuth());
   } catch {
     return { ok: false, error: "Unauthorized" };
   }
@@ -612,8 +616,19 @@ export async function applyAnalysisSuggestions(
     }
   }
 
+  // 챙길 일정 — 형식 검증 후 insert
+  const remindersToInsert = (selected.reminders ?? []).filter(
+    (r) =>
+      typeof r?.remind_date === "string" &&
+      /^\d{4}-\d{2}-\d{2}$/.test(r.remind_date) &&
+      typeof r?.content === "string" &&
+      r.content.trim().length > 0
+  );
+
   const applied =
-    Object.keys(customerPatch).length + Object.keys(flagsPatch).length;
+    Object.keys(customerPatch).length +
+    Object.keys(flagsPatch).length +
+    remindersToInsert.length;
   if (applied === 0) {
     return { ok: true, data: { applied: 0 } };
   }
@@ -632,8 +647,161 @@ export async function applyAnalysisSuggestions(
       .eq("customer_id", customerId);
     if (error) return { ok: false, error: error.message };
   }
+  if (remindersToInsert.length > 0) {
+    const { error } = await supabase.from("customer_reminders").insert(
+      remindersToInsert.map((r) => ({
+        customer_id: customerId,
+        remind_date: r.remind_date,
+        content: r.content.trim(),
+        created_by: user.id,
+      }))
+    );
+    if (error) return { ok: false, error: error.message };
+  }
 
   revalidatePath(`/customers/${customerId}`);
   revalidatePath("/customers");
+  revalidatePath("/");
   return { ok: true, data: { applied } };
+}
+
+// =============================================================================
+// 챙길 일정 (customer_reminders) — 0016
+// =============================================================================
+
+export async function createCustomerReminder(
+  customerId: string,
+  input: CustomerReminderInput
+): Promise<ActionResult<{ id: string }>> {
+  const parsed = customerReminderSchema.safeParse(input);
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.issues[0].message };
+  }
+
+  let user, supabase;
+  try {
+    ({ user, supabase } = await requireAuth());
+  } catch {
+    return { ok: false, error: "Unauthorized" };
+  }
+
+  const { data, error } = await supabase
+    .from("customer_reminders")
+    .insert({
+      customer_id: customerId,
+      remind_date: parsed.data.remind_date,
+      content: parsed.data.content,
+      completed: parsed.data.completed,
+      created_by: user.id,
+    })
+    .select("id")
+    .single();
+
+  if (error || !data) return { ok: false, error: error?.message ?? "저장 실패" };
+
+  revalidatePath(`/customers/${customerId}`);
+  revalidatePath("/");
+  return { ok: true, data: { id: data.id as string } };
+}
+
+export async function updateCustomerReminder(
+  reminderId: string,
+  input: CustomerReminderInput
+): Promise<ActionResult> {
+  const parsed = customerReminderSchema.safeParse(input);
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.issues[0].message };
+  }
+
+  let supabase;
+  try {
+    ({ supabase } = await requireAuth());
+  } catch {
+    return { ok: false, error: "Unauthorized" };
+  }
+
+  // customer_id 가 필요한 revalidate 위해 먼저 조회
+  const { data: existing } = await supabase
+    .from("customer_reminders")
+    .select("customer_id")
+    .eq("id", reminderId)
+    .maybeSingle();
+
+  const { error } = await supabase
+    .from("customer_reminders")
+    .update({
+      remind_date: parsed.data.remind_date,
+      content: parsed.data.content,
+      completed: parsed.data.completed,
+    })
+    .eq("id", reminderId);
+
+  if (error) return { ok: false, error: error.message };
+
+  if (existing?.customer_id) {
+    revalidatePath(`/customers/${existing.customer_id}`);
+  }
+  revalidatePath("/");
+  return { ok: true, data: null };
+}
+
+export async function toggleCustomerReminderCompleted(
+  reminderId: string,
+  completed: boolean
+): Promise<ActionResult> {
+  let supabase;
+  try {
+    ({ supabase } = await requireAuth());
+  } catch {
+    return { ok: false, error: "Unauthorized" };
+  }
+
+  const { data: existing } = await supabase
+    .from("customer_reminders")
+    .select("customer_id")
+    .eq("id", reminderId)
+    .maybeSingle();
+
+  const { error } = await supabase
+    .from("customer_reminders")
+    .update({ completed })
+    .eq("id", reminderId);
+
+  if (error) return { ok: false, error: error.message };
+
+  if (existing?.customer_id) {
+    revalidatePath(`/customers/${existing.customer_id}`);
+  }
+  revalidatePath("/");
+  return { ok: true, data: null };
+}
+
+export async function deleteCustomerReminder(
+  reminderId: string
+): Promise<ActionResult> {
+  let supabase;
+  try {
+    ({ supabase } = await requireAuth());
+  } catch {
+    return { ok: false, error: "Unauthorized" };
+  }
+
+  const { data: existing } = await supabase
+    .from("customer_reminders")
+    .select("customer_id")
+    .eq("id", reminderId)
+    .maybeSingle();
+
+  const { error } = await supabase
+    .from("customer_reminders")
+    .delete()
+    .eq("id", reminderId);
+
+  if (error) return { ok: false, error: error.message };
+
+  if (existing?.customer_id) {
+    revalidatePath(`/customers/${existing.customer_id}`);
+  }
+  revalidatePath("/");
+  return { ok: true, data: null };
 }

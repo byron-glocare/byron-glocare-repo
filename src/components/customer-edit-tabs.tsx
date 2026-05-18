@@ -56,6 +56,7 @@ import type {
   CareHome,
   Customer,
   Consultation,
+  CustomerReminder,
   EventPayment,
   ReservationPayment,
   TrainingCenter,
@@ -97,6 +98,7 @@ type Props = {
     name_vi: string | null;
   }[];
   progressInputs: StatusInputs;
+  reminders: CustomerReminder[];
   careHomeLocked: boolean;
   settings: Record<string, Json | undefined>;
 };
@@ -114,6 +116,7 @@ export function CustomerEditTabs({
   careHomes,
   customerOptions,
   progressInputs,
+  reminders,
   careHomeLocked,
   settings,
 }: Props) {
@@ -248,6 +251,7 @@ export function CustomerEditTabs({
           <CustomerProgressTab
             customerId={customer.id}
             inputs={progressInputs}
+            reminders={reminders}
             embedded
             ref={progressRef}
             onDirtyChange={setProgressDirty}
@@ -287,6 +291,7 @@ export function CustomerEditTabs({
             trainingClasses={trainingClasses}
             careHomes={careHomes}
             customerOptions={customerOptions}
+            reminders={reminders}
             careHomeLocked={careHomeLocked}
             settings={settings}
           />

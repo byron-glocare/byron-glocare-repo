@@ -54,6 +54,7 @@ export default async function DashboardPage() {
     { count: claimsPending },
     { count: trainingCenterActiveCount },
     { count: careHomeActiveCount },
+    { data: reminders },
   ] = await Promise.all([
     supabase.from("customers").select("*"),
     supabase.from("customer_statuses").select("*"),
@@ -102,6 +103,10 @@ export default async function DashboardPage() {
       .from("care_homes")
       .select("id", { count: "exact", head: true })
       .eq("partnership_terminated", false),
+    supabase
+      .from("customer_reminders")
+      .select("customer_id, remind_date, completed")
+      .eq("completed", false),
   ]);
 
   const inputs = {
@@ -110,6 +115,7 @@ export default async function DashboardPage() {
     reservationPayments: reservationPayments ?? [],
     welcomePackPayments: welcomePackPayments ?? [],
     smsMessages: smsMessages ?? [],
+    reminders: reminders ?? [],
   };
 
   const taskBuckets = computeTaskBuckets(inputs);

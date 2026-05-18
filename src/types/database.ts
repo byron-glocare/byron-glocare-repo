@@ -547,6 +547,41 @@ export type Database = {
       };
 
       // -----------------------------------------------------------------------
+      customer_reminders: {
+        Row: {
+          id: string;
+          customer_id: string;
+          remind_date: string; // YYYY-MM-DD
+          content: string;
+          completed: boolean;
+          created_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          customer_id: string;
+          remind_date: string;
+          content: string;
+          completed?: boolean;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["customer_reminders"]["Insert"]
+        >;
+        Relationships: [
+          {
+            foreignKeyName: "customer_reminders_customer_id_fkey";
+            columns: ["customer_id"];
+            referencedRelation: "customers";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+
+      // -----------------------------------------------------------------------
       sms_messages: {
         Row: {
           id: string;
@@ -931,6 +966,7 @@ export type ReservationPayment = Tables<"reservation_payments">;
 export type CommissionPayment = Tables<"commission_payments">;
 export type EventPayment = Tables<"event_payments">;
 export type WelcomePackPayment = Tables<"welcome_pack_payments">;
+export type CustomerReminder = Tables<"customer_reminders">;
 export type SmsMessage = Tables<"sms_messages">;
 export type SystemSetting = Tables<"system_settings">;
 export type StatusOption = Tables<"status_options">;
