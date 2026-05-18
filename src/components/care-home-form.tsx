@@ -56,6 +56,7 @@ type Props = {
 
 const EMPTY: CareHomeInput = {
   name: "",
+  director_phone: null,
   region: null,
   address: null,
   director_name: null,
@@ -188,16 +189,35 @@ export function CareHomeForm({ mode, homeId, defaultValues }: Props) {
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">담당자</CardTitle>
+              <CardTitle className="text-base">연락처</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              {/* 대표 연락처 (사업장 대표번호) */}
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>대표 연락처</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        value={field.value ?? ""}
+                        placeholder="02-0000-0000 (지역번호 포함)"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {/* 대표자 */}
               <div className="grid sm:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="director_name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>원장</FormLabel>
+                      <FormLabel>대표자 이름</FormLabel>
                       <FormControl>
                         <Input {...field} value={field.value ?? ""} />
                       </FormControl>
@@ -207,15 +227,15 @@ export function CareHomeForm({ mode, homeId, defaultValues }: Props) {
                 />
                 <FormField
                   control={form.control}
-                  name="phone"
+                  name="director_phone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>대표 전화</FormLabel>
+                      <FormLabel>대표자 연락처</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
                           value={field.value ?? ""}
-                          placeholder="02-000-0000"
+                          placeholder="010-0000-0000"
                         />
                       </FormControl>
                       <FormMessage />
@@ -223,13 +243,14 @@ export function CareHomeForm({ mode, homeId, defaultValues }: Props) {
                   )}
                 />
               </div>
+              {/* 담당자 */}
               <div className="grid sm:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="contact_person"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>담당자</FormLabel>
+                      <FormLabel>담당자 이름</FormLabel>
                       <FormControl>
                         <Input {...field} value={field.value ?? ""} />
                       </FormControl>
@@ -242,7 +263,7 @@ export function CareHomeForm({ mode, homeId, defaultValues }: Props) {
                   name="contact_phone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>담당자 전화</FormLabel>
+                      <FormLabel>담당자 연락처</FormLabel>
                       <FormControl>
                         <Input
                           {...field}

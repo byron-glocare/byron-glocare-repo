@@ -62,6 +62,9 @@ const EMPTY: TrainingCenterInput = {
   address: null,
   business_number: null,
   director_name: null,
+  director_phone: null,
+  contact_person: null,
+  contact_phone: null,
   phone: null,
   email: null,
   bank_name: null,
@@ -309,19 +312,38 @@ export function TrainingCenterForm({
             </CardContent>
           </Card>
 
-          {/* 우측: 담당자/연락처/금액 */}
+          {/* 우측: 연락처/결제/강의 */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">담당자 · 결제 · 강의</CardTitle>
+              <CardTitle className="text-base">연락처 · 결제 · 강의</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              {/* 대표 연락처 (사업장 대표번호) */}
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>대표 연락처</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        value={field.value ?? ""}
+                        placeholder="02-0000-0000 (지역번호 포함)"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {/* 대표자 */}
               <div className="grid sm:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="director_name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>원장</FormLabel>
+                      <FormLabel>대표자 이름</FormLabel>
                       <FormControl>
                         <Input {...field} value={field.value ?? ""} />
                       </FormControl>
@@ -331,10 +353,43 @@ export function TrainingCenterForm({
                 />
                 <FormField
                   control={form.control}
-                  name="phone"
+                  name="director_phone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>전화번호</FormLabel>
+                      <FormLabel>대표자 연락처</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          value={field.value ?? ""}
+                          placeholder="010-0000-0000"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              {/* 담당자 */}
+              <div className="grid sm:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="contact_person"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>담당자 이름</FormLabel>
+                      <FormControl>
+                        <Input {...field} value={field.value ?? ""} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="contact_phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>담당자 연락처</FormLabel>
                       <FormControl>
                         <Input
                           {...field}

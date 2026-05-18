@@ -74,6 +74,9 @@ export type Database = {
           address: string | null;
           business_number: string | null;
           director_name: string | null;
+          director_phone: string | null;
+          contact_person: string | null;
+          contact_phone: string | null;
           phone: string | null;
           email: string | null;
           bank_name: string | null;
@@ -99,6 +102,9 @@ export type Database = {
           address?: string | null;
           business_number?: string | null;
           director_name?: string | null;
+          director_phone?: string | null;
+          contact_person?: string | null;
+          contact_phone?: string | null;
           phone?: string | null;
           email?: string | null;
           bank_name?: string | null;
@@ -166,6 +172,7 @@ export type Database = {
           region: string | null;
           address: string | null;
           director_name: string | null;
+          director_phone: string | null;
           phone: string | null;
           contact_person: string | null;
           contact_phone: string | null;
@@ -182,6 +189,7 @@ export type Database = {
           region?: string | null;
           address?: string | null;
           director_name?: string | null;
+          director_phone?: string | null;
           phone?: string | null;
           contact_person?: string | null;
           contact_phone?: string | null;
