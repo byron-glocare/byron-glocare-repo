@@ -137,6 +137,117 @@ export function buildCommissionSettlementMessage(
 }
 
 // =============================================================================
+// 3) 정산 내역 알림 — 운영자가 카카오톡/이메일 등에 직접 복사해 보낼 본문
+//    (NHN SMS 가 아니라 외부 채널로 발송할 정산서 안내문)
+// =============================================================================
+
+export const COMPANY_INFO = {
+  companyName: "주식회사 글로케어",
+  bankName: "신한은행",
+  bankAccount: "100-038-096550",
+};
+
+export type CommissionNotificationTemplateInput = {
+  /** 교육원 — 사업자번호 / 대표자 / 발행 이메일 포함 */
+  center: {
+    name: string;
+    business_number: string | null;
+    director_name: string | null;
+    email: string | null;
+    tuition_fee_2026: number | null;
+  };
+  /** 정산 대상 월 (YYYY-MM-01) */
+  settlementMonth: string;
+  /** 정산 대상 교육생 + 개강반 (YYYY-MM-DD or "12월 30일 개강반" 표시용) */
+  items: {
+    customerName: string;
+    classStartDate: string | null;
+    classTypeLabel: string | null;
+  }[];
+  /** 정산 합계 */
+  totals: {
+    /** 합계 수강료 (info 용 — 25% 적용 전) */
+    tuitionSum: number;
+    /** 합계 소개비 (수강료 × 25%) */
+    totalAmount: number;
+    /** 합계 공제 */
+    deductionAmount: number;
+    /** 입금액 (소개비 − 공제) */
+    receivedAmount: number;
+  };
+  /** 공제 사유 라벨 (있으면 본문에 명시 — 예: "시험비") */
+  deductionLabel?: string;
+};
+
+export function buildCommissionNotificationMessage(
+  input: CommissionNotificationTemplateInput
+): string {
+  const ym = input.settlementMonth.slice(0, 7);
+  const [year, month] = ym.split("-");
+  const studentLines = input.items.map((s) => {
+    const className = s.classStartDate
+      ? `${shortKoreanDate(s.classStartDate)} 개강반${
+          s.classTypeLabel ? ` (${s.classTypeLabel})` : ""
+        }`
+      : s.classTypeLabel
+        ? `${s.classTypeLabel}`
+        : "—";
+    return ` - ${s.customerName} / ${className}`;
+  });
+  // 세금계산서 — 부가세 별도 계산 (공급가액 = total × 100 / 110)
+  const supply = Math.round(input.totals.totalAmount / 1.1);
+  const vat = input.totals.totalAmount - supply;
+  const tuitionFee = input.center.tuition_fee_2026 ?? 0;
+  const dedLabel = input.deductionLabel
+    ? `공제(${input.deductionLabel})`
+    : "공제";
+
+  const lines = [
+    `${input.center.name} 원장님께,`,
+    `저희 글로케어와 함께해주셔서 감사합니다. 아래와 같이 소개 수수료 정산을 안내드리오니 확인 부탁드리겠습니다.`,
+    ``,
+    `1. 대상기간: ${year}년 ${Number(month)}월`,
+    ``,
+    `2. 대상 교육생: ${input.items.length}명`,
+    ...studentLines,
+    ``,
+    `3. 정산금액`,
+    `1) 입금액`,
+    ` - 수수료 기준: 교육생 수강료의 25%`,
+    ` - 수강료: ${formatKRW(tuitionFee)}`,
+    ` - 교육생 수: ${input.items.length}명`,
+    ` - 총 정산액: ${formatKRW(input.totals.totalAmount)}`,
+    input.totals.deductionAmount > 0
+      ? ` - ${dedLabel}: ${formatKRW(input.totals.deductionAmount)}`
+      : null,
+    ` - 입금액: ${formatKRW(input.totals.receivedAmount)}`,
+    `2) 입금정보`,
+    ` - ${COMPANY_INFO.bankName} ${COMPANY_INFO.bankAccount} ${COMPANY_INFO.companyName}`,
+    ` - 입금액: ${formatKRW(input.totals.receivedAmount)}`,
+    ``,
+    `4. 전자세금계산서 발행`,
+    ` - 업체명: ${input.center.name}`,
+    ` - 대표자: ${safeDash(input.center.director_name)}`,
+    ` - 사업자등록번호: ${safeDash(input.center.business_number)}`,
+    ` - 발행 이메일: ${safeDash(input.center.email)}`,
+    ` - 발행금액: ${formatKRW(input.totals.totalAmount)} (공급가액: ${formatKRW(supply)} / 부가세액: ${formatKRW(vat)})`,
+    ` - 발행일: 입금일로부터 1주일 이내`,
+    ``,
+    `다시 한번 글로케어와 함께해주셔서 감사드리며, 앞으로도 잘 부탁드리겠습니다.`,
+    `진행에 궁금하신 점이나 어려운 점이 있으시면 언제든 연락주세요!`,
+  ];
+
+  return lines.filter((l) => l !== null).join("\n");
+}
+
+/** "2026-03-15" → "3월 15일" */
+function shortKoreanDate(iso: string): string {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
+  if (!m) return iso;
+  return `${Number(m[2])}월 ${Number(m[3])}일`;
+}
+
+// =============================================================================
 // 유틸
 // =============================================================================
 

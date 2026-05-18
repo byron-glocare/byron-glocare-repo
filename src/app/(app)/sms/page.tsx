@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { GraduationCap, ArrowRight, Clock } from "lucide-react";
+import { ArrowRight, Clock, GraduationCap, Receipt } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/page-header";
@@ -77,8 +77,26 @@ export default async function SmsPage() {
             </div>
           </Link>
 
-          {/* 수수료 정산 알림은 /settlements 페이지에서 교육원×월 단위 정산과
-              통합 예정 — 0007 이후 리디자인 중 */}
+          <Link
+            href="/sms/commission"
+            className="group block rounded-lg border border-border bg-card p-6 transition-colors hover:border-primary/50 hover:bg-accent/30"
+          >
+            <div className="flex items-start gap-4">
+              <div className="size-10 rounded-md bg-success/10 text-success flex items-center justify-center shrink-0">
+                <Receipt className="size-5" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="font-medium flex items-center gap-2">
+                  정산 내역 발송
+                  <ArrowRight className="size-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  교육원별 정산 안내문 본문 미리보기 + 정산서 PDF (브라우저
+                  인쇄로 저장) — 카카오톡/이메일로 직접 전송
+                </p>
+              </div>
+            </div>
+          </Link>
         </div>
 
         {/* 최근 발송 이력 */}
