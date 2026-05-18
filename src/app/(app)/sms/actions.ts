@@ -207,3 +207,72 @@ export async function sendNewStudentSms(input: {
   return { ok: true };
 }
 
+// =============================================================================
+// 정산 내역 발송
+// =============================================================================
+
+export async function sendCommissionSms(input: {
+  centerId: string;
+  recipientPhone: string;
+  body: string;
+  /** sms_messages 이력 매칭용 (각 customer 에 대해서도 row 생성). */
+  customerIds?: string[];
+}): Promise<SmsActionResult> {
+  const phone = input.recipientPhone.trim();
+  if (!phone) {
+    return {
+      ok: false,
+      error: "수신자 전화번호가 비어있습니다. 교육원 정보에 대표자 연락처를 등록하거나 발송 모달에서 직접 입력하세요.",
+    };
+  }
+  if (!input.body?.trim()) {
+    return { ok: false, error: "본문이 비어있습니다." };
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "Unauthorized" };
+
+  const send = await sendNhnLms({
+    phone,
+    title: "[글로케어 정산 안내]",
+    body: input.body,
+  });
+  if (!send.ok) return { ok: false, error: `발송 실패: ${send.error}` };
+
+  // 이력 — center 1 row + customer 별 1 row
+  const customerIds = input.customerIds ?? [];
+  const rows = [
+    {
+      message_type: "commission_settlement",
+      target_center_id: input.centerId,
+      target_customer_id: null,
+      content: input.body,
+      sent_by: user.id,
+    },
+    ...customerIds.map((cid) => ({
+      message_type: "commission_settlement",
+      target_center_id: input.centerId,
+      target_customer_id: cid,
+      content: input.body,
+      sent_by: user.id,
+    })),
+  ];
+
+  const { error: insertError } = await supabase
+    .from("sms_messages")
+    .insert(rows);
+  if (insertError) {
+    return {
+      ok: true,
+      warning: `SMS 발송 완료. 이력 저장 중 오류: ${insertError.message}`,
+    };
+  }
+
+  revalidatePath("/sms");
+  revalidatePath("/sms/commission");
+  return { ok: true };
+}
+

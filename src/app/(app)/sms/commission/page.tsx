@@ -26,7 +26,7 @@ export default async function SmsCommissionPage() {
     supabase
       .from("training_centers")
       .select(
-        "id, name, region, business_number, director_name, email, tuition_fee_2026"
+        "id, name, region, business_number, director_name, director_phone, phone, email, tuition_fee_2026"
       ),
     supabase
       .from("customers")
@@ -58,6 +58,8 @@ export default async function SmsCommissionPage() {
     centerId: string;
     centerName: string;
     region: string | null;
+    /** 수신자 default — 대표자 연락처. 없으면 빈 문자열. */
+    directorPhone: string;
     settlementMonth: string;
     rows: Row[];
     totals: { total: number; deduction: number; net: number };
@@ -104,6 +106,7 @@ export default async function SmsCommissionPage() {
         centerId: center.id,
         centerName: center.name,
         region: center.region,
+        directorPhone: center.director_phone ?? "",
         settlementMonth: cp.settlement_month,
         rows: [row],
         totals: {

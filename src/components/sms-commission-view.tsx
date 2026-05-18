@@ -11,6 +11,7 @@ import {
   Copy,
   FileText,
   Loader2,
+  MessageCircle,
   Receipt,
   Undo2,
 } from "lucide-react";
@@ -18,12 +19,23 @@ import {
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
   completeSettlementBatch,
   revertSingleCustomer,
   settleSingleCustomer,
 } from "@/app/(app)/settlements/actions";
+import { sendCommissionSms } from "@/app/(app)/sms/actions";
 import { formatCurrency } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -42,6 +54,7 @@ type Group = {
   centerId: string;
   centerName: string;
   region: string | null;
+  directorPhone: string;
   settlementMonth: string; // YYYY-MM-01
   rows: Row[];
   totals: { total: number; deduction: number; net: number };
@@ -97,11 +110,45 @@ function GroupRow({ group }: { group: Group }) {
   const [open, setOpen] = useState(false);
   const [pending, startTransition] = useTransition();
 
+  // 문자 발송 모달
+  const [smsModalOpen, setSmsModalOpen] = useState(false);
+  const [smsPhone, setSmsPhone] = useState(group.directorPhone);
+  const [smsBody, setSmsBody] = useState(group.message);
+  const [smsSending, setSmsSending] = useState(false);
+
   const ym = group.settlementMonth.slice(0, 7);
   const printItems = group.rows
     .map((r) => `${r.customerId}:${r.deduction}`)
     .join(",");
   const printHref = `/settlements/print?center=${group.centerId}&month=${ym}&items=${encodeURIComponent(printItems)}`;
+
+  function openSmsModal() {
+    setSmsPhone(group.directorPhone);
+    setSmsBody(group.message);
+    setSmsModalOpen(true);
+  }
+
+  async function handleSendSms() {
+    if (!smsPhone.trim()) {
+      toast.error("수신자 전화번호를 입력해주세요.");
+      return;
+    }
+    setSmsSending(true);
+    const result = await sendCommissionSms({
+      centerId: group.centerId,
+      recipientPhone: smsPhone,
+      body: smsBody,
+      customerIds: group.rows.map((r) => r.customerId),
+    });
+    setSmsSending(false);
+    if (!result.ok) {
+      toast.error("문자 발송 실패", { description: result.error });
+      return;
+    }
+    toast.success("문자 발송 완료" + (result.warning ? ` (${result.warning})` : ""));
+    setSmsModalOpen(false);
+    router.refresh();
+  }
 
   async function handleCopy() {
     try {
@@ -249,6 +296,15 @@ function GroupRow({ group }: { group: Group }) {
           <Button
             type="button"
             size="sm"
+            variant="outline"
+            onClick={openSmsModal}
+          >
+            <MessageCircle className="size-4" />
+            문자 보내기
+          </Button>
+          <Button
+            type="button"
+            size="sm"
             onClick={handleBulkComplete}
             disabled={pending}
           >
@@ -363,6 +419,74 @@ function GroupRow({ group }: { group: Group }) {
           </div>
         </div>
       )}
+
+      {/* 문자 발송 모달 */}
+      <Dialog open={smsModalOpen} onOpenChange={setSmsModalOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>문자 발송 — {group.centerName}</DialogTitle>
+            <DialogDescription className="text-xs">
+              발신: 010-2825-4849 (글로케어). 수신자가 비어있으면 교육원 정보
+              [대표자 연락처] 를 입력하거나 아래에서 직접 입력하세요.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div>
+              <Label className="text-xs text-muted-foreground">
+                수신자 전화번호
+              </Label>
+              <Input
+                value={smsPhone}
+                onChange={(e) => setSmsPhone(e.target.value)}
+                placeholder="010-0000-0000"
+                disabled={smsSending}
+              />
+              {!group.directorPhone && (
+                <p className="text-[11px] text-warning mt-1">
+                  ⚠ 이 교육원에 대표자 연락처가 등록되지 않았습니다. 수신자를
+                  직접 입력하거나 교육원 정보를 먼저 수정해주세요.
+                </p>
+              )}
+            </div>
+            <div>
+              <Label className="text-xs text-muted-foreground">본문</Label>
+              <Textarea
+                value={smsBody}
+                onChange={(e) => setSmsBody(e.target.value)}
+                rows={Math.min(20, Math.max(10, smsBody.split("\n").length))}
+                className="font-mono text-xs leading-relaxed"
+                disabled={smsSending}
+              />
+              <p className="text-[11px] text-muted-foreground mt-1">
+                {new TextEncoder().encode(smsBody).length} byte / 2000 byte
+                (MMS 한도)
+              </p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setSmsModalOpen(false)}
+              disabled={smsSending}
+            >
+              취소
+            </Button>
+            <Button
+              type="button"
+              onClick={handleSendSms}
+              disabled={smsSending || !smsPhone.trim()}
+            >
+              {smsSending ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                <MessageCircle className="size-4" />
+              )}
+              발송
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }
