@@ -206,10 +206,15 @@ export function SettlementByCustomerView({ rows }: Props) {
       </div>
 
       {filtered.length === 0 ? (
-        <Card className="p-12 text-center text-sm text-muted-foreground">
-          {hasAnyFilter
-            ? "조건에 맞는 교육생이 없습니다."
-            : "등록된 교육생이 없습니다."}
+        <Card className="p-12 text-center text-sm text-muted-foreground space-y-2">
+          <div>
+            {hasAnyFilter
+              ? "조건에 맞는 교육생이 없습니다."
+              : "등록된 교육생이 없습니다."}
+          </div>
+          <div className="text-[11px] text-muted-foreground/70">
+            (server 전달 row {rows.length}건 · 필터 후 {filtered.length}건)
+          </div>
         </Card>
       ) : (
         <>
