@@ -55,6 +55,8 @@ type Group = {
   centerName: string;
   region: string | null;
   directorPhone: string;
+  directorName: string;
+  email: string;
   settlementMonth: string; // YYYY-MM-01
   rows: Row[];
   totals: { total: number; deduction: number; net: number };
@@ -241,32 +243,50 @@ function GroupRow({ group }: { group: Group }) {
 
   return (
     <Card className="overflow-hidden p-0">
-      <div className="flex items-center gap-3 p-4 border-b border-border bg-muted/30">
+      <div className="flex items-start gap-3 p-4 border-b border-border bg-muted/30">
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
-          className="flex items-center gap-2 hover:text-primary min-w-0"
+          className="flex flex-col items-start gap-1 hover:text-primary min-w-0"
         >
-          {open ? (
-            <ChevronDown className="size-4 shrink-0" />
-          ) : (
-            <ChevronRight className="size-4 shrink-0" />
-          )}
-          <span className="font-semibold truncate">{group.centerName}</span>
-          {group.region && (
-            <Badge variant="outline" className="text-xs shrink-0">
-              {group.region}
+          <div className="flex items-center gap-2">
+            {open ? (
+              <ChevronDown className="size-4 shrink-0" />
+            ) : (
+              <ChevronRight className="size-4 shrink-0" />
+            )}
+            <span className="font-semibold truncate">{group.centerName}</span>
+            {group.region && (
+              <Badge variant="outline" className="text-xs shrink-0">
+                {group.region}
+              </Badge>
+            )}
+            <Badge
+              variant="outline"
+              className="text-xs font-mono shrink-0 bg-info/10 text-info border-info/20"
+            >
+              {ym} 확정
             </Badge>
-          )}
-          <Badge
-            variant="outline"
-            className="text-xs font-mono shrink-0 bg-info/10 text-info border-info/20"
-          >
-            {ym} 확정
-          </Badge>
-          <Badge variant="secondary" className="text-xs shrink-0">
-            {group.rows.length}명
-          </Badge>
+            <Badge variant="secondary" className="text-xs shrink-0">
+              {group.rows.length}명
+            </Badge>
+          </div>
+          {/* 원장 연락처 + 이메일 — 표시용. 발송 시 모달에서 편집 가능 */}
+          <div className="flex items-center gap-3 text-[11px] text-muted-foreground pl-6">
+            <span>
+              원장{" "}
+              <span className="text-foreground">
+                {group.directorName || "—"}
+              </span>
+              {group.directorPhone ? ` · ${group.directorPhone}` : ""}
+            </span>
+            {group.email && (
+              <span>
+                이메일{" "}
+                <span className="text-foreground">{group.email}</span>
+              </span>
+            )}
+          </div>
         </button>
         <div className="ml-auto flex items-center gap-3">
           <div className="text-base font-semibold">

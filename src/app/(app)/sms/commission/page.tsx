@@ -60,6 +60,10 @@ export default async function SmsCommissionPage() {
     region: string | null;
     /** 수신자 default — 대표자 연락처. 없으면 빈 문자열. */
     directorPhone: string;
+    /** 대표자 이름 — 표시용 */
+    directorName: string;
+    /** 발행 이메일 — 표시용 */
+    email: string;
     settlementMonth: string;
     rows: Row[];
     totals: { total: number; deduction: number; net: number };
@@ -107,6 +111,8 @@ export default async function SmsCommissionPage() {
         centerName: center.name,
         region: center.region,
         directorPhone: center.director_phone ?? "",
+        directorName: center.director_name ?? "",
+        email: center.email ?? "",
         settlementMonth: cp.settlement_month,
         rows: [row],
         totals: {
