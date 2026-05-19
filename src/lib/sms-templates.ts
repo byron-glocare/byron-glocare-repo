@@ -6,7 +6,7 @@
  * 실제 문구는 운영 중에 §8 설정 페이지에서 편집 가능하게 확장 예정.
  */
 
-import { formatDate } from "./format";
+import { asciiUpper } from "./name-utils";
 
 // =============================================================================
 // 공통
@@ -22,49 +22,145 @@ function safeDash(v: string | number | null | undefined): string {
 // 1) 신규 교육생 알림 — 교육원 원장에게 발송
 // =============================================================================
 
-export type NewStudentTemplateInput = {
-  centerName: string;
+export type NewStudentTemplateStudent = {
+  name_kr: string | null;
+  name_vi: string | null;
+  phone: string | null;
+  visa_type: string | null;
+  birth_year: number | null;
+  topik_level: string | null;
+  /** 예약금 = reservation_payments.amount (없으면 0 으로 표시) */
+  reservationAmount: number | null;
+  /** 해당 학생이 등록된 강의 — 학생마다 다를 수 있음 (대표값을 fallback 으로 사용) */
   classStartDate: string | null;
   classType: "weekday" | "night" | null;
-  students: {
-    name_kr: string | null;
-    name_vi: string | null;
-    phone: string | null;
-    visa_type: string | null;
-    birth_year: number | null;
-  }[];
-  /** 블라블라/특이사항 — 직접 입력 */
+  /** 특이사항 — 학생별 */
   extraNote?: string;
 };
+
+export type NewStudentTemplateInput = {
+  centerName: string;
+  /** 제목 라벨용 월 (없으면 학생 첫 번째 classStartDate 사용) — 예: 4 → "[4월 신규 교육생 안내]" */
+  monthLabel?: number | null;
+  students: NewStudentTemplateStudent[];
+};
+
+const NEW_STUDENT_FOOTER_NOTICE =
+  "※ 예약금은 교육생의 시험비 액수와 같습니다. 교육생이 시험에 응시하지 못하더라도 환불되지 않으니 참고 부탁드립니다.";
+const NEW_STUDENT_CLOSING =
+  "진행에 궁금하신 점이나 어려운 점이 있으시면 언제든 연락주세요!";
 
 export function buildNewStudentMessage(
   input: NewStudentTemplateInput
 ): string {
-  const header = `[글로케어] ${input.centerName} 원장님 안녕하세요.`;
-
-  const classInfo = input.classStartDate
-    ? `이번 ${formatDate(input.classStartDate)}${
-        input.classType === "night" ? " (야간)" : " (주간)"
-      } 개강 수업에`
-    : "이번 개강 수업에";
-
-  const intro = `${classInfo} 아래 ${input.students.length}명의 교육생이 등록되었습니다.`;
-
-  const lines = input.students.map((s, i) => {
-    const name = s.name_kr || s.name_vi || "(이름 없음)";
-    const parts = [`${i + 1}. ${name}`];
-    if (s.birth_year) parts.push(`${s.birth_year}년생`);
-    if (s.visa_type) parts.push(s.visa_type);
-    if (s.phone) parts.push(s.phone);
-    return parts.join(" / ");
-  });
-
-  const body = [header, "", intro, "", ...lines].join("\n");
-
-  if (input.extraNote?.trim()) {
-    return `${body}\n\n${input.extraNote.trim()}`;
+  // 제목 월 — 명시값 우선, 없으면 첫 학생의 class 시작 월
+  let month = input.monthLabel ?? null;
+  if (month == null) {
+    const firstDate = input.students.find((s) => s.classStartDate)
+      ?.classStartDate;
+    if (firstDate) {
+      const m = /^\d{4}-(\d{2})-\d{2}$/.exec(firstDate);
+      if (m) month = Number(m[1]);
+    }
   }
-  return body;
+
+  const title = month
+    ? `[${month}월 신규 교육생 안내]`
+    : `[신규 교육생 안내]`;
+
+  const greeting = [
+    `${input.centerName} 원장님께,`,
+    ``,
+    `안녕하세요. 글로케어입니다.`,
+    `아래와 같이 신규 교육생을 안내드리오니 확인 부탁드리겠습니다.`,
+  ].join("\n");
+
+  const totalLine = `대상 교육생: ${input.students.length}명`;
+
+  const blocks = input.students.map((s, i) =>
+    renderNewStudentBlock(s, i + 1, input.students.length)
+  );
+
+  const lines = [
+    title,
+    ``,
+    greeting,
+    ``,
+    totalLine,
+    ``,
+    blocks.join("\n\n"),
+    ``,
+    NEW_STUDENT_FOOTER_NOTICE,
+    ``,
+    NEW_STUDENT_CLOSING,
+  ];
+
+  return lines.join("\n");
+}
+
+function renderNewStudentBlock(
+  s: NewStudentTemplateStudent,
+  index: number,
+  total: number
+): string {
+  const nameVi = s.name_vi ? asciiUpper(s.name_vi) : "";
+  const nameKr = s.name_kr ?? "";
+  const nameLine = [nameVi, nameKr].filter(Boolean).join(" / ") || "(이름 없음)";
+  const heading = total > 1 ? `[${index}/${total}]` : null;
+
+  const klass = formatClassLabel(s.classStartDate, s.classType);
+  const age = s.birth_year ? `${currentAgeKr(s.birth_year)}세` : "—";
+  const topik = s.topik_level ? formatTopik(s.topik_level) : "—";
+  const visa = s.visa_type ?? "—";
+  const phone = s.phone ?? "—";
+  const reservation =
+    s.reservationAmount != null && s.reservationAmount > 0
+      ? `${s.reservationAmount.toLocaleString("ko-KR")}원`
+      : "—";
+
+  const lines = [
+    heading,
+    `- 이름: ${nameLine}`,
+    `- 희망 개강일: ${klass}`,
+    `- 연락처: ${phone}`,
+    `- 나이: ${age}`,
+    `- 토픽: ${topik}`,
+    `- 비자: ${visa}`,
+    `- 예약금(시험비): ${reservation}`,
+    `- 특이사항: ${s.extraNote?.trim() ?? ""}`,
+  ];
+
+  return lines.filter((l) => l !== null).join("\n");
+}
+
+/** "2026-04-17" + "weekday" → "26년 4월 17일 주간반" */
+function formatClassLabel(
+  iso: string | null,
+  type: "weekday" | "night" | null
+): string {
+  if (!iso) return type === "night" ? "야간반" : type === "weekday" ? "주간반" : "—";
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
+  if (!m) return iso;
+  const yy = m[1].slice(2);
+  const mo = Number(m[2]);
+  const da = Number(m[3]);
+  const t = type === "night" ? "야간반" : "주간반";
+  return `${yy}년 ${mo}월 ${da}일 ${t}`;
+}
+
+/** "TOPIK 2" / "2급" / "2" → "2급" — 숫자 추출 후 "N급" 으로 통일 */
+function formatTopik(raw: string): string {
+  const trimmed = raw.trim();
+  if (!trimmed) return "—";
+  const m = /(\d+)/.exec(trimmed);
+  if (m) return `${m[1]}급`;
+  return trimmed;
+}
+
+/** 출생년도 → 만 나이 (KST 기준, 단순 연도 차) */
+function currentAgeKr(birthYear: number): number {
+  const now = new Date();
+  return now.getFullYear() - birthYear;
 }
 
 // =============================================================================
