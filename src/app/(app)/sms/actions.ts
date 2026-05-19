@@ -85,6 +85,11 @@ export async function sendNewStudentSms(input: {
    * 비어있으면 서버에서 템플릿으로 재생성한다.
    */
   bodyOverride?: string;
+  /**
+   * 운영자가 미리보기 모달에서 직접 편집한 수신 전화번호.
+   * 비어있으면 교육원 대표 연락처로 발송한다.
+   */
+  phoneOverride?: string;
 }): Promise<SmsActionResult> {
   if (input.customerIds.length === 0) {
     return { ok: false, error: "교육생을 선택해주세요." };
@@ -105,10 +110,14 @@ export async function sendNewStudentSms(input: {
   if (centerError || !center) {
     return { ok: false, error: "교육원을 찾을 수 없습니다." };
   }
-  if (!center.phone) {
+
+  // 수신 전화번호 — phoneOverride 우선, 없으면 교육원 대표 연락처
+  const recipientPhone = (input.phoneOverride ?? center.phone ?? "").trim();
+  if (!recipientPhone) {
     return {
       ok: false,
-      error: "교육원에 전화번호가 등록되지 않았습니다. 교육원 상세에서 입력하세요.",
+      error:
+        "수신 전화번호가 비어있습니다. 미리보기 모달에서 직접 입력하거나 교육원 대표 연락처를 등록하세요.",
     };
   }
 
@@ -206,7 +215,7 @@ export async function sendNewStudentSms(input: {
 
   // NHN 호출 (1회)
   const send = await sendNhnLms({
-    phone: center.phone,
+    phone: recipientPhone,
     title: smsTitle,
     body,
   });

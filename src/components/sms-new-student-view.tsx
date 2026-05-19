@@ -166,6 +166,8 @@ function CenterGroupCard({
   const [previewOpen, setPreviewOpen] = useState(false);
   // 미리보기에서 운영자가 직접 본문을 수정할 수 있도록 — 열때마다 템플릿으로 reset
   const [editedBody, setEditedBody] = useState<string>("");
+  // 수신자 전화번호 — 기본값은 교육원 전화번호, 다이얼로그 열때마다 reset
+  const [editedPhone, setEditedPhone] = useState<string>(center.phone ?? "");
   const [pending, startTransition] = useTransition();
   // 발송 후 "강의 접수 메시지 발송 플래그 ON 으로 변경할까요?" 확인 다이얼로그
   const [sentPromptIds, setSentPromptIds] = useState<string[] | null>(null);
@@ -254,10 +256,13 @@ function CenterGroupCard({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [center.name, monthLabel, selectedStudents, studentNotes, reservationAmountByCustomer]);
 
-  // 미리보기 다이얼로그가 열릴 때 — 최신 템플릿으로 editedBody reset
+  // 미리보기 다이얼로그가 열릴 때 — 최신 템플릿으로 editedBody / editedPhone reset
   useEffect(() => {
-    if (previewOpen) setEditedBody(generatedMessage);
-  }, [previewOpen, generatedMessage]);
+    if (previewOpen) {
+      setEditedBody(generatedMessage);
+      setEditedPhone(center.phone ?? "");
+    }
+  }, [previewOpen, generatedMessage, center.phone]);
 
   function toggleSelect(id: string) {
     setSelectedIds((prev) =>
@@ -278,6 +283,11 @@ function CenterGroupCard({
       toast.error("본문이 비어있습니다.");
       return;
     }
+    const phone = editedPhone.trim();
+    if (!phone) {
+      toast.error("수신 전화번호가 비어있습니다.");
+      return;
+    }
 
     startTransition(async () => {
       const ids = selectedStudents.map((s) => s.id);
@@ -285,6 +295,7 @@ function CenterGroupCard({
         centerId: center.id,
         customerIds: ids,
         bodyOverride: editedBody,
+        phoneOverride: phone,
       });
       if (result.ok) {
         if ("warning" in result && result.warning) {
@@ -441,30 +452,63 @@ function CenterGroupCard({
           <DialogHeader>
             <DialogTitle>메시지 미리보기 & 편집</DialogTitle>
             <DialogDescription>
-              {center.name} 원장 {center.phone} 으로 발송 예정 — 본문을 직접 수정한 뒤 발송할 수 있습니다.
+              {center.name} 원장 — 수신 전화번호와 본문을 직접 수정한 뒤 발송할 수 있습니다.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-xs text-muted-foreground">
-                {selectedStudents.length}명 · 본문 {new TextEncoder().encode(editedBody).length} bytes / 2000
-              </span>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => setEditedBody(generatedMessage)}
-                disabled={pending}
-              >
-                템플릿으로 되돌리기
-              </Button>
+          <div className="space-y-3">
+            {/* 수신자 전화번호 — 편집 가능 */}
+            <div>
+              <label className="text-xs text-muted-foreground block mb-1">
+                수신 전화번호 (기본값: 교육원 대표 연락처
+                {center.phone ? ` ${center.phone}` : " 없음"})
+              </label>
+              <input
+                type="tel"
+                value={editedPhone}
+                onChange={(e) => setEditedPhone(e.target.value)}
+                placeholder="010-0000-0000"
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-ring"
+              />
+              {center.phone && editedPhone.replace(/[^0-9]/g, "") !==
+                center.phone.replace(/[^0-9]/g, "") && (
+                <div className="mt-1 flex items-center gap-2">
+                  <span className="text-[11px] text-warning">
+                    교육원에 등록된 번호와 다릅니다.
+                  </span>
+                  <button
+                    type="button"
+                    className="text-[11px] text-muted-foreground underline hover:text-foreground"
+                    onClick={() => setEditedPhone(center.phone ?? "")}
+                  >
+                    원장님 번호로 되돌리기
+                  </button>
+                </div>
+              )}
             </div>
-            <Textarea
-              value={editedBody}
-              onChange={(e) => setEditedBody(e.target.value)}
-              rows={20}
-              className="font-mono text-xs"
-            />
+
+            {/* 본문 */}
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-xs text-muted-foreground">
+                  {selectedStudents.length}명 · 본문 {new TextEncoder().encode(editedBody).length} bytes / 2000
+                </span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setEditedBody(generatedMessage)}
+                  disabled={pending}
+                >
+                  템플릿으로 되돌리기
+                </Button>
+              </div>
+              <Textarea
+                value={editedBody}
+                onChange={(e) => setEditedBody(e.target.value)}
+                rows={20}
+                className="font-mono text-xs"
+              />
+            </div>
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => setPreviewOpen(false)}>
