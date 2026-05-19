@@ -36,7 +36,7 @@ export default async function SmsNewStudentPage() {
     supabase.from("customer_statuses").select("*"),
     supabase
       .from("reservation_payments")
-      .select("customer_id, payment_date"),
+      .select("customer_id, payment_date, amount"),
     supabase
       .from("welcome_pack_payments")
       .select("customer_id, reservation_date"),
@@ -57,12 +57,18 @@ export default async function SmsNewStudentPage() {
   );
   const reservationsByCustomer = new Map<
     string,
-    { payment_date: string | null }[]
+    { payment_date: string | null; amount: number }[]
   >();
   for (const r of reservationPayments ?? []) {
     const arr = reservationsByCustomer.get(r.customer_id) ?? [];
-    arr.push({ payment_date: r.payment_date });
+    arr.push({ payment_date: r.payment_date, amount: r.amount });
     reservationsByCustomer.set(r.customer_id, arr);
+  }
+  // 학생별 예약금 합계 (메시지 본문 "예약금(시험비)" 항목용)
+  const reservationAmountByCustomer = new Map<string, number>();
+  for (const [cid, rows] of reservationsByCustomer) {
+    const sum = rows.reduce((acc, r) => acc + (Number(r.amount) || 0), 0);
+    reservationAmountByCustomer.set(cid, sum);
   }
   const welcomeByCustomer = new Map(
     (welcomePackPayments ?? []).map((w) => [
@@ -111,6 +117,9 @@ export default async function SmsNewStudentPage() {
           classes={classes ?? []}
           sentCustomerIds={Array.from(sentCustomerIds)}
           readyToSendIds={readyToSendIds}
+          reservationAmountByCustomer={Object.fromEntries(
+            reservationAmountByCustomer
+          )}
         />
       </div>
     </>

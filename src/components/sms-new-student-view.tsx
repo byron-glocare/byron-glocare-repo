@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Eye, Loader2, Send } from "lucide-react";
@@ -26,7 +26,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { buildNewStudentMessage } from "@/lib/sms-templates";
+import {
+  buildNewStudentMessage,
+  type NewStudentTemplateStudent,
+} from "@/lib/sms-templates";
 import { formatDate } from "@/lib/format";
 
 type Center = {
@@ -45,6 +48,7 @@ type Customer = {
   phone: string | null;
   visa_type: string | null;
   birth_year: number | null;
+  topik_level: string | null;
   training_center_id: string | null;
   training_class_id: string | null;
   class_start_date: string | null;
@@ -69,9 +73,9 @@ type Props = {
    * (0022 — 기존엔 모든 pending 학생 체크 / 이제는 발송 대기 학생만)
    */
   readyToSendIds: string[];
+  /** 학생별 예약금 합계 (reservation_payments.amount 합) — 메시지의 "예약금(시험비)" 항목용 */
+  reservationAmountByCustomer: Record<string, number>;
 };
-
-const NOTE_STORAGE_KEY = "glocare:sms:new-student:note";
 
 export function SmsNewStudentView({
   centers,
@@ -79,6 +83,7 @@ export function SmsNewStudentView({
   classes,
   sentCustomerIds,
   readyToSendIds,
+  reservationAmountByCustomer,
 }: Props) {
   const router = useRouter();
   const sentSet = useMemo(() => new Set(sentCustomerIds), [sentCustomerIds]);
@@ -124,6 +129,7 @@ export function SmsNewStudentView({
             classMap={classMap}
             sentSet={sentSet}
             readySet={readySet}
+            reservationAmountByCustomer={reservationAmountByCustomer}
             onSent={() => router.refresh()}
           />
         ))
@@ -139,6 +145,7 @@ function CenterGroupCard({
   classMap,
   sentSet,
   readySet,
+  reservationAmountByCustomer,
   onSent,
 }: {
   center: Center;
@@ -147,18 +154,18 @@ function CenterGroupCard({
   classMap: Map<string, TrainingClass>;
   sentSet: Set<string>;
   readySet: Set<string>;
+  reservationAmountByCustomer: Record<string, number>;
   onSent: () => void;
 }) {
-  // 마지막 입력값 자동 완성
-  const [note, setNote] = useState(() => {
-    if (typeof window === "undefined") return "";
-    return window.localStorage.getItem(NOTE_STORAGE_KEY) ?? "";
-  });
   // 0022: default 체크 = 현재 단계가 '강의 접수 메시지 발송 대기' 인 학생만
   const [selectedIds, setSelectedIds] = useState<string[]>(
     pendingStudents.filter((p) => readySet.has(p.id)).map((p) => p.id)
   );
+  // 학생별 특이사항 — 학생 id → 텍스트
+  const [studentNotes, setStudentNotes] = useState<Record<string, string>>({});
   const [previewOpen, setPreviewOpen] = useState(false);
+  // 미리보기에서 운영자가 직접 본문을 수정할 수 있도록 — 열때마다 템플릿으로 reset
+  const [editedBody, setEditedBody] = useState<string>("");
   const [pending, startTransition] = useTransition();
   // 발송 후 "강의 접수 메시지 발송 플래그 ON 으로 변경할까요?" 확인 다이얼로그
   const [sentPromptIds, setSentPromptIds] = useState<string[] | null>(null);
@@ -168,8 +175,8 @@ function CenterGroupCard({
     selectedIds.includes(p.id)
   );
 
-  // 강의 정보 추론 — 선택된 학생들의 class_id 중 가장 많이 등장하는 것
-  const classInfo = useMemo(() => {
+  // 대표 class 정보 (가장 많이 등장하는 class_id) — 학생의 class 가 비어있을 때 fallback
+  const fallbackClass = useMemo(() => {
     const counts = new Map<string, number>();
     for (const s of selectedStudents) {
       if (s.training_class_id) {
@@ -193,19 +200,64 @@ function CenterGroupCard({
     return top;
   }, [selectedStudents, classMap]);
 
-  const message = buildNewStudentMessage({
-    centerName: center.name,
-    classStartDate: classInfo?.start_date ?? selectedStudents[0]?.class_start_date ?? null,
-    classType: classInfo?.class_type ?? null,
-    students: selectedStudents.map((s) => ({
+  function resolveClassForStudent(s: Customer): {
+    classStartDate: string | null;
+    classType: "weekday" | "night" | null;
+  } {
+    const cls = s.training_class_id ? classMap.get(s.training_class_id) : null;
+    if (cls) {
+      return {
+        classStartDate: cls.start_date ?? s.class_start_date ?? null,
+        classType: cls.class_type,
+      };
+    }
+    return {
+      classStartDate: s.class_start_date ?? fallbackClass?.start_date ?? null,
+      classType: fallbackClass?.class_type ?? null,
+    };
+  }
+
+  function studentToTemplate(s: Customer): NewStudentTemplateStudent {
+    const cls = resolveClassForStudent(s);
+    return {
       name_kr: s.name_kr,
       name_vi: s.name_vi,
       phone: s.phone,
       visa_type: s.visa_type,
       birth_year: s.birth_year,
-    })),
-    extraNote: note,
-  });
+      topik_level: s.topik_level,
+      reservationAmount: reservationAmountByCustomer[s.id] ?? null,
+      classStartDate: cls.classStartDate,
+      classType: cls.classType,
+      extraNote: studentNotes[s.id] ?? "",
+    };
+  }
+
+  // 제목 월 — 가장 빠른 학생 class 의 월
+  const monthLabel = useMemo(() => {
+    const dates = selectedStudents
+      .map((s) => resolveClassForStudent(s).classStartDate)
+      .filter((d): d is string => !!d);
+    if (dates.length === 0) return null;
+    const earliest = dates.slice().sort()[0];
+    const m = /^\d{4}-(\d{2})-\d{2}$/.exec(earliest);
+    return m ? Number(m[1]) : null;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedStudents, fallbackClass]);
+
+  const generatedMessage = useMemo(() => {
+    return buildNewStudentMessage({
+      centerName: center.name,
+      monthLabel,
+      students: selectedStudents.map(studentToTemplate),
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [center.name, monthLabel, selectedStudents, studentNotes, reservationAmountByCustomer]);
+
+  // 미리보기 다이얼로그가 열릴 때 — 최신 템플릿으로 editedBody reset
+  useEffect(() => {
+    if (previewOpen) setEditedBody(generatedMessage);
+  }, [previewOpen, generatedMessage]);
 
   function toggleSelect(id: string) {
     setSelectedIds((prev) =>
@@ -213,13 +265,18 @@ function CenterGroupCard({
     );
   }
 
-  function handleSend() {
+  function setStudentNote(id: string, value: string) {
+    setStudentNotes((prev) => ({ ...prev, [id]: value }));
+  }
+
+  function handleSendPreview() {
     if (selectedStudents.length === 0) {
       toast.error("발송할 교육생을 선택하세요.");
       return;
     }
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem(NOTE_STORAGE_KEY, note);
+    if (!editedBody.trim()) {
+      toast.error("본문이 비어있습니다.");
+      return;
     }
 
     startTransition(async () => {
@@ -227,7 +284,7 @@ function CenterGroupCard({
       const result = await sendNewStudentSms({
         centerId: center.id,
         customerIds: ids,
-        extraNote: note,
+        bodyOverride: editedBody,
       });
       if (result.ok) {
         if ("warning" in result && result.warning) {
@@ -294,59 +351,69 @@ function CenterGroupCard({
         <div className="flex gap-2 shrink-0">
           <Button
             type="button"
-            variant="outline"
             size="sm"
             onClick={() => setPreviewOpen(true)}
             disabled={selectedStudents.length === 0}
           >
             <Eye className="size-3" />
-            미리보기
-          </Button>
-          <Button
-            type="button"
-            size="sm"
-            onClick={handleSend}
-            disabled={pending || selectedStudents.length === 0}
-          >
-            {pending ? (
-              <Loader2 className="size-3 animate-spin" />
-            ) : (
-              <Send className="size-3" />
-            )}
-            발송
+            미리보기 및 발송
           </Button>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* 학생 체크리스트 */}
+        {/* 학생 체크리스트 + 학생별 특이사항 */}
         {pendingStudents.length === 0 ? (
           <p className="text-sm text-muted-foreground py-4 text-center border border-dashed border-border rounded-md">
             미발송 교육생이 없습니다. (이미 전체 발송 완료)
           </p>
         ) : (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
-            {pendingStudents.map((s) => (
-              <label
-                key={s.id}
-                className="flex items-center gap-2 rounded-md border border-border px-3 py-2 cursor-pointer hover:bg-accent/30"
-              >
-                <input
-                  type="checkbox"
-                  checked={selectedIds.includes(s.id)}
-                  onChange={() => toggleSelect(s.id)}
-                  className="shrink-0"
-                />
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium truncate">
-                    {s.name_kr || s.name_vi || "(이름 없음)"}
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    {s.code}
-                    {s.class_start_date && ` · ${formatDate(s.class_start_date)}`}
-                  </div>
+          <div className="space-y-2">
+            {pendingStudents.map((s) => {
+              const checked = selectedIds.includes(s.id);
+              return (
+                <div
+                  key={s.id}
+                  className={`rounded-md border px-3 py-2 ${
+                    checked ? "border-primary/40 bg-primary/5" : "border-border"
+                  }`}
+                >
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={() => toggleSelect(s.id)}
+                      className="shrink-0"
+                    />
+                    <div className="flex-1 min-w-0 grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-1">
+                      <div className="text-sm font-medium truncate">
+                        {s.name_kr || s.name_vi || "(이름 없음)"}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {s.code}
+                        {s.class_start_date && ` · ${formatDate(s.class_start_date)}`}
+                        {s.topik_level && ` · 토픽 ${s.topik_level}`}
+                        {reservationAmountByCustomer[s.id] != null &&
+                          reservationAmountByCustomer[s.id] > 0 &&
+                          ` · 예약금 ${reservationAmountByCustomer[s.id].toLocaleString("ko-KR")}원`}
+                      </div>
+                    </div>
+                  </label>
+                  {checked && (
+                    <div className="mt-2 pl-6">
+                      <label className="text-xs text-muted-foreground block mb-1">
+                        특이사항 (학생별)
+                      </label>
+                      <Textarea
+                        value={studentNotes[s.id] ?? ""}
+                        onChange={(e) => setStudentNote(s.id, e.target.value)}
+                        rows={2}
+                        placeholder="예: 시험일정 변경 요청 / 출석 일정 조정 필요 등"
+                      />
+                    </div>
+                  )}
                 </div>
-              </label>
-            ))}
+              );
+            })}
           </div>
         )}
 
@@ -367,37 +434,43 @@ function CenterGroupCard({
             </div>
           </details>
         )}
-
-        {/* 추가 메모 */}
-        <div>
-          <label className="text-xs text-muted-foreground block mb-1">
-            추가 메모 (마지막 입력값이 저장됩니다)
-          </label>
-          <Textarea
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            rows={2}
-            placeholder="특이사항, 강의 준비물 등"
-          />
-        </div>
       </CardContent>
 
       <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>메시지 미리보기</DialogTitle>
+            <DialogTitle>메시지 미리보기 & 편집</DialogTitle>
             <DialogDescription>
-              {center.name} 원장 {center.phone} 으로 발송 예정
+              {center.name} 원장 {center.phone} 으로 발송 예정 — 본문을 직접 수정한 뒤 발송할 수 있습니다.
             </DialogDescription>
           </DialogHeader>
-          <pre className="whitespace-pre-wrap text-sm bg-muted p-4 rounded-md max-h-96 overflow-y-auto">
-            {message}
-          </pre>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-muted-foreground">
+                {selectedStudents.length}명 · 본문 {new TextEncoder().encode(editedBody).length} bytes / 2000
+              </span>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => setEditedBody(generatedMessage)}
+                disabled={pending}
+              >
+                템플릿으로 되돌리기
+              </Button>
+            </div>
+            <Textarea
+              value={editedBody}
+              onChange={(e) => setEditedBody(e.target.value)}
+              rows={20}
+              className="font-mono text-xs"
+            />
+          </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => setPreviewOpen(false)}>
               닫기
             </Button>
-            <Button type="button" onClick={handleSend} disabled={pending}>
+            <Button type="button" onClick={handleSendPreview} disabled={pending}>
               {pending ? <Loader2 className="size-3 animate-spin" /> : <Send className="size-3" />}
               이대로 발송
             </Button>

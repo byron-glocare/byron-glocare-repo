@@ -80,7 +80,11 @@ async function sendNhnLms(params: {
 export async function sendNewStudentSms(input: {
   centerId: string;
   customerIds: string[];
-  extraNote?: string;
+  /**
+   * 운영자가 미리보기 모달에서 직접 편집한 본문.
+   * 비어있으면 서버에서 템플릿으로 재생성한다.
+   */
+  bodyOverride?: string;
 }): Promise<SmsActionResult> {
   if (input.customerIds.length === 0) {
     return { ok: false, error: "교육생을 선택해주세요." };
@@ -108,11 +112,11 @@ export async function sendNewStudentSms(input: {
     };
   }
 
-  // 교육생 로드
+  // 교육생 로드 (이력 기록 + fallback 템플릿용)
   const { data: students } = await supabase
     .from("customers")
     .select(
-      "id, code, name_kr, name_vi, phone, visa_type, birth_year, class_start_date, training_class_id"
+      "id, code, name_kr, name_vi, phone, visa_type, birth_year, topik_level, class_start_date, training_class_id"
     )
     .in("id", input.customerIds);
 
@@ -120,58 +124,90 @@ export async function sendNewStudentSms(input: {
     return { ok: false, error: "교육생 정보를 불러오지 못했습니다." };
   }
 
-  // 대표 class 정보 (가장 많이 등장하는 class_id)
-  const classIdCounts = new Map<string, number>();
-  for (const s of students) {
-    if (s.training_class_id) {
-      classIdCounts.set(
-        s.training_class_id,
-        (classIdCounts.get(s.training_class_id) ?? 0) + 1
+  let body = input.bodyOverride?.trim();
+
+  // 본문 override 가 없으면 서버에서 템플릿으로 재생성 (학생별 특이사항은 빈 값)
+  if (!body) {
+    // 학생별 class 정보 + 예약금 조회
+    const classIds = Array.from(
+      new Set(students.map((s) => s.training_class_id).filter((v): v is string => !!v))
+    );
+    const classMap = new Map<
+      string,
+      { start_date: string | null; class_type: "weekday" | "night" }
+    >();
+    if (classIds.length > 0) {
+      const { data: classes } = await supabase
+        .from("training_classes")
+        .select("id, start_date, class_type")
+        .in("id", classIds);
+      for (const c of classes ?? []) {
+        classMap.set(c.id, { start_date: c.start_date, class_type: c.class_type });
+      }
+    }
+    const { data: reservations } = await supabase
+      .from("reservation_payments")
+      .select("customer_id, amount")
+      .in("customer_id", input.customerIds);
+    const reservationSum = new Map<string, number>();
+    for (const r of reservations ?? []) {
+      reservationSum.set(
+        r.customer_id,
+        (reservationSum.get(r.customer_id) ?? 0) + (Number(r.amount) || 0)
       );
     }
-  }
-  let topClassId: string | null = null;
-  let topCount = 0;
-  for (const [id, c] of classIdCounts) {
-    if (c > topCount) {
-      topClassId = id;
-      topCount = c;
+
+    // 제목 월 — 가장 빠른 class 시작일
+    const startDates = students
+      .map((s) => {
+        const cls = s.training_class_id ? classMap.get(s.training_class_id) : null;
+        return cls?.start_date ?? s.class_start_date ?? null;
+      })
+      .filter((d): d is string => !!d);
+    const earliest = startDates.slice().sort()[0];
+    let monthLabel: number | null = null;
+    if (earliest) {
+      const m = /^\d{4}-(\d{2})-\d{2}$/.exec(earliest);
+      if (m) monthLabel = Number(m[1]);
     }
+
+    body = buildNewStudentMessage({
+      centerName: center.name,
+      monthLabel,
+      students: students.map((s) => {
+        const cls = s.training_class_id ? classMap.get(s.training_class_id) : null;
+        return {
+          name_kr: s.name_kr,
+          name_vi: s.name_vi,
+          phone: s.phone,
+          visa_type: s.visa_type,
+          birth_year: s.birth_year,
+          topik_level: s.topik_level,
+          reservationAmount: reservationSum.get(s.id) ?? null,
+          classStartDate: cls?.start_date ?? s.class_start_date ?? null,
+          classType: cls?.class_type ?? null,
+        };
+      }),
+    });
   }
 
-  let classStartDate: string | null = students[0]?.class_start_date ?? null;
-  let classType: "weekday" | "night" | null = null;
-  if (topClassId) {
-    const { data: cls } = await supabase
-      .from("training_classes")
-      .select("start_date, class_type")
-      .eq("id", topClassId)
-      .maybeSingle();
-    if (cls) {
-      classStartDate = cls.start_date;
-      classType = cls.class_type;
-    }
+  if (!body) {
+    return { ok: false, error: "본문이 비어있습니다." };
   }
 
-  // 메시지 구성
-  const body = buildNewStudentMessage({
-    centerName: center.name,
-    classStartDate,
-    classType,
-    students: students.map((s) => ({
-      name_kr: s.name_kr,
-      name_vi: s.name_vi,
-      phone: s.phone,
-      visa_type: s.visa_type,
-      birth_year: s.birth_year,
-    })),
-    extraNote: input.extraNote,
-  });
+  // 제목 — 가장 빠른 class 시작 월 기준
+  const titleMonth = (() => {
+    const m = /\[(\d+)월/.exec(body);
+    return m ? Number(m[1]) : null;
+  })();
+  const smsTitle = titleMonth
+    ? `[글로케어] ${titleMonth}월 신규교육생`
+    : "[글로케어 신규교육생]";
 
   // NHN 호출 (1회)
   const send = await sendNhnLms({
     phone: center.phone,
-    title: "[글로케어 신규교육생]",
+    title: smsTitle,
     body,
   });
   if (!send.ok) return { ok: false, error: `발송 실패: ${send.error}` };
