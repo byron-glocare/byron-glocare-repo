@@ -64,6 +64,11 @@ type Props = {
   customers: Customer[];
   classes: TrainingClass[];
   sentCustomerIds: string[];
+  /**
+   * default 체크 대상 — 현재 단계가 '강의 접수 메시지 발송 대기' 인 학생 ID.
+   * (0022 — 기존엔 모든 pending 학생 체크 / 이제는 발송 대기 학생만)
+   */
+  readyToSendIds: string[];
 };
 
 const NOTE_STORAGE_KEY = "glocare:sms:new-student:note";
@@ -73,9 +78,14 @@ export function SmsNewStudentView({
   customers,
   classes,
   sentCustomerIds,
+  readyToSendIds,
 }: Props) {
   const router = useRouter();
   const sentSet = useMemo(() => new Set(sentCustomerIds), [sentCustomerIds]);
+  const readySet = useMemo(
+    () => new Set(readyToSendIds),
+    [readyToSendIds]
+  );
   const classMap = useMemo(() => new Map(classes.map((c) => [c.id, c])), [classes]);
 
   // 교육원별로 그룹핑 (미발송 고객 위주로 표시)
@@ -113,6 +123,7 @@ export function SmsNewStudentView({
             pendingStudents={pending}
             classMap={classMap}
             sentSet={sentSet}
+            readySet={readySet}
             onSent={() => router.refresh()}
           />
         ))
@@ -127,6 +138,7 @@ function CenterGroupCard({
   pendingStudents,
   classMap,
   sentSet,
+  readySet,
   onSent,
 }: {
   center: Center;
@@ -134,6 +146,7 @@ function CenterGroupCard({
   pendingStudents: Customer[];
   classMap: Map<string, TrainingClass>;
   sentSet: Set<string>;
+  readySet: Set<string>;
   onSent: () => void;
 }) {
   // 마지막 입력값 자동 완성
@@ -141,8 +154,9 @@ function CenterGroupCard({
     if (typeof window === "undefined") return "";
     return window.localStorage.getItem(NOTE_STORAGE_KEY) ?? "";
   });
+  // 0022: default 체크 = 현재 단계가 '강의 접수 메시지 발송 대기' 인 학생만
   const [selectedIds, setSelectedIds] = useState<string[]>(
-    pendingStudents.map((p) => p.id)
+    pendingStudents.filter((p) => readySet.has(p.id)).map((p) => p.id)
   );
   const [previewOpen, setPreviewOpen] = useState(false);
   const [pending, startTransition] = useTransition();
