@@ -15,23 +15,31 @@ import {
 // =============================================================================
 
 describe("computeSettlementSummary — §5.2", () => {
-  it("모두 비어있으면 웰컴팩은 product 에 따라 '대상아님', 나머지는 '미완료'", () => {
+  it("product_type null 이면 소개비/웰컴팩 모두 대상아님 (0021)", () => {
     const r = computeSettlementSummary({
-      customer: { product_type: null },
+      customer: {
+        product_type: null,
+        class_start_date: null,
+        visa_change_date: null,
+      },
       reservationPayments: [],
       commissionPayments: [],
       eventPayments: [],
       welcomePackPayment: null,
     });
     expect(r.reservation).toBe("미완료");
-    expect(r.commission).toBe("미완료");
+    expect(r.commission).toBe("대상아님");
     expect(r.event).toBe("대상아님");
     expect(r.welcomePack).toBe("대상아님");
   });
 
   it("예약금 payment_date 있으면 완료", () => {
     const r = computeSettlementSummary({
-      customer: { product_type: "교육" },
+      customer: {
+        product_type: "교육",
+        class_start_date: null,
+        visa_change_date: null,
+      },
       reservationPayments: [{ payment_date: "2026-04-01" }],
       commissionPayments: [],
       eventPayments: [],
@@ -40,9 +48,13 @@ describe("computeSettlementSummary — §5.2", () => {
     expect(r.reservation).toBe("완료");
   });
 
-  it("소개비 레코드가 있으면 완료 (0007 이후 row 존재 = 완료 표식)", () => {
+  it("소개비 레코드가 있으면 완료, 강의 정보 부족 시 '미완료' fallback", () => {
     const none = computeSettlementSummary({
-      customer: { product_type: "교육" },
+      customer: {
+        product_type: "교육",
+        class_start_date: null,
+        visa_change_date: null,
+      },
       reservationPayments: [],
       commissionPayments: [],
       eventPayments: [],
@@ -51,7 +63,11 @@ describe("computeSettlementSummary — §5.2", () => {
     expect(none.commission).toBe("미완료");
 
     const some = computeSettlementSummary({
-      customer: { product_type: "교육" },
+      customer: {
+        product_type: "교육",
+        class_start_date: null,
+        visa_change_date: null,
+      },
       reservationPayments: [],
       commissionPayments: [{ id: "commission-1" }],
       eventPayments: [],
@@ -62,7 +78,11 @@ describe("computeSettlementSummary — §5.2", () => {
 
   it("이벤트 레코드 있고 모두 gift_given 이면 완료", () => {
     const r = computeSettlementSummary({
-      customer: { product_type: "교육" },
+      customer: {
+        product_type: "교육",
+        class_start_date: null,
+        visa_change_date: null,
+      },
       reservationPayments: [],
       commissionPayments: [],
       eventPayments: [{ gift_given: true }, { gift_given: true }],
@@ -73,7 +93,11 @@ describe("computeSettlementSummary — §5.2", () => {
 
   it("이벤트 중 하나라도 미지급이면 미완료", () => {
     const r = computeSettlementSummary({
-      customer: { product_type: "교육" },
+      customer: {
+        product_type: "교육",
+        class_start_date: null,
+        visa_change_date: null,
+      },
       reservationPayments: [],
       commissionPayments: [],
       eventPayments: [{ gift_given: true }, { gift_given: false }],
@@ -84,16 +108,25 @@ describe("computeSettlementSummary — §5.2", () => {
 
   it("product_type 이 웰컴팩/교육+웰컴팩이면 웰컴팩 대상", () => {
     const target = computeSettlementSummary({
-      customer: { product_type: "웰컴팩" },
+      customer: {
+        product_type: "웰컴팩",
+        class_start_date: null,
+        visa_change_date: null,
+      },
       reservationPayments: [],
       commissionPayments: [],
       eventPayments: [],
       welcomePackPayment: null,
     });
-    expect(target.welcomePack).toBe("미완료");
+    // 0021: visa_change_date null → '비자변경일 미정'
+    expect(target.welcomePack).toBe("비자변경일 미정");
 
     const combined = computeSettlementSummary({
-      customer: { product_type: "교육+웰컴팩" },
+      customer: {
+        product_type: "교육+웰컴팩",
+        class_start_date: null,
+        visa_change_date: null,
+      },
       reservationPayments: [],
       commissionPayments: [],
       eventPayments: [],
@@ -104,13 +137,105 @@ describe("computeSettlementSummary — §5.2", () => {
 
   it("product_type 이 '교육' 이면 웰컴팩은 대상아님 (결제 레코드 있더라도)", () => {
     const r = computeSettlementSummary({
-      customer: { product_type: "교육" },
+      customer: {
+        product_type: "교육",
+        class_start_date: null,
+        visa_change_date: null,
+      },
       reservationPayments: [],
       commissionPayments: [],
       eventPayments: [],
       welcomePackPayment: { sales_reported: true },
     });
     expect(r.welcomePack).toBe("대상아님");
+  });
+
+  // 0021 신규 시나리오
+  it("소개비 — 접수 포기면 대상아님", () => {
+    const r = computeSettlementSummary({
+      customer: {
+        product_type: "교육",
+        class_start_date: "2026-04-01",
+        visa_change_date: null,
+      },
+      status: {
+        intake_abandoned: true,
+        study_abroad_consultation: false,
+        training_reservation_abandoned: false,
+      },
+      trainingClass: { class_type: "weekday" },
+      reservationPayments: [],
+      commissionPayments: [],
+      eventPayments: [],
+      welcomePackPayment: null,
+    });
+    expect(r.commission).toBe("대상아님");
+  });
+
+  it("소개비 — 주간 + 강의시작 이후 2개월 전 → '정산 전'", () => {
+    const r = computeSettlementSummary({
+      customer: {
+        product_type: "교육",
+        class_start_date: "2026-04-01",
+        visa_change_date: null,
+      },
+      trainingClass: { class_type: "weekday" },
+      reservationPayments: [],
+      commissionPayments: [],
+      eventPayments: [],
+      welcomePackPayment: null,
+      today: "2026-05-01", // 2026-04-01 + 2m = 2026-06-01 → 정산 전
+    });
+    expect(r.commission).toBe("정산 전");
+  });
+
+  it("소개비 — 야간 + 강의시작 이후 3개월 후 → '정산 지연'", () => {
+    const r = computeSettlementSummary({
+      customer: {
+        product_type: "교육",
+        class_start_date: "2026-01-01",
+        visa_change_date: null,
+      },
+      trainingClass: { class_type: "night" },
+      reservationPayments: [],
+      commissionPayments: [],
+      eventPayments: [],
+      welcomePackPayment: null,
+      today: "2026-05-01", // 2026-01-01 + 3m = 2026-04-01 → 정산 지연
+    });
+    expect(r.commission).toBe("정산 지연");
+  });
+
+  it("웰컴팩 — 비자변경일 이전 → '정산 전'", () => {
+    const r = computeSettlementSummary({
+      customer: {
+        product_type: "교육+웰컴팩",
+        class_start_date: null,
+        visa_change_date: "2026-08-01",
+      },
+      reservationPayments: [],
+      commissionPayments: [],
+      eventPayments: [],
+      welcomePackPayment: null,
+      today: "2026-05-01",
+    });
+    expect(r.welcomePack).toBe("정산 전");
+  });
+
+  it("웰컴팩 — 비자변경일 이후 → '정산 지연'", () => {
+    const r = computeSettlementSummary({
+      customer: {
+        product_type: "웰컴팩",
+        class_start_date: null,
+        visa_change_date: "2026-03-01",
+      },
+      reservationPayments: [],
+      commissionPayments: [],
+      eventPayments: [],
+      welcomePackPayment: null,
+      today: "2026-05-01",
+    });
+    expect(r.welcomePack).toBe("정산 지연");
   });
 });
 

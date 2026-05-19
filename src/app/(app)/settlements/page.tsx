@@ -334,10 +334,34 @@ export default async function SettlementsPage({
     stageKey: string;
     centerName: string | null;
     careHomeName: string | null;
-    reservation: "완료" | "미완료" | "대상아님";
-    commission: "완료" | "미완료" | "대상아님";
-    event: "완료" | "미완료" | "대상아님";
-    welcomePack: "완료" | "미완료" | "대상아님";
+    reservation:
+      | "완료"
+      | "미완료"
+      | "정산 전"
+      | "정산 지연"
+      | "비자변경일 미정"
+      | "대상아님";
+    commission:
+      | "완료"
+      | "미완료"
+      | "정산 전"
+      | "정산 지연"
+      | "비자변경일 미정"
+      | "대상아님";
+    event:
+      | "완료"
+      | "미완료"
+      | "정산 전"
+      | "정산 지연"
+      | "비자변경일 미정"
+      | "대상아님";
+    welcomePack:
+      | "완료"
+      | "미완료"
+      | "정산 전"
+      | "정산 지연"
+      | "비자변경일 미정"
+      | "대상아님";
   };
 
   // Tabs 는 client-side toggle 이라 URL 의 tab 파라미터는 default 'pending' 만 옴.
@@ -447,6 +471,8 @@ export default async function SettlementsPage({
 
       const summary = computeSettlementSummary({
         customer: c,
+        status,
+        trainingClass,
         reservationPayments: reservationsByCustomer.get(c.id) ?? [],
         commissionPayments: commissionsByCustomer.get(c.id) ?? [],
         eventPayments: eventsByCustomer.get(c.id) ?? [],

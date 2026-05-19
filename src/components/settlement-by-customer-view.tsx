@@ -28,7 +28,13 @@ import { cn } from "@/lib/utils";
 
 const PAGE_SIZE = 50;
 
-type SettlementFlag = "완료" | "미완료" | "대상아님";
+type SettlementFlag =
+  | "완료"
+  | "미완료"
+  | "정산 전"
+  | "정산 지연"
+  | "비자변경일 미정"
+  | "대상아님";
 
 export type ByCustomerRow = {
   id: string;
@@ -44,6 +50,8 @@ export type ByCustomerRow = {
   event: SettlementFlag;
   welcomePack: SettlementFlag;
 };
+
+export type { SettlementFlag };
 
 type Props = {
   rows: ByCustomerRow[];
@@ -168,6 +176,7 @@ export function SettlementByCustomerView({ rows }: Props) {
         </div>
         <FilterSelect
           label="소개비"
+          field="commission"
           value={commissionFilter}
           onChange={(v) => {
             setCommissionFilter(v);
@@ -176,6 +185,7 @@ export function SettlementByCustomerView({ rows }: Props) {
         />
         <FilterSelect
           label="이벤트"
+          field="event"
           value={eventFilter}
           onChange={(v) => {
             setEventFilter(v);
@@ -184,6 +194,7 @@ export function SettlementByCustomerView({ rows }: Props) {
         />
         <FilterSelect
           label="웰컴팩"
+          field="welcomePack"
           value={welcomePackFilter}
           onChange={(v) => {
             setWelcomePackFilter(v);
@@ -320,15 +331,28 @@ export function SettlementByCustomerView({ rows }: Props) {
   );
 }
 
-function FilterSelect({
-  label,
-  value,
-  onChange,
-}: {
+type FilterSelectProps = {
   label: string;
   value: string;
   onChange: (v: string) => void;
-}) {
+  /** 어느 정산 항목인지 — 옵션 목록 다르게 */
+  field: "commission" | "event" | "welcomePack";
+};
+
+function FilterSelect({ label, value, onChange, field }: FilterSelectProps) {
+  // 정산 항목별로 가능한 옵션 다름
+  const options: SettlementFlag[] =
+    field === "commission"
+      ? ["완료", "정산 전", "정산 지연", "대상아님"]
+      : field === "welcomePack"
+        ? [
+            "완료",
+            "정산 전",
+            "정산 지연",
+            "비자변경일 미정",
+            "대상아님",
+          ]
+        : ["완료", "미완료", "대상아님"]; // event
   return (
     <div>
       <label className="text-xs text-muted-foreground block mb-1">
@@ -337,12 +361,14 @@ function FilterSelect({
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="h-8 rounded-md border border-input bg-background px-2 text-sm min-w-24"
+        className="h-8 rounded-md border border-input bg-background px-2 text-sm min-w-28"
       >
         <option value="all">전체</option>
-        <option value="완료">완료</option>
-        <option value="미완료">미완료</option>
-        <option value="대상아님">대상아님</option>
+        {options.map((o) => (
+          <option key={o} value={o}>
+            {o}
+          </option>
+        ))}
       </select>
     </div>
   );
@@ -352,9 +378,15 @@ function FlagBadge({ flag }: { flag: SettlementFlag }) {
   const cls =
     flag === "완료"
       ? "bg-success/10 text-success border-success/20"
-      : flag === "미완료"
-        ? "bg-warning/10 text-warning border-warning/20"
-        : "bg-muted text-muted-foreground border-border";
+      : flag === "정산 지연"
+        ? "bg-destructive/10 text-destructive border-destructive/20"
+        : flag === "비자변경일 미정"
+          ? "bg-warning/10 text-warning border-warning/20"
+          : flag === "정산 전"
+            ? "bg-info/10 text-info border-info/20"
+            : flag === "미완료"
+              ? "bg-warning/10 text-warning border-warning/20"
+              : "bg-muted text-muted-foreground border-border";
   return (
     <Badge variant="outline" className={cls}>
       {flag}

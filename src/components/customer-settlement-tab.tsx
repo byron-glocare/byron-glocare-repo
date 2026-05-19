@@ -107,6 +107,10 @@ export function CustomerSettlementTab({
 }: Props) {
   const summary = computeSettlementSummary({
     customer,
+    // 0021: 소개비 '대상아님' 판정에 status (포기 플래그) + 정산 기한 계산용 class_type 필요
+    // status / trainingClass 가 없으면 fallback (정산 기한 계산 불가 → '미완료')
+    status: null,
+    trainingClass: null,
     reservationPayments,
     commissionPayments,
     eventPayments,
@@ -212,13 +216,18 @@ function SummaryBadge({
   label: string;
   flag: SettlementFlag;
 }) {
+  // 0021: '정산 전' (info) / '정산 지연' (destructive) / '비자변경일 미정' (warning) 추가
   const cls =
     flag === "완료"
       ? "bg-success/10 text-success border-success/20"
-      : flag === "미완료"
-        ? "bg-warning/10 text-warning border-warning/20"
-        : "bg-muted text-muted-foreground border-border";
-  const Icon = flag === "완료" ? Check : flag === "미완료" ? X : MinusCircle;
+      : flag === "정산 지연"
+        ? "bg-destructive/10 text-destructive border-destructive/20"
+        : flag === "정산 전"
+          ? "bg-info/10 text-info border-info/20"
+          : flag === "미완료" || flag === "비자변경일 미정"
+            ? "bg-warning/10 text-warning border-warning/20"
+            : "bg-muted text-muted-foreground border-border";
+  const Icon = flag === "완료" ? Check : flag === "대상아님" ? MinusCircle : X;
 
   return (
     <div className="flex items-center gap-2 rounded-md border border-border bg-card p-3">

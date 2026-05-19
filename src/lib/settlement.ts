@@ -7,17 +7,30 @@
 
 import type {
   Customer,
+  CustomerStatus,
   ReservationPayment,
   CommissionPayment,
   EventPayment,
+  TrainingClass,
   WelcomePackPayment,
 } from "@/types/database";
 
 // =============================================================================
-// §5.2 — 4종 정산 상태
+// §5.2 — 정산 상태 (확장)
+//   - "완료" / "대상아님" : 공통
+//   - "미완료"            : 이벤트 등 단순 미완료
+//   - "정산 전"           : 정산 기한 도래 전
+//   - "정산 지연"         : 정산 기한 도래 후 (= 처리 늦음)
+//   - "비자변경일 미정"   : 웰컴팩 전용 (visa_change_date 가 NULL)
 // =============================================================================
 
-export type SettlementFlag = "완료" | "미완료" | "대상아님";
+export type SettlementFlag =
+  | "완료"
+  | "미완료"
+  | "정산 전"
+  | "정산 지연"
+  | "비자변경일 미정"
+  | "대상아님";
 
 export type SettlementSummary = {
   reservation: SettlementFlag;
@@ -26,16 +39,64 @@ export type SettlementSummary = {
   welcomePack: SettlementFlag;
 };
 
+/** KST 기준 오늘 (YYYY-MM-DD) */
+function todayKstStr(override?: string): string {
+  if (override) return override;
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Seoul",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
+}
+
+/** YYYY-MM-DD 에 N개월 더한 새 YYYY-MM-DD (overflow 자동 처리) */
+function addMonthsStr(dateStr: string, months: number): string {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateStr);
+  if (!m) return dateStr;
+  const d = new Date(
+    Number(m[1]),
+    Number(m[2]) - 1 + months,
+    Number(m[3])
+  );
+  const y = d.getFullYear();
+  const mo = String(d.getMonth() + 1).padStart(2, "0");
+  const da = String(d.getDate()).padStart(2, "0");
+  return `${y}-${mo}-${da}`;
+}
+
 export function computeSettlementSummary(inputs: {
-  customer: Pick<Customer, "product_type">;
+  customer: Pick<
+    Customer,
+    "product_type" | "class_start_date" | "visa_change_date"
+  >;
+  /** 접수/교육 예약 포기 판정용 */
+  status?: Pick<
+    CustomerStatus,
+    | "intake_abandoned"
+    | "study_abroad_consultation"
+    | "training_reservation_abandoned"
+  > | null;
+  /** 강의 일정 — class_type 으로 정산 기한 계산 (주간 2개월, 야간 3개월) */
+  trainingClass?: Pick<TrainingClass, "class_type"> | null;
   reservationPayments: Pick<ReservationPayment, "payment_date">[];
   /** commission_payments row 존재 자체가 "완료" 신호 (0007 이후 구조) */
   commissionPayments: Pick<CommissionPayment, "id">[];
   eventPayments: Pick<EventPayment, "gift_given">[];
   welcomePackPayment: Pick<WelcomePackPayment, "sales_reported"> | null;
+  /** 테스트 주입용 — 오늘 (YYYY-MM-DD) */
+  today?: string;
 }): SettlementSummary {
-  const { customer, reservationPayments, commissionPayments, eventPayments, welcomePackPayment } =
-    inputs;
+  const {
+    customer,
+    status,
+    trainingClass,
+    reservationPayments,
+    commissionPayments,
+    eventPayments,
+    welcomePackPayment,
+  } = inputs;
+  const today = todayKstStr(inputs.today);
 
   // 상품이 "웰컴팩" 단독이면 교육 미참여 → 교육 예약금/소개비는 대상 아님
   const welcomePackOnly = customer.product_type === "웰컴팩";
@@ -50,12 +111,34 @@ export function computeSettlementSummary(inputs: {
       : "미완료";
   }
 
-  // 소개비: 웰컴팩 단독이면 대상 아님
+  // 소개비 (확장):
+  //   - 대상아님:
+  //       (a) product_type 이 '교육' / '교육+웰컴팩' 가 아님 (웰컴팩 단독 / null)
+  //       (b) 접수/교육 예약 단계에서 포기 (intake_abandoned /
+  //           study_abroad_consultation / training_reservation_abandoned)
+  //   - 완료: commission_payments row 존재
+  //   - 정산 전 / 지연: class_start_date + (주간 2개월 / 야간 3개월) 기준 — today
+  //     와 비교 (정보 부족 시 '미완료' fallback)
   let commission: SettlementFlag;
-  if (welcomePackOnly) {
+  const commissionTarget =
+    customer.product_type === "교육" ||
+    customer.product_type === "교육+웰컴팩";
+  const abandonedEarly =
+    !!status &&
+    (status.intake_abandoned ||
+      status.study_abroad_consultation ||
+      status.training_reservation_abandoned);
+  if (!commissionTarget || abandonedEarly) {
     commission = "대상아님";
+  } else if (commissionPayments.length > 0) {
+    commission = "완료";
+  } else if (customer.class_start_date && trainingClass?.class_type) {
+    const months = trainingClass.class_type === "weekday" ? 2 : 3;
+    const dueDate = addMonthsStr(customer.class_start_date, months);
+    commission = today < dueDate ? "정산 전" : "정산 지연";
   } else {
-    commission = commissionPayments.length > 0 ? "완료" : "미완료";
+    // 강의 정보 부족 — 정산 기한 계산 불가
+    commission = "미완료";
   }
 
   // 이벤트: 레코드 없으면 대상아님. 있으면 모두 gift_given 이어야 완료.
@@ -66,17 +149,25 @@ export function computeSettlementSummary(inputs: {
     event = eventPayments.every((e) => e.gift_given) ? "완료" : "미완료";
   }
 
-  // 웰컴팩: 상품이 웰컴팩/교육+웰컴팩일 때만 대상
+  // 웰컴팩 (확장):
+  //   - 대상아님: product_type 이 '웰컴팩' / '교육+웰컴팩' 가 아님
+  //   - 완료: welcome_pack_payment.sales_reported = true
+  //   - 비자변경일 미정: customer.visa_change_date 가 NULL
+  //   - 정산 전 / 지연: today < visa_change_date / today >= visa_change_date
+  let welcomePack: SettlementFlag;
   const welcomePackTarget =
     customer.product_type === "웰컴팩" ||
     customer.product_type === "교육+웰컴팩";
-  let welcomePack: SettlementFlag;
   if (!welcomePackTarget) {
     welcomePack = "대상아님";
-  } else if (!welcomePackPayment) {
-    welcomePack = "미완료";
+  } else if (welcomePackPayment?.sales_reported) {
+    welcomePack = "완료";
+  } else if (!customer.visa_change_date) {
+    welcomePack = "비자변경일 미정";
+  } else if (today < customer.visa_change_date) {
+    welcomePack = "정산 전";
   } else {
-    welcomePack = welcomePackPayment.sales_reported ? "완료" : "미완료";
+    welcomePack = "정산 지연";
   }
 
   return { reservation, commission, event, welcomePack };
