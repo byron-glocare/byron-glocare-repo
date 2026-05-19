@@ -340,8 +340,11 @@ export default async function SettlementsPage({
     welcomePack: "완료" | "미완료" | "대상아님";
   };
 
+  // Tabs 는 client-side toggle 이라 URL 의 tab 파라미터는 default 'pending' 만 옴.
+  // server 가 어느 탭이든 모든 데이터를 계산해야 사용자가 [교육생별 정산] 탭 눌렀을 때
+  // 즉시 표시됨. (URL 변경 없이 client 토글만으로 동작)
   let byCustomerRows: ByCustomerRow[] = [];
-  if (tab === "customers") {
+  {
     const [
       { data: allCustomers },
       { data: allStatuses },
