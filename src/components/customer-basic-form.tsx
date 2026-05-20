@@ -123,6 +123,8 @@ const EMPTY: CustomerInput = {
   recontact_date: null,
   waiting_memo: null,
   termination_reason: null,
+  bank_name: null,
+  bank_account: null,
   legacy_status: null,
 };
 
@@ -367,6 +369,40 @@ export function CustomerBasicForm({
                   <FormLabel>주소</FormLabel>
                   <FormControl>
                     <Input {...field} value={field.value ?? ""} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="bank_name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>은행명</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      value={field.value ?? ""}
+                      placeholder="신한은행"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="bank_account"
+              render={({ field }) => (
+                <FormItem className="sm:col-span-2">
+                  <FormLabel>계좌번호</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      value={field.value ?? ""}
+                      placeholder="100-038-096550"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

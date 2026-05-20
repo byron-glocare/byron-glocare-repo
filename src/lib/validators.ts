@@ -212,6 +212,10 @@ export const customerSchema = z
       .nullable()
       .optional(),
 
+    // 은행 계좌 (단순 기본 정보 — 다른 기능과 미연동)
+    bank_name: optionalString,
+    bank_account: optionalString,
+
     // 참고용
     legacy_status: optionalString,
   })
