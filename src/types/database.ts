@@ -236,6 +236,8 @@ export type Database = {
           recontact_date: string | null;
           waiting_memo: string | null;
           termination_reason: TerminationReason | null;
+          bank_name: string | null;
+          bank_account: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -270,6 +272,8 @@ export type Database = {
           recontact_date?: string | null;
           waiting_memo?: string | null;
           termination_reason?: TerminationReason | null;
+          bank_name?: string | null;
+          bank_account?: string | null;
           created_at?: string;
           updated_at?: string;
         };
