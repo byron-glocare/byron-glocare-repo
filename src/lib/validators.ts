@@ -176,6 +176,7 @@ export const customerSchema = z
     // 서버 액션이 자동 동기화 — 폼/클라이언트에서 직접 쓰지 않음.
     work_start_date: optionalDate,
     work_end_date: optionalDate,
+    visa_change_application_date: optionalDate,
     visa_change_date: optionalDate,
     interview_date: optionalDate,
 
@@ -222,7 +223,35 @@ export const customerSchema = z
   .refine(
     (v) => !!(v.name_kr?.trim() || v.name_vi?.trim() || v.phone?.trim()),
     { message: "이름(한국어/베트남어) 또는 전화번호 중 하나는 입력해야 합니다." }
-  );
+  )
+  // 비자 변경 관련 — 두 날짜는 work_start_date 가 있어야 의미가 있음
+  .refine(
+    (v) =>
+      !(v.visa_change_application_date || v.visa_change_date) ||
+      !!v.work_start_date,
+    {
+      message: "비자 변경 접수일/변경일은 근무 시작일 입력 후에 등록할 수 있습니다.",
+      path: ["visa_change_application_date"],
+    }
+  )
+  // 변경일 < 접수일 모순 차단
+  .refine(
+    (v) =>
+      !v.visa_change_application_date ||
+      !v.visa_change_date ||
+      v.visa_change_date >= v.visa_change_application_date,
+    {
+      message: "비자 변경일은 변경 접수일과 같거나 그 이후여야 합니다.",
+      path: ["visa_change_date"],
+    }
+  )
+  // 변경일만 있고 접수일이 없으면 자동으로 같은 값으로 백필
+  .transform((v) => {
+    if (v.visa_change_date && !v.visa_change_application_date) {
+      return { ...v, visa_change_application_date: v.visa_change_date };
+    }
+    return v;
+  });
 
 export type CustomerInput = z.input<typeof customerSchema>;
 export type CustomerOutput = z.output<typeof customerSchema>;

@@ -120,6 +120,7 @@ const EMPTY: CustomerInput = {
   interview_date: null,
   product_type: null,
   is_waiting: false,
+  visa_change_application_date: null,
   recontact_date: null,
   waiting_memo: null,
   termination_reason: null,
@@ -826,6 +827,24 @@ export function CustomerBasicForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>근무 종료일</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="date"
+                        {...field}
+                        value={field.value ?? ""}
+                        disabled={careHomeLocked}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="visa_change_application_date"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>비자 변경 접수일</FormLabel>
                     <FormControl>
                       <Input
                         type="date"

@@ -593,10 +593,21 @@ export function CustomerProgressTab({
           </AutoRow>
           <AutoRow label="비자변경">
             {summary.work.visaChangePhase ? (
-              <Badge variant="outline">{summary.work.visaChangePhase}</Badge>
+              <Badge
+                variant="outline"
+                className={
+                  summary.work.visaUrgent
+                    ? "bg-destructive/10 text-destructive border-destructive/30"
+                    : summary.work.visaChangePhase === "변경 완료"
+                      ? "bg-success/10 text-success border-success/20"
+                      : ""
+                }
+              >
+                {summary.work.visaChangePhase}
+              </Badge>
             ) : (
               <span className="text-xs text-muted-foreground">
-                근무 시작일 필요
+                {summary.work.workPhase ? "—" : "근무 시작일 필요"}
               </span>
             )}
           </AutoRow>

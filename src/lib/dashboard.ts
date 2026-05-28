@@ -286,11 +286,12 @@ export function computeTaskBuckets(inputs: DashboardInputs): TaskBucket[] {
       careHomeFinding.push(brief);
     }
 
-    // 7-8 비자 변경: 대기 or 중 (종료 아닌 고객만)
+    // 7-8 비자 업무: 근무 시작했고 비자 변경 완료되지 않은 모든 케이스
+    //   (신청 필요 / 접수 대기중 / 변경 대기중 — '변경 완료' 만 제외, '근무종료'/'종료' 제외)
     if (
       !e.summary.terminated &&
-      (e.summary.work.visaChangePhase === "대기" ||
-        e.summary.work.visaChangePhase === "중")
+      e.summary.work.workPhase === "중" &&
+      e.summary.work.visaChangePhase !== "변경 완료"
     ) {
       visaChange.push(brief);
     }
@@ -320,7 +321,7 @@ export function computeTaskBuckets(inputs: DashboardInputs): TaskBucket[] {
     { key: "reservation_payment", label: "예약금 입금 대기", customers: reservationPayment, count: reservationPayment.length },
     { key: "intro_sms", label: "강의 접수 메시지 발송", customers: introSms, count: introSms.length },
     { key: "care_home_finding", label: "요양원 발굴 필요", customers: careHomeFinding, count: careHomeFinding.length },
-    { key: "visa_change", label: "비자 변경 진행", customers: visaChange, count: visaChange.length },
+    { key: "visa_change", label: "비자 업무", customers: visaChange, count: visaChange.length },
     { key: "recontact_needed", label: "연락 필요", customers: recontactNeeded, count: recontactNeeded.length },
   ];
 }

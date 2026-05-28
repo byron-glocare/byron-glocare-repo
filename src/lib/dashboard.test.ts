@@ -36,6 +36,7 @@ function makeCustomer(overrides?: Partial<Customer>): Customer {
     class_end_date: null,
     work_start_date: null,
     work_end_date: null,
+    visa_change_application_date: null,
     visa_change_date: null,
     interview_date: null,
     product_type: null,
@@ -162,22 +163,39 @@ describe("computeTaskBuckets", () => {
     expect(buckets.find((b) => b.key === "class_matching")?.count).toBe(0);
   });
 
-  it("비자변경 '대기' 또는 '중' 이면 버킷에 포함", () => {
-    const pending = makeCustomer({ work_start_date: "2026-04-15" }); // +30일 이전
-    const inProgress = makeCustomer({ work_start_date: "2026-03-01" }); // +30일 이후, visa_change_date null
+  it("비자 업무 — 근무 시작 + 변경 미완료 모두 포함 (신청 필요/접수 대기중/변경 대기중)", () => {
+    // (a) 30일 이내, 둘 다 비어있음 → null phase 인데 dashboard 는 workPhase=중 + 변경 완료 아님 으로 포함
+    const within30 = makeCustomer({ work_start_date: "2026-04-15" });
+    // (b) 30일 경과, 둘 다 비어있음 → '신청 필요'
+    const needApp = makeCustomer({ work_start_date: "2026-03-01" });
+    // (c) 접수일 미래
+    const appFuture = makeCustomer({
+      work_start_date: "2026-03-01",
+      visa_change_application_date: "2026-05-10",
+    });
+    // (d) 접수일 과거, 변경일 없음 → '변경 대기중'
+    const changePending = makeCustomer({
+      work_start_date: "2026-03-01",
+      visa_change_application_date: "2026-04-01",
+    });
+    // (e) 변경 완료 → 제외
     const done = makeCustomer({
       work_start_date: "2026-03-01",
+      visa_change_application_date: "2026-04-01",
       visa_change_date: "2026-04-10",
     });
     const buckets = computeTaskBuckets(
       buildInputs([
-        { customer: pending },
-        { customer: inProgress },
+        { customer: within30 },
+        { customer: needApp },
+        { customer: appFuture },
+        { customer: changePending },
         { customer: done },
       ])
     );
     const vc = buckets.find((b) => b.key === "visa_change");
-    expect(vc?.count).toBe(2);
+    expect(vc?.label).toBe("비자 업무");
+    expect(vc?.count).toBe(4);
   });
 });
 
