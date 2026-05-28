@@ -229,6 +229,7 @@ export type Database = {
           class_end_date: string | null;
           work_start_date: string | null;
           work_end_date: string | null;
+          visa_change_application_date: string | null;
           visa_change_date: string | null;
           interview_date: string | null;
           product_type: ProductType | null;
@@ -265,6 +266,7 @@ export type Database = {
           class_end_date?: string | null;
           work_start_date?: string | null;
           work_end_date?: string | null;
+          visa_change_application_date?: string | null;
           visa_change_date?: string | null;
           interview_date?: string | null;
           product_type?: ProductType | null;

@@ -39,6 +39,12 @@ export type StageSummary = {
   /** 현재 단계의 짧은 설명 */
   label: string;
 
+  /**
+   * 현재 단계가 운영자 즉시 조치 필요한 상태인지 (붉은색 강조용).
+   * 예: 비자 변경 신청 필요 (근무 30일 경과했는데 접수 안 함).
+   */
+  urgent: boolean;
+
   /** §5.1.1 접수 단계 */
   intake: {
     basicInfo: BasicInfoLevel;
@@ -83,7 +89,23 @@ export type StageSummary = {
   /** §5.1.5 근무 단계 */
   work: {
     workPhase: "전" | "중" | "종료" | null;
-    visaChangePhase: "대기" | "중" | "완료" | null;
+    /**
+     * 비자 변경 단계 — 5가지 상태.
+     *  - `null`        : work_start_date 없거나, 30일 이내 + 두 날짜 모두 비어있음
+     *  - `"신청 필요"`  : work_start + 30일 경과 + visa_change_application_date 비어있음
+     *                   (urgent=true — 일을 놓치고 있는 상태)
+     *  - `"접수 대기중"`: visa_change_application_date 미래
+     *  - `"변경 대기중"`: visa_change_application_date 과거 + visa_change_date 비어있거나 미래
+     *  - `"변경 완료"`  : visa_change_date 과거
+     */
+    visaChangePhase:
+      | "신청 필요"
+      | "접수 대기중"
+      | "변경 대기중"
+      | "변경 완료"
+      | null;
+    /** 비자 단계에 즉시 조치 필요 (신청 필요 = 30일 경과했는데 접수 안 함) — 화면 붉은색 강조용 */
+    visaUrgent: boolean;
   };
 
   /** §5.1.6 대기/종료 */
@@ -112,6 +134,7 @@ export type StatusInputs = {
     | "class_end_date"
     | "work_start_date"
     | "work_end_date"
+    | "visa_change_application_date"
     | "visa_change_date"
     | "interview_date"
     | "product_type"
@@ -335,19 +358,33 @@ export function computeWork(inputs: StatusInputs): StageSummary["work"] {
     }
   }
 
-  let visaChangePhase: "대기" | "중" | "완료" | null = null;
+  // 비자 변경 단계 — 2개의 날짜로 5가지 상태 판정
+  let visaChangePhase: StageSummary["work"]["visaChangePhase"] = null;
+  let visaUrgent = false;
+
   if (customer.work_start_date) {
-    const after30 = addDays(customer.work_start_date, 30);
-    if (customer.visa_change_date) {
-      visaChangePhase = "완료";
-    } else if (today < after30) {
-      visaChangePhase = "대기";
+    const appDate = customer.visa_change_application_date;
+    const changeDate = customer.visa_change_date;
+
+    if (changeDate && today >= changeDate) {
+      visaChangePhase = "변경 완료";
+    } else if (appDate && today >= appDate) {
+      // 접수일 지났음 → 변경 대기 (변경일이 미래여도 동일)
+      visaChangePhase = "변경 대기중";
+    } else if (appDate && today < appDate) {
+      visaChangePhase = "접수 대기중";
     } else {
-      visaChangePhase = "중";
+      // 두 날짜 모두 비어있음 — 30일 경계로 urgent 여부 결정
+      const after30 = addDays(customer.work_start_date, 30);
+      if (today >= after30) {
+        visaChangePhase = "신청 필요";
+        visaUrgent = true;
+      }
+      // 30일 이내 + 둘 다 비어있음 → null (단계 없음)
     }
   }
 
-  return { workPhase, visaChangePhase };
+  return { workPhase, visaChangePhase, visaUrgent };
 }
 
 // =============================================================================
@@ -415,7 +452,12 @@ export function computeCustomerStatus(inputs: StatusInputs): StageSummary {
     label = "근무 종료";
   } else if (work.workPhase === "중") {
     currentStage = "근무중";
-    label = `근무 중 · 비자변경 ${work.visaChangePhase ?? "—"}`;
+    if (work.visaUrgent) {
+      // 근무 30일 경과했는데 비자 변경 접수 안 함 — 운영자 즉시 조치 필요
+      label = "근무 중 · 비자 변경 신청 필요";
+    } else {
+      label = `근무 중 · 비자변경 ${work.visaChangePhase ?? "—"}`;
+    }
   } else if (
     employment.complete &&
     training.certificateAcquired &&
@@ -495,6 +537,7 @@ export function computeCustomerStatus(inputs: StatusInputs): StageSummary {
   return {
     currentStage,
     label,
+    urgent: work.visaUrgent && currentStage === "근무중",
     intake,
     trainingReservation,
     training,

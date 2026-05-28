@@ -37,6 +37,7 @@ function buildInputs(overrides?: {
       class_end_date: null,
       work_start_date: null,
       work_end_date: null,
+      visa_change_application_date: null,
       visa_change_date: null,
       interview_date: null,
       product_type: null,
@@ -438,37 +439,102 @@ describe("computeWork — §5.1.5", () => {
     expect(r.workPhase).toBe("종료");
   });
 
-  it("work_start + 30일 이전 → visaChangePhase = '대기'", () => {
+  it("work_start_date 없음 → visaChangePhase = null", () => {
+    const r = computeWork(buildInputs({ customer: {}, today: "2026-04-21" }));
+    expect(r.visaChangePhase).toBeNull();
+    expect(r.visaUrgent).toBe(false);
+  });
+
+  it("work_start + 30일 이내 + 두 날짜 비어있음 → null (단계 없음)", () => {
     const r = computeWork(
       buildInputs({
         customer: { work_start_date: "2026-04-01" },
         today: "2026-04-20",
       })
     );
-    expect(r.visaChangePhase).toBe("대기");
+    expect(r.visaChangePhase).toBeNull();
+    expect(r.visaUrgent).toBe(false);
   });
 
-  it("work_start + 30일 이후 + visa_change_date null → '중'", () => {
+  it("work_start + 30일 경과 + 두 날짜 비어있음 → '신청 필요' (urgent=true)", () => {
     const r = computeWork(
       buildInputs({
         customer: { work_start_date: "2026-03-01" },
         today: "2026-04-21",
       })
     );
-    expect(r.visaChangePhase).toBe("중");
+    expect(r.visaChangePhase).toBe("신청 필요");
+    expect(r.visaUrgent).toBe(true);
   });
 
-  it("visa_change_date 존재 → '완료'", () => {
+  it("application_date 미래 → '접수 대기중'", () => {
+    const r = computeWork(
+      buildInputs({
+        customer: {
+          work_start_date: "2026-04-01",
+          visa_change_application_date: "2026-05-10",
+        },
+        today: "2026-04-25",
+      })
+    );
+    expect(r.visaChangePhase).toBe("접수 대기중");
+    expect(r.visaUrgent).toBe(false);
+  });
+
+  it("application_date 과거 + change_date 비어있음 → '변경 대기중'", () => {
+    const r = computeWork(
+      buildInputs({
+        customer: {
+          work_start_date: "2026-03-01",
+          visa_change_application_date: "2026-04-01",
+        },
+        today: "2026-04-21",
+      })
+    );
+    expect(r.visaChangePhase).toBe("변경 대기중");
+  });
+
+  it("application_date 과거 + change_date 미래 → '변경 대기중'", () => {
+    const r = computeWork(
+      buildInputs({
+        customer: {
+          work_start_date: "2026-03-01",
+          visa_change_application_date: "2026-04-01",
+          visa_change_date: "2026-06-01",
+        },
+        today: "2026-04-21",
+      })
+    );
+    expect(r.visaChangePhase).toBe("변경 대기중");
+  });
+
+  it("change_date 과거 → '변경 완료'", () => {
     const r = computeWork(
       buildInputs({
         customer: {
           work_start_date: "2026-02-01",
+          visa_change_application_date: "2026-03-01",
           visa_change_date: "2026-03-15",
         },
         today: "2026-04-21",
       })
     );
-    expect(r.visaChangePhase).toBe("완료");
+    expect(r.visaChangePhase).toBe("변경 완료");
+    expect(r.visaUrgent).toBe(false);
+  });
+
+  it("change_date 정확히 오늘 → '변경 완료'", () => {
+    const r = computeWork(
+      buildInputs({
+        customer: {
+          work_start_date: "2026-02-01",
+          visa_change_application_date: "2026-03-01",
+          visa_change_date: "2026-04-21",
+        },
+        today: "2026-04-21",
+      })
+    );
+    expect(r.visaChangePhase).toBe("변경 완료");
   });
 });
 
@@ -513,7 +579,7 @@ describe("computeCustomerStatus — 통합", () => {
     expect(r.currentStage).toBe("접수중");
   });
 
-  it("근무중 + 비자변경 대기 → label 에 표시", () => {
+  it("근무중 + 30일 이내 (두 날짜 비어있음) → label = '근무 중 · 비자변경 —' (단계 없음)", () => {
     const r = computeCustomerStatus(
       buildInputs({
         customer: {
@@ -526,7 +592,40 @@ describe("computeCustomerStatus — 통합", () => {
     );
     expect(r.currentStage).toBe("근무중");
     expect(r.label).toContain("근무 중");
-    expect(r.label).toContain("대기");
+    expect(r.urgent).toBe(false);
+  });
+
+  it("근무중 + 30일 경과 + 접수일 없음 → '신청 필요' 라벨 + urgent=true", () => {
+    const r = computeCustomerStatus(
+      buildInputs({
+        customer: {
+          name_kr: "홍",
+          phone: "010-0000-0000",
+          work_start_date: "2026-03-01",
+        },
+        today: "2026-04-21",
+      })
+    );
+    expect(r.currentStage).toBe("근무중");
+    expect(r.label).toBe("근무 중 · 비자 변경 신청 필요");
+    expect(r.urgent).toBe(true);
+  });
+
+  it("근무중 + 접수 완료 + 변경 대기 → urgent=false", () => {
+    const r = computeCustomerStatus(
+      buildInputs({
+        customer: {
+          name_kr: "홍",
+          phone: "010-0000-0000",
+          work_start_date: "2026-03-01",
+          visa_change_application_date: "2026-04-01",
+        },
+        today: "2026-04-21",
+      })
+    );
+    expect(r.currentStage).toBe("근무중");
+    expect(r.urgent).toBe(false);
+    expect(r.label).toContain("변경 대기중");
   });
 
   it("waiting=true 이면 currentStage = '대기중' (포기 상태보다 우선 아님)", () => {

@@ -122,7 +122,7 @@ export async function CustomerListPanel({
       termination_reason, legacy_status, product_type,
       desired_region, updated_at, created_at,
       class_start_date, class_end_date,
-      work_start_date, work_end_date, visa_change_date, interview_date,
+      work_start_date, work_end_date, visa_change_application_date, visa_change_date, interview_date,
       address, gender
       `
     )
@@ -575,6 +575,7 @@ export async function CustomerListPanel({
                               <StageBadge
                                 stage={summary.currentStage}
                                 label={summary.label}
+                                urgent={summary.urgent}
                               />
                             )}
                           </Link>
@@ -735,12 +736,16 @@ export async function CustomerListPanel({
 function StageBadge({
   stage,
   label,
+  urgent,
 }: {
   stage: StageSummary["currentStage"];
   label: string;
+  urgent?: boolean;
 }) {
-  const cls =
-    stage === "종료"
+  const cls = urgent
+    ? // 운영자 즉시 조치 필요 (현재: 비자 변경 신청 누락)
+      "bg-destructive/10 text-destructive border-destructive/30 font-medium"
+    : stage === "종료"
       ? "bg-destructive/10 text-destructive border-destructive/20"
       : stage === "대기중"
         ? "bg-warning/10 text-warning border-warning/20"
