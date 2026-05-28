@@ -82,7 +82,7 @@ export default async function SettlementsPage({
       .select("id, class_type, start_date"),
     supabase
       .from("reservation_payments")
-      .select("customer_id, amount, payment_date"),
+      .select("customer_id, amount, payment_date, refund_amount, refund_date"),
     supabase
       .from("welcome_pack_payments")
       .select("customer_id, reservation_date"),
@@ -117,11 +117,21 @@ export default async function SettlementsPage({
   );
   const reservationByCustomer = new Map<
     string,
-    { amount: number; payment_date: string | null }[]
+    {
+      amount: number;
+      payment_date: string | null;
+      refund_amount: number;
+      refund_date: string | null;
+    }[]
   >();
   for (const rp of reservationPayments ?? []) {
     const arr = reservationByCustomer.get(rp.customer_id) ?? [];
-    arr.push({ amount: rp.amount, payment_date: rp.payment_date });
+    arr.push({
+      amount: rp.amount,
+      payment_date: rp.payment_date,
+      refund_amount: rp.refund_amount,
+      refund_date: rp.refund_date,
+    });
     reservationByCustomer.set(rp.customer_id, arr);
   }
   const welcomePackByCustomer = new Map<

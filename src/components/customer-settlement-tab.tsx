@@ -1097,8 +1097,15 @@ function CommissionPaymentCard({
     (trainingCenter.tuition_fee_2026 ?? 0) * 0.25
   );
   const wantsDeduct = trainingCenter.deduct_reservation_by_default;
-  const paidReservation = reservationPayments.some(
+  const paidReservations = reservationPayments.filter(
     (r) => r.payment_date && r.payment_date.trim()
+  );
+  const heldReservations = paidReservations.filter(
+    (r) =>
+      !(
+        (r.refund_date && r.refund_date.trim().length > 0) ||
+        (typeof r.refund_amount === "number" && r.refund_amount > 0)
+      )
   );
   const hasWelcomePackReservation = !!welcomePackPayment?.reservation_date;
   let autoDeduction = 0;
@@ -1107,8 +1114,10 @@ function CommissionPaymentCard({
     deductionReason = "교육원 설정: 공제 안 함";
   } else if (hasWelcomePackReservation) {
     deductionReason = "웰컴팩 예약금으로 교육 예약금 면제";
-  } else if (!paidReservation) {
+  } else if (paidReservations.length === 0) {
     deductionReason = "교육 예약금 미납";
+  } else if (heldReservations.length === 0) {
+    deductionReason = "교육 예약금 환불됨 — 공제 없음";
   } else {
     autoDeduction = educationReservationAmount;
     deductionReason = "교육 예약금 공제";
