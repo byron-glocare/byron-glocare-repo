@@ -142,7 +142,10 @@ export type CommissionAmountInputs = {
     TrainingCenter,
     "tuition_fee_2026" | "deduct_reservation_by_default"
   >;
-  reservationPayments: Pick<ReservationPayment, "payment_date">[];
+  reservationPayments: Pick<
+    ReservationPayment,
+    "payment_date" | "refund_amount" | "refund_date"
+  >[];
   welcomePackPayment: Pick<WelcomePackPayment, "reservation_date"> | null;
   /** system_settings.education_reservation_amount (default 35000) */
   educationReservationAmount: number;
@@ -154,6 +157,15 @@ export type CommissionAmount = {
   deductionEligible: boolean; // 공제 자격 있음 (수동 override 시 참고용)
   deductionReason: string; // "교육원 OFF" / "교육 예약금 미납" / "웰컴팩 예약금으로 면제" 등
 };
+
+/** 환불된 예약금인지 — refund_date 가 있거나 refund_amount > 0 */
+function isRefunded(
+  p: Pick<ReservationPayment, "refund_amount" | "refund_date">
+): boolean {
+  if (p.refund_date && p.refund_date.trim().length > 0) return true;
+  if (typeof p.refund_amount === "number" && p.refund_amount > 0) return true;
+  return false;
+}
 
 export function computeCommissionAmount(
   inputs: CommissionAmountInputs
@@ -182,16 +194,28 @@ export function computeCommissionAmount(
     };
   }
 
-  // 교육 예약금 실납 여부
-  const paid = inputs.reservationPayments.some(
+  // 교육 예약금 실납 여부 — payment_date 있어야 실납
+  const paidPayments = inputs.reservationPayments.filter(
     (r) => r.payment_date && r.payment_date.length > 0
   );
-  if (!paid) {
+  if (paidPayments.length === 0) {
     return {
       tuitionBase,
       defaultDeduction: 0,
       deductionEligible: false,
       deductionReason: "교육 예약금 미납",
+    };
+  }
+
+  // 환불 처리됨 → 더 이상 글로케어가 보유한 금액이 아님 → 공제 없음
+  // (납입한 예약금이 모두 환불된 경우)
+  const heldPayments = paidPayments.filter((p) => !isRefunded(p));
+  if (heldPayments.length === 0) {
+    return {
+      tuitionBase,
+      defaultDeduction: 0,
+      deductionEligible: false,
+      deductionReason: "교육 예약금 환불됨 — 공제 없음",
     };
   }
 
