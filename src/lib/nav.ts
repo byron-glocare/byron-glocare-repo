@@ -1,6 +1,10 @@
 import {
   BookOpen,
   Building2,
+  ClipboardList,
+  Database,
+  DollarSign,
+  FileText,
   Film,
   GraduationCap,
   Hospital,
@@ -50,9 +54,19 @@ export const NAV_GROUPS: NavGroup[] = [
       { href: "/students", label: "유학생", icon: Plane },
       { href: "/universities", label: "대학교", icon: School },
       { href: "/departments", label: "학과", icon: BookOpen },
+      { href: "/admissions", label: "모집요강", icon: ClipboardList },
+      { href: "/student-data-types", label: "표준 데이터", icon: Database },
       { href: "/study-centers", label: "유학센터", icon: Building2 },
       { href: "/study-cases", label: "사례", icon: Film },
       { href: "/study-channels", label: "SNS 채널", icon: Radio },
+    ],
+  },
+  {
+    label: "유학 B2B 정산",
+    items: [
+      { href: "/pricing-plans", label: "가격 플랜", icon: DollarSign },
+      { href: "/center-orgs", label: "유학센터 회사", icon: Building2 },
+      { href: "/study-invoices", label: "인보이스", icon: FileText },
     ],
   },
   {

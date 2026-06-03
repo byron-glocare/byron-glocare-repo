@@ -18,6 +18,9 @@ import { NewCustomersCard } from "@/components/dashboard/new-customers-card";
 import { CumulativeStatsCard } from "@/components/dashboard/cumulative-stats-card";
 import { PartnersStatsCard } from "@/components/dashboard/partners-stats-card";
 import { StudyStatsCards } from "@/components/dashboard/study-stats-cards";
+import { StudyB2BStatsCards } from "@/components/dashboard/study-b2b-stats";
+import { AiUsageCard } from "@/components/dashboard/ai-usage-card";
+import { AdmissionPipelineCard } from "@/components/dashboard/admission-pipeline-card";
 import {
   computeTaskBuckets,
   computeStageDistribution,
@@ -127,6 +130,117 @@ export default async function DashboardPage() {
     trainingCenters: tcSchedules ?? [],
     trainingClasses: tcClasses ?? [],
   };
+
+  // 유학 B2B / AI / 모집요강 파이프라인 (B5)
+  const now = new Date();
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+  const [
+    { data: monthInvoices },
+    { data: monthSettlements },
+    { data: openInvoices },
+    { data: openSettlements },
+    { count: activeOrgsCount },
+    { count: specsExtractedCount },
+    { data: formsWithEssays },
+    { count: essaysGeneratedCount },
+    { data: specPipelineRows },
+  ] = await Promise.all([
+    supabase
+      .from("study_invoices")
+      .select("total_amount, currency")
+      .gte("period_end", monthStart.slice(0, 10)),
+    supabase
+      .from("study_settlements")
+      .select("amount, currency")
+      .gte("received_at", monthStart),
+    supabase
+      .from("study_invoices")
+      .select("id, total_amount, status")
+      .in("status", ["draft", "sent"]),
+    supabase
+      .from("study_settlements")
+      .select("invoice_id, amount"),
+    supabase
+      .from("study_center_orgs")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "active"),
+    supabase
+      .from("study_admission_specs")
+      .select("id", { count: "exact", head: true })
+      .not("ai_extraction_log", "is", null),
+    // 양식 분석 = essay_questions 가 비어있지 않은 form_files (클라에서 필터)
+    supabase
+      .from("study_admission_form_files")
+      .select("essay_questions")
+      .eq("is_current", true),
+    supabase
+      .from("study_student_essay_drafts")
+      .select("id", { count: "exact", head: true }),
+    supabase
+      .from("study_admission_specs")
+      .select("status"),
+  ]);
+
+  // 미수금: open invoice 의 total - 매칭된 settlement
+  const settledPerInvoice = new Map<string, number>();
+  for (const s of openSettlements ?? []) {
+    settledPerInvoice.set(
+      s.invoice_id,
+      (settledPerInvoice.get(s.invoice_id) ?? 0) + Number(s.amount)
+    );
+  }
+  const outstanding = (openInvoices ?? []).reduce((sum, inv) => {
+    const total = Number(inv.total_amount);
+    const paid = settledPerInvoice.get(inv.id) ?? 0;
+    return sum + Math.max(0, total - paid);
+  }, 0);
+
+  const monthBilled = (monthInvoices ?? []).reduce(
+    (s, i) => s + Number(i.total_amount),
+    0
+  );
+  const monthSettled = (monthSettlements ?? []).reduce(
+    (s, x) => s + Number(x.amount),
+    0
+  );
+  const pendingInvoicesCount = (openInvoices ?? []).filter(
+    (i) => i.status === "sent" || i.status === "draft"
+  ).length;
+
+  const b2bStats = {
+    monthBilledAmount: monthBilled,
+    monthSettledAmount: monthSettled,
+    outstandingAmount: outstanding,
+    activeOrgsCount: activeOrgsCount ?? 0,
+    pendingInvoicesCount,
+  };
+
+  // 양식 분석: essay_questions 배열 length > 0 인 것
+  const formsAnalyzedCount = (formsWithEssays ?? []).filter((f) => {
+    const eq = f.essay_questions;
+    return Array.isArray(eq) && eq.length > 0;
+  }).length;
+
+  // 토큰 추정: 추출 1건 = ~15K, 양식 분석 1건 = ~8K, 작문 1건 = ~2K
+  const tokens =
+    (specsExtractedCount ?? 0) * 15000 +
+    formsAnalyzedCount * 8000 +
+    (essaysGeneratedCount ?? 0) * 2000;
+
+  const aiStats = {
+    specsExtractedCount: specsExtractedCount ?? 0,
+    formsAnalyzedCount,
+    essaysGeneratedCount: essaysGeneratedCount ?? 0,
+    estimatedTokens: tokens,
+  };
+
+  // 모집요강 파이프라인
+  const pipeline = { draft: 0, reviewing: 0, approved: 0, archived: 0 };
+  for (const r of specPipelineRows ?? []) {
+    if (r.status in pipeline) {
+      pipeline[r.status as keyof typeof pipeline]++;
+    }
+  }
 
   const taskBuckets = computeTaskBuckets(inputs);
   const stageDistribution = computeStageDistribution(inputs);
@@ -243,6 +357,23 @@ export default async function DashboardPage() {
             </span>
           </div>
           <StudyStatsCards stats={studyStats} />
+        </section>
+
+        {/* 유학 B2B 정산 + AI + 파이프라인 (B5) */}
+        <section className="space-y-3 pt-2">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-medium text-muted-foreground">
+              유학 B2B 정산 · AI · 파이프라인
+            </h2>
+            <span className="text-xs text-muted-foreground">
+              이번 달 기준
+            </span>
+          </div>
+          <StudyB2BStatsCards stats={b2bStats} />
+          <div className="grid gap-3 lg:grid-cols-2">
+            <AdmissionPipelineCard pipeline={pipeline} />
+            <AiUsageCard stats={aiStats} />
+          </div>
         </section>
       </div>
     </>

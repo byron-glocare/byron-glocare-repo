@@ -61,3 +61,6 @@ Desktop.ini
 /tmp
 .claude/
 scripts/output/
+
+# 형제 프로젝트 (이 레포에 포함 안 함)
+/glocare_homepage/

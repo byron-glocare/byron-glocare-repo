@@ -952,6 +952,484 @@ export type Database = {
         Update: Partial<Database["public"]["Tables"]["study_insurance_claims"]["Insert"]>;
         Relationships: [];
       };
+
+      // ---------------------------------------------------------------------
+      // 가격·정산 (B3)
+      // ---------------------------------------------------------------------
+      study_pricing_plans: {
+        Row: {
+          id: string;
+          name: string;
+          model: "per_student" | "monthly" | "percentage" | "hybrid";
+          currency: string;
+          per_student_fee: number | null;
+          monthly_fee: number | null;
+          percentage_rate: number | null;
+          percentage_basis: "tuition" | "total_paid" | null;
+          hybrid_params: unknown | null;
+          notes: string | null;
+          is_active: boolean;
+          effective_from: string | null;
+          effective_to: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          model: "per_student" | "monthly" | "percentage" | "hybrid";
+          currency?: string;
+          per_student_fee?: number | null;
+          monthly_fee?: number | null;
+          percentage_rate?: number | null;
+          percentage_basis?: "tuition" | "total_paid" | null;
+          hybrid_params?: unknown | null;
+          notes?: string | null;
+          is_active?: boolean;
+          effective_from?: string | null;
+          effective_to?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["study_pricing_plans"]["Insert"]
+        >;
+        Relationships: [];
+      };
+
+      study_center_orgs: {
+        Row: {
+          id: string;
+          name_vi: string;
+          name_ko: string | null;
+          country: string;
+          tax_id: string | null;
+          status: "pending" | "active" | "suspended" | "closed";
+          pricing_plan_id: string | null;
+          settlement_currency: string;
+          contact_info: unknown | null;
+          created_at: string;
+          updated_at: string;
+          activated_at: string | null;
+          deactivated_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          name_vi: string;
+          name_ko?: string | null;
+          country?: string;
+          tax_id?: string | null;
+          status?: "pending" | "active" | "suspended" | "closed";
+          pricing_plan_id?: string | null;
+          settlement_currency?: string;
+          contact_info?: unknown | null;
+          created_at?: string;
+          updated_at?: string;
+          activated_at?: string | null;
+          deactivated_at?: string | null;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["study_center_orgs"]["Insert"]
+        >;
+        Relationships: [
+          {
+            foreignKeyName: "study_center_orgs_pricing_plan_id_fkey";
+            columns: ["pricing_plan_id"];
+            referencedRelation: "study_pricing_plans";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+
+      study_invoices: {
+        Row: {
+          id: string;
+          org_id: string;
+          period_start: string;
+          period_end: string;
+          line_items: unknown;
+          total_amount: number;
+          currency: string;
+          status: "draft" | "sent" | "paid" | "cancelled";
+          tax_invoice_url: string | null;
+          created_at: string;
+          updated_at: string;
+          sent_at: string | null;
+          paid_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          org_id: string;
+          period_start: string;
+          period_end: string;
+          line_items?: unknown;
+          total_amount: number;
+          currency?: string;
+          status?: "draft" | "sent" | "paid" | "cancelled";
+          tax_invoice_url?: string | null;
+          created_at?: string;
+          updated_at?: string;
+          sent_at?: string | null;
+          paid_at?: string | null;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["study_invoices"]["Insert"]
+        >;
+        Relationships: [
+          {
+            foreignKeyName: "study_invoices_org_id_fkey";
+            columns: ["org_id"];
+            referencedRelation: "study_center_orgs";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+
+      study_settlements: {
+        Row: {
+          id: string;
+          invoice_id: string;
+          amount: number;
+          currency: string;
+          received_at: string;
+          bank_reference: string | null;
+          attached_proof_url: string | null;
+          matched_by_admin: string | null;
+          note: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          invoice_id: string;
+          amount: number;
+          currency?: string;
+          received_at: string;
+          bank_reference?: string | null;
+          attached_proof_url?: string | null;
+          matched_by_admin?: string | null;
+          note?: string | null;
+          created_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["study_settlements"]["Insert"]
+        >;
+        Relationships: [
+          {
+            foreignKeyName: "study_settlements_invoice_id_fkey";
+            columns: ["invoice_id"];
+            referencedRelation: "study_invoices";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+
+      // ---------------------------------------------------------------------
+      // 표준 데이터 타입 카탈로그 (B4-2)
+      // ---------------------------------------------------------------------
+      study_student_data_types: {
+        Row: {
+          id: string;
+          key: string;
+          label_ko: string;
+          label_vi: string;
+          category:
+            | "identity"
+            | "education"
+            | "family"
+            | "financial"
+            | "language"
+            | "contact"
+            | "career"
+            | "essay"
+            | "document"
+            | "other";
+          input_type:
+            | "text"
+            | "long_text"
+            | "date"
+            | "number"
+            | "select"
+            | "multi_select"
+            | "file"
+            | "boolean";
+          options: Array<{ value: string; label_ko: string; label_vi: string }> | null;
+          hint_ko: string | null;
+          hint_vi: string | null;
+          is_essay_basis: boolean;
+          is_default_required: boolean;
+          sort_order: number;
+          is_active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          key: string;
+          label_ko: string;
+          label_vi: string;
+          category:
+            | "identity"
+            | "education"
+            | "family"
+            | "financial"
+            | "language"
+            | "contact"
+            | "career"
+            | "essay"
+            | "document"
+            | "other";
+          input_type:
+            | "text"
+            | "long_text"
+            | "date"
+            | "number"
+            | "select"
+            | "multi_select"
+            | "file"
+            | "boolean";
+          options?: Array<{ value: string; label_ko: string; label_vi: string }> | null;
+          hint_ko?: string | null;
+          hint_vi?: string | null;
+          is_essay_basis?: boolean;
+          is_default_required?: boolean;
+          sort_order?: number;
+          is_active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["study_student_data_types"]["Insert"]
+        >;
+        Relationships: [];
+      };
+
+      // ---------------------------------------------------------------------
+      // 학생 작문 결과 (B4-5)
+      // ---------------------------------------------------------------------
+      study_student_essay_drafts: {
+        Row: {
+          id: string;
+          student_id: string;
+          form_file_id: string;
+          question_index: number;
+          question_ko: string;
+          basis_data_keys: string[];
+          generated_text: string | null;
+          generated_at: string | null;
+          generation_model: string | null;
+          generation_usage: unknown | null;
+          edited_text: string | null;
+          edited_at: string | null;
+          edited_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          student_id: string;
+          form_file_id: string;
+          question_index: number;
+          question_ko: string;
+          basis_data_keys?: string[];
+          generated_text?: string | null;
+          generated_at?: string | null;
+          generation_model?: string | null;
+          generation_usage?: unknown | null;
+          edited_text?: string | null;
+          edited_at?: string | null;
+          edited_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["study_student_essay_drafts"]["Insert"]
+        >;
+        Relationships: [
+          {
+            foreignKeyName: "study_student_essay_drafts_student_id_fkey";
+            columns: ["student_id"];
+            referencedRelation: "study_managed_students";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "study_student_essay_drafts_form_file_id_fkey";
+            columns: ["form_file_id"];
+            referencedRelation: "study_admission_form_files";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+
+      // ---------------------------------------------------------------------
+      // 모집요강 양식 파일 (B4-1)
+      // ---------------------------------------------------------------------
+      study_admission_form_files: {
+        Row: {
+          id: string;
+          university_id: number;
+          department_name: string | null;
+          key:
+            | "application_form"
+            | "self_intro"
+            | "study_plan"
+            | "financial_pledge_form"
+            | "privacy_consent"
+            | "academic_record_release"
+            | "recommendation_letter"
+            | "health_certificate"
+            | "other";
+          name_ko: string;
+          file_url: string;
+          file_name: string;
+          size_bytes: number | null;
+          mime_type: string | null;
+          is_current: boolean;
+          superseded_by: string | null;
+          uploaded_by: string | null;
+          uploaded_at: string;
+          notes: string | null;
+          required_data_type_keys: string[];
+          essay_questions: Array<{
+            question_ko: string;
+            question_vi?: string;
+            max_chars?: number;
+            basis_data_type_keys: string[];
+            sub_questions?: Array<{
+              question_ko: string;
+              question_vi: string;
+              hint_vi?: string;
+              data_type_key?: string;
+            }>;
+          }>;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          university_id: number;
+          department_name?: string | null;
+          key:
+            | "application_form"
+            | "self_intro"
+            | "study_plan"
+            | "financial_pledge_form"
+            | "privacy_consent"
+            | "academic_record_release"
+            | "recommendation_letter"
+            | "health_certificate"
+            | "other";
+          name_ko: string;
+          file_url: string;
+          file_name: string;
+          size_bytes?: number | null;
+          mime_type?: string | null;
+          is_current?: boolean;
+          superseded_by?: string | null;
+          uploaded_by?: string | null;
+          uploaded_at?: string;
+          notes?: string | null;
+          required_data_type_keys?: string[];
+          essay_questions?: Array<{
+            question_ko: string;
+            question_vi?: string;
+            max_chars?: number;
+            basis_data_type_keys: string[];
+            sub_questions?: Array<{
+              question_ko: string;
+              question_vi: string;
+              hint_vi?: string;
+              data_type_key?: string;
+            }>;
+          }>;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["study_admission_form_files"]["Insert"]
+        >;
+        Relationships: [
+          {
+            foreignKeyName: "study_admission_form_files_university_id_fkey";
+            columns: ["university_id"];
+            referencedRelation: "universities";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+
+      // ---------------------------------------------------------------------
+      // 모집요강 (B1/B2)
+      // ---------------------------------------------------------------------
+      study_admission_specs: {
+        Row: {
+          id: string;
+          university_id: number;
+          term: string;
+          admission_category: string | null;
+          program_type:
+            | "language_program"
+            | "associate_2yr"
+            | "bachelor_3yr_extension"
+            | "bachelor_4yr";
+          status: "draft" | "reviewing" | "approved" | "archived";
+          source_file_url: string | null;
+          ai_extraction_log: unknown | null;
+          /** JSONB — DepartmentItem[] */
+          departments: unknown;
+          /** JSONB — RequiredDocument[] */
+          required_documents: unknown;
+          /** JSONB — Eligibility */
+          eligibility: unknown;
+          /** JSONB — Schedule */
+          schedule: unknown;
+          /** JSONB — Tuition */
+          tuition: unknown;
+          /** JSONB — Scholarship[] */
+          scholarships: unknown;
+          /** JSONB — Metadata */
+          metadata: unknown;
+          approved_by: string | null;
+          approved_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          university_id: number;
+          term: string;
+          admission_category?: string | null;
+          program_type:
+            | "language_program"
+            | "associate_2yr"
+            | "bachelor_3yr_extension"
+            | "bachelor_4yr";
+          status?: "draft" | "reviewing" | "approved" | "archived";
+          source_file_url?: string | null;
+          ai_extraction_log?: unknown | null;
+          departments?: unknown;
+          required_documents?: unknown;
+          eligibility?: unknown;
+          schedule?: unknown;
+          tuition?: unknown;
+          scholarships?: unknown;
+          metadata?: unknown;
+          approved_by?: string | null;
+          approved_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["study_admission_specs"]["Insert"]
+        >;
+        Relationships: [
+          {
+            foreignKeyName: "study_admission_specs_university_id_fkey";
+            columns: ["university_id"];
+            referencedRelation: "universities";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
     };
     Views: { [_ in never]: never };
     Functions: { [_ in never]: never };
@@ -987,3 +1465,25 @@ export type CustomerReminder = Tables<"customer_reminders">;
 export type SmsMessage = Tables<"sms_messages">;
 export type SystemSetting = Tables<"system_settings">;
 export type StatusOption = Tables<"status_options">;
+export type StudyAdmissionSpec = Tables<"study_admission_specs">;
+export type StudyAdmissionSpecInsert = TablesInsert<"study_admission_specs">;
+export type StudyAdmissionSpecUpdate = TablesUpdate<"study_admission_specs">;
+export type StudyAdmissionFormFile = Tables<"study_admission_form_files">;
+export type StudyAdmissionFormFileInsert = TablesInsert<"study_admission_form_files">;
+export type StudyAdmissionFormFileUpdate = TablesUpdate<"study_admission_form_files">;
+export type StudyStudentDataType = Tables<"study_student_data_types">;
+export type StudyStudentDataTypeInsert = TablesInsert<"study_student_data_types">;
+export type StudyStudentDataTypeUpdate = TablesUpdate<"study_student_data_types">;
+
+// B3 — 가격·정산
+export type StudyPricingPlan = Tables<"study_pricing_plans">;
+export type StudyPricingPlanInsert = TablesInsert<"study_pricing_plans">;
+export type StudyPricingPlanUpdate = TablesUpdate<"study_pricing_plans">;
+export type StudyCenterOrg = Tables<"study_center_orgs">;
+export type StudyCenterOrgInsert = TablesInsert<"study_center_orgs">;
+export type StudyCenterOrgUpdate = TablesUpdate<"study_center_orgs">;
+export type StudyInvoice = Tables<"study_invoices">;
+export type StudyInvoiceInsert = TablesInsert<"study_invoices">;
+export type StudyInvoiceUpdate = TablesUpdate<"study_invoices">;
+export type StudySettlement = Tables<"study_settlements">;
+export type StudySettlementInsert = TablesInsert<"study_settlements">;

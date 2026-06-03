@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Plus } from "lucide-react";
+import { FileText, Plus } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/page-header";
@@ -21,6 +21,20 @@ import type { UniversityInput } from "@/lib/validators";
 
 export const dynamic = "force-dynamic";
 
+const PROGRAM_TYPE_LABEL: Record<string, string> = {
+  language_program: "어학연수 (D-4)",
+  associate_2yr: "전문학사 2년",
+  bachelor_3yr_extension: "전공심화 (2+2)",
+  bachelor_4yr: "학사 4년",
+};
+
+const SPEC_STATUS_LABEL: Record<string, string> = {
+  draft: "초안",
+  reviewing: "검수 중",
+  approved: "승인",
+  archived: "보관",
+};
+
 export default async function UniversityEditPage({
   params,
 }: {
@@ -31,16 +45,22 @@ export default async function UniversityEditPage({
   if (!Number.isFinite(numericId)) notFound();
 
   const supabase = await createClient();
-  const [{ data: row, error }, { data: depts }] = await Promise.all([
-    supabase.from("universities").select("*").eq("id", numericId).single(),
-    supabase
-      .from("departments")
-      .select(
-        "id, active, icon, name_ko, name_vi, category, course, badge, sort_order"
-      )
-      .eq("university_id", numericId)
-      .order("sort_order"),
-  ]);
+  const [{ data: row, error }, { data: depts }, { data: specs }] =
+    await Promise.all([
+      supabase.from("universities").select("*").eq("id", numericId).single(),
+      supabase
+        .from("departments")
+        .select(
+          "id, active, icon, name_ko, name_vi, category, course, badge, sort_order"
+        )
+        .eq("university_id", numericId)
+        .order("sort_order"),
+      supabase
+        .from("study_admission_specs")
+        .select("id, term, program_type, admission_category, status, departments, updated_at")
+        .eq("university_id", numericId)
+        .order("updated_at", { ascending: false }),
+    ]);
 
   if (error || !row) notFound();
 
@@ -81,6 +101,15 @@ export default async function UniversityEditPage({
           { href: "/universities", label: "대학교" },
           { label: row.name_ko },
         ]}
+        actions={
+          <Link
+            href={`/admissions/forms?univ=${numericId}`}
+            className={buttonVariants({ variant: "outline", size: "sm" })}
+          >
+            <FileText className="size-4" />
+            양식 파일
+          </Link>
+        }
       />
       <div className="p-6 space-y-6">
         <UniversityForm
@@ -170,6 +199,103 @@ export default async function UniversityEditPage({
                           ) : (
                             <Badge variant="outline">숨김</Badge>
                           )}
+                        </Link>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          )}
+        </Card>
+
+        {/* 모집요강 — 모집요강 메뉴와 연동 */}
+        <Card className="overflow-hidden p-0">
+          <div className="p-4 flex items-center justify-between border-b">
+            <div className="flex items-center gap-2">
+              <h2 className="font-semibold text-base">모집요강</h2>
+              <Badge variant="secondary">{specs?.length ?? 0}</Badge>
+            </div>
+            <div className="flex items-center gap-2">
+              <Link
+                href={`/admissions/forms?univ=${numericId}`}
+                className={buttonVariants({ variant: "outline", size: "sm" })}
+              >
+                <FileText className="size-4" />
+                양식 파일
+              </Link>
+              <Link
+                href="/admissions/new"
+                className={buttonVariants({ variant: "outline", size: "sm" })}
+              >
+                <Plus className="size-4" />
+                모집요강 추가
+              </Link>
+            </div>
+          </div>
+          {!specs || specs.length === 0 ? (
+            <div className="p-8 text-center text-sm text-muted-foreground">
+              등록된 모집요강이 없습니다.{" "}
+              <Link href="/admissions/new" className="text-primary hover:underline">
+                PDF 업로드로 추가 →
+              </Link>
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-28">학기</TableHead>
+                  <TableHead className="w-40">과정</TableHead>
+                  <TableHead>학과</TableHead>
+                  <TableHead className="w-24 text-center">상태</TableHead>
+                  <TableHead className="w-28">갱신</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {specs.map((s) => {
+                  const href = `/admissions/${s.id}`;
+                  const depts = Array.isArray(s.departments)
+                    ? (s.departments as Array<{ name?: string }>)
+                    : [];
+                  const deptNames = depts
+                    .map((d) => d?.name)
+                    .filter(Boolean) as string[];
+                  return (
+                    <TableRow key={s.id} className="cursor-pointer">
+                      <TableCell className="text-sm">
+                        <Link href={href} className="block hover:text-primary font-medium">
+                          {s.term}
+                        </Link>
+                      </TableCell>
+                      <TableCell className="text-sm">
+                        <Link href={href} className="block">
+                          {PROGRAM_TYPE_LABEL[s.program_type] ?? s.program_type}
+                        </Link>
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        <Link href={href} className="block">
+                          {deptNames.length === 0
+                            ? "—"
+                            : deptNames.slice(0, 3).join(" · ") +
+                              (deptNames.length > 3 ? ` +${deptNames.length - 3}` : "")}
+                        </Link>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <Link href={href} className="block">
+                          {s.status === "approved" ? (
+                            <Badge className="bg-success/10 text-success border-success/20">
+                              {SPEC_STATUS_LABEL[s.status] ?? s.status}
+                            </Badge>
+                          ) : (
+                            <Badge variant="outline">
+                              {SPEC_STATUS_LABEL[s.status] ?? s.status}
+                            </Badge>
+                          )}
+                        </Link>
+                      </TableCell>
+                      <TableCell className="text-xs text-muted-foreground">
+                        <Link href={href} className="block">
+                          {new Date(s.updated_at).toLocaleDateString("ko-KR")}
                         </Link>
                       </TableCell>
                     </TableRow>
