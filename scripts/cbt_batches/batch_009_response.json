@@ -1,0 +1,752 @@
+[
+  {
+    "id": 1498,
+    "intent_ko": "치매 대상자의 일상생활 지원 원칙 — 자립 촉진과 바람직하지 않은 방법 구별",
+    "intent_vi": "Nguyên tắc hỗ trợ sinh hoạt hàng ngày cho người bệnh sa sút trí tuệ — phân biệt phương pháp thúc đẩy tự lập và phương pháp không phù hợp",
+    "choice_explanations": {
+      "ko": {
+        "1": "주변 환경을 자주 바꾸면 치매 대상자에게 혼란과 불안을 초래하므로 바람직하지 않다.",
+        "2": "★ 습관적으로 해오던 일을 스스로 하게 하는 것이 치매 대상자의 자립을 돕는 올바른 방법이다. 치매 환자는 새로운 학습이 어렵지만 오래된 습관 기억은 비교적 잘 유지되므로, 익숙한 활동을 직접 수행하게 하여 잔존 기능을 유지시킨다.",
+        "3": "약물 용량 조정은 반드시 의사가 판단해야 하며, 요양보호사가 임의로 줄여서는 안 된다.",
+        "4": "요양보호사는 대상자가 스스로 할 수 있는 것은 직접 하도록 유도해야 하며, 전적으로 대신해 주는 것은 자립 능력을 저하시킨다.",
+        "5": "치매라는 이유로 일상생활이 불가능하다고 단정하는 것은 대상자의 존엄성을 해치고 잔존 기능을 외면하는 태도다."
+      },
+      "vi": {
+        "1": "Thay đổi môi trường xung quanh thường xuyên sẽ gây nhầm lẫn và lo lắng cho người bệnh sa sút trí tuệ, không phù hợp.",
+        "2": "★ Để người bệnh tự thực hiện những việc đã quen làm là phương pháp đúng đắn giúp thúc đẩy tính tự lập. Người bệnh sa sút trí tuệ khó học điều mới nhưng ký ức về thói quen cũ còn tương đối tốt, nên hãy để họ tự thực hiện các hoạt động quen thuộc để duy trì chức năng còn lại.",
+        "3": "Việc điều chỉnh liều lượng thuốc phải do bác sĩ quyết định; nhân viên chăm sóc không được tự ý giảm liều.",
+        "4": "Nhân viên chăm sóc nên khuyến khích người bệnh tự làm những gì họ có thể; làm thay hoàn toàn sẽ làm giảm khả năng tự lập.",
+        "5": "Khẳng định rằng người bệnh không thể sinh hoạt được vì sa sút trí tuệ là thái độ xúc phạm nhân phẩm và bỏ qua các chức năng còn lại của họ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "자립", "def_vi": "Tự lập — khả năng tự thực hiện các hoạt động mà không cần sự trợ giúp của người khác" },
+      { "term_ko": "잔존 기능", "def_vi": "Chức năng còn lại — khả năng hoặc chức năng cơ thể/nhận thức vẫn còn duy trì được dù đã mắc bệnh" }
+    ]
+  },
+  {
+    "id": 1497,
+    "intent_ko": "입소 초기 치매 대상자의 일상생활 지원 — 정서적 안정과 안전을 위한 올바른 접근",
+    "intent_vi": "Hỗ trợ sinh hoạt hàng ngày cho người bệnh sa sút trí tuệ mới vào cơ sở — tiếp cận đúng đắn để tạo ổn định cảm xúc và đảm bảo an toàn",
+    "choice_explanations": {
+      "ko": {
+        "1": "입소 초기에 새로운 습관을 형성하려 하면 오히려 혼란과 불안을 가중시킨다.",
+        "2": "안전을 위해 침상에서 절대 안정하게 하면 활동 제한으로 근력 저하, 욕창 등 부작용이 생긴다.",
+        "3": "가구 위치를 자주 바꾸면 익숙한 공간 감각을 잃어 혼란이 심해진다.",
+        "4": "★ 집에서 쓰던 이불처럼 익숙한 물건을 곁에 두면 새 환경에서 느끼는 불안을 줄이고 심리적 안정감을 준다. 치매 환자는 낯선 환경에 취약하므로 친숙한 소지품이 정서적 지지 역할을 한다.",
+        "5": "약 관리는 전문 의료진이 담당해야 하며, 대상자가 스스로 관리하게 하면 복용 오류 등 위험이 발생할 수 있다."
+      },
+      "vi": {
+        "1": "Cố gắng hình thành thói quen mới ngay từ đầu khi mới vào cơ sở sẽ làm tăng thêm sự nhầm lẫn và lo lắng.",
+        "2": "Bắt người bệnh nằm yên trên giường vì lý do an toàn sẽ dẫn đến giảm sức mạnh cơ bắp, loét tì đè và các tác dụng phụ khác.",
+        "3": "Thay đổi vị trí đồ nội thất thường xuyên sẽ khiến người bệnh mất đi cảm giác quen thuộc với không gian, làm tăng nhầm lẫn.",
+        "4": "★ Để bên cạnh những vật dụng quen thuộc như chăn từ nhà mang đến sẽ giúp giảm lo lắng trong môi trường mới và mang lại cảm giác an tâm. Người bệnh sa sút trí tuệ dễ bị ảnh hưởng bởi môi trường lạ, nên đồ vật quen thuộc đóng vai trò hỗ trợ cảm xúc quan trọng.",
+        "5": "Việc quản lý thuốc phải do nhân viên y tế chuyên môn phụ trách; để người bệnh tự quản lý có thể dẫn đến nguy hiểm như uống nhầm liều."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "정서적 안정감", "def_vi": "Cảm giác ổn định cảm xúc — trạng thái tâm lý bình yên, không lo lắng hay bất an" },
+      { "term_ko": "욕창", "def_vi": "Loét tì đè (bed sore) — vết thương da do nằm lâu một tư thế, máu không lưu thông đến vùng đó" }
+    ]
+  },
+  {
+    "id": 1496,
+    "intent_ko": "치매약 처방 변경 후 불안 증상 발생 시 요양보호사의 적절한 대처 방법",
+    "intent_vi": "Cách ứng phó phù hợp của nhân viên chăm sóc khi người bệnh có triệu chứng lo lắng sau khi thay đổi đơn thuốc sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "약 용량을 늘리는 것은 의료 전문가의 판단 없이 할 수 없으며, 요양보호사 권한 밖의 일이다.",
+        "2": "이전 처방약을 임의로 제공하는 것은 현재 처방과 충돌할 수 있어 위험하다.",
+        "3": "★ 처방 변경 후 나타나는 이상 증상을 꼼꼼히 메모하여 병원에 가지고 가는 것이 가장 적절한 대처다. 요양보호사는 관찰·기록·보고가 주된 역할이며, 의약품에 관한 판단은 의사에게 맡겨야 한다.",
+        "4": "보호자의 허락이 있어도 요양보호사가 복용량을 조절하는 것은 법적·윤리적으로 허용되지 않는다.",
+        "5": "증상이 호전되는 과정이라고 스스로 판단하여 안심시키는 것은 의학적 근거 없이 이루어지는 행위이므로 부적절하다."
+      },
+      "vi": {
+        "1": "Tăng liều thuốc phải do chuyên gia y tế quyết định; nằm ngoài thẩm quyền của nhân viên chăm sóc.",
+        "2": "Tự ý cho uống thuốc từ đơn cũ có thể mâu thuẫn với đơn thuốc hiện tại và gây nguy hiểm.",
+        "3": "★ Ghi chép cẩn thận các triệu chứng bất thường sau khi đổi đơn thuốc rồi mang đến bệnh viện là cách ứng phó phù hợp nhất. Vai trò chính của nhân viên chăm sóc là quan sát, ghi chép và báo cáo; việc phán quyết về thuốc phải để bác sĩ quyết định.",
+        "4": "Dù có sự đồng ý của người thân, nhân viên chăm sóc điều chỉnh liều thuốc vẫn không được phép về mặt pháp lý và đạo đức.",
+        "5": "Tự mình kết luận rằng đây là hiện tượng triệu chứng đang cải thiện rồi an ủi người bệnh là hành vi thiếu cơ sở y tế, không phù hợp."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "처방", "def_vi": "Đơn thuốc / kê đơn — chỉ định của bác sĩ về loại và liều lượng thuốc cần dùng" },
+      { "term_ko": "복용량", "def_vi": "Liều lượng — lượng thuốc được uống mỗi lần hoặc mỗi ngày theo chỉ định" },
+      { "term_ko": "이상 증상", "def_vi": "Triệu chứng bất thường — dấu hiệu không bình thường xuất hiện sau khi dùng thuốc hoặc thay đổi điều trị" }
+    ]
+  },
+  {
+    "id": 1495,
+    "intent_ko": "치매 약물 복용의 중요성에 대해 가족에게 올바르게 설명하는 내용 파악",
+    "intent_vi": "Xác định nội dung giải thích đúng đắn về tầm quan trọng của việc dùng thuốc sa sút trí tuệ cho gia đình người bệnh",
+    "choice_explanations": {
+      "ko": {
+        "1": "치매약은 조기에 시작할수록 효과적이며, 늦게 시작할수록 안전하다는 것은 잘못된 정보다.",
+        "2": "★ 치매약은 인지기능 개선 또는 악화 속도를 늦추는 데 도움이 된다는 것이 과학적으로 검증된 사실이다. 가족에게 현실적인 기대를 심어주는 올바른 설명이다.",
+        "3": "치매약도 구역감, 식욕감퇴 등 부작용이 있으며, 현재까지 완치 약물은 존재하지 않는다.",
+        "4": "용량 조정은 반드시 의사의 지시에 따라야 하며, 임의로 두 배로 늘리는 것은 매우 위험하다.",
+        "5": "치매 치료는 환자 상태에 따라 복수 약물을 병용하거나 변경할 수 있으며, 한 가지만 고집해야 한다는 것은 잘못된 설명이다."
+      },
+      "vi": {
+        "1": "Thuốc sa sút trí tuệ hiệu quả nhất khi bắt đầu sớm; nói rằng bắt đầu muộn hơn là an toàn hơn là thông tin sai.",
+        "2": "★ Thuốc sa sút trí tuệ được chứng minh khoa học là có tác dụng cải thiện chức năng nhận thức hoặc làm chậm tốc độ suy giảm. Đây là giải thích đúng đắn, mang lại kỳ vọng thực tế cho gia đình.",
+        "3": "Thuốc sa sút trí tuệ cũng có tác dụng phụ như buồn nôn, chán ăn, và hiện chưa có thuốc chữa khỏi hoàn toàn.",
+        "4": "Điều chỉnh liều lượng phải theo chỉ định của bác sĩ; tự ý tăng gấp đôi là rất nguy hiểm.",
+        "5": "Điều trị sa sút trí tuệ có thể dùng phối hợp nhiều thuốc hoặc thay đổi tùy theo tình trạng bệnh nhân; nói phải dùng mãi một loại là không chính xác."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "인지기능", "def_vi": "Chức năng nhận thức — khả năng tư duy, ghi nhớ, phán đoán và hiểu biết của não bộ" },
+      { "term_ko": "부작용", "def_vi": "Tác dụng phụ — phản ứng không mong muốn xảy ra khi sử dụng thuốc" },
+      { "term_ko": "완치", "def_vi": "Chữa khỏi hoàn toàn — bệnh được điều trị dứt điểm, không còn triệu chứng" }
+    ]
+  },
+  {
+    "id": 1494,
+    "intent_ko": "치매 가족과의 의사소통 기법 중 '힘 돋우기'에 해당하는 사례 파악",
+    "intent_vi": "Nhận biết kỹ thuật 'tiếp thêm sức mạnh (힘 돋우기)' trong giao tiếp với gia đình người bệnh sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "공감은 상대방의 감정을 이해하고 공유하는 기법으로, 격려와는 다른 개념이다.",
+        "2": "관심 전달은 상대방의 상황에 주의를 기울이고 있음을 보여주는 것으로, 적극적 격려와는 구별된다.",
+        "3": "★ 힘 돋우기는 '힘내세요', '포기하지 마세요'처럼 격려의 말을 건네고, 다른 가족들의 긍정적 극복 사례를 공유하여 희망과 동기를 심어주는 기법이다. 문제에서 제시된 두 가지 행동이 모두 힘 돋우기에 해당한다.",
+        "4": "조언 및 정보제공은 구체적인 지식이나 방법을 안내하는 것으로, 격려와는 목적이 다르다.",
+        "5": "나-메시지 전달법은 '나는 ~하게 느낀다'처럼 자신의 감정을 표현하는 기법으로, 격려와 무관하다."
+      },
+      "vi": {
+        "1": "Đồng cảm là kỹ thuật hiểu và chia sẻ cảm xúc của người khác, là khái niệm khác với khích lệ.",
+        "2": "Truyền đạt sự quan tâm là cho thấy mình đang chú ý đến hoàn cảnh của người kia, phân biệt với việc khích lệ tích cực.",
+        "3": "★ 'Tiếp thêm sức mạnh (힘 돋우기)' là kỹ thuật nói những lời khích lệ như 'Cố lên!', 'Đừng bỏ cuộc!' và chia sẻ những câu chuyện thành công tích cực của các gia đình khác để truyền hy vọng và động lực. Cả hai hành động được nêu trong đề bài đều thuộc kỹ thuật này.",
+        "4": "Tư vấn và cung cấp thông tin là hướng dẫn kiến thức hoặc phương pháp cụ thể, mục đích khác với khích lệ.",
+        "5": "Kỹ thuật truyền đạt thông điệp 'Tôi' (나-메시지) là bày tỏ cảm xúc của bản thân kiểu 'Tôi cảm thấy...', không liên quan đến khích lệ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "힘 돋우기", "def_vi": "Tiếp thêm sức mạnh — kỹ thuật giao tiếp dùng lời khích lệ và chia sẻ ví dụ tích cực để tạo động lực cho đối phương" },
+      { "term_ko": "나-메시지 전달법", "def_vi": "Kỹ thuật truyền đạt thông điệp 'Tôi' — phương pháp bày tỏ cảm xúc cá nhân bắt đầu bằng chủ ngữ 'tôi' thay vì phán xét người khác" }
+    ]
+  },
+  {
+    "id": 1493,
+    "intent_ko": "치매 가족과 효과적으로 의사소통하기 위한 올바른 기법 파악",
+    "intent_vi": "Nhận biết kỹ thuật giao tiếp hiệu quả với gia đình người bệnh sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "가족이 표현한 말 속에 숨겨진 감정을 무시하면 신뢰 관계가 형성되지 않으며 소통이 단절된다.",
+        "2": "실패한 돌봄 사례를 전달하면 가족에게 절망감과 두려움을 줄 수 있어 부적절하다.",
+        "3": "기존 돌봄 방법을 무시하면 가족의 노력을 부정하는 것으로 신뢰를 잃게 된다.",
+        "4": "잘못된 방법에 대해 충고나 지적을 먼저 하면 방어적 반응을 유발해 오히려 소통을 어렵게 한다.",
+        "5": "★ 가족의 돌봄 방법과 지식에서 긍정적인 면을 먼저 인정해 주면 신뢰를 쌓고 관계를 강화할 수 있다. 칭찬과 인정을 기반으로 소통을 시작하는 것이 효과적인 의사소통 원칙이다."
+      },
+      "vi": {
+        "1": "Bỏ qua cảm xúc ẩn sau những gì gia đình bày tỏ sẽ ngăn cản việc xây dựng lòng tin và làm gián đoạn giao tiếp.",
+        "2": "Kể lại những câu chuyện chăm sóc thất bại của gia đình khác có thể gây tuyệt vọng và lo sợ cho gia đình, không phù hợp.",
+        "3": "Phủ nhận phương pháp chăm sóc hiện tại của gia đình là bác bỏ nỗ lực của họ, dẫn đến mất lòng tin.",
+        "4": "Đưa ra lời khuyên hay chỉ trích trước về phương pháp sai sẽ gây phản ứng phòng thủ, làm cho giao tiếp khó khăn hơn.",
+        "5": "★ Trước tiên công nhận những điểm tích cực trong phương pháp và kiến thức chăm sóc của gia đình sẽ giúp xây dựng lòng tin và củng cố mối quan hệ. Bắt đầu giao tiếp bằng sự khen ngợi và công nhận là nguyên tắc giao tiếp hiệu quả."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "돌봄", "def_vi": "Chăm sóc — hành động hỗ trợ toàn diện về thể chất và tinh thần cho người cần được giúp đỡ" },
+      { "term_ko": "신뢰 관계", "def_vi": "Quan hệ tin tưởng — mối quan hệ dựa trên sự tin cậy lẫn nhau giữa nhân viên chăm sóc và gia đình" }
+    ]
+  },
+  {
+    "id": 1492,
+    "intent_ko": "치매 가족에게 '관심 전달'을 하기 위한 적절한 의사소통 기법",
+    "intent_vi": "Kỹ thuật giao tiếp phù hợp để 'truyền đạt sự quan tâm' đến gia đình người bệnh sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "방어적인 자세는 상대방에게 거부감과 불편함을 주어 의사소통을 방해한다.",
+        "2": "옆이나 뒤에서 이야기하면 상대방이 무시당하는 느낌을 받고 불안감이 생긴다.",
+        "3": "마주 보며 이야기하는 것은 좋지만, 큰 목소리는 공격적으로 들릴 수 있어 부적절하다.",
+        "4": "★ '나는 당신을 존중한다'는 표현은 상대방의 가치를 인정하고 관심을 전달하는 핵심적인 긍정적 의사소통 기법이다. 존중의 표현은 신뢰를 쌓고 가족이 마음을 열게 한다.",
+        "5": "과도하게 밀착하면 개인 공간을 침해하여 오히려 불편함과 불안을 유발한다."
+      },
+      "vi": {
+        "1": "Tư thế phòng thủ gây cho đối phương cảm giác bị từ chối và khó chịu, cản trở giao tiếp.",
+        "2": "Nói chuyện từ bên cạnh hoặc phía sau khiến người kia cảm thấy bị phớt lờ và sinh ra lo lắng.",
+        "3": "Đối mặt nhau khi nói là tốt, nhưng nói to có thể nghe có vẻ hung hăng, không phù hợp.",
+        "4": "★ Nói 'Tôi tôn trọng bạn' là kỹ thuật giao tiếp tích cực cốt lõi, công nhận giá trị của đối phương và truyền đạt sự quan tâm. Biểu hiện tôn trọng giúp xây dựng lòng tin và khiến gia đình mở lòng hơn.",
+        "5": "Tiếp cận quá gần sẽ xâm phạm không gian cá nhân, gây khó chịu và lo lắng cho người kia."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "관심 전달", "def_vi": "Truyền đạt sự quan tâm — kỹ thuật giao tiếp thể hiện rằng mình đang chú ý và quan tâm đến hoàn cảnh của đối phương" },
+      { "term_ko": "개인 공간", "def_vi": "Không gian cá nhân — khoảng cách vật lý xung quanh một người mà nếu bị xâm phạm sẽ gây cảm giác khó chịu" }
+    ]
+  },
+  {
+    "id": 1491,
+    "intent_ko": "치매 가족과의 의사소통에서 올바른 접근 방법 파악",
+    "intent_vi": "Nhận biết phương pháp tiếp cận đúng đắn trong giao tiếp với gia đình người bệnh sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "의사소통은 요양보호사의 관점이 아닌 가족의 관점과 감정을 중심으로 이루어져야 한다.",
+        "2": "기분의 정도만 파악하는 것은 표면적 관찰에 그치며, 깊이 있는 소통을 방해한다.",
+        "3": "★ 가족이 대상자를 돌보는 능력을 최대한 지지하고 격려하는 것은 효과적인 의사소통의 핵심이다. 가족의 자기효능감을 높여 돌봄의 질을 향상시킨다.",
+        "4": "절망적인 감정을 억압하도록 유도하면 심리적 소진이 심화되어 가족과의 관계가 악화된다.",
+        "5": "고개를 끄덕이는 등의 비언어적 표현은 공감과 경청을 전달하는 중요한 수단으로, 반드시 활용해야 한다."
+      },
+      "vi": {
+        "1": "Giao tiếp cần lấy quan điểm và cảm xúc của gia đình làm trung tâm, không phải góc nhìn của nhân viên chăm sóc.",
+        "2": "Chỉ nắm bắt mức độ tâm trạng là quan sát bề mặt, cản trở giao tiếp sâu sắc.",
+        "3": "★ Hết lòng ủng hộ và khích lệ khả năng chăm sóc của gia đình là cốt lõi của giao tiếp hiệu quả. Điều này nâng cao cảm giác tự tin của gia đình, cải thiện chất lượng chăm sóc.",
+        "4": "Hướng dẫn gia đình kìm nén cảm xúc tuyệt vọng sẽ làm trầm trọng thêm kiệt sức tâm lý và làm xấu đi mối quan hệ.",
+        "5": "Các biểu hiện phi ngôn ngữ như gật đầu là phương tiện quan trọng truyền đạt sự đồng cảm và lắng nghe, nhất thiết phải sử dụng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "비언어적 표현", "def_vi": "Biểu hiện phi ngôn ngữ — ngôn ngữ cơ thể như cử chỉ, biểu cảm khuôn mặt, gật đầu thay vì lời nói" },
+      { "term_ko": "자기효능감", "def_vi": "Cảm giác tự tin vào năng lực bản thân — niềm tin của một người rằng mình có khả năng hoàn thành nhiệm vụ" }
+    ]
+  },
+  {
+    "id": 1490,
+    "intent_ko": "치매 가족이 느끼는 신체적 부담과 정서적 부담 구별",
+    "intent_vi": "Phân biệt gánh nặng thể chất và gánh nặng cảm xúc mà gia đình người bệnh sa sút trí tuệ phải chịu",
+    "choice_explanations": {
+      "ko": {
+        "1": "죄책감은 정서적 부담에 해당한다.",
+        "2": "소외감은 대인관계에서 비롯되는 정서적 부담이다.",
+        "3": "불안감은 미래에 대한 걱정에서 오는 심리적·정서적 부담이다.",
+        "4": "★ 수면장애는 치매 환자 돌봄 과정에서 수면이 지속적으로 방해받아 생기는 대표적인 신체적 부담이다. 신체적 피로와 건강 저하로 직결되며, 정서적 증상과 명확히 구분된다.",
+        "5": "무기력감은 힘든 상황에 대한 심리적·정서적 반응이다."
+      },
+      "vi": {
+        "1": "Cảm giác tội lỗi thuộc loại gánh nặng cảm xúc.",
+        "2": "Cảm giác bị cô lập là gánh nặng cảm xúc xuất phát từ các mối quan hệ xã hội.",
+        "3": "Cảm giác lo lắng là gánh nặng tâm lý và cảm xúc do lo lắng về tương lai.",
+        "4": "★ Rối loạn giấc ngủ là gánh nặng thể chất điển hình do giấc ngủ liên tục bị gián đoạn trong quá trình chăm sóc người bệnh sa sút trí tuệ. Trực tiếp dẫn đến mệt mỏi thể chất và suy giảm sức khỏe, phân biệt rõ với các triệu chứng cảm xúc.",
+        "5": "Cảm giác bất lực là phản ứng tâm lý và cảm xúc trước hoàn cảnh khó khăn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "수면장애", "def_vi": "Rối loạn giấc ngủ — tình trạng không thể ngủ đủ giấc hoặc ngủ không sâu, ảnh hưởng đến sức khỏe thể chất" },
+      { "term_ko": "소외감", "def_vi": "Cảm giác bị cô lập — cảm giác bị tách biệt, xa lánh khỏi các mối quan hệ xã hội xung quanh" }
+    ]
+  },
+  {
+    "id": 1489,
+    "intent_ko": "치매 가족이 느끼는 신체적 부담과 정서적 부담 구별 (유사 반복 문제)",
+    "intent_vi": "Phân biệt gánh nặng thể chất và gánh nặng cảm xúc của gia đình người bệnh sa sút trí tuệ (dạng câu hỏi tương tự)",
+    "choice_explanations": {
+      "ko": {
+        "1": "죄책감은 정서적 부담에 해당한다.",
+        "2": "소외감은 정서적 부담이다.",
+        "3": "불안감은 심리적·정서적 부담으로 분류된다.",
+        "4": "★ 수면장애는 신체에 직접 영향을 미치는 대표적인 신체적 부담이다. 치매 환자를 24시간 돌보는 과정에서 야간 수면이 방해받아 발생하며, 만성 피로 및 면역력 저하로 이어진다.",
+        "5": "무기력감은 정서적 반응으로 분류된다."
+      },
+      "vi": {
+        "1": "Cảm giác tội lỗi thuộc gánh nặng cảm xúc.",
+        "2": "Cảm giác bị cô lập cũng là gánh nặng cảm xúc.",
+        "3": "Cảm giác lo lắng được phân loại là gánh nặng tâm lý và cảm xúc.",
+        "4": "★ Rối loạn giấc ngủ là gánh nặng thể chất điển hình tác động trực tiếp đến cơ thể. Xảy ra do giấc ngủ ban đêm bị gián đoạn trong quá trình chăm sóc người bệnh suốt 24 giờ, dẫn đến mệt mỏi mãn tính và suy giảm miễn dịch.",
+        "5": "Cảm giác bất lực được phân loại là phản ứng cảm xúc."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "신체적 부담", "def_vi": "Gánh nặng thể chất — sự căng thẳng hoặc tổn hại ảnh hưởng trực tiếp đến cơ thể, ví dụ: mệt mỏi, rối loạn giấc ngủ" },
+      { "term_ko": "만성 피로", "def_vi": "Mệt mỏi mãn tính — tình trạng kiệt sức kéo dài không phục hồi được dù đã nghỉ ngơi" }
+    ]
+  },
+  {
+    "id": 1488,
+    "intent_ko": "치매 가족이 실제로 느끼는 부담의 특성을 올바르게 설명한 항목 파악",
+    "intent_vi": "Xác định mô tả đúng đắn về đặc điểm gánh nặng mà gia đình người bệnh sa sút trí tuệ thực sự chịu đựng",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 치매 대상자의 예후가 불확실하고 호전이 기대되지 않는 상황에서 가족 구성원들이 무기력감을 느끼는 것은 치매 돌봄의 대표적인 정서적 부담이다. 장기적인 돌봄 과정에서 가족이 겪는 심리적 고통을 적절히 설명한다.",
+        "2": "치매 돌봄은 정서적 안도감보다 지속적인 긴장과 소진을 유발하는 것이 현실이다.",
+        "3": "오히려 치매 돌봄으로 인해 사회적 접촉이 줄고, 역할이 제한되는 경향이 있다.",
+        "4": "치매 돌봄의 부담이 증가하면서 가족 관계가 긴장되거나 부정적으로 변하는 경우가 많다.",
+        "5": "전문가의 지원은 역기능적 상호작용을 줄이는 긍정적 효과를 가져오며, 역기능적 연쇄를 유발하지 않는다."
+      },
+      "vi": {
+        "1": "★ Trong bối cảnh tiên lượng của người bệnh sa sút trí tuệ không chắc chắn và không kỳ vọng cải thiện, các thành viên gia đình cảm thấy bất lực là gánh nặng cảm xúc điển hình của việc chăm sóc sa sút trí tuệ. Mô tả phù hợp về nỗi đau tâm lý mà gia đình trải qua trong quá trình chăm sóc dài hạn.",
+        "2": "Chăm sóc người bệnh sa sút trí tuệ trên thực tế gây ra căng thẳng liên tục và kiệt sức, không phải cảm giác nhẹ nhõm về cảm xúc.",
+        "3": "Ngược lại, việc chăm sóc sa sút trí tuệ thường dẫn đến giảm tiếp xúc xã hội và hạn chế vai trò xã hội.",
+        "4": "Gánh nặng chăm sóc sa sút trí tuệ gia tăng thường khiến các mối quan hệ gia đình trở nên căng thẳng hoặc tiêu cực.",
+        "5": "Sự hỗ trợ của chuyên gia mang lại hiệu ứng tích cực giúp giảm các tương tác rối loạn chức năng, không gây ra chúng theo chuỗi."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "무기력감", "def_vi": "Cảm giác bất lực — cảm giác không có sức lực hay khả năng thay đổi tình hình, thường gặp ở người chăm sóc dài hạn" },
+      { "term_ko": "역기능적 상호작용", "def_vi": "Tương tác rối loạn chức năng — các mô hình giao tiếp hoặc ứng xử trong gia đình gây hại cho các thành viên thay vì hỗ trợ nhau" },
+      { "term_ko": "소진", "def_vi": "Kiệt sức (burnout) — trạng thái cạn kiệt thể chất và tinh thần do căng thẳng kéo dài" }
+    ]
+  },
+  {
+    "id": 1487,
+    "intent_ko": "치매 노인의 환경적 자극의 질과 조정 방법 — 감각 자극을 통한 정서·인지 지원",
+    "intent_vi": "Phương pháp điều chỉnh chất lượng kích thích môi trường cho người cao tuổi sa sút trí tuệ — hỗ trợ cảm xúc và nhận thức thông qua kích thích giác quan",
+    "choice_explanations": {
+      "ko": {
+        "1": "만남을 촉진하는 공간 배치는 교류 지원 영역이며, 자극의 질 조정과는 구별된다.",
+        "2": "★ 꽃 향기와 같은 후각 자극은 감각을 통해 치매 노인의 정서를 안정시키고 인지적 반응을 긍정적으로 유도하는 환경적 자극의 질 조정에 해당한다. 다양한 감각(청각·후각·시각·촉각)을 적절히 자극하는 것이 치매 환경 지원의 핵심이다.",
+        "3": "스스로 식사할 수 있는 환경은 기능적 능력 지원 영역이다.",
+        "4": "바닥의 턱 제거는 안전·안심 지원 영역이다.",
+        "5": "소품 배치는 공간 활용 문제로, 자극의 질과는 직접 관련이 없다."
+      },
+      "vi": {
+        "1": "Bố trí không gian để thúc đẩy gặp gỡ thuộc lĩnh vực hỗ trợ giao lưu, phân biệt với điều chỉnh chất lượng kích thích.",
+        "2": "★ Kích thích khứu giác như hương hoa là điều chỉnh chất lượng kích thích môi trường giúp ổn định cảm xúc và thúc đẩy phản ứng nhận thức tích cực cho người cao tuổi sa sút trí tuệ thông qua giác quan. Kích thích đa giác quan phù hợp (thính giác, khứu giác, thị giác, xúc giác) là cốt lõi của hỗ trợ môi trường trong sa sút trí tuệ.",
+        "3": "Môi trường để tự ăn uống thuộc lĩnh vực hỗ trợ khả năng chức năng.",
+        "4": "Loại bỏ bậc thềm trên sàn thuộc lĩnh vực hỗ trợ an toàn và an tâm.",
+        "5": "Bố trí đồ vật nhỏ là vấn đề sử dụng không gian, không liên quan trực tiếp đến chất lượng kích thích."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "환경적 자극", "def_vi": "Kích thích môi trường — các yếu tố trong môi trường sống tác động đến giác quan, cảm xúc và nhận thức của người bệnh" },
+      { "term_ko": "후각 자극", "def_vi": "Kích thích khứu giác — tác động lên khứu giác thông qua mùi hương để cải thiện tâm trạng và nhận thức" }
+    ]
+  },
+  {
+    "id": 1486,
+    "intent_ko": "장기요양기관 치매 대상자 환경지원 지침 영역 중 '기능적인 능력 지원'에 해당하는 사례 파악",
+    "intent_vi": "Nhận biết trường hợp thuộc lĩnh vực 'hỗ trợ khả năng chức năng' trong hướng dẫn hỗ trợ môi trường cho người bệnh sa sút trí tuệ tại cơ sở chăm sóc dài hạn",
+    "choice_explanations": {
+      "ko": {
+        "1": "지남력 지원은 시계·달력·이름표 등을 활용해 시간·장소·사람을 인식하도록 돕는 영역이다.",
+        "2": "자기 선택을 위한 지원은 대상자가 스스로 선택할 기회를 제공하는 영역이다.",
+        "3": "★ 스스로 식사하거나 요리·빨래·장보기 등 일상 활동을 수행할 수 있는 환경을 만드는 것은 잔존 기능을 유지·강화하는 '기능적인 능력 지원'에 해당한다. 신체적·인지적 잔존 능력을 최대한 활용하도록 환경을 구성하는 것이 핵심이다.",
+        "4": "환경적 자극의 질과 조정은 감각 자극(향기·소리·색깔 등)을 통해 정서·인지를 지원하는 영역이다.",
+        "5": "대상자의 교류를 위한 지원은 다른 사람과의 사회적 상호작용을 촉진하는 영역이다."
+      },
+      "vi": {
+        "1": "Hỗ trợ định hướng là lĩnh vực giúp nhận biết thời gian, địa điểm, con người thông qua đồng hồ, lịch, bảng tên.",
+        "2": "Hỗ trợ tự lựa chọn là lĩnh vực cung cấp cơ hội để người bệnh tự đưa ra quyết định.",
+        "3": "★ Tạo môi trường để người bệnh tự ăn uống hoặc thực hiện các hoạt động hàng ngày như nấu ăn, giặt giũ, mua sắm thuộc 'hỗ trợ khả năng chức năng' — duy trì và củng cố các chức năng còn lại. Cốt lõi là thiết kế môi trường để tận dụng tối đa khả năng thể chất và nhận thức còn lại.",
+        "4": "Điều chỉnh chất lượng kích thích môi trường là lĩnh vực hỗ trợ cảm xúc và nhận thức thông qua kích thích giác quan (hương thơm, âm thanh, màu sắc...).",
+        "5": "Hỗ trợ giao lưu của người bệnh là lĩnh vực thúc đẩy tương tác xã hội với người khác."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "기능적인 능력 지원", "def_vi": "Hỗ trợ khả năng chức năng — lĩnh vực hỗ trợ môi trường giúp duy trì và phát huy các khả năng sinh hoạt hàng ngày còn lại của người bệnh" },
+      { "term_ko": "장기요양기관", "def_vi": "Cơ sở chăm sóc dài hạn — nơi cung cấp dịch vụ điều dưỡng và chăm sóc cho người cần hỗ trợ trong thời gian dài" },
+      { "term_ko": "잔존 기능", "def_vi": "Chức năng còn lại — khả năng hoặc chức năng vẫn còn duy trì được dù đã mắc bệnh" }
+    ]
+  },
+  {
+    "id": 1485,
+    "intent_ko": "치매노인 환경지원 지침 영역 중 '지남력 지원'에 해당하는 사례 파악",
+    "intent_vi": "Nhận biết trường hợp thuộc lĩnh vực 'hỗ trợ định hướng (지남력 지원)' trong hướng dẫn hỗ trợ môi trường cho người cao tuổi sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 생활 공간 입구에 이름표를 붙이고, 시계·달력을 잘 보이는 곳에 배치하는 것은 대상자가 장소(어디)·시간(언제)·사람(누구)을 인식하도록 돕는 지남력 지원에 해당한다. 지남력은 치매에서 가장 먼저 손상되는 인지 영역 중 하나이므로, 환경적 단서 제공이 매우 중요하다.",
+        "2": "기능적인 능력 지원은 스스로 식사·활동 등을 할 수 있도록 돕는 환경이다.",
+        "3": "자기 선택을 위한 지원은 대상자가 선택권을 행사하도록 돕는 것이다.",
+        "4": "안전·안심을 위한 지원은 낙상 방지, 비상벨 설치 등 물리적 안전을 위한 조치다.",
+        "5": "환경적 자극의 질과 조정은 향기·음악 등 감각 자극을 통한 정서 지원이다."
+      },
+      "vi": {
+        "1": "★ Dán bảng tên ở lối vào không gian sống và treo đồng hồ, lịch ở nơi dễ thấy là hỗ trợ định hướng — giúp người bệnh nhận biết địa điểm (ở đâu), thời gian (khi nào), con người (ai). Định hướng là một trong những lĩnh vực nhận thức bị tổn thương sớm nhất trong sa sút trí tuệ, nên cung cấp manh mối môi trường rất quan trọng.",
+        "2": "Hỗ trợ khả năng chức năng là môi trường giúp tự ăn uống và thực hiện các hoạt động.",
+        "3": "Hỗ trợ tự lựa chọn là giúp người bệnh thực hiện quyền lựa chọn.",
+        "4": "Hỗ trợ an toàn và an tâm là các biện pháp an toàn vật lý như phòng ngã, lắp chuông báo động.",
+        "5": "Điều chỉnh chất lượng kích thích môi trường là hỗ trợ cảm xúc thông qua kích thích giác quan như hương thơm, âm nhạc."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "지남력", "def_vi": "Định hướng lực — khả năng nhận biết đúng về thời gian, địa điểm và con người xung quanh; thường bị suy giảm sớm trong sa sút trí tuệ" },
+      { "term_ko": "환경적 단서", "def_vi": "Manh mối môi trường — các yếu tố trong không gian sống giúp người bệnh nhận biết và định hướng được" }
+    ]
+  },
+  {
+    "id": 1484,
+    "intent_ko": "재가에서의 올바른 청소 방법 파악 — 효과적이고 위생적인 청소 기법",
+    "intent_vi": "Nhận biết phương pháp dọn dẹp đúng đắn khi chăm sóc tại nhà — kỹ thuật dọn dẹp hiệu quả và vệ sinh",
+    "choice_explanations": {
+      "ko": {
+        "1": "방바닥 먼지 제거에는 빗자루보다 진공청소기나 젖은 걸레가 먼지를 공중으로 날리지 않아 위생적이다.",
+        "2": "★ 양변기의 물때 제거에는 식초를 묻힌 솔로 닦는 것이 효과적이다. 식초의 산성 성분이 석회질(물때)을 분해하며, 화학 세제 없이도 안전하고 위생적으로 청소할 수 있다.",
+        "3": "습기가 많은 화장실은 문을 닫으면 더욱 습해지고 곰팡이가 생길 수 있으므로, 문을 열어 환기해야 한다.",
+        "4": "사용하지 않는 물건을 처분하는 것은 정리·정돈에 해당하며, 청소 방법으로 직접 보기 어렵다.",
+        "5": "쓰레기통의 냄새는 방향제로 가리는 것이 아니라 쓰레기를 자주 비워 근본 원인을 제거해야 한다."
+      },
+      "vi": {
+        "1": "Để loại bỏ bụi trên sàn, máy hút bụi hoặc khăn ướt vệ sinh hơn chổi vì không làm bụi bay lên không khí.",
+        "2": "★ Dùng bàn chải thấm giấm để lau cặn nước trên bồn cầu là phương pháp hiệu quả. Thành phần axit của giấm phân hủy cặn vôi (vết bẩn nước), có thể dọn sạch an toàn và vệ sinh mà không cần chất tẩy hóa học.",
+        "3": "Nhà vệ sinh nhiều độ ẩm sẽ càng ẩm hơn và dễ nấm mốc nếu đóng cửa; cần mở cửa để thông gió.",
+        "4": "Việc di chuyển hoặc vứt bỏ đồ vật không dùng là sắp xếp, khó coi là phương pháp dọn dẹp trực tiếp.",
+        "5": "Mùi thùng rác cần được xử lý bằng cách đổ rác thường xuyên để loại bỏ nguyên nhân gốc rễ, không phải che giấu bằng nước thơm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "물때", "def_vi": "Cặn vôi / vết bẩn nước — vết cặn còn lại trên bề mặt sau khi nước khô, thường do khoáng chất trong nước tạo thành" },
+      { "term_ko": "양변기", "def_vi": "Bồn cầu — thiết bị vệ sinh dùng trong nhà tắm để xả chất thải" },
+      { "term_ko": "환기", "def_vi": "Thông gió — sự lưu thông không khí để loại bỏ độ ẩm, mùi hôi và vi khuẩn khỏi không gian kín" }
+    ]
+  },
+  {
+    "id": 1483,
+    "intent_ko": "재가 방문 시 올바른 청소 방법 파악",
+    "intent_vi": "Nhận biết phương pháp dọn dẹp đúng đắn khi thăm nhà người được chăm sóc tại nhà",
+    "choice_explanations": {
+      "ko": {
+        "1": "소독제 원액은 희석하지 않고 사용하면 독성이 강해 위험하며, 배수구에 직접 붓는 것은 부적절하다.",
+        "2": "시트나 침구는 낮에만 정리하는 것이 아니라 사용 후 또는 필요 시 바로 정리하는 것이 위생적이다.",
+        "3": "주변 정돈은 대상자의 의견을 반영하여 함께 하거나 대상자가 직접 하도록 돕는 것이 원칙이며, 요양보호사가 임의로 정리하면 대상자의 물건을 잃어버리게 할 수 있다.",
+        "4": "★ 실내 청소 시 젖은 걸레를 사용하면 먼지가 공중으로 날리지 않고 표면에 밀착되어 효과적으로 제거된다. 이는 위생적이고 청결 유지에 가장 효과적인 기본 청소법이다.",
+        "5": "음식물 쓰레기는 악취·세균 번식의 원인이 되므로 즉시 처리해야 하며, 모아두는 것은 비위생적이다."
+      },
+      "vi": {
+        "1": "Dùng chất khử trùng nguyên chất không pha loãng rất độc hại và nguy hiểm; đặc biệt không được đổ trực tiếp vào cống.",
+        "2": "Ga giường và chăn gối không chỉ dọn vào ban ngày mà nên dọn ngay sau khi dùng hoặc khi cần để đảm bảo vệ sinh.",
+        "3": "Việc dọn dẹp xung quanh phải phản ánh ý kiến của người được chăm sóc hoặc để họ tự làm; nhân viên chăm sóc tự ý sắp xếp có thể làm mất đồ của người bệnh.",
+        "4": "★ Dùng khăn ướt khi dọn dẹp trong nhà giúp bụi không bay lên không khí mà bám chặt vào bề mặt, loại bỏ hiệu quả. Đây là phương pháp dọn dẹp cơ bản nhất giúp duy trì vệ sinh và sạch sẽ hiệu quả.",
+        "5": "Rác thực phẩm là nguyên nhân gây mùi hôi và vi khuẩn sinh sôi nên phải xử lý ngay; tích lũy lại là mất vệ sinh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "소독제", "def_vi": "Chất khử trùng — hóa chất dùng để tiêu diệt vi khuẩn và mầm bệnh trên bề mặt hoặc trong nước" },
+      { "term_ko": "재가", "def_vi": "Chăm sóc tại nhà — dịch vụ điều dưỡng và hỗ trợ được cung cấp tại chính nhà của người cần chăm sóc" }
+    ]
+  },
+  {
+    "id": 1482,
+    "intent_ko": "대상자의 쾌적하고 안전한 실내 환경 조성 방법 — 낙상 예방 조명 설치",
+    "intent_vi": "Phương pháp tạo môi trường trong nhà thoải mái và an toàn cho người được chăm sóc — lắp đèn chiếu sáng phòng ngã",
+    "choice_explanations": {
+      "ko": {
+        "1": "자연채광을 차단하면 실내가 어두워져 쾌적성과 기분이 저하된다.",
+        "2": "전체난방이 실내 온도를 균일하게 유지하여 더 쾌적하다. 국소난방은 특정 부위만 따뜻하게 해 체온 조절에 어려움을 줄 수 있다.",
+        "3": "직접환기는 외부의 차갑거나 오염된 공기가 바로 유입되어 불쾌함을 줄 수 있으므로 간접환기가 권장된다.",
+        "4": "가스레인지를 손이 닿지 않는 높이로 조정하면 오히려 사용이 불편하거나 추가 위험이 생길 수 있다.",
+        "5": "★ 현관이나 계단에 발밑을 비추는 조명(풋라이트)을 설치하면 야간 이동 시 발을 헛디뎌 낙상하는 사고를 예방할 수 있다. 어두운 공간에서의 낙상은 노인에게 심각한 부상을 초래할 수 있으므로 조명 확보는 안전 환경의 핵심이다."
+      },
+      "vi": {
+        "1": "Che chắn ánh sáng tự nhiên sẽ làm không gian trong nhà tối tăm, giảm sự thoải mái và tâm trạng.",
+        "2": "Sưởi toàn phòng duy trì nhiệt độ đồng đều, thoải mái hơn. Sưởi cục bộ chỉ làm ấm một vùng nhất định, có thể gây khó khăn trong việc điều tiết nhiệt độ cơ thể.",
+        "3": "Thông gió trực tiếp có thể đưa không khí lạnh hoặc ô nhiễm từ ngoài vào ngay lập tức gây khó chịu; khuyến nghị dùng thông gió gián tiếp.",
+        "4": "Điều chỉnh bếp gas ở độ cao tay không với tới có thể gây bất tiện khi sử dụng hoặc phát sinh nguy hiểm thêm.",
+        "5": "★ Lắp đèn chiếu sáng phần chân (foot light) ở lối vào hoặc cầu thang giúp phòng ngã do trượt chân khi di chuyển ban đêm. Ngã trong không gian tối có thể gây chấn thương nghiêm trọng cho người cao tuổi, nên đảm bảo ánh sáng là cốt lõi của môi trường an toàn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "국소난방", "def_vi": "Sưởi cục bộ — sưởi ấm chỉ một khu vực hoặc bộ phận cụ thể, không phải toàn bộ không gian" },
+      { "term_ko": "간접환기", "def_vi": "Thông gió gián tiếp — phương pháp lưu thông không khí mà không để gió ngoài trời thổi thẳng vào người, giảm nguy cơ cảm lạnh" },
+      { "term_ko": "낙상", "def_vi": "Ngã — tai nạn té ngã, đặc biệt nguy hiểm với người cao tuổi vì có thể gây gãy xương hoặc chấn thương nghiêm trọng" }
+    ]
+  },
+  {
+    "id": 1481,
+    "intent_ko": "대상자의 안전하고 쾌적한 실내 환경 조성 방법 — 가구 안전 처리",
+    "intent_vi": "Phương pháp tạo môi trường trong nhà an toàn và thoải mái cho người được chăm sóc — xử lý an toàn đồ nội thất",
+    "choice_explanations": {
+      "ko": {
+        "1": "현관이나 계단의 문턱을 낮추는 것은 안전에 도움이 되나, 이것만으로 쾌적한 환경 전반을 설명하기에 부족하다.",
+        "2": "★ 가구 모서리에 안전 커버(덧대기)를 하면 충돌 시 날카로운 모서리로 인한 부상을 예방할 수 있다. 특히 인지 기능이 저하된 노인이나 보행이 불안정한 대상자에게는 필수적인 안전 조치다.",
+        "3": "다리 간격이 좁은 식탁은 휠체어나 보행보조기 사용 시 이동이 어렵고 불편하다.",
+        "4": "안전손잡이는 마비가 없는 건강한 쪽 손으로 잡아야 효과적이므로, 마비가 없는 쪽에 설치해야 한다.",
+        "5": "환기 시 대상자가 직접 바람을 맞으면 체온이 낮아지거나 감기에 걸릴 수 있으므로, 간접환기나 대상자 위치를 고려해야 한다."
+      },
+      "vi": {
+        "1": "Hạ thấp ngưỡng cửa ở lối vào hoặc cầu thang giúp an toàn hơn, nhưng không đủ để mô tả toàn bộ môi trường thoải mái.",
+        "2": "★ Dán miếng bảo vệ (đệm lót) vào góc đồ nội thất giúp phòng ngừa thương tích do góc nhọn khi va chạm. Đây là biện pháp an toàn thiết yếu đặc biệt với người cao tuổi bị suy giảm nhận thức hoặc đi lại không vững.",
+        "3": "Bàn ăn có khoảng cách chân hẹp gây khó di chuyển và bất tiện khi dùng xe lăn hoặc khung tập đi.",
+        "4": "Tay vịn an toàn phải lắp ở phía tay lành (không bị liệt) để nắm hiệu quả; không phải ở phía bị liệt.",
+        "5": "Khi thông gió, để gió thổi thẳng vào người bệnh có thể làm hạ thân nhiệt hoặc gây cảm lạnh; cần thông gió gián tiếp hoặc chú ý vị trí của người bệnh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "안전손잡이", "def_vi": "Tay vịn an toàn — thanh kim loại hoặc nhựa gắn vào tường giúp người dùng vịn vào để di chuyển an toàn, đặc biệt trong nhà tắm hay hành lang" },
+      { "term_ko": "보행보조기", "def_vi": "Khung tập đi / dụng cụ hỗ trợ đi bộ — thiết bị giúp người cao tuổi hoặc người khuyết tật đi lại an toàn hơn" }
+    ]
+  },
+  {
+    "id": 1480,
+    "intent_ko": "쾌적하고 안전한 실내 환경 조성 — 계절별 습도 조절 방법",
+    "intent_vi": "Tạo môi trường trong nhà thoải mái và an toàn — phương pháp điều chỉnh độ ẩm theo mùa",
+    "choice_explanations": {
+      "ko": {
+        "1": "야간에 전체 소등하면 어두운 환경에서 이동 시 낙상 위험이 높아진다. 소등하지 않거나 야간등을 켜두어야 한다.",
+        "2": "직사광선은 실내 온도를 과도하게 높이고 눈부심을 유발해 쾌적하지 않으므로, 커튼 등으로 조절해야 한다.",
+        "3": "★ 여름에는 제습기로 과도한 습기를 제거하고, 겨울에는 가습기로 건조함을 방지하는 것이 쾌적한 실내 습도를 유지하는 올바른 방법이다. 적정 습도(40~60%)는 호흡기 건강과 피부 건강을 지킨다.",
+        "4": "배설물을 치울 때는 안전을 위해 밝은 조명이 필요하며, 간접 조명은 시야를 제한해 위험을 증가시킨다.",
+        "5": "여름 실내온도는 약 26~28도, 겨울은 약 18~22도가 적정하다. 제시된 온도(여름 16~18도, 겨울 25~26도)는 실제와 반대이거나 과도해 건강에 해롭다."
+      },
+      "vi": {
+        "1": "Tắt hoàn toàn đèn vào ban đêm làm tăng nguy cơ ngã khi di chuyển trong bóng tối; cần để đèn ngủ hoặc không tắt hoàn toàn.",
+        "2": "Ánh sáng mặt trời trực tiếp làm nhiệt độ trong nhà tăng quá cao và gây chói mắt, không thoải mái; cần điều chỉnh bằng rèm cửa.",
+        "3": "★ Dùng máy hút ẩm vào mùa hè để loại bỏ độ ẩm dư thừa và dùng máy tạo ẩm vào mùa đông để chống khô hanh là phương pháp đúng đắn để duy trì độ ẩm trong nhà thoải mái. Độ ẩm phù hợp (40~60%) bảo vệ sức khỏe đường hô hấp và da.",
+        "4": "Khi dọn chất thải cần đèn sáng để đảm bảo an toàn; đèn gián tiếp hạn chế tầm nhìn và tăng nguy hiểm.",
+        "5": "Nhiệt độ trong nhà phù hợp là khoảng 26~28°C vào mùa hè và 18~22°C vào mùa đông. Nhiệt độ được nêu (mùa hè 16~18°C, mùa đông 25~26°C) là ngược lại hoặc quá mức, có hại cho sức khỏe."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "제습기", "def_vi": "Máy hút ẩm — thiết bị hút ẩm từ không khí, dùng vào mùa hè hoặc khi độ ẩm cao" },
+      { "term_ko": "가습기", "def_vi": "Máy tạo ẩm — thiết bị phun hơi nước vào không khí, dùng vào mùa đông khi không khí khô hanh" },
+      { "term_ko": "직사광선", "def_vi": "Ánh sáng mặt trời trực tiếp — ánh nắng chiếu thẳng vào phòng không qua vật cản, có thể gây chói mắt và tăng nhiệt độ" }
+    ]
+  },
+  {
+    "id": 1479,
+    "intent_ko": "대상자의 쾌적하고 안전한 실내 환경 조성 — 정기적 환기의 중요성",
+    "intent_vi": "Tạo môi trường trong nhà thoải mái và an toàn cho người được chăm sóc — tầm quan trọng của việc thông gió định kỳ",
+    "choice_explanations": {
+      "ko": {
+        "1": "전기코드를 바닥에 고정하는 것은 걸려 넘어지는 사고를 예방하는 안전 조치이지만, 쾌적한 환경을 만드는 핵심 방법은 아니다.",
+        "2": "밤에 거실과 화장실 조명을 끄면 야간 이동 시 낙상 위험이 커지므로 안전에 반한다.",
+        "3": "욕실의 나무 발판은 시간이 지나면 미끄러워지거나 썩을 수 있어 오히려 위험하다. 미끄럼 방지 매트가 권장된다.",
+        "4": "깊은 욕조는 입욕 중 익수 위험이 있어 노인이나 장애 대상자에게 적합하지 않다.",
+        "5": "★ 하루 3번, 2~3시간 간격으로 창문을 열어 환기하는 것은 실내 공기를 신선하게 유지하고, 오염 물질·습기·냄새를 제거하여 쾌적한 환경을 만드는 가장 효과적인 방법이다."
+      },
+      "vi": {
+        "1": "Cố định dây điện xuống sàn là biện pháp an toàn phòng vấp ngã, nhưng không phải phương pháp cốt lõi tạo môi trường thoải mái.",
+        "2": "Tắt đèn phòng khách và nhà vệ sinh vào ban đêm làm tăng nguy cơ ngã khi di chuyển, vi phạm an toàn.",
+        "3": "Sàn gỗ trong phòng tắm có thể trở nên trơn trượt hoặc mục theo thời gian, gây nguy hiểm hơn. Khuyến nghị dùng thảm chống trơn.",
+        "4": "Bồn tắm sâu có nguy cơ chìm nghỉm khi tắm, không phù hợp cho người cao tuổi hoặc người khuyết tật.",
+        "5": "★ Mở cửa sổ thông gió 3 lần mỗi ngày, cách nhau 2~3 giờ là phương pháp hiệu quả nhất để duy trì không khí trong lành, loại bỏ chất ô nhiễm, độ ẩm và mùi hôi, tạo môi trường thoải mái."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "환기", "def_vi": "Thông gió — sự lưu thông không khí giữa trong và ngoài nhà để đổi mới không khí, loại bỏ ô nhiễm và độ ẩm" },
+      { "term_ko": "미끄럼 방지 매트", "def_vi": "Thảm chống trơn — tấm thảm có bề mặt nhám giúp phòng ngã trong nhà tắm hoặc các khu vực ẩm ướt" }
+    ]
+  },
+  {
+    "id": 1478,
+    "intent_ko": "대상자 주거환경의 안전 관리 방법 — 비상 상황 대비 설비",
+    "intent_vi": "Phương pháp quản lý an toàn môi trường sống của người được chăm sóc — trang bị ứng phó tình huống khẩn cấp",
+    "choice_explanations": {
+      "ko": {
+        "1": "화장실을 멀리 두면 이동 거리가 길어져 낙상 위험이 증가하고 급박한 상황에 대응이 늦어진다.",
+        "2": "현관 입구를 좁게 만들면 휠체어나 보행보조기 사용 시 접근이 어렵고, 응급 상황 시 대피도 곤란하다.",
+        "3": "★ 대상자 방에 비상벨을 설치하면 낙상, 갑작스러운 건강 이상 등 긴급 상황 발생 시 즉시 도움을 요청할 수 있어 안전 관리의 핵심 수단이다.",
+        "4": "창가의 작은 화분 여러 개는 채광을 방해하거나 이동 시 장애물이 되어 오히려 사고를 유발할 수 있다.",
+        "5": "계단은 일직선으로만 설치하는 것이 아니라 안전 핸드레일, 충분한 넓이, 미끄럼 방지 처리 등을 갖추어 설계해야 한다."
+      },
+      "vi": {
+        "1": "Đặt nhà vệ sinh ở nơi xa làm tăng quãng đường di chuyển, tăng nguy cơ ngã và chậm ứng phó trong tình huống khẩn cấp.",
+        "2": "Làm hẹp lối vào cổng cản trở sử dụng xe lăn hoặc khung tập đi, và gây khó khăn khi sơ tán trong tình huống khẩn cấp.",
+        "3": "★ Lắp chuông báo khẩn cấp trong phòng người được chăm sóc giúp gọi trợ giúp ngay lập tức khi xảy ra ngã, đột biến sức khỏe hoặc tình huống khẩn cấp — đây là phương tiện cốt lõi của quản lý an toàn.",
+        "4": "Nhiều chậu hoa nhỏ bên cửa sổ có thể cản ánh sáng tự nhiên hoặc trở thành vật cản khi di chuyển, thậm chí gây tai nạn.",
+        "5": "Cầu thang không chỉ thiết kế thẳng mà cần có tay vịn an toàn, chiều rộng đủ rộng và bề mặt chống trơn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "비상벨", "def_vi": "Chuông báo khẩn cấp — thiết bị báo động cho phép người bệnh gọi trợ giúp ngay khi xảy ra tình huống nguy hiểm" },
+      { "term_ko": "주거환경", "def_vi": "Môi trường sống — điều kiện và không gian nơi người được chăm sóc sinh sống, cần được thiết kế an toàn và tiện nghi" }
+    ]
+  },
+  {
+    "id": 1477,
+    "intent_ko": "대상자의 안전한 주거환경 조성 — 현관 의자 배치를 통한 낙상 예방",
+    "intent_vi": "Tạo môi trường sống an toàn cho người được chăm sóc — phòng ngã thông qua bố trí ghế ở lối vào",
+    "choice_explanations": {
+      "ko": {
+        "1": "물품을 높은 곳에 보관하면 꺼낼 때 발받침이나 의자를 사용해야 해 낙상 위험이 높아진다.",
+        "2": "방과 거실 사이의 문턱은 발이 걸려 넘어지는 낙상 위험 요인이므로 없애야 한다.",
+        "3": "★ 현관에 의자를 두면 신발을 신고 벗을 때 앉아서 할 수 있어 서 있는 상태에서 균형을 잃어 낙상하는 사고를 예방할 수 있다. 체력이 저하된 노인 대상자에게 매우 중요한 안전 조치다.",
+        "4": "화장실 문을 투명 유리문으로 설치하면 사생활이 침해되어 대상자의 존엄성이 훼손된다.",
+        "5": "싱크대가 손이 닿지 않는 높이면 오히려 무리한 동작으로 부상 위험이 생긴다."
+      },
+      "vi": {
+        "1": "Cất đồ vật ở nơi cao yêu cầu dùng ghế hay bục đứng khi lấy xuống, tăng nguy cơ ngã.",
+        "2": "Ngưỡng cửa giữa phòng và phòng khách là yếu tố nguy cơ vấp ngã; cần loại bỏ.",
+        "3": "★ Đặt ghế ở lối vào cho phép người bệnh ngồi xuống khi mang và cởi giày, phòng mất thăng bằng khi đứng và ngã. Đây là biện pháp an toàn rất quan trọng với người cao tuổi bị suy giảm thể lực.",
+        "4": "Cửa nhà vệ sinh bằng kính trong suốt xâm phạm quyền riêng tư, làm tổn hại đến nhân phẩm của người được chăm sóc.",
+        "5": "Bồn rửa ở độ cao tay không với tới có thể gây chấn thương do các động tác gắng sức."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "낙상 예방", "def_vi": "Phòng ngã — các biện pháp môi trường và hành vi nhằm giảm nguy cơ té ngã, đặc biệt quan trọng với người cao tuổi" },
+      { "term_ko": "문턱", "def_vi": "Ngưỡng cửa — phần nổi cao ở cửa ra vào, dễ gây vấp ngã và cần được loại bỏ trong môi trường dành cho người cao tuổi" }
+    ]
+  },
+  {
+    "id": 1476,
+    "intent_ko": "대상자가 화장실을 안전하게 이용하도록 돕는 방법 — 막대형 문고리의 장점",
+    "intent_vi": "Phương pháp giúp người được chăm sóc sử dụng nhà vệ sinh an toàn — ưu điểm của tay nắm cửa dạng thanh",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 막대형(레버형) 문고리는 원형 손잡이와 달리 손 힘이 약한 노인이나 관절염 환자도 손목 비틀기 없이 손바닥이나 팔꿈치로 쉽게 조작할 수 있어 화장실 출입 안전성을 높인다.",
+        "2": "화장실 표시는 멀리서도 쉽게 알아볼 수 있도록 눈높이 이상의 적절한 위치에 해야 하며, 입구 아래쪽에 하면 인식이 어렵다.",
+        "3": "화장실 조명의 조도는 미끄럼·낙상 방지를 위해 충분히 밝게 유지해야 한다.",
+        "4": "화장실 복도에 화분을 두면 보행 시 장애물이 되어 낙상 위험을 높인다.",
+        "5": "슬리퍼는 뒤꿈치가 없어 걸을 때 벗겨질 수 있고 미끄럼 위험이 있어 낙상을 유발할 수 있다. 발 전체를 감싸는 미끄럼 방지 신발이 권장된다."
+      },
+      "vi": {
+        "1": "★ Tay nắm cửa dạng thanh (lever) khác với tay nắm tròn ở chỗ người cao tuổi yếu tay hoặc bị viêm khớp có thể thao tác bằng lòng bàn tay hoặc khuỷu tay mà không cần vặn cổ tay, giúp tăng an toàn khi ra vào nhà vệ sinh.",
+        "2": "Biển nhà vệ sinh phải đặt ở vị trí ngang tầm mắt hoặc cao hơn để dễ nhận ra từ xa; đặt ở phía dưới lối vào khó nhận biết.",
+        "3": "Độ sáng đèn nhà vệ sinh phải duy trì đủ sáng để phòng trơn trượt và ngã.",
+        "4": "Đặt chậu hoa ở hành lang nhà vệ sinh tạo vật cản khi đi lại, tăng nguy cơ ngã.",
+        "5": "Dép lê không có gót có thể tuột ra khi đi lại và có nguy cơ trơn trượt, gây ngã. Khuyến nghị dùng giày chống trơn bao trọn bàn chân."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "막대형 문고리", "def_vi": "Tay nắm cửa dạng thanh (lever handle) — loại tay nắm cửa hình thanh ngang, dễ thao tác hơn tay nắm tròn, phù hợp với người yếu tay hoặc khuyết tật" },
+      { "term_ko": "조도", "def_vi": "Độ sáng / cường độ chiếu sáng — mức độ sáng của đèn trong một không gian, đo bằng đơn vị lux" }
+    ]
+  },
+  {
+    "id": 1475,
+    "intent_ko": "재가 대상자의 일상업무 대행 범위 — 대상자 본인을 위한 업무만 해당",
+    "intent_vi": "Phạm vi đại diện công việc hàng ngày cho người được chăm sóc tại nhà — chỉ bao gồm công việc vì chính người đó",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 약국에서 대상자 본인의 약품을 대신 받아주는 것은 대상자의 일상업무를 직접 대행하는 올바른 지원이다. 재가 대상자의 활동을 돕는 서비스 범위에 명확히 포함된다.",
+        "2": "가족의 물품을 택배로 보내는 것은 대상자 본인의 업무가 아닌 가족을 위한 일이므로 서비스 범위 밖이다.",
+        "3": "방문한 아들의 옷을 세탁하는 것은 대상자 본인이 아닌 제3자를 위한 서비스로 부적절하다.",
+        "4": "배우자의 심부름은 대상자 본인을 위한 지원이 아니므로 해당하지 않는다.",
+        "5": "요양보호사의 사적 업무는 서비스와 무관하며, 사적 업무를 함께 보는 것은 직업 윤리에 어긋난다."
+      },
+      "vi": {
+        "1": "★ Thay người được chăm sóc đến nhà thuốc nhận thuốc là đại diện công việc hàng ngày đúng đắn, trực tiếp phục vụ người đó. Rõ ràng nằm trong phạm vi dịch vụ hỗ trợ hoạt động của người được chăm sóc tại nhà.",
+        "2": "Gửi đồ của người thân qua bưu điện không phải công việc của người được chăm sóc mà là việc cho gia đình, nằm ngoài phạm vi dịch vụ.",
+        "3": "Giặt quần áo cho người con trai đến thăm là dịch vụ cho người thứ ba, không phải người được chăm sóc — không phù hợp.",
+        "4": "Chạy việc vặt cho vợ/chồng không phải hỗ trợ cho chính người được chăm sóc, không thuộc phạm vi dịch vụ.",
+        "5": "Công việc riêng của nhân viên chăm sóc không liên quan đến dịch vụ; thực hiện việc cá nhân trong giờ làm vi phạm đạo đức nghề nghiệp."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "일상업무 대행", "def_vi": "Đại diện công việc hàng ngày — thay mặt người được chăm sóc thực hiện các việc vặt thường nhật như đi chợ, nhận thuốc, làm thủ tục hành chính" },
+      { "term_ko": "서비스 범위", "def_vi": "Phạm vi dịch vụ — giới hạn của các công việc mà nhân viên chăm sóc được phép thực hiện theo hợp đồng chăm sóc" }
+    ]
+  },
+  {
+    "id": 1474,
+    "intent_ko": "대상자의 관공서 업무대행 시 요양보호사의 올바른 태도 파악",
+    "intent_vi": "Nhận biết thái độ đúng đắn của nhân viên chăm sóc khi đại diện thực hiện công việc tại cơ quan nhà nước cho người được chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "대행 경비에 서비스 비용을 추가로 요구하는 것은 부당 이득 행위로 직업 윤리에 위반된다.",
+        "2": "★ 대상자가 원하는 경우 해당 업무 담당자와 연결해 주는 것은 대상자의 자기결정권을 존중하고 필요한 정보를 정확히 전달하도록 돕는 올바른 태도다.",
+        "3": "업무 대행 중 필요한 정보는 사전에 대상자와 충분히 상의하여 준비해야 하며, 중간에 전화로 확인하는 것은 기본적으로 바람직하지 않다.",
+        "4": "재요청 시 정중히 거절하는 것은 서비스 제공자로서 적절한 태도가 아니다. 불만이 있으면 기관과 협의해야 한다.",
+        "5": "업무 대행 후 처리 결과만 전달하면 대상자가 전체 과정을 이해하지 못할 수 있어 불완전한 서비스다."
+      },
+      "vi": {
+        "1": "Yêu cầu thêm chi phí dịch vụ ngoài chi phí đại diện là hành vi trục lợi, vi phạm đạo đức nghề nghiệp.",
+        "2": "★ Kết nối người được chăm sóc với cán bộ phụ trách khi họ yêu cầu là thái độ đúng đắn, tôn trọng quyền tự quyết của người đó và giúp truyền đạt thông tin cần thiết chính xác.",
+        "3": "Thông tin cần thiết khi thực hiện công việc phải được thảo luận và chuẩn bị kỹ trước với người được chăm sóc; gọi điện xác nhận giữa chừng về cơ bản là không phù hợp.",
+        "4": "Từ chối lịch sự khi được yêu cầu lại không phải thái độ phù hợp của nhà cung cấp dịch vụ; nếu có bất mãn cần thương lượng với cơ sở.",
+        "5": "Chỉ truyền đạt kết quả xử lý sau khi đại diện xong có thể khiến người được chăm sóc không hiểu toàn bộ quá trình, là dịch vụ không đầy đủ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "관공서", "def_vi": "Cơ quan nhà nước / công sở — cơ quan hành chính của chính phủ nơi thực hiện các thủ tục hành chính" },
+      { "term_ko": "자기결정권", "def_vi": "Quyền tự quyết — quyền của người được chăm sóc tự đưa ra quyết định về cuộc sống và dịch vụ của mình" },
+      { "term_ko": "업무대행", "def_vi": "Đại diện thực hiện công việc — thay mặt người khác hoàn thành một nhiệm vụ hoặc thủ tục cụ thể" }
+    ]
+  },
+  {
+    "id": 1473,
+    "intent_ko": "대상자와 외출 동행 시 요양보호사의 올바른 행동 파악",
+    "intent_vi": "Nhận biết hành động đúng đắn của nhân viên chăm sóc khi đi cùng người được chăm sóc ra ngoài",
+    "choice_explanations": {
+      "ko": {
+        "1": "외출 시 준비물 챙기는 것은 요양보호사가 주도적으로 도와야 하며, 대상자 혼자 챙기게 하는 것은 적절하지 않다.",
+        "2": "개인물품 분실 가능성을 미리 알리는 것은 불필요한 불안을 조성하므로 바람직하지 않다.",
+        "3": "이동 수단 선택은 대상자의 상태와 상황에 따라 결정하며, 요양보호사의 차를 반드시 사용하는 것은 원칙이 아니다.",
+        "4": "외출 장소와 시간은 대상자의 희망과 건강 상태를 고려하여 대상자 중심으로 결정해야 한다.",
+        "5": "★ 외출 후 대상자의 만족 정도를 확인하는 것은 서비스 품질을 점검하고 다음 외출 계획에 반영할 수 있는 올바른 후속 조치다."
+      },
+      "vi": {
+        "1": "Khi ra ngoài, nhân viên chăm sóc phải chủ động giúp chuẩn bị đồ cần thiết; để người được chăm sóc tự lo là không phù hợp.",
+        "2": "Báo trước về khả năng mất đồ cá nhân tạo ra lo lắng không cần thiết, không phù hợp.",
+        "3": "Lựa chọn phương tiện di chuyển phụ thuộc vào tình trạng và hoàn cảnh của người được chăm sóc; không nhất thiết phải dùng xe của nhân viên chăm sóc.",
+        "4": "Địa điểm và thời gian ra ngoài phải được quyết định lấy người được chăm sóc làm trung tâm, dựa trên mong muốn và tình trạng sức khỏe của họ.",
+        "5": "★ Xác nhận mức độ hài lòng của người được chăm sóc sau khi ra ngoài là biện pháp theo dõi đúng đắn giúp kiểm tra chất lượng dịch vụ và phản ánh vào kế hoạch ngoại ra tiếp theo."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "외출 동행", "def_vi": "Đi cùng khi ra ngoài — dịch vụ nhân viên chăm sóc đi cùng người được chăm sóc trong các chuyến đi bên ngoài nhà" },
+      { "term_ko": "만족 정도 확인", "def_vi": "Xác nhận mức độ hài lòng — kiểm tra phản hồi của người được chăm sóc sau khi hoàn thành một hoạt động hoặc dịch vụ" }
+    ]
+  },
+  {
+    "id": 1472,
+    "intent_ko": "대상자의 일상업무 대행 전 반드시 확인해야 할 사항 파악",
+    "intent_vi": "Nhận biết điều cần xác nhận trước khi đại diện thực hiện công việc hàng ngày cho người được chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "경제적 능력 상태 확인은 서비스 계획 수립 시 참고할 사항이지, 개별 대행 업무 직전에 확인할 주된 사항이 아니다.",
+        "2": "함께 할 동료 여부는 대행 업무의 성격에 따라 달라지며, 개인 대행 업무에서 필수 확인 사항은 아니다.",
+        "3": "★ 업무 대행 전에 필요한 자료(신분증·서류 등)와 경비(교통비·수수료 등)를 미리 점검하는 것은 대행 업무를 차질 없이 수행하기 위한 필수적인 준비 사항이다.",
+        "4": "대신해 줄 사람이 있는지 확인하는 것은 요양보호사가 직접 수행하는 업무에서 우선적으로 검토할 사항이 아니다.",
+        "5": "가족의 추가 요구 사항 확인은 중요할 수 있으나, 이는 서비스 계획 단계에서 논의해야 할 사항이며 대행 전 즉각적인 점검 사항은 아니다."
+      },
+      "vi": {
+        "1": "Xác nhận tình trạng kinh tế là tham khảo khi lập kế hoạch dịch vụ, không phải điều chính cần xác nhận ngay trước mỗi lần thực hiện công việc.",
+        "2": "Có đồng nghiệp đi cùng hay không phụ thuộc vào tính chất công việc; không phải điều cần thiết phải xác nhận trong công việc đại diện cá nhân.",
+        "3": "★ Kiểm tra trước tài liệu cần thiết (chứng minh thư, giấy tờ...) và chi phí (tiền đi lại, lệ phí...) là bước chuẩn bị thiết yếu để thực hiện công việc đại diện suôn sẻ.",
+        "4": "Kiểm tra xem có người khác thay thế không là không phải ưu tiên cần xem xét trong công việc mà nhân viên chăm sóc trực tiếp thực hiện.",
+        "5": "Xác nhận yêu cầu bổ sung của gia đình có thể quan trọng, nhưng nên thảo luận ở giai đoạn lập kế hoạch dịch vụ, không phải kiểm tra ngay trước khi thực hiện."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "경비", "def_vi": "Chi phí thực tế — khoản tiền cần thiết để thực hiện công việc như tiền đi lại, lệ phí hành chính" },
+      { "term_ko": "자료", "def_vi": "Tài liệu / giấy tờ — thông tin hoặc văn bản cần thiết để hoàn thành thủ tục hoặc công việc" }
+    ]
+  },
+  {
+    "id": 1471,
+    "intent_ko": "재가 대상자 병원 방문 동행 시 요양보호사의 올바른 준비 및 태도",
+    "intent_vi": "Sự chuẩn bị và thái độ đúng đắn của nhân viên chăm sóc khi đi cùng người được chăm sóc tại nhà đến bệnh viện",
+    "choice_explanations": {
+      "ko": {
+        "1": "진료 당일 복용하던 약을 임의로 중단하는 것은 금단 증상 등 건강에 위험을 줄 수 있으며, 반드시 의사의 지시에 따라야 한다.",
+        "2": "병원 선택은 대상자 또는 보호자의 의사를 존중해야 하며, 요양보호사가 아는 병원으로 임의로 데려가는 것은 적절하지 않다.",
+        "3": "장기요양인정서는 서비스 제공 관련 서류로 진료 시 주된 서류가 아니며, 주민등록본은 진료에 꼭 필요한 서류 조합은 아니다.",
+        "4": "★ 대상자의 신체 상태(보행 능력, 거동 불편 여부 등)를 사전에 파악하여 휠체어, 지팡이, 보행기 등 적절한 이동보조기구를 준비하는 것은 안전하고 편안한 병원 이동을 위한 핵심 준비 사항이다.",
+        "5": "진료 후 알게 된 대상자의 건강 상태는 담당 기관장에게 보고하는 것이 원칙이며, 비밀로 하는 것은 직업 윤리에 어긋난다."
+      },
+      "vi": {
+        "1": "Tự ý ngừng thuốc đang uống vào ngày khám có thể gây triệu chứng cai thuốc và nguy hiểm sức khỏe; phải tuân theo chỉ định của bác sĩ.",
+        "2": "Chọn bệnh viện phải tôn trọng ý kiến của người được chăm sóc hoặc người thân; nhân viên chăm sóc tự ý đưa đến bệnh viện quen biết là không phù hợp.",
+        "3": "Giấy xác nhận chăm sóc dài hạn là tài liệu liên quan đến dịch vụ, không phải tài liệu chính cần thiết cho khám chữa bệnh; sổ hộ khẩu không phải tổ hợp tài liệu nhất thiết phải có khi khám.",
+        "4": "★ Nắm rõ tình trạng thể chất của người được chăm sóc (khả năng đi lại, mức độ bất tiện vận động...) và chuẩn bị thiết bị hỗ trợ di chuyển phù hợp như xe lăn, gậy, khung tập đi là bước chuẩn bị cốt lõi để di chuyển đến bệnh viện an toàn và thoải mái.",
+        "5": "Tình trạng sức khỏe của người được chăm sóc sau khám phải được báo cáo cho người phụ trách cơ sở theo nguyên tắc; giữ bí mật là vi phạm đạo đức nghề nghiệp."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "이동보조기구", "def_vi": "Thiết bị hỗ trợ di chuyển — các dụng cụ như xe lăn, gậy chống, khung tập đi giúp người khuyết tật hoặc người cao tuổi di chuyển an toàn" },
+      { "term_ko": "장기요양인정서", "def_vi": "Giấy xác nhận chăm sóc dài hạn — tài liệu chính thức xác nhận người được nhận dịch vụ chăm sóc dài hạn theo chương trình bảo hiểm y tế quốc gia Hàn Quốc" }
+    ]
+  },
+  {
+    "id": 1470,
+    "intent_ko": "병원 방문 동행 시 돕는 방법을 묻는 질문이나 선택지가 의류 방충제 내용으로 잘못 구성된 문제 — 정답 번호 기준으로 학습",
+    "intent_vi": "Câu hỏi về đi cùng khi đến bệnh viện nhưng các lựa chọn bị soạn nhầm thành nội dung thuốc chống côn trùng — học theo số đáp án",
+    "choice_explanations": {
+      "ko": {
+        "3": "★ 이 문제는 질문(병원 방문 동행)과 선택지(방충제 관련 내용)가 일치하지 않는 출제 오류로 보인다. 시험에서는 정답 번호인 3번('오랫동안 사용하기 위해서')을 기준으로 학습하고, 실제 병원 방문 동행 시에는 대상자의 신체 상태에 맞는 이동보조기구 준비, 대상자 의사 존중 등이 핵심이다."
+      },
+      "vi": {
+        "3": "★ Đây có vẻ là lỗi soạn đề khi nội dung câu hỏi (đi cùng đến bệnh viện) và các lựa chọn (nội dung về thuốc chống côn trùng) không khớp nhau. Trong kỳ thi, hãy học theo số đáp án là lựa chọn 3 ('để sử dụng lâu dài'); còn khi thực tế đi cùng bệnh nhân đến bệnh viện, cốt lõi là chuẩn bị thiết bị hỗ trợ di chuyển phù hợp và tôn trọng ý kiến người bệnh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "동행", "def_vi": "Đi cùng — hành động đi kèm với người được chăm sóc để hỗ trợ và đảm bảo an toàn trong quá trình di chuyển" }
+    ]
+  },
+  {
+    "id": 1469,
+    "intent_ko": "의류 보관 시 한 가지 방충제만 사용해야 하는 가장 중요한 이유 — 화학 반응으로 인한 옷감 변질",
+    "intent_vi": "Lý do quan trọng nhất phải chỉ dùng một loại thuốc chống côn trùng khi bảo quản quần áo — vải bị biến chất do phản ứng hóa học",
+    "choice_explanations": {
+      "ko": {
+        "1": "비용 절감은 방충제 종류를 한 가지로 제한하는 주된 이유가 아니다.",
+        "2": "방충제를 여러 가지 섞으면 효과가 약해질 수 있으나, 이것이 가장 중요한 이유는 아니다.",
+        "3": "오래 사용하기 위한 목적과 방충제 종류의 수는 직접 관련이 없다.",
+        "4": "냄새 억제는 방충제 사용의 부차적인 고려 사항이며, 핵심 이유가 아니다.",
+        "5": "★ 서로 다른 방충제(예: 나프탈렌 계열과 파라다이클로로벤젠 계열)를 함께 사용하면 화학반응이 일어나 옷감이 녹거나 변색·변질될 수 있다. 이것이 한 가지 방충제만 사용해야 하는 가장 중요한 이유다."
+      },
+      "vi": {
+        "1": "Tiết kiệm chi phí không phải lý do chính để giới hạn chỉ dùng một loại thuốc chống côn trùng.",
+        "2": "Dùng nhiều loại thuốc chống côn trùng trộn lẫn có thể làm giảm hiệu quả, nhưng đây không phải lý do quan trọng nhất.",
+        "3": "Mục đích sử dụng lâu dài không liên quan trực tiếp đến số loại thuốc chống côn trùng.",
+        "4": "Hạn chế mùi là yếu tố thứ yếu khi dùng thuốc chống côn trùng, không phải lý do cốt lõi.",
+        "5": "★ Dùng chung các loại thuốc chống côn trùng khác nhau (ví dụ: loại naphthalene và loại paradichlorobenzene) có thể gây phản ứng hóa học làm vải bị tan chảy, phai màu hoặc biến chất. Đây là lý do quan trọng nhất phải chỉ dùng một loại thuốc chống côn trùng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "방충제", "def_vi": "Thuốc chống côn trùng — hóa chất dùng để ngăn côn trùng (như nhậy, gián) làm hỏng quần áo khi bảo quản" },
+      { "term_ko": "변질", "def_vi": "Biến chất — sự thay đổi theo chiều hướng xấu về chất lượng, màu sắc hoặc cấu trúc của vật liệu do tác động hóa học hoặc vật lý" },
+      { "term_ko": "화학반응", "def_vi": "Phản ứng hóa học — quá trình các chất hóa học tương tác với nhau tạo ra chất mới, có thể gây hỏng hóc vật liệu" }
+    ]
+  }
+]

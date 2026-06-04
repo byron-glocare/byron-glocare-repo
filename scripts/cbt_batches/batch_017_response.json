@@ -1,0 +1,778 @@
+[
+  {
+    "id": 1256,
+    "intent_ko": "변기를 따뜻하게 데우는 의학적 이유를 묻는 문제",
+    "intent_vi": "Câu hỏi về lý do y học của việc làm ấm bô vệ sinh",
+    "choice_explanations": {
+      "ko": {
+        "1": "피부발진 예방은 변기 온도와 직접적 연관이 없습니다.",
+        "2": "★ 따뜻한 온도는 항문 괄약근을 이완시켜 배변을 용이하게 합니다. 차가운 자극은 괄약근을 수축시키므로 변기를 미리 데워 이완을 유도하는 것이 핵심 원리입니다.",
+        "3": "요실금(소변 조절 불능)은 변기 온도와 무관합니다.",
+        "4": "온도가 수치심 감소에 영향을 미치지는 않습니다.",
+        "5": "치질 예방은 변기 온도와 직접적 관련이 없습니다."
+      },
+      "vi": {
+        "1": "Phòng ngừa phát ban da không liên quan trực tiếp đến nhiệt độ bô vệ sinh.",
+        "2": "★ Nhiệt độ ấm giúp cơ vòng hậu môn giãn ra, tạo điều kiện thuận lợi cho việc đại tiện. Kích thích lạnh khiến cơ vòng co lại, vì vậy làm ấm bô trước là nguyên lý cốt lõi.",
+        "3": "Tiểu không tự chủ không liên quan đến nhiệt độ bô vệ sinh.",
+        "4": "Nhiệt độ không ảnh hưởng đến việc giảm cảm giác xấu hổ.",
+        "5": "Phòng ngừa bệnh trĩ không có liên quan trực tiếp đến nhiệt độ bô vệ sinh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "항문 괄약근", "def_vi": "Cơ vòng hậu môn — cơ hình vòng kiểm soát việc mở/đóng hậu môn" },
+      { "term_ko": "요실금", "def_vi": "Tiểu không tự chủ — tình trạng không kiểm soát được việc đi tiểu" },
+      { "term_ko": "치질", "def_vi": "Bệnh trĩ — tình trạng tĩnh mạch quanh hậu môn bị giãn và gây đau" }
+    ]
+  },
+  {
+    "id": 1255,
+    "intent_ko": "누워있는 대상자의 침상 배설을 올바르게 돕는 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về phương pháp hỗ trợ đúng đắn khi người nằm trên giường đại tiểu tiện",
+    "choice_explanations": {
+      "ko": {
+        "1": "간이변기 사용 직후 기저귀를 채우는 것은 위생적으로 바람직하지 않으며, 대상자의 존엄성을 해칩니다.",
+        "2": "조용한 환경 제공은 중요하지만, 변기를 따뜻하게 데우는 것(4번)이 신체적으로 더 직접적인 도움입니다.",
+        "3": "스크린을 열어두면 사생활을 침해하므로 잘못된 방법입니다.",
+        "4": "★ 변기를 따뜻하게 데워 사용하면 항문 괄약근이 이완되어 배변이 용이해지고, 차가운 자극으로 인한 불쾌감도 방지할 수 있습니다.",
+        "5": "회음부 닦기 방향은 앞(요도)에서 뒤(항문) 쪽으로 닦아야 감염을 예방합니다. 뒤에서 앞으로 닦으면 항문 세균이 요도로 옮겨 감염 위험이 높아집니다."
+      },
+      "vi": {
+        "1": "Mặc tã ngay sau khi dùng bô không hợp vệ sinh và vi phạm phẩm giá của người bệnh.",
+        "2": "Tạo môi trường yên tĩnh rất quan trọng, nhưng làm ấm bô (đáp án 4) hỗ trợ trực tiếp hơn về mặt thể chất.",
+        "3": "Để màn che mở sẽ xâm phạm quyền riêng tư, đây là phương pháp sai.",
+        "4": "★ Làm ấm bô trước khi dùng giúp cơ vòng hậu môn giãn ra, tạo điều kiện đại tiện dễ dàng hơn và tránh cảm giác khó chịu do kích thích lạnh.",
+        "5": "Hướng lau vùng sinh dục phải từ trước (niệu đạo) ra sau (hậu môn) để phòng nhiễm khuẩn. Lau ngược chiều làm vi khuẩn hậu môn lây sang niệu đạo."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "침상 배설", "def_vi": "Đại tiểu tiện trên giường — việc bài tiết khi người bệnh không thể đến nhà vệ sinh" },
+      { "term_ko": "간이변기", "def_vi": "Bô di động — dụng cụ vệ sinh dùng tạm tại giường bệnh" },
+      { "term_ko": "회음부", "def_vi": "Vùng tầng sinh môn — vùng giữa bộ phận sinh dục và hậu môn" }
+    ]
+  },
+  {
+    "id": 1254,
+    "intent_ko": "침상 배설 보조 시 가장 먼저 해야 할 순서를 묻는 문제",
+    "intent_vi": "Câu hỏi về bước đầu tiên cần thực hiện khi hỗ trợ đại tiểu tiện trên giường",
+    "choice_explanations": {
+      "ko": {
+        "1": "TV나 음악은 집중이 필요한 상황에서 부적절하며, 대상자의 의사를 먼저 확인해야 합니다.",
+        "2": "커튼·스크린으로 가리는 것은 사생활 보호를 위해 필요하지만, 대상자 확인 후에 하는 단계입니다.",
+        "3": "★ 대상자를 확인하고 절차를 설명하는 것이 가장 먼저 해야 합니다. 대상자 동의와 협조를 구하는 것은 모든 요양 행위의 첫 단계이며, 신뢰 형성과 안전한 케어의 기본 원칙입니다.",
+        "4": "일회용 장갑 착용은 위생을 위해 필요하지만, 대상자를 먼저 확인한 후에 착용합니다.",
+        "5": "변기를 데워 놓는 것은 편안함을 위한 준비 단계이지만, 가장 먼저 할 일은 아닙니다."
+      },
+      "vi": {
+        "1": "Bật TV hoặc nhạc không phù hợp trong tình huống cần tập trung; phải xác nhận người bệnh trước tiên.",
+        "2": "Che màn/rèm là bước cần thiết để bảo vệ quyền riêng tư, nhưng thực hiện sau khi đã xác nhận người bệnh.",
+        "3": "★ Xác nhận danh tính người bệnh và giải thích quy trình là bước đầu tiên bắt buộc. Xin sự đồng ý và hợp tác của người bệnh là nguyên tắc cơ bản của mọi hành động chăm sóc.",
+        "4": "Đeo găng tay dùng một lần cần thiết cho vệ sinh, nhưng thực hiện sau khi đã xác nhận người bệnh.",
+        "5": "Làm ấm bô là bước chuẩn bị cho sự thoải mái, nhưng không phải việc cần làm đầu tiên."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "침상 배설", "def_vi": "Đại tiểu tiện trên giường — bài tiết khi người bệnh không thể đến nhà vệ sinh" },
+      { "term_ko": "일회용 장갑", "def_vi": "Găng tay dùng một lần — găng tay vô khuẩn sử dụng một lần để đảm bảo vệ sinh" }
+    ]
+  },
+  {
+    "id": 1253,
+    "intent_ko": "요실금 대상자를 돕는 올바른 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về phương pháp hỗ trợ đúng đắn cho người bị tiểu không tự chủ",
+    "choice_explanations": {
+      "ko": {
+        "1": "기저귀는 일시적 해결책으로 근본 문제를 해결하지 못하며, 대상자의 자존감을 낮출 수 있습니다.",
+        "2": "★ 배뇨 훈련에 참여하도록 격려하는 것이 올바른 방법입니다. 정해진 시간에 화장실을 가는 습관 형성, 골반저근 운동 등을 통해 방광 조절 능력을 회복시키는 장기적·근본적 접근법입니다.",
+        "3": "수분 섭취량을 줄이면 탈수와 요로감염 위험이 높아져 오히려 건강에 해롭습니다.",
+        "4": "변기에 오래 앉혀두는 것은 피부 압박과 불편함을 유발하며 효과적인 방법이 아닙니다.",
+        "5": "복부에 얼음주머니를 대는 것은 요실금 치료와 무관하며 불쾌감만 유발합니다."
+      },
+      "vi": {
+        "1": "Mặc tã chỉ là giải pháp tạm thời, không giải quyết vấn đề gốc rễ và có thể làm giảm lòng tự trọng của người bệnh.",
+        "2": "★ Khuyến khích tham gia tập luyện kiểm soát bàng quang là phương pháp đúng đắn. Tạo thói quen đi vệ sinh theo giờ cố định, tập cơ sàn chậu giúp phục hồi khả năng kiểm soát bàng quang — đây là cách tiếp cận lâu dài và căn bản.",
+        "3": "Giảm lượng nước uống làm tăng nguy cơ mất nước và nhiễm trùng đường tiết niệu, gây hại cho sức khỏe.",
+        "4": "Ngồi bô quá lâu gây áp lực lên da và khó chịu, không phải phương pháp hiệu quả.",
+        "5": "Chườm túi đá vào bụng không liên quan đến điều trị tiểu không tự chủ và chỉ gây khó chịu."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "요실금", "def_vi": "Tiểu không tự chủ — tình trạng không kiểm soát được việc đi tiểu" },
+      { "term_ko": "배뇨 훈련", "def_vi": "Tập luyện kiểm soát bàng quang — phương pháp phục hồi chức năng bàng quang qua luyện tập có kế hoạch" },
+      { "term_ko": "골반저근", "def_vi": "Cơ sàn chậu — nhóm cơ ở đáy chậu hỗ trợ bàng quang và kiểm soát tiểu tiện" }
+    ]
+  },
+  {
+    "id": 1252,
+    "intent_ko": "침상에서 배변하는 대상자를 돕는 올바른 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về phương pháp đúng đắn hỗ trợ người đại tiện trên giường",
+    "choice_explanations": {
+      "ko": {
+        "1": "요의·변의를 느낄 때 참도록 유도하면 변비가 악화되고 대상자에게 고통을 줍니다.",
+        "2": "옷을 모두 벗기는 것은 불필요하며 수치심을 유발합니다. 최소한의 부위만 노출하는 것이 원칙입니다.",
+        "3": "★ 복부를 시계방향으로 마사지하면 대장의 연동운동(장운동) 방향과 일치하여 변의를 촉진하고 배변을 용이하게 합니다. 이것이 배변 보조에서 요양보호사가 직접 할 수 있는 효과적인 방법입니다.",
+        "4": "배변하는 동안 피부를 살피는 것은 사생활을 침해하며, 배변 자체를 돕는 행위가 아닙니다.",
+        "5": "실수에 대해 주의를 주는 것은 대상자의 자존감을 상처입히고 심리적 부담을 주므로 절대 해서는 안 됩니다."
+      },
+      "vi": {
+        "1": "Bảo người bệnh nhịn khi có cảm giác buồn đại tiểu tiện sẽ làm táo bón nặng thêm và gây đau đớn.",
+        "2": "Cởi hết quần áo là không cần thiết và gây xấu hổ. Nguyên tắc là chỉ để lộ vùng tối thiểu cần thiết.",
+        "3": "★ Xoa bóp bụng theo chiều kim đồng hồ trùng với hướng nhu động của đại tràng, kích thích nhu động ruột và giúp đại tiện dễ dàng hơn. Đây là phương pháp hiệu quả mà nhân viên chăm sóc có thể thực hiện trực tiếp.",
+        "4": "Kiểm tra da trong khi người bệnh đang đại tiện xâm phạm quyền riêng tư và không phải hành động hỗ trợ đại tiện.",
+        "5": "Quở trách khi người bệnh không nhịn được sẽ tổn thương lòng tự trọng và gây áp lực tâm lý — tuyệt đối không được làm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "연동운동", "def_vi": "Nhu động ruột — chuyển động co bóp của ruột để đẩy thức ăn/phân di chuyển" },
+      { "term_ko": "변의", "def_vi": "Cảm giác buồn đại tiện — cảm giác cần đi đại tiện" },
+      { "term_ko": "요의", "def_vi": "Cảm giác buồn tiểu — cảm giác cần đi tiểu" }
+    ]
+  },
+  {
+    "id": 1251,
+    "intent_ko": "편마비 대상자가 휠체어로 화장실을 이용할 때 올바른 보조 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về phương pháp hỗ trợ đúng khi người liệt nửa người dùng xe lăn đến nhà vệ sinh",
+    "choice_explanations": {
+      "ko": {
+        "1": "휠체어는 마비되지 않은 건강한 쪽에 두어야 대상자가 건강한 팔다리로 이동을 지지할 수 있습니다.",
+        "2": "의자 끝에 걸터앉혀 이동하면 낙상 위험이 높아 안전하지 않습니다.",
+        "3": "휠체어를 타고 내릴 때는 반드시 잠금장치를 잠가 고정해야 안전합니다. 해제하면 사고 위험이 있습니다.",
+        "4": "★ 대상자의 겨드랑이를 감싸 일으킨 후 몸을 90도 회전시켜 변기에 앉히는 것이 올바른 방법입니다. 요양보호사가 지지·유도하면서 편마비 대상자의 균형을 유지하고 안전하게 변기에 이동시킬 수 있습니다.",
+        "5": "배설이 끝나기 전에 자리를 비우면 낙상 등 안전사고 위험이 있습니다. 근처에서 대기해야 합니다."
+      },
+      "vi": {
+        "1": "Xe lăn phải đặt ở phía lành (không bị liệt) để người bệnh dùng tay chân lành hỗ trợ việc di chuyển.",
+        "2": "Cho ngồi ở mép ghế xe lăn rồi di chuyển làm tăng nguy cơ ngã, không an toàn.",
+        "3": "Khi lên xuống xe lăn phải khóa phanh chắc chắn. Mở khóa trong lúc di chuyển gây nguy hiểm.",
+        "4": "★ Ôm nách người bệnh đỡ dậy rồi xoay người 90 độ đặt lên bô vệ sinh là phương pháp đúng. Nhân viên chăm sóc vừa đỡ vừa dẫn dắt giúp người liệt nửa người giữ thăng bằng và di chuyển an toàn.",
+        "5": "Rời đi trước khi người bệnh xong việc có nguy cơ xảy ra tai nạn như ngã. Phải chờ đợi ở gần đó."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "편마비", "def_vi": "Liệt nửa người — tình trạng tê liệt một bên tay và chân do đột quỵ hoặc tổn thương não" },
+      { "term_ko": "잠금장치", "def_vi": "Phanh/khóa xe lăn — thiết bị cố định bánh xe lăn khi lên xuống" },
+      { "term_ko": "겨드랑이", "def_vi": "Nách — vùng tiếp giáp giữa cánh tay và thân người, dùng để đỡ khi di chuyển người bệnh" }
+    ]
+  },
+  {
+    "id": 1250,
+    "intent_ko": "대상자가 부끄러우니 밖에서 기다려 달라고 할 때 올바른 대처방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về cách xử lý đúng khi người bệnh xấu hổ và yêu cầu chờ bên ngoài",
+    "choice_explanations": {
+      "ko": {
+        "1": "즉시 자리를 피해주면 대상자가 낙상했을 때 도움을 받을 수 없어 위험합니다.",
+        "2": "낙상 위험을 이유로 옆에 있기를 고집하는 것은 대상자의 의사와 자율성을 무시하는 행동입니다.",
+        "3": "커튼으로 가리고 가끔 들여다보는 것은 사생활을 침해하여 오히려 불편함을 줍니다.",
+        "4": "★ 호출기를 쥐어주고 밖에서 기다리는 것이 올바른 방법입니다. 대상자의 요청(사생활·존엄성)을 존중하면서, 호출기를 통해 즉각 응답할 수 있어 안전도 확보할 수 있는 균형 잡힌 대처법입니다.",
+        "5": "문을 활짝 열어놓고 지켜보는 것은 심각한 사생활 침해입니다."
+      },
+      "vi": {
+        "1": "Rời đi ngay lập tức thì khi người bệnh bị ngã sẽ không có ai giúp — rất nguy hiểm.",
+        "2": "Cố tình ở lại bên cạnh với lý do nguy cơ ngã là phủ nhận ý kiến và quyền tự chủ của người bệnh.",
+        "3": "Che màn rồi thỉnh thoảng nhìn vào vẫn xâm phạm quyền riêng tư và gây khó chịu cho người bệnh.",
+        "4": "★ Đưa thiết bị gọi cho người bệnh rồi chờ bên ngoài là phương pháp đúng. Vừa tôn trọng yêu cầu (quyền riêng tư, phẩm giá) của người bệnh, vừa đảm bảo an toàn qua thiết bị gọi — đây là cách xử lý cân bằng.",
+        "5": "Mở toang cửa và đứng nhìn là xâm phạm nghiêm trọng quyền riêng tư."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "호출기", "def_vi": "Thiết bị gọi khẩn — chuông/nút bấm dùng để gọi nhân viên chăm sóc khi cần" },
+      { "term_ko": "낙상", "def_vi": "Ngã — tai nạn ngã xuống, một trong những nguy cơ phổ biến nhất với người cao tuổi" },
+      { "term_ko": "자율성", "def_vi": "Quyền tự chủ — quyền tự quyết định của người bệnh, nguyên tắc cơ bản trong chăm sóc" }
+    ]
+  },
+  {
+    "id": 1249,
+    "intent_ko": "누워있던 대상자를 일으킨 후 잠시 앉혀두는 의학적 이유를 묻는 문제",
+    "intent_vi": "Câu hỏi về lý do y học của việc cho người bệnh ngồi một lúc sau khi đỡ dậy",
+    "choice_explanations": {
+      "ko": {
+        "1": "땀이 날 수 있지만 잠시 앉혀두는 주된 이유는 아닙니다.",
+        "2": "숨이 차는 것은 이동 후 발생할 수 있지만, 앉혀두는 핵심 이유가 아닙니다.",
+        "3": "★ 누워있다가 갑자기 일어서면 중력으로 인해 혈액이 하체로 쏠려 뇌로 가는 혈액이 일시적으로 감소합니다. 이로 인한 기립성 저혈압으로 어지러움·실신이 발생할 수 있으므로 잠시 앉혀두어 혈압이 안정되도록 기다리는 것이 필수적입니다.",
+        "4": "맥박 저하로 인한 가슴 통증은 심각한 심장 문제의 징후로, 단순히 일어선 것과 직결되지 않습니다.",
+        "5": "소변을 참는 연습은 이 상황과 관계없습니다."
+      },
+      "vi": {
+        "1": "Có thể ra mồ hôi nhưng đây không phải lý do chính để cho ngồi một lúc.",
+        "2": "Có thể khó thở sau khi di chuyển nhưng không phải lý do cốt lõi.",
+        "3": "★ Khi đứng dậy đột ngột từ tư thế nằm, trọng lực làm máu dồn xuống chi dưới khiến lượng máu lên não tạm thời giảm. Điều này gây hạ huyết áp tư thế đứng dẫn đến chóng mặt hoặc ngất. Vì vậy cần cho ngồi một lúc để huyết áp ổn định.",
+        "4": "Đau ngực do mạch yếu là dấu hiệu vấn đề tim nghiêm trọng, không liên quan trực tiếp đến việc đứng dậy thông thường.",
+        "5": "Tập nhịn tiểu không liên quan đến tình huống này."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "기립성 저혈압", "def_vi": "Hạ huyết áp tư thế đứng — huyết áp giảm đột ngột khi đứng dậy, gây chóng mặt" },
+      { "term_ko": "혈압 저하", "def_vi": "Hạ huyết áp — tình trạng huyết áp xuống thấp hơn bình thường" }
+    ]
+  },
+  {
+    "id": 1248,
+    "intent_ko": "침대에 누워있는 편마비 대상자를 휠체어로 화장실에 이동시킬 때 올바른 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về phương pháp đúng khi di chuyển người liệt nửa người từ giường lên xe lăn để đến nhà vệ sinh",
+    "choice_explanations": {
+      "ko": {
+        "1": "휠체어는 마비된 쪽이 아닌, 건강한(마비되지 않은) 쪽에 놓아야 합니다.",
+        "2": "★ 침대에 일으켜 앉혔을 때 어지러움(기립성 저혈압)을 호소하는지 확인하는 것은 중요한 안전 절차입니다. 어지러움이 있으면 잠시 기다렸다가 상태가 안정된 후 이동해야 낙상을 예방할 수 있습니다.",
+        "3": "휠체어는 침대 가까이 두어야 이동 거리가 짧아 안전합니다.",
+        "4": "휠체어의 잠금장치는 반드시 잠근 상태에서 이동시켜야 사고를 예방합니다.",
+        "5": "속옷을 입히지 않으면 위생과 사생활 보호에 좋지 않습니다."
+      },
+      "vi": {
+        "1": "Xe lăn phải đặt ở phía lành (không liệt), không phải phía liệt.",
+        "2": "★ Kiểm tra xem người bệnh có chóng mặt (hạ huyết áp tư thế) không sau khi ngồi dậy là bước an toàn quan trọng. Nếu có chóng mặt, cần chờ cho ổn định rồi mới di chuyển để phòng ngã.",
+        "3": "Xe lăn phải đặt gần giường để giảm khoảng cách di chuyển và đảm bảo an toàn.",
+        "4": "Phanh xe lăn phải được khóa chặt trong suốt quá trình di chuyển để phòng tai nạn.",
+        "5": "Không mặc đồ lót ảnh hưởng xấu đến vệ sinh và quyền riêng tư."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "편마비", "def_vi": "Liệt nửa người — tê liệt một bên cơ thể" },
+      { "term_ko": "기립성 저혈압", "def_vi": "Hạ huyết áp tư thế đứng — huyết áp tụt khi đứng dậy gây chóng mặt" },
+      { "term_ko": "잠금장치", "def_vi": "Phanh khóa xe lăn — thiết bị cố định bánh xe, phải khóa khi lên xuống xe lăn" }
+    ]
+  },
+  {
+    "id": 1247,
+    "intent_ko": "대상자가 화장실을 안전하게 이용할 수 있도록 돕는 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về cách giúp người bệnh sử dụng nhà vệ sinh an toàn",
+    "choice_explanations": {
+      "ko": {
+        "1": "이동 시 재촉하면 낙상 위험이 높아집니다. 충분한 시간을 주어야 합니다.",
+        "2": "배뇨 중 바로 옆에서 지켜보면 사생활을 침해합니다.",
+        "3": "옷을 최대한 벗기는 것은 불필요하며 수치심을 유발합니다.",
+        "4": "★ 바닥에 흐트러진 물건들을 정리하면 넘어질 위험 요소를 제거하여 낙상을 예방합니다. 환경을 안전하게 정돈하는 것이 화장실 이용 안전의 핵심입니다.",
+        "5": "조명을 어둡게 하면 발밑이 보이지 않아 낙상 위험이 오히려 높아집니다. 조명은 밝게 유지해야 합니다."
+      },
+      "vi": {
+        "1": "Thúc giục khi di chuyển làm tăng nguy cơ ngã. Phải cho đủ thời gian.",
+        "2": "Đứng sát bên trong khi người bệnh đi tiểu xâm phạm quyền riêng tư.",
+        "3": "Cởi hết quần áo là không cần thiết và gây xấu hổ.",
+        "4": "★ Dọn dẹp các vật dụng rải rác trên sàn loại bỏ yếu tố nguy cơ vấp ngã, phòng tai nạn ngã. Đây là biện pháp cốt lõi để sử dụng nhà vệ sinh an toàn.",
+        "5": "Tắt bớt đèn khiến không nhìn thấy sàn nhà, làm tăng nguy cơ ngã. Cần giữ ánh sáng đủ sáng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "낙상 예방", "def_vi": "Phòng ngừa ngã — các biện pháp giảm thiểu nguy cơ té ngã cho người bệnh" },
+      { "term_ko": "배뇨", "def_vi": "Đi tiểu — hành động thải nước tiểu ra ngoài" }
+    ]
+  },
+  {
+    "id": 1246,
+    "intent_ko": "거동 불편 대상자의 화장실 이용 시 낙상 위험을 줄이는 올바른 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về phương pháp giảm nguy cơ ngã khi người hạn chế vận động sử dụng nhà vệ sinh",
+    "choice_explanations": {
+      "ko": {
+        "1": "슬리퍼는 미끄럽고 고정력이 없어 오히려 낙상 위험을 높입니다.",
+        "2": "중간에 의자를 두면 장애물이 되어 이동을 방해하고 위험할 수 있습니다.",
+        "3": "화장실 문 앞에 매트를 깔면 발이 걸리거나 매트 자체가 미끄러져 낙상 위험이 증가합니다.",
+        "4": "★ 변기 옆에 손잡이(안전바)를 설치하면 앉고 일어설 때 지지대로 활용할 수 있어 균형을 유지하고 낙상을 직접적으로 예방합니다. 가장 효과적이고 근본적인 낙상 예방 조치입니다.",
+        "5": "응급벨은 낙상 후 신속한 도움을 요청하는 데 유용하지만, 낙상 자체를 예방하지는 못합니다."
+      },
+      "vi": {
+        "1": "Dép đi trong nhà trơn và không cố định tốt, làm tăng nguy cơ ngã.",
+        "2": "Đặt ghế giữa đường đi trở thành chướng ngại vật cản trở di chuyển và gây nguy hiểm.",
+        "3": "Trải thảm nhỏ trước cửa nhà vệ sinh có thể gây vấp hoặc thảm trượt làm tăng nguy cơ ngã.",
+        "4": "★ Lắp tay vịn (thanh an toàn) bên cạnh bô vệ sinh giúp người bệnh bám vào khi ngồi xuống và đứng dậy, duy trì thăng bằng và trực tiếp phòng ngừa ngã. Đây là biện pháp phòng ngã hiệu quả và căn bản nhất.",
+        "5": "Chuông khẩn cấp hữu ích để gọi giúp đỡ sau khi ngã, nhưng không ngăn được bản thân việc ngã."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "거동", "def_vi": "Vận động/di chuyển — khả năng đi lại và di chuyển của người bệnh" },
+      { "term_ko": "손잡이(안전바)", "def_vi": "Tay vịn/thanh an toàn — thanh bám cố định giúp người bệnh giữ thăng bằng trong nhà vệ sinh" },
+      { "term_ko": "응급벨", "def_vi": "Chuông khẩn cấp — thiết bị báo động để gọi trợ giúp khi có sự cố" }
+    ]
+  },
+  {
+    "id": 1245,
+    "intent_ko": "휠체어 사용 대상자의 화장실 이용 보조 방법 중 옳은 것을 묻는 문제",
+    "intent_vi": "Câu hỏi về phương pháp hỗ trợ đúng khi người dùng xe lăn sử dụng nhà vệ sinh",
+    "choice_explanations": {
+      "ko": {
+        "1": "처음부터 끝까지 모두 도와주면 대상자의 자율성과 잔존 기능을 억제하게 됩니다.",
+        "2": "휠체어를 타고 내릴 때 잠금장치를 풀어놓으면 휠체어가 움직여 낙상 사고가 발생할 수 있습니다.",
+        "3": "변기로 옮기는 동안 발 받침대를 내려놓으면 발이 바닥에 닿아 걸릴 수 있어 위험합니다.",
+        "4": "화장실 바닥에 물을 뿌리면 미끄러져 낙상 위험이 높아집니다.",
+        "5": "★ 배뇨 후 도움이 필요한 부분만 도와주는 것이 올바른 방법입니다. 대상자가 스스로 할 수 있는 부분은 스스로 하게 하여 자율성과 잔존 기능을 유지하고, 필요한 부분만 선택적으로 보조합니다."
+      },
+      "vi": {
+        "1": "Giúp đỡ từ đầu đến cuối hoàn toàn sẽ ức chế tính tự chủ và chức năng còn lại của người bệnh.",
+        "2": "Mở khóa xe lăn khi lên xuống làm xe có thể trượt đi gây tai nạn ngã.",
+        "3": "Hạ bàn đặt chân trong khi di chuyển người bệnh lên bô nguy hiểm vì chân có thể chạm sàn và vướng.",
+        "4": "Vẩy nước lên sàn nhà vệ sinh làm trơn trượt, tăng nguy cơ ngã.",
+        "5": "★ Chỉ hỗ trợ những phần người bệnh cần giúp sau khi đi tiểu là phương pháp đúng. Để người bệnh tự làm những gì có thể tự làm, duy trì tính tự chủ và chức năng còn lại, chỉ hỗ trợ có chọn lọc những phần cần thiết."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "자율성", "def_vi": "Tính tự chủ — khả năng tự quyết định và tự thực hiện các hoạt động của người bệnh" },
+      { "term_ko": "잔존 기능", "def_vi": "Chức năng còn lại — các khả năng vận động/tự phục vụ người bệnh vẫn còn duy trì được" },
+      { "term_ko": "발 받침대", "def_vi": "Bàn đặt chân xe lăn — bộ phận đỡ chân người ngồi xe lăn" }
+    ]
+  },
+  {
+    "id": 1244,
+    "intent_ko": "대상자의 비언어적 배설 요구 신호를 인식하는 문제",
+    "intent_vi": "Câu hỏi về nhận biết tín hiệu phi ngôn ngữ thể hiện nhu cầu đại tiểu tiện của người bệnh",
+    "choice_explanations": {
+      "ko": {
+        "1": "웃옷을 벗는 행위는 더위나 불편함을 나타내며 배설 요구와는 무관합니다.",
+        "2": "물을 마시지 않는 행위는 식욕 저하나 다른 문제를 나타낼 수 있으나 배설 요구와 무관합니다.",
+        "3": "머리를 긁는 행위는 가려움이나 심리적 불안을 나타낼 수 있으나 배설 요구와 관련 없습니다.",
+        "4": "★ 안절부절 못하며 허리를 들썩이는 행위는 방광이나 직장에 압박감이 느껴질 때 나타나는 전형적인 비언어적 배설 요구 신호입니다. 언어 표현이 어려운 대상자(치매, 의식 저하 등)에서 특히 중요한 관찰 포인트입니다.",
+        "5": "손을 입으로 가져가는 행위는 배고픔, 불안, 습관적 행동 등을 나타낼 수 있으며 배설 요구와는 다릅니다."
+      },
+      "vi": {
+        "1": "Cởi áo ngoài thể hiện nóng bức hoặc khó chịu, không liên quan đến nhu cầu đại tiểu tiện.",
+        "2": "Không uống nước có thể do chán ăn hoặc vấn đề khác, không liên quan đến nhu cầu đại tiểu tiện.",
+        "3": "Gãi đầu có thể thể hiện ngứa hoặc lo lắng tâm lý, không liên quan đến nhu cầu đại tiểu tiện.",
+        "4": "★ Bồn chồn không yên và cứ nhấc người lên là tín hiệu phi ngôn ngữ điển hình của nhu cầu đại tiểu tiện khi bàng quang hoặc trực tràng có áp lực. Đây là điểm quan sát đặc biệt quan trọng với người bệnh khó diễn đạt bằng lời (sa sút trí tuệ, giảm ý thức...).",
+        "5": "Đưa tay lên miệng có thể thể hiện đói, lo lắng, hoặc hành động theo thói quen — khác với nhu cầu đại tiểu tiện."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "비언어적 신호", "def_vi": "Tín hiệu phi ngôn ngữ — cử chỉ, biểu hiện thể chất thể hiện nhu cầu mà không dùng lời nói" },
+      { "term_ko": "배설 요구", "def_vi": "Nhu cầu đại tiểu tiện — cảm giác cần đi vệ sinh cần được nhận biết và đáp ứng kịp thời" }
+    ]
+  },
+  {
+    "id": 1243,
+    "intent_ko": "대상자가 소변이 마렵다고 할 때 올바른 보조 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về phương pháp hỗ trợ đúng khi người bệnh cho biết buồn tiểu",
+    "choice_explanations": {
+      "ko": {
+        "1": "걸을 수 있어도 혼자 가게 하면 낙상이나 실수의 위험이 있습니다. 상태를 먼저 파악해야 합니다.",
+        "2": "★ 신체적·심리적 상태를 파악하여 보조하는 것이 가장 적절합니다. 현재 대상자의 이동 능력, 균형감각, 심리적 상태(수치심, 불안 등)를 종합적으로 파악하여 필요한 만큼만 도와주는 것이 올바른 요양보호의 원칙입니다.",
+        "3": "화장실 문을 열어놓고 배설하게 하면 사생활을 침해합니다.",
+        "4": "이동변기는 화장실 이동이 어려운 경우에 사용하며, 걷기 어렵지 않은 대상자에게 무조건 권유하는 것은 자율성을 침해합니다.",
+        "5": "냄새에 대해 솔직히 말하는 것은 대상자의 자존심을 상처입히는 부적절한 태도입니다."
+      },
+      "vi": {
+        "1": "Dù có thể đi lại, để đi một mình vẫn có nguy cơ ngã hoặc không kịp. Phải xác định tình trạng trước.",
+        "2": "★ Nắm bắt tình trạng thể chất và tâm lý rồi hỗ trợ là phương pháp phù hợp nhất. Đánh giá toàn diện khả năng di chuyển, thăng bằng và tâm lý (xấu hổ, lo lắng...) của người bệnh để hỗ trợ vừa đủ — đây là nguyên tắc chăm sóc đúng đắn.",
+        "3": "Để cửa nhà vệ sinh mở khi người bệnh đi tiểu xâm phạm quyền riêng tư.",
+        "4": "Bô di động dùng khi không thể đến nhà vệ sinh; tích cực khuyến nghị với người không khó đi lại là xâm phạm tính tự chủ.",
+        "5": "Nói thẳng về mùi là thái độ không phù hợp, tổn thương lòng tự trọng của người bệnh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "이동변기", "def_vi": "Bô di động — dụng cụ vệ sinh có thể di chuyển, dùng khi người bệnh không thể đến nhà vệ sinh" },
+      { "term_ko": "요양보호", "def_vi": "Chăm sóc người cao tuổi/người bệnh — dịch vụ hỗ trợ sinh hoạt hàng ngày cho người cần chăm sóc" },
+      { "term_ko": "자존심", "def_vi": "Lòng tự trọng — cảm giác tôn trọng bản thân, cần được bảo vệ trong chăm sóc" }
+    ]
+  },
+  {
+    "id": 1242,
+    "intent_ko": "배설 요양보호의 일반적 원칙 중 옳은 것을 묻는 문제",
+    "intent_vi": "Câu hỏi về nguyên tắc chung đúng đắn trong chăm sóc đại tiểu tiện",
+    "choice_explanations": {
+      "ko": {
+        "1": "대상자의 요구를 무시하는 것은 요양보호의 기본 원칙에 정면으로 위배됩니다.",
+        "2": "★ 대상자가 편안하게 배설하도록 배려하는 것이 배설 요양보호의 핵심 원칙입니다. 사생활 보호, 따뜻한 환경 제공, 심리적 안심감 조성 등이 포함됩니다.",
+        "3": "배설물을 모아서 한꺼번에 치우는 것은 비위생적이며 피부 손상과 감염의 위험이 있습니다. 즉시 처리해야 합니다.",
+        "4": "요양보호사가 전적으로 도와주면 대상자의 자율성과 잔존 기능이 저하됩니다. 할 수 있는 부분은 스스로 하도록 합니다.",
+        "5": "항문을 닦는 올바른 방향은 앞(요도 방향)에서 뒤(항문 방향)입니다. 뒤에서 앞으로 닦으면 장내 세균이 요도·질로 이동해 감염이 발생합니다."
+      },
+      "vi": {
+        "1": "Bỏ qua nhu cầu của người bệnh vi phạm trực tiếp nguyên tắc cơ bản của chăm sóc.",
+        "2": "★ Tạo điều kiện để người bệnh đại tiểu tiện thoải mái là nguyên tắc cốt lõi trong chăm sóc. Bao gồm bảo vệ quyền riêng tư, tạo môi trường ấm áp và cảm giác an tâm về tâm lý.",
+        "3": "Gom chất thải lại để dọn một lần không hợp vệ sinh, có nguy cơ tổn thương da và nhiễm khuẩn. Phải xử lý ngay.",
+        "4": "Nhân viên chăm sóc làm tất cả mọi thứ sẽ làm giảm tính tự chủ và chức năng còn lại của người bệnh. Để người bệnh tự làm những phần có thể.",
+        "5": "Hướng lau hậu môn đúng là từ trước (phía niệu đạo) ra sau (phía hậu môn). Lau ngược chiều làm vi khuẩn đường ruột lây sang niệu đạo/âm đạo gây nhiễm khuẩn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "요양보호", "def_vi": "Chăm sóc người cần hỗ trợ — dịch vụ hỗ trợ sinh hoạt hàng ngày cho người cao tuổi hoặc người bệnh" },
+      { "term_ko": "잔존 기능", "def_vi": "Chức năng còn lại — khả năng tự thực hiện hoạt động mà người bệnh vẫn còn duy trì" },
+      { "term_ko": "회음부 세정 방향", "def_vi": "Hướng vệ sinh vùng tầng sinh môn — phải lau từ trước ra sau để phòng nhiễm khuẩn" }
+    ]
+  },
+  {
+    "id": 1241,
+    "intent_ko": "약물 변질을 막기 위한 올바른 보관 및 사용 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về phương pháp bảo quản và sử dụng thuốc đúng để tránh biến chất",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 안약과 귀약은 상온의 그늘진 곳에서 보관하는 것이 올바릅니다. 직사광선과 고온을 피하면 성분 변질을 막을 수 있습니다.",
+        "2": "알약을 습기가 많은 상온에서 보관하면 약 성분이 분해되거나 곰팡이가 생겨 변질됩니다. 건조한 곳에 보관해야 합니다.",
+        "3": "가루약을 먹일 때 물기 있는 숟가락을 사용하면 수분에 의해 약 성분이 변질됩니다. 건조한 숟가락을 사용해야 합니다.",
+        "4": "시럽제를 약 용기째 빨아 먹으면 입안의 세균이 용기 안으로 들어가 오염·변질됩니다.",
+        "5": "이미 꺼낸 시럽을 다시 병에 넣으면 오염을 유발하므로 반드시 버려야 합니다."
+      },
+      "vi": {
+        "1": "★ Bảo quản thuốc nhỏ mắt và thuốc nhỏ tai ở nơi thoáng mát, tránh ánh sáng trực tiếp là đúng. Tránh ánh nắng và nhiệt độ cao giúp ngăn ngừa biến chất thành phần thuốc.",
+        "2": "Bảo quản viên thuốc ở nơi ẩm ướt làm thành phần thuốc bị phân hủy hoặc mốc, dẫn đến biến chất. Phải bảo quản ở nơi khô ráo.",
+        "3": "Dùng thìa ướt để cho uống thuốc bột làm thuốc bị ẩm và biến chất. Phải dùng thìa khô.",
+        "4": "Uống thuốc si-rô trực tiếp từ lọ đưa vi khuẩn từ miệng vào lọ, gây ô nhiễm và biến chất.",
+        "5": "Si-rô đã rót ra ngoài phải bỏ đi, không được đổ lại vào lọ vì sẽ gây ô nhiễm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "변질", "def_vi": "Biến chất — sự thay đổi thành phần hoặc chất lượng thuốc do bảo quản không đúng" },
+      { "term_ko": "시럽제", "def_vi": "Thuốc si-rô — thuốc dạng lỏng ngọt, cần bảo quản đúng cách để tránh ô nhiễm" },
+      { "term_ko": "가루약", "def_vi": "Thuốc bột — thuốc ở dạng bột, dễ bị ẩm và biến chất nếu tiếp xúc với nước" }
+    ]
+  },
+  {
+    "id": 1240,
+    "intent_ko": "대상자의 약품을 종류별로 올바르게 보관하는 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về cách bảo quản đúng đắn từng loại thuốc của người bệnh",
+    "choice_explanations": {
+      "ko": {
+        "1": "가루약을 물에 녹여 냉장 보관하면 성분이 변질되거나 분해될 수 있습니다. 건조한 상태로 서늘한 곳에 보관해야 합니다.",
+        "2": "시럽제는 직사광선을 피해 서늘한 곳에 보관해야 합니다. 햇빛에 노출되면 성분이 분해됩니다.",
+        "3": "★ 알약은 건조한 곳에 보관해야 합니다. 습기는 알약의 코팅을 손상시키고 성분을 분해하므로, 습기와 열을 피한 건조하고 서늘한 장소가 최적의 보관 조건입니다.",
+        "4": "안약은 개봉 전까지만 냉장 보관하는 경우가 있으나, 사용 전 실온으로 두어야 하며 제조사 지침을 따라야 합니다. 무조건 냉장 보관이 옳다고 볼 수 없습니다.",
+        "5": "치매 대상자의 약은 침상 옆에 두면 대상자가 한꺼번에 복용하거나 분실할 위험이 있습니다. 잠금이 가능한 안전한 장소에 보관해야 합니다."
+      },
+      "vi": {
+        "1": "Pha thuốc bột vào nước rồi bảo quản lạnh có thể làm biến chất hoặc phân hủy thành phần. Phải bảo quản ở trạng thái khô, nơi mát mẻ.",
+        "2": "Thuốc si-rô phải bảo quản ở nơi mát, tránh ánh sáng trực tiếp. Tiếp xúc ánh nắng làm phân hủy thành phần.",
+        "3": "★ Viên thuốc phải bảo quản ở nơi khô ráo. Độ ẩm làm hỏng lớp bao bọc và phân hủy thành phần thuốc, nên nơi khô, mát, tránh ẩm và nhiệt là điều kiện bảo quản tốt nhất.",
+        "4": "Một số thuốc nhỏ mắt có thể bảo quản lạnh trước khi mở, nhưng phải để ở nhiệt độ phòng trước khi dùng và tuân theo hướng dẫn của nhà sản xuất. Không thể nói bảo quản lạnh hoàn toàn là đúng.",
+        "5": "Để thuốc của người bị sa sút trí tuệ cạnh giường có nguy cơ uống nhầm hoặc mất thuốc. Phải bảo quản ở nơi an toàn có thể khóa được."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "알약", "def_vi": "Viên thuốc — thuốc dạng viên nén hoặc viên nang" },
+      { "term_ko": "안약", "def_vi": "Thuốc nhỏ mắt — thuốc dạng lỏng nhỏ vào mắt để điều trị" },
+      { "term_ko": "치매", "def_vi": "Sa sút trí tuệ (chứng mất trí) — tình trạng suy giảm nhận thức tiến triển, cần quản lý thuốc đặc biệt cẩn thận" }
+    ]
+  },
+  {
+    "id": 1239,
+    "intent_ko": "정맥주사 중 대상자가 주사 부위 통증을 호소할 때 올바른 대처 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về cách xử lý đúng khi người bệnh kêu đau tại vị trí truyền tĩnh mạch",
+    "choice_explanations": {
+      "ko": {
+        "1": "주사바늘을 즉시 제거하는 것은 요양보호사의 업무 범위를 벗어나며, 상태 확인 없이 시행하면 위험합니다.",
+        "2": "주입 속도를 줄이는 것은 근본 원인을 해결하지 않으며, 즉각적 대처로 적절하지 않습니다.",
+        "3": "냉찜질은 일시적 완화일 수 있으나 주사 부위 이상의 근본 원인을 해결하지 못합니다.",
+        "4": "수액병을 심장보다 아래로 내리면 주입이 정지되지만, 이것이 올바른 대처 순서는 아닙니다.",
+        "5": "★ 수액 조절기(조절릭)를 잠근 후 즉시 간호사에게 보고하는 것이 올바른 대처입니다. 주입을 중단하여 추가 손상을 막고, 전문 의료인에게 상황을 알려 적절한 처치를 받도록 하는 것이 요양보호사로서 해야 할 안전한 행동입니다."
+      },
+      "vi": {
+        "1": "Tự ý rút kim tiêm ngay lập tức vượt quá phạm vi công việc của nhân viên chăm sóc và nguy hiểm khi chưa kiểm tra tình trạng.",
+        "2": "Giảm tốc độ truyền không giải quyết nguyên nhân gốc rễ và không phải cách xử lý kịp thời phù hợp.",
+        "3": "Chườm lạnh có thể giảm đau tạm thời nhưng không giải quyết nguyên nhân bất thường tại vị trí tiêm.",
+        "4": "Hạ chai dịch xuống dưới tim sẽ ngừng truyền nhưng không phải thứ tự xử lý đúng đắn.",
+        "5": "★ Khóa van điều chỉnh dịch truyền rồi báo ngay cho y tá là cách xử lý đúng. Ngừng truyền để ngăn tổn thương thêm và thông báo cho nhân viên y tế chuyên môn xử lý — đây là hành động an toàn đúng vai trò của nhân viên chăm sóc."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "정맥주사", "def_vi": "Tiêm/truyền tĩnh mạch — đưa thuốc hoặc dịch trực tiếp vào tĩnh mạch" },
+      { "term_ko": "수액 조절기", "def_vi": "Van điều chỉnh dịch truyền — thiết bị kiểm soát tốc độ dịch truyền vào tĩnh mạch" },
+      { "term_ko": "부종", "def_vi": "Phù nề — sưng phù do dịch tích tụ, dấu hiệu bất thường tại vị trí tiêm truyền" }
+    ]
+  },
+  {
+    "id": 1238,
+    "intent_ko": "정맥주사 시 수액 병의 올바른 위치(높이)를 묻는 문제",
+    "intent_vi": "Câu hỏi về vị trí (độ cao) đúng của chai dịch truyền khi truyền tĩnh mạch",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 수액 병은 반드시 심장보다 높은 위치에 두어야 합니다. 중력에 의해 수액이 아래로 흘러내려 정맥으로 주입되기 때문입니다. 심장보다 낮으면 정맥 내 혈압이 수액 압력을 초과하여 역류가 발생할 수 있습니다.",
+        "2": "심장 아래에 두면 수액이 중력에 의해 주입되지 못하고 역류가 일어납니다.",
+        "3": "방광 아래는 수액 주입 원리와 맞지 않는 위치입니다.",
+        "4": "허리 아래도 심장보다 낮아 수액이 주입되지 않습니다.",
+        "5": "허리에서 심장 사이도 심장보다 아래이므로 주입이 제대로 이루어지지 않습니다."
+      },
+      "vi": {
+        "1": "★ Chai dịch truyền phải đặt cao hơn tim. Dịch chảy xuống theo trọng lực và vào tĩnh mạch. Nếu đặt thấp hơn tim, áp lực trong tĩnh mạch vượt áp lực dịch truyền và có thể gây chảy ngược.",
+        "2": "Đặt dưới tim khiến dịch không thể chảy vào và gây chảy ngược.",
+        "3": "Dưới bàng quang không phù hợp với nguyên lý truyền dịch.",
+        "4": "Dưới thắt lưng cũng thấp hơn tim nên dịch không truyền vào được.",
+        "5": "Giữa thắt lưng và tim vẫn thấp hơn tim nên truyền không hiệu quả."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "수액", "def_vi": "Dịch truyền — chất lỏng y tế (nước muối, glucose...) truyền vào cơ thể qua tĩnh mạch" },
+      { "term_ko": "정맥주입", "def_vi": "Truyền tĩnh mạch — đưa dịch hoặc thuốc vào cơ thể qua đường tĩnh mạch" },
+      { "term_ko": "역류", "def_vi": "Chảy ngược — dịch/máu chảy ngược chiều so với chiều mong muốn, xảy ra khi chai dịch thấp hơn tim" }
+    ]
+  },
+  {
+    "id": 1237,
+    "intent_ko": "정맥주사 주입 시 올바른 보조 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về phương pháp hỗ trợ đúng khi người bệnh đang truyền tĩnh mạch",
+    "choice_explanations": {
+      "ko": {
+        "1": "수액세트를 팽팽하게 당기면 주사바늘이 혈관에서 빠지거나 혈관 내벽이 손상될 수 있습니다.",
+        "2": "의복을 갈아입을 때도 주사바늘을 빼면 안 됩니다. 의복 소매를 먼저 제거하고 수액세트를 통과시키는 방식으로 갈아입습니다.",
+        "3": "주사 부위에 부종이 생기면 약물이 혈관 밖으로 새고 있다는 신호이므로 즉시 간호사에게 알려야 하며, 요양보호사가 임의로 바늘을 제거하는 것은 업무 범위를 벗어납니다.",
+        "4": "★ 정맥주입 속도가 일정하게 유지되는지 수시로 확인하는 것이 중요합니다. 속도가 너무 빠르면 심장에 부담을 주고, 너무 느리면 치료 효과가 줄어듭니다. 요양보호사는 주입 속도와 주사 부위 이상을 관찰하고 이상 시 간호사에게 보고해야 합니다.",
+        "5": "주사바늘 제거 후 알코올 솜으로 비비면 출혈이 악화됩니다. 가볍게 누르는 방식으로 지혈해야 합니다."
+      },
+      "vi": {
+        "1": "Căng dây truyền dịch có thể làm kim tuột ra khỏi mạch máu hoặc tổn thương thành mạch.",
+        "2": "Không được rút kim khi thay quần áo. Rút tay áo trước rồi luồn qua dây truyền để thay đồ.",
+        "3": "Phù nề tại vị trí tiêm là dấu hiệu thuốc đang thoát ra ngoài mạch; phải báo y tá ngay. Nhân viên chăm sóc tự ý rút kim vượt quá phạm vi công việc.",
+        "4": "★ Thường xuyên kiểm tra tốc độ truyền dịch có đều đặn không là rất quan trọng. Quá nhanh gây áp lực cho tim, quá chậm làm giảm hiệu quả điều trị. Nhân viên chăm sóc cần quan sát tốc độ truyền và tình trạng vị trí tiêm, báo y tá khi có bất thường.",
+        "5": "Chà xát bằng bông cồn sau khi rút kim làm chảy máu nặng hơn. Phải nhấn nhẹ để cầm máu."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "수액세트", "def_vi": "Dây truyền dịch — bộ ống dẫn dịch từ chai vào tĩnh mạch người bệnh" },
+      { "term_ko": "부종", "def_vi": "Phù nề tại vị trí tiêm — sưng phù do dịch thoát ra ngoài mạch, cần báo y tá ngay" },
+      { "term_ko": "정맥주입 속도", "def_vi": "Tốc độ truyền tĩnh mạch — lượng dịch chảy vào tĩnh mạch trong một đơn vị thời gian" }
+    ]
+  },
+  {
+    "id": 1236,
+    "intent_ko": "한쪽 귀에 염증이 있는 대상자에게 귀약을 올바르게 투여하는 자세를 묻는 문제",
+    "intent_vi": "Câu hỏi về tư thế đúng khi nhỏ thuốc tai cho người bệnh bị viêm một bên tai",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 치료할 귀(왼쪽)를 위쪽으로 하여 편안한 자세를 취하게 하는 것이 올바릅니다. 이렇게 하면 약물이 중력에 의해 외이도 안쪽으로 자연스럽게 흘러들어가 흡수됩니다.",
+        "2": "귓바퀴를 후하방으로 잡아당기는 것은 외이도를 펴서 약물이 잘 들어가도록 하는 중요한 기술이지만, 이는 점적 전에 하는 행위이며 자세 선택(1번)이 더 포괄적으로 옳습니다.",
+        "3": "귀입구를 문지르는 것은 권장되지 않으며, 점적 후 귀입구를 부드럽게 눌러주는 것이 올바릅니다.",
+        "4": "투여 직후 치료하는 귀를 아래로 하면 약물이 흘러나와 효과가 감소합니다. 치료 귀를 위로 유지해야 합니다.",
+        "5": "귓구멍에 솜을 하루 종일 끼워두는 것은 권장되지 않습니다."
+      },
+      "vi": {
+        "1": "★ Cho người bệnh nằm thoải mái với tai cần điều trị (bên trái) quay lên trên là đúng. Tư thế này giúp thuốc chảy tự nhiên vào sâu trong ống tai nhờ trọng lực và được hấp thu tốt.",
+        "2": "Kéo vành tai ra sau và xuống dưới là kỹ thuật quan trọng để làm thẳng ống tai trước khi nhỏ, nhưng đây là hành động trước khi nhỏ thuốc; chọn tư thế (đáp án 1) đúng hơn một cách toàn diện.",
+        "3": "Chà xát lỗ tai không được khuyến nghị; sau khi nhỏ thuốc nên nhấn nhẹ lỗ tai.",
+        "4": "Nghiêng tai điều trị xuống dưới ngay sau khi nhỏ làm thuốc chảy ra ngoài, giảm hiệu quả. Phải giữ tai điều trị hướng lên.",
+        "5": "Nhét bông vào lỗ tai cả ngày không được khuyến nghị."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "외이도", "def_vi": "Ống tai ngoài — đường ống từ lỗ tai đến màng nhĩ" },
+      { "term_ko": "귓바퀴", "def_vi": "Vành tai — phần sụn bên ngoài tai có thể nhìn thấy được" },
+      { "term_ko": "점적", "def_vi": "Nhỏ giọt — kỹ thuật đưa thuốc vào mắt hoặc tai theo từng giọt" }
+    ]
+  },
+  {
+    "id": 1235,
+    "intent_ko": "귀에 통증이 있는 대상자에게 귀약 투여 시 올바른 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về phương pháp đúng khi nhỏ thuốc tai cho người bị đau tai",
+    "choice_explanations": {
+      "ko": {
+        "1": "똑바로 누운 자세는 귀약 투여에 적합하지 않습니다. 치료할 귀가 위로 향하도록 옆으로 누워야 합니다.",
+        "2": "면봉으로 귓속을 닦는 것은 권장되지 않습니다. 면봉이 이물질을 더 깊이 밀어넣거나 이도를 손상시킬 수 있습니다.",
+        "3": "이관 내에 솜을 꼭 끼워 눌러 주는 것은 잘못된 방법으로 이도를 자극하거나 손상을 줄 수 있습니다.",
+        "4": "이도 중앙에 점적하는 것보다 외이도 내벽을 따라 흘러들어가도록 점적하는 것이 올바릅니다.",
+        "5": "★ 점적 후 귀입구를 부드럽게 눌러주어 약물이 이도 안으로 들어가게 하고, 5분간 치료 귀가 위를 향한 자세로 누워있게 하는 것이 올바른 방법입니다. 이렇게 하면 약물이 충분히 흡수됩니다."
+      },
+      "vi": {
+        "1": "Nằm ngửa thẳng không phù hợp để nhỏ thuốc tai. Phải nằm nghiêng với tai cần điều trị hướng lên.",
+        "2": "Ngoáy tai bằng tăm bông không được khuyến nghị vì có thể đẩy dị vật sâu hơn hoặc làm tổn thương ống tai.",
+        "3": "Nhét bông chặt vào ống tai là sai, có thể kích thích hoặc làm tổn thương ống tai.",
+        "4": "Nhỏ thuốc vào giữa ống tai không chuẩn; nên nhỏ dọc theo thành ống tai để thuốc chảy vào trong.",
+        "5": "★ Sau khi nhỏ thuốc, nhấn nhẹ lỗ tai để thuốc đi vào bên trong ống tai, rồi nằm nghiêng với tai điều trị hướng lên trong 5 phút là phương pháp đúng. Như vậy thuốc được hấp thu đầy đủ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "이도", "def_vi": "Ống tai (đường tai) — đường từ lỗ tai đến màng nhĩ" },
+      { "term_ko": "이관", "def_vi": "Vòi nhĩ (ống Eustache) — ống nối tai giữa với họng, giúp cân bằng áp suất" },
+      { "term_ko": "점적", "def_vi": "Nhỏ giọt — kỹ thuật đưa thuốc vào tai hoặc mắt theo từng giọt" }
+    ]
+  },
+  {
+    "id": 1234,
+    "intent_ko": "귀약을 올바르게 투여하는 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về phương pháp nhỏ thuốc tai đúng cách",
+    "choice_explanations": {
+      "ko": {
+        "1": "냉장 보관한 귀약은 사용 전 반드시 체온 근처 온도로 맞춰야 합니다. 차가운 약을 그대로 귀에 넣으면 어지러움(현훈)을 유발할 수 있습니다.",
+        "2": "★ 점적 전에 면봉으로 귓바퀴와 외이도 입구를 부드럽게 닦아 이물질을 제거하면 약물이 더 효과적으로 흡수됩니다.",
+        "3": "치료할 귀는 아래가 아닌 위를 향하게 해야 약물이 이도 안으로 잘 흘러들어갑니다.",
+        "4": "귓바퀴를 후하방으로 잡아당기는 것은 점적 전(약을 넣기 전)에 하는 것이 올바릅니다.",
+        "5": "솜을 이도 깊이 끼워넣는 것은 이도를 손상시킬 수 있으며 절대 해서는 안 됩니다."
+      },
+      "vi": {
+        "1": "Thuốc nhỏ tai bảo quản lạnh phải được làm ấm đến gần nhiệt độ cơ thể trước khi dùng. Nhỏ thuốc lạnh vào tai có thể gây chóng mặt (chứng hoa mắt).",
+        "2": "★ Trước khi nhỏ thuốc, dùng tăm bông nhẹ nhàng lau sạch vành tai và lỗ tai ngoài để loại bỏ dị vật, giúp thuốc được hấp thu hiệu quả hơn.",
+        "3": "Tai cần điều trị phải hướng lên trên, không phải xuống dưới, để thuốc chảy vào bên trong ống tai.",
+        "4": "Kéo vành tai ra sau và xuống dưới phải thực hiện trước khi nhỏ thuốc (trước khi đưa thuốc vào).",
+        "5": "Nhét bông sâu vào ống tai có thể gây tổn thương và tuyệt đối không được làm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "외이도", "def_vi": "Ống tai ngoài — đường ống từ lỗ tai đến màng nhĩ" },
+      { "term_ko": "현훈", "def_vi": "Chóng mặt/hoa mắt — cảm giác quay cuồng, có thể xảy ra khi thuốc lạnh tiếp xúc với ống tai" },
+      { "term_ko": "귓바퀴", "def_vi": "Vành tai — phần sụn bên ngoài tai, kéo ra sau-xuống để mở rộng ống tai khi nhỏ thuốc" }
+    ]
+  },
+  {
+    "id": 1233,
+    "intent_ko": "냉장 보관 귀약을 투여 전 올바르게 데우는 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về cách làm ấm đúng thuốc nhỏ tai bảo quản lạnh trước khi sử dụng",
+    "choice_explanations": {
+      "ko": {
+        "1": "전자레인지에 넣으면 과열·불균일 가열로 약물 성분이 파괴되고 용기가 손상될 수 있습니다.",
+        "2": "창가 햇볕에 두면 자외선과 불균일한 온도 변화로 약물이 변질될 수 있습니다.",
+        "3": "끓는 물에 담그면 고온으로 약물 성분이 분해·변성됩니다.",
+        "4": "차가운 상태로 귀에 넣으면 내이(달팽이관)를 자극하여 심한 어지러움(현훈)을 유발합니다.",
+        "5": "★ 손바닥으로 약병을 감싸 체온으로 서서히 데우는 것이 가장 안전한 방법입니다. 체온(약 36~37°C)에 가깝게 데우면 귀에 넣었을 때 자극이 없고 약물 성분도 손상되지 않습니다."
+      },
+      "vi": {
+        "1": "Cho vào lò vi sóng làm nóng quá mức hoặc không đều, phá hủy thành phần thuốc và có thể làm hỏng hộp đựng.",
+        "2": "Để ở cửa sổ có nắng làm thuốc biến chất do tia UV và thay đổi nhiệt độ không đều.",
+        "3": "Ngâm vào nước sôi làm nhiệt độ cao phân hủy và biến tính thành phần thuốc.",
+        "4": "Nhỏ thuốc lạnh trực tiếp kích thích tai trong (ốc tai) gây chóng mặt nặng (chứng hoa mắt).",
+        "5": "★ Ủ lọ thuốc trong lòng bàn tay để làm ấm từ từ bằng thân nhiệt là phương pháp an toàn nhất. Làm ấm gần nhiệt độ cơ thể (~36–37°C) giúp không gây kích thích khi nhỏ vào tai và không làm hỏng thành phần thuốc."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "내이", "def_vi": "Tai trong — phần sâu nhất của tai chứa ốc tai và cơ quan thăng bằng, rất nhạy cảm với nhiệt độ" },
+      { "term_ko": "현훈", "def_vi": "Chứng hoa mắt/chóng mặt — cảm giác quay cuồng do kích thích tai trong" },
+      { "term_ko": "약물 변성", "def_vi": "Biến tính thuốc — sự thay đổi cấu trúc phân tử thuốc do nhiệt độ quá cao, làm mất tác dụng" }
+    ]
+  },
+  {
+    "id": 1232,
+    "intent_ko": "안연고를 올바르게 투여하는 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về phương pháp bôi thuốc mỡ mắt đúng cách",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 안연고 튜브에서 처음 나오는 연고는 오염되어 있을 수 있으므로 거즈로 닦아 버린 후 사용합니다. 이것이 위생적인 투여의 첫 단계입니다.",
+        "2": "동공(검은 눈동자)에 직접 연고를 짜 넣으면 각막을 손상시킬 수 있습니다. 아래 결막낭에 짜 넣어야 합니다.",
+        "3": "약을 넣은 후 눈을 감는 것은 맞지만, 안구를 고정시키는 것은 불필요하며 불편함을 유발합니다.",
+        "4": "눈꺼풀 밖으로 나온 연고는 멸균 솜으로 살짝 닦아내는 것이지, 밀어 넣어서는 안 됩니다. 밀어 넣으면 오염이 됩니다.",
+        "5": "연고는 눈 안쪽(비루관 쪽)에서 바깥쪽으로 짜 넣어야 합니다. 바깥쪽에서 안쪽으로 짜면 연고가 코눈물관을 막을 수 있습니다."
+      },
+      "vi": {
+        "1": "★ Thuốc mỡ đầu tiên ra khỏi tuýp có thể bị ô nhiễm, nên phải lau bỏ bằng gạc trước khi dùng. Đây là bước đầu tiên của việc bôi vệ sinh.",
+        "2": "Bơm thuốc trực tiếp vào đồng tử (tròng đen) có thể gây tổn thương giác mạc. Phải bơm vào túi kết mạc dưới.",
+        "3": "Nhắm mắt sau khi bôi thuốc là đúng, nhưng cố định nhãn cầu là không cần thiết và gây khó chịu.",
+        "4": "Thuốc mỡ tràn ra ngoài mí mắt phải lau nhẹ bằng bông vô khuẩn, không được đẩy vào trong vì sẽ gây ô nhiễm.",
+        "5": "Bôi thuốc từ góc trong (phía ống dẫn lệ) ra ngoài. Bôi từ ngoài vào trong có thể làm tắc ống dẫn nước mắt."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "안연고", "def_vi": "Thuốc mỡ mắt — thuốc dạng mỡ dùng để điều trị các bệnh về mắt" },
+      { "term_ko": "결막낭", "def_vi": "Túi kết mạc — khoang giữa mí mắt và nhãn cầu, vị trí bôi thuốc mỡ mắt" },
+      { "term_ko": "동공", "def_vi": "Đồng tử — vùng tối ở trung tâm mắt, không được bôi thuốc trực tiếp vào" },
+      { "term_ko": "멸균 거즈", "def_vi": "Gạc vô khuẩn — gạc đã được khử trùng, dùng để lau thuốc dư hoặc làm sạch" }
+    ]
+  },
+  {
+    "id": 1231,
+    "intent_ko": "안약을 투여하는 올바른 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về phương pháp nhỏ thuốc mắt đúng cách",
+    "choice_explanations": {
+      "ko": {
+        "1": "위 눈꺼풀에 멸균솜을 대는 것은 안약 투여 방법이 아닙니다.",
+        "2": "안약 점적 시 대상자에게 위를 보게 하여 아래 결막낭이 노출되도록 해야 합니다. 아래를 보게 하면 결막낭이 가려집니다.",
+        "3": "안약은 각막(검은 눈동자)이 아닌 아래 결막낭에 점적해야 합니다. 각막에 직접 떨어뜨리면 통증과 자극이 생깁니다.",
+        "4": "★ 안약을 점적한 후 비루관(눈과 코를 연결하는 관)을 손가락으로 부드럽게 눌러주면, 약물이 코와 목으로 빠져나가는 것을 막아 안구 내 흡수율을 높입니다. 이것이 안약 투여에서 중요한 추가 단계입니다.",
+        "5": "멸균솜으로 닦을 때는 눈 안쪽에서 바깥쪽으로 닦아야 하며, 바깥쪽에서 안쪽으로 닦으면 오염 물질이 눈 안으로 들어올 수 있습니다."
+      },
+      "vi": {
+        "1": "Đặt bông vô khuẩn lên mí mắt trên không phải phương pháp nhỏ thuốc mắt.",
+        "2": "Khi nhỏ thuốc mắt phải yêu cầu người bệnh nhìn lên trên để lộ túi kết mạc dưới. Nhìn xuống sẽ che khuất túi kết mạc.",
+        "3": "Nhỏ thuốc vào túi kết mạc dưới, không phải vào giác mạc (tròng đen). Nhỏ thẳng vào giác mạc gây đau và kích thích.",
+        "4": "★ Sau khi nhỏ thuốc, nhẹ nhàng ấn lên ống dẫn lệ (ống nối mắt với mũi) bằng ngón tay giúp ngăn thuốc thoát ra mũi và họng, tăng khả năng hấp thu trong nhãn cầu. Đây là bước bổ sung quan trọng trong việc nhỏ thuốc mắt.",
+        "5": "Khi lau bằng bông vô khuẩn phải lau từ trong ra ngoài; lau từ ngoài vào trong có thể đưa chất ô nhiễm vào mắt."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "비루관", "def_vi": "Ống dẫn lệ — ống nối mắt với mũi; cần ấn nhẹ sau khi nhỏ thuốc mắt để ngăn thuốc thoát ra" },
+      { "term_ko": "결막낭", "def_vi": "Túi kết mạc — khoang giữa mí mắt và nhãn cầu, vị trí đúng để nhỏ thuốc mắt" },
+      { "term_ko": "각막", "def_vi": "Giác mạc — lớp trong suốt phía trước mắt, không được nhỏ thuốc trực tiếp vào" }
+    ]
+  },
+  {
+    "id": 1230,
+    "intent_ko": "한쪽 눈 감염 시 반대편으로 전염되지 않도록 멸균 솜으로 닦는 올바른 방향을 묻는 문제",
+    "intent_vi": "Câu hỏi về hướng lau đúng bằng bông vô khuẩn để tránh lây nhiễm sang mắt còn lại",
+    "choice_explanations": {
+      "ko": {
+        "1": "방향이 중요하지 않다는 것은 완전히 잘못된 정보입니다. 방향에 따라 감염이 확산될 수 있습니다.",
+        "2": "바깥쪽에서 안쪽으로 닦으면 표면의 분비물·세균이 눈 안으로 들어와 감염이 심해질 수 있습니다.",
+        "3": "★ 눈 안쪽(비루관 쪽)에서 바깥쪽으로 닦는 것이 올바릅니다. 분비물과 세균을 눈 안쪽에서 멀어지는 방향으로 제거하므로 감염 물질이 눈 안으로 역행하지 않습니다. 또한 각 닦기마다 새 솜을 사용해야 다른 쪽 눈으로의 전파를 막습니다.",
+        "4": "둥근 원을 그리며 닦으면 분비물이 퍼져 감염 위험이 오히려 높아집니다.",
+        "5": "위에서 아래로만 닦는 방법도 분비물을 안쪽으로 역행시킬 수 있어 감염 확산 위험이 있습니다."
+      },
+      "vi": {
+        "1": "Hướng không quan trọng là thông tin hoàn toàn sai. Hướng lau ảnh hưởng trực tiếp đến khả năng lây lan nhiễm trùng.",
+        "2": "Lau từ ngoài vào trong đưa dịch tiết và vi khuẩn từ bên ngoài vào trong mắt, làm nặng thêm nhiễm trùng.",
+        "3": "★ Lau từ trong (phía ống dẫn lệ) ra ngoài là đúng. Hướng này đẩy dịch tiết và vi khuẩn ra xa khỏi mắt, ngăn chất nhiễm khuẩn chảy ngược vào trong. Mỗi lần lau phải dùng miếng bông mới để tránh lây sang mắt kia.",
+        "4": "Lau theo vòng tròn làm dịch tiết lan rộng, làm tăng nguy cơ nhiễm khuẩn.",
+        "5": "Lau từ trên xuống dưới cũng có thể đẩy dịch tiết ngược vào trong, có nguy cơ lây lan nhiễm khuẩn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "멸균 솜", "def_vi": "Bông vô khuẩn — bông đã khử trùng, dùng để lau mắt, mỗi lần dùng một miếng mới" },
+      { "term_ko": "감염 전파", "def_vi": "Lây lan nhiễm khuẩn — sự lan rộng của vi sinh vật gây bệnh từ vùng này sang vùng khác" },
+      { "term_ko": "비루관", "def_vi": "Ống dẫn lệ — ống nối góc trong mắt với mũi; điểm bắt đầu khi lau mắt đúng cách" }
+    ]
+  },
+  {
+    "id": 1229,
+    "intent_ko": "물약을 따르기 전에 흔드는 이유를 묻는 문제",
+    "intent_vi": "Câu hỏi về lý do lắc thuốc nước trước khi rót",
+    "choice_explanations": {
+      "ko": {
+        "1": "흔드는 것은 변질 방지보다는 성분을 균일하게 섞는 목적이 주된 이유입니다.",
+        "2": "냄새는 흔들기와 관련이 없습니다.",
+        "3": "흔드는 것이 약물 흡수를 직접적으로 높이지는 않습니다.",
+        "4": "쓴맛은 맛 차폐제(코팅)로 조절하는 것이지, 흔든다고 줄어들지 않습니다.",
+        "5": "★ 물약은 고체 성분이 가라앉으면 위쪽은 묽고 아래쪽은 진해집니다. 흔들어 섞어야 약물 성분이 균일하게 분포되어 정확한 농도의 약을 투여할 수 있습니다. 농도가 고르지 않으면 과량 또는 과소 투여가 될 수 있습니다."
+      },
+      "vi": {
+        "1": "Lắc chủ yếu để trộn đều thành phần, không phải để ngăn biến chất.",
+        "2": "Mùi không liên quan đến việc lắc thuốc.",
+        "3": "Lắc không trực tiếp tăng khả năng hấp thu thuốc.",
+        "4": "Vị đắng được điều chỉnh bằng chất che vị (lớp bọc), không giảm khi lắc.",
+        "5": "★ Trong thuốc nước, các thành phần rắn lắng xuống đáy làm phần trên loãng và phần dưới đặc. Lắc đều giúp thành phần phân bố đồng đều để có nồng độ chính xác khi uống. Nồng độ không đều dẫn đến quá liều hoặc thiếu liều."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "농도", "def_vi": "Nồng độ — lượng hoạt chất thuốc hòa tan trong một thể tích dung dịch nhất định" },
+      { "term_ko": "현탁액", "def_vi": "Hỗn dịch (thuốc lắc) — thuốc dạng hạt rắn phân tán trong lỏng, cần lắc trước khi dùng" }
+    ]
+  },
+  {
+    "id": 1228,
+    "intent_ko": "물약을 투여할 때 올바른 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về phương pháp đúng khi cho người bệnh uống thuốc nước",
+    "choice_explanations": {
+      "ko": {
+        "1": "계량컵이 없을 때 종이컵을 사용하면 정확한 용량을 측정할 수 없어 과량·과소 투여 위험이 있습니다.",
+        "2": "라벨이 붙은 반대쪽 방향으로 용액을 따라야 합니다. 라벨 방향으로 따르면 약이 라벨 위로 흘러 라벨이 오염·훼손되어 다음에 읽을 수 없게 됩니다.",
+        "3": "용량을 초과해서 따른 약은 오염 가능성이 있으므로 반드시 버려야 하며, 절대 병에 다시 넣으면 안 됩니다.",
+        "4": "병 뚜껑을 씌우기 전에 복용량을 확인하는 것은 중요하지만, 용량이 적을 때의 가장 좋은 방법을 묻는 질문에서는 5번이 더 적합합니다.",
+        "5": "★ 약의 용량이 매우 적을 때는 바늘을 제거한 주사기를 이용하면 계량컵보다 정밀하게 측정하여 정확한 용량을 투여할 수 있습니다."
+      },
+      "vi": {
+        "1": "Dùng cốc giấy khi không có cốc đo không thể đo chính xác liều lượng, có nguy cơ quá liều hoặc thiếu liều.",
+        "2": "Phải rót thuốc về phía ngược lại với nhãn. Rót về phía có nhãn làm thuốc chảy lên nhãn, làm bẩn và hỏng nhãn khiến không đọc được sau này.",
+        "3": "Thuốc rót ra quá liều có nguy cơ ô nhiễm nên phải bỏ đi, tuyệt đối không đổ lại vào chai.",
+        "4": "Kiểm tra liều trước khi đậy nắp là quan trọng, nhưng khi liều lượng nhỏ thì đáp án 5 phù hợp hơn.",
+        "5": "★ Khi liều thuốc rất nhỏ, dùng ống tiêm đã tháo kim giúp đo chính xác hơn cốc đo thông thường, cho phép cho uống đúng liều."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "계량컵", "def_vi": "Cốc đo lường — dụng cụ đo thể tích thuốc nước, có vạch chia mililít" },
+      { "term_ko": "용량", "def_vi": "Liều lượng — lượng thuốc cần dùng trong một lần uống" },
+      { "term_ko": "라벨", "def_vi": "Nhãn thuốc — nhãn dán trên chai ghi thông tin thuốc, cần bảo vệ khỏi bị thấm ướt bởi thuốc" }
+    ]
+  },
+  {
+    "id": 1227,
+    "intent_ko": "대상자의 알약 복용을 올바르게 돕는 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về phương pháp hỗ trợ đúng khi cho người bệnh uống thuốc viên",
+    "choice_explanations": {
+      "ko": {
+        "1": "삼키기 어려운 알약을 임의로 갈아서 먹이면 약의 서방형 코팅이 파괴되어 과량이 한꺼번에 흡수되거나 효과가 달라질 수 있습니다. 반드시 처방 의사나 약사에게 확인해야 합니다.",
+        "2": "약을 먹인 후 충분한 물(최소 한 잔 이상)을 주어야 약이 식도를 통해 위장까지 잘 이동하고 흡수됩니다. 물을 조금만 주면 식도에 약이 걸릴 수 있습니다.",
+        "3": "알약이 많을 경우 한 번에 먹이면 삼킴 곤란, 기침, 흡인 위험이 있습니다. 한 알씩 나누어 먹입니다.",
+        "4": "★ 약을 떨어뜨릴 우려가 있는 대상자(손 떨림, 근력 저하 등)에게는 요양보호사가 직접 입안에 넣어주는 것이 안전합니다. 대상자의 신체 기능을 고려한 적절한 지원 방법입니다.",
+        "5": "남은 알약은 원래 용기에 보관해야 하며, 다른 용기에 옮기면 약 정보(이름, 용량, 유효기간)를 확인할 수 없게 됩니다. 또한 냉장 보관이 필요한 약인지 확인해야 합니다."
+      },
+      "vi": {
+        "1": "Tự ý nghiền viên thuốc khó nuốt có thể phá hủy lớp bọc phóng thích chậm, gây hấp thu quá nhiều cùng lúc hoặc thay đổi tác dụng. Phải hỏi bác sĩ hoặc dược sĩ trước.",
+        "2": "Sau khi cho uống thuốc phải cho uống đủ nước (ít nhất một cốc) để thuốc di chuyển qua thực quản xuống dạ dày và được hấp thu. Uống ít nước có thể làm thuốc mắc kẹt ở thực quản.",
+        "3": "Nếu nhiều viên, cho uống hết một lần có nguy cơ khó nuốt, ho, hít sặc. Phải cho uống từng viên một.",
+        "4": "★ Với người bệnh có nguy cơ làm rơi thuốc (run tay, yếu cơ...), nhân viên chăm sóc trực tiếp đặt thuốc vào miệng là an toàn. Đây là phương pháp hỗ trợ phù hợp dựa trên chức năng thể chất của người bệnh.",
+        "5": "Thuốc còn lại phải bảo quản trong hộp gốc; chuyển sang hộp khác khiến không kiểm tra được thông tin thuốc (tên, liều, hạn dùng). Cũng cần xác nhận xem thuốc có cần bảo quản lạnh không."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "서방형 코팅", "def_vi": "Lớp bọc phóng thích chậm — lớp bao bọc viên thuốc giúp thuốc giải phóng từ từ; không được nghiền" },
+      { "term_ko": "흡인", "def_vi": "Hít sặc — thuốc hoặc thức ăn đi vào đường hô hấp thay vì thực quản, nguy hiểm đặc biệt với người cao tuổi" },
+      { "term_ko": "복용", "def_vi": "Uống thuốc — hành động đưa thuốc vào cơ thể qua đường miệng" }
+    ]
+  }
+]

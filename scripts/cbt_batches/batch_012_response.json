@@ -1,0 +1,736 @@
+[
+  {
+    "id": 1408,
+    "intent_ko": "지팡이의 올바른 길이 설정 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về cách xác định độ dài gậy đúng chuẩn",
+    "choice_explanations": {
+      "ko": {
+        "1": "청결 점검은 위생 관리에 해당하며, 지팡이 길이·높이 등 안전한 사용 방법과는 직접적인 관련이 없다.",
+        "2": "팔꿈치를 직각(90°)으로 구부린 높이는 지팡이가 너무 짧아 체중 지지에 불리하다. 적절한 각도는 약 20~30° 굴곡이다.",
+        "3": "★ 지팡이 길이는 바닥면에서 대퇴골 대전자(둔부 옆 돌출부) 또는 둔부까지 맞추는 것이 표준이다. 이 길이에서 팔꿈치가 약 20~30° 구부러져 최적의 체중 지지와 균형이 이루어진다.",
+        "4": "서 있을 수 없는 대상자에게 네발 지팡이가 유용한 것은 사실이나, 이는 지팡이 종류 선택에 관한 설명이지 안전한 사용 방법이 아니다.",
+        "5": "불편한 쪽 발의 앞·옆 15cm 지점은 지팡이 끝의 위치 설명으로 사실에 해당하나, 질문은 '길이'를 묻고 있어 정답이 될 수 없다."
+      },
+      "vi": {
+        "1": "Kiểm tra vệ sinh thuộc về quản lý sạch sẽ, không liên quan trực tiếp đến phương pháp sử dụng gậy an toàn như độ dài hay chiều cao.",
+        "2": "Khi khuỷu tay gập vuông góc 90°, gậy quá ngắn và không hỗ trợ trọng lượng tốt. Góc thích hợp là khoảng 20–30°.",
+        "3": "★ Độ dài gậy phải được điều chỉnh từ mặt đất đến phần mấu chuyển lớn (xương đùi) hoặc đến phần mông. Ở độ dài này, khuỷu tay cong khoảng 20–30°, giúp chống đỡ trọng lượng và giữ thăng bằng tối ưu.",
+        "4": "Gậy bốn chân có ích với người không thể đứng, nhưng đây là giải thích về việc chọn loại gậy, không phải về cách sử dụng an toàn.",
+        "5": "Đặt đầu gậy cách chân bất tiện 15cm về phía trước và 15cm sang bên là mô tả vị trí đặt gậy, không phải câu trả lời đúng vì câu hỏi hỏi về 'độ dài' gậy."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "대전자", "def_vi": "Mấu chuyển lớn — phần nhô ra bên ngoài của xương đùi, dùng làm mốc đo độ dài gậy" },
+      { "term_ko": "네발 지팡이", "def_vi": "Gậy bốn chân — loại gậy có bốn điểm tựa, dùng cho người cần độ ổn định cao hơn" },
+      { "term_ko": "체중 지지", "def_vi": "Chống đỡ trọng lượng cơ thể — khả năng chịu lực của dụng cụ hỗ trợ đi lại" }
+    ]
+  },
+  {
+    "id": 1407,
+    "intent_ko": "보행기(보행보조도구)에 대한 올바른 설명을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn mô tả đúng về khung tập đi (dụng cụ hỗ trợ đi bộ)",
+    "choice_explanations": {
+      "ko": {
+        "1": "보행기는 실내뿐만 아니라 실외에서도 사용 가능하다.",
+        "2": "보행기는 네 개의 지지점을 가지므로 일반 지팡이보다 안전성이 높다.",
+        "3": "★ 보행기를 사용하는 대상자 옆에서 요양보호사가 항상 가까이 대기해야 낙상 등 응급 상황에 즉각 대응할 수 있어 안전을 확보할 수 있다.",
+        "4": "보행기는 앞쪽 지지를 돕는 도구로, 뒤로 넘어지는 것을 방지하는 기능은 없다.",
+        "5": "반신마비 대상자에게는 보행기보다 지팡이나 보조자 지지가 더 적합한 경우가 많다."
+      },
+      "vi": {
+        "1": "Khung tập đi có thể sử dụng cả trong nhà lẫn ngoài trời.",
+        "2": "Khung tập đi có bốn điểm tựa nên độ an toàn cao hơn gậy thông thường.",
+        "3": "★ Nhân viên chăm sóc phải luôn đứng gần người dùng khung tập đi để có thể ứng phó ngay khi xảy ra ngã hoặc tình huống khẩn cấp, đảm bảo an toàn cho đối tượng.",
+        "4": "Khung tập đi hỗ trợ chống đỡ phía trước, không có chức năng ngăn ngã về phía sau.",
+        "5": "Với người bị liệt nửa người, thường cần gậy hoặc người hỗ trợ hơn là khung tập đi."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "보행기", "def_vi": "Khung tập đi — dụng cụ hỗ trợ đi bộ có bốn chân, giúp người dùng giữ thăng bằng khi di chuyển" },
+      { "term_ko": "반신마비", "def_vi": "Liệt nửa người — tình trạng mất khả năng vận động ở một bên cơ thể do đột quỵ hoặc chấn thương" },
+      { "term_ko": "안전성", "def_vi": "Độ an toàn — mức độ đảm bảo không xảy ra tai nạn hay nguy hiểm" }
+    ]
+  },
+  {
+    "id": 1406,
+    "intent_ko": "복지용구 종류별 올바른 소독·관리 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn phương pháp khử trùng và quản lý đúng theo từng loại dụng cụ phúc lợi",
+    "choice_explanations": {
+      "ko": {
+        "1": "목욕의자는 플라스틱·금속 재질로 열탕소독 시 변형될 수 있어 부적절하다.",
+        "2": "수동침대는 크기가 크고 정밀 기계 부품이 있어 흐르는 물로 세척하기 어렵고 녹슬 위험이 있다.",
+        "3": "★ 휠체어는 전면 세척이 어려운 정밀 부품과 금속 재질이 혼재하므로, 소독용 알코올을 적신 천으로 표면을 닦는 방법이 가장 적합하고 안전하다.",
+        "4": "목욕리프트에 소독액이나 뜨거운 물을 직접 사용하면 전기 부품이나 기계 장치가 손상될 수 있다.",
+        "5": "성인용 보행기를 햇볕에 말리면 플라스틱 부품 변형이 생길 수 있으며, 소독 효과도 불충분하다."
+      },
+      "vi": {
+        "1": "Ghế tắm làm bằng nhựa/kim loại có thể bị biến dạng khi tiệt trùng bằng nước sôi, nên không phù hợp.",
+        "2": "Giường tay có bộ phận cơ khí tinh vi và kích thước lớn, khó rửa bằng nước chảy và dễ bị rỉ sét.",
+        "3": "★ Xe lăn có nhiều bộ phận kim loại và chi tiết cơ khí, nên lau bề mặt bằng vải thấm cồn sát khuẩn là phương pháp phù hợp và an toàn nhất.",
+        "4": "Dùng dung dịch khử trùng hoặc nước nóng trực tiếp lên thiết bị nâng tắm có thể làm hỏng linh kiện điện và cơ khí.",
+        "5": "Phơi nắng khung tập đi người lớn có thể làm biến dạng bộ phận nhựa và không đảm bảo khử trùng đầy đủ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "복지용구", "def_vi": "Dụng cụ phúc lợi — thiết bị hỗ trợ sinh hoạt dành cho người cao tuổi hoặc người khuyết tật" },
+      { "term_ko": "소독용 알코올", "def_vi": "Cồn sát khuẩn — dung dịch cồn dùng để tiêu diệt vi khuẩn trên bề mặt dụng cụ" },
+      { "term_ko": "열탕소독", "def_vi": "Tiệt trùng bằng nước sôi — phương pháp khử trùng bằng cách ngâm hoặc luộc trong nước sôi" }
+    ]
+  },
+  {
+    "id": 1405,
+    "intent_ko": "휠체어가 잘 굴러가지 않고 잠금장치가 고정되지 않을 때 우선 점검 부위를 묻는 문제",
+    "intent_vi": "Câu hỏi về bộ phận cần kiểm tra trước tiên khi xe lăn không lăn trơn và khóa không hoạt động",
+    "choice_explanations": {
+      "ko": {
+        "1": "앞바퀴는 방향 전환에 영향을 주지만, 잠금장치 불량과 직접적인 연관이 없다.",
+        "2": "받침쇠는 휠체어 골격의 일부로, 잠금장치 작동과는 관련이 없다.",
+        "3": "발 받침대는 탑승자의 발을 지지하는 부품으로, 이동성이나 잠금장치와 직접 관련이 없다.",
+        "4": "★ 타이어 공기압이 낮으면 바퀴가 변형되어 잘 굴러가지 않고, 잠금장치가 타이어에 밀착되지 못해 제대로 고정되지 않는다. 따라서 공기압을 먼저 점검해야 한다.",
+        "5": "바퀴 손잡이(핸드림)는 손으로 밀어 이동 시 사용하는 부품으로, 잠금장치 고정 문제와는 관련이 없다."
+      },
+      "vi": {
+        "1": "Bánh trước ảnh hưởng đến việc đổi hướng nhưng không liên quan trực tiếp đến lỗi khóa.",
+        "2": "Giá đỡ là bộ phận khung của xe lăn, không liên quan đến hoạt động của khóa.",
+        "3": "Bệ để chân là bộ phận đỡ chân người dùng, không liên quan trực tiếp đến di chuyển hay khóa.",
+        "4": "★ Khi áp suất lốp thấp, bánh xe bị biến dạng làm xe không lăn trơn, đồng thời khóa không bám sát lốp nên không giữ cố định được. Do đó cần kiểm tra áp suất lốp trước tiên.",
+        "5": "Vành tay (handrim) là bộ phận dùng để đẩy xe lăn bằng tay, không liên quan đến vấn đề khóa không hoạt động."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "타이어 공기압", "def_vi": "Áp suất lốp xe — áp lực không khí bên trong lốp bánh xe lăn, ảnh hưởng đến khả năng di chuyển và hoạt động của khóa" },
+      { "term_ko": "잠금장치", "def_vi": "Thiết bị khóa — cơ cấu giữ cố định bánh xe lăn để tránh xe di chuyển khi không cần thiết" },
+      { "term_ko": "받침쇠", "def_vi": "Giá đỡ — thanh kim loại cấu thành khung xương của xe lăn" }
+    ]
+  },
+  {
+    "id": 1404,
+    "intent_ko": "휠체어 관리 방법 중 올바른 것을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn phương pháp quản lý xe lăn đúng",
+    "choice_explanations": {
+      "ko": {
+        "1": "사용하지 않을 때 잠금장치를 풀어두면 휠체어가 저절로 움직여 낙상·사고 위험이 있다.",
+        "2": "뒷바퀴 공기압이 낮으면 타이어가 찌그러져 잠금장치가 오히려 제대로 걸리지 않는다.",
+        "3": "★ 뒷바퀴 공기압이 너무 높으면 타이어가 단단해져 외부 충격을 흡수하지 못하고 탑승자에게 그대로 전달된다. 적정 공기압 유지가 중요하다.",
+        "4": "엄지로 눌렀을 때 '약간 들어가는' 정도가 적정 공기압이다. 전혀 들어가지 않을 만큼 단단하면 과압 상태이다.",
+        "5": "보관 시에는 휠체어를 접어 공간을 절약하고 부품 변형을 방지하는 것이 권장된다."
+      },
+      "vi": {
+        "1": "Để khóa mở khi không sử dụng sẽ khiến xe lăn tự di chuyển, gây nguy cơ ngã và tai nạn.",
+        "2": "Áp suất lốp sau thấp làm lốp bẹp, khiến khóa không bám được vào lốp và không hoạt động đúng.",
+        "3": "★ Khi áp suất lốp sau quá cao, lốp cứng quá mức và không hấp thụ được chấn động từ bên ngoài, truyền toàn bộ lực va đập lên người ngồi. Vì vậy cần duy trì áp suất phù hợp.",
+        "4": "Áp suất phù hợp là khi dùng ngón cái ấn vào lốp thấy hơi lún nhẹ. Nếu hoàn toàn không lún tức là áp suất quá cao.",
+        "5": "Nên gấp xe lăn khi bảo quản để tiết kiệm không gian và tránh biến dạng các bộ phận."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "공기압", "def_vi": "Áp suất không khí (lốp) — mức áp lực không khí bên trong lốp bánh xe lăn" },
+      { "term_ko": "충격 흡수", "def_vi": "Hấp thụ chấn động — khả năng của lốp xe giảm thiểu lực va đập truyền lên người ngồi" }
+    ]
+  },
+  {
+    "id": 1403,
+    "intent_ko": "요실금 팬티의 올바른 사용 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi về cách sử dụng đúng quần lót dành cho người tiểu không tự chủ",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 요실금 팬티는 천 소재로 세탁 후 반복 사용이 가능하며, 일회용 기저귀와 달리 재사용 가능한 복지용구이다. 위생적으로 세탁·건조 후 재사용하는 것이 올바른 방법이다.",
+        "2": "소변이 묻은 팬티를 그냥 말려서 재사용하면 세균 번식·피부 염증 위험이 있어 위생상 부적절하다.",
+        "3": "요실금 팬티 위에 일반 팬티를 덧입히면 흡수 기능이 방해되고 피부 마찰이 증가하여 바람직하지 않다.",
+        "4": "신체 치수에 맞는 것을 사용해야 하며, 한두 치수 큰 것을 쓰면 흘림이 새어나오고 착용감이 떨어진다.",
+        "5": "흘림량이 500mL 이상이면 요실금 팬티보다 흡수력이 높은 일회용 기저귀가 적합하다. 요실금 팬티는 흘림량이 적은 경우에 사용한다."
+      },
+      "vi": {
+        "1": "★ Quần lót dành cho người tiểu không tự chủ làm bằng vải có thể giặt và tái sử dụng nhiều lần. Khác với tã dùng một lần, đây là dụng cụ phúc lợi có thể sử dụng lại sau khi giặt sạch và phơi khô đúng cách.",
+        "2": "Phơi khô quần lót dính nước tiểu mà không giặt sẽ tạo điều kiện vi khuẩn sinh sôi và gây viêm da, không đảm bảo vệ sinh.",
+        "3": "Mặc quần thường bên ngoài quần lót tiểu không tự chủ sẽ cản trở khả năng thấm hút và tăng ma sát da, không phù hợp.",
+        "4": "Cần chọn đúng kích cỡ phù hợp với cơ thể; mặc quần to hơn một hoặc hai cỡ sẽ làm nước tiểu rò rỉ ra ngoài và giảm độ thoải mái.",
+        "5": "Khi lượng tiểu từ 500mL trở lên, nên dùng tã dùng một lần có khả năng thấm hút cao hơn. Quần lót tiểu không tự chủ chỉ dùng khi lượng tiểu ít."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "요실금", "def_vi": "Tiểu không tự chủ — tình trạng không kiểm soát được việc đi tiểu, nước tiểu tự rò rỉ ra ngoài" },
+      { "term_ko": "흘림량", "def_vi": "Lượng tiểu rò rỉ — lượng nước tiểu thoát ra ngoài mà người dùng không kiểm soát được" },
+      { "term_ko": "재사용", "def_vi": "Tái sử dụng — dùng lại sản phẩm sau khi làm sạch, áp dụng cho các vật dụng có thể giặt được" }
+    ]
+  },
+  {
+    "id": 1402,
+    "intent_ko": "간이변기(이동식 변기)를 이용한 침상 배설 보조 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về cách hỗ trợ đại tiểu tiện trên giường bằng bồn cầu di động",
+    "choice_explanations": {
+      "ko": {
+        "1": "거동이 불편한 대상자가 스스로 변기에 앉는 것은 어렵고 위험할 수 있어, 요양보호사의 도움이 필요하다.",
+        "2": "팔걸이와 등받이에 기댄 자세는 자연스러운 배변 자세를 돕지만, 이는 사용 자세에 관한 설명이다.",
+        "3": "변의가 불확실한 대상자를 장시간 변기에 앉혀 두면 피부 손상 및 낙상 위험이 있어 부적절하다.",
+        "4": "★ 열로 소독할 수 있는 재질의 간이변기를 사용해야 사용 후 위생적인 소독이 가능하다. 배설 보조에서 감염 예방을 위한 소독 가능 여부는 용구 선택의 핵심 기준이다.",
+        "5": "협조가 어려운 대상자를 옆으로 누인 채 변기를 사용하면 변기가 고정되지 않아 오염·낙상 위험이 크다."
+      },
+      "vi": {
+        "1": "Người khó vận động khó tự ngồi lên bồn cầu một mình và có thể nguy hiểm; cần sự hỗ trợ của nhân viên chăm sóc.",
+        "2": "Tư thế tựa vào tay vịn và lưng tựa giúp đại tiện tự nhiên hơn, nhưng đây là giải thích về tư thế sử dụng.",
+        "3": "Để người chưa có nhu cầu rõ ràng ngồi trên bồn cầu lâu có thể gây tổn thương da và nguy cơ ngã.",
+        "4": "★ Nên dùng bồn cầu di động có thể khử trùng bằng nhiệt để đảm bảo vệ sinh sau khi sử dụng. Khả năng khử trùng là tiêu chí quan trọng khi chọn dụng cụ hỗ trợ đại tiểu tiện nhằm phòng ngừa nhiễm khuẩn.",
+        "5": "Để người không thể phối hợp nằm nghiêng dùng bồn cầu sẽ khiến bồn không cố định, dễ gây ô nhiễm và ngã."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "간이변기", "def_vi": "Bồn cầu di động — dụng cụ vệ sinh di chuyển được, dùng cho người không thể đến nhà vệ sinh" },
+      { "term_ko": "변의", "def_vi": "Nhu cầu đại tiện — cảm giác muốn đi vệ sinh (đại tiện hoặc tiểu tiện)" },
+      { "term_ko": "침상 배설", "def_vi": "Đại tiểu tiện trên giường — hoạt động vệ sinh được thực hiện ngay tại giường cho người không thể di chuyển" }
+    ]
+  },
+  {
+    "id": 1401,
+    "intent_ko": "화장실 이동이 어려운 대상자에게 적합한 이동변기의 조건을 고르는 문제",
+    "intent_vi": "Câu hỏi về điều kiện phù hợp của bồn cầu di động cho người khó đi lại nhà vệ sinh",
+    "choice_explanations": {
+      "ko": {
+        "1": "팔걸이와 등받이가 없으면 앉고 일어설 때 지지대가 없어 낙상 위험이 높아 적절하지 않다.",
+        "2": "바퀴가 달린 이동변기는 이동성은 좋으나, 배설 중 미끄러지지 않도록 잠금이 필수이며 이것이 주된 조건은 아니다.",
+        "3": "양변기 위에 올려놓는 형태는 고정이 불안정하여 낙상 위험이 있다.",
+        "4": "본체와 변기통이 일체형이면 분리 세척이 어려워 위생 관리에 불리할 수 있다.",
+        "5": "★ 뜨거운 물로 세척·소독이 가능한 이동변기는 매 사용 후 위생적으로 관리할 수 있어 감염 예방에 가장 중요한 조건이다. 배설 보조 용구는 위생 관리가 최우선이다."
+      },
+      "vi": {
+        "1": "Không có tay vịn và lưng tựa khiến người dùng không có điểm bám khi ngồi xuống và đứng lên, tăng nguy cơ ngã.",
+        "2": "Bồn cầu có bánh xe giúp di chuyển dễ hơn nhưng cần khóa bánh khi dùng để tránh trượt; đây không phải điều kiện chính.",
+        "3": "Loại đặt lên trên bệ xí bệt không được cố định chắc chắn, dễ bị trượt gây ngã.",
+        "4": "Loại thân và bình một khối khó tháo rời để vệ sinh, bất lợi cho quản lý vệ sinh.",
+        "5": "★ Bồn cầu di động có thể rửa và khử trùng bằng nước nóng sau mỗi lần sử dụng là điều kiện quan trọng nhất để phòng ngừa nhiễm khuẩn. Vệ sinh là ưu tiên hàng đầu với dụng cụ hỗ trợ đại tiểu tiện."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "이동변기", "def_vi": "Bồn cầu di động — dụng cụ vệ sinh di chuyển được, dùng tại phòng cho người không thể đến nhà vệ sinh" },
+      { "term_ko": "일체형", "def_vi": "Loại nguyên khối (liền thân) — thiết kế thân và bình chứa gắn liền, không tháo rời được" },
+      { "term_ko": "위생 관리", "def_vi": "Quản lý vệ sinh — quy trình làm sạch và khử trùng dụng cụ để phòng ngừa nhiễm khuẩn" }
+    ]
+  },
+  {
+    "id": 1400,
+    "intent_ko": "노인장기요양보험 급여로 대여 가능한 복지용구를 고르는 문제",
+    "intent_vi": "Câu hỏi về dụng cụ phúc lợi được cho thuê theo bảo hiểm chăm sóc dài hạn cho người cao tuổi",
+    "choice_explanations": {
+      "ko": {
+        "1": "이동변기는 노인장기요양보험 급여로 구입 대상에 해당한다(대여 아님).",
+        "2": "목욕의자는 급여로 구입 가능한 품목이다.",
+        "3": "안전손잡이는 급여로 구입 가능한 품목이다.",
+        "4": "성인용 보행기는 급여로 대여 가능한 품목이다.",
+        "5": "★ 욕창예방 매트리스는 노인장기요양보험 급여 중 '대여' 품목에 해당한다. 전동침대, 수동침대, 욕창예방 매트리스 등 고가의 대형 용구는 대여 방식으로 제공된다."
+      },
+      "vi": {
+        "1": "Bồn cầu di động thuộc danh mục được mua (không phải thuê) theo bảo hiểm chăm sóc dài hạn.",
+        "2": "Ghế tắm thuộc danh mục được mua theo bảo hiểm.",
+        "3": "Tay vịn an toàn thuộc danh mục được mua theo bảo hiểm.",
+        "4": "Khung tập đi người lớn thuộc danh mục được thuê theo bảo hiểm.",
+        "5": "★ Đệm phòng ngừa loét áp lực thuộc danh mục 'cho thuê' theo bảo hiểm chăm sóc dài hạn. Các thiết bị lớn, giá trị cao như giường điện, giường tay, đệm phòng loét đều được cung cấp dưới hình thức cho thuê."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "노인장기요양보험", "def_vi": "Bảo hiểm chăm sóc dài hạn cho người cao tuổi — chế độ bảo hiểm nhà nước hỗ trợ chi phí chăm sóc người già và người khuyết tật nặng tại Hàn Quốc" },
+      { "term_ko": "욕창예방 매트리스", "def_vi": "Đệm phòng ngừa loét áp lực — đệm chuyên dụng giúp phân tán áp lực, ngăn ngừa vết loét cho người nằm lâu" },
+      { "term_ko": "급여 대여", "def_vi": "Cho thuê theo chế độ bảo hiểm — hình thức cung cấp dụng cụ phúc lợi thông qua hợp đồng thuê được bảo hiểm chi trả" }
+    ]
+  },
+  {
+    "id": 1399,
+    "intent_ko": "노인장기요양보험 급여로 대여 가능한 복지용구를 고르는 문제",
+    "intent_vi": "Câu hỏi về dụng cụ phúc lợi được cho thuê theo bảo hiểm chăm sóc dài hạn cho người cao tuổi",
+    "choice_explanations": {
+      "ko": {
+        "1": "지팡이는 개인 구매 품목으로, 노인장기요양보험 대여 대상이 아니다.",
+        "2": "간이변기는 급여 구입 대상 품목이지 대여 품목이 아니다.",
+        "3": "안전손잡이는 급여 구입 품목에 해당하며, 대여 품목은 아니다.",
+        "4": "★ 수동 휠체어는 노인장기요양보험 급여를 통해 대여할 수 있는 대표적인 품목이다. 고가·대형 이동 보조 용구는 대여 방식으로 제공된다.",
+        "5": "욕창예방 방석은 급여 구입 대상 품목이며, 욕창예방 매트리스(대형)가 대여 품목에 해당한다."
+      },
+      "vi": {
+        "1": "Gậy là mặt hàng mua cá nhân, không thuộc danh mục cho thuê của bảo hiểm.",
+        "2": "Bồn cầu đơn giản thuộc danh mục được mua theo bảo hiểm, không phải danh mục cho thuê.",
+        "3": "Tay vịn an toàn là mặt hàng được mua theo bảo hiểm, không phải cho thuê.",
+        "4": "★ Xe lăn tay là mặt hàng tiêu biểu có thể thuê theo bảo hiểm chăm sóc dài hạn cho người cao tuổi. Các thiết bị hỗ trợ di chuyển lớn, giá trị cao được cung cấp dưới hình thức cho thuê.",
+        "5": "Đệm phòng loét (nhỏ) thuộc danh mục mua theo bảo hiểm; đệm phòng loét cỡ lớn (mattress) mới thuộc danh mục cho thuê."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "수동 휠체어", "def_vi": "Xe lăn tay — xe lăn do người dùng hoặc người đẩy tự vận hành bằng tay, không dùng điện" },
+      { "term_ko": "욕창예방 방석", "def_vi": "Đệm phòng ngừa loét (nhỏ) — đệm ngồi chuyên dụng giúp phân tán áp lực, phân biệt với đệm nằm (mattress) cỡ lớn" }
+    ]
+  },
+  {
+    "id": 1398,
+    "intent_ko": "노인장기요양보험 급여로 대여 가능한 복지용구를 고르는 문제",
+    "intent_vi": "Câu hỏi về dụng cụ phúc lợi được cho thuê theo bảo hiểm chăm sóc dài hạn cho người cao tuổi",
+    "choice_explanations": {
+      "ko": {
+        "1": "목욕의자는 급여로 구입 가능한 품목이며, 대여 품목이 아니다.",
+        "2": "★ 배회감지기는 치매 노인의 안전을 위해 노인장기요양보험 급여로 대여할 수 있는 복지용구이다. 분실·파손 위험이 있는 전자 기기 특성상 대여 방식으로 제공된다.",
+        "3": "지팡이는 개인 구매 품목으로 급여 대여 대상이 아니다.",
+        "4": "이동변기는 급여 구입 품목이며 대여 대상이 아니다.",
+        "5": "성인용 비행기는 요양 급여와 전혀 무관한 항목이다."
+      },
+      "vi": {
+        "1": "Ghế tắm thuộc danh mục mua theo bảo hiểm, không phải cho thuê.",
+        "2": "★ Thiết bị phát hiện lang thang là dụng cụ phúc lợi được cho thuê theo bảo hiểm chăm sóc dài hạn nhằm đảm bảo an toàn cho người cao tuổi bị sa sút trí tuệ. Do là thiết bị điện tử dễ mất hoặc hỏng nên được cung cấp dưới hình thức cho thuê.",
+        "3": "Gậy là mặt hàng mua cá nhân, không thuộc danh mục cho thuê.",
+        "4": "Bồn cầu di động thuộc danh mục mua theo bảo hiểm, không phải cho thuê.",
+        "5": "Máy bay người lớn không liên quan đến bảo hiểm chăm sóc — đây là lựa chọn nhiễu."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "배회감지기", "def_vi": "Thiết bị phát hiện lang thang — thiết bị điện tử theo dõi vị trí, cảnh báo khi người cao tuổi bị sa sút trí tuệ đi ra khỏi vùng an toàn" },
+      { "term_ko": "치매", "def_vi": "Sa sút trí tuệ (mất trí nhớ) — hội chứng suy giảm nhận thức, thường gặp ở người cao tuổi" }
+    ]
+  },
+  {
+    "id": 1397,
+    "intent_ko": "노인장기요양보험 급여로 구입 가능한 복지용구를 고르는 문제",
+    "intent_vi": "Câu hỏi về dụng cụ phúc lợi có thể mua theo bảo hiểm chăm sóc dài hạn cho người cao tuổi",
+    "choice_explanations": {
+      "ko": {
+        "1": "전동침대는 급여로 대여 가능한 품목이며, 구입 품목이 아니다.",
+        "2": "수동침대도 급여로 대여 가능한 품목이다.",
+        "3": "★ 요실금팬티는 소모성 용품으로 노인장기요양보험 급여로 구입할 수 있는 대표적인 품목이다. 위생 소모품은 대여가 아닌 구입 방식으로 지원된다.",
+        "4": "이동욕조는 급여로 대여 가능한 품목이다.",
+        "5": "배회감지기는 급여로 대여 가능한 품목이며, 구입 품목에 해당하지 않는다."
+      },
+      "vi": {
+        "1": "Giường điện thuộc danh mục cho thuê theo bảo hiểm, không phải mua.",
+        "2": "Giường tay cũng thuộc danh mục cho thuê theo bảo hiểm.",
+        "3": "★ Quần lót tiểu không tự chủ là vật tư tiêu hao, là mặt hàng tiêu biểu có thể mua theo bảo hiểm chăm sóc dài hạn. Vật tư vệ sinh dùng một lần được hỗ trợ theo hình thức mua, không phải thuê.",
+        "4": "Bồn tắm di động thuộc danh mục cho thuê theo bảo hiểm.",
+        "5": "Thiết bị phát hiện lang thang thuộc danh mục cho thuê theo bảo hiểm, không phải danh mục mua."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "소모성 용품", "def_vi": "Vật tư tiêu hao — sản phẩm dùng một lần hoặc số lần hữu hạn, được hỗ trợ mua theo bảo hiểm" },
+      { "term_ko": "이동욕조", "def_vi": "Bồn tắm di động — bồn tắm có thể di chuyển, dùng để tắm cho người không thể đến phòng tắm" }
+    ]
+  },
+  {
+    "id": 1396,
+    "intent_ko": "노인장기요양보험 급여로 구입 가능한 복지용구를 고르는 문제",
+    "intent_vi": "Câu hỏi về dụng cụ phúc lợi có thể mua theo bảo hiểm chăm sóc dài hạn cho người cao tuổi",
+    "choice_explanations": {
+      "ko": {
+        "1": "수동 휠체어는 급여로 대여 가능한 품목이며, 구입 품목이 아니다.",
+        "2": "목욕리프트는 급여로 대여 가능한 품목이다.",
+        "3": "백회감지기(배회감지기)는 대여 품목에 해당한다.",
+        "4": "이동욕조는 급여로 대여 가능한 품목이다.",
+        "5": "★ 안전손잡이는 노인장기요양보험 급여로 구입할 수 있는 품목이다. 설치형 고정 보조용구(안전손잡이, 미끄럼방지 용품 등)는 구입 방식으로 지원된다."
+      },
+      "vi": {
+        "1": "Xe lăn tay thuộc danh mục cho thuê theo bảo hiểm, không phải mua.",
+        "2": "Thiết bị nâng tắm thuộc danh mục cho thuê theo bảo hiểm.",
+        "3": "Thiết bị phát hiện lang thang thuộc danh mục cho thuê.",
+        "4": "Bồn tắm di động thuộc danh mục cho thuê theo bảo hiểm.",
+        "5": "★ Tay vịn an toàn là mặt hàng có thể mua theo bảo hiểm chăm sóc dài hạn. Các dụng cụ hỗ trợ cố định dạng lắp đặt (tay vịn an toàn, miếng chống trượt...) được hỗ trợ theo hình thức mua."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "안전손잡이", "def_vi": "Tay vịn an toàn — thanh vịn cố định vào tường hoặc sàn, giúp người cao tuổi di chuyển an toàn tránh ngã" },
+      { "term_ko": "목욕리프트", "def_vi": "Thiết bị nâng tắm — thiết bị cơ học nâng hạ người dùng vào/ra bồn tắm một cách an toàn" }
+    ]
+  },
+  {
+    "id": 1395,
+    "intent_ko": "오른쪽 다리가 불편한 대상자의 올바른 보행기 사용 순서를 고르는 문제",
+    "intent_vi": "Câu hỏi về thứ tự sử dụng khung tập đi đúng cho người bất tiện chân phải",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 오른쪽 다리가 불편한 경우, 보행기와 불편한 오른쪽 다리를 동시에 앞으로 이동한 뒤 건강한 왼쪽 다리를 따라오게 한다. 보행기가 불편한 다리를 지지하는 역할을 하기 때문이다.",
+        "2": "보행기와 건강한 왼쪽 다리를 함께 이동하면 불편한 오른쪽 다리를 지지하지 못해 불안정하다.",
+        "3": "보행기 - 오른쪽 다리 순서는 순차 이동으로 지지가 분리되어 비효율적이다.",
+        "4": "보행기 - 왼쪽 다리 순서는 건강한 쪽을 중간에 배치해 균형이 잘못된 방법이다.",
+        "5": "오른쪽 다리를 먼저 이동하고 보행기를 나중에 두면 불편한 다리가 지지 없이 먼저 움직이게 되어 위험하다."
+      },
+      "vi": {
+        "1": "★ Khi chân phải bất tiện, đồng thời di chuyển khung tập đi và chân phải (chân yếu) về phía trước, sau đó chân trái (chân khỏe) bước theo. Khung tập đi đóng vai trò chống đỡ cho chân yếu trong lúc di chuyển.",
+        "2": "Di chuyển khung tập đi cùng với chân trái (chân khỏe) khiến chân phải yếu không được hỗ trợ, gây mất ổn định.",
+        "3": "Thứ tự khung tập đi rồi chân phải là di chuyển tuần tự, tách rời điểm tựa nên không hiệu quả.",
+        "4": "Thứ tự khung tập đi rồi chân trái đặt chân khỏe ở giữa, tạo mất cân bằng.",
+        "5": "Di chuyển chân phải trước rồi mới đến khung tập đi khiến chân yếu bước mà không có điểm tựa, rất nguy hiểm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "보행기", "def_vi": "Khung tập đi — dụng cụ hỗ trợ đi lại dạng khung có bốn chân, người dùng cầm và đẩy về phía trước khi bước" }
+    ]
+  },
+  {
+    "id": 1394,
+    "intent_ko": "양쪽 다리가 약한 대상자의 올바른 보행기 사용 순서를 고르는 문제",
+    "intent_vi": "Câu hỏi về thứ tự sử dụng khung tập đi đúng cho người yếu cả hai chân",
+    "choice_explanations": {
+      "ko": {
+        "1": "다리를 먼저 이동하고 보행기를 나중에 사용하면 이동 중 지지대가 없어 균형을 잃을 위험이 크다.",
+        "2": "마찬가지로 다리를 먼저 내딛고 보행기가 뒤에 오는 순서는 지지 없이 이동하게 되어 위험하다.",
+        "3": "★ 양쪽 다리가 모두 약한 경우, 보행기를 먼저 앞으로 이동시킨 뒤 오른발, 왼발 순으로 보행기 안쪽으로 이동한다. 보행기가 항상 먼저 지지점을 확보해야 안전하다.",
+        "4": "양쪽 발을 동시에 이동하면 두 발이 모두 공중에 뜨는 순간이 생겨 균형을 잃기 쉽다.",
+        "5": "두 발을 먼저 이동하고 보행기를 뒤에 두면 지지대 없이 이동하게 되어 가장 위험하다."
+      },
+      "vi": {
+        "1": "Di chuyển chân trước rồi mới dùng khung tập đi sau sẽ không có điểm tựa khi di chuyển, dễ mất thăng bằng.",
+        "2": "Tương tự, bước chân trước rồi mới đẩy khung tập đi sau cũng nguy hiểm vì không có điểm tựa.",
+        "3": "★ Khi cả hai chân đều yếu, đẩy khung tập đi về phía trước trước, sau đó bước chân phải rồi chân trái vào phía trong khung. Khung tập đi phải luôn đảm bảo điểm tựa trước mới an toàn.",
+        "4": "Di chuyển cả hai chân cùng lúc tạo ra khoảnh khắc không chân nào tiếp đất, rất dễ mất thăng bằng.",
+        "5": "Di chuyển cả hai chân trước rồi mới đẩy khung tập đi là cách nguy hiểm nhất vì hoàn toàn không có điểm tựa."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "보행기 사용 순서", "def_vi": "Thứ tự sử dụng khung tập đi — quy trình đúng: đẩy khung trước, rồi bước từng chân theo sau" }
+    ]
+  },
+  {
+    "id": 1393,
+    "intent_ko": "오른쪽 다리가 불편한 대상자가 계단을 내려갈 때 지팡이 사용 순서를 고르는 문제",
+    "intent_vi": "Câu hỏi về thứ tự dùng gậy khi đi xuống cầu thang cho người bất tiện chân phải",
+    "choice_explanations": {
+      "ko": {
+        "1": "건강한 왼쪽 다리를 먼저 내리면 불편한 오른쪽 다리와 지팡이가 지지 없이 남겨져 위험하다.",
+        "2": "다리를 먼저 내리고 지팡이를 마지막에 사용하면 계단 하강 시 지지대가 없어 불안정하다.",
+        "3": "불편한 오른쪽 다리를 먼저 내리는 것은 지지 없이 약한 다리가 먼저 내려가므로 위험하다.",
+        "4": "지팡이를 먼저 사용하는 것은 맞지만, 왼쪽(건강한) 다리가 중간에 오는 순서는 불편한 다리에 지지 없이 내려가게 한다.",
+        "5": "★ 계단을 내려갈 때는 지팡이를 먼저 한 단계 아래에 놓아 지지점을 확보하고, 불편한 오른쪽 다리를 내린 뒤 건강한 왼쪽 다리가 따라 내려온다. '내려갈 때는 나쁜 쪽 먼저'가 원칙이다."
+      },
+      "vi": {
+        "1": "Bước chân trái (chân khỏe) xuống trước khiến chân phải yếu và gậy không có điểm tựa, rất nguy hiểm.",
+        "2": "Bước chân trước rồi mới dùng gậy sau cùng sẽ không có điểm tựa khi xuống cầu thang.",
+        "3": "Bước chân phải yếu xuống trước mà không có điểm tựa từ gậy là nguy hiểm.",
+        "4": "Dùng gậy trước là đúng, nhưng đặt chân trái (khỏe) ở giữa khiến chân yếu xuống thiếu hỗ trợ.",
+        "5": "★ Khi đi xuống cầu thang: đặt gậy xuống bậc dưới trước để tạo điểm tựa, rồi bước chân phải (chân yếu) xuống, cuối cùng chân trái (chân khỏe) theo sau. Nguyên tắc: 'xuống thang — chân yếu trước'."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "계단 하강 원칙", "def_vi": "Nguyên tắc xuống cầu thang — khi xuống: gậy trước → chân yếu → chân khỏe; khi lên: gậy trước → chân khỏe → chân yếu" }
+    ]
+  },
+  {
+    "id": 1392,
+    "intent_ko": "오른쪽 편마비 대상자가 평지를 이동할 때 지팡이 사용 순서를 고르는 문제",
+    "intent_vi": "Câu hỏi về thứ tự dùng gậy khi đi trên mặt phẳng cho người liệt nửa người phải",
+    "choice_explanations": {
+      "ko": {
+        "1": "지팡이 - 왼쪽(건강한) 다리 - 오른쪽(불편한) 다리 순서는 불편한 다리가 마지막에 오는 잘못된 방법이다.",
+        "2": "★ 오른쪽 편마비 대상자는 건강한 왼손으로 지팡이를 잡고, 지팡이와 불편한 오른쪽 다리를 동시에 앞으로 이동시킨 뒤, 건강한 왼쪽 다리를 따라오게 한다. 지팡이가 마비측 다리를 보완하는 역할을 한다.",
+        "3": "왼쪽(건강한) 다리를 먼저 이동하면 지팡이의 지지가 마비측 오른쪽 다리에 전달되지 않아 위험하다.",
+        "4": "지팡이 없이 오른쪽과 왼쪽 다리만 이동하는 순서는 편마비 대상자에게 맞지 않는다.",
+        "5": "오른쪽(불편한) 다리를 먼저 이동하고 지팡이가 나중에 오면 이동 순간 지지대가 없어 낙상 위험이 있다."
+      },
+      "vi": {
+        "1": "Thứ tự gậy → chân trái (khỏe) → chân phải (yếu) khiến chân yếu phải bước cuối cùng mà không có hỗ trợ đầy đủ.",
+        "2": "★ Người liệt nửa người phải cầm gậy bằng tay trái (tay khỏe), đồng thời di chuyển gậy và chân phải (chân yếu) về phía trước, sau đó chân trái (chân khỏe) bước theo. Gậy bù đắp cho chức năng của chân bên liệt.",
+        "3": "Bước chân trái (khỏe) trước làm gậy không hỗ trợ kịp thời cho chân phải yếu, gây mất an toàn.",
+        "4": "Thứ tự chỉ có hai chân mà không có gậy không phù hợp cho người liệt nửa người.",
+        "5": "Di chuyển chân phải yếu trước rồi mới dùng gậy sau tạo khoảnh khắc không có điểm tựa, nguy cơ ngã."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "편마비", "def_vi": "Liệt nửa người — tình trạng mất hoặc giảm chức năng vận động ở một bên cơ thể, thường do đột quỵ" },
+      { "term_ko": "평지 보행", "def_vi": "Đi trên mặt phẳng — di chuyển trên nền đất bằng phẳng, không có bậc thang hay dốc" }
+    ]
+  },
+  {
+    "id": 1391,
+    "intent_ko": "왼쪽 편마비 대상자가 지팡이로 버스에 탑승할 때 올바른 순서를 고르는 문제",
+    "intent_vi": "Câu hỏi về thứ tự dùng gậy khi lên xe buýt cho người liệt nửa người trái",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 왼쪽 편마비 대상자는 오른손으로 지팡이를 잡고, 지팡이를 버스 발판에 먼저 올린 후 건강한 오른발로 올라가고, 이어서 불편한 왼발을 올린다. 버스 탑승(올라가기)은 '건강한 쪽 먼저'가 원칙이다.",
+        "2": "불편한 왼발로 먼저 올라가면 지지력이 부족하여 낙상 위험이 크다.",
+        "3": "왼발을 먼저 올리고 지팡이를 중간에 두면 균형을 잃을 위험이 있다.",
+        "4": "오른발을 먼저 올리는 것은 맞지만, 지팡이 위치가 마지막이 되어 지지대 없이 탑승하게 된다.",
+        "5": "지팡이를 가장 마지막에 사용하면 탑승 내내 지지가 없어 안정성이 크게 떨어진다."
+      },
+      "vi": {
+        "1": "★ Người liệt nửa người trái cầm gậy bằng tay phải, đặt gậy lên bậc xe buýt trước, bước chân phải (chân khỏe) lên trước, rồi bước chân trái (chân yếu) theo sau. Nguyên tắc lên xe/cầu thang: 'chân khỏe lên trước'.",
+        "2": "Bước chân trái (chân yếu) lên trước khi thiếu điểm tựa sẽ có nguy cơ ngã cao.",
+        "3": "Bước chân trái lên trước rồi đặt gậy ở giữa có nguy cơ mất thăng bằng.",
+        "4": "Bước chân phải lên trước là đúng nhưng gậy ở cuối cùng khiến toàn bộ quá trình lên xe không có điểm tựa.",
+        "5": "Dùng gậy cuối cùng làm mất hoàn toàn điểm tựa trong suốt quá trình lên xe, rất kém an toàn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "탑승 원칙", "def_vi": "Nguyên tắc lên phương tiện/cầu thang — lên: chân khỏe trước; xuống: chân yếu trước" },
+      { "term_ko": "편마비 보행 보조", "def_vi": "Hỗ trợ đi lại cho người liệt nửa người — kỹ thuật dùng gậy ở phía đối diện với bên liệt để bù đắp chức năng chân yếu" }
+    ]
+  },
+  {
+    "id": 1390,
+    "intent_ko": "왼쪽 편마비 대상자가 지팡이 없이 계단을 올라갈 때 올바른 순서를 고르는 문제",
+    "intent_vi": "Câu hỏi về thứ tự đúng khi người liệt nửa người trái leo cầu thang không dùng gậy",
+    "choice_explanations": {
+      "ko": {
+        "1": "오른쪽(건강한) 다리를 먼저 올리는 것은 계단 손잡이 없이 시작하면 지지가 없어 불안전하다.",
+        "2": "오른쪽 다리를 올린 후 계단 손잡이를 잡는 순서는 지지점을 늦게 확보하여 불안정하다.",
+        "3": "왼쪽(불편한) 다리를 먼저 올리면 약한 다리에 부담을 주어 낙상 위험이 있다.",
+        "4": "★ 지팡이 없이 계단을 오를 때는 계단 손잡이를 먼저 잡아 안전한 지지점을 확보하고, 건강한 오른쪽 다리를 올린 후 불편한 왼쪽 다리를 올린다. '올라갈 때는 건강한 쪽 먼저'가 원칙이다.",
+        "5": "손잡이를 잡고 불편한 왼쪽 다리를 먼저 올리면 약한 다리에 체중 부담이 집중되어 위험하다."
+      },
+      "vi": {
+        "1": "Bước chân phải (khỏe) lên mà không giữ tay vịn trước sẽ không có điểm tựa, thiếu an toàn.",
+        "2": "Bước chân phải lên trước rồi mới giữ tay vịn là xác lập điểm tựa quá muộn, không ổn định.",
+        "3": "Bước chân trái (yếu) lên trước tạo áp lực lên chân yếu, nguy cơ ngã.",
+        "4": "★ Khi leo cầu thang không dùng gậy: trước tiên nắm tay vịn cầu thang để có điểm tựa vững, rồi bước chân phải (khỏe) lên, cuối cùng chân trái (yếu) theo sau. Nguyên tắc: 'lên cầu thang — chân khỏe trước'.",
+        "5": "Giữ tay vịn rồi bước chân trái (yếu) lên trước tập trung toàn bộ trọng lượng vào chân yếu, rất nguy hiểm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "계단 손잡이", "def_vi": "Tay vịn cầu thang — thanh vịn dọc theo cầu thang, giúp giữ thăng bằng khi lên/xuống" },
+      { "term_ko": "계단 오르기 원칙", "def_vi": "Nguyên tắc leo cầu thang — lên: tay vịn/gậy trước → chân khỏe → chân yếu; xuống: ngược lại" }
+    ]
+  },
+  {
+    "id": 1389,
+    "intent_ko": "왼쪽 편마비 대상자의 지팡이 보행을 돕는 올바른 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi về cách hỗ trợ đúng khi người liệt nửa người trái đi bộ bằng gậy",
+    "choice_explanations": {
+      "ko": {
+        "1": "왼쪽 편마비 환자는 왼손을 사용하기 어려우므로 건강한 오른손으로 지팡이를 잡아야 한다.",
+        "2": "★ 왼쪽 편마비 대상자의 경우, 오른손(건강한 쪽)으로 지팡이를 잡고 지팡이를 먼저 앞에 놓은 뒤 불편한 왼쪽 발부터 이동한다. 지팡이가 마비측 다리와 함께 이동하여 지지 역할을 하는 것이 핵심 원리이다.",
+        "3": "요양보호사는 대상자의 마비측(왼쪽) 뒤쪽에서 비스듬히 위치하며 대상자 속도에 맞추어야 한다. 20cm는 너무 가깝거나 멀 수 있으며 마비측 뒤에서 지원하는 것이 원칙이다.",
+        "4": "불편한 왼쪽 발의 앞 15cm, 옆 15cm 지점은 건강한 쪽 발의 설명이 아니라 지팡이 끝의 위치로, 이 경우 오른쪽 발(건강한 쪽)의 앞·옆 15cm가 정확하다.",
+        "5": "지팡이 쪽에 건강한 발을 놓고 불편한 발을 축으로 방향을 바꾸면 마비측에 과도한 부담이 가해진다."
+      },
+      "vi": {
+        "1": "Người liệt nửa người trái khó sử dụng tay trái, nên phải cầm gậy bằng tay phải (tay khỏe).",
+        "2": "★ Với người liệt nửa người trái: cầm gậy bằng tay phải (khỏe), đặt gậy ra phía trước trước, rồi bước chân trái (yếu) về phía gậy. Gậy và chân bên liệt cùng di chuyển để hỗ trợ lẫn nhau — đây là nguyên tắc cốt lõi.",
+        "3": "Nhân viên chăm sóc đứng chếch phía sau bên liệt (bên trái) của người dùng và đi theo tốc độ của họ. Vị trí và khoảng cách cần điều chỉnh theo thực tế.",
+        "4": "Đặt đầu gậy cách 15cm phía trước và 15cm sang bên là tính từ chân khỏe (chân phải), không phải chân trái.",
+        "5": "Đặt chân khỏe bên gậy rồi xoay người lấy chân yếu làm trục sẽ gây áp lực quá lớn lên bên liệt."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "마비측", "def_vi": "Bên liệt — phía cơ thể bị mất hoặc giảm chức năng vận động" },
+      { "term_ko": "지팡이 보행 원리", "def_vi": "Nguyên lý đi bộ bằng gậy — gậy và chân bên liệt cùng di chuyển trước, chân khỏe bước theo sau" }
+    ]
+  },
+  {
+    "id": 1388,
+    "intent_ko": "자동차에 앉아있는 편마비 대상자를 휠체어로 옮기는 올바른 순서를 고르는 문제",
+    "intent_vi": "Câu hỏi về thứ tự đúng khi chuyển người liệt nửa người từ ô tô sang xe lăn",
+    "choice_explanations": {
+      "ko": {
+        "3": "★ 올바른 순서: (나) 휠체어를 자동차와 평행하게 놓고 잠금장치 잠금·발 받침대 접기 → (가) 안전벨트 해제 → (라) 대상자 다리를 한쪽씩 자동차 밖으로 내리기 → (다) 두 발이 바닥을 지지하게 하기 → (마) 마비된 쪽 무릎을 지지하며 몸을 돌려 휠체어에 앉히기. 휠체어 준비(나)가 안전벨트 해제(가)보다 먼저여야 한다."
+      },
+      "vi": {
+        "3": "★ Thứ tự đúng: (나) Đặt xe lăn song song với ô tô, khóa bánh và gập bệ để chân → (가) Tháo dây an toàn → (라) Hạ từng chân của người dùng ra khỏi xe → (다) Để hai chân tiếp đất vững → (마) Hỗ trợ đầu gối bên liệt, xoay người và đặt vào ghế xe lăn. Cần chuẩn bị xe lăn (나) trước khi tháo dây an toàn (가)."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "이송 순서", "def_vi": "Thứ tự chuyển người — quy trình an toàn khi di chuyển người bệnh giữa các thiết bị hoặc phương tiện" },
+      { "term_ko": "안전벨트", "def_vi": "Dây an toàn — đai cố định trong xe ô tô, cần tháo trước khi hỗ trợ người bệnh ra khỏi xe" },
+      { "term_ko": "발 받침대", "def_vi": "Bệ để chân — bộ phận của xe lăn dùng để đặt chân, cần gập lại trước khi chuyển người lên/xuống" }
+    ]
+  },
+  {
+    "id": 1387,
+    "intent_ko": "편마비 대상자를 휠체어에서 자동차로 옮길 때 자동차에 앉히는 올바른 순서를 고르는 문제",
+    "intent_vi": "Câu hỏi về thứ tự đúng khi đặt người liệt nửa người vào ghế ô tô từ xe lăn",
+    "choice_explanations": {
+      "ko": {
+        "1": "엉덩이를 먼저 옮기고 두 다리를 동시에 올리면 다리가 고르지 않게 올라가거나 마비된 다리 관리가 어렵다.",
+        "2": "★ 편마비 대상자를 자동차에 앉힐 때는 엉덩이를 먼저 시트에 올린 뒤, 건강한 다리를 먼저 차 안으로 올리고, 마지막으로 마비된 다리를 올려 안전하게 이동시킨다. 건강한 쪽이 먼저 능동적으로 움직이고 마비측은 수동으로 보조한다.",
+        "3": "마비된 다리를 기준으로 먼저 이동하면 건강한 다리의 능동적 힘을 활용하지 못하고 마비측에 과도한 부담이 간다.",
+        "4": "건강한 다리를 먼저 올리면 엉덩이가 아직 시트에 안착되지 않은 상태라 불안정하다.",
+        "5": "마비된 다리를 가장 먼저 이동하면 이후 자세 안정이 어렵고 마비측에 부담이 집중된다."
+      },
+      "vi": {
+        "1": "Đặt mông trước rồi nâng cả hai chân cùng lúc làm chân lên không đều và khó quản lý chân bên liệt.",
+        "2": "★ Khi đặt người liệt nửa người vào ghế ô tô: đặt mông lên ghế trước, rồi đưa chân khỏe vào xe trước, cuối cùng đưa chân liệt vào. Chân khỏe tự chủ động bước, chân liệt được hỗ trợ thụ động — đây là trình tự an toàn.",
+        "3": "Bắt đầu bằng chân liệt không tận dụng được sức chủ động của chân khỏe và tạo áp lực quá lớn lên bên liệt.",
+        "4": "Đưa chân khỏe lên trước khi mông chưa ổn định trên ghế sẽ gây mất thăng bằng.",
+        "5": "Di chuyển chân liệt trước tiên gây khó khăn ổn định tư thế về sau và tập trung áp lực lên bên liệt."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "편마비 이송 원칙", "def_vi": "Nguyên tắc chuyển người liệt nửa người — phần cơ thể khỏe chủ động di chuyển trước; phần liệt được hỗ trợ thụ động sau" }
+    ]
+  },
+  {
+    "id": 1386,
+    "intent_ko": "대상자를 휠체어에서 자동차로 이동할 때 올바른 보조 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi về phương pháp hỗ trợ đúng khi chuyển người từ xe lăn vào ô tô",
+    "choice_explanations": {
+      "ko": {
+        "1": "휠체어를 자동차와 수직으로 놓으면 대상자가 자동차 시트로 이동할 거리가 너무 멀어 이동이 원활하지 않다.",
+        "2": "★ 요양보호사가 무릎으로 대상자의 마비측 무릎을 지지하면 마비된 다리가 꺾이거나 무너지는 것을 방지하고, 안전하게 자동차로 이동시킬 수 있다. 이는 편마비 대상자 이송의 핵심 기술이다.",
+        "3": "엉덩이를 마지막에 앉히는 것은 사실이지만, 이 설명만으로는 이동 방법 전체를 설명하지 못하며 방법론적으로 불충분하다.",
+        "4": "건강한 손으로 시트를 짚게 하는 것은 보조적 방법이지만, 마비측 무릎 지지 없이는 안전하게 이동하기 어렵다.",
+        "5": "대상자와 동승 시 앞자리보다는 대상자 옆자리(뒤)에 앉아 이동 중 안전을 확보하는 것이 권장된다."
+      },
+      "vi": {
+        "1": "Đặt xe lăn vuông góc với ô tô làm khoảng cách từ xe lăn đến ghế quá xa, cản trở việc chuyển người.",
+        "2": "★ Nhân viên chăm sóc dùng đầu gối của mình chống đỡ đầu gối bên liệt của người bệnh để tránh chân liệt bị gập hoặc khuỵu xuống khi di chuyển vào ô tô. Đây là kỹ thuật cốt lõi khi chuyển người liệt nửa người.",
+        "3": "Đặt mông vào ghế sau cùng là đúng, nhưng giải thích này không đủ để mô tả toàn bộ phương pháp di chuyển.",
+        "4": "Để người bệnh chống tay khỏe lên ghế là phương pháp hỗ trợ phụ; nếu không đỡ đầu gối bên liệt thì khó chuyển an toàn.",
+        "5": "Khi đi cùng người bệnh, nên ngồi kế bên (phía sau) chứ không phải ghế trước, để có thể hỗ trợ trong khi xe đang chạy."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "마비측 무릎 지지", "def_vi": "Chống đỡ đầu gối bên liệt — kỹ thuật dùng đầu gối của nhân viên chăm sóc để giữ ổn định đầu gối bên liệt của người bệnh khi chuyển" }
+    ]
+  },
+  {
+    "id": 1385,
+    "intent_ko": "대상자를 휠체어에서 이동변기로 옮기는 올바른 순서를 고르는 문제",
+    "intent_vi": "Câu hỏi về thứ tự đúng khi chuyển người từ xe lăn sang bồn cầu di động",
+    "choice_explanations": {
+      "ko": {
+        "2": "★ 올바른 순서: (가) 이동 방법 설명 및 휠체어 잠금장치 잠금 → (다) 발받침대 접기·두 발 바닥에 내리기 → (라) 건강한 손으로 이동변기 먼 쪽 손잡이 잡기 → (나) 건강한 다리에 힘주어 엉덩이를 이동변기로 옮겨 앉히기. 안전 확보(잠금)와 발 위치 확인 후 이동하는 것이 핵심이다."
+      },
+      "vi": {
+        "2": "★ Thứ tự đúng: (가) Giải thích quy trình và khóa bánh xe lăn → (다) Gập bệ để chân, hạ hai chân xuống sàn → (라) Để người bệnh cầm tay vịn xa của bồn cầu bằng tay khỏe → (나) Dồn lực vào chân khỏe, đẩy hông sang bồn cầu và ngồi xuống. Cần đảm bảo an toàn (khóa xe) và kiểm tra vị trí chân trước khi di chuyển."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "이동변기 이송 순서", "def_vi": "Thứ tự chuyển sang bồn cầu di động — quy trình: khóa xe lăn → hạ chân → cầm tay vịn → dịch hông sang bồn cầu" },
+      { "term_ko": "발받침대", "def_vi": "Bệ để chân — bộ phận nâng đỡ chân trong xe lăn, cần gập lại trước khi đứng lên hoặc chuyển người" }
+    ]
+  },
+  {
+    "id": 1384,
+    "intent_ko": "대상자의 안전을 위해 휠체어를 뒤로 이동해야 하는 경우를 고르는 문제",
+    "intent_vi": "Câu hỏi về các tình huống cần đẩy xe lăn lùi về phía sau để đảm bảo an toàn",
+    "choice_explanations": {
+      "ko": {
+        "1": "언덕을 오를 때는 앞으로 밀어야 하며, 언덕을 내려갈 때만 뒤로 내려가야 하므로 '오를 때'가 포함된 설명은 틀렸다.",
+        "2": "언덕을 오를 때 뒤로 미는 것은 오히려 불편하고 비효율적이다.",
+        "3": "★ 문턱을 내려갈 때와 언덕을 내려갈 때 모두 휠체어를 뒤로 이동해야 한다. 뒤로 이동하면 앞바퀴가 들려 문턱이나 경사를 안전하게 내려갈 수 있고, 대상자가 앞으로 쏠리는 위험을 방지할 수 있다.",
+        "4": "문턱을 오를 때는 앞바퀴를 먼저 들어 올리며 앞으로 이동한다.",
+        "5": "문턱을 오를 때는 앞으로 이동하며 앞바퀴를 들어올리는 방법을 사용한다."
+      },
+      "vi": {
+        "1": "Khi lên dốc cần đẩy về phía trước; chỉ khi xuống dốc mới cần đẩy lùi, nên lựa chọn có 'khi lên dốc' là sai.",
+        "2": "Đẩy lùi khi lên dốc vừa bất tiện vừa kém hiệu quả.",
+        "3": "★ Cả hai trường hợp xuống bậc thềm và xuống dốc đều cần đẩy xe lăn lùi về phía sau. Đẩy lùi giúp bánh trước được nâng lên, xuống bậc thềm/dốc an toàn và ngăn người ngồi bị nghiêng ngã về phía trước.",
+        "4": "Khi lên bậc thềm, dùng kỹ thuật nâng bánh trước lên rồi đẩy về phía trước.",
+        "5": "Khi lên bậc thềm cũng đẩy về phía trước với kỹ thuật nâng bánh trước."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "휠체어 후진 이동", "def_vi": "Đẩy xe lăn lùi — kỹ thuật đẩy xe lăn theo hướng ngược lại để xuống dốc hoặc bậc thềm an toàn" },
+      { "term_ko": "문턱", "def_vi": "Bậc thềm (ngưỡng cửa) — phần chênh lệch chiều cao giữa hai mặt sàn, trở ngại thường gặp khi dùng xe lăn" }
+    ]
+  },
+  {
+    "id": 1383,
+    "intent_ko": "스스로 자세를 바꿀 수 없는 대상자가 휠체어에 앉아있을 때 올바른 자세를 고르는 문제",
+    "intent_vi": "Câu hỏi về tư thế đúng khi người không tự thay đổi được tư thế ngồi trên xe lăn",
+    "choice_explanations": {
+      "ko": {
+        "1": "몸통이 한쪽으로 기울면 척추 변형과 욕창 위험이 높아져 올바른 자세가 아니다.",
+        "2": "★ 발 받침대에 두 발이 올라가 있어야 다리가 허공에 매달리지 않고 하체 혈액순환이 유지되며, 넘어질 위험도 감소한다. 이는 올바른 휠체어 자세의 필수 조건이다.",
+        "3": "잠금장치가 풀린 상태에서 쉬면 휠체어가 저절로 움직여 낙상 위험이 있다.",
+        "4": "휠체어 끝(앞쪽)에 앉으면 미끄러질 위험이 있고, 얼굴이 바닥을 향하면 기도 폐색 위험이 있다.",
+        "5": "욕창예방 방석 없이 장시간 앉으면 욕창 발생 위험이 높다. 2시간마다 체위 변경이 권장된다."
+      },
+      "vi": {
+        "1": "Thân người nghiêng sang một bên làm tăng nguy cơ biến dạng cột sống và loét áp lực.",
+        "2": "★ Hai chân phải đặt lên bệ để chân để tránh chân lơ lửng, duy trì tuần hoàn máu ở chi dưới và giảm nguy cơ ngã. Đây là điều kiện bắt buộc của tư thế ngồi xe lăn đúng cách.",
+        "3": "Để xe lăn ở trạng thái khóa mở khi nghỉ ngơi khiến xe có thể tự di chuyển, gây nguy cơ ngã.",
+        "4": "Ngồi ở mép xe lăn dễ bị trượt ngã; mặt hướng xuống sàn có thể gây tắc đường thở.",
+        "5": "Ngồi lâu không có đệm phòng loét áp lực làm tăng nguy cơ loét. Khuyến nghị thay đổi tư thế mỗi 2 giờ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "욕창예방 방석", "def_vi": "Đệm phòng ngừa loét áp lực — đệm ngồi chuyên dụng giúp phân tán áp lực, ngăn ngừa loét cho người ngồi xe lăn lâu" },
+      { "term_ko": "발 받침대", "def_vi": "Bệ để chân — bộ phận trên xe lăn nâng đỡ chân người dùng, giúp duy trì tư thế ngồi đúng" }
+    ]
+  },
+  {
+    "id": 1382,
+    "intent_ko": "휠체어를 펴는 올바른 순서를 고르는 문제",
+    "intent_vi": "Câu hỏi về thứ tự đúng khi mở (triển khai) xe lăn",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 휠체어를 펼 때의 올바른 순서는 잠금장치 해제 → 팔걸이 펼침 → 시트 눌러 펼침 → 발 받침대 내림이다. 잠금을 먼저 풀고 팔걸이를 벌린 후 시트를 안전하게 펼치며, 마지막으로 발 받침대를 내린다."
+      },
+      "vi": {
+        "1": "★ Thứ tự đúng khi mở xe lăn: tháo khóa → mở tay vịn ra → ấn xuống ghế để trải phẳng → hạ bệ để chân xuống. Cần mở khóa trước, rồi mở tay vịn, trải ghế an toàn và cuối cùng hạ bệ chân."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "휠체어 펼치기 순서", "def_vi": "Thứ tự mở xe lăn — quy trình: mở khóa → mở tay vịn → ấn ghế → hạ bệ chân" },
+      { "term_ko": "팔걸이", "def_vi": "Tay vịn (xe lăn) — bộ phận hai bên xe lăn để tựa tay; có thể tháo ra để thuận tiện chuyển người" }
+    ]
+  },
+  {
+    "id": 1381,
+    "intent_ko": "오른쪽으로 누워있는 왼쪽 편마비 대상자에게 욕창이 발생하기 쉬운 부위를 고르는 문제",
+    "intent_vi": "Câu hỏi về vị trí dễ bị loét áp lực khi người liệt nửa người trái nằm nghiêng phải",
+    "choice_explanations": {
+      "ko": {
+        "1": "천골(꼬리뼈 위 뼈)은 똑바로 누울 때 압력이 집중되는 부위이며, 옆으로 누울 때는 천골보다 다른 부위에 더 압력이 가해진다.",
+        "2": "목뒤는 옆으로 누울 때 일반적으로 압력이 크게 가해지지 않아 욕창 위험이 낮다.",
+        "3": "★ 오른쪽으로 누운 자세에서는 오른쪽 귀·어깨·고관절·무릎·발목 등 오른쪽 돌출 부위에 압력이 집중된다. 왼쪽 편마비 대상자는 스스로 자세를 바꾸기 어려우므로 오른쪽으로 누운 채 장시간 있으면 오른쪽 귀에 욕창이 발생하기 쉽다.",
+        "4": "복장 뼈(흉골)는 앞쪽에 있어 옆으로 누울 때 압력이 가해지지 않아 욕창 위험이 낮다.",
+        "5": "발등은 엎드리거나 특정 자세에서 압력을 받지만, 오른쪽으로 누운 자세에서는 주된 욕창 발생 부위가 아니다."
+      },
+      "vi": {
+        "1": "Xương cùng (phía trên xương cụt) chịu áp lực khi nằm ngửa, không phải khi nằm nghiêng.",
+        "2": "Gáy cổ không bị áp lực lớn khi nằm nghiêng, ít có nguy cơ loét.",
+        "3": "★ Khi nằm nghiêng phải, các vùng lồi bên phải như tai phải, vai, khớp hông, đầu gối, mắt cá chân chịu áp lực tập trung. Người liệt nửa người trái không tự thay đổi tư thế được, nằm nghiêng phải lâu sẽ dễ bị loét ở tai phải.",
+        "4": "Xương ức nằm ở phía trước, không chịu áp lực khi nằm nghiêng, ít nguy cơ loét.",
+        "5": "Mu bàn chân có thể bị loét khi nằm sấp hoặc tư thế đặc biệt, nhưng không phải vị trí loét chính khi nằm nghiêng phải."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "욕창", "def_vi": "Loét áp lực (loét do tì đè) — vết thương da và mô bên dưới do áp lực kéo dài lên vùng da tiếp xúc với bề mặt cứng" },
+      { "term_ko": "천골", "def_vi": "Xương cùng — xương hình tam giác ở phần dưới cột sống, vùng dễ bị loét khi nằm ngửa" },
+      { "term_ko": "복장 뼈", "def_vi": "Xương ức — xương dẹt ở giữa ngực phía trước, không phải vùng nguy cơ loét khi nằm nghiêng" }
+    ]
+  },
+  {
+    "id": 1380,
+    "intent_ko": "특정 증상을 완화하는 데 적합한 자세를 고르는 문제 (엎드린 자세)",
+    "intent_vi": "Câu hỏi về tư thế phù hợp để giảm nhẹ triệu chứng nhất định (tư thế nằm sấp)",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 엎드린 자세(복와위)는 등과 천골 부위의 압박을 해소하여 욕창 예방에 효과적이고, 척추 신전 근육의 긴장을 완화하며, 엉덩이 굴곡 구축 예방에도 도움이 된다. 장기 침상 대상자의 구축·욕창 예방을 위해 주기적으로 취해야 하는 자세이다.",
+        "2": "서있는 자세는 하중이 하지에 집중되어 약해진 대상자에게 부담이 크다.",
+        "3": "앉은 자세는 천골과 꼬리뼈에 압력이 집중되어 장시간 유지 시 욕창 위험이 높다.",
+        "4": "바로 누운 자세(앙와위)는 천골과 뒤통수에 압박이 가해져 욕창 위험이 있다.",
+        "5": "옆으로 누운 자세는 한쪽 고관절·어깨·귀에 압력이 집중되어 욕창 위험이 있다."
+      },
+      "vi": {
+        "1": "★ Tư thế nằm sấp (tư thế phục nằm) giải phóng áp lực ở lưng và xương cùng, hiệu quả phòng ngừa loét; đồng thời giảm căng cơ duỗi cột sống và ngăn ngừa co cứng khớp hông. Đây là tư thế cần thực hiện định kỳ cho người nằm lâu để phòng co cứng và loét.",
+        "2": "Tư thế đứng tập trung tải trọng vào chân dưới, gây áp lực lớn cho người đã suy yếu.",
+        "3": "Tư thế ngồi tập trung áp lực vào xương cùng và xương cụt, dễ gây loét khi duy trì lâu.",
+        "4": "Tư thế nằm ngửa gây áp lực lên xương cùng và chẩm đầu, có nguy cơ loét.",
+        "5": "Tư thế nằm nghiêng tập trung áp lực vào khớp hông, vai và tai một bên, có nguy cơ loét."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "복와위", "def_vi": "Tư thế nằm sấp — tư thế nằm úp mặt xuống, giúp giảm áp lực ở lưng và xương cùng" },
+      { "term_ko": "구축", "def_vi": "Co cứng khớp (co rút) — tình trạng khớp hoặc cơ bị rút ngắn và cứng do không vận động trong thời gian dài" },
+      { "term_ko": "앙와위", "def_vi": "Tư thế nằm ngửa — tư thế nằm thẳng ngửa mặt lên trên" }
+    ]
+  },
+  {
+    "id": 1378,
+    "intent_ko": "장기 침상 생활 대상자의 관절강직과 변형을 예방하는 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi về phương pháp phòng ngừa cứng khớp và biến dạng khớp cho người nằm giường lâu ngày",
+    "choice_explanations": {
+      "ko": {
+        "1": "탄력스타킹은 하지정맥 혈전증 예방에 효과적이나, 관절강직 예방과는 직접적인 관련이 없다.",
+        "2": "★ 체위변경은 장시간 같은 자세를 유지할 때 발생하는 관절의 강직과 변형을 예방하는 가장 중요한 방법이다. 다양한 자세로의 전환이 관절 가동 범위를 유지하고 구축을 방지한다. 또한 욕창 예방 효과도 있다.",
+        "3": "방수포는 기저귀나 침대 오염 방지용으로, 관절강직 예방과는 관계가 없다.",
+        "4": "공기침대는 욕창 예방에 도움이 되나, 관절강직 예방 효과는 제한적이다.",
+        "5": "뜨거운 물주머니 찜질은 일시적 통증 완화에 도움될 수 있으나, 관절강직 예방에는 효과가 미미하다."
+      },
+      "vi": {
+        "1": "Tất co giãn hiệu quả phòng huyết khối tĩnh mạch chi dưới nhưng không liên quan trực tiếp đến phòng ngừa cứng khớp.",
+        "2": "★ Thay đổi tư thế là phương pháp quan trọng nhất để phòng ngừa cứng khớp và biến dạng khớp do nằm cùng một tư thế lâu. Thay đổi sang nhiều tư thế khác nhau giúp duy trì biên độ vận động khớp và ngăn co rút. Còn có tác dụng phòng ngừa loét áp lực.",
+        "3": "Vải chống thấm dùng để ngăn bẩn giường và tã lót, không liên quan đến phòng cứng khớp.",
+        "4": "Đệm khí giúp phòng loét áp lực nhưng hiệu quả phòng cứng khớp còn hạn chế.",
+        "5": "Chườm túi nước nóng có thể giảm đau tạm thời nhưng ít hiệu quả trong phòng ngừa cứng khớp."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "관절강직", "def_vi": "Cứng khớp — tình trạng khớp mất khả năng vận động linh hoạt do không được cử động trong thời gian dài" },
+      { "term_ko": "체위변경", "def_vi": "Thay đổi tư thế — hành động xoay trở tư thế nằm định kỳ cho người bệnh để phòng loét và cứng khớp" },
+      { "term_ko": "하지정맥 혈전증", "def_vi": "Huyết khối tĩnh mạch chi dưới — cục máu đông hình thành trong tĩnh mạch chân, biến chứng nguy hiểm của nằm lâu" },
+      { "term_ko": "탄력스타킹", "def_vi": "Tất co giãn y tế — tất chuyên dụng tạo áp lực lên chân để ngăn hình thành huyết khối tĩnh mạch" }
+    ]
+  }
+]

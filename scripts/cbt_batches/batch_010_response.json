@@ -1,0 +1,769 @@
+[
+  {
+    "id": 1468,
+    "intent_ko": "대상자 의류 보관 및 관리 방법 중 올바른 것을 고르는 문제",
+    "intent_vi": "Chọn phương pháp bảo quản và quản lý quần áo đúng cho đối tượng chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "다리미질 시 힘은 앞뒤 어느 방향이든 균일하게 주는 것이 원칙이며, '앞으로 나갈 때 앞쪽에 힘을 준다'는 것은 잘못된 설명입니다.",
+        "2": "눅눅해진 의류를 직사광선에 노출하면 변색·손상이 생길 수 있어 그늘에서 통풍 건조해야 합니다.",
+        "3": "곰팡이 발생 시 직사광선 아래에서 소독하거나 전문 처리가 필요하며, 단순히 그늘에서 2시간 건조하는 것은 불충분합니다.",
+        "4": "★ 견(실크) 소재는 해충에 취약하므로 보관 시 방충제를 함께 넣어두는 것이 옳습니다. 방충제는 휘발 성분이 위에서 아래로 내려오므로 용기의 위쪽에 넣어야 효과적입니다.",
+        "5": "방충제는 휘발 성분이 위에서 아래로 퍼지는 성질이 있으므로 보관 용기의 위쪽에 넣어야 하며, 아래쪽 구석에 넣으면 효과가 떨어집니다."
+      },
+      "vi": {
+        "1": "Khi là (ủi) quần áo, cần giữ lực đều theo cả hai chiều; giải thích 'đẩy mạnh về phía trước khi bàn là tiến tới' là sai.",
+        "2": "Phơi quần áo ẩm dưới ánh nắng trực tiếp có thể gây phai màu và hỏng vải; cần phơi nơi thoáng mát, tránh nắng.",
+        "3": "Khi quần áo bị mốc, cần xử lý chuyên biệt hoặc phơi dưới nắng để diệt nấm; chỉ phơi bóng mát 2 giờ là không đủ.",
+        "4": "★ Vải lụa (tơ tằm) rất dễ bị côn trùng phá hoại, vì vậy khi bảo quản cần cho thuốc chống mối/côn trùng vào. Thuốc bay hơi từ trên xuống dưới, nên đặt ở phần trên của hộp bảo quản.",
+        "5": "Thuốc chống côn trùng bay hơi từ trên xuống dưới, vì vậy phải đặt ở phần trên hộp bảo quản; đặt ở góc dưới sẽ làm giảm hiệu quả."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "견(絹)", "def_vi": "Vải lụa tơ tằm — loại vải cao cấp dễ bị côn trùng phá hoại" },
+      { "term_ko": "방충제", "def_vi": "Thuốc chống côn trùng/mối mọt, dùng để bảo quản quần áo khỏi bị sâu bọ phá" },
+      { "term_ko": "직사광선", "def_vi": "Ánh nắng trực tiếp chiếu thẳng — có thể gây phai màu và hỏng vải" }
+    ]
+  },
+  {
+    "id": 1467,
+    "intent_ko": "의류 제품별 올바른 건조 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp sấy/phơi đúng cho từng loại vải quần áo",
+    "choice_explanations": {
+      "ko": {
+        "1": "흰색 면직물은 살균·표백 효과를 위해 햇빛에 건조하는 것이 좋으며, 그늘 건조는 적합하지 않습니다.",
+        "2": "★ 청바지는 지퍼를 열고 뒤집어서 건조해야 형태 변형을 방지하고 색상 보호가 됩니다. 지퍼를 열면 금속 부분의 산화를 막고, 뒤집으면 겉면 탈색을 최소화할 수 있습니다.",
+        "3": "니트류는 옷걸이에 걸면 무게로 인해 늘어나므로, 평평하게 펼쳐서 건조해야 형태가 유지됩니다.",
+        "4": "합성섬유는 햇빛에 건조하면 열 변형 및 변색이 생길 수 있어 그늘에서 건조하는 것이 권장됩니다.",
+        "5": "색상이나 무늬가 있는 의류는 햇빛에 건조하면 색이 바랠 수 있어 뒤집어서 그늘 건조해야 합니다."
+      },
+      "vi": {
+        "1": "Vải cotton màu trắng nên phơi nắng để có tác dụng diệt khuẩn và tẩy trắng; phơi bóng mát là không phù hợp.",
+        "2": "★ Quần jeans phải mở khóa kéo và lộn trái trước khi phơi để tránh biến dạng và bảo vệ màu sắc. Mở khóa kéo giúp tránh oxy hóa phần kim loại, lộn trái giúp giảm phai màu mặt ngoài.",
+        "3": "Đồ len/dệt kim không nên treo lên móc vì sức nặng làm giãn vải; cần trải phẳng trên mặt phẳng để phơi.",
+        "4": "Sợi tổng hợp dễ bị biến dạng và đổi màu khi phơi nắng trực tiếp; nên phơi nơi thoáng mát, tránh nắng.",
+        "5": "Quần áo có màu sắc hoặc hoa văn dễ bị phai màu dưới nắng; nên lộn trái và phơi bóng mát."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "면직물", "def_vi": "Vải cotton — loại vải dệt từ sợi bông tự nhiên" },
+      { "term_ko": "합성섬유", "def_vi": "Sợi tổng hợp — vải nhân tạo như polyester, nylon; dễ biến dạng khi phơi nắng" },
+      { "term_ko": "니트류", "def_vi": "Đồ len/dệt kim — quần áo dệt bằng sợi len hoặc cotton; dễ giãn nếu treo khi ướt" }
+    ]
+  },
+  {
+    "id": 1466,
+    "intent_ko": "대상자 옷 세탁의 올바른 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp giặt quần áo đúng cho đối tượng chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 삶을 때 뚜껑을 덮고 삶으면 열이 고르게 유지되어 살균 효과가 높아지고 위생적으로 세탁됩니다.",
+        "2": "탈수 시간을 지나치게 길게 하면 원단이 손상될 수 있으며, 적정 탈수 시간을 지켜야 합니다.",
+        "3": "립스틱 얼룩 제거에 아세톤을 사용하면 특정 원단(합성섬유 등)이 손상될 수 있어 부적절합니다.",
+        "4": "삶을 때 옷이 잠기도록 물을 충분히 넣어야 하지만, 비눗물 농도가 지나치게 높으면 잔여물이 남을 수 있습니다.",
+        "5": "세탁물을 충분히 헹구는 것은 중요하지만, 비눗물이 완전히 제거되지 않으면 피부 자극의 원인이 될 수 있습니다."
+      },
+      "vi": {
+        "1": "★ Khi luộc quần áo, đậy nắp lại giúp duy trì nhiệt độ đều đặn, tăng hiệu quả diệt khuẩn và giặt sạch hơn.",
+        "2": "Vắt quá lâu có thể làm hỏng sợi vải; cần tuân thủ thời gian vắt phù hợp cho từng loại vải.",
+        "3": "Dùng acetone để tẩy vết son môi có thể làm hỏng một số loại vải (đặc biệt sợi tổng hợp); không nên dùng.",
+        "4": "Khi luộc cần đủ nước để quần áo ngập hoàn toàn, nhưng nồng độ xà phòng quá cao có thể để lại cặn trên vải.",
+        "5": "Xả kỹ quần áo là quan trọng, nhưng nếu không xả sạch hoàn toàn xà phòng có thể gây kích ứng da."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "탈수", "def_vi": "Vắt nước — quá trình quay/ép để loại bỏ nước từ quần áo sau khi giặt" },
+      { "term_ko": "아세톤", "def_vi": "Acetone — dung môi hóa học có thể tẩy vết bẩn nhưng gây hỏng một số loại vải" },
+      { "term_ko": "애벌빨래", "def_vi": "Giặt sơ bộ (giặt tay lần đầu) trước khi giặt chính để loại bỏ vết bẩn nặng" }
+    ]
+  },
+  {
+    "id": 1465,
+    "intent_ko": "의류 세탁 시 얼룩 종류별 올바른 제거 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp xử lý vết bẩn đúng theo từng loại khi giặt quần áo",
+    "choice_explanations": {
+      "ko": {
+        "1": "혈액·체액은 더운 물로 세탁하면 단백질이 응고되어 얼룩이 고착됩니다. 반드시 찬물로 먼저 헹궈야 합니다.",
+        "2": "튀김기름 얼룩은 알코올보다 주방세제(계면활성제)나 베이킹소다로 제거하는 것이 효과적입니다.",
+        "3": "면직물 속옷은 삶은 후 헹구어야 하며, '삶고 난 후 세탁한다'는 표현은 순서상 옳습니다. 다만 삶기 전에 애벌빨래가 먼저입니다.",
+        "4": "★ 파운데이션 얼룩은 알코올이 함유된 화장수(토너)로 두드려 지우는 것이 효과적입니다. 알코올 성분이 메이크업의 유성 성분을 녹여내는 역할을 합니다.",
+        "5": "냄새가 심한 세탁물은 식초물이나 베이킹소다 용액에 담그는 것이 효과적이며, 붕산수는 일반적인 방법이 아닙니다."
+      },
+      "vi": {
+        "1": "Vết máu hoặc dịch cơ thể nếu giặt bằng nước nóng sẽ làm protein đông lại và vết bẩn ăn sâu hơn; phải xả bằng nước lạnh trước.",
+        "2": "Vết dầu chiên hiệu quả hơn khi dùng nước rửa chén (chất hoạt động bề mặt) hoặc baking soda, không phải cồn.",
+        "3": "Quần áo lót bằng cotton nên luộc rồi xả lại; trình tự 'luộc trước, giặt sau' đúng nhưng cần giặt sơ trước khi luộc.",
+        "4": "★ Vết kem nền (foundation) được tẩy hiệu quả bằng nước hoa hồng (toner) có chứa cồn. Cồn hòa tan thành phần dầu trong mỹ phẩm, giúp tẩy sạch vết bẩn.",
+        "5": "Quần áo có mùi nặng nên ngâm trong nước giấm hoặc dung dịch baking soda; ngâm nước boric acid không phải phương pháp thông thường."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "파운데이션 얼룩", "def_vi": "Vết kem nền (foundation) — vết mỹ phẩm dạng dầu có thể tẩy bằng cồn" },
+      { "term_ko": "화장수", "def_vi": "Nước hoa hồng (toner) — loại nước dưỡng da chứa cồn, dùng tẩy vết mỹ phẩm" },
+      { "term_ko": "붕산수", "def_vi": "Dung dịch axit boric — có tính kháng khuẩn nhẹ, không phổ biến trong giặt giũ thông thường" }
+    ]
+  },
+  {
+    "id": 1464,
+    "intent_ko": "변실금 대상자 속옷 세탁의 올바른 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp giặt đồ lót đúng cho đối tượng bị tiêu không tự chủ",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 변실금으로 오염된 속옷은 본세탁 전에 애벌빨래(사전 세탁)를 통해 분변 등 초기 오염물을 먼저 제거해야 합니다. 이후 삶기와 본세탁을 진행합니다.",
+        "2": "삶을 때는 뚜껑을 덮어야 열이 고르게 유지되고 살균 효과가 높아집니다. 뚜껑을 열면 온도가 내려가 효과가 줄어듭니다.",
+        "3": "비눗물에 세탁물이 잠길 정도로 물을 충분히 넣어야 하지만, 비누 농도가 지나치게 높으면 잔여물이 남으므로 적정 농도를 지켜야 합니다.",
+        "4": "표백제에 오래 담가 두면 원단이 손상되고 섬유가 약해질 수 있어 부적절합니다.",
+        "5": "붕산수는 일반적인 세탁 방법이 아니며, 변실금 오염물 제거에 적합한 방법이 아닙니다."
+      },
+      "vi": {
+        "1": "★ Đồ lót bị bẩn do tiêu không tự chủ cần được giặt sơ bộ (giặt tay trước) để loại bỏ chất thải ban đầu trước khi giặt chính. Sau đó mới luộc và giặt kỹ.",
+        "2": "Khi luộc phải đậy nắp để duy trì nhiệt độ đều và tăng hiệu quả diệt khuẩn; mở nắp làm nhiệt độ giảm, giảm hiệu quả.",
+        "3": "Cần đủ nước để quần áo ngập hoàn toàn, nhưng nồng độ xà phòng quá cao sẽ để lại cặn; cần dùng lượng xà phòng phù hợp.",
+        "4": "Ngâm quá lâu trong chất tẩy trắng có thể làm hỏng sợi vải và làm vải yếu đi; không phù hợp.",
+        "5": "Dung dịch boric acid không phải phương pháp giặt thông thường và không thích hợp để xử lý vết bẩn do tiêu không tự chủ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "변실금", "def_vi": "Tiêu không tự chủ (đại tiện mất kiểm soát) — tình trạng không thể kiểm soát việc đại tiện" },
+      { "term_ko": "애벌빨래", "def_vi": "Giặt sơ bộ — bước giặt tay đầu tiên trước khi giặt chính để loại bỏ vết bẩn nặng" },
+      { "term_ko": "표백제", "def_vi": "Chất tẩy trắng — hóa chất dùng để làm trắng vải, ngâm quá lâu có thể làm hỏng vải" }
+    ]
+  },
+  {
+    "id": 1463,
+    "intent_ko": "올바른 옷 세탁 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp giặt quần áo đúng",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 오염이 심한 경우 물에 불리거나 부분세탁을 병행하면 세제가 오염 물질에 충분히 침투하여 효과적으로 제거됩니다. 심한 오염에 적합한 올바른 방법입니다.",
+        "2": "얼룩이 많은 옷을 한꺼번에 모아 세탁하면 얼룩끼리 교차 오염이 일어나 더 심해질 수 있습니다.",
+        "3": "혈흔은 뜨거운 물로 세탁하면 단백질이 응고되어 얼룩이 고착됩니다. 찬물로 먼저 헹구어야 합니다.",
+        "4": "속옷은 햇빛에서 살균 건조하는 것이 일반적으로 권장되며, 그늘 건조는 일부 경우에 적용됩니다.",
+        "5": "커피 얼룩은 물로 신속히 헹군 뒤 중성세제나 전용 얼룩 제거제로 처리해야 하며, 샴푸는 커피 얼룩 제거에 적합하지 않습니다."
+      },
+      "vi": {
+        "1": "★ Khi quần áo rất bẩn, ngâm nước hoặc kết hợp giặt cục bộ giúp chất tẩy thấm sâu vào vết bẩn và làm sạch hiệu quả hơn. Đây là phương pháp đúng cho vết bẩn nặng.",
+        "2": "Gom nhiều quần áo nhiều vết bẩn giặt cùng nhau có thể gây ô nhiễm chéo, làm vết bẩn lan rộng hơn.",
+        "3": "Vết máu gặp nước nóng sẽ làm protein đông lại và vết bẩn ăn sâu; phải xả nước lạnh trước.",
+        "4": "Đồ lót thường được khuyến nghị phơi nắng để diệt khuẩn; phơi bóng mát chỉ áp dụng trong một số trường hợp nhất định.",
+        "5": "Vết cà phê cần xả nước ngay rồi dùng nước rửa trung tính hoặc chất tẩy vết chuyên dụng; dầu gội không phù hợp để tẩy vết cà phê."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "부분세탁", "def_vi": "Giặt cục bộ — chỉ giặt tay phần có vết bẩn trước, kết hợp với giặt toàn bộ" },
+      { "term_ko": "혈흔", "def_vi": "Vết máu — vết bẩn từ máu; phải xử lý bằng nước lạnh vì nước nóng làm protein đông lại" },
+      { "term_ko": "불리다", "def_vi": "Ngâm (quần áo trong nước) — bước ngâm trước khi giặt để làm mềm và tách vết bẩn" }
+    ]
+  },
+  {
+    "id": 1462,
+    "intent_ko": "올바른 옷 세탁 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp giặt quần áo đúng theo nguyên tắc cơ bản",
+    "choice_explanations": {
+      "ko": {
+        "1": "수선이 필요한 경우 세탁 전에 수선하는 것이 원칙입니다. 세탁 후 수선하면 세탁 과정에서 손상이 더 커질 수 있습니다.",
+        "2": "실금·하혈로 오염된 세탁물은 즉시 찬물로 헹군 후 적절한 처리를 거쳐 세탁해야 하며, 무조건 재빨리 세탁기에 넣는 것은 적합하지 않습니다.",
+        "3": "★ 옷의 종류(소재)와 색상에 따라 분류하여 세탁해야 색 번짐이나 원단 손상을 방지할 수 있습니다. 이는 세탁의 가장 기본적인 원칙입니다.",
+        "4": "땀 얼룩이 묻은 옷은 즉시 세탁하는 것이 바람직하며, 그늘에서 말린 후 세탁하면 얼룩이 고착될 수 있습니다.",
+        "5": "립스틱 얼룩에 표백제를 사용하면 원단이 손상될 수 있으며, 알코올이나 전용 얼룩 제거제를 사용해야 합니다."
+      },
+      "vi": {
+        "1": "Nguyên tắc là sửa chữa quần áo trước khi giặt; nếu giặt trước, vết rách có thể lan rộng hơn trong quá trình giặt.",
+        "2": "Quần áo bị ô nhiễm do tiểu/xuất huyết cần xả nước lạnh ngay rồi xử lý phù hợp; không nên cho thẳng vào máy giặt ngay.",
+        "3": "★ Phân loại quần áo theo chất liệu và màu sắc trước khi giặt là nguyên tắc cơ bản nhất, giúp tránh phai màu và hỏng vải.",
+        "4": "Quần áo có mồ hôi cần giặt ngay; để khô rồi mới giặt có thể làm vết bẩn ăn sâu vào vải.",
+        "5": "Dùng chất tẩy trắng cho vết son môi có thể làm hỏng vải; nên dùng cồn hoặc chất tẩy vết chuyên dụng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "실금", "def_vi": "Tiểu không tự chủ — tình trạng rò rỉ nước tiểu không kiểm soát được" },
+      { "term_ko": "하혈", "def_vi": "Xuất huyết (chảy máu ra ngoài) — vết máu cần xử lý bằng nước lạnh ngay" },
+      { "term_ko": "수선", "def_vi": "Sửa chữa quần áo — vá, khâu lại quần áo bị rách trước khi giặt" }
+    ]
+  },
+  {
+    "id": 1461,
+    "intent_ko": "대상자의 침구 선택 및 관리 방법 중 올바른 것을 고르는 문제",
+    "intent_vi": "Chọn phương pháp lựa chọn và quản lý chăn ga gối đệm đúng cho đối tượng chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "시트는 색이 연하고 습기를 잘 흡수하는 재질(면 등)을 사용해야 위생 관리 및 편안함에 좋습니다.",
+        "2": "베개 소재로는 알레르기를 유발할 수 있는 깃털보다 저자극 소재가 권장되는 경우가 많습니다.",
+        "3": "★ 베개 높이는 척추와 머리가 수평을 이루도록 맞춰야 경추(목뼈)에 가해지는 부담이 최소화되어 올바른 자세 유지에 도움이 됩니다.",
+        "4": "감염 대상자의 경우 시트와 베개 커버는 오염 상황에 따라 수시로 교환해야 하며, 베개 자체를 매일 교환하는 것이 현실적이지는 않습니다.",
+        "5": "시트는 오염이나 필요에 따라 수시로 교환해야 하며, 정해진 날짜에만 바꾸는 것은 위생 원칙에 어긋납니다."
+      },
+      "vi": {
+        "1": "Ga trải giường nên chọn màu nhạt và chất liệu thấm hút tốt (như cotton) để dễ vệ sinh và tạo sự thoải mái.",
+        "2": "Gối lông vũ có thể gây dị ứng; thường ưu tiên chất liệu ít kích ứng hơn cho đối tượng chăm sóc.",
+        "3": "★ Độ cao của gối phải đảm bảo cột sống và đầu nằm thẳng hàng ngang, giúp giảm tải cho đốt sống cổ và duy trì tư thế đúng khi ngủ.",
+        "4": "Đối tượng có nguy cơ nhiễm trùng cần thay vỏ gối và ga giường thường xuyên theo mức độ ô nhiễm; thay cả chiếc gối mỗi ngày là không thực tế.",
+        "5": "Ga trải giường cần được thay theo nhu cầu thực tế (khi bẩn, ướt...); chỉ thay vào ngày cố định không đúng nguyên tắc vệ sinh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "침구", "def_vi": "Đồ dùng giường ngủ — bao gồm chăn, ga, gối và các vật dụng trên giường" },
+      { "term_ko": "척추", "def_vi": "Cột sống — xương sống; gối đúng độ cao giúp giữ cột sống thẳng khi ngủ" },
+      { "term_ko": "경추", "def_vi": "Đốt sống cổ — phần cột sống ở vùng cổ; dễ bị tổn thương nếu gối không phù hợp" }
+    ]
+  },
+  {
+    "id": 1460,
+    "intent_ko": "침대 생활 대상자의 욕창 예방을 위한 올바른 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp phòng ngừa loét tì đè đúng cho đối tượng nằm giường",
+    "choice_explanations": {
+      "ko": {
+        "1": "풀을 먹인 시트는 딱딱하고 거칠어져 피부에 마찰을 유발하므로 욕창 예방과 무관하거나 오히려 해롭습니다.",
+        "2": "두껍고 재봉선이 있는 시트는 피부에 압박과 마찰을 증가시켜 욕창 위험을 높입니다.",
+        "3": "★ 시트의 주름을 반듯하고 팽팽하게 펴주면 피부에 가해지는 국소 압력을 분산시키고 마찰을 줄여 욕창 예방에 직접적으로 기여합니다.",
+        "4": "베개 소재가 습기와 열을 흡수하면 욕창 예방에 일부 도움이 될 수 있으나, 시트 주름 관리만큼 직접적인 효과는 없습니다.",
+        "5": "침대 시트가 젖었을 때는 즉시 교환해야 하며, 체위변경은 욕창 예방에 중요하지만 '젖었을 때 체위변경을 한다'는 것은 올바른 대응이 아닙니다."
+      },
+      "vi": {
+        "1": "Ga trải giường hồ cứng sẽ gây ma sát với da, không liên quan đến phòng ngừa loét tì đè, thậm chí gây hại.",
+        "2": "Ga dày và có đường may nổi làm tăng áp lực và ma sát lên da, làm tăng nguy cơ loét tì đè.",
+        "3": "★ Căng ga giường phẳng và thẳng giúp phân tán áp lực lên da, giảm ma sát — đây là biện pháp trực tiếp phòng ngừa loét tì đè cho người nằm lâu.",
+        "4": "Gối thấm hút độ ẩm và nhiệt có thể hỗ trợ một phần, nhưng không hiệu quả bằng việc căng phẳng ga giường.",
+        "5": "Khi ga ướt phải thay ngay; thay đổi tư thế quan trọng để phòng loét nhưng 'đổi tư thế khi ga ướt' không phải là phản ứng đúng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "욕창", "def_vi": "Loét tì đè (bedsore) — vết thương da do áp lực kéo dài ở người nằm liệt, phổ biến ở xương cùng, gót chân" },
+      { "term_ko": "체위변경", "def_vi": "Thay đổi tư thế — xoay trở người bệnh định kỳ để phòng ngừa loét tì đè" },
+      { "term_ko": "재봉선", "def_vi": "Đường may — đường khâu trên vải; ga có đường may dày nổi có thể gây áp lực tập trung lên da" }
+    ]
+  },
+  {
+    "id": 1459,
+    "intent_ko": "대상자 침구류의 올바른 관리 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp quản lý chăn ga gối đệm đúng cho đối tượng chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "두껍고 무거운 이불은 대상자에게 압박감을 주고 관리가 어려우므로 적합하지 않습니다.",
+        "2": "매트리스는 개인마다 다르지만, 노인 대상자는 지나치게 푹신한 것보다 적절한 탄성이 있는 것이 척추 지지에 유리합니다.",
+        "3": "시트 크기는 매트리스보다 약간 크게 하여 사방으로 접어 넣을 수 있어야 주름이 생기지 않고 팽팽하게 유지됩니다.",
+        "4": "★ 양모나 오리털 이불은 직사광선에 노출하면 섬유가 손상되므로 그늘에서 건조·관리하는 것이 올바른 방법입니다.",
+        "5": "습기를 흡수하는 매트리스는 세균과 곰팡이가 번식하기 쉬워 위생 문제를 초래할 수 있습니다."
+      },
+      "vi": {
+        "1": "Chăn dày và nặng gây áp lực cho đối tượng và khó quản lý; không phù hợp cho chăm sóc.",
+        "2": "Tùy từng người, nhưng người cao tuổi thường phù hợp với đệm có độ đàn hồi vừa phải để nâng đỡ cột sống tốt hơn là đệm quá mềm.",
+        "3": "Ga trải giường phải lớn hơn đệm một chút để có thể gấp tucked-in vào bốn phía, giữ ga phẳng và không nhăn.",
+        "4": "★ Chăn lông cừu hoặc lông vũ (chăn vịt) phải phơi bóng mát vì ánh nắng trực tiếp làm hỏng sợi lông — đây là phương pháp bảo quản đúng.",
+        "5": "Đệm hút ẩm dễ tạo môi trường cho vi khuẩn và nấm mốc phát triển, gây vấn đề vệ sinh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "양모", "def_vi": "Lông cừu — sợi tự nhiên dùng làm chăn; cần phơi bóng mát để tránh hỏng sợi" },
+      { "term_ko": "오리털 이불", "def_vi": "Chăn lông vịt — chăn nhẹ nhưng ấm; không phơi nắng trực tiếp" },
+      { "term_ko": "매트리스", "def_vi": "Đệm giường — cần có độ đàn hồi phù hợp để nâng đỡ cột sống; tránh hút ẩm" }
+    ]
+  },
+  {
+    "id": 1458,
+    "intent_ko": "야간 외출 시 대상자에게 바람직한 복장을 고르는 문제",
+    "intent_vi": "Chọn trang phục phù hợp cho đối tượng chăm sóc khi ra ngoài ban đêm",
+    "choice_explanations": {
+      "ko": {
+        "1": "단추가 많은 하의는 착용과 탈의가 불편하고, 야간에 안전사고 위험을 높입니다.",
+        "2": "장식이 많은 상의는 실용적이지 않고 걸려 넘어질 위험도 있습니다.",
+        "3": "몸에 꽉 끼는 옷은 혈액 순환을 방해하고 활동성을 제한합니다.",
+        "4": "★ 밝은 색의 겉옷은 야간에 자동차 운전자나 주변 사람들이 쉽게 인식할 수 있어 시인성을 높이고 안전사고를 예방하는 데 효과적입니다.",
+        "5": "뒤가 트인 슬리퍼는 야간 외출 시 발이 미끄러지거나 발목을 삘 위험이 있어 안전하지 않습니다."
+      },
+      "vi": {
+        "1": "Quần có nhiều cúc gây khó khăn khi mặc/cởi và tăng nguy cơ tai nạn vào ban đêm.",
+        "2": "Áo có nhiều trang trí không thực dụng và có thể vướng víu, gây ngã.",
+        "3": "Quần áo bó sát cản trở tuần hoàn máu và hạn chế khả năng di chuyển.",
+        "4": "★ Mặc áo khoác màu sáng khi ra ngoài ban đêm giúp tài xế và người xung quanh dễ nhìn thấy đối tượng hơn, tăng khả năng nhận diện và phòng ngừa tai nạn.",
+        "5": "Dép hở gót không an toàn khi đi ngoài ban đêm vì dễ trượt chân hoặc bong gân mắt cá."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "시인성", "def_vi": "Khả năng được nhìn thấy (visibility) — mức độ dễ quan sát; quần áo sáng màu tăng khả năng này vào ban đêm" },
+      { "term_ko": "복장", "def_vi": "Trang phục — cách ăn mặc, lựa chọn quần áo phù hợp với hoàn cảnh" }
+    ]
+  },
+  {
+    "id": 1457,
+    "intent_ko": "대상자의 의복과 신발을 선택할 때 올바른 기준을 고르는 문제",
+    "intent_vi": "Chọn tiêu chí đúng khi lựa chọn quần áo và giày dép cho đối tượng chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "야간 외출 시 어두운 색 옷은 시인성이 낮아 안전에 위협이 됩니다. 밝은 색이 권장됩니다.",
+        "2": "노인의 체형보다 지나치게 큰 옷은 걸려 넘어질 위험이 있고 활동에 불편합니다.",
+        "3": "★ 대상자의 의복은 움직임에 제한이 없어야 하고, 과도한 장식(단추·리본 등)은 사고 위험과 착탈의 불편을 줍니다. 기능성과 안전성을 최우선으로 선택해야 합니다.",
+        "4": "신발은 굽이 낮고 폭이 넓어야 발의 압박을 줄이고 안정적으로 걸을 수 있습니다. 좁은 폭은 부적합합니다.",
+        "5": "뒤가 트인 슬리퍼는 미끄러지거나 걸려 넘어질 위험이 있어 대상자에게 적합하지 않습니다."
+      },
+      "vi": {
+        "1": "Quần áo màu tối khi ra ngoài ban đêm làm giảm khả năng nhìn thấy, gây nguy hiểm; nên chọn màu sáng.",
+        "2": "Quần áo quá rộng so với vóc dáng người cao tuổi dễ gây vấp ngã và bất tiện khi hoạt động.",
+        "3": "★ Trang phục của đối tượng chăm sóc phải không cản trở vận động, và cần tránh trang trí quá nhiều (cúc, nơ...) vì gây nguy cơ tai nạn và khó mặc/cởi. Ưu tiên tính tiện dụng và an toàn.",
+        "4": "Giày phải có gót thấp và rộng bản để giảm áp lực lên bàn chân và đi lại vững vàng; giày hẹp không phù hợp.",
+        "5": "Dép hở gót dễ gây trượt chân và vấp ngã; không phù hợp cho đối tượng chăm sóc."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "의복", "def_vi": "Trang phục — quần áo; khi chọn cho người cao tuổi cần ưu tiên tính tiện dụng và an toàn" },
+      { "term_ko": "과도한 장식", "def_vi": "Trang trí quá mức — cúc, nơ, đồ đính kết dư thừa trên quần áo có thể gây vướng víu, nguy hiểm" }
+    ]
+  },
+  {
+    "id": 1456,
+    "intent_ko": "대상자 의복 관리의 기본 원칙 중 올바른 것을 고르는 문제",
+    "intent_vi": "Chọn nguyên tắc cơ bản đúng trong quản lý quần áo cho đối tượng chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "속옷은 하루에 한 번 갈아입는 것이 기본 위생 원칙이며, 2~3일에 한 번은 부적절합니다.",
+        "2": "★ 얼룩이나 오염이 심한 옷은 즉시 세탁하여 오염물이 섬유에 고착되는 것을 방지해야 합니다. 이는 의복 관리의 가장 기본적인 원칙입니다.",
+        "3": "낡은 의류라도 요양보호사가 임의로 버려서는 안 됩니다. 반드시 대상자(또는 보호자)의 동의를 받아야 합니다.",
+        "4": "자주 입는 옷은 꺼내기 쉬운 위치에 정리해야 하며, 수납장 깊이 넣어두면 활동에 불편합니다.",
+        "5": "감염 의심 의류는 적절한 소독·세탁 처리를 하는 것이 원칙이며, 무조건 폐기하는 것은 불필요합니다."
+      },
+      "vi": {
+        "1": "Đồ lót phải thay mỗi ngày theo nguyên tắc vệ sinh cơ bản; thay 2-3 ngày một lần là không đúng.",
+        "2": "★ Quần áo có vết bẩn hoặc ô nhiễm nặng phải giặt ngay để tránh vết bẩn ăn sâu vào sợi vải. Đây là nguyên tắc cơ bản nhất trong quản lý quần áo.",
+        "3": "Dù quần áo cũ, nhân viên chăm sóc không được tự ý vứt bỏ; phải có sự đồng ý của đối tượng hoặc người giám hộ.",
+        "4": "Quần áo hay mặc cần để ở vị trí dễ lấy; để sâu trong tủ gây bất tiện khi sử dụng.",
+        "5": "Quần áo nghi nhiễm khuẩn cần được xử lý bằng cách khử trùng và giặt đúng cách; không nhất thiết phải vứt bỏ tất cả."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "요양보호사", "def_vi": "Nhân viên chăm sóc người cao tuổi — người có chứng chỉ hành nghề chăm sóc tại nhà hoặc cơ sở" },
+      { "term_ko": "감염 의심", "def_vi": "Nghi ngờ nhiễm khuẩn — tình trạng có thể đã tiếp xúc với tác nhân gây bệnh; cần khử trùng, không vứt bỏ tùy tiện" }
+    ]
+  },
+  {
+    "id": 1455,
+    "intent_ko": "주방 위생관리 방법 중 올바른 것을 고르는 문제",
+    "intent_vi": "Chọn phương pháp vệ sinh nhà bếp đúng",
+    "choice_explanations": {
+      "ko": {
+        "1": "냉장실은 환기가 필요하지 않으며, 냄새 제거를 위해서는 베이킹소다나 숯 등을 활용하는 것이 효과적입니다.",
+        "2": "변색된 음식은 부패한 것으로 가열해도 독소가 제거되지 않으므로 즉시 폐기해야 합니다.",
+        "3": "소독제 원액을 배수구에 직접 부으면 독성으로 인해 환경과 건강에 해롭습니다. 희석하여 사용해야 합니다.",
+        "4": "싱크대 곰팡이는 곰팡이 전용 제거제로 처리해야 효과적이며, 일반 주방세제만으로는 부족합니다.",
+        "5": "★ 수세미는 소독제를 희석한 물에 일정 시간 담갔다가 물로 헹군 후 충분히 건조시키는 것이 세균 번식을 방지하는 올바른 위생 관리 방법입니다."
+      },
+      "vi": {
+        "1": "Ngăn mát tủ lạnh không cần thông gió; để khử mùi, dùng baking soda hoặc than hoạt tính sẽ hiệu quả hơn.",
+        "2": "Thực phẩm đã đổi màu là đã hỏng; đun nóng không tiêu diệt được độc tố — phải vứt bỏ ngay.",
+        "3": "Đổ dung dịch tẩy trùng nguyên chất vào cống thoát nước gây độc hại cho môi trường và sức khỏe; phải pha loãng trước khi dùng.",
+        "4": "Nấm mốc trong bồn rửa cần dùng chất tẩy mốc chuyên dụng mới hiệu quả; nước rửa bát thông thường không đủ.",
+        "5": "★ Ngâm mút/miếng rửa chén trong dung dịch tẩy trùng pha loãng, sau đó xả sạch và để khô hoàn toàn là cách quản lý vệ sinh đúng, ngăn ngừa vi khuẩn sinh sôi."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "수세미", "def_vi": "Mút/miếng rửa chén — dụng cụ cọ rửa; cần khử trùng và phơi khô thường xuyên để tránh vi khuẩn" },
+      { "term_ko": "소독제", "def_vi": "Chất khử trùng/tẩy trùng — cần pha loãng đúng tỷ lệ trước khi dùng; không dùng nguyên chất" },
+      { "term_ko": "변색", "def_vi": "Đổi màu (thực phẩm) — dấu hiệu thực phẩm bị hỏng; không nên tiếp tục sử dụng dù đun nóng" }
+    ]
+  },
+  {
+    "id": 1454,
+    "intent_ko": "식기 및 주방용품의 올바른 위생관리 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp vệ sinh đúng cho bát đĩa và dụng cụ nhà bếp",
+    "choice_explanations": {
+      "ko": {
+        "1": "고무장갑은 사용 후 겉면만 씻어서는 안 되며, 뒤집어서 안쪽까지 세제로 꼼꼼히 씻은 후 건조해야 합니다.",
+        "2": "★ 행주는 세척한 후 삶아서 살균하고, 완전히 건조시킨 후 보관해야 세균 번식을 방지할 수 있습니다. 행주는 세균이 가장 많이 번식하는 주방용품 중 하나이므로 삶기가 필수적입니다.",
+        "3": "기름기가 많은 그릇은 먼저 키친타월로 기름을 닦아낸 뒤 세제를 묻혀 수세미로 닦는 것이 효과적입니다. 여러 번 닦는 것만으로는 불충분합니다.",
+        "4": "수세미는 스펀지형보다 그물형이 위생적으로 건조가 잘 되고 세균 번식이 덜합니다.",
+        "5": "유통기한이 지난 식재료는 즉시 폐기해야 하며, 냉동 보관해도 안전하지 않습니다."
+      },
+      "vi": {
+        "1": "Găng tay cao su sau khi dùng phải lộn ngược và rửa cả bên trong bằng xà phòng; chỉ rửa bên ngoài là không đủ vệ sinh.",
+        "2": "★ Khăn bếp phải được giặt sạch, sau đó luộc diệt khuẩn và phơi khô hoàn toàn trước khi cất. Khăn bếp là nơi vi khuẩn sinh sôi nhiều nhất trong bếp, vì vậy luộc là bước bắt buộc.",
+        "3": "Bát đĩa nhiều dầu mỡ cần lau bớt dầu bằng khăn giấy trước rồi mới rửa với xà phòng; chỉ lau nhiều lần không đủ hiệu quả.",
+        "4": "Miếng rửa dạng lưới thoáng hơn, khô nhanh hơn miếng bọt biển nên ít vi khuẩn hơn về mặt vệ sinh.",
+        "5": "Thực phẩm hết hạn sử dụng phải bỏ ngay; cấp đông không đảm bảo an toàn cho thực phẩm đã hết hạn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "행주", "def_vi": "Khăn bếp — dụng cụ lau chùi trong bếp; cần luộc và phơi khô thường xuyên vì dễ tích vi khuẩn" },
+      { "term_ko": "유통기한", "def_vi": "Hạn sử dụng (date of expiry) — thời hạn an toàn của thực phẩm; hết hạn phải bỏ, không cấp đông lại" },
+      { "term_ko": "고무장갑", "def_vi": "Găng tay cao su — dụng cụ bảo hộ khi rửa chén; cần rửa cả trong lẫn ngoài sau khi dùng" }
+    ]
+  },
+  {
+    "id": 1453,
+    "intent_ko": "식기 및 주방 위생관리 방법 중 올바른 것을 고르는 문제",
+    "intent_vi": "Chọn phương pháp vệ sinh bát đĩa và nhà bếp đúng",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 곰팡이가 발생한 싱크대는 희석한 알코올로 닦으면 곰팡이균을 효과적으로 제거할 수 있습니다. 알코올은 단백질 변성을 통해 곰팡이를 살균합니다.",
+        "2": "냉장실 선반을 희석한 락스로 닦으면 식품에 락스 성분이 잔류할 수 있어 위험합니다. 냉장실 내부는 식품용 안전 세제나 식초·베이킹소다 용액이 적합합니다.",
+        "3": "앞치마는 조리용(식품 접촉)과 청소용(화학물질 접촉)을 반드시 구분해서 사용해야 교차 오염을 방지합니다.",
+        "4": "냉장고 청소 중 꺼낸 식품은 아이스박스나 냉각 상태를 유지하는 곳에 보관해야 하며, 단순히 '서늘한 곳'은 충분하지 않습니다.",
+        "5": "고무장갑은 세척하여 재사용할 수 있지만, 목적별(조리용/청소용)로 구분하는 것이 원칙입니다."
+      },
+      "vi": {
+        "1": "★ Bồn rửa bị mốc nên lau bằng cồn pha loãng để tiêu diệt nấm mốc hiệu quả. Cồn biến tính protein của nấm, có tác dụng diệt khuẩn tốt.",
+        "2": "Lau kệ ngăn mát bằng nước tẩy (chlorine) pha loãng có thể để lại dư lượng hóa chất trên thực phẩm; nên dùng chất tẩy rửa an toàn thực phẩm hoặc giấm/baking soda.",
+        "3": "Tạp dề nấu ăn và tạp dề dọn dẹp phải dùng riêng để tránh lây nhiễm chéo giữa thực phẩm và hóa chất.",
+        "4": "Thực phẩm lấy ra khi dọn tủ lạnh cần giữ lạnh bằng thùng đá hoặc nơi có nhiệt độ kiểm soát; chỉ 'để nơi mát' là không đủ.",
+        "5": "Găng tay cao su có thể tái sử dụng sau khi rửa sạch, nhưng cần dùng riêng cho nấu ăn và dọn dẹp."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "곰팡이", "def_vi": "Nấm mốc — loại nấm phát triển ở nơi ẩm ướt; có thể diệt bằng cồn hoặc chất tẩy chuyên dụng" },
+      { "term_ko": "희석", "def_vi": "Pha loãng — giảm nồng độ dung dịch bằng cách thêm nước; bước bắt buộc trước khi dùng hóa chất tẩy rửa" },
+      { "term_ko": "교차 오염", "def_vi": "Lây nhiễm chéo — sự lây lan vi khuẩn hoặc hóa chất từ vật dụng/thực phẩm này sang thực phẩm khác" }
+    ]
+  },
+  {
+    "id": 1452,
+    "intent_ko": "도마와 칼이 하나일 때 식재료 사용 순서를 고르는 문제",
+    "intent_vi": "Chọn thứ tự sử dụng thớt và dao đúng khi chỉ có một bộ dụng cụ",
+    "choice_explanations": {
+      "ko": {
+        "2": "★ 도마와 칼이 하나뿐일 때는 채소·과일(교차 오염 위험 낮음) → 육류 → 생선류 → 닭고기(살모넬라균 등 오염 위험 가장 높음) 순서로 사용해야 식중독 위험을 최소화할 수 있습니다."
+      },
+      "vi": {
+        "2": "★ Khi chỉ có một thớt và dao, thứ tự đúng là: rau/trái cây (nguy cơ lây nhiễm thấp) → thịt đỏ → hải sản → thịt gà (nguy cơ nhiễm khuẩn salmonella cao nhất). Thứ tự này giúp giảm thiểu nguy cơ ngộ độc thực phẩm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "교차 오염", "def_vi": "Lây nhiễm chéo — vi khuẩn từ thịt/cá sống lây sang thực phẩm khác qua thớt hoặc dao dùng chung" },
+      { "term_ko": "식중독", "def_vi": "Ngộ độc thực phẩm — bệnh do ăn thực phẩm bị ô nhiễm vi khuẩn, virus hoặc độc tố" },
+      { "term_ko": "살모넬라균", "def_vi": "Vi khuẩn Salmonella — thường có trong thịt gà sống; nguyên nhân phổ biến gây ngộ độc thực phẩm" }
+    ]
+  },
+  {
+    "id": 1451,
+    "intent_ko": "안전한 식품 섭취를 위한 올바른 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp sử dụng thực phẩm an toàn đúng",
+    "choice_explanations": {
+      "ko": {
+        "1": "계란과 생선류는 살충 효과를 위해 내부까지 완전히 익혀야 하며, 살짝 가열하면 식중독균이 생존할 수 있습니다.",
+        "2": "많은 양을 조리하면 남은 음식이 생겨 보관 중 부패 위험이 높아집니다. 적당량 조리가 원칙입니다.",
+        "3": "★ 과일은 섭취 전 100ppm 농도로 희석된 소독액(차아염소산나트륨 등)에 일정 시간 담갔다가 물로 헹구는 방법으로 표면 세균을 제거하는 것이 올바른 위생 처리 방법입니다.",
+        "4": "조리된 음식과 생 육류·생선은 각각 다른 칸에 분리 보관해야 교차 오염을 방지할 수 있습니다.",
+        "5": "냉동식품은 냉장실에서 서서히 해동하거나 전자레인지 해동 기능을 이용해야 하며, 실온 해동은 세균 번식 온도 구간(5~60°C)에 장시간 노출되어 위험합니다."
+      },
+      "vi": {
+        "1": "Trứng và hải sản phải nấu chín kỹ hoàn toàn để tiêu diệt vi khuẩn; đun sơ không đủ nhiệt có thể để lại vi khuẩn gây bệnh.",
+        "2": "Nấu quá nhiều dẫn đến thức ăn thừa, tăng nguy cơ hỏng khi bảo quản; nguyên tắc là nấu vừa đủ dùng.",
+        "3": "★ Trước khi ăn, ngâm trái cây trong dung dịch tẩy trùng pha loãng 100ppm (như nước tẩy thực phẩm) rồi xả lại bằng nước sạch là cách loại bỏ vi khuẩn bề mặt an toàn và đúng chuẩn vệ sinh.",
+        "4": "Thức ăn đã nấu và thịt/cá sống phải bảo quản ngăn riêng để tránh lây nhiễm chéo.",
+        "5": "Thực phẩm đông lạnh cần rã đông trong ngăn mát tủ lạnh hoặc bằng lò vi sóng; rã đông ở nhiệt độ phòng để thực phẩm trong vùng nguy hiểm (5-60°C) quá lâu, tạo điều kiện vi khuẩn sinh sôi."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "소독액", "def_vi": "Dung dịch khử trùng — dung dịch tẩy trùng pha loãng (thường 100ppm) dùng để rửa rau quả trước khi ăn" },
+      { "term_ko": "교차 오염", "def_vi": "Lây nhiễm chéo — vi khuẩn từ thực phẩm sống lây sang thực phẩm đã chế biến khi bảo quản chung" },
+      { "term_ko": "해동", "def_vi": "Rã đông — quá trình làm tan băng thực phẩm đông lạnh; phải thực hiện trong tủ lạnh hoặc lò vi sóng, không rã đông ở nhiệt độ phòng" }
+    ]
+  },
+  {
+    "id": 1450,
+    "intent_ko": "식중독을 유발하는 원인을 찾는 문제",
+    "intent_vi": "Xác định nguyên nhân gây ngộ độc thực phẩm trong các lựa chọn",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 고기는 내부 온도 74°C 이상으로 완전히 익혀야 식중독균(살모넬라, 대장균 등)이 사멸합니다. 60°C는 불충분하여 세균이 생존할 수 있어 식중독을 유발할 수 있는 원인이 됩니다.",
+        "2": "생육과 조리 음식을 구분 보관하는 것은 식중독 예방법이지 원인이 아닙니다.",
+        "3": "적당량 조리하는 것은 식중독 예방에 기여하는 올바른 방법입니다.",
+        "4": "조리 식품을 실온에 2시간 이상 방치하지 않는 것은 식중독 예방 원칙으로, 이것 자체가 원인은 아닙니다.",
+        "5": "도마·칼을 용도별로 구분하는 것은 교차 오염 예방법이므로 식중독 원인이 아닙니다."
+      },
+      "vi": {
+        "1": "★ Thịt phải được nấu đến nhiệt độ nội tâm trên 74°C để tiêu diệt vi khuẩn gây bệnh (salmonella, E.coli...). Nấu ở 60°C là không đủ, vi khuẩn có thể sống sót và gây ngộ độc thực phẩm.",
+        "2": "Bảo quản thịt sống và thức ăn đã nấu riêng biệt là biện pháp phòng ngừa ngộ độc thực phẩm, không phải nguyên nhân.",
+        "3": "Nấu vừa đủ dùng là thói quen đúng góp phần phòng ngừa ngộ độc, không phải nguyên nhân gây bệnh.",
+        "4": "Không để thức ăn đã nấu ở nhiệt độ phòng quá 2 tiếng là nguyên tắc phòng ngừa đúng, không phải nguyên nhân.",
+        "5": "Dùng thớt và dao riêng theo mục đích là biện pháp phòng lây nhiễm chéo, không phải nguyên nhân gây ngộ độc."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "식중독", "def_vi": "Ngộ độc thực phẩm — bệnh do ăn thực phẩm bị nhiễm khuẩn hoặc độc tố; triệu chứng: buồn nôn, tiêu chảy, đau bụng" },
+      { "term_ko": "살모넬라", "def_vi": "Vi khuẩn Salmonella — nguyên nhân phổ biến gây ngộ độc thực phẩm; bị tiêu diệt khi nấu đủ nhiệt độ" },
+      { "term_ko": "내부 온도", "def_vi": "Nhiệt độ nội tâm — nhiệt độ bên trong thực phẩm khi nấu; thịt cần đạt tối thiểu 74°C để an toàn" }
+    ]
+  },
+  {
+    "id": 1449,
+    "intent_ko": "식품 보관의 올바른 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp bảo quản thực phẩm đúng",
+    "choice_explanations": {
+      "ko": {
+        "1": "생선은 통째로 냉동하면 내부까지 고르게 동결되지 않고 품질이 저하될 수 있습니다. 손질 후 적당히 나누어 보관하는 것이 좋습니다.",
+        "2": "망고와 아보카도는 상온에서 후숙 후 냉장 보관하는 것이 적합하며, 처음부터 냉장실에 넣으면 냉해를 입을 수 있습니다.",
+        "3": "달걀은 냉장실 문쪽은 온도 변화가 심하여 품질이 저하됩니다. 냉장실 안쪽에 보관해야 합니다.",
+        "4": "육류는 통째로 냉동하면 해동 시 필요 이상으로 많이 해동해야 하므로, 사용량에 맞게 소분하여 냉동하는 것이 좋습니다.",
+        "5": "★ 냉장 보관 시 용기 사이에 간격을 띄워야 냉기가 고르게 순환되어 음식의 신선도와 위생 상태가 잘 유지됩니다."
+      },
+      "vi": {
+        "1": "Bảo quản cá nguyên con trong tủ đông không đảm bảo cấp đông đều; nên làm sạch và chia phần trước khi đông.",
+        "2": "Xoài và bơ nên ủ chín ở nhiệt độ phòng trước, sau đó mới cho vào ngăn mát; để ngăn mát ngay từ đầu có thể gây hỏng lạnh.",
+        "3": "Trứng để ở cánh cửa tủ lạnh bị dao động nhiệt độ lớn, làm giảm chất lượng; nên để sâu bên trong ngăn mát.",
+        "4": "Bảo quản thịt nguyên khối trong tủ đông bất tiện khi chỉ cần dùng một phần; nên chia thành từng phần vừa dùng trước khi cấp đông.",
+        "5": "★ Khi bảo quản trong tủ lạnh, để khoảng cách giữa các hộp đựng giúp không khí lạnh lưu thông đều, duy trì độ tươi ngon và an toàn vệ sinh của thực phẩm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "후숙", "def_vi": "Ủ chín sau thu hoạch — quá trình trái cây (xoài, bơ) tiếp tục chín sau khi hái; cần thực hiện ở nhiệt độ phòng" },
+      { "term_ko": "냉해", "def_vi": "Tổn thương do lạnh (chilling injury) — hỏng hóc của thực phẩm nhiệt đới khi bị làm lạnh quá sớm hoặc quá mức" },
+      { "term_ko": "소분", "def_vi": "Chia nhỏ (phần) — chia thực phẩm thành từng phần vừa dùng trước khi bảo quản đông" }
+    ]
+  },
+  {
+    "id": 1448,
+    "intent_ko": "식중독 발생 가능성이 높은 경우를 찾는 문제",
+    "intent_vi": "Xác định trường hợp có nguy cơ cao gây ngộ độc thực phẩm",
+    "choice_explanations": {
+      "ko": {
+        "1": "두부는 냉장 보관하는 것이 올바른 방법으로 식중독 예방에 도움이 됩니다.",
+        "2": "★ 달걀을 비비며(마찰 세척) 씻으면 껍데기의 큐티클(보호막)이 손상되어 세균이 내부로 침투하기 쉬워집니다. 달걀은 사용 직전에 가볍게 씻는 것이 원칙이며, 세게 비비는 것은 오히려 오염을 유발합니다.",
+        "3": "먹고 남은 음식을 즉시 처분하는 것은 식중독 예방에 필수적입니다.",
+        "4": "생선과 조개류를 냉동 보관하는 것은 세균 번식을 억제하는 올바른 방법입니다.",
+        "5": "냉장실 해동이나 전자레인지 해동은 올바른 방법이나, 전자레인지 사용 시 균일하게 익지 않을 수 있으므로 즉시 조리해야 합니다."
+      },
+      "vi": {
+        "1": "Bảo quản đậu phụ trong ngăn mát là đúng; giúp phòng ngừa ngộ độc thực phẩm.",
+        "2": "★ Kỳ cọ mạnh trứng làm hỏng lớp màng bảo vệ tự nhiên (cuticle) trên vỏ, tạo điều kiện cho vi khuẩn xâm nhập vào bên trong. Nên rửa nhẹ nhàng ngay trước khi dùng; chà xát mạnh làm tăng nguy cơ ô nhiễm.",
+        "3": "Vứt bỏ thức ăn thừa ngay là biện pháp cần thiết để phòng ngừa ngộ độc thực phẩm.",
+        "4": "Cấp đông cá và hải sản là phương pháp đúng để ức chế vi khuẩn sinh sôi.",
+        "5": "Rã đông trong ngăn mát hoặc lò vi sóng là đúng, nhưng khi dùng lò vi sóng có thể rã đông không đều nên phải nấu ngay sau đó."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "큐티클(보호막)", "def_vi": "Màng bảo vệ tự nhiên (cuticle) trên vỏ trứng — ngăn vi khuẩn xâm nhập; bị phá hủy khi chà xát mạnh" },
+      { "term_ko": "식중독균", "def_vi": "Vi khuẩn gây ngộ độc thực phẩm — các loại vi khuẩn như Salmonella, E.coli có thể xâm nhập qua vỏ trứng bị tổn thương" }
+    ]
+  },
+  {
+    "id": 1447,
+    "intent_ko": "감자와 고구마의 올바른 보관 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp bảo quản khoai tây và khoai lang đúng",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 감자와 고구마는 통풍이 잘 되고 서늘하며 어두운 곳(10~15°C 내외)에 보관해야 싹이 나거나 부패하는 것을 방지할 수 있습니다. 햇빛을 받으면 감자는 솔라닌이 생성될 수 있습니다.",
+        "2": "끓는 물에 데치면 영양소와 전분이 파괴되고 보관 시 질감이 떨어집니다.",
+        "3": "식용유를 바르면 표면에 막이 생겨 통풍이 차단되고 오히려 부패가 촉진됩니다.",
+        "4": "냉장 보관은 감자의 전분을 당으로 변환시켜 맛이 달라지고 부패가 빨라질 수 있습니다.",
+        "5": "물을 뿌린 신문지에 싸면 습도가 높아져 곰팡이와 부패의 원인이 됩니다."
+      },
+      "vi": {
+        "1": "★ Khoai tây và khoai lang cần bảo quản nơi thoáng gió, mát và tối (khoảng 10-15°C) để tránh nảy mầm và thối rữa. Ánh sáng có thể làm khoai tây tạo ra chất solanine độc hại.",
+        "2": "Chần qua nước sôi làm mất chất dinh dưỡng và tinh bột, giảm chất lượng khi bảo quản.",
+        "3": "Bôi dầu ăn lên bề mặt cản trở thông gió và thúc đẩy quá trình thối rữa.",
+        "4": "Bảo quản trong ngăn mát tủ lạnh chuyển tinh bột thành đường, làm thay đổi hương vị và tăng tốc hỏng hóc.",
+        "5": "Bọc bằng giấy báo thấm nước làm tăng độ ẩm, tạo điều kiện cho nấm mốc và vi khuẩn gây thối."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "솔라닌", "def_vi": "Solanine — độc chất tự nhiên sinh ra trong khoai tây khi tiếp xúc ánh sáng; gây ngộ độc nếu ăn phải" },
+      { "term_ko": "통풍", "def_vi": "Thông gió — lưu thông không khí; cần thiết để bảo quản khoai tây, khoai lang không bị ẩm và thối" }
+    ]
+  },
+  {
+    "id": 1446,
+    "intent_ko": "식품을 위생적으로 보관하는 올바른 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp bảo quản thực phẩm hợp vệ sinh đúng",
+    "choice_explanations": {
+      "ko": {
+        "1": "바나나, 파인애플 등 열대과일 일부는 냉장 보관 시 냉해를 입어 품질이 저하될 수 있으며, 상온 후숙 후 냉장하는 것이 적합합니다.",
+        "2": "달걀을 물로 씻으면 껍데기의 큐티클(보호막)이 제거되어 세균 침투 위험이 높아집니다. 사용 직전에 씻는 것이 원칙입니다.",
+        "3": "생선에 소금을 뿌리는 것은 단기 저장에 도움이 될 수 있지만, 냉장 보관 상태에서 소금 처리만으로 장기 보관은 부적절합니다.",
+        "4": "★ 채소는 이물질을 제거한 후 밀폐용기에 담아 냉장 보관하면 공기 접촉을 최소화하여 신선도가 오래 유지되고 위생적입니다.",
+        "5": "해동한 식품을 재냉동하면 세균이 급격히 증식한 상태에서 다시 얼어 해동 시 식중독 위험이 매우 높아집니다."
+      },
+      "vi": {
+        "1": "Một số trái cây nhiệt đới như chuối, dứa có thể bị hỏng lạnh khi để ngăn mát ngay; cần ủ chín ở nhiệt độ phòng trước.",
+        "2": "Rửa trứng bằng nước làm mất lớp màng bảo vệ cuticle, tạo điều kiện vi khuẩn xâm nhập; chỉ rửa ngay trước khi dùng.",
+        "3": "Ướp muối cá có thể bảo quản ngắn hạn, nhưng chỉ ướp muối mà để trong ngăn mát không phù hợp để bảo quản lâu dài.",
+        "4": "★ Rau củ sau khi loại bỏ tạp chất, cho vào hộp kín rồi bảo quản trong ngăn mát giúp giảm tiếp xúc với không khí, giữ độ tươi lâu và đảm bảo vệ sinh.",
+        "5": "Rã đông thực phẩm rồi đông lại rất nguy hiểm vì vi khuẩn đã sinh sôi mạnh trong lúc rã đông; tăng nguy cơ ngộ độc thực phẩm khi dùng lần sau."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "밀폐용기", "def_vi": "Hộp kín (đựng thực phẩm) — hộp có nắp đậy kín, giảm tiếp xúc không khí và giữ độ tươi cho thực phẩm" },
+      { "term_ko": "재냉동", "def_vi": "Đông lại (sau khi rã đông) — cực kỳ nguy hiểm vì vi khuẩn đã tăng sinh trong quá trình rã đông" },
+      { "term_ko": "냉해", "def_vi": "Hỏng lạnh (chilling injury) — tổn thương ở trái cây nhiệt đới khi bị làm lạnh quá sớm hoặc quá thấp" }
+    ]
+  },
+  {
+    "id": 1445,
+    "intent_ko": "대상자 집 냉장고에서 부패한 음식 발견 시 올바른 대처 방법을 고르는 문제",
+    "intent_vi": "Chọn cách xử lý đúng khi phát hiện thực phẩm bị hỏng trong tủ lạnh của đối tượng",
+    "choice_explanations": {
+      "ko": {
+        "1": "부패한 음식은 끓여도 열에 강한 독소가 남아 있을 수 있어 절대로 다시 먹여서는 안 됩니다.",
+        "2": "★ 부패한 음식을 발견하면 해당 음식을 즉시 폐기하고, 냉장고 온도 설정이 적절한지(4°C 이하), 함께 보관된 다른 음식들의 상태도 점검해야 합니다. 온도 이상이나 다른 음식 오염 여부를 확인하는 것이 체계적인 대처입니다.",
+        "3": "상한 부분만 버리는 것은 잘못된 방법으로, 부패는 눈에 보이지 않는 곳까지 퍼져 있을 수 있습니다.",
+        "4": "즉시 폐기는 올바르지만, 나중에 설명하는 것은 충분하지 않습니다. 대상자(보호자)에게 즉시 알리고 함께 점검하는 것이 원칙입니다.",
+        "5": "부패한 음식을 빨리 섭취하도록 권하는 것은 심각한 위해 행위입니다."
+      },
+      "vi": {
+        "1": "Thực phẩm bị hỏng tuyệt đối không được đun nóng để ăn lại vì độc tố chịu nhiệt vẫn còn nguyên.",
+        "2": "★ Khi phát hiện thực phẩm hỏng, cần vứt bỏ ngay và kiểm tra nhiệt độ tủ lạnh (có đạt dưới 4°C không) cũng như tình trạng các thực phẩm khác đang bảo quản cùng. Đây là cách xử lý có hệ thống và đúng nguyên tắc.",
+        "3": "Chỉ vứt phần hỏng nhìn thấy là sai; sự hư hỏng có thể đã lan sang các phần khác mà mắt thường không thấy.",
+        "4": "Vứt bỏ ngay là đúng, nhưng thông báo cho đối tượng/người giám hộ phải làm ngay, không phải để sau.",
+        "5": "Khuyến khích ăn thực phẩm đã hỏng là hành vi gây hại nghiêm trọng cho sức khỏe đối tượng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "부패", "def_vi": "Hư hỏng/thối rữa thực phẩm — quá trình vi khuẩn phân hủy thực phẩm; sinh độc tố ngay cả sau khi đun nóng" },
+      { "term_ko": "열에 강한 독소", "def_vi": "Độc tố chịu nhiệt — độc tố do vi khuẩn tiết ra, không bị phá hủy khi đun sôi; nguy hiểm dù thực phẩm đã nấu chín" }
+    ]
+  },
+  {
+    "id": 1444,
+    "intent_ko": "질환별로 적합한 음식을 고르는 문제",
+    "intent_vi": "Chọn loại thực phẩm phù hợp theo từng bệnh lý",
+    "choice_explanations": {
+      "ko": {
+        "1": "꿀은 단순당이 풍부하여 혈당을 빠르게 올리므로 당뇨병 환자에게 금기이며, 육류는 당뇨 합병증인 고지혈증 위험을 높입니다.",
+        "2": "젓갈류와 장아찌는 나트륨 함량이 매우 높아 고혈압 환자에게 혈압을 상승시키므로 금기입니다.",
+        "3": "★ 골다공증은 뼈의 칼슘이 감소하는 질환으로, 칼슘이 풍부한 미역과 칼슘·단백질이 풍부한 두부를 섭취하는 것이 뼈 강도 유지에 도움이 됩니다.",
+        "4": "만성신부전 환자는 신장의 수분 조절 기능이 떨어지므로 수분 섭취를 제한해야 합니다. 많은 양의 물은 부종을 악화시킵니다.",
+        "5": "변비에는 식이섬유와 수분이 풍부한 음식이 필요하며, 콜라(카페인·탄산)와 녹차(탄닌)는 오히려 변비를 악화시킬 수 있습니다."
+      },
+      "vi": {
+        "1": "Mật ong giàu đường đơn làm tăng đường huyết nhanh — chống chỉ định với bệnh tiểu đường; thịt đỏ tăng nguy cơ biến chứng mỡ máu.",
+        "2": "Mắm, dưa muối, kim chi... có hàm lượng natri rất cao, làm tăng huyết áp — chống chỉ định cho bệnh nhân cao huyết áp.",
+        "3": "★ Loãng xương là bệnh do mất canxi xương; rong biển (wakame) và đậu phụ giàu canxi và protein giúp duy trì mật độ xương, đây là thực phẩm phù hợp.",
+        "4": "Bệnh nhân suy thận mãn tính có chức năng điều tiết nước bị suy giảm; uống nhiều nước làm nặng thêm tình trạng phù nề.",
+        "5": "Táo bón cần thực phẩm nhiều chất xơ và nước; nước ngọt có gas và trà xanh (chứa tannin) có thể làm táo bón nặng hơn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "골다공증", "def_vi": "Loãng xương — bệnh mật độ xương giảm, xương dễ gãy; cần bổ sung canxi từ thực phẩm" },
+      { "term_ko": "만성신부전", "def_vi": "Suy thận mãn tính — thận mất dần chức năng; phải hạn chế nước, kali, phốt pho theo chỉ định" },
+      { "term_ko": "나트륨", "def_vi": "Natri (muối) — khoáng chất làm tăng huyết áp khi nạp quá nhiều; cần hạn chế với bệnh nhân cao huyết áp" },
+      { "term_ko": "식이요법", "def_vi": "Chế độ ăn kiêng/liệu pháp dinh dưỡng — điều chỉnh chế độ ăn theo từng bệnh lý để hỗ trợ điều trị" }
+    ]
+  },
+  {
+    "id": 1443,
+    "intent_ko": "변비 대상자의 올바른 식사 원칙을 고르는 문제",
+    "intent_vi": "Chọn nguyên tắc ăn uống đúng cho đối tượng bị táo bón",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 보리와 검정콩은 식이섬유가 풍부하고, 미역은 수용성 식이섬유(알긴산)가 풍부하여 장 운동을 촉진하고 변비 개선에 효과적입니다.",
+        "2": "과일 통조림은 제조 과정에서 식이섬유가 상당 부분 손실되어 생과일보다 변비 해소 효과가 낮습니다.",
+        "3": "비타민 D와 칼슘보충제는 골다공증 치료를 위한 것으로, 변비 개선과는 직접적 관련이 없습니다.",
+        "4": "도정을 많이 한 곡류(흰쌀, 흰밀가루)는 식이섬유가 제거되어 변비를 악화시킬 수 있습니다.",
+        "5": "변비 시 수분 섭취는 오히려 필수이며, 수분이 부족하면 대변이 딱딱해져 변비가 악화됩니다."
+      },
+      "vi": {
+        "1": "★ Lúa mạch và đậu đen giàu chất xơ; rong biển (wakame) giàu chất xơ hòa tan (alginic acid) giúp kích thích nhu động ruột và cải thiện táo bón hiệu quả.",
+        "2": "Trái cây đóng hộp mất nhiều chất xơ trong quá trình chế biến; ít tác dụng cải thiện táo bón hơn trái cây tươi.",
+        "3": "Vitamin D và canxi bổ sung dành cho điều trị loãng xương, không liên quan trực tiếp đến cải thiện táo bón.",
+        "4": "Ngũ cốc xay xát nhiều (gạo trắng, bột mì trắng) đã loại bỏ chất xơ, có thể làm táo bón nặng thêm.",
+        "5": "Với táo bón, uống đủ nước là điều bắt buộc; thiếu nước làm phân cứng và táo bón nặng hơn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "식이섬유", "def_vi": "Chất xơ (dietary fiber) — thành phần thực vật không tiêu hóa được; giúp kích thích nhu động ruột, cải thiện táo bón" },
+      { "term_ko": "도정", "def_vi": "Xay xát (ngũ cốc) — quá trình loại bỏ vỏ cám khỏi hạt; làm mất phần lớn chất xơ" },
+      { "term_ko": "수용성 식이섬유", "def_vi": "Chất xơ hòa tan — loại chất xơ tan trong nước (như alginic acid trong rong biển); giúp làm mềm phân" }
+    ]
+  },
+  {
+    "id": 1442,
+    "intent_ko": "변비 완화에 도움이 되는 식품을 고르는 문제",
+    "intent_vi": "Chọn thực phẩm giúp cải thiện táo bón",
+    "choice_explanations": {
+      "ko": {
+        "1": "돼지고기는 단백질·지방 식품으로 식이섬유가 거의 없어 변비 완화에 도움이 되지 않습니다.",
+        "2": "커피와 콜라는 카페인으로 이뇨 작용을 하여 수분을 손실시키므로 변비를 악화시킬 수 있습니다.",
+        "3": "홍차와 녹차의 탄닌 성분은 장 점막을 수축시키고 수분 흡수를 방해하여 변비에 좋지 않습니다.",
+        "4": "초콜릿과 치즈는 지방 함량이 높고 식이섬유가 거의 없어 장 운동을 느리게 하여 변비를 악화시킵니다.",
+        "5": "★ 잡곡류·생과일·생채소는 모두 식이섬유가 풍부하여 장 운동을 촉진하고 변의 용적을 늘려 변비를 완화하는 데 가장 효과적입니다."
+      },
+      "vi": {
+        "1": "Thịt lợn là thực phẩm giàu protein và chất béo, gần như không có chất xơ — không giúp cải thiện táo bón.",
+        "2": "Cà phê và nước ngọt có caffeine gây lợi tiểu, làm mất nước cơ thể — có thể làm táo bón nặng hơn.",
+        "3": "Tannin trong trà đen và trà xanh làm co niêm mạc ruột và cản trở hấp thu nước — không tốt cho táo bón.",
+        "4": "Socola và phô mai nhiều chất béo, ít chất xơ, làm chậm nhu động ruột — làm táo bón nặng hơn.",
+        "5": "★ Ngũ cốc hỗn hợp, trái cây tươi và rau sống đều giàu chất xơ, giúp kích thích nhu động ruột, tăng khối lượng phân — hiệu quả nhất trong cải thiện táo bón."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "탄닌", "def_vi": "Tannin — hợp chất trong trà, làm co niêm mạc ruột và cản trở hấp thu nước; không tốt cho táo bón" },
+      { "term_ko": "잡곡류", "def_vi": "Ngũ cốc hỗn hợp (gạo lứt, lúa mạch, kê...) — giàu chất xơ, tốt cho nhu động ruột và phòng ngừa táo bón" },
+      { "term_ko": "이뇨 작용", "def_vi": "Tác dụng lợi tiểu — kích thích bài tiết nước tiểu nhiều hơn, gây mất nước; caffeine có tác dụng này" }
+    ]
+  },
+  {
+    "id": 1441,
+    "intent_ko": "음식물 삼킴이 어려운 대상자의 식사를 돕는 올바른 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp hỗ trợ ăn uống đúng cho đối tượng khó nuốt",
+    "choice_explanations": {
+      "ko": {
+        "1": "국수를 돌돌 말면 삼키는 과정에서 기도를 막을 수 있어 흡인 위험이 높습니다.",
+        "2": "과일을 주스로 만들면 당이 높고 식이섬유가 줄어들며, 씹는 훈련 기회도 없어집니다. 점도 조절이 안 된 액체는 오히려 흡인 위험이 있습니다.",
+        "3": "익히지 않은 생채소는 딱딱하고 씹기 어려워 삼킴 장애 대상자에게 위험합니다. 익힌 채소가 안전합니다.",
+        "4": "물과 같은 묽은 액체는 삼킴 장애 대상자에게 폐로 흡인될 위험이 있어, 점도 증진제를 사용하여 적절한 농도로 조절해야 합니다.",
+        "5": "★ 한 번에 조금씩 떠 먹이고 충분히 삼킨 후 다음 음식을 제공하면 흡인을 예방하고 안전하게 식사를 도울 수 있습니다. 이는 삼킴 장애 대상자 식사 지원의 가장 기본적인 원칙입니다."
+      },
+      "vi": {
+        "1": "Cuộn mì lại thành cục có thể gây tắc đường thở khi nuốt — nguy cơ hít sặc cao.",
+        "2": "Xay trái cây thành nước ép làm tăng đường, giảm chất xơ và không có cơ hội tập nhai; chất lỏng loãng không kiểm soát độ nhớt còn có thể gây hít sặc.",
+        "3": "Rau sống cứng và khó nhai — nguy hiểm cho người khó nuốt; rau đã nấu chín mềm mới an toàn.",
+        "4": "Chất lỏng loãng như nước uống dễ bị hít vào phổi ở người khó nuốt; cần dùng chất tăng độ nhớt để điều chỉnh độ đặc phù hợp.",
+        "5": "★ Múc từng muỗng nhỏ và đợi đối tượng nuốt xong mới cho tiếp là cách phòng ngừa hít sặc và hỗ trợ ăn uống an toàn nhất — đây là nguyên tắc cơ bản nhất khi chăm sóc người khó nuốt."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "삼킴 장애", "def_vi": "Rối loạn nuốt (dysphagia) — khó nuốt thức ăn/nước uống; có nguy cơ hít sặc vào phổi" },
+      { "term_ko": "흡인", "def_vi": "Hít sặc (aspiration) — thức ăn hoặc chất lỏng đi vào đường thở thay vì thực quản; gây viêm phổi nguy hiểm" },
+      { "term_ko": "점도 증진제", "def_vi": "Chất tăng độ nhớt (thickener) — chất phụ gia làm đặc thức ăn/nước uống để giảm nguy cơ hít sặc ở người khó nuốt" }
+    ]
+  },
+  {
+    "id": 1440,
+    "intent_ko": "삼킴 장애 대상자의 식사를 돕는 올바른 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp hỗ trợ ăn uống đúng cho đối tượng có rối loạn nuốt",
+    "choice_explanations": {
+      "ko": {
+        "1": "밥을 국물에 말면 점도가 낮아져 흡인 위험이 증가합니다. 묽은 음식은 삼킴 장애 대상자에게 위험합니다.",
+        "2": "★ 사과를 숟가락으로 긁어내면 부드럽고 점도가 적당한 퓨레 형태가 되어 삼킴 장애 대상자가 안전하게 섭취할 수 있습니다. 씹거나 삼키기 쉬운 형태로 변환하는 적절한 방법입니다.",
+        "3": "반숙과 완숙 중 어느 것이 더 적합한지는 개인 상태에 따라 다르며, 완숙이 무조건 더 나은 것은 아닙니다.",
+        "4": "신맛이 강한 소스는 분비물(침)을 자극하여 흡인 위험을 높일 수 있고, 강한 맛 자극이 삼킴 반사를 교란할 수 있습니다.",
+        "5": "마시는 형태의 유제품(액체)은 삼킴 장애 대상자에게 흡인 위험이 더 크므로 적합하지 않습니다."
+      },
+      "vi": {
+        "1": "Trộn cơm vào nước canh làm giảm độ nhớt, tăng nguy cơ hít sặc; thức ăn loãng nguy hiểm cho người khó nuốt.",
+        "2": "★ Nạo táo bằng muỗng tạo ra dạng xốt mịn có độ nhớt vừa phải, an toàn để người bị rối loạn nuốt có thể ăn được. Đây là cách chuyển đổi thực phẩm sang dạng dễ nuốt phù hợp.",
+        "3": "Trứng lòng đào hay lòng cứng tùy thuộc vào tình trạng từng người; không thể khẳng định lòng cứng luôn tốt hơn.",
+        "4": "Sốt chua mạnh kích thích tiết nước bọt nhiều và có thể gây rối loạn phản xạ nuốt, tăng nguy cơ hít sặc.",
+        "5": "Sản phẩm sữa dạng lỏng có nguy cơ hít sặc cao hơn ở người rối loạn nuốt; không phù hợp."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "삼킴 장애", "def_vi": "Rối loạn nuốt (dysphagia) — khó nuốt; cần điều chỉnh texture (cấu trúc) thức ăn để ăn an toàn" },
+      { "term_ko": "흡인 위험", "def_vi": "Nguy cơ hít sặc — thức ăn/chất lỏng đi nhầm vào đường thở; phổ biến ở người bị rối loạn nuốt" },
+      { "term_ko": "퓨레", "def_vi": "Purée — thực phẩm xay/nghiền nhuyễn thành dạng sốt mịn; dễ nuốt và an toàn cho người khó nuốt" }
+    ]
+  },
+  {
+    "id": 1439,
+    "intent_ko": "고혈압 대상자가 섭취를 제한해야 하는 음식을 고르는 문제",
+    "intent_vi": "Chọn thực phẩm cần hạn chế cho đối tượng bị cao huyết áp",
+    "choice_explanations": {
+      "ko": {
+        "1": "저지방 우유는 칼슘과 단백질이 풍부하고 나트륨이 적어 고혈압 환자에게 권장되는 식품입니다.",
+        "2": "★ 빵(특히 식빵·가공빵)은 제조 과정에서 나트륨이 많이 들어가고, 베이컨은 가공육으로 나트륨 함량이 매우 높습니다. 나트륨은 혈압을 상승시키므로 고혈압 환자는 반드시 제한해야 합니다.",
+        "3": "보리밥은 식이섬유가 풍부하고, 삶은 양배추는 칼륨이 풍부하여 나트륨 배출을 도와 고혈압에 유익합니다.",
+        "4": "현미밥은 식이섬유와 미네랄이 풍부하며, 콩나물국은 칼륨이 풍부하여 고혈압 환자에게 좋습니다.",
+        "5": "카레가루에는 나트륨이 일부 포함되어 있으나, 조리 방법에 따라 나트륨 함량이 달라집니다."
+      },
+      "vi": {
+        "1": "Sữa ít béo giàu canxi, protein và ít natri — là thực phẩm được khuyến nghị cho bệnh nhân cao huyết áp.",
+        "2": "★ Bánh mì (đặc biệt bánh mì sandwich, bánh mì chế biến) chứa nhiều natri trong quá trình sản xuất; thịt xông khói (bacon) là thịt chế biến có hàm lượng natri rất cao. Natri làm tăng huyết áp nên bệnh nhân cao huyết áp phải hạn chế tuyệt đối.",
+        "3": "Cơm lúa mạch giàu chất xơ; bắp cải luộc giàu kali giúp đào thải natri — tốt cho bệnh nhân cao huyết áp.",
+        "4": "Cơm gạo lứt giàu chất xơ và khoáng chất; canh giá đỗ giàu kali — phù hợp cho bệnh nhân cao huyết áp.",
+        "5": "Bột cà ri có chứa một lượng natri nhất định, nhưng hàm lượng thay đổi tùy theo cách chế biến."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "나트륨", "def_vi": "Natri (sodium) — khoáng chất chủ yếu trong muối; nạp quá nhiều làm tăng huyết áp, cần hạn chế nghiêm ngặt" },
+      { "term_ko": "가공육", "def_vi": "Thịt chế biến — thịt đã qua xử lý (xông khói, ướp muối...); chứa hàm lượng natri và chất bảo quản cao" },
+      { "term_ko": "칼륨", "def_vi": "Kali (potassium) — khoáng chất giúp đào thải natri qua nước tiểu, hỗ trợ kiểm soát huyết áp; có nhiều trong rau, đậu" }
+    ]
+  }
+]

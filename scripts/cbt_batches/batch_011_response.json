@@ -1,0 +1,766 @@
+[
+  {
+    "id": 1438,
+    "intent_ko": "고혈압 대상자에게 적합한 저염·저지방 식품을 고르는 문제",
+    "intent_vi": "Chọn thực phẩm ít muối, ít chất béo phù hợp cho người bị tăng huyết áp",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 찐 고구마는 식이섬유와 칼륨이 풍부해 나트륨 배출을 돕고 혈압 조절에 효과적입니다. 조리 시 소금을 사용하지 않아 고혈압 식단에 가장 적합합니다.",
+        "2": "강된장은 발효 과정에서 나트륨 함량이 매우 높아 혈압을 상승시킬 수 있어 부적합합니다.",
+        "3": "깻잎장아찌는 절임 과정에서 소금을 다량 사용하므로 나트륨이 많아 고혈압에 부적합합니다.",
+        "4": "삼겹살 구이는 포화지방 함량이 높아 혈관 건강에 부정적 영향을 미칩니다.",
+        "5": "자반 고등어는 간을 하여 염장한 생선으로 나트륨이 매우 많아 고혈압에 좋지 않습니다."
+      },
+      "vi": {
+        "1": "★ Khoai lang hấp giàu chất xơ và kali, giúp thải natri và kiểm soát huyết áp hiệu quả. Không dùng muối khi chế biến nên rất phù hợp cho chế độ ăn của người tăng huyết áp.",
+        "2": "Tương đậu đặc (강된장) có hàm lượng natri rất cao do quá trình lên men, có thể làm tăng huyết áp nên không phù hợp.",
+        "3": "Dưa lá vừng ngâm muối (깻잎장아찌) dùng nhiều muối trong quá trình muối chua nên hàm lượng natri cao, không phù hợp với người tăng huyết áp.",
+        "4": "Thịt ba chỉ nướng có hàm lượng chất béo bão hòa cao, ảnh hưởng tiêu cực đến sức khỏe mạch máu.",
+        "5": "Cá thu muối (자반 고등어) là loại cá ướp muối nên có hàm lượng natri rất cao, không tốt cho người tăng huyết áp."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "고혈압", "def_vi": "Tăng huyết áp — tình trạng huyết áp cao hơn mức bình thường, gây nguy cơ bệnh tim mạch" },
+      { "term_ko": "식이섬유", "def_vi": "Chất xơ — thành phần thực vật không tiêu hóa được, giúp điều hòa đường huyết và hỗ trợ tiêu hóa" },
+      { "term_ko": "칼륨", "def_vi": "Kali — khoáng chất giúp cân bằng natri trong cơ thể và hỗ trợ kiểm soát huyết áp" }
+    ]
+  },
+  {
+    "id": 1437,
+    "intent_ko": "당뇨병 대상자의 올바른 식사 관리 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp quản lý bữa ăn đúng đắn cho người bị bệnh tiểu đường",
+    "choice_explanations": {
+      "ko": {
+        "1": "혈당지수가 높은 식품은 혈당을 급격히 상승시켜 당뇨 관리에 매우 해롭습니다.",
+        "2": "식이섬유는 포만감을 주고 혈당 상승을 완만하게 하므로 오히려 섭취를 권장해야 합니다.",
+        "3": "튀김·볶음 요리는 지방 함량이 높아 체중 증가와 혈당 불안정을 초래하므로 피해야 합니다.",
+        "4": "★ 향신료(마늘, 생강, 허브 등)를 활용하면 소금 없이도 맛을 낼 수 있어 나트륨 섭취를 줄일 수 있습니다. 당뇨 환자는 혈압 관리도 중요하므로 싱겁게 조리하는 것이 원칙입니다.",
+        "5": "식사 횟수를 늘리더라도 총 섭취 칼로리와 당질 양을 엄격히 조절해야 하며, 무조건 자주 먹는 것은 혈당 관리에 불리합니다."
+      },
+      "vi": {
+        "1": "Thực phẩm có chỉ số đường huyết cao làm tăng đường huyết đột ngột, rất có hại cho việc kiểm soát tiểu đường.",
+        "2": "Chất xơ giúp tạo cảm giác no và làm chậm tốc độ tăng đường huyết nên cần được khuyến khích tiêu thụ, không phải hạn chế.",
+        "3": "Món chiên và xào có hàm lượng chất béo cao, dễ gây tăng cân và bất ổn đường huyết nên cần tránh.",
+        "4": "★ Sử dụng gia vị (tỏi, gừng, thảo mộc...) giúp tạo hương vị mà không cần muối, từ đó giảm lượng natri nạp vào. Người tiểu đường cũng cần kiểm soát huyết áp nên nguyên tắc nấu nhạt rất quan trọng.",
+        "5": "Dù tăng số bữa ăn, vẫn phải kiểm soát chặt tổng calo và lượng tinh bột tiêu thụ; ăn thường xuyên tùy tiện sẽ bất lợi cho kiểm soát đường huyết."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "혈당지수", "def_vi": "Chỉ số đường huyết (GI) — chỉ số cho biết tốc độ một thực phẩm làm tăng đường huyết sau khi ăn" },
+      { "term_ko": "식이섬유", "def_vi": "Chất xơ — thành phần không tiêu hóa được trong thực vật, giúp kiểm soát đường huyết và tạo cảm giác no" },
+      { "term_ko": "향신료", "def_vi": "Gia vị thơm (tỏi, gừng, thảo mộc...) — nguyên liệu tạo mùi vị thay thế muối, giúp giảm natri trong chế độ ăn" }
+    ]
+  },
+  {
+    "id": 1436,
+    "intent_ko": "당뇨병 혈당 관리에 도움이 되는 혈당지수가 낮은 식품을 고르는 문제",
+    "intent_vi": "Chọn thực phẩm có chỉ số đường huyết thấp giúp kiểm soát đường huyết cho người tiểu đường",
+    "choice_explanations": {
+      "ko": {
+        "1": "수박은 혈당지수(GI)가 약 72로 높아 혈당을 빠르게 올리므로 부적합합니다.",
+        "2": "흰밥은 혈당지수가 70 이상으로 높아 당뇨 식단에서 피해야 할 식품입니다.",
+        "3": "찐감자도 혈당지수가 약 65~85로 높아 당뇨 관리에 적합하지 않습니다.",
+        "4": "★ 미역은 혈당지수가 낮고 식이섬유(알긴산)가 풍부하여 혈당 상승을 완만하게 합니다. 칼로리도 낮고 미네랄이 풍부해 당뇨 환자에게 권장되는 식품입니다.",
+        "5": "식빵은 정제 밀가루로 만들어 혈당지수가 높아 당뇨 식단에 적합하지 않습니다."
+      },
+      "vi": {
+        "1": "Dưa hấu có chỉ số đường huyết (GI) khoảng 72 — cao, làm tăng đường huyết nhanh nên không phù hợp.",
+        "2": "Cơm trắng có chỉ số GI trên 70 — cao, là thực phẩm cần tránh trong chế độ ăn của người tiểu đường.",
+        "3": "Khoai tây luộc cũng có GI khoảng 65–85 — cao, không phù hợp cho việc kiểm soát tiểu đường.",
+        "4": "★ Rong biển (미역) có chỉ số đường huyết thấp và giàu chất xơ (alginat) giúp làm chậm tốc độ tăng đường huyết. Ít calo và giàu khoáng chất, đây là thực phẩm được khuyến nghị cho người tiểu đường.",
+        "5": "Bánh mì trắng được làm từ bột mì tinh chế nên có chỉ số GI cao, không phù hợp với chế độ ăn tiểu đường."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "혈당지수", "def_vi": "Chỉ số đường huyết (GI) — chỉ số đo lường mức độ và tốc độ thực phẩm làm tăng đường trong máu" },
+      { "term_ko": "알긴산", "def_vi": "Axit alginic — chất xơ hòa tan có trong rong biển, giúp làm chậm hấp thụ đường và kiểm soát đường huyết" },
+      { "term_ko": "당뇨병", "def_vi": "Bệnh tiểu đường — rối loạn chuyển hóa do thiếu hoặc kháng insulin, khiến đường huyết tăng cao" }
+    ]
+  },
+  {
+    "id": 1435,
+    "intent_ko": "당뇨병 대상자에게 올바른 식품 섭취 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp tiêu thụ thực phẩm đúng đắn cho người bị tiểu đường",
+    "choice_explanations": {
+      "ko": {
+        "1": "알코올은 혈당을 급격히 변동시키고 저혈당 위험을 높이므로 당뇨 환자에게 해롭습니다.",
+        "2": "커피·탄산음료에는 당분이 많아 혈당을 급격히 올리므로 피해야 합니다.",
+        "3": "★ 잡곡밥은 현미, 보리, 콩 등 다양한 곡물이 혼합되어 식이섬유가 풍부하고 혈당지수가 낮아 혈당 조절에 효과적입니다. 흰밥에 비해 소화 속도가 느려 혈당 급등을 방지합니다.",
+        "4": "생과일에는 식이섬유가 있어 혈당 상승 속도를 늦추지만, 과일주스는 섬유소가 제거되어 혈당을 빠르게 올립니다.",
+        "5": "설탕·꿀 등 단순당은 소화 흡수가 빨라 혈당을 급격히 상승시키므로 당뇨 환자는 피해야 합니다."
+      },
+      "vi": {
+        "1": "Rượu làm biến động đường huyết đột ngột và tăng nguy cơ hạ đường huyết, gây hại cho người tiểu đường.",
+        "2": "Cà phê và nước ngọt có gas chứa nhiều đường làm tăng đường huyết nhanh nên cần tránh.",
+        "3": "★ Cơm gạo lứt hỗn hợp (잡곡밥) chứa nhiều loại ngũ cốc như gạo lứt, đại mạch, đậu... giàu chất xơ và có chỉ số GI thấp, giúp kiểm soát đường huyết hiệu quả. Tiêu hóa chậm hơn cơm trắng, ngăn đường huyết tăng đột ngột.",
+        "4": "Trái cây tươi có chất xơ giúp làm chậm tăng đường huyết, nhưng nước ép trái cây đã loại bỏ chất xơ nên làm tăng đường huyết nhanh.",
+        "5": "Đường đơn như đường mía và mật ong hấp thụ nhanh, làm tăng đường huyết đột ngột nên người tiểu đường cần tránh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "잡곡밥", "def_vi": "Cơm ngũ cốc hỗn hợp — cơm nấu từ nhiều loại ngũ cốc (gạo lứt, đại mạch, đậu...) giàu chất xơ và có GI thấp" },
+      { "term_ko": "단순당", "def_vi": "Đường đơn — dạng carbohydrate đơn giản (đường mía, mật ong) được hấp thụ nhanh, làm tăng đường huyết đột ngột" },
+      { "term_ko": "혈당지수", "def_vi": "Chỉ số đường huyết (GI) — đo mức độ thực phẩm làm tăng đường huyết sau khi ăn" }
+    ]
+  },
+  {
+    "id": 1434,
+    "intent_ko": "당뇨병 대상자의 올바른 식사 돕기 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp hỗ trợ bữa ăn đúng đắn cho người bị tiểu đường",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 단순당질(설탕, 흰밥, 과자 등)은 혈당을 급격히 상승시키므로 당뇨 관리에서 섭취를 제한하는 것이 가장 핵심 원칙입니다.",
+        "2": "해조류(미역, 김, 다시마)는 식이섬유와 미네랄이 풍부하고 혈당지수가 낮아 당뇨 환자에게 오히려 권장되는 식품입니다.",
+        "3": "과식은 혈당을 크게 올리고 체중 증가를 유발하여 당뇨 관리에 반하므로 잘못된 방법입니다.",
+        "4": "동물성 포화지방은 인슐린 저항성을 높이고 심혈관 합병증 위험을 증가시키므로 제한해야 합니다.",
+        "5": "혈당지수가 높은 식품은 혈당을 급격히 올려 당뇨 관리에 해롭습니다."
+      },
+      "vi": {
+        "1": "★ Carbohydrate đơn giản (đường, cơm trắng, bánh kẹo...) làm tăng đường huyết đột ngột, vì vậy hạn chế tiêu thụ là nguyên tắc cốt lõi nhất trong quản lý bệnh tiểu đường.",
+        "2": "Rong biển (미역, 김, 다시마) giàu chất xơ và khoáng chất, có chỉ số GI thấp nên thực ra được khuyến nghị cho người tiểu đường, không nên giảm tiêu thụ.",
+        "3": "Ăn quá nhiều làm tăng đường huyết mạnh và gây tăng cân, đi ngược lại mục tiêu kiểm soát tiểu đường.",
+        "4": "Chất béo bão hòa từ động vật làm tăng kháng insulin và nguy cơ biến chứng tim mạch nên cần hạn chế.",
+        "5": "Thực phẩm có chỉ số GI cao làm tăng đường huyết nhanh, có hại cho kiểm soát tiểu đường."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "단순당질", "def_vi": "Carbohydrate đơn giản — dạng tinh bột/đường hấp thụ nhanh như đường mía, cơm trắng; làm tăng đường huyết đột ngột" },
+      { "term_ko": "인슐린 저항성", "def_vi": "Kháng insulin — tình trạng tế bào không phản ứng tốt với insulin, khiến đường huyết khó kiểm soát" },
+      { "term_ko": "해조류", "def_vi": "Rong biển — thực vật biển (rong biển, tảo bẹ...) giàu chất xơ và khoáng chất, tốt cho người tiểu đường" }
+    ]
+  },
+  {
+    "id": 1433,
+    "intent_ko": "영양밀도를 높이고 먹기 쉽게 조리하는 올바른 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp nấu ăn đúng đắn để tăng mật độ dinh dưỡng và dễ ăn",
+    "choice_explanations": {
+      "ko": {
+        "1": "나물을 미리 무쳐 두면 풍미는 살릴 수 있지만 영양밀도를 높이는 방법과는 직접적 관련이 없습니다.",
+        "2": "양념 맛을 과도하게 강조하면 식품 본래의 영양소를 가리고 나트륨 섭취가 늘어날 수 있습니다.",
+        "3": "마요네즈는 칼로리가 높지만 비타민·미네랄 등 필수 영양소가 부족하여 영양밀도 향상에 도움이 되지 않습니다.",
+        "4": "★ 쑥갓나물 무침에 삶아서 으깬 두부를 넣으면 나물의 식이섬유에 두부의 식물성 단백질이 더해져 영양밀도가 높아집니다. 두부는 부드러워 노인 등 씹는 힘이 약한 대상자도 먹기 쉽습니다.",
+        "5": "사태·양지는 결 방향으로 자르고 고온에서 단시간 조리하면 질겨지므로, 노인 대상자에게는 결 반대 방향으로 잘라 저온에서 오래 삶는 것이 적합합니다."
+      },
+      "vi": {
+        "1": "Trộn rau trước có thể giữ hương vị nhưng không trực tiếp liên quan đến việc tăng mật độ dinh dưỡng.",
+        "2": "Nhấn mạnh quá vào hương vị gia vị có thể che khuất dinh dưỡng tự nhiên của thực phẩm và tăng lượng natri tiêu thụ.",
+        "3": "Sốt mayonnaise nhiều calo nhưng thiếu vitamin và khoáng chất cần thiết, không giúp tăng mật độ dinh dưỡng.",
+        "4": "★ Cho đậu phụ luộc nghiền vào món rau cải cúc trộn sẽ bổ sung protein thực vật từ đậu phụ vào chất xơ của rau, giúp tăng mật độ dinh dưỡng. Đậu phụ mềm nên người cao tuổi hoặc người nhai kém vẫn dễ ăn.",
+        "5": "Thịt bắp và thịt nạm cắt theo thớ rồi nấu ở nhiệt độ cao trong thời gian ngắn sẽ bị dai; với người cao tuổi nên cắt ngang thớ và hầm lâu ở nhiệt độ thấp."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "영양밀도", "def_vi": "Mật độ dinh dưỡng — lượng dinh dưỡng có lợi (vitamin, khoáng chất, protein) trên mỗi đơn vị calo của thực phẩm" },
+      { "term_ko": "식물성 단백질", "def_vi": "Protein thực vật — protein có nguồn gốc từ thực vật như đậu phụ, đậu lăng; dễ tiêu và tốt cho sức khỏe tim mạch" }
+    ]
+  },
+  {
+    "id": 1432,
+    "intent_ko": "음식 조리 시 나트륨을 줄이는 올바른 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp nấu ăn đúng để giảm lượng natri",
+    "choice_explanations": {
+      "ko": {
+        "1": "면을 삶을 때 소금을 넣으면 나트륨이 증가하므로 나트륨 감소와 반대되는 행동입니다.",
+        "2": "국물에는 나트륨이 많이 녹아 있어 국물 위주로 제공하면 나트륨 섭취가 오히려 늘어납니다.",
+        "3": "★ 쌈장을 만들 때 삶아서 으깬 두부를 넣으면 장의 양을 늘리면서 실제 된장·고추장의 비율을 줄일 수 있어 전체 나트륨 함량을 낮출 수 있습니다.",
+        "4": "절인 배추(김치 등)는 염장 과정에서 나트륨이 매우 높아져 나트륨 감소에 반하는 선택입니다.",
+        "5": "소금은 간장보다 나트륨 농도가 더 높아 간을 맞출 때 소금을 사용하면 나트륨 섭취가 더 많아집니다."
+      },
+      "vi": {
+        "1": "Thêm muối khi luộc mì làm tăng natri, đây là hành động ngược với mục tiêu giảm natri.",
+        "2": "Nước súp chứa nhiều natri hòa tan, cung cấp chủ yếu nước súp sẽ làm tăng lượng natri tiêu thụ.",
+        "3": "★ Cho đậu phụ luộc nghiền vào nước chấm (쌈장) giúp tăng khối lượng nước chấm trong khi giảm tỷ lệ tương đậu và tương ớt thực sự, từ đó giảm tổng hàm lượng natri.",
+        "4": "Bắp cải muối có hàm lượng natri rất cao do quá trình muối dưa, đây là lựa chọn ngược với mục tiêu giảm natri.",
+        "5": "Muối có nồng độ natri cao hơn nước tương, dùng muối để nêm sẽ làm tăng lượng natri tiêu thụ nhiều hơn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "나트륨", "def_vi": "Natri — khoáng chất chính trong muối; tiêu thụ quá nhiều dẫn đến tăng huyết áp và bệnh tim mạch" },
+      { "term_ko": "쌈장", "def_vi": "Nước chấm trộn (ssam-jang) — hỗn hợp tương đậu và tương ớt dùng để ăn kèm rau; hàm lượng natri cao" },
+      { "term_ko": "건더기", "def_vi": "Phần cái trong canh/lẩu — nguyên liệu rắn có thể nhai được trong món canh, đối lập với nước súp" }
+    ]
+  },
+  {
+    "id": 1431,
+    "intent_ko": "고혈압 예방을 위해 소금 섭취를 줄이는 올바른 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp đúng để giảm tiêu thụ muối nhằm phòng ngừa tăng huyết áp",
+    "choice_explanations": {
+      "ko": {
+        "1": "간을 점점 진하게 하면 나트륨 섭취가 늘어 고혈압 예방과 반대됩니다.",
+        "2": "음식이 뜨거울 때 간을 맞추면 실제보다 싱겁게 느껴져 간을 더 넣게 되어 나트륨이 증가할 수 있습니다.",
+        "3": "★ 두부와 가공식품(햄, 어묵 등)은 제조 과정에서 소금이 많이 첨가됩니다. 끓는 물에 데치면 표면의 나트륨이 물로 빠져나와 실제 섭취 나트륨량을 줄일 수 있습니다.",
+        "4": "고추장·된장·간장은 모두 나트륨이 많은 발효 양념으로, 이를 이용하면 나트륨 섭취가 늘어납니다.",
+        "5": "다른 맛·향의 양념(식초, 레몬, 허브 등)과 채소를 적극 활용하면 소금을 줄이면서도 맛을 낼 수 있습니다. 사용을 삼가는 것은 오히려 나트륨 감소에 불리합니다."
+      },
+      "vi": {
+        "1": "Nêm ngày càng đậm làm tăng lượng natri tiêu thụ, đi ngược với mục tiêu phòng ngừa tăng huyết áp.",
+        "2": "Nêm nếm khi thức ăn còn nóng khiến cảm giác vị nhạt hơn thực tế, dẫn đến thêm muối nhiều hơn và tăng natri.",
+        "3": "★ Đậu phụ và thực phẩm chế biến (giăm bông, chả cá...) được thêm nhiều muối trong quá trình sản xuất. Chần qua nước sôi giúp natri trên bề mặt hòa tan vào nước, giảm lượng natri thực sự nạp vào cơ thể.",
+        "4": "Tương ớt, tương đậu và nước tương đều là gia vị lên men giàu natri; sử dụng chúng sẽ làm tăng lượng natri tiêu thụ.",
+        "5": "Tích cực dùng các loại gia vị có mùi vị khác (giấm, chanh, thảo mộc) và rau quả giúp giảm muối mà vẫn tạo hương vị. Tránh dùng chúng lại bất lợi cho việc giảm natri."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "가공식품", "def_vi": "Thực phẩm chế biến — thực phẩm đã qua chế biến công nghiệp, thường chứa nhiều natri và phụ gia" },
+      { "term_ko": "데치다", "def_vi": "Chần — nhúng nhanh thực phẩm vào nước sôi để loại bỏ một phần muối hoặc tạp chất trên bề mặt" },
+      { "term_ko": "발효 양념", "def_vi": "Gia vị lên men — gia vị được sản xuất qua quá trình lên men (tương đậu, tương ớt, nước tương) có hàm lượng natri cao" }
+    ]
+  },
+  {
+    "id": 1430,
+    "intent_ko": "대상자를 위한 올바른 음식 조리 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp nấu ăn đúng đắn cho đối tượng cần chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "볶기는 일반적으로 고온에서 짧은 시간에 조리하는 방법이며, 저온에서 오래 볶으면 식감과 영양이 저하됩니다.",
+        "2": "생선구이는 너무 오래 구우면 육즙과 영양소가 손실되고 식감이 딱딱해져 노인 대상자가 먹기 어렵습니다.",
+        "3": "삶기는 최소한의 물로 조리해야 수용성 비타민 등 영양소 손실을 줄일 수 있으며, 물을 많이 사용하면 영양소가 물에 용출됩니다.",
+        "4": "★ 나물을 데친 후 참기름이나 들기름을 넣어 무치는 것이 올바른 조리법입니다. 데치면 부드러워져 노인이 먹기 쉽고, 식물성 기름을 가미하여 지용성 비타민 흡수를 높일 수 있습니다.",
+        "5": "튀기기는 고온에서 빠르게 조리하여 바삭한 식감을 내는 방법이며, 저온에서 조리하면 기름 흡수가 많아집니다."
+      },
+      "vi": {
+        "1": "Xào thường được thực hiện ở nhiệt độ cao trong thời gian ngắn; xào lâu ở nhiệt độ thấp làm giảm chất lượng và dinh dưỡng.",
+        "2": "Nướng cá quá lâu làm mất nước và chất dinh dưỡng, khiến cá cứng, khó ăn đặc biệt với người cao tuổi.",
+        "3": "Luộc nên dùng lượng nước tối thiểu để giảm mất vitamin tan trong nước; dùng nhiều nước sẽ làm dinh dưỡng hòa tan vào nước.",
+        "4": "★ Chần rau rồi trộn với dầu vừng hoặc dầu perilla là phương pháp nấu đúng. Chần làm rau mềm, dễ ăn cho người cao tuổi, còn dầu thực vật giúp tăng hấp thụ vitamin tan trong dầu.",
+        "5": "Chiên là phương pháp nấu ở nhiệt độ cao để tạo độ giòn; chiên ở nhiệt độ thấp sẽ làm thực phẩm hút nhiều dầu hơn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "들기름", "def_vi": "Dầu perilla (dầu tía tô) — dầu ép từ hạt tía tô, giàu omega-3 và có hương thơm đặc trưng, phổ biến trong ẩm thực Hàn Quốc" },
+      { "term_ko": "지용성 비타민", "def_vi": "Vitamin tan trong dầu — vitamin A, D, E, K chỉ được hấp thụ tốt khi có chất béo đi kèm" }
+    ]
+  },
+  {
+    "id": 1429,
+    "intent_ko": "치아 손실이 있는 재가대상자의 식사를 부드럽게 조리하는 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp nấu ăn mềm phù hợp cho người chăm sóc tại nhà bị mất răng",
+    "choice_explanations": {
+      "ko": {
+        "1": "감자를 바싹 튀겨 소금을 뿌리면 딱딱하고 짜서 치아 손실 대상자가 씹기 어렵고 고혈압에도 좋지 않습니다.",
+        "2": "흰떡을 큼직하게 썰어 볶으면 쫄깃하고 딱딱해져 치아가 없는 대상자가 삼키기 위험합니다.",
+        "3": "★ 양배추를 센 불로 먼저 익힌 후 약불로 줄여서 찌면 충분히 부드러워집니다. 부드러운 식감으로 치아 없이도 잇몸으로 으깨어 먹을 수 있어 치아 손실 대상자에게 안전하고 적합한 방법입니다.",
+        "4": "문어는 본래 질기고, 오래 삶아도 질긴 식감이 남을 수 있어 치아 손실 대상자에게 적합하지 않습니다.",
+        "5": "소고기 육포는 수분이 제거되어 딱딱하고 질겨 치아 없이는 전혀 씹을 수 없어 위험합니다."
+      },
+      "vi": {
+        "1": "Khoai tây chiên giòn rắc muối cứng và mặn, người mất răng khó nhai và cũng không tốt cho người tăng huyết áp.",
+        "2": "Bánh gạo trắng cắt to rồi xào sẽ dai và cứng, nguy hiểm cho người mất răng vì khó nuốt.",
+        "3": "★ Bắp cải nấu sôi to lửa trước rồi hạ nhỏ lửa hấp tiếp sẽ mềm đủ để người mất răng dùng nướu nghiền nhuyễn. Đây là phương pháp an toàn và phù hợp cho người mất răng.",
+        "4": "Bạch tuộc vốn dai và dù hầm lâu vẫn có thể còn dai, không phù hợp cho người mất răng.",
+        "5": "Thịt bò khô (jerky) đã mất nước, rất cứng và dai, không thể nhai nếu không có răng, rất nguy hiểm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "재가대상자", "def_vi": "Người nhận chăm sóc tại nhà — đối tượng nhận dịch vụ chăm sóc tại gia thay vì tại cơ sở y tế" },
+      { "term_ko": "치아 손실", "def_vi": "Mất răng — tình trạng mất một hoặc nhiều răng, thường gặp ở người cao tuổi, ảnh hưởng đến khả năng nhai" }
+    ]
+  },
+  {
+    "id": 1428,
+    "intent_ko": "식사 준비 시 재가대상자에게 올바른 설명을 한 것을 고르는 문제",
+    "intent_vi": "Chọn lời giải thích đúng đắn khi chuẩn bị bữa ăn cho đối tượng chăm sóc tại nhà",
+    "choice_explanations": {
+      "ko": {
+        "1": "남은 재료를 요양보호사가 먹겠다는 것은 대상자의 물품을 사적으로 사용하는 것으로 부적절합니다.",
+        "2": "구매 후 남은 돈을 가족에게 주는 것은 요양보호사의 역할 범위를 벗어나며 경비 처리 절차에 어긋납니다.",
+        "3": "대상자의 허락 없이 냉장고 내용물을 임의로 버리는 것은 대상자의 재산권을 침해하는 행위입니다.",
+        "4": "흰죽만 드시라는 것은 대상자의 기호와 영양 균형을 무시한 일방적인 판단입니다.",
+        "5": "★ 혈당이 높은 대상자에게 혈당지수가 낮은 잡곡밥을 제공하겠다는 것은 건강 상태를 반영한 올바른 식사 계획이며, 대상자가 좋아하는 메뉴를 선택하여 심리적 만족도도 높였습니다."
+      },
+      "vi": {
+        "1": "Người chăm sóc nói sẽ ăn phần nguyên liệu thừa là sử dụng tài sản của đối tượng cho mục đích cá nhân — không phù hợp.",
+        "2": "Đưa tiền thừa sau mua sắm cho gia đình vượt quá phạm vi vai trò của người chăm sóc và không đúng quy trình thanh toán chi phí.",
+        "3": "Tự ý vứt bỏ thực phẩm trong tủ lạnh mà không có sự cho phép của đối tượng là xâm phạm quyền tài sản của họ.",
+        "4": "Chỉ cho ăn cháo trắng là quyết định một chiều, bỏ qua sở thích và cân bằng dinh dưỡng của đối tượng.",
+        "5": "★ Đề xuất nấu cơm ngũ cốc hỗn hợp (có GI thấp) cho người có đường huyết cao phản ánh đúng tình trạng sức khỏe, đồng thời chọn món đối tượng yêu thích giúp tăng sự hài lòng về mặt tâm lý."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "재가대상자", "def_vi": "Người nhận chăm sóc tại nhà — người được hỗ trợ dịch vụ chăm sóc tại gia" },
+      { "term_ko": "잡곡밥", "def_vi": "Cơm ngũ cốc hỗn hợp — cơm nấu từ nhiều loại ngũ cốc có chỉ số GI thấp, tốt cho người tiểu đường" },
+      { "term_ko": "혈당", "def_vi": "Đường huyết — nồng độ glucose trong máu; cần được kiểm soát chặt chẽ ở người tiểu đường" }
+    ]
+  },
+  {
+    "id": 1427,
+    "intent_ko": "식사 준비를 위한 올바른 식재료 구매 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp mua nguyên liệu thực phẩm đúng đắn để chuẩn bị bữa ăn",
+    "choice_explanations": {
+      "ko": {
+        "1": "값이 싸다고 대량 구매하면 신선도 유지가 어렵고 식품 낭비로 이어질 수 있어 바람직하지 않습니다.",
+        "2": "유통기한을 넘긴 식품은 안전성이 보장되지 않아 대상자 건강에 위험하므로 절대 구매해서는 안 됩니다.",
+        "3": "대상자와 구매 목록을 사전에 상의해야 기호와 건강 상태에 맞는 식재료를 선택할 수 있습니다.",
+        "4": "★ 식재료를 구매할 때는 보관 방법(냉장·냉동·상온)과 보관 상태(신선도, 포장 이상 유무)를 반드시 확인해야 식품 안전을 확보할 수 있습니다.",
+        "5": "식단은 구매 전에 미리 계획해야 필요한 재료를 적절한 양만큼 효율적으로 구입할 수 있습니다."
+      },
+      "vi": {
+        "1": "Mua số lượng lớn chỉ vì giá rẻ khó duy trì độ tươi và dẫn đến lãng phí thực phẩm, không phù hợp.",
+        "2": "Thực phẩm quá hạn sử dụng không đảm bảo an toàn và nguy hiểm cho sức khỏe của đối tượng; tuyệt đối không được mua.",
+        "3": "Cần thảo luận với đối tượng về danh sách mua sắm trước để chọn nguyên liệu phù hợp với sở thích và tình trạng sức khỏe.",
+        "4": "★ Khi mua nguyên liệu thực phẩm, bắt buộc phải kiểm tra phương pháp bảo quản (lạnh/đông/nhiệt độ phòng) và tình trạng bảo quản (độ tươi, bao bì nguyên vẹn) để đảm bảo an toàn thực phẩm.",
+        "5": "Thực đơn cần được lên kế hoạch trước khi mua sắm để mua đúng loại và đúng lượng nguyên liệu cần thiết một cách hiệu quả."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "유통기한", "def_vi": "Hạn sử dụng — thời hạn mà thực phẩm đảm bảo an toàn và chất lượng khi tiêu thụ" },
+      { "term_ko": "보관방법", "def_vi": "Phương pháp bảo quản — cách lưu trữ thực phẩm đúng cách (lạnh, đông lạnh, nhiệt độ phòng) để duy trì chất lượng và an toàn" },
+      { "term_ko": "식재료", "def_vi": "Nguyên liệu thực phẩm — các nguyên liệu tươi hoặc chế biến cần thiết để nấu ăn" }
+    ]
+  },
+  {
+    "id": 1426,
+    "intent_ko": "식사 준비를 위한 올바른 장보기 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp mua sắm thực phẩm đúng đắn để chuẩn bị bữa ăn",
+    "choice_explanations": {
+      "ko": {
+        "1": "한 번에 많은 양을 구입하면 신선도가 떨어지고 보관 문제가 생길 수 있어 바람직하지 않습니다.",
+        "2": "가족이 먹고 싶은 음식보다 대상자의 건강 상태와 필요를 우선해야 합니다. 요양보호사의 역할은 대상자 중심입니다.",
+        "3": "요양보호사 자신의 물품을 대상자 경비로 함께 구입하는 것은 규정 위반이며 윤리에 어긋납니다.",
+        "4": "경비 결산은 구매 후 즉시 또는 정기적으로(매번) 투명하게 처리해야 하며, 한 달 단위로만 하는 것은 부적절합니다.",
+        "5": "★ 대상자의 건강 상태(질병, 알레르기, 금기 음식 등)를 고려하여 식단을 먼저 작성하고, 그에 맞게 식재료를 구입하는 것이 가장 중요한 장보기 원칙입니다."
+      },
+      "vi": {
+        "1": "Mua số lượng lớn một lần có thể làm giảm độ tươi và gây vấn đề bảo quản, không phù hợp.",
+        "2": "Nhu cầu sức khỏe của đối tượng phải được ưu tiên hơn sở thích ăn uống của gia đình. Vai trò của người chăm sóc là lấy đối tượng làm trung tâm.",
+        "3": "Mua đồ dùng cá nhân của người chăm sóc bằng chi phí của đối tượng là vi phạm quy định và đạo đức nghề nghiệp.",
+        "4": "Chi phí phải được thanh toán minh bạch ngay sau mua sắm hoặc định kỳ (mỗi lần); chỉ quyết toán một tháng một lần là không phù hợp.",
+        "5": "★ Lập thực đơn dựa trên tình trạng sức khỏe của đối tượng (bệnh tật, dị ứng, thực phẩm kiêng kỵ...) trước, rồi mua nguyên liệu phù hợp — đây là nguyên tắc mua sắm quan trọng nhất."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "식단", "def_vi": "Thực đơn — kế hoạch bữa ăn được lập dựa trên nhu cầu dinh dưỡng và tình trạng sức khỏe của đối tượng" },
+      { "term_ko": "경비 결산", "def_vi": "Thanh toán chi phí — quy trình ghi chép và báo cáo minh bạch các khoản chi tiêu mua sắm cho đối tượng" }
+    ]
+  },
+  {
+    "id": 1425,
+    "intent_ko": "식사 준비를 위한 올바른 장보기 수칙을 고르는 문제",
+    "intent_vi": "Chọn quy tắc mua sắm thực phẩm đúng đắn để chuẩn bị bữa ăn",
+    "choice_explanations": {
+      "ko": {
+        "1": "대상자의 질병 상태(당뇨, 고혈압 등)에 따라 식재료 선택이 달라지므로 반드시 고려해야 합니다.",
+        "2": "요양보호사는 대상자의 건강·기호·예산을 고려하여 구매해야 하며, 임의로 결정해서는 안 됩니다.",
+        "3": "★ 장보기 전에 냉장고 안의 품목을 확인하면 이미 있는 재료의 중복 구매를 피하고, 부족한 재료만 필요한 양만큼 효율적으로 구입할 수 있습니다.",
+        "4": "가공식품은 나트륨과 방부제 함량이 높아 노인 대상자에게 좋지 않으므로 위주로 구매해서는 안 됩니다.",
+        "5": "재래시장, 대형마트, 온라인 등 상황에 따라 적절한 구매처를 선택하면 되며, 재래시장 이용을 굳이 삼갈 필요는 없습니다."
+      },
+      "vi": {
+        "1": "Tình trạng bệnh của đối tượng (tiểu đường, tăng huyết áp...) ảnh hưởng đến lựa chọn nguyên liệu nên bắt buộc phải cân nhắc.",
+        "2": "Người chăm sóc phải mua sắm dựa trên sức khỏe, sở thích và ngân sách của đối tượng, không được tự ý quyết định.",
+        "3": "★ Kiểm tra đồ trong tủ lạnh trước khi đi mua sắm giúp tránh mua trùng nguyên liệu đã có và chỉ mua đúng lượng nguyên liệu còn thiếu — giúp tiết kiệm và hiệu quả.",
+        "4": "Thực phẩm chế biến có hàm lượng natri và chất bảo quản cao, không tốt cho người cao tuổi, không nên mua chủ yếu loại này.",
+        "5": "Có thể mua ở chợ truyền thống, siêu thị lớn hoặc online tùy tình huống; không nhất thiết phải tránh chợ truyền thống."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "가공식품", "def_vi": "Thực phẩm chế biến — thực phẩm đã qua chế biến công nghiệp, thường chứa nhiều natri, phụ gia và chất bảo quản" },
+      { "term_ko": "재래시장", "def_vi": "Chợ truyền thống — chợ dân gian nơi bán thực phẩm tươi sống và các mặt hàng tiêu dùng hàng ngày" }
+    ]
+  },
+  {
+    "id": 1424,
+    "intent_ko": "대상자에게 일상생활 지원 시 지켜야 할 기본 원칙을 고르는 문제",
+    "intent_vi": "Chọn nguyên tắc cơ bản cần tuân thủ khi hỗ trợ sinh hoạt hàng ngày cho đối tượng",
+    "choice_explanations": {
+      "ko": {
+        "1": "일상생활 지원에서는 대상자의 욕구가 최우선이며, 주변 정리는 부차적인 업무입니다.",
+        "2": "★ 서비스 제공 내용을 상세하게 기록하는 것은 법적 의무이자 서비스의 질을 관리하고 분쟁 시 근거가 되므로 매우 중요한 기본 원칙입니다.",
+        "3": "요양보호사의 개인 가치관이나 생활방식을 대상자에게 강요하는 것은 대상자의 자율성을 침해합니다.",
+        "4": "대상자의 물품은 반드시 대상자의 동의하에 사용해야 하며, 임의로 사용해서는 안 됩니다.",
+        "5": "인지능력이 저하된 경우에도 이해 수준에 맞는 설명을 제공하고 동의를 구하는 노력이 필요합니다."
+      },
+      "vi": {
+        "1": "Trong hỗ trợ sinh hoạt, nhu cầu của đối tượng là ưu tiên hàng đầu; dọn dẹp xung quanh chỉ là công việc phụ.",
+        "2": "★ Ghi chép chi tiết nội dung dịch vụ cung cấp là nghĩa vụ pháp lý, giúp quản lý chất lượng dịch vụ và là bằng chứng khi có tranh chấp — đây là nguyên tắc cơ bản rất quan trọng.",
+        "3": "Áp đặt giá trị cá nhân và lối sống của người chăm sóc lên đối tượng là xâm phạm quyền tự chủ của họ.",
+        "4": "Đồ dùng của đối tượng phải được sử dụng với sự đồng ý của họ, không được tự ý sử dụng.",
+        "5": "Ngay cả khi đối tượng suy giảm nhận thức, vẫn cần cố gắng giải thích theo mức độ hiểu biết và xin sự đồng ý."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "일상생활 지원", "def_vi": "Hỗ trợ sinh hoạt hàng ngày — dịch vụ giúp đỡ các hoạt động thiết yếu hàng ngày cho người cần chăm sóc" },
+      { "term_ko": "기본원칙", "def_vi": "Nguyên tắc cơ bản — các quy tắc nền tảng cần tuân thủ trong quá trình cung cấp dịch vụ chăm sóc" },
+      { "term_ko": "자율성", "def_vi": "Quyền tự chủ — quyền của đối tượng được tự quyết định về cuộc sống và chăm sóc của bản thân" }
+    ]
+  },
+  {
+    "id": 1423,
+    "intent_ko": "일상생활 지원의 올바른 기본 원칙을 고르는 문제",
+    "intent_vi": "Chọn nguyên tắc cơ bản đúng đắn trong hỗ trợ sinh hoạt hàng ngày",
+    "choice_explanations": {
+      "ko": {
+        "1": "요양보호사의 주관적 판단만으로 결정하는 것은 대상자의 자기결정권을 무시하는 행위입니다.",
+        "2": "대상자의 물품을 임의로 배치하면 대상자가 물건을 찾지 못하고 불편함과 불안감을 느낄 수 있습니다.",
+        "3": "일회용품 사용이 위생에 도움이 될 수 있지만, 이것이 일상생활 지원의 기본 원칙이라고 볼 수는 없습니다.",
+        "4": "일상생활 지원 서비스는 대상자를 위한 것이므로 가족 지원이 주된 역할은 아닙니다.",
+        "5": "★ 대상자 개개인의 특성(건강 상태, 기능 수준, 생활 습관)과 욕구(원하는 것, 필요한 것)를 먼저 파악한 후 그에 맞는 맞춤형 서비스를 제공하는 것이 일상생활 지원의 핵심 원칙입니다."
+      },
+      "vi": {
+        "1": "Quyết định dựa trên nhận định chủ quan của người chăm sóc là bỏ qua quyền tự quyết của đối tượng.",
+        "2": "Tự ý sắp xếp đồ dùng của đối tượng có thể khiến họ không tìm được đồ và cảm thấy bất tiện, lo lắng.",
+        "3": "Dùng đồ dùng một lần có thể giúp vệ sinh nhưng không thể coi đó là nguyên tắc cơ bản của hỗ trợ sinh hoạt.",
+        "4": "Dịch vụ hỗ trợ sinh hoạt dành cho đối tượng, không phải chủ yếu hỗ trợ gia đình.",
+        "5": "★ Nắm bắt đặc điểm (tình trạng sức khỏe, mức độ chức năng, thói quen sinh hoạt) và nhu cầu (mong muốn, cần thiết) của từng đối tượng rồi cung cấp dịch vụ phù hợp — đây là nguyên tắc cốt lõi của hỗ trợ sinh hoạt hàng ngày."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "자기결정권", "def_vi": "Quyền tự quyết — quyền của đối tượng được tự đưa ra quyết định về cuộc sống và dịch vụ chăm sóc của bản thân" },
+      { "term_ko": "욕구", "def_vi": "Nhu cầu — những điều đối tượng mong muốn hoặc cần thiết; cần được xác định trước khi cung cấp dịch vụ" },
+      { "term_ko": "맞춤형 서비스", "def_vi": "Dịch vụ cá nhân hóa — dịch vụ được thiết kế riêng phù hợp với đặc điểm và nhu cầu của từng đối tượng" }
+    ]
+  },
+  {
+    "id": 1422,
+    "intent_ko": "치매 대상자의 실종을 방지하기 위해 사용하는 복지용구를 고르는 문제",
+    "intent_vi": "Chọn dụng cụ phúc lợi dùng để phòng ngừa mất tích cho người bị sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 배회감지기는 치매 대상자가 실내 또는 외부로 배회할 때 이를 감지하여 보호자나 시설에 알림을 보내는 장치입니다. 길을 잃거나 실종되는 것을 조기에 방지할 수 있습니다.",
+        "2": "목욕리프트는 욕실에서 안전하게 목욕을 도와주는 기구로, 실종 방지와 무관합니다.",
+        "3": "경사로는 휠체어 사용자의 이동을 돕는 구조물로, 실종 방지 기능이 없습니다.",
+        "4": "안전손잡이는 이동 시 균형을 잡도록 돕는 장치로, 실종 방지와는 관련이 없습니다.",
+        "5": "실버카는 보행 보조기구로 노인의 이동을 돕지만, 실종 감지 기능은 없습니다."
+      },
+      "vi": {
+        "1": "★ Cảm biến phát hiện lang thang (배회감지기) là thiết bị phát hiện khi người bị sa sút trí tuệ đi lang thang trong nhà hoặc ra ngoài, rồi gửi thông báo đến người giám hộ hoặc cơ sở. Giúp phòng ngừa sớm tình trạng mất tích.",
+        "2": "Ghế tắm nâng (목욕리프트) hỗ trợ tắm an toàn trong phòng tắm, không liên quan đến phòng ngừa mất tích.",
+        "3": "Dốc dành cho xe lăn (경사로) giúp người dùng xe lăn di chuyển, không có chức năng phòng ngừa mất tích.",
+        "4": "Tay vịn an toàn (안전손잡이) giúp giữ thăng bằng khi di chuyển, không liên quan đến phòng ngừa mất tích.",
+        "5": "Xe đẩy hỗ trợ đi bộ cho người cao tuổi (실버카) hỗ trợ di chuyển nhưng không có chức năng phát hiện mất tích."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "배회감지기", "def_vi": "Cảm biến phát hiện lang thang — thiết bị phúc lợi phát hiện và báo động khi người bị sa sút trí tuệ đi lang thang hoặc ra ngoài không kiểm soát" },
+      { "term_ko": "치매", "def_vi": "Sa sút trí tuệ (치매/dementia) — hội chứng suy giảm nhận thức, trí nhớ và định hướng, thường gặp ở người cao tuổi" },
+      { "term_ko": "복지용구", "def_vi": "Dụng cụ phúc lợi — thiết bị, dụng cụ hỗ trợ sinh hoạt được cung cấp thông qua chính sách bảo hiểm chăm sóc dài hạn" }
+    ]
+  },
+  {
+    "id": 1421,
+    "intent_ko": "침대를 사용하는 대상자를 안전하게 돕는 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp hỗ trợ an toàn cho đối tượng sử dụng giường",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 자주 사용하는 물건(물컵, 리모컨, 호출벨 등)을 침대 가까이 두면 대상자가 무리하게 몸을 뻗거나 일어서려 하지 않아 낙상 위험을 줄일 수 있습니다.",
+        "2": "바퀴 잠금장치를 열어두면 침대가 이동하여 대상자가 낙상할 수 있어 매우 위험합니다.",
+        "3": "침대 난간을 내려두면 대상자가 침대에서 굴러 떨어지는 낙상 사고가 발생할 수 있으므로 위험합니다.",
+        "4": "등판·다리판 손잡이를 신속하게 조작하는 것보다 대상자의 상태를 확인하며 천천히 작동하는 것이 안전합니다.",
+        "5": "침대를 이동할 때 잠금장치를 잠가야 한다는 것은 반대로 이동 전 잠금을 해제하고 이동 후 다시 잠가야 합니다."
+      },
+      "vi": {
+        "1": "★ Để đồ dùng thường xuyên (cốc nước, điều khiển, chuông gọi...) gần giường giúp đối tượng không cần với xa hoặc cố đứng dậy, giảm nguy cơ té ngã.",
+        "2": "Để khóa bánh xe ở trạng thái mở khiến giường dễ di chuyển và đối tượng có thể bị té ngã — rất nguy hiểm.",
+        "3": "Hạ lan can giường xuống có thể dẫn đến đối tượng lăn khỏi giường, gây tai nạn té ngã.",
+        "4": "Thao tác tay cầm điều chỉnh lưng/chân giường nhanh chóng kém an toàn hơn việc kiểm tra tình trạng đối tượng và điều chỉnh từ từ.",
+        "5": "Về khóa bánh xe khi di chuyển: thực tế phải mở khóa trước khi di chuyển giường, rồi khóa lại sau khi đặt vào vị trí."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "침대 난간", "def_vi": "Lan can giường — thanh chắn bên cạnh giường giúp ngăn đối tượng lăn khỏi giường, cần giữ ở trạng thái nâng lên khi đối tượng nằm" },
+      { "term_ko": "잠금장치", "def_vi": "Cơ chế khóa — thiết bị cố định bánh xe giường để ngăn giường di chuyển; phải khóa khi đối tượng đang sử dụng giường" }
+    ]
+  },
+  {
+    "id": 1420,
+    "intent_ko": "수동침대를 안전하게 사용하는 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp sử dụng giường thủ công an toàn",
+    "choice_explanations": {
+      "ko": {
+        "1": "크랭크를 항상 펴서 두면 보호자나 대상자가 크랭크에 걸려 다칠 수 있으므로 사용 후에는 접어 두어야 합니다.",
+        "2": "침대 난간은 안전을 위해 설치된 것이므로, 대상자가 오를 때 난간을 잡는 것이 아니라 전문 요양보호사의 도움을 받거나 적절한 보조 방법을 사용해야 합니다.",
+        "3": "★ 수동침대는 이동하지 않을 때 반드시 바퀴의 잠금 장치를 잠가야 침대가 움직이지 않아 대상자의 낙상 위험을 방지할 수 있습니다.",
+        "4": "침대를 사용하지 않을 때 높이를 높게 하면 대상자가 오르내리기 어렵고 낙상 위험이 증가하므로 낮게 유지해야 합니다.",
+        "5": "침대 이동 시 난간을 잡고 이동하면 구조물에 무리가 가거나 불안정할 수 있으며, 침대 하부 프레임을 잡거나 적절한 이동 방법을 사용해야 합니다."
+      },
+      "vi": {
+        "1": "Để tay quay (크랭크) luôn ở trạng thái mở ra có thể gây vướng và thương tích cho người chăm sóc hoặc đối tượng; cần gập lại sau khi sử dụng.",
+        "2": "Lan can giường được lắp vì mục đích an toàn; khi đối tượng lên giường không nên bám vào lan can mà cần nhờ người chăm sóc hoặc dùng phương pháp hỗ trợ phù hợp.",
+        "3": "★ Khi không di chuyển giường thủ công, bắt buộc phải khóa bánh xe để giường không di chuyển, ngăn nguy cơ té ngã cho đối tượng.",
+        "4": "Để giường ở vị trí cao khi không sử dụng khiến đối tượng khó lên xuống và tăng nguy cơ té ngã; nên giữ ở vị trí thấp.",
+        "5": "Khi di chuyển giường, bám vào lan can có thể gây mất ổn định; nên cầm vào khung dưới của giường hoặc dùng phương pháp di chuyển phù hợp."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "수동침대", "def_vi": "Giường thủ công — giường y tế điều chỉnh bằng tay quay (crank), không dùng điện" },
+      { "term_ko": "크랭크", "def_vi": "Tay quay (crank) — bộ phận thủ công dùng để điều chỉnh độ cao, góc lưng và chân của giường bệnh" }
+    ]
+  },
+  {
+    "id": 1419,
+    "intent_ko": "자세변환용 쿠션의 적합한 조건을 고르는 문제",
+    "intent_vi": "Chọn điều kiện phù hợp của đệm thay đổi tư thế cho đối tượng khó đi lại",
+    "choice_explanations": {
+      "ko": {
+        "1": "표면이 미끄러우면 대상자의 몸이 미끄러져 오히려 자세 유지가 어렵고 낙상 위험이 있습니다.",
+        "2": "커버는 분리 가능해야 세탁·소독이 쉬워 위생 관리에 유리합니다.",
+        "3": "자세변환용 쿠션은 압력을 분산하기 위해 부드러운 소재여야 하며, 딱딱한 소재는 오히려 욕창 위험을 높입니다.",
+        "4": "★ 쿠션에 부착된 지퍼가 외부로 노출되면 피부에 닿아 욕창이나 피부 손상을 유발할 수 있습니다. 지퍼가 감춰져 있어야 피부 안전이 보장됩니다.",
+        "5": "커버는 세탁·소독이 가능해야 하지만 변색이 잘 된다는 것은 품질이 낮다는 의미로 바람직하지 않습니다."
+      },
+      "vi": {
+        "1": "Bề mặt trơn trượt khiến cơ thể đối tượng bị trượt, khó duy trì tư thế và tăng nguy cơ té ngã.",
+        "2": "Vỏ bọc cần có thể tháo rời để dễ giặt và khử trùng, đảm bảo vệ sinh.",
+        "3": "Đệm thay đổi tư thế cần làm từ chất liệu mềm để phân tán áp lực; chất liệu cứng ngược lại làm tăng nguy cơ loét áp lực.",
+        "4": "★ Nếu khóa kéo (zipper) gắn trên đệm bị lộ ra ngoài có thể tiếp xúc trực tiếp với da và gây loét hoặc tổn thương da. Khóa kéo phải được che khuất để đảm bảo an toàn cho da.",
+        "5": "Vỏ bọc cần có thể giặt và khử trùng được, nhưng dễ phai màu cho thấy chất lượng kém — không mong muốn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "자세변환용 쿠션", "def_vi": "Đệm thay đổi tư thế — dụng cụ phúc lợi dùng để thay đổi và hỗ trợ tư thế cho người khó di chuyển, giúp phòng ngừa loét áp lực" },
+      { "term_ko": "욕창", "def_vi": "Loét áp lực (bedsore) — tổn thương da và mô mềm do bị áp lực kéo dài, thường gặp ở người nằm lâu một chỗ" }
+    ]
+  },
+  {
+    "id": 1418,
+    "intent_ko": "욕창예방 매트리스의 올바른 사용 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp sử dụng đúng đệm phòng ngừa loét áp lực",
+    "choice_explanations": {
+      "ko": {
+        "1": "욕창예방 매트리스는 욕창 발생 위험이 있는 대상자에게 24시간 사용해야 효과적이며, 12시간만 사용하는 것은 부적절합니다.",
+        "2": "매트리스 위에 올라가면 내부 구조가 손상될 수 있으므로 올라가서 확인하는 것은 잘못된 방법입니다.",
+        "3": "찜질기의 열이 매트리스에 영향을 줄 수 있고 화상 위험도 있어 함께 사용하면 안 됩니다.",
+        "4": "★ 매트리스가 정상 작동하는지 확인하는 가장 정확한 방법은 등과 엉덩이 밑에 손을 넣어 공기 순환에 의해 환자 몸이 균일하게 부양되는지 확인하는 것입니다.",
+        "5": "매트리스 셀과 커버를 알코올로 닦으면 소재가 손상될 수 있으며, 제조사 지침에 따른 세정제를 사용해야 합니다."
+      },
+      "vi": {
+        "1": "Đệm phòng ngừa loét áp lực cần được sử dụng 24 giờ cho đối tượng có nguy cơ loét; chỉ dùng 12 giờ là không đủ.",
+        "2": "Leo lên đệm có thể làm hỏng cấu trúc bên trong; đây là cách kiểm tra sai.",
+        "3": "Nhiệt từ thiết bị chườm có thể ảnh hưởng đến đệm và gây nguy cơ bỏng; không được dùng cùng nhau.",
+        "4": "★ Cách chính xác nhất để kiểm tra đệm hoạt động bình thường là luồn tay dưới lưng và mông bệnh nhân để xác nhận cơ thể được nâng đỡ đều đặn nhờ tuần hoàn không khí.",
+        "5": "Lau ô chứa khí (cell) và vỏ đệm bằng cồn có thể làm hỏng vật liệu; phải dùng chất tẩy rửa theo hướng dẫn của nhà sản xuất."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "욕창예방 매트리스", "def_vi": "Đệm phòng ngừa loét áp lực — đệm y tế có hệ thống bơm khí luân phiên giúp phân tán áp lực và ngăn ngừa loét cho người nằm lâu" },
+      { "term_ko": "부양", "def_vi": "Nâng đỡ — trong ngữ cảnh này là cơ thể bệnh nhân được nâng lên đều đặn nhờ áp lực không khí của đệm, giảm điểm tì đè" },
+      { "term_ko": "매트리스 셀", "def_vi": "Ô khí của đệm — các túi khí riêng biệt bên trong đệm phòng ngừa loét, bơm xen kẽ để thay đổi điểm tì đè" }
+    ]
+  },
+  {
+    "id": 1417,
+    "intent_ko": "체중에 의한 압력을 분산시키고 통풍을 원활하게 하는 복지용구를 고르는 문제",
+    "intent_vi": "Chọn dụng cụ phúc lợi giúp phân tán áp lực từ trọng lượng cơ thể và tăng cường thông gió",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 욕창예방 매트리스는 공기를 지속적으로 순환시켜 특정 부위에 집중되는 체중 압력을 분산하고, 통기성을 높여 피부 손상을 예방합니다. 이것이 욕창예방 매트리스의 핵심 기능입니다.",
+        "2": "휠체어는 이동을 위한 기구로 체중 분산·통풍 기능이 없습니다.",
+        "3": "목욕리프트는 목욕 시 이동을 돕는 기구로 압력 분산과 무관합니다.",
+        "4": "자세변환 용구는 자세를 바꿔 특정 부위의 압력을 줄이는 데 도움이 되지만, 통풍 기능은 없습니다.",
+        "5": "이동욕조는 목욕 관련 용구로 체중 압력 분산·통풍과 관련이 없습니다."
+      },
+      "vi": {
+        "1": "★ Đệm phòng ngừa loét áp lực liên tục tuần hoàn không khí để phân tán áp lực trọng lượng tập trung tại một điểm, tăng cường thông khí và ngăn ngừa tổn thương da. Đây là chức năng cốt lõi của loại đệm này.",
+        "2": "Xe lăn là phương tiện di chuyển, không có chức năng phân tán áp lực hay thông gió.",
+        "3": "Ghế tắm nâng hỗ trợ di chuyển khi tắm, không liên quan đến phân tán áp lực.",
+        "4": "Dụng cụ thay đổi tư thế giúp giảm áp lực tại điểm tì đè bằng cách thay đổi tư thế nhưng không có chức năng thông gió.",
+        "5": "Bồn tắm di động là dụng cụ liên quan đến việc tắm, không liên quan đến phân tán áp lực hay thông gió."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "압력 분산", "def_vi": "Phân tán áp lực — phân bổ đều trọng lượng cơ thể để không tập trung tại một điểm, giúp ngăn ngừa loét áp lực" },
+      { "term_ko": "통풍", "def_vi": "Thông gió — luồng không khí lưu thông giữa cơ thể và bề mặt tiếp xúc, giúp da thoáng khí và giảm ẩm ướt" },
+      { "term_ko": "욕창예방 매트리스", "def_vi": "Đệm phòng ngừa loét áp lực — đệm y tế với hệ thống bơm khí luân phiên giúp phân tán áp lực và tăng thông gió" }
+    ]
+  },
+  {
+    "id": 1416,
+    "intent_ko": "욕창예방 방석의 올바른 사용 및 관리 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp sử dụng và bảo quản đúng đắn cho đệm ngồi phòng ngừa loét",
+    "choice_explanations": {
+      "ko": {
+        "1": "욕창예방 방석 커버는 오염 상태에 따라 더 자주 세탁해야 하며, 한 달에 한 번은 너무 드문 세탁 주기입니다.",
+        "2": "공기를 주입한 후에도 밸브를 통해 공기를 뺄 수 있으며, 공기를 뺄 수 없다는 것은 사실이 아닙니다.",
+        "3": "열탕 소독이나 햇볕에 말리면 방석 소재(고무, 비닐 등)가 변형되거나 손상될 수 있어 부적절합니다.",
+        "4": "욕창예방 방석은 압력을 분산시키기 위한 것이며, 특정 부위에 압력을 주기 위한 것이 아닙니다.",
+        "5": "★ 욕창예방 방석을 소독할 때는 공기를 완전히 빼서 납작하게 만든 후 흐르는 물로 씻고 그늘에서 충분히 건조해야 합니다. 이렇게 해야 소재가 손상되지 않고 위생적으로 관리할 수 있습니다."
+      },
+      "vi": {
+        "1": "Vỏ đệm phòng ngừa loét cần giặt thường xuyên hơn tùy theo mức độ bẩn; một tháng một lần là quá ít.",
+        "2": "Sau khi bơm khí vẫn có thể xả khí qua van; nói không thể xả khí là không đúng.",
+        "3": "Hấp bằng nước sôi hoặc phơi nắng có thể làm biến dạng hoặc hỏng chất liệu đệm (cao su, nhựa...) — không phù hợp.",
+        "4": "Đệm phòng ngừa loét dùng để phân tán áp lực, không phải để tập trung áp lực vào một điểm cụ thể.",
+        "5": "★ Khi khử trùng đệm phòng ngừa loét, cần xả hết khí cho đệm phẳng hoàn toàn, rửa dưới vòi nước chảy rồi phơi khô ở nơi thoáng mát. Cách này bảo vệ chất liệu và đảm bảo vệ sinh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "욕창예방 방석", "def_vi": "Đệm ngồi phòng ngừa loét — đệm có không khí hoặc gel dùng cho người ngồi xe lăn, giúp phân tán áp lực và ngăn loét" },
+      { "term_ko": "공기밸브", "def_vi": "Van khí — bộ phận điều chỉnh lượng không khí trong đệm; dùng để bơm và xả khí khi vệ sinh hoặc điều chỉnh độ cứng" }
+    ]
+  },
+  {
+    "id": 1415,
+    "intent_ko": "이동욕조를 올바르게 사용하는 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp sử dụng đúng đắn cho bồn tắm di động",
+    "choice_explanations": {
+      "ko": {
+        "1": "욕조 바닥면이 미끄러우면 대상자가 미끄러져 낙상할 수 있어 오히려 위험합니다. 미끄럼 방지 처리가 되어 있어야 합니다.",
+        "2": "이동욕조는 1인용 기구이므로 두 사람이 함께 사용하는 것은 불가능합니다.",
+        "3": "욕조를 잡고 일어나게 하면 욕조가 기울거나 무너질 수 있어 위험하므로 올바른 사용법이 아닙니다.",
+        "4": "★ 이동욕조는 평평하고 이물질이 없는 안전한 장소에 설치해야 욕조가 기울거나 미끄러지지 않아 대상자의 안전을 확보할 수 있습니다.",
+        "5": "응급상황 발생 시 공기밸브를 즉시 열어 공기를 빼면 욕조가 갑자기 무너져 대상자가 다칠 수 있습니다. 안전하게 대상자를 욕조에서 꺼내는 것이 우선입니다."
+      },
+      "vi": {
+        "1": "Đáy bồn tắm trơn trượt có thể khiến đối tượng bị trượt và ngã — nguy hiểm. Bề mặt cần có chống trơn trượt.",
+        "2": "Bồn tắm di động là thiết bị dùng cho một người; hai người cùng dùng là không thể.",
+        "3": "Cho đối tượng bám vào bồn để đứng dậy có thể làm bồn nghiêng hoặc đổ — không phải cách dùng đúng.",
+        "4": "★ Bồn tắm di động phải được đặt tại nơi bằng phẳng, sạch sẽ không có dị vật để bồn không bị nghiêng hoặc trượt, đảm bảo an toàn cho đối tượng.",
+        "5": "Trong tình huống khẩn cấp, mở van xả khí ngay lập tức có thể làm bồn xẹp đột ngột, gây thương tích; ưu tiên đưa đối tượng ra khỏi bồn một cách an toàn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "이동욕조", "def_vi": "Bồn tắm di động — bồn tắm bơm hơi có thể di chuyển, dùng để tắm cho người không thể đến phòng tắm thông thường" },
+      { "term_ko": "응급상황", "def_vi": "Tình huống khẩn cấp — tình huống đột xuất cần xử lý ngay lập tức để ngăn nguy hiểm cho tính mạng hoặc sức khỏe" }
+    ]
+  },
+  {
+    "id": 1414,
+    "intent_ko": "목욕리프트의 특징과 올바른 설명을 고르는 문제",
+    "intent_vi": "Chọn mô tả đúng về ghế tắm nâng (목욕리프트)",
+    "choice_explanations": {
+      "ko": {
+        "1": "목욕리프트는 방수와 내구성을 위해 플라스틱, 알루미늄 등 다양한 소재로 제작되며, 반드시 철제일 필요는 없습니다.",
+        "2": "대부분의 목욕리프트는 전동식으로 높낮이가 자동 조절되며, 반드시 수동으로 조절되어야 하는 것은 아닙니다.",
+        "3": "★ 목욕리프트는 다리가 불편하거나 거동이 어려운 대상자가 욕조에 안전하게 들어가고 나올 수 있도록 도와주는 기구로, 이러한 대상자에게 매우 편리하고 안전합니다.",
+        "4": "등받이 각도가 조절 가능한 모델도 많으며, 반드시 고정되어야 하는 것은 아닙니다.",
+        "5": "혼자 앉을 수 없는 대상자도 요양보호사의 보조를 받아 목욕리프트를 이용할 수 있으므로 사용할 수 없다는 것은 부정확합니다."
+      },
+      "vi": {
+        "1": "Ghế tắm nâng được làm từ nhiều chất liệu như nhựa, nhôm... để chống nước và bền; không nhất thiết phải làm bằng sắt.",
+        "2": "Hầu hết ghế tắm nâng là loại điện, tự động điều chỉnh chiều cao; không nhất thiết phải điều chỉnh thủ công.",
+        "3": "★ Ghế tắm nâng là thiết bị giúp người khó đi lại hoặc bất tiện về chân vào/ra bồn tắm an toàn, rất tiện lợi và an toàn cho nhóm đối tượng này.",
+        "4": "Nhiều mẫu có thể điều chỉnh góc tựa lưng; không nhất thiết phải cố định.",
+        "5": "Người không thể tự ngồi vẫn có thể dùng ghế tắm nâng với sự hỗ trợ của người chăm sóc; nói không thể sử dụng là không chính xác."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "목욕리프트", "def_vi": "Ghế tắm nâng — thiết bị điện hoặc thủ công giúp đưa người khó di chuyển vào/ra bồn tắm một cách an toàn" }
+    ]
+  },
+  {
+    "id": 1413,
+    "intent_ko": "거동이 불편한 대상자에게 적합한 목욕의자의 조건을 고르는 문제",
+    "intent_vi": "Chọn điều kiện phù hợp của ghế tắm cho đối tượng khó đi lại",
+    "choice_explanations": {
+      "ko": {
+        "1": "팔걸이가 없으면 대상자가 균형을 잡기 어려워 낙상 위험이 높아집니다.",
+        "2": "등받이가 낮으면 허리 지지가 부족해 장시간 앉기 어렵습니다.",
+        "3": "구멍이나 흠이 없는 의자는 위생 면에서 유리하지만, 안전성의 핵심 기준은 아닙니다.",
+        "4": "★ 앉는 자리가 미끄럽지 않아야 대상자가 목욕 중에 의자에서 미끄러지는 사고를 방지할 수 있습니다. 미끄럼 방지 처리가 된 시트는 거동이 불편한 대상자의 안전을 위해 가장 중요한 조건입니다.",
+        "5": "발이 바닥에 닿지 않으면 균형을 잡기 어렵고 불안정하여 낙상 위험이 있습니다."
+      },
+      "vi": {
+        "1": "Không có tay vịn khiến đối tượng khó giữ thăng bằng và tăng nguy cơ té ngã.",
+        "2": "Tựa lưng thấp không đủ hỗ trợ lưng, khó ngồi lâu.",
+        "3": "Ghế không có lỗ hay vết nứt tốt về mặt vệ sinh nhưng không phải tiêu chí an toàn cốt lõi.",
+        "4": "★ Mặt ngồi không trơn trượt giúp ngăn đối tượng bị trượt khỏi ghế khi tắm. Bề mặt chống trơn là điều kiện quan trọng nhất để đảm bảo an toàn cho người khó di chuyển.",
+        "5": "Nếu chân không chạm sàn, đối tượng khó giữ thăng bằng và dễ ngã."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "목욕의자", "def_vi": "Ghế tắm — ghế chuyên dụng dùng khi tắm, dành cho người cao tuổi hoặc khó đi lại, cần có bề mặt chống trơn và tay vịn" },
+      { "term_ko": "미끄럼 방지", "def_vi": "Chống trơn trượt — xử lý bề mặt hoặc vật liệu giúp ngăn trượt ngã, đặc biệt quan trọng trong môi trường ẩm ướt như phòng tắm" }
+    ]
+  },
+  {
+    "id": 1412,
+    "intent_ko": "휴대용 경사로 선정 시 가장 중요한 고려 사항을 고르는 문제",
+    "intent_vi": "Chọn yếu tố quan trọng nhất khi lựa chọn dốc di động (경사로 xách tay)",
+    "choice_explanations": {
+      "ko": {
+        "1": "색상은 개인 취향의 문제이며 안전과 기능에 직접적인 영향이 없습니다.",
+        "2": "★ 균형감(안정성)은 경사로를 사용할 때 휠체어가 기울거나 미끄러지지 않도록 하는 핵심 요소입니다. 균형이 잡히지 않으면 대상자가 낙상할 수 있어 안전과 직결됩니다.",
+        "3": "디자인은 심미적 요소이며, 기능과 안전성보다 중요도가 낮습니다.",
+        "4": "제조 회사명은 브랜드 선호도와 관련되지만 제품 선택의 핵심 기준은 아닙니다.",
+        "5": "청결성은 사용 후 관리 사항으로, 제품 선정 시의 주요 기준이 아닙니다."
+      },
+      "vi": {
+        "1": "Màu sắc là vấn đề thẩm mỹ cá nhân, không ảnh hưởng trực tiếp đến an toàn và chức năng.",
+        "2": "★ Cảm giác cân bằng (tính ổn định) là yếu tố cốt lõi để xe lăn không bị nghiêng hoặc trượt khi sử dụng dốc. Thiếu ổn định có thể gây té ngã cho đối tượng — liên quan trực tiếp đến an toàn.",
+        "3": "Thiết kế là yếu tố thẩm mỹ, kém quan trọng hơn chức năng và an toàn.",
+        "4": "Tên công ty liên quan đến ưu tiên thương hiệu nhưng không phải tiêu chí cốt lõi để chọn sản phẩm.",
+        "5": "Độ sạch là vấn đề quản lý sau sử dụng, không phải tiêu chí chính khi chọn sản phẩm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "휴대용 경사로", "def_vi": "Dốc di động (경사로 xách tay) — tấm dốc nhẹ có thể di chuyển, giúp xe lăn vượt qua các bậc thang hoặc ngưỡng cửa" },
+      { "term_ko": "균형감", "def_vi": "Cảm giác cân bằng/tính ổn định — khả năng thiết bị duy trì vị trí ổn định khi chịu tải trọng, đặc biệt quan trọng với dụng cụ hỗ trợ đi lại" }
+    ]
+  },
+  {
+    "id": 1411,
+    "intent_ko": "안전손잡이를 설치하는 이유를 고르는 문제",
+    "intent_vi": "Chọn lý do lắp đặt tay vịn an toàn trong không gian sống của đối tượng khó đi lại",
+    "choice_explanations": {
+      "ko": {
+        "1": "근력과 지구력 향상은 운동 프로그램의 효과이며, 안전손잡이 설치 목적과는 다릅니다.",
+        "2": "스트레칭과 운동능력 강화는 재활 훈련의 목표이며, 안전손잡이와 직접적 관련이 없습니다.",
+        "3": "근육의 유연성과 신장성은 운동 치료와 관련된 개념으로 안전손잡이 설치 목적이 아닙니다.",
+        "4": "유산소 운동과 폐기능 강화는 안전손잡이와 무관한 별개의 목표입니다.",
+        "5": "★ 안전손잡이는 대상자가 이동할 때 몸을 지지하여 균형을 유지할 수 있게 하고, 보호자의 도움 없이 스스로 이동할 수 있는 자립성을 높이기 위해 설치합니다. 이것이 안전손잡이 설치의 핵심 목적입니다."
+      },
+      "vi": {
+        "1": "Tăng cường cơ bắp và sức bền là hiệu quả của chương trình tập luyện, không phải mục đích lắp tay vịn.",
+        "2": "Tăng cường khả năng vận động và căng cơ là mục tiêu của phục hồi chức năng, không liên quan trực tiếp đến tay vịn.",
+        "3": "Độ linh hoạt và co giãn của cơ là khái niệm liên quan đến liệu pháp vận động, không phải mục đích lắp tay vịn.",
+        "4": "Tập aerobic và tăng cường chức năng phổi là mục tiêu riêng biệt, không liên quan đến tay vịn.",
+        "5": "★ Tay vịn an toàn được lắp để hỗ trợ cơ thể khi di chuyển, giúp duy trì thăng bằng và nâng cao khả năng tự lập — đối tượng có thể tự di chuyển mà không cần người chăm sóc giúp. Đây là mục đích cốt lõi của việc lắp tay vịn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "안전손잡이", "def_vi": "Tay vịn an toàn — thanh vịn cố định vào tường hoặc sàn nhà vệ sinh/phòng tắm, giúp người khó đi lại giữ thăng bằng và di chuyển tự lập" },
+      { "term_ko": "자립성", "def_vi": "Tính tự lập — khả năng đối tượng tự thực hiện hoạt động mà không cần sự hỗ trợ từ người khác; mục tiêu quan trọng trong chăm sóc dài hạn" }
+    ]
+  },
+  {
+    "id": 1410,
+    "intent_ko": "지팡이를 안전하게 사용하기 위해 점검해야 하는 항목을 고르는 문제",
+    "intent_vi": "Chọn hạng mục cần kiểm tra để sử dụng gậy an toàn",
+    "choice_explanations": {
+      "ko": {
+        "1": "지팡이 청결은 위생 면에서 중요하지만 안전과 직접적인 관련이 적습니다.",
+        "2": "손잡이 끈은 보조적인 장치로, 기본 안전 점검 항목이라 보기 어렵습니다.",
+        "3": "손잡이 마모도 중요하지만 안전에 가장 직접적인 영향을 주는 요소는 아닙니다.",
+        "4": "페인트 도장 상태는 외관상의 문제일 뿐 안전과 무관합니다.",
+        "5": "★ 지팡이 바닥 끝의 고무(팁)가 닳으면 미끄러짐이 발생하여 낙상 위험이 크게 높아집니다. 바닥 끝 고무의 닳은 정도는 지팡이 안전 점검에서 가장 중요한 항목입니다."
+      },
+      "vi": {
+        "1": "Độ sạch của gậy quan trọng về mặt vệ sinh nhưng ít liên quan trực tiếp đến an toàn.",
+        "2": "Dây cầm tay là phụ kiện bổ sung, không phải hạng mục kiểm tra an toàn cơ bản.",
+        "3": "Mức độ mòn của tay cầm cũng quan trọng nhưng không ảnh hưởng trực tiếp nhất đến an toàn.",
+        "4": "Tình trạng sơn chỉ là vấn đề thẩm mỹ, không liên quan đến an toàn.",
+        "5": "★ Cao su đầu gậy (tip) bị mòn làm gậy dễ trượt và tăng nguy cơ té ngã đáng kể. Mức độ mòn của cao su đầu gậy là hạng mục quan trọng nhất trong kiểm tra an toàn gậy."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "지팡이", "def_vi": "Gậy chống — dụng cụ hỗ trợ đi lại giúp người cao tuổi hoặc người khó đi lại giữ thăng bằng và giảm tải trọng lên chân" },
+      { "term_ko": "바닥 끝 고무", "def_vi": "Cao su đầu gậy (tip) — đệm cao su ở đầu gậy tiếp xúc với sàn; cần kiểm tra định kỳ vì khi mòn sẽ gây trượt ngã" }
+    ]
+  },
+  {
+    "id": 1409,
+    "intent_ko": "지팡이를 안전하게 사용하는 올바른 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp sử dụng gậy an toàn và đúng đắn",
+    "choice_explanations": {
+      "ko": {
+        "1": "청결 상태 점검은 위생 관리이지 지팡이의 안전한 사용 방법이라고 보기 어렵습니다.",
+        "2": "팔꿈치를 직각(90°)으로 구부린 높이는 너무 높거나 낮을 수 있으며, 올바른 지팡이 높이는 팔꿈치를 약 20~30° 구부렸을 때 손잡이가 손목 위치에 오는 높이입니다.",
+        "3": "★ 지팡이 길이(높이)는 바닥면에서 엉덩이 관절(둔부)까지의 길이로 맞추는 것이 올바른 기준입니다. 이 길이가 팔꿈치가 약간 구부러진 상태에서 체중을 안전하게 지지할 수 있는 적정 높이입니다.",
+        "4": "설 수 없는 대상자에게는 지팡이보다 보행기나 휠체어 등 다른 보조기구가 필요합니다.",
+        "5": "올바른 지팡이 위치는 건강한 쪽 손에 지팡이를 잡고, 지팡이 끝을 발 앞 15cm·옆 15cm 지점에 놓는 것입니다. '불편한 쪽' 발 기준이라는 설명이 잘못되었습니다."
+      },
+      "vi": {
+        "1": "Kiểm tra độ sạch là quản lý vệ sinh, không phải phương pháp sử dụng gậy an toàn.",
+        "2": "Chiều cao gậy tương ứng với khuỷu tay gấp 90° có thể quá cao hoặc quá thấp; chiều cao đúng là khi tay cầm nằm ở vị trí cổ tay khi khuỷu tay gấp khoảng 20–30°.",
+        "3": "★ Chiều dài (chiều cao) gậy đúng chuẩn là từ sàn đến khớp hông (mông). Đây là chiều cao phù hợp để chịu trọng lượng an toàn khi khuỷu tay hơi cong.",
+        "4": "Người không thể đứng cần dụng cụ hỗ trợ khác như khung đi bộ hoặc xe lăn, không phải gậy 4 chân.",
+        "5": "Vị trí đúng của đầu gậy là 15cm trước và 15cm sang bên so với bàn chân của tay cầm gậy (bên lành), không phải bên chân đau."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "둔부", "def_vi": "Khớp hông/mông — phần khớp nối giữa thân và chân; dùng làm chuẩn đo chiều cao gậy chống phù hợp" },
+      { "term_ko": "보행 보조기", "def_vi": "Dụng cụ hỗ trợ đi bộ — các thiết bị như gậy, khung đi bộ, xe lăn giúp người khó đi lại di chuyển an toàn" },
+      { "term_ko": "네발 지팡이", "def_vi": "Gậy 4 chân — gậy chống có 4 điểm tựa ở đáy, cung cấp độ ổn định cao hơn gậy thường, dùng cho người yếu hơn" }
+    ]
+  }
+]

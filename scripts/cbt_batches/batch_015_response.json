@@ -1,0 +1,774 @@
+[
+  {
+    "id": 1316,
+    "intent_ko": "대상자의 의치를 올바르게 관리하는 방법을 파악한다.",
+    "intent_vi": "Xác định phương pháp chăm sóc răng giả cho người bệnh đúng cách.",
+    "choice_explanations": {
+      "ko": {
+        "1": "베타딘(포비돈 아이오딘) 용액은 의치 소재를 손상시킬 수 있어 보관 용액으로 부적합하다.",
+        "2": "세면기는 오염이 심하므로 의치를 헹구는 장소로 비위생적이다.",
+        "3": "윗니 의치를 먼저 끼운 후 아랫니 의치를 끼워야 한다. 동시에 끼우는 것은 올바른 방법이 아니다.",
+        "4": "★ 의치 삽입 전에 구강세정제로 입안을 헹구게 하면 구강 내 세균 수를 줄이고 전반적인 구강 위생을 향상시킬 수 있다.",
+        "5": "인지저하나 마비가 있어도 의치를 사용할 수 있으나, 요양보호사가 각별한 주의를 기울여 관리해야 한다."
+      },
+      "vi": {
+        "1": "Dung dịch betadine (povidone-iodine) có thể làm hỏng vật liệu làm răng giả, không thích hợp để ngâm bảo quản.",
+        "2": "Chậu rửa mặt thường bị ô nhiễm nặng, không phải nơi vệ sinh để tráng rửa răng giả.",
+        "3": "Phải lắp hàm trên trước rồi mới lắp hàm dưới. Lắp cùng lúc không phải cách đúng.",
+        "4": "★ Cho người bệnh súc miệng bằng nước súc miệng trước khi lắp răng giả giúp giảm vi khuẩn trong khoang miệng và cải thiện vệ sinh răng miệng tổng thể.",
+        "5": "Ngay cả khi người bệnh suy giảm nhận thức hoặc liệt, vẫn có thể sử dụng răng giả, nhưng người chăm sóc cần quản lý cẩn thận hơn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "의치", "def_vi": "Răng giả (hàm giả) — bộ răng nhân tạo tháo lắp được" },
+      { "term_ko": "구강세정제", "def_vi": "Nước súc miệng — dung dịch dùng để làm sạch khoang miệng" },
+      { "term_ko": "베타딘", "def_vi": "Betadine (povidone-iodine) — dung dịch sát khuẩn màu vàng nâu, không dùng để bảo quản răng giả" }
+    ]
+  },
+  {
+    "id": 1315,
+    "intent_ko": "대상자의 의치를 올바르게 관리하는 방법을 파악한다.",
+    "intent_vi": "Xác định phương pháp chăm sóc răng giả cho người bệnh đúng cách.",
+    "choice_explanations": {
+      "ko": {
+        "1": "뜨거운 물은 의치의 변형을 초래하므로 소독 방법으로 부적절하다. 미지근한 물을 사용해야 한다.",
+        "2": "휴지에 싸서 보관하면 의치가 건조해지거나 분실·파손될 수 있어 적절하지 않다. 물이 담긴 용기에 보관해야 한다.",
+        "3": "의치를 낀 채로 자면 잇몸에 지속적인 압력이 가해져 손상될 수 있으므로 자기 전에 빼야 한다.",
+        "4": "★ 의치를 끼우기 전에 잇몸을 마사지하면 혈액순환이 촉진되고 잇몸 적응을 도와주므로 올바른 방법이다.",
+        "5": "의치를 뺄 때는 윗니(상악)를 먼저 빼는 것이 원칙이다."
+      },
+      "vi": {
+        "1": "Nước nóng sẽ làm biến dạng răng giả nên không phù hợp để khử trùng. Phải dùng nước ấm.",
+        "2": "Bảo quản trong khăn giấy khiến răng giả bị khô, dễ mất hoặc vỡ — không đúng cách. Phải bảo quản trong hộp chứa nước.",
+        "3": "Đeo răng giả khi ngủ gây áp lực liên tục lên nướu, có thể gây tổn thương. Phải tháo ra trước khi ngủ.",
+        "4": "★ Xoa bóp nướu trước khi lắp răng giả giúp tăng tuần hoàn máu và giúp nướu thích nghi tốt hơn — đây là phương pháp đúng.",
+        "5": "Khi tháo răng giả, nguyên tắc là tháo hàm trên (hàm trên) trước."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "의치", "def_vi": "Răng giả (hàm giả) — bộ răng nhân tạo tháo lắp được" },
+      { "term_ko": "잇몸", "def_vi": "Nướu răng — mô mềm bao quanh và nâng đỡ chân răng" },
+      { "term_ko": "상악", "def_vi": "Hàm trên — xương hàm phía trên, tương ứng với hàng răng trên" }
+    ]
+  },
+  {
+    "id": 1314,
+    "intent_ko": "취침 전 의치를 빼 주는 주된 이유를 파악한다.",
+    "intent_vi": "Xác định lý do chính cần tháo răng giả trước khi ngủ.",
+    "choice_explanations": {
+      "ko": {
+        "1": "의치를 빼는 것과 침 분비 촉진은 직접적 연관이 없다.",
+        "2": "★ 의치를 착용한 채 자면 잇몸에 지속적인 압력이 가해져 통증, 염증, 조직 손상이 발생할 수 있다. 잇몸 압박 예방이 가장 중요한 이유이다.",
+        "3": "의치 변형은 보관 방법(뜨거운 물, 건조 등)과 관련되지, 빼는 행위 자체와는 직접 연관이 적다.",
+        "4": "의치는 경질 재료로 만들어진 고정 구조물이므로 유연성 개념이 적용되지 않는다.",
+        "5": "턱뼈 골밀도는 저작 기능과 관련되나, 의치를 빼는 것과 골밀도의 직접적 연결은 근거가 부족하다."
+      },
+      "vi": {
+        "1": "Tháo răng giả không liên quan trực tiếp đến việc kích thích tiết nước bọt.",
+        "2": "★ Đeo răng giả khi ngủ gây áp lực liên tục lên nướu, dẫn đến đau, viêm và tổn thương mô nướu. Phòng ngừa áp lực lên nướu là lý do quan trọng nhất.",
+        "3": "Biến dạng răng giả liên quan đến cách bảo quản (nước nóng, để khô…), không trực tiếp liên quan đến việc tháo ra.",
+        "4": "Răng giả được làm từ vật liệu cứng, có cấu trúc cố định nên khái niệm tính linh hoạt không áp dụng.",
+        "5": "Mật độ xương hàm liên quan đến chức năng nhai, nhưng không có bằng chứng đủ về mối liên hệ trực tiếp với việc tháo răng giả."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "잇몸 압박", "def_vi": "Áp lực lên nướu — lực đè liên tục của răng giả lên mô nướu, có thể gây tổn thương" },
+      { "term_ko": "골밀도", "def_vi": "Mật độ xương — chỉ số phản ánh lượng khoáng chất trong xương, đánh giá độ chắc của xương" },
+      { "term_ko": "의치 변형", "def_vi": "Biến dạng răng giả — thay đổi hình dạng của răng giả do nhiệt độ cao hoặc bảo quản không đúng cách" }
+    ]
+  },
+  {
+    "id": 1313,
+    "intent_ko": "누워 있는 대상자의 구강청결을 올바르게 돕는 방법을 파악한다.",
+    "intent_vi": "Xác định phương pháp vệ sinh miệng đúng cho người bệnh đang nằm.",
+    "choice_explanations": {
+      "ko": {
+        "1": "치아 안쪽도 세균이 쌓이므로 소홀히 하지 않고 꼼꼼히 닦아야 한다.",
+        "2": "혀는 세균막(설태)이 형성되는 곳으로, 구강 위생을 위해 반드시 닦아야 한다.",
+        "3": "★ 누워 있는 대상자가 양치물(헹굼물)을 삼키지 않도록 상체(머리와 어깨)를 올려주는 것이 흡인 예방의 핵심 방법이다.",
+        "4": "입안을 헹구기 어려운 경우 거즈나 일회용 스펀지 브러시로 닦아내는 것은 올바른 대안적 방법이지만, 보기 3번이 더 핵심 정답이다.",
+        "5": "칫솔질은 식사 후에 하는 것이 원칙이며, 식사 전이 아니다."
+      },
+      "vi": {
+        "1": "Mặt trong của răng cũng tích tụ vi khuẩn, cần đánh kỹ, không được bỏ qua.",
+        "2": "Lưỡi là nơi hình thành mảng vi khuẩn (bựa lưỡi), bắt buộc phải lau sạch để đảm bảo vệ sinh miệng.",
+        "3": "★ Nâng thân trên (đầu và vai) của người bệnh đang nằm giúp ngăn nuốt phải nước súc miệng, phòng ngừa hít sặc — đây là biện pháp then chốt.",
+        "4": "Khi khó súc miệng, lau bằng gạc hoặc bàn chải bọt biển dùng một lần là phương án thay thế đúng đắn, nhưng đáp án 3 mới là trọng tâm.",
+        "5": "Nguyên tắc là đánh răng sau bữa ăn, không phải trước bữa ăn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "구강청결", "def_vi": "Vệ sinh khoang miệng — hành động làm sạch bên trong miệng để phòng ngừa nhiễm trùng" },
+      { "term_ko": "흡인 예방", "def_vi": "Phòng ngừa hít sặc — biện pháp tránh nước hoặc thức ăn lọt vào đường hô hấp" },
+      { "term_ko": "설태", "def_vi": "Bựa lưỡi — lớp vi khuẩn, tế bào chết và thức ăn tích tụ trên bề mặt lưỡi" }
+    ]
+  },
+  {
+    "id": 1312,
+    "intent_ko": "대상자의 칫솔질을 올바르게 돕는 방법을 파악한다.",
+    "intent_vi": "Xác định phương pháp hỗ trợ đánh răng đúng cho người bệnh.",
+    "choice_explanations": {
+      "ko": {
+        "1": "치약을 많이 짜면 거품이 과도해져 효과적인 칫솔질이 어렵고 낭비가 된다. 완두콩 크기 정도가 적절하다.",
+        "2": "칫솔 각도는 잇몸 경계선에 대해 45도로 기울이는 것이 표준 방법이다. 90도는 잘못된 방법이다.",
+        "3": "머리를 뒤로 젖히면 양치물이 기도로 넘어갈 위험이 있어 흡인 사고가 생길 수 있다.",
+        "4": "★ 일반 컵을 쥐기 어려운 대상자에게 빨대 달린 컵을 사용하게 하면 물 섭취와 구강세정을 쉽고 안전하게 할 수 있다.",
+        "5": "혈액응고장애가 있는 경우 치실은 잇몸 출혈을 일으킬 수 있어 오히려 위험하다."
+      },
+      "vi": {
+        "1": "Bôi quá nhiều kem đánh răng gây bọt nhiều, khó đánh hiệu quả và lãng phí. Lượng phù hợp bằng hạt đậu.",
+        "2": "Góc chuẩn của bàn chải là 45 độ so với đường viền nướu. Góc 90 độ là sai.",
+        "3": "Ngả đầu ra sau có nguy cơ nước súc miệng tràn vào đường thở, gây hít sặc.",
+        "4": "★ Với người bệnh khó cầm cốc thông thường, dùng cốc có ống hút giúp uống nước và súc miệng dễ dàng và an toàn hơn.",
+        "5": "Người có rối loạn đông máu dùng chỉ nha khoa có thể gây chảy máu nướu — nguy hiểm hơn so với dùng bàn chải."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "혈액응고장애", "def_vi": "Rối loạn đông máu — tình trạng máu không đông bình thường, dễ chảy máu kéo dài" },
+      { "term_ko": "칫솔 각도", "def_vi": "Góc bàn chải — góc nghiêng 45 độ so với viền nướu là tiêu chuẩn khi đánh răng" }
+    ]
+  },
+  {
+    "id": 1311,
+    "intent_ko": "대상자의 올바른 칫솔질 방향과 방법을 파악한다.",
+    "intent_vi": "Xác định hướng và phương pháp đánh răng đúng cho người bệnh.",
+    "choice_explanations": {
+      "ko": {
+        "1": "치약을 두툼하게 올리면 거품이 과도해져 오히려 효과적인 칫솔질을 방해한다.",
+        "2": "★ 잇몸에서 치아 방향으로(위에서 아래로, 아래에서 위로) 쓸어내리듯 닦는 것이 잇몸 건강을 지키는 올바른 방법이다. 이 방식은 잇몸과 치아 사이 음식물 찌꺼기를 효과적으로 제거한다.",
+        "3": "칫솔질 시 치아뿐 아니라 잇몸도 함께 닦아야 치주질환을 예방할 수 있다.",
+        "4": "칫솔을 옆으로 강하게 문지르면 치아 에나멜이 마모되고 잇몸이 손상될 수 있다.",
+        "5": "청량감 유지보다는 치약 성분을 효과적으로 제거하기 위해 물로 여러 번 충분히 헹궈야 한다."
+      },
+      "vi": {
+        "1": "Bôi nhiều kem đánh răng gây bọt quá mức, cản trở việc đánh răng hiệu quả.",
+        "2": "★ Chải từ nướu xuống răng (trên xuống dưới / dưới lên trên) là phương pháp đúng giúp bảo vệ nướu và loại bỏ hiệu quả mảng bám thức ăn giữa nướu và răng.",
+        "3": "Khi đánh răng phải chải cả nướu, không chỉ răng, để phòng ngừa bệnh nha chu.",
+        "4": "Chải ngang mạnh gây mòn men răng và tổn thương nướu.",
+        "5": "Cần súc miệng nhiều lần để loại bỏ thành phần kem đánh răng, không nên chỉ súc một lần vì lý do giữ cảm giác mát."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "잇몸", "def_vi": "Nướu răng — mô mềm bao quanh và nâng đỡ chân răng" },
+      { "term_ko": "치주질환", "def_vi": "Bệnh nha chu — bệnh viêm nhiễm mô nâng đỡ răng, gây tụt nướu và mất răng nếu không điều trị" },
+      { "term_ko": "에나멜", "def_vi": "Men răng — lớp cứng bảo vệ ngoài cùng của răng, dễ bị mòn nếu chải ngang mạnh" }
+    ]
+  },
+  {
+    "id": 1310,
+    "intent_ko": "혈액응고장애가 있는 대상자에게 안전한 칫솔질 방법을 파악한다.",
+    "intent_vi": "Xác định phương pháp đánh răng an toàn cho người bệnh có rối loạn đông máu.",
+    "choice_explanations": {
+      "ko": {
+        "1": "단단한 칫솔모는 잇몸에 상처를 내어 출혈을 유발할 수 있으므로, 혈액응고장애 대상자에게는 부드러운 칫솔모를 사용해야 한다.",
+        "2": "잇몸 방향 회전 칫솔질 자체는 나쁘지 않지만, 혈액응고장애 대상자는 잇몸 자극을 최소화해야 하므로 매우 조심해야 한다.",
+        "3": "혀 깊숙이 닦는 것은 구역 반사를 유발하거나 점막을 자극할 수 있어 주의가 필요하다.",
+        "4": "치실은 잇몸 출혈을 일으킬 수 있어 혈액응고장애 대상자에게는 사용을 피해야 한다.",
+        "5": "★ 매 식사 후 30분 이내와 잠자기 전에 규칙적으로 칫솔질하는 것은 구강 위생을 유지하면서 혈액응고장애 대상자에게도 가장 안전하고 중요한 기본 원칙이다."
+      },
+      "vi": {
+        "1": "Lông bàn chải cứng có thể gây trầy xước nướu và chảy máu. Người có rối loạn đông máu phải dùng bàn chải lông mềm.",
+        "2": "Chải xoay theo hướng từ nướu xuống răng không sai về kỹ thuật, nhưng với người rối loạn đông máu cần hết sức nhẹ nhàng để tránh kích thích nướu.",
+        "3": "Chải sâu vào lưỡi có thể kích thích phản xạ nôn hoặc gây trầy xước niêm mạc.",
+        "4": "Chỉ nha khoa dễ gây chảy máu nướu, không nên dùng cho người rối loạn đông máu.",
+        "5": "★ Đánh răng đều đặn trong vòng 30 phút sau mỗi bữa ăn và trước khi ngủ là nguyên tắc cơ bản an toàn nhất và quan trọng nhất, kể cả với người có rối loạn đông máu."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "혈액응고장애", "def_vi": "Rối loạn đông máu — tình trạng máu không đông bình thường, nguy cơ chảy máu kéo dài khi bị thương" },
+      { "term_ko": "칫솔모", "def_vi": "Lông bàn chải — phần sợi lông của bàn chải đánh răng; cần dùng loại mềm cho người dễ chảy máu" },
+      { "term_ko": "구역 반사", "def_vi": "Phản xạ nôn — phản xạ tự nhiên xảy ra khi vùng họng hoặc lưỡi bị kích thích" }
+    ]
+  },
+  {
+    "id": 1309,
+    "intent_ko": "의식이 없는 대상자의 구강 청결을 안전하게 돕는 방법을 파악한다.",
+    "intent_vi": "Xác định phương pháp vệ sinh miệng an toàn cho người bệnh không có ý thức.",
+    "choice_explanations": {
+      "ko": {
+        "1": "구강 내 상처 소독은 의료진이 판단해야 할 사항이며, 의식 없는 환자에게 요양보호사가 임의로 소독하는 것은 적절하지 않다.",
+        "2": "상반신을 낮추면(눕히면) 구강 내 물이 기도로 흡인될 위험이 높아진다. 반드시 측위 또는 상체를 높여야 한다.",
+        "3": "생리식염수로 헹구는 것은 의식 있는 환자에게만 가능한 방법이다. 의식 없는 환자는 삼킴 반사가 없어 흡인 위험이 크다.",
+        "4": "★ 물에 적신 일회용 스펀지 브러시로 닦는 방법은 의식이 없는 대상자에게 가장 안전하고 효과적인 구강 청결 방법이다. 흡인 위험 없이 구강 점막을 부드럽게 닦을 수 있다.",
+        "5": "입 주변의 물기를 방치하면 피부 짓무름(침연)이 발생할 수 있으므로 닦아내야 한다."
+      },
+      "vi": {
+        "1": "Sát khuẩn vết thương trong miệng là việc y tế chuyên môn. Người chăm sóc không được tự ý thực hiện cho người bệnh mất ý thức.",
+        "2": "Hạ thấp thân trên (nằm phẳng) làm tăng nguy cơ nước tràn vào đường thở. Phải để người bệnh ở tư thế nghiêng hoặc nâng cao đầu.",
+        "3": "Súc miệng bằng nước muối sinh lý chỉ áp dụng được cho người còn ý thức. Người mất ý thức không có phản xạ nuốt, nguy cơ hít sặc rất cao.",
+        "4": "★ Lau bằng bàn chải bọt biển dùng một lần đã thấm nước là phương pháp vệ sinh miệng an toàn và hiệu quả nhất cho người bệnh không có ý thức, giúp lau nhẹ nhàng niêm mạc mà không có nguy cơ hít sặc.",
+        "5": "Để ẩm xung quanh miệng có thể gây loét da (chàm ẩm), cần lau khô."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "의식", "def_vi": "Ý thức — trạng thái tỉnh táo, nhận biết được môi trường xung quanh" },
+      { "term_ko": "일회용 스펀지 브러시", "def_vi": "Bàn chải bọt biển dùng một lần — dụng cụ vệ sinh miệng an toàn cho người mất ý thức" },
+      { "term_ko": "흡인", "def_vi": "Hít sặc (aspiration) — tình trạng dịch hoặc thức ăn xâm nhập vào đường hô hấp, có thể gây viêm phổi" },
+      { "term_ko": "침연", "def_vi": "Chàm ẩm (maceration) — tình trạng da bị mềm và bong tróc do tiếp xúc lâu với độ ẩm" }
+    ]
+  },
+  {
+    "id": 1308,
+    "intent_ko": "의식이 없는 대상자의 입안을 닦는 올바른 순서를 파악한다.",
+    "intent_vi": "Xác định thứ tự đúng khi lau miệng cho người bệnh không có ý thức.",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 윗니와 잇몸 → 아래쪽 이와 잇몸 → 입천장 → 혀 → 볼 안쪽 순서로 닦는 것이 올바른 방법이다. 위에서 아래로, 단단한 구조물(치아, 잇몸)에서 부드러운 부위(혀, 볼)로 이동하는 원칙을 따른다."
+      },
+      "vi": {
+        "1": "★ Thứ tự đúng: Răng hàm trên và nướu → Răng hàm dưới và nướu → Vòm miệng → Lưỡi → Mặt trong má. Nguyên tắc là từ trên xuống dưới, từ cấu trúc cứng (răng, nướu) sang vùng mềm (lưỡi, má)."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "입천장", "def_vi": "Vòm miệng (khẩu cái) — phần trần của khoang miệng" },
+      { "term_ko": "구강 점막", "def_vi": "Niêm mạc khoang miệng — lớp màng lót bên trong miệng, cần lau nhẹ nhàng" },
+      { "term_ko": "설태", "def_vi": "Bựa lưỡi — mảng vi khuẩn tích tụ trên bề mặt lưỡi, cần lau sạch khi vệ sinh miệng" }
+    ]
+  },
+  {
+    "id": 1307,
+    "intent_ko": "치아가 없거나 연하장애가 있는 대상자에게 적합한 구강청결 방법을 파악한다.",
+    "intent_vi": "Xác định phương pháp vệ sinh miệng phù hợp cho người bệnh không có răng hoặc khó nuốt.",
+    "choice_explanations": {
+      "ko": {
+        "1": "칫솔질은 치아가 있는 대상자에게 적합한 방법으로, 치아가 없으면 적용할 수 없다.",
+        "2": "★ 입안닦아내기(구강 내 닦기)는 치아가 없는 대상자 또는 연하장애로 물을 삼키기 어려운 대상자에게 가장 적합한 구강청결 방법이다. 물 없이 거즈나 스펀지로 구강 점막을 직접 닦아낸다.",
+        "3": "입안 헹구기는 물을 구강에 머금고 뱉는 과정이 필요하므로, 연하장애 대상자에게는 흡인 위험이 있어 부적합하다.",
+        "4": "의치 손질은 의치를 사용하는 대상자에게만 해당한다.",
+        "5": "치실 사용은 치아 사이 공간이 있어야 하므로 치아가 없는 대상자에게 해당하지 않는다."
+      },
+      "vi": {
+        "1": "Đánh răng phù hợp với người có răng, không áp dụng được cho người không có răng.",
+        "2": "★ Lau trong miệng (vệ sinh khoang miệng bằng gạc/bọt biển) là phương pháp phù hợp nhất cho người không có răng hoặc người khó nuốt do có nguy cơ hít sặc. Lau trực tiếp niêm mạc miệng bằng gạc hoặc bọt biển mà không cần nước.",
+        "3": "Súc miệng đòi hỏi phải ngậm nước và nhổ ra, nguy cơ hít sặc cao với người có rối loạn nuốt.",
+        "4": "Chăm sóc răng giả chỉ áp dụng cho người dùng răng giả.",
+        "5": "Chỉ nha khoa cần có khoảng hở giữa các răng, không áp dụng cho người không có răng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "연하장애", "def_vi": "Rối loạn nuốt (khó nuốt) — tình trạng khó khăn hoặc không thể nuốt thức ăn, nước, gây nguy cơ hít sặc" },
+      { "term_ko": "입안닦아내기", "def_vi": "Lau trong miệng — phương pháp vệ sinh miệng bằng gạc hoặc bọt biển ẩm, không dùng nước súc miệng" },
+      { "term_ko": "구강 점막", "def_vi": "Niêm mạc khoang miệng — lớp màng lót bên trong miệng, đối tượng cần làm sạch khi lau miệng" }
+    ]
+  },
+  {
+    "id": 1306,
+    "intent_ko": "식사 전에 입안을 헹구는 목적을 파악한다.",
+    "intent_vi": "Xác định mục đích súc miệng trước bữa ăn.",
+    "choice_explanations": {
+      "ko": {
+        "1": "입안을 헹구는 것은 식욕과 직접적인 관련이 없다.",
+        "2": "식도 역류는 위장관 문제이며 입안을 헹구는 것과 직접 연관이 없다.",
+        "3": "헹구기는 타액 분비를 줄이지 않으며, 오히려 촉진하는 효과가 있다.",
+        "4": "위액 분비는 식욕·냄새·생각 등 중추 신경 자극에 의해 결정되며 입안 헹구기와 관련이 없다.",
+        "5": "★ 식사 전 입안을 물로 헹구면 구강 내 수분을 보충하여 구강건조증(xerostomia)을 예방할 수 있다. 건조한 구강 점막은 음식 삼키기 어렵게 하고 세균 증식을 촉진하므로, 식전 헹구기로 이를 예방한다."
+      },
+      "vi": {
+        "1": "Súc miệng không có liên quan trực tiếp đến cảm giác thèm ăn.",
+        "2": "Trào ngược thực quản là vấn đề tiêu hóa, không liên quan đến súc miệng.",
+        "3": "Súc miệng không làm giảm tiết nước bọt, thậm chí có thể kích thích tiết nước bọt.",
+        "4": "Dịch vị phụ thuộc vào kích thích thần kinh trung ương (mùi, vị, suy nghĩ về thức ăn), không liên quan đến súc miệng.",
+        "5": "★ Súc miệng bằng nước trước bữa ăn bổ sung độ ẩm cho khoang miệng, giúp phòng ngừa khô miệng (xerostomia). Niêm mạc miệng khô khiến khó nuốt và tạo điều kiện cho vi khuẩn phát triển, nên súc miệng trước ăn là cần thiết."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "구강건조", "def_vi": "Khô miệng (xerostomia) — tình trạng tiết nước bọt không đủ, làm niêm mạc miệng bị khô, khó nuốt và dễ viêm nhiễm" },
+      { "term_ko": "타액", "def_vi": "Nước bọt — dịch tiết từ tuyến nước bọt, giúp tiêu hóa, làm ẩm và bảo vệ khoang miệng" },
+      { "term_ko": "식도 역류", "def_vi": "Trào ngược thực quản — tình trạng axit dạ dày chảy ngược lên thực quản, gây ợ nóng" }
+    ]
+  },
+  {
+    "id": 1305,
+    "intent_ko": "대상자의 구강 청결을 올바르게 돕는 방법을 파악한다.",
+    "intent_vi": "Xác định phương pháp hỗ trợ vệ sinh miệng đúng cho người bệnh.",
+    "choice_explanations": {
+      "ko": {
+        "1": "혀 안쪽과 목젖 깊숙이까지 닦으면 구역 반사를 유발하고 점막 손상의 위험이 있다.",
+        "2": "★ 구강 청결을 돕기 전에 입안에 상처나 염증이 있는지 확인하는 것은 추가 손상을 예방하고 필요시 의료진에게 보고하기 위한 필수 사전 점검이다.",
+        "3": "구취제거 스프레이는 근본 원인을 해결하지 않으며, 임시 방편에 불과하다. 원인을 파악하고 구강 위생을 개선해야 한다.",
+        "4": "의식이 없는 대상자는 매일 구강 청결을 해야 하며, 일주일에 한 번은 부족하다.",
+        "5": "치매 대상자가 거부한다고 강제로 입을 벌리면 부상을 유발할 수 있다. 부드럽게 설득하고 충분한 시간을 주어야 한다."
+      },
+      "vi": {
+        "1": "Lau sâu vào trong lưỡi và vùng lưỡi gà có thể kích thích phản xạ nôn và gây tổn thương niêm mạc.",
+        "2": "★ Kiểm tra xem trong miệng có vết thương hoặc viêm nhiễm trước khi vệ sinh miệng là bước kiểm tra bắt buộc, giúp tránh tổn thương thêm và báo cáo y tế kịp thời.",
+        "3": "Xịt khử mùi miệng chỉ che mùi tạm thời, không giải quyết nguyên nhân. Cần cải thiện vệ sinh miệng.",
+        "4": "Người mất ý thức cần được vệ sinh miệng hàng ngày; một tuần một lần là không đủ.",
+        "5": "Cưỡng ép há miệng người bệnh sa sút trí tuệ có thể gây thương tích. Cần dỗ dành nhẹ nhàng và dành đủ thời gian."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "염증", "def_vi": "Viêm — phản ứng của cơ thể với tác nhân gây hại, biểu hiện bằng đỏ, sưng, đau và nóng" },
+      { "term_ko": "구취", "def_vi": "Hôi miệng — mùi khó chịu từ khoang miệng, thường do vi khuẩn phân hủy thức ăn hoặc bệnh lý" },
+      { "term_ko": "구역 반사", "def_vi": "Phản xạ nôn — phản xạ bảo vệ xảy ra khi vùng hầu họng bị kích thích quá mức" }
+    ]
+  },
+  {
+    "id": 1304,
+    "intent_ko": "장루를 착용하고 있는 대상자를 올바르게 돕는 방법을 파악한다.",
+    "intent_vi": "Xác định phương pháp hỗ trợ đúng cho người bệnh đang dùng túi hậu môn nhân tạo.",
+    "choice_explanations": {
+      "ko": {
+        "1": "장루 주머니 교환 날에도 목욕은 가능하다. 목욕을 금지할 이유가 없다.",
+        "2": "복통 호소 시 장루 주머니를 임의로 떼어내는 것은 장루 부위에 자극이나 오염을 줄 수 있어 부적절하다. 의료진에게 보고해야 한다.",
+        "3": "장운동 부담 감소를 위해 식사량을 줄이는 것은 영양 부족을 초래할 수 있어 권장되지 않는다.",
+        "4": "★ 배설물이 주머니의 1/3~1/2 정도 채워지면 비워주는 것이 올바른 방법이다. 너무 가득 차면 누출(leakage) 위험이 높아진다.",
+        "5": "배설물이 차지 않더라도 주머니를 교체할 필요는 없다. 교체는 정해진 주기나 피부 밀착력이 저하될 때 한다."
+      },
+      "vi": {
+        "1": "Ngay cả ngày thay túi, người bệnh vẫn có thể tắm. Không có lý do cấm tắm.",
+        "2": "Khi người bệnh kêu đau bụng, không được tự ý tháo túi hậu môn nhân tạo vì có thể gây kích thích hoặc ô nhiễm vùng lỗ hậu môn nhân tạo. Phải báo cáo y tế.",
+        "3": "Giảm lượng ăn để giảm tải cho nhu động ruột có thể gây thiếu dinh dưỡng, không được khuyến nghị.",
+        "4": "★ Đổ túi khi chất thải đầy khoảng 1/3 đến 1/2 túi là phương pháp đúng. Nếu để quá đầy sẽ tăng nguy cơ rò rỉ.",
+        "5": "Không cần thay túi chỉ vì túi chưa có chất thải. Thay túi theo chu kỳ quy định hoặc khi độ bám dính da giảm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "장루", "def_vi": "Hậu môn nhân tạo (ostomy) — lỗ mở được phẫu thuật tạo ra ở thành bụng để đưa phân ra ngoài cơ thể" },
+      { "term_ko": "배설물 누출", "def_vi": "Rò rỉ chất thải — tình trạng chất thải thoát ra ngoài túi hậu môn nhân tạo, gây kích ứng da" },
+      { "term_ko": "장운동", "def_vi": "Nhu động ruột — chuyển động co bóp của ruột để đẩy thức ăn di chuyển qua đường tiêu hóa" }
+    ]
+  },
+  {
+    "id": 1303,
+    "intent_ko": "장루 관리에 대한 올바른 설명을 파악한다.",
+    "intent_vi": "Xác định mô tả đúng về chăm sóc hậu môn nhân tạo (ostomy).",
+    "choice_explanations": {
+      "ko": {
+        "1": "장루 관리 시 수분 섭취는 장 기능 유지와 변비 예방을 위해 충분히 해야 하며, 제한하지 않는다.",
+        "2": "통목욕 시에도 장루 주머니를 떼지 않고 그대로 착용한 채 목욕해야 한다.",
+        "3": "배설 주머니가 가득 차기 전에(1/3~1/2 정도에서) 비워야 누출 위험을 줄일 수 있다.",
+        "4": "★ 장루 주머니는 일반적으로 주 1회 주기로 교환하는 것이 표준 관리 방법이다.",
+        "5": "복벽을 통하여 소변을 체외로 배출하는 구멍은 장루가 아니라 요루(urostomy)이다. 장루는 대변 배출을 위한 구멍이다."
+      },
+      "vi": {
+        "1": "Khi chăm sóc hậu môn nhân tạo, cần uống đủ nước để duy trì chức năng ruột và phòng táo bón, không được hạn chế.",
+        "2": "Khi tắm toàn thân, phải giữ nguyên túi hậu môn nhân tạo, không tháo ra.",
+        "3": "Cần đổ túi trước khi đầy (khoảng 1/3 đến 1/2) để giảm nguy cơ rò rỉ.",
+        "4": "★ Túi hậu môn nhân tạo thường được thay định kỳ 1 lần/tuần — đây là phương pháp quản lý chuẩn.",
+        "5": "Lỗ mở qua thành bụng để dẫn nước tiểu ra ngoài là lỗ tiết niệu nhân tạo (urostomy), không phải hậu môn nhân tạo. Hậu môn nhân tạo dành cho bài tiết phân."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "장루", "def_vi": "Hậu môn nhân tạo — lỗ mở phẫu thuật tạo ra ở thành bụng để bài tiết phân" },
+      { "term_ko": "요루", "def_vi": "Lỗ tiết niệu nhân tạo (urostomy) — lỗ mở tạo ra để dẫn nước tiểu ra ngoài, khác với hậu môn nhân tạo dành cho phân" },
+      { "term_ko": "복벽", "def_vi": "Thành bụng — lớp cơ và mô bao quanh ổ bụng, nơi tạo lỗ hậu môn/tiết niệu nhân tạo" }
+    ]
+  },
+  {
+    "id": 1302,
+    "intent_ko": "요루 관리의 올바른 방법을 파악한다.",
+    "intent_vi": "Xác định phương pháp chăm sóc lỗ tiết niệu nhân tạo (urostomy) đúng cách.",
+    "choice_explanations": {
+      "ko": {
+        "1": "요루는 일반적으로 우측 하복부에 위치한다. 좌측이라는 설명은 틀리다.",
+        "2": "요루 주머니는 매일 교환하지 않아도 된다. 필요에 따라 또는 정해진 주기에 맞추어 교환한다.",
+        "3": "★ 통목욕 시에는 소변을 비운 후 주머니를 착용한 상태로 목욕하는 것이 올바른 방법이다.",
+        "4": "샤워 시 요루 주머니 착용 여부는 개인 상태와 제품 종류에 따라 다르며, 반드시 착용해야 한다고 단정할 수 없다.",
+        "5": "소변이 나올 때마다 주머니를 비울 필요는 없다. 용량의 절반 정도 찼을 때 비우는 것이 적절하다."
+      },
+      "vi": {
+        "1": "Lỗ tiết niệu nhân tạo thường nằm ở vùng bụng dưới bên phải. Mô tả bên trái là sai.",
+        "2": "Không cần thay túi tiết niệu nhân tạo mỗi ngày. Thay theo chu kỳ quy định hoặc khi cần thiết.",
+        "3": "★ Khi tắm toàn thân, cần đổ hết nước tiểu trước rồi đeo túi khi tắm — đây là phương pháp đúng.",
+        "4": "Khi tắm vòi hoa sen, có đeo túi hay không tùy thuộc vào tình trạng cá nhân và loại túi sử dụng, không thể khẳng định phải luôn đeo.",
+        "5": "Không cần đổ túi mỗi lần có nước tiểu. Đổ khi túi đầy khoảng một nửa là phù hợp."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "요루", "def_vi": "Lỗ tiết niệu nhân tạo (urostomy) — lỗ mở phẫu thuật tạo ra ở thành bụng để dẫn nước tiểu ra ngoài" },
+      { "term_ko": "하복부", "def_vi": "Vùng bụng dưới — phần bụng phía dưới rốn, nơi thường đặt lỗ tiết niệu hoặc hậu môn nhân tạo" },
+      { "term_ko": "통목욕", "def_vi": "Tắm ngâm toàn thân — tắm bồn ngâm cả người, khác với tắm vòi hoa sen" }
+    ]
+  },
+  {
+    "id": 1301,
+    "intent_ko": "요루 관리에 대한 올바른 설명을 파악한다.",
+    "intent_vi": "Xác định mô tả đúng về chăm sóc lỗ tiết niệu nhân tạo.",
+    "choice_explanations": {
+      "ko": {
+        "1": "소변이 가득 차면 주머니를 버리는 것이 아니라 배출구를 통해 소변을 비우고 주머니는 계속 사용한다.",
+        "2": "★ 요루 주머니는 일반적으로 주 2~3회 교환하는 것이 적절하다. 이 주기가 피부 보호와 위생 유지의 균형을 맞춘 표준 방법이다.",
+        "3": "통목욕 시에도 요루 주머니를 그대로 착용한 상태로 목욕이 가능하며, 굳이 떼지 않아도 된다.",
+        "4": "요루 출혈 시 알코올 소독은 점막 자극 및 손상을 줄 수 있어 부적절하다. 즉시 의료진에게 보고해야 한다.",
+        "5": "복벽에 만든 구멍에 주머니를 연결하여 대변을 배출하는 것은 요루가 아닌 장루에 해당한다. 요루는 소변을 배출한다."
+      },
+      "vi": {
+        "1": "Khi túi đầy nước tiểu, không vứt túi đi mà mở van xả để đổ nước tiểu, tiếp tục sử dụng túi.",
+        "2": "★ Túi tiết niệu nhân tạo thường được thay 2~3 lần/tuần — chu kỳ này cân bằng giữa bảo vệ da và duy trì vệ sinh, là phương pháp chuẩn.",
+        "3": "Khi tắm ngâm, vẫn có thể tắm trong khi đeo túi, không cần tháo ra.",
+        "4": "Khi chảy máu ở lỗ tiết niệu nhân tạo, sát khuẩn bằng cồn sẽ kích thích và gây tổn thương niêm mạc. Phải báo cáo y tế ngay.",
+        "5": "Lỗ mở ở thành bụng nối với túi để bài tiết phân là hậu môn nhân tạo, không phải lỗ tiết niệu nhân tạo. Lỗ tiết niệu nhân tạo dành cho nước tiểu."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "요루", "def_vi": "Lỗ tiết niệu nhân tạo — lỗ mở phẫu thuật tạo ở thành bụng để dẫn nước tiểu ra ngoài cơ thể" },
+      { "term_ko": "출혈", "def_vi": "Chảy máu — hiện tượng máu thoát ra khỏi mạch máu, cần báo cáo y tế ngay khi xảy ra tại lỗ mở nhân tạo" },
+      { "term_ko": "장루", "def_vi": "Hậu môn nhân tạo — lỗ mở phẫu thuật tạo ở thành bụng để bài tiết phân, phân biệt với lỗ tiết niệu nhân tạo" }
+    ]
+  },
+  {
+    "id": 1300,
+    "intent_ko": "유치도뇨관 사용 시 간호사에게 보고하지 않아도 되는 상황을 파악한다.",
+    "intent_vi": "Xác định tình huống không cần báo cáo điều dưỡng khi người bệnh đang dùng ống thông tiểu lưu.",
+    "choice_explanations": {
+      "ko": {
+        "1": "소변량 감소는 신장 기능 저하, 탈수, 도뇨관 막힘 등의 징후일 수 있어 즉시 보고해야 한다.",
+        "2": "소변색이 탁해지면 요로감염의 징후일 수 있으므로 반드시 보고해야 한다.",
+        "3": "도뇨관이 빠지면 즉각적인 처치가 필요하므로 즉시 보고해야 한다.",
+        "4": "★ 소변이 많이 나오는 것은 수분 섭취가 충분하거나 이뇨 효과가 있는 경우 나타날 수 있는 정상적인 현상으로, 다른 이상 증상이 없다면 긴급 보고 대상이 아니다.",
+        "5": "체온 상승은 요로감염을 포함한 전신 감염의 징후일 수 있으므로 반드시 보고해야 한다."
+      },
+      "vi": {
+        "1": "Giảm lượng nước tiểu có thể là dấu hiệu suy giảm chức năng thận, mất nước hoặc tắc nghẽn ống thông — phải báo cáo ngay.",
+        "2": "Nước tiểu đục có thể là dấu hiệu nhiễm trùng đường tiết niệu — phải báo cáo.",
+        "3": "Ống thông bị tuột ra cần xử lý ngay — phải báo cáo ngay lập tức.",
+        "4": "★ Lượng nước tiểu nhiều có thể là hiện tượng bình thường khi uống nhiều nước hoặc có tác dụng lợi tiểu; nếu không có triệu chứng bất thường khác, không cần báo cáo khẩn.",
+        "5": "Tăng thân nhiệt có thể là dấu hiệu nhiễm trùng đường tiết niệu hoặc nhiễm trùng toàn thân — phải báo cáo."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "유치도뇨관", "def_vi": "Ống thông tiểu lưu — ống thông mềm được đặt vào bàng quang và giữ cố định để dẫn nước tiểu ra liên tục" },
+      { "term_ko": "요로감염", "def_vi": "Nhiễm trùng đường tiết niệu — nhiễm khuẩn xảy ra ở bất kỳ vị trí nào trong hệ tiết niệu (bàng quang, niệu đạo, thận)" },
+      { "term_ko": "이뇨 효과", "def_vi": "Tác dụng lợi tiểu — hiệu ứng làm tăng sản xuất và bài tiết nước tiểu" }
+    ]
+  },
+  {
+    "id": 1299,
+    "intent_ko": "유치도뇨관 사용 중 긴급히 간호사에게 보고해야 할 상황을 파악한다.",
+    "intent_vi": "Xác định tình huống cần báo cáo khẩn cho điều dưỡng khi sử dụng ống thông tiểu lưu.",
+    "choice_explanations": {
+      "ko": {
+        "1": "연결관 꺾임은 흐름을 차단할 수 있으나 즉시 펴주면 해결되는 경우가 많아 긴급 보고보다는 즉각 조치 후 관찰이 우선이다.",
+        "2": "소변주머니가 가득 찬 경우 비워주면 해결되는 상황으로 긴급 보고 대상은 아니다.",
+        "3": "소변주머니를 들고 걷는 것은 잘못된 행동(방광보다 높이 들면 역류 위험)이나 즉각적 긴급 상황은 아니다.",
+        "4": "배출구가 잠겨 있으면 열어주면 되는 상황으로 즉각 교정이 가능하다.",
+        "5": "★ 도뇨관 밖으로 소변이 새는 것(요루)은 도뇨관 위치 이탈, 풍선 파열, 요도 자극·손상의 심각한 징후일 수 있어 즉각적인 의료 처치가 필요한 긴급 상황이다."
+      },
+      "vi": {
+        "1": "Ống nối bị gập lại có thể gây tắc dòng, nhưng thường giải quyết được khi duỗi thẳng; ưu tiên xử lý ngay và theo dõi hơn là báo cáo khẩn.",
+        "2": "Túi nước tiểu đầy chỉ cần đổ đi là giải quyết — không phải tình huống khẩn cấp.",
+        "3": "Cầm túi nước tiểu khi đi lại (nâng cao hơn bàng quang gây nguy cơ trào ngược) là hành động sai, nhưng không phải tình huống khẩn cấp ngay lập tức.",
+        "4": "Van xả bị khóa có thể mở ra dễ dàng — không phải tình huống khẩn cấp.",
+        "5": "★ Nước tiểu rò rỉ ra ngoài ống thông là dấu hiệu nghiêm trọng của lệch vị trí ống, vỡ bóng cố định, hoặc tổn thương niệu đạo — cần xử lý y tế ngay lập tức."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "유치도뇨관", "def_vi": "Ống thông tiểu lưu — ống thông được đặt cố định trong bàng quang để dẫn nước tiểu liên tục" },
+      { "term_ko": "요누출", "def_vi": "Rò rỉ nước tiểu — nước tiểu thoát ra ngoài ống thông, dấu hiệu cần báo cáo y tế khẩn" },
+      { "term_ko": "역류", "def_vi": "Trào ngược — dòng chảy ngược chiều; trong bối cảnh ống thông tiểu, túi phải đặt thấp hơn bàng quang để ngăn trào ngược" }
+    ]
+  },
+  {
+    "id": 1298,
+    "intent_ko": "유치도뇨관을 강제로 빼낼 때 발생할 수 있는 주된 문제를 파악한다.",
+    "intent_vi": "Xác định vấn đề chủ yếu có thể xảy ra khi rút ống thông tiểu lưu bằng lực.",
+    "choice_explanations": {
+      "ko": {
+        "1": "방광감염은 도뇨관 제거 자체보다는 장기간 삽입 유지나 비위생적 처치 시 발생하는 합병증이다.",
+        "2": "요로파열은 강한 외력에 의해 발생하나, 도뇨관 강제 제거로 인한 일반적 결과는 아니다.",
+        "3": "요로감염의 위험은 증가하나, 강제 제거의 즉각적이고 직접적인 결과는 아니다.",
+        "4": "체온 상승은 여러 요인에 의해 발생하며 강제 제거와 직접적 연관이 적다.",
+        "5": "★ 유치도뇨관 끝에는 풍선(balloon)이 팽창되어 있어 강제로 빼면 요도 점막이 찢어지거나 손상되어 출혈·염증·협착으로 이어질 수 있다. 요도점막 손상이 가장 직접적인 결과이다."
+      },
+      "vi": {
+        "1": "Nhiễm trùng bàng quang thường là biến chứng của việc để ống thông lâu hoặc xử lý không vô khuẩn, không phải hệ quả trực tiếp của việc rút ống.",
+        "2": "Vỡ đường tiết niệu xảy ra do lực tác động mạnh từ bên ngoài, không phải kết quả thông thường khi rút ống thông.",
+        "3": "Nguy cơ nhiễm trùng đường tiết niệu có thể tăng, nhưng không phải hậu quả ngay lập tức và trực tiếp nhất.",
+        "4": "Tăng thân nhiệt phụ thuộc nhiều yếu tố, ít liên quan trực tiếp đến việc rút ống thông bằng lực.",
+        "5": "★ Ống thông tiểu lưu có bóng (balloon) bơm phồng ở đầu để cố định trong bàng quang. Khi rút bằng lực mà chưa xả bóng, niêm mạc niệu đạo bị rách hoặc tổn thương, dẫn đến chảy máu, viêm và có thể hẹp niệu đạo — đây là hậu quả trực tiếp nhất."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "요도점막", "def_vi": "Niêm mạc niệu đạo — lớp màng lót bên trong niệu đạo, dễ bị tổn thương khi rút ống thông bằng lực" },
+      { "term_ko": "풍선(balloon)", "def_vi": "Bóng cố định — bộ phận ở đầu ống thông tiểu lưu được bơm phồng bằng nước để giữ ống không bị tuột ra" },
+      { "term_ko": "요도 협착", "def_vi": "Hẹp niệu đạo — thu hẹp lòng niệu đạo do sẹo sau tổn thương, gây khó tiểu" }
+    ]
+  },
+  {
+    "id": 1297,
+    "intent_ko": "유치도뇨관을 삽입하고 있는 대상자를 올바르게 돕는 방법을 파악한다.",
+    "intent_vi": "Xác định phương pháp hỗ trợ đúng cho người bệnh đang có ống thông tiểu lưu.",
+    "choice_explanations": {
+      "ko": {
+        "1": "수면 중 연결관을 잠가두면 소변이 방광에 쌓여 방광 팽창, 통증, 역류 위험이 생긴다.",
+        "2": "소변색이 탁할 때 요양보호사가 임의로 방광을 세척하는 것은 의료 행위이므로 의료진에게 보고해야 한다.",
+        "3": "★ 금기사항(심부전·신장질환 등 수분 제한 필요 질환)이 없는 한 충분한 수분 섭취를 권장하는 것은 요로감염 예방과 도뇨관 유지에 중요하다.",
+        "4": "소변이 샐 때 즉시 제거하는 것은 요양보호사의 역할 범위를 벗어나며, 의료진에게 보고해야 한다.",
+        "5": "도뇨관 막힘 시 교체는 의료진이 판단해야 하며, 요양보호사가 임의로 교체하면 안 된다."
+      },
+      "vi": {
+        "1": "Khóa ống nối khi ngủ khiến nước tiểu tích tụ trong bàng quang, gây căng bàng quang, đau và nguy cơ trào ngược.",
+        "2": "Khi nước tiểu đục, người chăm sóc không được tự ý rửa bàng quang — đây là thủ thuật y tế, phải báo cáo điều dưỡng.",
+        "3": "★ Trừ khi có chống chỉ định (suy tim, bệnh thận cần hạn chế dịch), khuyến khích uống đủ nước rất quan trọng để phòng nhiễm trùng đường tiết niệu và duy trì lưu thông ống thông.",
+        "4": "Khi nước tiểu bị rò rỉ, không được tự ý rút ống — vượt quá phạm vi người chăm sóc, phải báo cáo y tế.",
+        "5": "Khi ống thông bị tắc, phải để điều dưỡng đánh giá và xử lý; người chăm sóc không được tự ý thay ống."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "유치도뇨관", "def_vi": "Ống thông tiểu lưu — ống thông mềm đặt cố định trong bàng quang để dẫn nước tiểu" },
+      { "term_ko": "금기사항", "def_vi": "Chống chỉ định — điều kiện bệnh lý mà tại đó một phương pháp điều trị hoặc hành động bị cấm" },
+      { "term_ko": "방광 팽창", "def_vi": "Căng bàng quang — tình trạng bàng quang tích đầy nước tiểu gây đau và khó chịu" }
+    ]
+  },
+  {
+    "id": 1296,
+    "intent_ko": "유치도뇨관을 삽입한 대상자를 올바르게 돕는 방법을 파악한다.",
+    "intent_vi": "Xác định phương pháp hỗ trợ đúng cho người bệnh được đặt ống thông tiểu lưu.",
+    "choice_explanations": {
+      "ko": {
+        "1": "산책 중에도 유치도뇨관을 제거하면 안 된다. 제거는 의료진이 결정하는 사항이다.",
+        "2": "★ 소변량이 적은 경우 가장 먼저 연결관의 꼬임 여부를 확인해야 한다. 꼬임이 소변 흐름을 막고 있을 수 있기 때문이다.",
+        "3": "소변주머니 배출구는 비위생적 세척이 오히려 감염을 일으킬 수 있으므로, 비운 후 배출구를 잠그는 것이 올바른 방법이다.",
+        "4": "도뇨관을 수시로 당겨 확인하는 것은 요도점막 손상과 도뇨관 탈락 위험을 높여 위험하다.",
+        "5": "하복부 불편 시 원인을 파악하는 것이 우선이나, 소변주머니가 가득 차 있다면 비워주는 것이 도움이 된다."
+      },
+      "vi": {
+        "1": "Không được rút ống thông tiểu khi đi dạo hay bất kỳ lúc nào — việc rút ống là quyết định của y tế.",
+        "2": "★ Khi lượng nước tiểu ít, việc đầu tiên cần kiểm tra là ống nối có bị gập hoặc xoắn không vì đây có thể là nguyên nhân cản trở dòng chảy.",
+        "3": "Rửa van xả túi nước tiểu có thể gây nhiễm trùng nếu thực hiện không đúng; sau khi đổ túi, đóng van lại là cách đúng.",
+        "4": "Thường xuyên kéo ống thông để kiểm tra làm tăng nguy cơ tổn thương niêm mạc niệu đạo và tuột ống — nguy hiểm.",
+        "5": "Khi người bệnh khó chịu vùng bụng dưới, ưu tiên tìm nguyên nhân; nếu túi đầy, đổ túi có thể giúp giảm khó chịu."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "연결관 꼬임", "def_vi": "Ống nối bị xoắn/gập — tình trạng ống dẫn từ ống thông tiểu đến túi bị gập, cản trở dòng chảy của nước tiểu" },
+      { "term_ko": "소변량", "def_vi": "Lượng nước tiểu — thể tích nước tiểu được thải ra, cần theo dõi để phát hiện bất thường" },
+      { "term_ko": "요도점막 손상", "def_vi": "Tổn thương niêm mạc niệu đạo — tổn thương lớp lót bên trong niệu đạo do thao tác thô bạo với ống thông" }
+    ]
+  },
+  {
+    "id": 1295,
+    "intent_ko": "유치도뇨관 삽입 대상자가 방광 팽창으로 불편감을 호소할 때 올바른 대처법을 파악한다.",
+    "intent_vi": "Xác định cách xử lý đúng khi người bệnh đặt ống thông tiểu lưu bị đau do bàng quang căng.",
+    "choice_explanations": {
+      "ko": {
+        "1": "아랫배를 따뜻하게 하는 것은 일시적 통증 완화에 도움이 될 수 있으나 근본 원인을 해결하지 못한다.",
+        "2": "소변주머니를 비워주는 것도 도움이 되지만, 먼저 방광 팽창의 원인을 파악해야 한다.",
+        "3": "★ 방광이 팽창하여 불편감을 호소할 때 가장 먼저 연결관이 꺾여 있는지 확인해야 한다. 꺾임이 소변 배출을 막아 방광 팽창의 주요 원인이 될 수 있으므로, 이를 먼저 점검하고 해소해야 한다.",
+        "4": "소변 줄을 팽팽하게 당기는 것은 요도 손상을 유발할 수 있어 매우 위험한 행동이다.",
+        "5": "수분 제한과 금식은 방광 팽창 해소에 도움이 되지 않으며, 오히려 전반적인 건강을 해친다."
+      },
+      "vi": {
+        "1": "Làm ấm bụng dưới có thể giúp giảm đau tạm thời nhưng không giải quyết được nguyên nhân cơ bản.",
+        "2": "Đổ túi nước tiểu cũng giúp ích, nhưng trước tiên cần xác định nguyên nhân gây căng bàng quang.",
+        "3": "★ Khi người bệnh có ống thông tiểu lưu bị đau do bàng quang căng, việc đầu tiên cần làm là kiểm tra xem ống nối có bị gập không. Ống bị gập cản trở nước tiểu chảy ra, là nguyên nhân chủ yếu gây căng bàng quang — cần kiểm tra và duỗi thẳng ống trước tiên.",
+        "4": "Kéo căng ống thông tiểu có thể gây tổn thương niệu đạo — rất nguy hiểm.",
+        "5": "Hạn chế dịch và nhịn ăn không giúp giải quyết bàng quang căng, thậm chí gây hại cho sức khỏe tổng thể."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "방광 팽창", "def_vi": "Căng bàng quang — tình trạng bàng quang tích đầy nước tiểu do tắc nghẽn dòng chảy, gây đau và khó chịu" },
+      { "term_ko": "연결관 꺾임", "def_vi": "Ống nối bị gập — nguyên nhân phổ biến gây tắc nghẽn dòng nước tiểu trong hệ thống ống thông" },
+      { "term_ko": "유치도뇨관", "def_vi": "Ống thông tiểu lưu — ống thông mềm đặt cố định trong bàng quang để dẫn nước tiểu ra liên tục" }
+    ]
+  },
+  {
+    "id": 1294,
+    "intent_ko": "유치도뇨관 사용 대상자의 소변주머니를 올바르게 관리하는 방법을 파악한다.",
+    "intent_vi": "Xác định phương pháp quản lý túi nước tiểu đúng cho người bệnh đang dùng ống thông tiểu lưu.",
+    "choice_explanations": {
+      "ko": {
+        "1": "소변주머니는 정해진 시간에만 비우지 않고, 1/2~2/3 정도 찼을 때 비워야 감염과 역류를 예방할 수 있다.",
+        "2": "소변주머니는 매일 세척하는 것이 아니라, 전용 배출구를 통해 소변만 비우며 위생적으로 관리한다.",
+        "3": "★ 소변주머니를 비운 후에는 반드시 배출구를 잠가야 한다. 배출구를 열어두면 역행 감염(상행 감염)의 위험이 높아지므로 감염 예방을 위해 잠그는 것이 핵심이다.",
+        "4": "소변주머니 배출구가 바닥에 닿으면 오염과 감염의 위험이 매우 높아진다.",
+        "5": "도뇨관과 소변주머니의 연결 부위를 분리하면 폐쇄 배뇨계가 깨져 세균 침입 경로가 생겨 요로감염 위험이 급격히 증가한다."
+      },
+      "vi": {
+        "1": "Không chỉ đổ túi vào giờ cố định; phải đổ khi túi đầy khoảng 1/2~2/3 để phòng nhiễm trùng và trào ngược.",
+        "2": "Không rửa túi mỗi ngày; chỉ đổ nước tiểu qua van xả chuyên dụng và duy trì vệ sinh.",
+        "3": "★ Sau khi đổ túi nước tiểu, bắt buộc phải khóa van xả lại. Để van mở tạo điều kiện cho vi khuẩn xâm nhập ngược lên (nhiễm trùng ngược dòng) — khóa van là biện pháp then chốt phòng ngừa nhiễm trùng.",
+        "4": "Để van xả chạm sàn gây ô nhiễm nghiêm trọng và tăng nguy cơ nhiễm trùng cao.",
+        "5": "Tách rời ống thông và túi nước tiểu phá vỡ hệ thống tiết niệu kín, tạo đường cho vi khuẩn xâm nhập, làm tăng đột ngột nguy cơ nhiễm trùng đường tiết niệu."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "배출구", "def_vi": "Van xả — bộ phận ở cuối túi nước tiểu dùng để tháo nước tiểu; phải khóa lại sau khi xả" },
+      { "term_ko": "역행 감염", "def_vi": "Nhiễm trùng ngược dòng — vi khuẩn xâm nhập từ van xả hoặc môi trường bên ngoài ngược lên đường tiết niệu" },
+      { "term_ko": "폐쇄 배뇨계", "def_vi": "Hệ thống tiết niệu kín — hệ thống ống thông và túi nước tiểu được giữ kín để ngăn vi khuẩn xâm nhập" }
+    ]
+  },
+  {
+    "id": 1293,
+    "intent_ko": "유치도뇨관(유치돈관) 사용 대상자를 올바르게 돕는 방법을 파악한다.",
+    "intent_vi": "Xác định phương pháp hỗ trợ đúng cho người bệnh đang dùng ống thông tiểu lưu.",
+    "choice_explanations": {
+      "ko": {
+        "1": "소변량과 색깔 확인은 하루에 한 번보다 더 자주 해야 하며, 특히 이상 징후가 있을 때는 즉각 확인이 필요하다.",
+        "2": "★ 소변주머니를 비운 후 배출구를 알코올 솜으로 닦는 것은 세균 오염을 예방하는 중요한 위생 처치이다. 역행 감염을 막기 위해 배출구를 청결하게 유지해야 한다.",
+        "3": "요도관이 빠진 경우 요양보호사가 임의로 끼워 넣어서는 안 된다. 즉시 의료진에게 보고하고 전문 처치를 받아야 한다.",
+        "4": "충분한 수분 섭취는 요로감염 예방에 중요하며, 수분을 제한하면 오히려 감염 위험이 높아진다.",
+        "5": "유치도뇨관이 삽입된 대상자는 소변을 화장실에서 볼 수 없다. 소변은 도뇨관을 통해 자동으로 주머니에 배출된다."
+      },
+      "vi": {
+        "1": "Theo dõi lượng và màu nước tiểu cần thực hiện thường xuyên hơn một lần/ngày, đặc biệt khi có dấu hiệu bất thường.",
+        "2": "★ Sau khi đổ túi nước tiểu, lau van xả bằng bông cồn là biện pháp vệ sinh quan trọng phòng ngừa ô nhiễm vi khuẩn và nhiễm trùng ngược dòng.",
+        "3": "Khi ống thông bị tuột ra, người chăm sóc không được tự ý cắm lại. Phải báo cáo y tế ngay để được xử lý chuyên môn.",
+        "4": "Uống đủ nước rất quan trọng để phòng nhiễm trùng đường tiết niệu; hạn chế nước làm tăng nguy cơ nhiễm trùng.",
+        "5": "Người đang có ống thông tiểu lưu không thể đi tiểu ở nhà vệ sinh. Nước tiểu tự động chảy qua ống thông vào túi."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "알코올 솜", "def_vi": "Bông cồn — bông thấm cồn 70% dùng để sát khuẩn bề mặt dụng cụ y tế, ví dụ van xả túi nước tiểu" },
+      { "term_ko": "역행 감염", "def_vi": "Nhiễm trùng ngược dòng — vi khuẩn từ van xả hoặc bên ngoài xâm nhập ngược lên bàng quang" },
+      { "term_ko": "배뇨", "def_vi": "Tiểu tiện (đi tiểu) — hành động thải nước tiểu ra khỏi bàng quang qua niệu đạo" }
+    ]
+  },
+  {
+    "id": 1292,
+    "intent_ko": "유치도뇨관을 삽입하고 있는 대상자를 올바르게 돕는 방법을 파악한다.",
+    "intent_vi": "Xác định phương pháp hỗ trợ đúng cho người bệnh đang có ống thông tiểu lưu.",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 유치도뇨관이 삽입되어 있어도 도뇨관이 당기거나 빠지지 않도록 주의하면서 자유롭게 움직일 수 있다는 것을 대상자에게 알려주는 것이 심리적 안정과 활동 유지에 중요하다.",
+        "2": "소변주머니는 매 식사 전이 아닌 1/2~2/3 정도 찼을 때 비워야 한다.",
+        "3": "도뇨관이 막힌 경우 의료진에게 보고해야 하며 요양보호사가 임의로 교체하면 안 된다.",
+        "4": "프로그램 참여 중 연결관을 잠그면 소변이 배출되지 않아 방광 팽창, 불편감, 역류 위험이 생긴다.",
+        "5": "소변주머니에서 냄새가 나면 세척이 아닌 필요시 교체하거나 의료진에게 보고해야 한다."
+      },
+      "vi": {
+        "1": "★ Dù đang có ống thông tiểu lưu, người bệnh vẫn có thể vận động tương đối tự do nếu cẩn thận không để ống bị kéo hay tuột. Thông báo điều này cho người bệnh giúp họ ổn định tâm lý và duy trì hoạt động.",
+        "2": "Không đổ túi nước tiểu trước mỗi bữa ăn; cần đổ khi túi đầy khoảng 1/2~2/3.",
+        "3": "Khi ống thông bị tắc, phải báo cáo y tế; người chăm sóc không được tự ý thay ống.",
+        "4": "Khóa ống nối khi tham gia hoạt động khiến nước tiểu không chảy được, gây căng bàng quang, khó chịu và nguy cơ trào ngược.",
+        "5": "Khi túi nước tiểu có mùi, không rửa túi mà cần thay túi nếu cần thiết hoặc báo cáo y tế."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "유치도뇨관", "def_vi": "Ống thông tiểu lưu — ống thông mềm đặt cố định trong bàng quang để dẫn nước tiểu" },
+      { "term_ko": "방광 팽창", "def_vi": "Căng bàng quang — tích tụ nước tiểu quá mức trong bàng quang gây đau và có thể trào ngược" },
+      { "term_ko": "소변주머니", "def_vi": "Túi nước tiểu — túi thu gom nước tiểu được kết nối với ống thông tiểu lưu" }
+    ]
+  },
+  {
+    "id": 1291,
+    "intent_ko": "유치도뇨관을 사용하는 대상자를 올바르게 관리하는 방법을 파악한다.",
+    "intent_vi": "Xác định phương pháp quản lý đúng cho người bệnh đang sử dụng ống thông tiểu lưu.",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 소변량과 색깔을 매 2~3시간마다 정기적으로 확인하는 것은 대상자의 건강 상태, 신장 기능, 수분 균형, 감염 여부를 조기에 파악하는 데 필수적인 모니터링 방법이다.",
+        "2": "걸을 때 소변주머니를 아랫배보다 높이 들면 소변이 역류하여 방광으로 올라가 역행 감염이 발생할 수 있다. 반드시 방광보다 낮게 들어야 한다.",
+        "3": "도뇨관 밖으로 소변이 새는 경우 즉시 교체하기 전에 원인(꺾임, 풍선 문제 등)을 파악하고 의료진에게 보고해야 한다.",
+        "4": "소변주머니는 가득 찰 때까지 기다리지 말고 1/2~2/3 정도 찼을 때 비워야 감염과 역류를 예방할 수 있다.",
+        "5": "소변색 이상은 감염의 징후일 수 있어 즉시 버리기보다 관찰하고 의료진에게 보고해야 한다."
+      },
+      "vi": {
+        "1": "★ Theo dõi lượng và màu nước tiểu định kỳ mỗi 2~3 giờ là phương pháp giám sát cần thiết để phát hiện sớm bất thường về chức năng thận, cân bằng dịch và dấu hiệu nhiễm trùng.",
+        "2": "Nâng túi nước tiểu cao hơn bụng dưới khi đi lại làm nước tiểu trào ngược vào bàng quang, gây nhiễm trùng ngược dòng. Phải giữ túi thấp hơn mức bàng quang.",
+        "3": "Khi nước tiểu rò rỉ ra ngoài ống thông, cần xác định nguyên nhân (ống gập, bóng xẹp…) và báo cáo y tế trước khi thay ống.",
+        "4": "Không chờ đến khi túi đầy mới đổ; đổ khi túi đầy khoảng 1/2~2/3 để phòng nhiễm trùng và trào ngược.",
+        "5": "Nước tiểu màu bất thường có thể là dấu hiệu nhiễm trùng; không vứt bỏ ngay mà cần quan sát và báo cáo y tế."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "역행 감염", "def_vi": "Nhiễm trùng ngược dòng — vi khuẩn xâm nhập từ bên ngoài ngược lên bàng quang qua ống thông hoặc van xả" },
+      { "term_ko": "소변량 모니터링", "def_vi": "Theo dõi lượng nước tiểu — ghi chép và kiểm tra lượng nước tiểu theo định kỳ để phát hiện bất thường chức năng thận và tuần hoàn" },
+      { "term_ko": "수분 균형", "def_vi": "Cân bằng dịch — trạng thái lượng dịch vào và dịch ra của cơ thể ở mức cân bằng" }
+    ]
+  },
+  {
+    "id": 1290,
+    "intent_ko": "소변주머니를 방광보다 낮게 두어야 하는 이유를 파악한다.",
+    "intent_vi": "Xác định lý do phải đặt túi nước tiểu thấp hơn vị trí bàng quang.",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 소변주머니를 방광보다 낮게 두면 중력에 의해 소변이 아래로 자연스럽게 흘러 방광으로 역류하지 않는다. 역류 시 소변 내 세균이 방광으로 올라가 역류성 감염(상행 감염)을 일으킬 수 있으므로, 이를 예방하는 것이 가장 중요한 이유이다.",
+        "2": "보행 편의는 부수적인 고려 사항이며 주된 이유가 아니다.",
+        "3": "도뇨관 탈락 방지는 고정 방법과 관련되며 위치와는 무관하다.",
+        "4": "냄새 유출 방지는 주된 이유가 아니다.",
+        "5": "연결관 꺾임 방지는 관리 방법의 문제이며 위치와는 다른 차원의 문제이다."
+      },
+      "vi": {
+        "1": "★ Đặt túi nước tiểu thấp hơn bàng quang giúp nước tiểu chảy xuống theo trọng lực tự nhiên, không bị trào ngược lên bàng quang. Khi nước tiểu trào ngược, vi khuẩn trong nước tiểu có thể xâm nhập lên bàng quang gây nhiễm trùng ngược dòng — phòng ngừa điều này là lý do quan trọng nhất.",
+        "2": "Tiện lợi khi đi lại chỉ là yếu tố thứ yếu, không phải lý do chính.",
+        "3": "Phòng ống thông bị tuột liên quan đến cách cố định, không liên quan đến vị trí của túi.",
+        "4": "Ngăn mùi thoát ra không phải lý do chính.",
+        "5": "Ngăn ống nối bị gập là vấn đề kỹ thuật quản lý, khác với vấn đề vị trí của túi."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "역류성 감염", "def_vi": "Nhiễm trùng ngược dòng — vi khuẩn từ túi nước tiểu trào ngược lên bàng quang gây nhiễm trùng đường tiết niệu" },
+      { "term_ko": "소변주머니 위치", "def_vi": "Vị trí túi nước tiểu — phải đặt thấp hơn bàng quang để tận dụng trọng lực và ngăn trào ngược" },
+      { "term_ko": "상행 감염", "def_vi": "Nhiễm trùng ngược chiều (đi lên) — vi khuẩn lan từ vùng thấp (túi, van xả) ngược lên hệ tiết niệu trên (bàng quang, thận)" }
+    ]
+  },
+  {
+    "id": 1289,
+    "intent_ko": "유치도뇨관을 사용하는 대상자를 올바르게 돕는 방법을 파악한다.",
+    "intent_vi": "Xác định phương pháp hỗ trợ đúng cho người bệnh đang dùng ống thông tiểu lưu.",
+    "choice_explanations": {
+      "ko": {
+        "1": "소변주머니는 매일 교체할 필요가 없다. 감염 예방을 위해 불필요한 연결 분리는 피해야 한다.",
+        "2": "★ 소변주머니는 반드시 방광의 위치보다 낮게 두어 중력에 의해 소변이 자연스럽게 흐르도록 해야 한다. 높이 두면 역류로 인한 요로감염 위험이 높아진다.",
+        "3": "방광 통증 시 즉시 도뇨관을 빼는 것은 의료진의 판단 없이 요양보호사가 해서는 안 되며, 즉시 보고해야 한다.",
+        "4": "연결관 탈락 방지를 위해 침상에만 누워있게 하는 것은 과도한 제한이며, 활동을 적절히 허용하면서 관리해야 한다.",
+        "5": "소변이 고이지 않을 때 하복부를 눌러주는 것은 도뇨관이나 요도에 불필요한 자극과 압박을 줄 수 있어 부적절하다."
+      },
+      "vi": {
+        "1": "Không cần thay túi nước tiểu mỗi ngày. Tránh tách rời kết nối không cần thiết để phòng nhiễm trùng.",
+        "2": "★ Túi nước tiểu phải được đặt thấp hơn vị trí bàng quang để nước tiểu chảy tự nhiên theo trọng lực. Đặt cao hơn bàng quang làm nước tiểu trào ngược, tăng nguy cơ nhiễm trùng đường tiết niệu.",
+        "3": "Khi bàng quang đau, không được tự ý rút ống thông mà không có chỉ định y tế — phải báo cáo ngay.",
+        "4": "Bắt người bệnh nằm yên trên giường để giữ ống là hạn chế quá mức; cần quản lý cẩn thận trong khi cho phép vận động phù hợp.",
+        "5": "Ấn vùng bụng dưới khi nước tiểu không chảy có thể gây kích thích và áp lực không cần thiết lên ống thông và niệu đạo — không phù hợp."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "유치도뇨관", "def_vi": "Ống thông tiểu lưu — ống thông mềm đặt cố định trong bàng quang để dẫn nước tiểu ra liên tục" },
+      { "term_ko": "소변주머니 위치", "def_vi": "Vị trí túi nước tiểu — phải đặt thấp hơn bàng quang để tận dụng trọng lực ngăn trào ngược" },
+      { "term_ko": "하복부", "def_vi": "Vùng bụng dưới — phần bụng phía dưới rốn, nơi chứa bàng quang và các cơ quan tiết niệu" }
+    ]
+  },
+  {
+    "id": 1288,
+    "intent_ko": "침상에 누워있는 대상자의 기저귀 사용을 올바르게 돕는 방법을 파악한다.",
+    "intent_vi": "Xác định phương pháp hỗ trợ đúng khi dùng tã cho người bệnh nằm trên giường.",
+    "choice_explanations": {
+      "ko": {
+        "1": "대상자가 거부하더라도 위생과 피부 건강을 위해 기저귀 교체는 반드시 필요하다. 부드럽게 설득하며 진행해야 한다.",
+        "2": "기저귀 교환 시마다 시설장에게 보고하는 것은 일상적인 관리 절차가 아니다.",
+        "3": "피부가 붉어졌을 때 더운 물주머니를 대면 피부 손상을 악화시킬 수 있다. 건조하게 유지하고 피부 보호 크림을 바르는 것이 적절하다.",
+        "4": "★ 기저귀가 뭉치면 피부에 압박과 마찰이 생겨 욕창과 피부 손상을 유발한다. 잘 펴서 둔부(엉덩이)를 균일하게 감싸주는 것이 피부를 보호하는 올바른 방법이다.",
+        "5": "발적이 있을 때 도넛 베개는 욕창 예방을 위한 도구이지만, 기저귀 교환 시 일상적으로 사용하는 방법이 아니다."
+      },
+      "vi": {
+        "1": "Dù người bệnh từ chối, vẫn phải thay tã vì lý do vệ sinh và bảo vệ da. Cần thuyết phục nhẹ nhàng rồi tiến hành.",
+        "2": "Báo cáo với giám đốc cơ sở mỗi lần thay tã không phải quy trình quản lý thường ngày.",
+        "3": "Khi da đỏ, chườm nóng có thể làm tổn thương da nặng hơn. Cần giữ da khô và bôi kem bảo vệ da.",
+        "4": "★ Tã bị vón cục gây áp lực và ma sát lên da, dễ gây loét tỳ đè và tổn thương da. Trải phẳng tã và bọc đều vùng mông là phương pháp đúng để bảo vệ da.",
+        "5": "Gối hình vòng tròn (donut pillow) dùng để phòng loét tỳ đè, nhưng không phải phương pháp thường quy khi thay tã."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "기저귀", "def_vi": "Tã — vật dụng thấm hút để giữ vệ sinh vùng kín cho người không kiểm soát được bài tiết" },
+      { "term_ko": "욕창", "def_vi": "Loét tỳ đè (bedsore) — vết loét da do áp lực liên tục lên cùng một vị trí, thường gặp ở người nằm lâu" },
+      { "term_ko": "발적", "def_vi": "Đỏ da (ban đỏ) — vùng da bị đỏ do kích ứng, ma sát hoặc thiếu tuần hoàn, dấu hiệu cảnh báo sớm của loét tỳ đè" }
+    ]
+  },
+  {
+    "id": 1287,
+    "intent_ko": "침상에서 대상자의 기저귀를 교환하는 올바른 방법을 파악한다.",
+    "intent_vi": "Xác định phương pháp thay tã đúng cho người bệnh trên giường.",
+    "choice_explanations": {
+      "ko": {
+        "1": "윗옷을 가슴까지 올리면 신체 노출이 과도해 대상자의 존엄성을 침해하며, 불필요한 노출은 피해야 한다.",
+        "2": "무릎을 편 상태에서 허리를 들어 올리는 것은 대상자와 요양보호사 모두에게 부담을 줄 수 있으며, 무릎을 굽혀서 발바닥을 침상에 붙이고 허리를 들어야 한다.",
+        "3": "새 기저귀의 바깥면(흡수되지 않는 방수면)이 보이게 하면 기저귀 방향이 거꾸로 되어 올바르지 않다.",
+        "4": "기저귀 교환 중 창문을 열면 대상자의 사생활이 침해될 수 있고, 체온이 낮아질 수 있어 주의가 필요하다.",
+        "5": "★ 꼬리뼈 부위(천골·미골 부위)는 누워있는 대상자에게 욕창이 가장 흔히 발생하는 부위이므로, 기저귀 교환 시마다 피부 발적, 짓무름, 욕창 징후를 반드시 관찰해야 한다."
+      },
+      "vi": {
+        "1": "Kéo áo lên đến ngực làm lộ người quá mức, xâm phạm sự riêng tư và phẩm giá của người bệnh.",
+        "2": "Nâng hông khi duỗi thẳng đầu gối gây khó khăn và tốn sức cho cả người bệnh và người chăm sóc; cần gập gối, đặt lòng bàn chân lên giường rồi mới nâng hông.",
+        "3": "Để mặt ngoài (mặt chống thấm) của tã mới quay lên trên là bị ngược chiều — không đúng.",
+        "4": "Mở cửa sổ khi thay tã xâm phạm sự riêng tư và có thể làm người bệnh bị lạnh.",
+        "5": "★ Vùng xương cụt (xương cùng-cụt) là vị trí loét tỳ đè phổ biến nhất ở người nằm lâu. Mỗi lần thay tã phải kiểm tra da vùng này xem có đỏ, ẩm ướt hay dấu hiệu loét không."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "꼬리뼈", "def_vi": "Xương cụt (coccyx) — xương nhỏ ở cuối cột sống, điểm tỳ đè dễ bị loét nhất ở người nằm lâu" },
+      { "term_ko": "피부 발적", "def_vi": "Đỏ da — vùng da bị ửng đỏ do áp lực hoặc ma sát, dấu hiệu cảnh báo sớm cần theo dõi khi thay tã" },
+      { "term_ko": "욕창", "def_vi": "Loét tỳ đè — vết loét da và mô sâu hơn do áp lực liên tục, cần phát hiện sớm để can thiệp kịp thời" }
+    ]
+  }
+]

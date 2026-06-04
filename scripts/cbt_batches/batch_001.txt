@@ -1,0 +1,1431 @@
+너는 한국 요양보호사 자격시험 CBT 해설 작가야.
+대상 학습자는 TOPIK 3-4 급 베트남인 — 한국어 학습 중이라 한국어와 베트남어를 분리해서 보여줘야 함.
+
+각 문제에 대해 다음 형식으로 JSON 반환:
+- intent_ko / intent_vi — 한 줄 요약
+- choice_explanations — { "ko": {1: ...}, "vi": {1: ...} } — ko/vi 블록 분리, 1→5 순서
+  - 정답 보기는 자세히 (왜 옳은지, 핵심 원리), 해설 맨 앞에 ★
+  - 오답 보기는 의미 있을 때만 짧게 (잘못된 이유)
+  - 순서·매칭 문제처럼 보기별 차이가 무의미하면 해당 키 자체를 생략 (ko·vi 양쪽 동일)
+  - "이건 정답이 아닙니다" 같은 무의미한 해설 금지
+- key_terms — [{ "term_ko": "한글 용어", "def_vi": "Vietnamese definition" }] 형식
+  - TOPIK 3-4 가 모를 의학·전문 용어 2-5 개
+  - 일상 단어 제외, 전문 용어 우선
+
+여러 문제를 한 번에 처리할 때는 array 로 묶어서 반환.
+
+다음 30 문제를 모두 처리해서 array 로 반환:
+
+=== 문제 ID 1740 (챕터 15) ===
+질문:
+치매 대상자의 주보호자인 며느리가 다음과 같이 말할 때 요양보호사의 대처방법은? "시아버지를 돌보고 있는데 남편은 고맙다는 말 한마디도 안 하고, 딸은 자기를 하나도 챙기지 않는다며 투정해요. 내가 집에서 노는 줄 알아요."
+
+보기:
+1) "남편분에게 얼마나 힘든지 해보라고 하세요."
+2) "가족들이 몰라주는 것 같아 속상하시겠어요."
+3) "딸이 엄마를 도와주지는 못할망정 너무하네요."
+4) "며느리가 돌보는건 당연해요. 조금만 참으세요."
+5) "제가 가족들에게 도와주라고 말해 볼게요."
+
+정답: 2번
+
+기존 해설 자료 (참고용):
+문제 의도 Ý định của câu hỏi
+치매 환자를 돌보는 주보호자의 감정에 대해 공감하고, 적절한 대처 방법을 찾는 것.
+Tìm hiểu cảm xúc của người chăm sóc chính bệnh nhân Alzheimer và tìm cách xử lý phù hợp.
+
+보기 해설 Giải thích lựa chọn
+(1) 
+
+기존 핵심 용어 자료 (참고용):
+주보호자: 환자를 곁에서 가장 많이 도와주는 사람
+Người chăm sóc chính: Người giúp đỡ bệnh nhân nhiều nhất ở bên cạnh
+
+시아버지: 남편의 아버지
+Bố chồng: Bố của chồng
+
+---
+
+=== 문제 ID 1739 (챕터 15) ===
+질문:
+치매 대상자가 주변에 아무도 없는데 저리 가!라고 소리치며 저기 검은 옷 입은 사람이 자꾸 나를 쳐다봐.라고 말할 때 올바른 대처방법은?
+
+보기:
+1) 아무도 없다고 대상자에게 말한다.
+2) 저리 가라고 대상자와 같이 소리친다.
+3) 잘못한 일을 혼내려고 왔나보다고 말한다.
+4) 간식을 제공하거나 좋아하는 활동을 하게 한다.
+5) 기운이 없어서 헛것이 보이는 것이라고 말한다.
+
+정답: 4번
+
+기존 해설 자료 (참고용):
+문제 의도 Ý định của câu hỏi
+치매 대상자의 이상 행동에 대한 올바른 대처 방법을 이해하고 있는지를 평가하기 위한 문제입니다.
+Đây là câu hỏi để đánh giá xem bạn có hiểu cách xử lý hành vi bất thường của người bị bệnh Alzheimer hay không.
+
+보기 해설 Giải thích lựa chọn
+(1) 대상자에게 아무도 없다고 말하는 것은 대상자의 불안을 더욱 심화시킬 수 있습니다.
+Nói với bệnh nhân rằng không có ai sẽ làm trầm trọng thêm sự lo lắng của họ.
+
+(2) 함께 소리치는 것은 상황을 더욱 악화시킬 수 있으므로 적절하지 않습니다.
+Hét cùng với bệnh nhân có thể làm tình huống tồi tệ hơn và không thích hợp.
+
+(3) 잘못한 일을 혼내려고 왔다고 말하는 것은 불필요한 혼란을 일으킬 수 있습니다.
+Nói rằng bạn đến để la mắng họ có thể gây ra sự nhầm lẫn không cần thiết.
+
+[정답] (4) 간식을 제공하거나 좋아하는 활동을 하게 하는 것은 대처 방법으로 적합합니다.
+[Đáp án đúng] (4) Cung cấp thức ăn nhẹ hoặc cho họ tham gia hoạt động yêu thích là cách xử lý phù hợp.
+
+(5) 기운이 없어서 헛것이 보인다고 말하는 것은 대상자를 불안하게 만들 수 있습니다.
+Nói rằng họ mệt mỏi và thấy ảo giác có thể làm tăng lo lắng cho bệnh nhân.
+
+기존 핵심 용어 자료 (참고용):
+치매: 기억력과 사고에 영향을 미치는 질병
+Bệnh Alzheimer: Bệnh ảnh hưởng đến trí nhớ và suy nghĩ.
+
+대상자: 보호를 받는 사람
+Người nhận chăm sóc: Người được chăm sóc
+
+불안: 걱정스러운 감정
+Lo lắng: Cảm xúc lo lắng
+
+대처 방법: 문제를 해결하는 방식
+Cách xử lý: Cách giải quyết vấn đề
+
+활동: 어떤 행동이나 작업
+Hoạt động: Hành động hoặc công việc nào đó
+
+---
+
+=== 문제 ID 1738 (챕터 15) ===
+질문:
+치매 대상자가 다음과 같은정신행동증상을 보일 때 대처방법은? "목걸이가 없어졌어. 며느리가 가져간게 분명해. 내 방에 몰래 들어가는 걸 봤거든."
+
+보기:
+1) "지난번에도 그러시더니, 또 의심하시네요."
+2) "그래요? 반지나 팔찌는 없어지지 않았어요?"
+3) "앞으로는 저한테 맡기세요. 잘 보관해 드릴게요."
+4) "목걸이 여기 있잖아요. 왜 그렇게 의심이 많으세요?"
+5) "목걸이가 없어져서 많이 속상하시겠어요."라며 함께 찾아본다.
+
+정답: 5번
+
+기존 해설 자료 (참고용):
+문제 의도 Ý định của câu hỏi
+대체적으로 치매 대상자의 정신행동증상에 적합한 대처방법을 묻고 있습니다.
+Hỏi về phương pháp ứng phó phù hợp với triệu chứng hành vi tâm thần của người bị sa sút trí tuệ.
+
+보기 해설 Giải thích lựa chọn
+(1) 대상자의 감정을 무시하고 비난하는 것이므로 부적절합니다.
+Cách này không đúng vì phớt lờ cảm xúc của người bệnh và chỉ trích họ.
+
+(2) 의심을 덜게 하기 위한 방식이지만, 상황을 인정하지 않아서 적절하지 않습니다.
+Cách này không phù hợp vì không thừa nhận tình huống, mặc dù nó có thể làm giảm sự nghi ngờ.
+
+[정답] (5) 대상자의 감정을 이해하고 함께 문제를 해결하자는 접근 방식이므로 가장 적절합니다.
+[Đáp án đúng] (5) Phương pháp này là tiếp cận phù hợp nhất vì hiểu cảm xúc của người bệnh và muốn cùng giải quyết vấn đề.
+
+(3) 책임을 떠넘기는 것이므로 신뢰를 구축하기 어렵습니다.
+Cách này sẽ khó xây dựng niềm tin vì chuyển trách nhiệm cho người khác.
+
+(4) 비난의 요소가 있으며 대상자의 감정을 더욱 나쁘게 할 수 있습니다.
+Cách này có yếu tố chỉ trích và có thể làm cho cảm xúc của bệnh nhân tồi tệ hơn.
+
+기존 핵심 용어 자료 (참고용):
+치매: 인지능력이 감소하는 병증
+Sa sút trí tuệ: Bệnh giảm khả năng nhận thức
+
+대상자: 치료를 받는 사람
+Người được chữa trị: Người nhận được trị liệu
+
+정신행동증상: 정신적 또는 행동적 문제를 나타내는 증상
+Triệu chứng hành vi tâm thần: Triệu chứng biểu hiện vấn đề về tâm lý hoặc hành vi
+
+대처방법: 특정 상황에 대한 대응 방법
+Phương pháp ứng phó: Phương pháp đáp ứng với một tình huống cụ thể
+
+---
+
+=== 문제 ID 1737 (챕터 15) ===
+질문:
+치매 대상자가 자신의 옷에 배설한 것을 인지하지 못하고 의자에 앉아있을 때 대처방법은?
+
+보기:
+1) "어휴 냄새...어르신은 냄새도 안 나세요?"
+2) "왜, 자꾸 실수하시는 거예요? 화장실은 저쪽에 있잖아요."
+3) "화장실에 가서 옷 갈아입어요." 조용하고 부드럽게 말한다.
+4) "대변을 봤으면 말씀을 하셔야지, 가만히 계시면 어떻게 해요?"
+5) "너무 많이 드셨나 봐요. 식사량과 음료수 섭취량을 줄여야겠네요."
+
+정답: 3번
+
+기존 해설 자료 (참고용):
+문제 의도 Ý định của câu hỏi
+치매 환자에 대한 적절한 대처 방법을 묻는 문제입니다.
+Câu hỏi này hỏi về cách đối phó phù hợp với bệnh nhân mất trí nhớ.
+
+보기 해설 Giải thích lựa chọn
+(1) 치매 환자에게는 냄새에 대한 말이 불안감이나 수치심을 유발할 수 있습니다.
+Nói về mùi hôi có thể gây ra lo lắng hoặc xấu hổ cho bệnh nhân mất trí nhớ.
+
+(2) 치매 환자에게 책임을 묻는 발언은 부정적인 반응을 일으킬 수 있습니다.
+Việc hỏi trách nhiệm có thể gây ra phản ứng tiêu cực từ bệnh nhân mất trí nhớ.
+
+[정답] (3) 조용하고 부드럽게 말하는 것이 치매 환자에게 도움이 됩니다.
+[Đáp án đúng] (3) Nói nhẹ nhàng và êm ái sẽ giúp ích cho bệnh nhân mất trí nhớ.
+
+(4) 책임을 묻는 질문은 치매 환자의 자존감에 해롭고, 부정적인 감정을 초래할 수 있습니다.
+Câu hỏi đặt trách nhiệm có thể gây hại cho lòng tự trọng và mang lại cảm giác tiêu cực cho bệnh nhân mất trí nhớ.
+
+(5) 이러한 발언은 치료보다는 문제를 가중시킬 수 있습니다.
+Câu nói này có thể làm nặng thêm vấn đề hơn là chữa trị.
+
+기존 핵심 용어 자료 (참고용):
+치매: 기억과 사고에 영향을 미치는 질병
+Bệnh mất trí: Bệnh ảnh hưởng đến trí nhớ và tư duy
+
+대처: 문제나 상황에 맞게 행동함
+Xử lý: Hành động phù hợp với tình huống hoặc vấn đề
+
+부드럽다: 외부에 심한 영향이 없다
+Mềm mại: Không có ảnh hưởng mạnh mẽ đến bên ngoài
+
+---
+
+=== 문제 ID 1736 (챕터 15) ===
+질문:
+시도 때도 없이 먹으려 하는 치매 대상자가 다음과 말할 때 대처 방법은? "저녁 준비하고 있어? 나 밥 안 먹었는데, 밥 안 줬잖아?"
+
+보기:
+1) "제가 방금 드렸잖아요." 라고 말한다.
+2) "지금은 바빠서준비할 수 없습니다." 라고 말한다.
+3) "조금만 기다려 주세요." 라고 말하며 화초를 닦아 달라고 말한다.
+4) "하루 종일 너무 많이 드셔서 드릴 수 없습니다."라고 말한다.
+5) "밥을 더 드리면 따님에게 혼나요. 이해해 주세요."라고 말한다.
+
+정답: 3번
+
+기존 해설 자료 (참고용):
+문제 의도 Ý định của câu hỏi
+치매 환자에게 적절한 대처 방법을 이해하고 적용하는 능력을 평가하기 위해 제시한 질문입니다.
+Câu hỏi được đưa ra nhằm đánh giá khả năng hiểu và áp dụng phương pháp đối phó phù hợp với bệnh nhân Alzheimer.
+
+보기 해설 Giải thích lựa chọn
+(1) '제가 방금 드렸잖아요.' 라고 말한다는 것은 환자의 불안감을 오히려 악화시킬 수 있습니다.
+Câu trả lời này có thể làm tăng thêm sự lo lắng cho bệnh nhân.
+
+[정답] (3) '조금만 기다려 주세요.' 라고 말하며 화초를 닦아 달라고 말하는 것은 환자의 주의를 다른 데로 돌릴 수 있어 긍정적인 효과를 가져옵니다.
+[Đáp án đúng] (3) Nói 'Chỉ cần chờ một chút.' và đề nghị bệnh nhân lau cây cũng có thể có hiệu quả tích cực bằng cách chuyển sự chú ý của họ sang điều khác.
+
+(2) '지금은 바빠서 준비할 수 없습니다.'라고 말하는 것은 환자를 실망시키고 상황을 악화시킬 수 있습니다.
+Nói 'Bây giờ tôi bận nên không thể chuẩn bị' có thể khiến bệnh nhân thất vọng và làm tình hình trở nên xấu đi.
+
+(4) '하루 종일 너무 많이 드셔서 드릴 수 없습니다.'라고 말하는 것은 환자의 기분이 상할 수 있습니다.
+Nói 'Bạn đã ăn quá nhiều suốt cả ngày nên không thể đưa cho bạn được' có thể làm tổn thương tâm trạng của bệnh nhân.
+
+(5) '밥을 더 드리면 따님에게 혼나요. 이해해 주세요.'라고 말하는 것은 환자에게 혼란을 줄 수 있습니다.
+Nói 'Nếu bạn ăn thêm cơm, bạn sẽ bị con gái mắng. Xin hãy hiểu.' có thể gây nhầm lẫn cho bệnh nhân.
+
+기존 핵심 용어 자료 (참고용):
+치매: 기억력과 인지 기능이 점차적으로 저하되는 질환
+Bệnh Alzheimer: Bệnh lí suy giảm trí nhớ và chức năng nhận thức dần dần
+
+대처: 문제에 대응하는 방법
+Đối phó: Cách ứng phó với vấn đề
+
+불안감: 마음이 편안하지 않은 상태
+Dùng từ: Trạng thái không thoải mái trong tâm trí
+
+주변: 인근 지역, 주변 환경
+Xung quanh: Khu vực xung quanh, môi trường xung quanh
+
+---
+
+=== 문제 ID 1735 (챕터 15) ===
+질문:
+치매 대상자가 같은 곳을 왔다 갔다 하고, 침을 뱉는 행동을 반복할 때 대처 방법은?
+
+보기:
+1) 그만하라고 야단을 친다.
+2) 반복하는행동을 못하게 한다.
+3) 반복 행동을 지적하여 바로 잡는다.
+4) 뒤에서 다가가 큰소리로 대상자를 부른다.
+5) 수건 접기를 하여 관심을 다른 곳으로 유도한다.
+
+정답: 5번
+
+기존 해설 자료 (참고용):
+문제 의도 Ý định của câu hỏi
+치매 환자에 대한 대처 방법을 이해하고 있는지를 평가한다.
+Đánh giá khả năng hiểu biết về phương pháp xử lý đối với bệnh nhân bị bệnh mất trí nhớ.
+
+보기 해설 Giải thích lựa chọn
+(1) 그만하라고 야단을 친다.
+이 방법은 오히려 치매 환자에게 혼란과 불안을 초래할 수 있다.
+Phương pháp này có thể tạo ra sự nhầm lẫn và lo lắng cho bệnh nhân bị mất trí nhớ.
+
+(2) 반복하는 행동을 못하게 한다.
+역시 이 방법은 치매 환자의 행동을 억제하기보다는 이해하고 대처하는 것이 필요하다.
+Cách này cũng không nên vì cần phải hiểu và xử lý hành vi của bệnh nhân thay vì kiềm chế.
+
+(3) 반복 행동을 지적하여 바로 잡는다.
+치매 환자는 인지능력이 떨어져 잘 이해하지 못할 수 있다.
+Bệnh nhân mất trí nhớ có thể không nhận thức được do khả năng nhận thức giảm.
+
+(4) 뒤에서 다가가 큰소리로 대상자를 부른다.
+이 방법은 치매 환자에게 놀라움을 줄 수 있어서 피해야 한다.
+Cách này có thể gây bất ngờ cho bệnh nhân và nên tránh.
+
+[정답] (5) 수건 접기를 하여 관심을 다른 곳으로 유도한다.
+이 방법은 부정적인 행동을 줄이고 긍정적인 대처 방법으로 환자의 관심을 전환시킨다.
+Cách này giúp giảm bớt hành vi tiêu cực và chuyển sự chú ý của bệnh nhân sang một hoạt động tích cực khác.
+
+(6) (없음)
+(6) (없음)
+
+기존 핵심 용어 자료 (참고용):
+치매: 기억력을 잃는 질환
+Bệnh mất trí nhớ: Bệnh làm mất khả năng nhớ
+
+대상자: 돌보는 사람
+Đối tượng: Người được chăm sóc
+
+반복 행동: 같은 행동을 여러 번 하는 것
+Hành vi lặp lại: Làm hành động nhiều lần
+
+수건: 물건의 일종, 일반적으로 사용
+Khăn: Một loại đồ vật, sử dụng chung
+
+관심: 주목하는 것
+Sự quan tâm: Điều được chú ý
+
+---
+
+=== 문제 ID 1734 (챕터 15) ===
+질문:
+공격성이 나타나는 치매 대상자의 옷을 갈아입히는 방법으로 옳은 것은?
+
+보기:
+1) 강제로 옷을 갈아입힌다.
+2) 대상자가 화를 내면 같이 화를 낸다.
+3) 옷에 물을 쏟아 젖게 하여 갈아입힌다.
+4) 요양보호사의 기분이 좋을 때 갈아입힌다.
+5) 가족에게 도움을 요청하여 함께 갈아입힌다.
+
+정답: 3번
+
+기존 해설 자료 (참고용):
+문제 의도 Ý định của câu hỏi
+치매 환자에게 옷을 갈아입힐 때 필요한 접근 방식을 이해하고 있는지를 평가한다.
+Đánh giá khả năng hiểu cách tiếp cận cần thiết khi thay quần áo cho bệnh nhân mắc chứng mất trí nhớ.
+
+보기 해설 Giải thích lựa chọn
+(1) 강제로 옷을 갈아입히는 것은 환자의 스트레스를 유발할 수 있으며, 안전하지 않다.
+(1) Ép buộc mặc quần áo không chỉ gây căng thẳng cho bệnh nhân mà còn không an toàn.
+
+[정답] (3) 치매 환자가 공격성을 보일 때는 부드러운 접근이 필요하며, 물로 옷을 젖게 해서 갈아입히는 방법은 환자에게 불안감을 줄일 수 있다.
+[Đáp án đúng] (3) Khi bệnh nhân mất trí nhớ có biểu hiện hung hăng, cần phải có cách tiếp cận nhẹ nhàng, và việc làm ướt quần áo để thay có thể làm giảm cảm giác lo lắng cho bệnh nhân.
+
+(4) 요양보호사의 기분과 관계없이 환자의 상태가 우선시 되어야 한다.
+(4) Tâm trạng của người chăm sóc không quan trọng, mà tình trạng của bệnh nhân cần được ưu tiên.
+
+(5) 가족의 도움을 요청하는 것은 좋은 방법일 수 있으나, 혼자서도 할 수 있는 접근 방법이 필요하다.
+(5) Việc yêu cầu sự giúp đỡ từ gia đình có thể là một phương pháp tốt, nhưng cần có cách tiếp cận mà có thể tự làm một mình.
+
+기존 핵심 용어 자료 (참고용):
+공격성: 환자가 보이는 스트레스나 감정의 폭발
+Aggression: Những sự bùng nổ cảm xúc hoặc căng thẳng của bệnh nhân
+
+갈아입히다: 옷을 입히기 위해 변화를 주다
+Thay đồ: Thay đổi để mặc một bộ quần áo khác
+
+요양보호사: 환자의 돌봄을 담당하는 전문가
+Người chăm sóc: Chuyên gia chịu trách nhiệm chăm sóc bệnh nhân
+
+가족: 친척이나 가까운 사람
+Gia đình: Người thân hoặc những người gần gũi
+
+---
+
+=== 문제 ID 1733 (챕터 15) ===
+질문:
+치매 대상자가 인사를 하거나 말을 걸어도 반응이 없고, 의자에 가만히 앉아있을 때 요양보호사의 대처방법은?
+
+보기:
+1) 대답하지 않으면 말 걸지 말고 그냥 둔다.
+2) 대상자의 흥미를 유발할 수 있는 활동을 시도한다.
+3) 대상자의 사소한 말이나 행동에는 관심을 두지 않는다.
+4) 혼자 있는 시간을 갖도록 배려한다.
+5) 걱정거리가 있는지 물어본다.
+
+정답: 2번
+
+기존 해설 자료 (참고용):
+문제 의도 Ý định của câu hỏi
+치매 대상자에 대한 올바른 대처 방법을 물어보는 문제입니다.
+Câu hỏi này hỏi về cách ứng phó đúng với người bị chứng mất trí nhớ.
+
+보기 해설 Giải thích lựa chọn
+(1) 대답하지 않으면 말 걸지 말고 그냥 둔다.
+대상자와의 소통이 부족해질 수 있습니다.
+Nếu không trả lời, có thể dẫn đến sự thiếu giao tiếp với người bệnh.
+
+[정답] (2) 대상자의 흥미를 유발할 수 있는 활동을 시도한다.
+대상자가 반응하도록 유도할 수 있는 효과적인 방법입니다.
+Thử các hoạt động có thể kích thích sự hứng thú của người bệnh là cách hiệu quả để khuyến khích phản ứng.
+
+(3) 대상자의 사소한 말이나 행동에는 관심을 두지 않는다.
+관심을 두지 않으면 소통이 더 어려워질 수 있습니다.
+Nếu không quan tâm đến những lời nói hay hành động nhỏ của người bệnh, việc giao tiếp sẽ càng khó khăn hơn.
+
+(4) 혼자 있는 시간을 갖도록 배려한다.
+상황에 따라 적절한 보살핌이 필요합니다.
+Cần phải cân nhắc việc chăm sóc phù hợp tùy thuộc vào tình huống.
+
+(5) 걱정거리가 있는지 물어본다.
+반응이 없는 상태에서 질문은 부담을 줄 수 있습니다.
+Hỏi về những lo lắng có thể gây áp lực cho người bệnh trong trạng thái không phản ứng.
+
+기존 핵심 용어 자료 (참고용):
+치매: 기억력, 사고력의 저하로 인한 증상
+Bệnh mất trí: Triệu chứng giảm trí nhớ và khả năng tư duy
+
+대상자: 요양보호 서비스의 수혜자
+Đối tượng: Người nhận dịch vụ chăm sóc
+
+반응: 자극에 대한 응답
+Phản ứng: Đáp ứng với kích thích
+
+소통: 의사소통하는 것
+Giao tiếp: Việc giao tiếp
+
+---
+
+=== 문제 ID 1732 (챕터 15) ===
+질문:
+치매 대상자의 목욕을 도와주려고 샤워기로 물을 뿌리자 대상자가 놀라서 소리를 지르며 밖으로 나가려고 할 때, 돕는 방법은?
+
+보기:
+1) 욕실 문을 잠그고 빨리 씻긴다.
+2) 목욕 도중에 소리를 질러도 무시한다.
+3) 샤워기 물을 잠그고 대상자 혼자 욕실에 두고 나온다.
+4) 목욕 후 대상자가 좋아하는 일을 하자며 목욕을 유도한다.
+5) 대상자보다 큰소리로 야단치며 행동을 제압한다.
+
+정답: 4번
+
+기존 해설 자료 (참고용):
+문제 의도 Ý định của câu hỏi
+치매 대상자에게 적절한 안전한 목욕 도와주기 방법을 찾기 위한 문제입니다.
+Câu hỏi nhằm tìm ra phương pháp hỗ trợ tắm an toàn và hợp lý cho người bệnh đã bị mất trí nhớ.
+
+보기 해설 Giải thích lựa chọn
+(1) 욕실 문을 잠그고 빨리 씻긴다. 이는 대상자의 안전에도 좋지 않으며, 놀라게 할 수 있습니다.
+(1) Khóa cửa nhà tắm và tắm nhanh. Điều này không an toàn cho đối tượng và có thể làm họ hoảng sợ.
+
+(2) 목욕 도중에 소리를 질러도 무시한다. 이는 대상자의 불안을 더 증가시킬 수 있습니다.
+(2) Bỏ qua tiếng hét giữa khi tắm. Điều này có thể làm tăng thêm lo lắng cho đối tượng.
+
+[정답] (4) 목욕 후 대상자가 좋아하는 일을 하자며 목욕을 유도한다. 이는 긍정적인 경험을 통해 대상자를 안심시키고 돕는 방법입니다.
+[Đáp án đúng] (4) Khuyến khích người bệnh tắm bằng cách hứa hẹn điều họ thích sau khi tắm. Đây là phương pháp giúp an tâm và hiệu quả.
+
+(3) 샤워기 물을 잠그고 대상자 혼자 욕실에 두고 나온다. 이는 대상자를 방치하는 행위로, 매우 위험합니다.
+(3) Tắt vòi sen và để người bệnh ở một mình trong phòng tắm. Đây là hành động bỏ mặc họ, rất nguy hiểm.
+
+(5) 대상자보다 큰소리로 야단치며 행동을 제압한다. 이는 그들의 불안감을 증가시키고 신뢰를 해치는 행동입니다.
+(5) La lớn hơn và kiểm soát hành động của bệnh nhân. Điều này sẽ làm tăng sự lo lắng cho họ và ảnh hưởng đến sự tin tưởng.
+
+기존 핵심 용어 자료 (참고용):
+치매: 기억력과 사고 기능이 손상된 상태
+Bệnh mất trí nhớ: Tình trạng tổn thương trí nhớ và khả năng suy nghĩ
+
+대상자: 간호나 돌봄을 받는 사람
+Người bệnh: Người nhận sự chăm sóc hoặc điều trị
+
+목욕: 몸을 물로 씻는 것
+Tắm: Hành động rửa sạch cơ thể bằng nước
+
+욕실: 목욕을 하는 방
+Phòng tắm: Phòng dành cho việc tắm
+
+안심: 불안하지 않게 하는 것
+Yên tâm: Làm cho người khác không lo lắng
+
+---
+
+=== 문제 ID 1731 (챕터 15) ===
+질문:
+중풍으로 오른쪽 팔과 다리가 불편한 대상자가 치매 증상이 십해지면서 옷을 갈아 입지 않으려고 할 때 돕는 방법은?
+
+보기:
+1) 냄새나도 모른척하며 다른 일을 한다.
+2) 갈아입을 옷을 주고 혼자서 갈아입게 한다.
+3) 대상자가 거부해도 강제로 옷을 갈아입힌다.
+4) 갈아입지 않으려는 이유를 설명해 달라고 한다.
+5) 가족과 상의하여 동일한 유형의 옷을 구입하여 입게 한다.
+
+정답: 5번
+
+기존 해설 자료 (참고용):
+문제 의도 Ý định của câu hỏi
+대상자의 치매 증상과 의사소통의 어려움을 고려하여 적절한 방법을 찾는 것.
+Câu hỏi yêu cầu tìm phương pháp hợp lý trong bối cảnh bệnh nhân bị chứng mất trí nhớ và khó khăn trong giao tiếp.
+
+보기 해설 Giải thích lựa chọn
+(1) 환자의 정서와 위생을 고려하지 않는 방법이다.
+Phương pháp này không xem xét cảm xúc và vệ sinh của bệnh nhân.
+
+(2) 환자가 혼자서 옷을 갈아입는 것은 위험할 수 있다.
+Việc để bệnh nhân tự thay quần áo có thể gây nguy hiểm.
+
+[정답] (5) 환자의 기호와 편안함을 고려한 방법이다.
+[Đáp án đúng] (5) Phương pháp này xem xét sự thoải mái và sở thích của bệnh nhân.
+
+(3) 강제로 옷을 입히는 것은 대상자의 신뢰를 잃게 만든다.
+Việc ép buộc thay đồ có thể làm mất lòng tin của bệnh nhân.
+
+(4) 이유를 물어보는 것은 치매 환자에게 적합하지 않다.
+Hỏi lý do là không phù hợp với bệnh nhân mắc chứng mất trí nhớ.
+
+기존 핵심 용어 자료 (참고용):
+중풍: 뇌졸중
+Đột quỵ: tổn thương do máu không lưu thông đến não
+
+옷: 착용하는 물건
+Quần áo: vật dụng mặc trên người
+
+치매: 기억 상실증
+Mất trí nhớ: chứng bệnh liên quan đến trí tuệ
+
+대상자: 치료 또는 간호를 받는 사람
+Người bệnh: người nhận điều trị hoặc chăm sóc
+
+갈아입다: 착용하던 것을 벗고 새로운 것을 착용하다
+Thay quần áo: bỏ cái cũ và mặc cái mới
+
+강제로: 힘을 사용하여
+Bằng cách cưỡng chế: sử dụng sức mạnh để thực hiện hành động
+
+---
+
+=== 문제 ID 1730 (챕터 14) ===
+질문:
+세면하기를 거부하는 치매 대상자에게 적합한 요양보호사의돌봄 방법은? 치매로 진단받은 73세 남성은 씻지 않은 지 일주일이 되어간다. 가족들이 설득하여 억지로 씻기려고 했지만, 그때마다 소리를 지르고 화를 내서 너무 힘들었다고 한다.
+
+보기:
+1) 진정제를 먹인 후 씻긴다.
+2) 가족과 함께 강제로 씻긴다.
+3) 더러워서 씻어야 한다고 대상자를 설득한다.
+4) 요양보호사가 물로 씻는 시늉을 보이며 스스로 씻게 한다.
+5) 거부가 심하면 서비스 제공이 어렵다고 가족에게 말한다.
+
+정답: 4번
+
+기존 해설 자료 (참고용):
+문제 의도 Ý định của câu hỏi
+치매 대상자에 대한 효과적인 돌봄 방법을 평가하는 것이다.
+Đánh giá phương pháp chăm sóc hiệu quả cho bệnh nhân mắc bệnh Alzheimer.
+
+보기 해설 Giải thích lựa chọn
+(1) 진정제를 사용하여 강제로 씻기면 대상자의 불안을 증대시킬 수 있다.
+Việc sử dụng thuốc an thần để cưỡng chế tắm có thể làm tăng lo lắng của bệnh nhân.
+
+(2) 가족과 강제로 씻기면 대상자는 더욱 반항할 수 있다.
+Cưỡng chế tắm cùng gia đình có thể làm cho bệnh nhân phản ứng mạnh hơn.
+
+(3) 단순 설득은 효과가 없으며, 대상자의 의사와 감정을 존중해야 한다.
+Việc chỉ thuyết phục đơn giản không hiệu quả, cần tôn trọng ý chí và cảm xúc của bệnh nhân.
+
+[정답] (4) 요양보호사가 시늉을 보이며 스스로 씻게 한다는 방법은 대상자의 자율성을 존중하고 불안을 완화할 수 있다.
+[Đáp án đúng] (4) Phương pháp để nhân viên chăm sóc chỉ cho bệnh nhân bằng cách bắt chước sẽ tôn trọng tính tự chủ và giảm lo âu của bệnh nhân.
+
+(5) 서비스 제공이 어렵다는 위협은 대화를 단절시킬 수 있다.
+Gây ra sự đổ vỡ trong giao tiếp bằng cách đe dọa rằng sẽ khó khăn khi cung cấp dịch vụ.
+
+기존 핵심 용어 자료 (참고용):
+세면: 씻는 것
+Rửa mặt: Rửa cơ thể
+
+치매: 기억력 및 사고력 손상
+Bệnh sa sút trí tuệ: Giảm sút khả năng ghi nhớ và tư duy
+
+대상자: 돌봄 받을 사람이자 환자
+Đối tượng: Người nhận chăm sóc và bệnh nhân
+
+강제: 억지로, 할 수 없이
+Cưỡng chế: Ép buộc, không thể khác
+
+자율성: 스스로 결정할 수 있는 능력
+Tính tự chủ: Khả năng tự quyết định
+
+---
+
+=== 문제 ID 1729 (챕터 14) ===
+질문:
+다음 사례에서 치매 대상자의 올바른 돌봄 방법으로 옳은 것은? 치매 대상자인 85세 남성은 식사할 때 수저를 사용하지 않고 손으로 음식을 집어 먹으려고 한다. 요양보호사가 수저로 먹으라고 하면 몇 번 서툴게 먹다가 다시 손으로 음식을 집는다.
+
+보기:
+1) 포크나 젓가락을 사용하게 한다.
+2) "손으로먹으면 더럽잖아요." 말하면 먹여준다.
+3) "수저로 드셔야지요." 하고 몸짓과 함께 부드럽게 말한다.
+4) "어르신은 말도 안 듣고 고집이 참 세네요." 하며 그냥 둔다.
+5) "수저 사용은 안 하려면 식사하지 마세요." 말하며 식사를 치운다.
+
+정답: 3번
+
+기존 해설 자료 (참고용):
+문제 의도 Ý định của câu hỏi
+치매 대상자를 올바르게 돌보는 방법을 이해하고 적용하는지 확인하기 위함입니다.
+Kiểm tra hiểu biết và áp dụng cách chăm sóc đúng cho người mắc chứng mất trí.
+
+보기 해설 Giải thích lựa chọn
+(1) 포크나 젓가락은 치매 대상자에게 적합한 도구가 아닐 수 있습니다.
+Dùng nĩa hoặc đũa có thể không phải là dụng cụ thích hợp cho người mắc chứng mất trí.
+
+[정답] (3) 부드러운 말과 몸짓을 함께 사용하며 올바른 방법을 유도해야 합니다.
+[Đáp án đúng] (3) Cần sử dụng lời nói nhẹ nhàng và cử chỉ để hướng dẫn cách đúng.
+
+(4) 고집을 부리는 태도는 부정적인 행동으로, 돌봄에 적절하지 않습니다.
+Thái độ cứng đầu là hành động tiêu cực và không phù hợp trong việc chăm sóc.
+
+(5) 식사를 치우는 것은 대상자의 필요를 충족하지 않으므로 부적절합니다.
+Dọn dẹp thức ăn không đáp ứng nhu cầu của bệnh nhân là không phù hợp.
+
+기존 핵심 용어 자료 (참고용):
+치매: 알츠하이머 병 등으로 인한 기억력 상실 및 인지 능력 장애
+Bệnh mất trí: Mất trí nhớ và rối loạn nhận thức do các bệnh như Alzheimer.
+돌봄: 다른 사람을 돌보는 행위
+Chăm sóc: Hành động chăm sóc người khác.
+수저: 음식을 먹는 도구
+Muỗng: Dụng cụ ăn thức ăn.
+
+---
+
+=== 문제 ID 1728 (챕터 14) ===
+질문:
+다음 사례에서 치매 대상자의 적합한 돌봄 방법으로 옳은 것은? 치매 대상자인 80세 여성은 물컵을 손으로 잡고 물을 마시지만 대부분 흘린다. 요양보호사의 도움으로 물을 다 마시고 나면 컵을 테이블에 놓지 못하고 바닥에 떨어뜨린다.
+
+보기:
+1) 물 대신 국을 많이 먹게 한다.
+2) 컵에 빨대를 꽂아 물을 마시게 한다.
+3) 깨질 수 있으니 컵 사용을 못하게 한다.
+4) 요실금을 예방하기 위해 물 섭취를 제한한다.
+5) 언제 물을 마셨는지를 기억했다가 물을 마시게 한다.
+
+정답: 5번
+
+기존 해설 자료 (참고용):
+문제 의도 Ý định của câu hỏi
+치매 대상자에게 적합한 돌봄 방법을 찾는 것이며, 적절한 수분 섭취를 중요시합니다.
+Tìm ra phương pháp chăm sóc phù hợp cho bệnh nhân mắc chứng sa sút trí tuệ, quan trọng việc cung cấp đủ nước cho họ.
+
+보기 해설 Giải thích lựa chọn
+(1) 물 대신 국을 많이 먹게 한다.
+국이 수분을 제공하더라도, 치매 환자가 이를 인지하기 어려운 경우가 많습니다.
+Mặc dù nước súp có thể cung cấp độ ẩm, nhưng bệnh nhân sa sút trí tuệ thường gặp khó khăn trong việc nhận thức điều này.
+
+[정답] (5) 언제 물을 마셨는지를 기억했다가 물을 마시게 한다.
+이 방법은 환자가 수분을 섭취하도록 도와줄 수 있습니다.
+Phương pháp này có thể giúp bệnh nhân nhớ để uống nước.
+
+(3) 깨질 수 있으니 컵 사용을 못하게 한다.
+컵 사용을 금지하면 환자는 수분 섭취에 어려움을 겪을 수 있습니다.
+Cấm sử dụng cốc có thể khiến bệnh nhân gặp khó khăn trong việc uống nước.
+
+(4) 요실금을 예방하기 위해 물 섭취를 제한한다.
+수분 섭취를 제한하면 탈수 위험이 있으므로 바람직하지 않습니다.
+Giới hạn lượng nước sẽ làm tăng nguy cơ mất nước, vì vậy không nên.
+
+
+기존 핵심 용어 자료 (참고용):
+치매: 기억력이나 사고 능력이 점차적으로 저하되는 질병
+Sa sút trí tuệ: Bệnh suy giảm trí nhớ hoặc khả năng suy nghĩ dần dần
+
+적합한: 적절한, 알맞은
+Phù hợp: Thích hợp, đúng
+
+---
+
+=== 문제 ID 1727 (챕터 14) ===
+질문:
+심폐소생술을 할 때 자동심장충격기를 사용하는 방법으로 옳은 것은?
+
+보기:
+1) 30회의 가슴압박을 마친 후에 전원을 켠다.
+2) 패드는 옷 위에 붙여서 감전을 방지한다.
+3) 분석 중이라는 음성지시가 나오면 심폐소생술을 시작한다.
+4) 정상 호흡은있으나 반응이 없는 대상자에게 사용한다.
+5) 심장충격 실시 후 즉시 가슴압박을 실시한다.
+
+정답: 5번
+
+기존 해설 자료 (참고용):
+문제 의도 Ý định của câu hỏi
+심폐소생술과 자동심장충격기 사용에 대한 이해를 평가하고자 함.
+Đánh giá sự hiểu biết về hồi sức tim phổi và cách sử dụng máy khử rung tim tự động.
+
+보기 해설 Giải thích lựa chọn
+(1) 가슴압박 후 전원을 켜는 것은 잘못된 순서임.
+Việc bật nguồn sau khi ấn ngực là thứ tự sai.
+
+[정답] (5) 심장충격 후 바로 가슴압박을 하는 것이 올바른 방법임.
+[Đáp án đúng] (5) Hành động đúng là thực hiện nén ngực ngay sau khi sốc tim.
+
+(2) 패드는 직접 피부에 붙여야 하며, 옷 위에 붙이면 감전 위험이 있음.
+Miếng dán phải được dán trực tiếp lên da, dán trên quần áo sẽ gây nguy hiểm điện giật.
+
+(3) 분석 중일 때는 심폐소생술을 중지해야 함.
+Trong khi phân tích, hồi sức tim phổi phải ngừng lại.
+
+(4) 정상 호흡이 있는 경우 전혀 사용하지 않음.
+Trong trường hợp có sự thở bình thường thì không sử dụng.
+
+기존 핵심 용어 자료 (참고용):
+심폐소생술: 심장과 호흡이 정지된 상태에서 생명을 구하기 위한 응급 처치법
+Hồi sức tim phổi: Phương pháp cấp cứu nhằm cứu sống khi tim và hô hấp ngừng lại
+
+자동심장충격기: 심장을 전기적으로 자극하여 정상 리듬으로 회복시키는 장치
+Máy khử rung tim tự động: Thiết bị kích thích tim điện để phục hồi nhịp sinh lý
+
+가슴압박: 심장을 압박하여 혈액 순환을 돕는 행위
+Nén ngực: Hành động ấn tim để hỗ trợ tuần hoàn máu
+
+패드: 전기 신호를 전달하는 장비의 일부분
+Miếng dán: Một phần của thiết bị truyền tín hiệu điện
+
+정상 호흡: 정상적인 호흡 상태
+Hơi thở bình thường: Trạng thái hô hấp bình thường
+
+---
+
+=== 문제 ID 1726 (챕터 14) ===
+질문:
+자동심장충격기 사용 시 심장충격 후 즉시 해야하는 것은?
+
+보기:
+1) 인공호흡을 한다.
+2) 가슴압박을 한다.
+3) 대상자에게서 손을 뗀다.
+4) 턱을 위로 당겨 기도를 열어준다.
+5) 패드를 떼었다가 다시 붙인다.
+
+정답: 2번
+
+기존 해설 자료 (참고용):
+문제 의도 Ý định của câu hỏi
+(한국어 의도) 자동심장충격기 사용 후 적절한 후속 조치를 확인하는 것
+(베트남어 의도) Xác định các bước thích hợp sau khi sử dụng máy khử rung tim tự động
+
+보기 해설 Giải thích lựa chọn
+(1) 인공호흡을 한다. (심장충격 후 즉시 인공호흡을 하는 것은 권장되지 않음)
+(1) Thực hiện hô hấp nhân tạo. (Không khuyến nghị thực hiện hô hấp nhân tạo ngay lập tức sau khi sốc điện)
+
+[정답] (2) 가슴압박을 한다. (심장충격 후 즉시 가슴압박을 시작해야 함)
+[Đáp án đúng] (2) Thực hiện ép ngực. (Cần bắt đầu ép ngực ngay lập tức sau khi sốc điện)
+
+(3) 대상자에게서 손을 뗀다. (안전 체크 후에만 손을 떼야 함)
+(3) Rời tay khỏi người bệnh. (Chỉ nên rời tay sau khi kiểm tra an toàn)
+
+(4) 턱을 위로 당겨 기도를 열어준다. (기침 및 호흡을 확인 후 필요 시에만 해야 함)
+(4) Kéo cằm lên để mở đường thở. (Chỉ cần làm nếu có triệu chứng hoặc nhận thấy cần thiết)
+
+(5) 패드를 떼었다가 다시 붙인다. (패드는 잘 붙여놓고 가슴압박을 해야 함)
+(5) Lột rồi dán lại điện cực. (Các điện cực nên được giữ cố định trong khi thực hiện ép ngực)
+
+기존 핵심 용어 자료 (참고용):
+자동심장충격기: 심장 문제가 생겼을 때 전기 충격을 주어 심장을 정상으로 되돌리기 위한 기계
+Máy khử rung tim tự động: Máy dùng để cung cấp sốc điện để khôi phục nhịp tim bình thường khi có vấn đề về tim
+
+가슴압박: 심장 기능이 멈췄을 때 혈액 순환을 유지하기 위해 가슴을 눌러주는 것
+Ép ngực: Hành động đè lên ngực để duy trì lưu thông máu khi chức năng tim ngừng
+
+인공호흡: 호흡이 정지된 사람에게 공기를 불어넣는 조치
+Hô hấp nhân tạo: Biện pháp thổi không khí vào người đã ngừng thở
+
+기도: 공기가 통과하는 경로
+Đường thở: Lộ trình không khí đi qua
+
+---
+
+=== 문제 ID 1725 (챕터 14) ===
+질문:
+자동심장충격기의 쇼크 버튼을 눌러야 하는 시점으로 옳은 것은?
+
+보기:
+1) 전원을 켜자마자
+2) 인공호흡을 한 후
+3) 패드를 부착한 직후
+4) 심장리듬을 분석하기 직전
+5) 에너지 충전이 완료된 후
+
+정답: 5번
+
+기존 해설 자료 (참고용):
+문제 의도 Ý định của câu hỏi
+이 문제는 자동심장충격기의 적절한 사용 시점을 평가하는 것을 목표로 합니다.
+Câu hỏi này nhằm đánh giá thời điểm sử dụng đúng cách máy khử rung tim tự động.
+
+보기 해설 Giải thích lựa chọn
+(1) 전원을 켜자마자 자동심장충격기를 작동했지만, 쇼크 버튼을 눌러야 하는 단계는 아닙니다.
+(1) Khi vừa bật nguồn của máy khử rung tim tự động, nhưng không phải là thời điểm cần nhấn nút sốc.
+
+(2) 인공호흡을 한 후에는 심장리듬을 분석해야 하기 때문에, 쇼크 버튼을 눌러서는 안 됩니다.
+(2) Sau khi hô hấp nhân tạo, cần phải phân tích nhịp tim, vì vậy không nên nhấn nút sốc.
+
+(3) 패드를 부착한 직후는 심장리듬을 분석해야 할 시점이기 때문에, 쇼크 버튼을 누르면 안 됩니다.
+(3) Ngay sau khi gắn các pad, đó là thời điểm cần phân tích nhịp tim, vì vậy không nên nhấn nút sốc.
+
+(4) 심장리듬을 분석하기 직전 단계이므로, 이 시점에서는 버튼을 누르지 않아야 합니다.
+(4) Ngay trước khi phân tích nhịp tim, vì vậy không nên nhấn nút này tại thời điểm này.
+
+[정답] (5) 에너지 충전이 완료된 후에 쇼크 버튼을 눌러야 합니다.
+[Đáp án đúng] (5) Phải nhấn nút sốc sau khi đã hoàn tất việc nạp năng lượng.
+
+기존 핵심 용어 자료 (참고용):
+자동심장충격기: 심장 리듬 이상 시 전기 충격을 주는 장치
+Máy khử rung tim tự động: Thiết bị cung cấp điện cho nhịp tim bất thường
+
+전원: 기계의 작동을 시작하기 위한 전기
+Nguồn: Điện cần thiết để khởi động thiết bị
+
+패드: 몸에 부착하여 전기를 전달하는 전극
+Pad: Điện cực được gắn lên cơ thể để truyền điện
+
+심장리듬: 심장의 전기적 활동을 나타내는 주기
+Nhịp tim: Hoạt động điện của tim
+
+에너지 충전: 기계가 작동을 위해 필요 전기를 저장하는 과정
+Nạp năng lượng: Quá trình lưu trữ điện năng cần thiết cho thiết bị hoạt động
+
+---
+
+=== 문제 ID 1724 (챕터 14) ===
+질문:
+자동심장충격기 사용 시 가슴 압박을 반드시 중단해야 하는 경우는?
+
+보기:
+1) 자동심장충격기의 전원을 켤 때
+2) 자동심장충격기의 패드를 부착할 때
+3) 자동심장충격기에서 심장리듬을 분석할 때
+4) 자동심장충격기가 에너지를 충전하는 동안
+5) 자동심장충격기의 쇼크 버튼을 누른 후 2분 동안
+
+정답: 3번
+
+기존 해설 자료 (참고용):
+문제 의도 Ý định của câu hỏi
+자동심장충격기 사용 시 가슴 압박을 중단해야 하는 상황에 대한 이해를 테스트하는 것입니다.
+Bài kiểm tra nhằm kiểm tra sự hiểu biết về tình huống khi cần ngừng ép ngực khi sử dụng máy khử rung tim tự động.
+
+보기 해설 Giải thích lựa chọn
+(1) 자동심장충격기의 전원을 켤 때는 가슴 압박을 중단할 필요가 없습니다.
+(1) Khi bật nguồn của máy khử rung tim tự động, không cần ngừng ép ngực.
+
+[정답] (3) 자동심장충격기에서 심장리듬을 분석할 때는 가슴 압박을 반드시 중단해야 합니다.
+[Đáp án đúng] (3) Khi máy khử rung tim tự động phân tích nhịp tim, phải ngừng ép ngực.
+
+(2) 자동심장충격기의 패드를 부착할 때 가슴 압박을 중단할 필요가 없습니다.
+(2) Khi gắn các miếng đệm của máy khử rung tim tự động, không cần ngừng ép ngực.
+
+(4) 자동심장충격기가 에너지를 충전하는 동안 가슴 압박을 중단해야 합니다.
+(4) Phải ngừng ép ngực trong khi máy khử rung tim tự động đang sạc năng lượng.
+
+(5) 자동심장충격기의 쇼크 버튼을 누른 후 2분 동안 가슴 압박을 계속해야 합니다.
+(5) Sau khi nhấn nút sốc của máy khử rung tim tự động, phải tiếp tục ép ngực trong 2 phút.
+
+기존 핵심 용어 자료 (참고용):
+자동심장충격기: 심장 기능이 정지된 환자에게 전기 쇼크를 주어 심장을 다시 뛰게 하는 기기
+Máy khử rung tim tự động: Thiết bị dùng để cung cấp sốc điện cho bệnh nhân bị ngừng tim
+
+압박: 힘을 가하여 누르다
+Ép: Đẩy lực để nhấn
+
+패드: 전극이 부착된 판
+Miếng đệm: Tấm có điện cực gắn vào
+
+심장리듬: 심장이 뛰는 규칙적인 패턴
+Nhịp tim: Mô hình nhịp đập của tim
+
+에너지: 일을 하는 능력
+Năng lượng: Khả năng thực hiện công việc
+
+---
+
+=== 문제 ID 1723 (챕터 14) ===
+질문:
+자동심장충격기를 사용하고 관리하는 방법으로 옳은 것은?
+
+보기:
+1) 충전 중에는 가슴압박을 멈추고 기다린다.
+2) 심장충격 버튼을 누르기 전 대상자에게서 손을 뗀다.
+3) 전극패드 부착 후 즉시 심장충격을 시행한다.
+4) 전기 충격이 전달된 즉시 대상자에게서 손을 뗀다.
+5) 자동심장충격기는 매년 1회정기 점검한다.
+
+정답: 2번
+
+기존 해설 자료 (참고용):
+문제 의도 Ý định của câu hỏi
+자동심장충격기 사용법에 대해 이해하고 있는지를 평가하기 위함입니다.
+Để đánh giá khả năng hiểu biết về cách sử dụng máy khử rung tim tự động.
+
+보기 해설 Giải thích lựa chọn
+(1) 충전 중에는 가슴압박을 멈추고 기다려야 하며, 이는 잘못된 방법입니다.
+Khi sạc, bạn cần dừng ép ngực và chờ, đây là cách sai.
+
+[정답] (2) 심장충격 버튼을 누르기 전 대상자에게서 손을 떼어야 하며, 이는 올바른 방법입니다.
+Trước khi nhấn nút sốc tim, bạn cần rút tay khỏi người bệnh, đây là cách đúng.
+
+(3) 전극패드 부착 후 즉시 심장충격을 시행하는 것은 위험할 수 있으며, 올바르지 않습니다.
+Việc thực hiện sốc tim ngay lập tức sau khi gắn miếng điện cực có thể gây nguy hiểm và không đúng.
+
+(4) 전기 충격이 전달된 즉시 대상자에게서 손을 뗀다는 것은 전극패드 부착과 관련하여 염두에 두어야 할 사항으로, 순서가 맞지 않습니다.
+Việc rút tay ngay lập tức sau khi điện được truyền cần lưu ý liên quan đến việc gắn miếng điện cực và không đúng thứ tự.
+
+(5) 자동심장충격기는 매년 1회 정기 점검을 원칙으로 하지만, 실제로는 사용 빈도에 따라 다를 수 있습니다.
+Máy khử rung tim tự động nên được kiểm tra định kỳ hàng năm nhưng thực tế có thể khác tùy thuộc vào tần suất sử dụng.
+
+기존 핵심 용어 자료 (참고용):
+자동심장충격기: 자동으로 심장충격을 주는 장비
+Máy khử rung tim tự động: Thiết bị tự động cung cấp sốc điện cho tim
+
+가슴압박: 심폐소생술의 일환으로 심장을 압박하는 행동
+Ép ngực: Hành động ép tim trong hồi sức tim phổi
+
+전극패드: 심장에 부착하는 전극판
+Miếng điện cực: Miếng dán vào tim
+
+심장충격: 심장에 전기 충격을 주는 행위
+Sốc tim: Hành động cung cấp sốc điện cho tim
+
+정기 점검: 정해진 주기로 점검하는 것
+Kiểm tra định kỳ: Kiểm tra theo chu kỳ đã định
+
+---
+
+=== 문제 ID 1722 (챕터 14) ===
+질문:
+심폐소생술을 할 때 자동심장충격기를 사용하는 방법으로 옳은 것은?
+
+보기:
+1) 패드를 붙인 후 전원을 켠다.
+2) 심장리듬 분석 주에는 인공 호흡을 한다.
+3) 심장 충격을 위한 충전 중에는 가슴 압박을 한다.
+4) 가슴압박과 동시에 쇼크 버튼을 누른다.
+5) 충격이 전달된 즉시 대상자의 반응과 호흡을 재확인한다.
+
+정답: 3번
+
+기존 해설 자료 (참고용):
+문제 의도 Ý định của câu hỏi
+(한국어 의도: 심폐소생술과 관련된 자동심장충격기 사용 방법에 대한 이해 여부 확인)
+(베트남어 의도: Kiểm tra sự hiểu biết về cách sử dụng máy khử rung tim tự động liên quan đến hồi sức tim phổi)
+
+보기 해설 Giải thích lựa chọn
+(1) 패드를 붙인 후 전원을 켠다. (한국어 해설: 자동심장충격기는 패드를 붙인 후 전원을 켜야 하므로 순서가 잘못됨.)
+(1) Đáp án này sai vì máy khử rung tim tự động cần được bật sau khi dán miếng dán.
+
+[정답] (3) 심장 충격을 위한 충전 중에는 가슴 압박을 한다. (한국어 해설: 심장 충격을 위한 충전 동안에는 가슴 압박을 계속해야 함을 의미함.)
+[Đáp án đúng] (3) Điều này có nghĩa là tiếp tục ấn ngực trong quá trình nạp điện để sốc tim.
+
+(2) 심장리듬 분석 주에는 인공 호흡을 한다. (한국어 해설: 심장리듬 분석 동안은 인공호흡 없이 가슴 압박에 집중해야 함.)
+(2) Đáp án này sai vì trong quá trình phân tích nhịp tim không nên thực hiện hô hấp nhân tạo.
+
+(4) 가슴압박과 동시에 쇼크 버튼을 누른다. (한국어 해설: 가슴 압박과 충격 버튼은 동시에 누르지 않아야 함.)
+(4) Đáp án này sai vì không nên ấn nút sốc cùng lúc với việc ấn ngực.
+
+(5) 충격이 전달된 즉시 대상자의 반응과 호흡을 재확인한다. (한국어 해설: 충격 이후에 반응을 확인하는 것이 후속 단계이므로 순서 상 잘못됨.)
+(5) Đáp án này sai vì xác nhận phản ứng và hơi thở nên được thực hiện sau khi sốc đã được thực hiện.
+
+기존 핵심 용어 자료 (참고용):
+심폐소생술: 심정지환자를 위한 응급처치법
+Hồi sức tim phổi: Phương pháp cấp cứu cho bệnh nhân ngừng tim
+
+자동심장충격기: 심장을 자동으로 충격하여 회복시키는 장치
+Máy khử rung tim tự động: Thiết bị tự động sốc tim để phục hồi
+
+패드: 전극이 부착된 부위
+Miếng dán: Vị trí dán điện cực
+
+가슴 압박: 심폐소생술의 한 방법
+Ấn ngực: Một phương pháp trong hồi sức tim phổi
+
+충전: 충격을 위한 에너지를 저장하는 과정
+Nạp: Quá trình lưu trữ năng lượng cho sốc
+
+호흡: 공기를 들이마시는 행동
+Hô hấp: Hành động hít vào không khí
+
+---
+
+=== 문제 ID 1721 (챕터 14) ===
+질문:
+심폐소생술을 할 때 자동심장충격기를 사용하는 방법으로 옳은 것은?
+
+보기:
+1) 심장리듬을 분석한후 패드를 부착한다.
+2) 심장리듬 분석 중에는 가슴압박을 지속한다.
+3) 심장충격 버튼을 누르기 전에 대상자를 꽉 잡는다.
+4) 심폐소생술 중 자동심장충격기가 도착하면 지체없이 전원을 켠다.
+5) 심장충격 버튼을누르고 1분 후에 가슴압박을 시작한다.
+
+정답: 4번
+
+기존 해설 자료 (참고용):
+문제 의도 Ý định của câu hỏi
+자동심장충격기를 사용할 때 올바른 사용 방법을 이해하고 있는지를 평가하는 문제입니다.
+Câu hỏi nhằm đánh giá khả năng hiểu đúng cách sử dụng máy khử rung tim tự động.
+
+보기 해설 Giải thích lựa chọn
+(1) 심장리듬을 분석한 후 패드를 부착한다.
+이 순서는 잘못되었습니다. 패드는 심장 리듬을 분석하기 전에 부착해야 합니다.
+Cách này là sai. Miếng dán nên được gắn trước khi phân tích nhịp tim.
+
+(2) 심장리듬 분석 중에는 가슴압박을 지속한다.
+이것은 잘못된 방법입니다. 심장 리듬 분석 중에는 압박을 중단해야 합니다.
+Cách này sai. Trong khi phân tích nhịp tim, cần ngừng ép ngực.
+
+(3) 심장충격 버튼을 누르기 전에 대상자를 꽉 잡는다.
+대상자를 잡는 것은 필요하지 않으며 올바른 방법이 아닙니다.
+Việc giữ chặt bệnh nhân là không cần thiết và không phải là cách đúng.
+
+[정답] (4) 심폐소생술 중 자동심장충격기가 도착하면 지체없이 전원을 켠다.
+심폐소생술을 시행하는 중 자동심장충격기를 즉시 사용할 준비를 해야 하므로 올바른 방법입니다.
+[Đáp án đúng] (4) Trong khi sơ cứu, khi máy khử rung tim tự động đến, cần bật ngay lập tức.
+
+(5) 심장충격 버튼을 누르고 1분 후에 가슴압박을 시작한다.
+이 방법은 잘못되었습니다. 가슴압박은 심장충격 버튼을 누르자마자 시작해야 합니다.
+Cách này sai. Cần bắt đầu ép ngực ngay sau khi nhấn nút khử rung tim.
+
+기존 핵심 용어 자료 (참고용):
+심폐소생술: 심정지 환자를 위한 응급처치
+Hồi sức tim phổi: Sơ cứu cho bệnh nhân ngừng tim
+
+자동심장충격기: 심장리듬에 따라 심장을 다시 뛰게 하는 기기
+Máy khử rung tim tự động: Thiết bị giúp tim hồi phục theo nhịp tim
+
+가슴압박: 심장소생에서 가슴을 눌러주는 행동
+Ép ngực: Hành động đè lên ngực trong hồi sức tim
+
+심장리듬: 심장의 전기적 활동 상태
+Nhịp tim: Trạng thái hoạt động điện của tim
+
+---
+
+=== 문제 ID 1720 (챕터 14) ===
+질문:
+자동심장 충격기를 사용하는 방법으로 옳은 것은?
+
+보기:
+1) 두 개의 패드를 부착 후 전원 버튼을 누른다.
+2) 심장 리듬 분석을 5분마다 한다.
+3) 심장리듬 분석 중에는 가슴압박을 중단한다.
+4) 심장충격 버튼을 누르기 전 인공호흡을 집중적으로 한다.
+5) 전극 패드를 왼쪽 빗장뼈 (쇄골)와 오른쪽 젖꼭지 아래에 붙인다.
+
+정답: 3번
+
+기존 해설 자료 (참고용):
+문제 의도 Ý định của câu hỏi
+자동심장 충격기를 사용하는 올바른 방법을 이해하고 선택하는 것이 중요하다.
+Việc hiểu và chọn cách sử dụng máy sốc điện tim tự động là rất quan trọng.
+
+보기 해설 Giải thích lựa chọn
+(1) 자동심장 충격기를 사용할 때 두 개의 패드를 부착하는 것은 필수적이지만, 전원을 누르는 시점은 고정적이지 않다.
+Việc gắn hai tấm điện cực là cần thiết khi sử dụng máy sốc điện nhưng thời điểm bấm nút nguồn không cố định.
+
+(2) 심장 리듬 분석은 5분마다 하는 것이 아니라, 자동심장 충격기가 필요할 때마다 이루어진다.
+Phân tích nhịp tim không thực hiện mỗi 5 phút mà được thực hiện khi máy sốc điện tự động cần thiết.
+
+[정답] (3) 분석 중에는 가슴압박을 중단해야 하며, 이는 심장 리듬 분석의 정확성을 높이기 위해서이다.
+[Đáp án đúng] (3) Phải ngừng ép ngực trong quá trình phân tích nhịp tim để tăng độ chính xác của phân tích nhịp tim.
+
+(4) 심장충격 버튼을 누르기 전에 인공호흡을 집중적으로 하는 것은 필요하지 않으며, 심장 충격 후에 가슴 압박을 계속해야 한다.
+Không cần tập trung vào việc hô hấp nhân tạo trước khi nhấn nút sốc tim, mà cần tiếp tục ép ngực sau khi sốc tim.
+
+(5) 전극 패드는 정확한 위치에 부착해야 하지만, 왼쪽 빗장뼈와 오른쪽 젖꼭지 아래에 붙이는 것은 잘못된 정보이다.
+Các tấm điện cực cần phải được gắn đúng vị trí, nhưng thông tin này về việc gắn vào xương đòn bên trái và dưới núm vú bên phải là sai.
+
+기존 핵심 용어 자료 (참고용):
+자동심장 충격기: 사람이 심장마비 시 전기 충격을 주어 심장을 다시 정상적으로 뛰게 하는 장치
+Máy sốc điện tim tự động: Thiết bị gây sốc điện cho tim để làm cho tim đập lại bình thường trong trường hợp ngừng tim
+
+심장 리듬: 심장의 전기적 활동 상태
+Nhịp tim: Trạng thái hoạt động điện của tim
+
+가슴압박: 심장을 압박하여 혈액을 순환시키는 행위
+Ép ngực: Hành động ép tim để tuần hoàn máu
+
+전극 패드: 자동심장 충격기를 사용하여 전기충격을 주기 위해 필요한 장비
+Tấm điện cực: Thiết bị cần thiết để gây sốc điện bằng máy sốc điện tim tự động
+
+---
+
+=== 문제 ID 1719 (챕터 14) ===
+질문:
+다음 중 자동심장충격기를 사용해야 하는 대상자는?
+
+보기:
+1) 호흡이 미세한 대상자
+2) 심 정지 대상자
+3) 의식이 없는 대상자
+4) 출혈이 심한 대상자
+5) 경련중인 대상자
+
+정답: 2번
+
+기존 해설 자료 (참고용):
+문제 의도 Ý định của câu hỏi
+자동심장충격기의 사용이 필요한 상황을 이해하고 있는지를 평가하기 위한 질문입니다.
+Câu hỏi này nhằm đánh giá liệu người học có hiểu tình huống nào cần sử dụng máy shock tim tự động hay không.
+
+보기 해설 Giải thích lựa chọn
+(1) 호흡이 미세한 대상자는 심정지 상태가 아니므로 자동심장충격기를 사용하지 않습니다.
+Người có hơi thở yếu không phải là trường hợp ngừng tim, vì vậy không sử dụng máy shock tim tự động.
+
+[정답] (2) 심 정지 대상자는 직접적인 심장 마비 상태이므로 자동심장충격기를 사용해야 합니다.
+[Đáp án đúng] (2) Người ngừng tim là tình huống cần sử dụng máy shock tim tự động.
+
+(3) 의식이 없는 대상자는 심정지인지 확인이 필요하므로 자동심장충격기를 사용할 필요가 없습니다.
+Người không có ý thức cần phải kiểm tra xem có thực sự ngừng tim hay không, do đó không cần sử dụng máy shock tim tự động.
+
+(4) 출혈이 심한 대상자는 심정지 상태가 아님으로 사용하지 않습니다.
+Người bị chảy máu nhiều không phải là trường hợp ngừng tim, do đó không sử dụng.
+
+(5) 경련중인 대상자는 심정지 상태가 아니므로 자동심장충격기를 사용하지 않습니다.
+Người đang co giật không phải là trường hợp ngừng tim, vì vậy không sử dụng máy shock tim tự động.
+
+기존 핵심 용어 자료 (참고용):
+자동심장충격기: 심장 정지를 감지하여 전기 충격을 주는 기기
+Máy shock tim tự động: Thiết bị phát hiện ngừng tim và cung cấp cú sốc điện
+
+심 정지: 심장이 멈춘 상태
+Ngừng tim: Tình trạng tim ngừng đập
+
+의식: 자신의 상태를 인식하는 능력
+Ý thức: Khả năng nhận thức về tình trạng của bản thân
+
+출혈: 혈액이 외부로 나오거나 내부에서 새는 것
+Chảy máu: Máu ra ngoài hoặc chảy bên trong
+
+경련: 불수의적인 근육 수축
+Co giật: Cơn co thắt cơ không tự nguyện
+
+---
+
+=== 문제 ID 1718 (챕터 14) ===
+질문:
+자동심장충격기 사용 순서로 옳은 것은? 가. 전원켜기 나. 심장리듬 분석 다. 심장충격 시행 라.패드 부착 마. 즉시 심폐소생술 시행
+
+보기:
+1) 가 - 다 - 나 - 라 - 마
+2) 가 - 다 - 라 - 나 - 마
+3) 가 - 라 - 나 - 다 - 마
+4) 가 - 나 - 다 - 라 - 마
+5) 가 - 나 - 라 - 다 - 마
+
+정답: 3번
+
+기존 해설 자료 (참고용):
+문제 의도
+자동심장충격기의 사용 절차에 대한 이해도를 평가하기 위한 문제입니다.
+
+보기 해설
+(1) 전원 켜고 심장 충격 시행 순서가 잘못되어 있습니다.
+(2) 전원 켜고 심장 충격 시행 후 심장 리듬 분석을 하는 순서가 잘못되어 있습니다.
+[정답] (3) 전원 켜고 패드를 부착 후 심장 리듬 분석 후 충격을 시행하는 순서입니다.
+(4) 전원 켜고 리듬 분석이 먼저 나와야 하므로 잘못된 순서입니다.
+(5) 전원 켜고 패드 부착 후 심장 리듬 분석이 뒤에 있으므로 잘못된 순서입니다.
+
+기존 핵심 용어 자료 (참고용):
+자동심장충격기: 심장에서 부정맥이나 급성 심장마비를 상황에서 전기 충격을 주는 기기
+Máy khử rung tim tự động: Thiết bị cung cấp sốc điện trong trường hợp rối loạn nhịp tim hoặc ngừng tim
+
+심장리듬: 심장이 활동하는 양상
+Nhịp tim: Hình thức hoạt động của tim
+
+심폐소생술: 심장과 호흡이 멈춘 사람을 살리기 위한 응급 처치
+Hồi sức tim phổi: Thao tác cấp cứu cho người ngừng tim và ngừng thở
+
+---
+
+=== 문제 ID 1717 (챕터 14) ===
+질문:
+요양보호사가 심폐소생술을 종료해야 할 시점은?
+
+보기:
+1) 맥박이 없을 때
+2) 호흡이 없을 때
+3) 자동심장충격기 사용 후
+4) 가족이 멈추길 원할 때
+5) 119 구급 대원에게 인계할 때
+
+정답: 5번
+
+기존 해설 자료 (참고용):
+문제 의도
+심폐소생술을 종료해야 하는 상황에 대한 이해를 평가하기 위해 출제되었습니다.
+
+보기 해설
+(1) 심폐소생술은 맥박이 없을 때에도 계속 진행해야 합니다.
+(2) 호흡이 없을 경우에도 심폐소생술을 계속해야 합니다.
+[정답] (3) 자동심장충격기를 사용할 후에도 심폐소생술은 지속해야 합니다.
+(4) 가족이 멈추기를 희망하더라도, 전문가의 판단에 따라 심폐소생술이 지속되어야 할 수 있습니다.
+(5) 119 구급 대원에게 인계할 때 심폐소생술을 종료해야 합니다.
+
+기존 핵심 용어 자료 (참고용):
+심폐소생술: 심장과 호흡이 멈춘 환자에게 다시 호흡과 순환을 회복시키기 위한 응급조치
+Hồi sức tim phổi: Biện pháp cấp cứu nhằm phục hồi hô hấp và tuần hoàn cho bệnh nhân khi tim và hô hấp ngừng lại
+
+자동심장충격기: 심장 박동을 재개시키기 위해 전기적 충격을 주는 기기
+Máy shock tim tự động: Thiết bị cung cấp sốc điện để khôi phục nhịp tim
+
+구급 대원: 응급 상황에서 환자를 돕는 전문가
+Nhân viên cấp cứu: Chuyên gia giúp đỡ bệnh nhân trong tình huống khẩn cấp
+
+---
+
+=== 문제 ID 1716 (챕터 14) ===
+질문:
+심폐소생술 시 가슴압박을 실시하는 방법으로 옳은 것은?
+
+보기:
+1) 가슴이 3cm 눌릴 정도로 압박한다.
+2) 가슴뼈 아래쪽 명치 부위를 강하게 압박한다.
+3) 대상자의 몸과수직이 되도록 하여 가슴을 압박한다.
+4) 압박된 가슴이 이완되지 않도록 빠르게 압박한다.
+5) 체중을 실어 깍지를 낀 두 손의 손바닥으로 압박한다.
+
+정답: 3번
+
+기존 해설 자료 (참고용):
+문제 의도
+심폐소생술 시 가슴압박의 정확한 방법을 평가하고자 합니다.
+
+보기 해설
+(1) 가슴압박 깊이는 일반적으로 5-6cm로 권장되며 3cm는 부족하다.
+[정답] (3) 가슴을 압박할 때는 대상자의 몸과 수직이 되어야 올바른 압박이 이루어진다.
+(2) 명치 부위를 압박하면 정확한 가슴압박이 이루어지지 않는다.
+(4) 압박 후 가슴이 이완되지 않으면 효과적인 순환이 이루어지지 않는다.
+(5) 두 손의 손바닥을 사용하되, 체중을 실어서 압박하는 것이 효과적이다.
+
+기존 핵심 용어 자료 (참고용):
+심폐소생술: 환자의 호흡과 맥박이 멈췄을 때 실시하는 응급처치
+Hồi sức tim phổi: Sơ cứu khi bệnh nhân ngừng thở và ngừng mạch
+
+가슴압박: 심장을 압박하여 혈액 순환을 도와주는 행위
+Ép ngực: Hành động ấn vào ngực để hỗ trợ tuần hoàn máu
+
+명치: 가슴 중앙 아래쪽에 위치하는 부위
+Xương ức: Vùng ở giữa dưới ngực
+
+체중: 몸의 무게
+Khối lượng: Trọng lượng cơ thể
+
+압박: 힘을 가하거나 눌러서 누르는 행위
+Áp lực: Hành động gây sức ép
+
+---
+
+=== 문제 ID 1715 (챕터 14) ===
+질문:
+심폐소생술을 할 때 가슴을 압박하는 방법으로 옳은 것은?
+
+보기:
+1) 복장뼈의 하단 칼돌기를 직접 압박한다.
+2) 분당 100~120회 속도로 압박한다.
+3) 대상자의 골반에 걸터앉아서 압박한다.
+4) 등 밑에 낮은 베개를 고인후 압박한다.
+5) 압박 위칠를 바꾸어 가면서 실시한다.
+
+정답: 2번
+
+기존 해설 자료 (참고용):
+문제 의도
+심폐소생술에 대한 이해와 올바른 방법을 평가하기 위한 문제입니다.
+
+보기 해설
+(1) 복장뼈의 하단 칼돌기를 직접 압박하는 것은 잘못된 방법입니다.  
+[정답] (2) 분당 100~120회 속도로 압박하는 것이 올바른 가슴 압박 속도입니다.  
+(3) 대상자의 골반에 걸터앉아서 압박하는 것은 올바른 방법이 아닙니다.  
+(4) 등 밑에 낮은 베개를 고인후 압박하는 것은 올바른 시행 방법이 아닙니다.  
+(5) 압박 위치를 바꾸어 가면서 실시하는 것은 권장되지 않는 방법입니다.
+
+기존 핵심 용어 자료 (참고용):
+심폐소생술: 생명을 구하기 위한 응급처치  
+Hồi sức tim phổi: Cứu sinh khẩn cấp  
+압박: 눌리다, 압축되다  
+Tác động: Ấn, ép, nén  
+대상자: 진료를 받는 사람  
+Người tham gia: Bệnh nhân
+
+---
+
+=== 문제 ID 1714 (챕터 14) ===
+질문:
+심폐소생술 시 가슴압박을 실시하는 방법으로 옳은 것은?
+
+보기:
+1) 압박된 가슴이 눌린 상태로 유지되게 압박한다.
+2) 분당 60회의 속도로 가슴을 압박한다.
+3) 손가락을 가슴에 대고 압박한다.
+4) 양쪽 팔을 45도 정도 굽혀 압박한다.
+5) 가슴이 5cm 눌릴 정도로 압박한다.
+
+정답: 5번
+
+기존 해설 자료 (참고용):
+문제 의도
+심폐소생술에서 올바른 가슴압박 방법을 이해하고 있는지를 평가하기 위한 문제입니다.
+
+보기 해설
+(1) 압박된 가슴이 눌린 상태로 유지되게 압박한다: 가슴 압박 시 눌린 상태가 유지되어야 하지 않습니다.
+[정답] (5) 가슴이 5cm 눌릴 정도로 압박한다: 심폐소생술의 올바른 가슴압박 깊이입니다.
+(3) 손가락을 가슴에 대고 압박한다: 손가락으로 압박하는 것은 부적절합니다.
+(4) 양쪽 팔을 45도 정도 굽혀 압박한다: 팔의 각도는 똑바로 펴는 것이 더 적절합니다.
+(2) 분당 60회의 속도로 가슴을 압박한다: 가슴압박 속도는 분당 100-120회가 적절합니다.
+
+기존 핵심 용어 자료 (참고용):
+심폐소생술: 심장과 호흡이 멈춘 환자를 살리기 위한 응급처치
+Hồi sức tim phổi: Cấp cứu cho bệnh nhân khi tim và hô hấp ngừng lại
+가슴압박: 가슴을 압박하여 심장을 압박하는 행위
+Ép ngực: Hành động ép ngực để ép tim
+압박: 압박하다: Đè nén
+Đè nén: Nén lại
+분당: 매 phút: mỗi phút
+Tốc độ: Tốc độ tốc độ
+5cm: 5cm
+
+
+---
+
+=== 문제 ID 1713 (챕터 14) ===
+질문:
+심폐소생술 시 가슴 압박을 위한 손 위치는?
+
+보기:
+1) 오른쪽 가슴
+2) 왼쪽 가슴
+3) 흉골 아래쪽 절반부위
+4) 명치 아래
+5) 상복부
+
+정답: 3번
+
+기존 해설 자료 (참고용):
+문제 의도
+심폐소생술의 정확한 시행 방법을 이해하고 있는지를 평가하기 위함입니다.
+
+보기 해설
+(1) 오른쪽 가슴 부위에서는 효과적인 압박이 불가능합니다.
+(2) 왼쪽 가슴도 마찬가지로 효과적이지 않습니다.
+[정답] (3) 흉골 아래쪽 절반부위가 심폐소생술 시 가슴 압박을 위한 올바른 위치입니다.
+(4) 명치 아래는 적절한 위치가 아닙니다.
+(5) 상복부도 심폐소생술 시 적용되지 않습니다.
+
+기존 핵심 용어 자료 (참고용):
+심폐소생술: 생명을 구하기 위한 응급 처치법
+Hồi phục tim phổi: Phương pháp cấp cứu nhằm cứu sống
+가슴 압박: 심장에 압력을 가하는 행위
+Ấn ngực: Hành động tạo áp lực lên tim
+흉골: 가슴 중앙의 뼈
+Xương ức: Xương nằm ở giữa ngực
+
+---
+
+=== 문제 ID 1712 (챕터 14) ===
+질문:
+심폐소생술을 시행하는 순서로 옳은 것은?
+
+보기:
+1) 도움요청 - 반응확인 - 호흡확인 - 가슴압박 - 회복자세
+2) 도움요청 - 호흡확인 - 반응확인 - 가슴압박 - 회복자세
+3) 반응확인 - 호흡확인 - 가슴압박 - 인공호흡 - 도움요청
+4) 반응확인 - 도움요청 - 호흡확인 - 가슴압박 - 회복자세
+5) 호흡확인 - 가슴압박 - 반응확인 - 도움요청 - 회복자세
+
+정답: 4번
+
+기존 해설 자료 (참고용):
+문제 의도
+심폐소생술의 올바른 순서를 아는 것이 중요하다.
+
+보기 해설
+(1) 도움요청을 먼저 해야 하지만, 반응확인을 먼저 한 후에 도움을 요청해야 한다.
+[정답] (4) 반응확인을 먼저 한 후 도움요청, 호흡확인, 가슴압박, 회복자세를 취해야 한다.
+(3) 반응확인 후 호흡확인을 해야 하지만, 도움요청이 늦어진다.
+(2) 호흡확인을 먼저 하는 것은 잘못된 순서다.
+(5) 호흡확인을 먼저 하는 것은 잘못된 순서다.
+
+기존 핵심 용어 자료 (참고용):
+심폐소생술: 심장을 다시 뛰게 하려는 응급처치 방법
+Hồi sức tim phổi: Phương pháp cấp cứu để làm tim hoạt động trở lại
+
+가슴압박: 심장 압박을 통해 혈액 순환을 돕는 방법
+Ép ngực: Phương pháp hỗ trợ tuần hoàn máu thông qua việc thúc đẩy tim
+
+회복자세: 의식을 회복한 사람의 올바른 자세
+Tư thế hồi phục: Tư thế đúng cho người đã hồi phục ý thức
+
+---
+
+=== 문제 ID 1711 (챕터 14) ===
+질문:
+쓰러져 있는 대상자를 발견했을 때 가장 먼저 해야 하는 것은?
+
+보기:
+1) 도움 요청
+2) 반응 확인
+3) 호흡 확인
+4) 가슴 압박
+5) 회복 자세
+
+정답: 2번
+
+기존 해설 자료 (참고용):
+문제 의도
+환자를 발견했을 때 즉각적으로 반응을 확인하여 중증도와 필요한 조치를 결정하기 위한 것이다.
+
+보기 해설
+(1) 도움 요청: 도움이 필요하지만, 우선 반응을 확인해야 한다.
+[정답] (2) 반응 확인: 대상자의 상태를 파악하기 위해 가장 먼저 확인해야 하는 점이다.
+(3) 호흡 확인: 반응을 확인한 후 수행하는 과정이다.
+(4) 가슴 압박: 호흡이나 반응이 없을 때 지침에 따라 진행해야 한다.
+(5) 회복 자세: 대상자의 상태에 따라 필요할 수 있지만, 먼저 반응 확인이 필요하다.
+
+기존 핵심 용어 자료 (참고용):
+대상자: 사람(환자)
+Người bệnh: bệnh nhân
+반응: 반응(애는 것)
+Phản ứng: phản ứng
+호흡: 숨쉬기(호흡)
+Hơi thở: hơi thở
+가슴 압박: 가슴을 누르는 것(압박)
+Nén ngực: nén ngực
+회복 자세: 회복하는 자세(자세)
+Tư thế hồi phục: tư thế hồi phục
+
+---
+
+위 모든 문제를 처리해서 다음 형식의 JSON array 만 반환 (마크다운 ```json 등 감싸지 말 것):
+
+```
+[
+  {
+    "id": 1740,
+    "intent_ko": "...",
+    "intent_vi": "...",
+    "choice_explanations": {
+      "ko": { "1": "...", "2": "★ ..." },
+      "vi": { "1": "...", "2": "★ ..." }
+    },
+    "key_terms": [{ "term_ko": "주보호자", "def_vi": "Người chăm sóc chính" }]
+  },
+  ... (각 id 마다 한 객체)
+]
+```
+
+⚠️ 정답에 해당하는 보기의 해설은 반드시 ★ 로 시작 (한국어·베트남어 둘 다)
+⚠️ 무의미한 보기는 키 자체 생략 (ko·vi 양쪽 동일하게)
+⚠️ 한국어와 베트남어 블록 완전 분리

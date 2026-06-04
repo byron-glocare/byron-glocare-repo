@@ -1,0 +1,761 @@
+[
+  {
+    "id": 1589,
+    "intent_ko": "치매 대상자에게 나타나는 석양증후군의 행동 특징을 식별하는 문제",
+    "intent_vi": "Nhận biết đặc điểm hành vi của hội chứng hoàng hôn ở người bị sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 석양증후군(Sundowning)의 핵심 특징이다. 낮에는 비교적 안정되지만 저녁·밤이 되면 불안이 고조되어 방 안을 왔다갔다하거나 초조해지는 행동이 전형적으로 나타난다. 일조량 감소 및 생체리듬 교란이 원인으로 알려져 있다.",
+        "2": "짐을 싸고 푸는 반복 행동은 귀가 욕구·배회 관련 증상에 가깝고 석양증후군의 정의적 특성과는 다르다.",
+        "3": "손에 닿는 것을 입으로 가져가는 행동(구강 탐색)은 전두측두엽 치매 등에서 나타나는 별개의 증상이다.",
+        "4": "목적 없이 돌아다니는 배회(wandering)는 치매의 일반 증상으로, 저녁 시간대 악화라는 석양증후군의 특이성과 구별된다.",
+        "5": "물건을 훔쳐 갔다는 의심과 분노는 도둑망상(pilferage delusion)에 해당하며 석양증후군과는 다른 범주다."
+      },
+      "vi": {
+        "1": "★ Đây là đặc điểm điển hình của hội chứng hoàng hôn (Sundowning). Ban ngày người bệnh tương đối bình tĩnh, nhưng khi chiều tối đến, lo âu tăng cao, biểu hiện bằng việc đi lại hồi hộp trong phòng. Nguyên nhân được cho là do giảm ánh sáng ban ngày và rối loạn nhịp sinh học.",
+        "2": "Hành vi liên tục đóng gói rồi lại mở ra gần với triệu chứng muốn về nhà hoặc đi lang thang, không phải đặc trưng của hội chứng hoàng hôn.",
+        "3": "Đưa mọi thứ chạm tay vào miệng (khám phá bằng miệng) là triệu chứng riêng biệt, thường gặp trong sa sút trí tuệ thùy trán-thái dương.",
+        "4": "Lang thang không mục đích (wandering) là triệu chứng chung của sa sút trí tuệ, khác với hội chứng hoàng hôn vốn đặc trưng bởi sự xấu đi vào buổi chiều tối.",
+        "5": "Nghi ngờ và tức giận vì cho rằng đồ vật bị đánh cắp thuộc về hoang tưởng trộm cắp (pilferage delusion), là loại triệu chứng khác với hội chứng hoàng hôn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "석양증후군", "def_vi": "Hội chứng hoàng hôn (Sundowning): tình trạng triệu chứng hành vi ở người sa sút trí tuệ xấu đi rõ rệt vào buổi chiều và tối" },
+      { "term_ko": "도둑망상", "def_vi": "Hoang tưởng trộm cắp: niềm tin sai lầm rằng người khác đang lấy cắp đồ của mình, thường gặp trong sa sút trí tuệ" },
+      { "term_ko": "배회", "def_vi": "Lang thang (Wandering): hành vi đi lại không mục đích, không theo lộ trình, thường gặp ở người sa sút trí tuệ" }
+    ]
+  },
+  {
+    "id": 1588,
+    "intent_ko": "석양증후군으로 밤에 잠을 못 자는 치매 대상자를 위한 적절한 대처법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp hỗ trợ phù hợp cho người sa sút trí tuệ mất ngủ do hội chứng hoàng hôn",
+    "choice_explanations": {
+      "ko": {
+        "1": "수면제는 의존성·낙상 위험 등 부작용이 있어 요양보호사가 임의로 제공할 수 없으며 의사 처방이 필요하다.",
+        "2": "★ 낮 동안 신체 활동량을 늘리면 수면 압력(sleep pressure)이 높아져 밤에 숙면을 취하게 된다. 석양증후군 예방의 핵심 비약물 접근법으로, 낮잠 시간 단축과 함께 효과적이다.",
+        "3": "낮에 혼자 쉬는 시간이 많으면 오히려 수면 압력이 낮아져 밤 수면이 더 어려워질 수 있다.",
+        "4": "저녁 조명을 은은하게 해주는 것은 보조적으로 도움이 되지만, 낮 활동 증진이 더 근본적인 해결책이다.",
+        "5": "낮 프로그램 참여를 제한하면 신체·인지 활동이 감소하여 밤 수면이 오히려 나빠진다."
+      },
+      "vi": {
+        "1": "Thuốc ngủ có nguy cơ gây phụ thuộc và té ngã; người chăm sóc không được tự ý cung cấp — cần có chỉ định của bác sĩ.",
+        "2": "★ Tăng hoạt động thể chất vào ban ngày làm tăng áp lực ngủ (sleep pressure), giúp người bệnh ngủ ngon hơn vào ban đêm. Đây là phương pháp không dùng thuốc cốt lõi để phòng ngừa hội chứng hoàng hôn, hiệu quả kết hợp với việc giảm giấc ngủ ngày.",
+        "3": "Nếu ban ngày nghỉ ngơi một mình quá nhiều, áp lực ngủ giảm, khiến giấc ngủ ban đêm càng khó hơn.",
+        "4": "Ánh sáng dịu vào buổi tối có hỗ trợ nhất định nhưng tăng hoạt động ban ngày mới là giải pháp căn bản hơn.",
+        "5": "Hạn chế tham gia chương trình ban ngày làm giảm hoạt động thể chất và nhận thức, khiến giấc ngủ đêm càng kém hơn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "석양증후군", "def_vi": "Hội chứng hoàng hôn: triệu chứng sa sút trí tuệ xấu đi vào buổi chiều tối" },
+      { "term_ko": "수면제", "def_vi": "Thuốc ngủ (thuốc an thần): thuốc kê đơn giúp gây ngủ, không được tự ý sử dụng" },
+      { "term_ko": "수면 압력", "def_vi": "Áp lực ngủ (sleep pressure): nhu cầu ngủ tích lũy trong ngày; càng hoạt động nhiều ban ngày thì áp lực ngủ ban đêm càng cao" }
+    ]
+  },
+  {
+    "id": 1587,
+    "intent_ko": "치매 대상자가 '대장 행동'을 하며 타인에게 화낼 때 효과적인 주의전환 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp đánh lạc hướng hiệu quả khi người sa sút trí tuệ có hành vi 'làm thủ lĩnh' và tức giận với người khác",
+    "choice_explanations": {
+      "ko": {
+        "1": "칭찬이 행동을 강화(reinforce)하여 오히려 같은 행동을 반복하게 만들 수 있다.",
+        "2": "자리를 피하는 것은 대상자의 행동을 방치하여 다른 입소자에 대한 위험이 지속된다.",
+        "3": "모든 대상자를 대장놀이에 참여시키면 상황이 더 복잡해지고 다른 입소자들도 불편을 겪는다.",
+        "4": "'내일은 다른 사람'이라는 말은 치매 대상자에게 단기 기억이 없어 혼란만 가중시킨다.",
+        "5": "★ 좋아하는 드라마를 보여주는 것은 관심을 완전히 다른 곳으로 전환(distraction)하는 가장 효과적인 방법이다. 치매 대상자에게 논리적 설득보다 즉각적 환경·자극 변화가 흥분을 가라앉히는 데 훨씬 효과적이다."
+      },
+      "vi": {
+        "1": "Khen ngợi có thể củng cố (reinforce) hành vi, khiến người bệnh lặp lại hành động đó nhiều hơn.",
+        "2": "Tránh đi chỗ khác đồng nghĩa với bỏ mặc, mối nguy với các người bệnh khác vẫn còn đó.",
+        "3": "Cho tất cả người bệnh tham gia vào trò chơi thủ lĩnh làm tình huống phức tạp hơn và gây bất tiện cho những người khác.",
+        "4": "Câu 'ngày mai người khác làm' không có tác dụng vì người sa sút trí tuệ thiếu trí nhớ ngắn hạn, chỉ gây thêm nhầm lẫn.",
+        "5": "★ Bật bộ phim truyền hình yêu thích là cách đánh lạc hướng (distraction) hiệu quả nhất — chuyển hoàn toàn sự chú ý sang kích thích khác. Với người sa sút trí tuệ, thay đổi môi trường/kích thích tức thì hiệu quả hơn nhiều so với thuyết phục bằng lý lẽ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "주의전환(distraction)", "def_vi": "Đánh lạc hướng: kỹ thuật chuyển sự chú ý của người bệnh sang kích thích khác để làm dịu hành vi kích động" },
+      { "term_ko": "행동 강화", "def_vi": "Củng cố hành vi (reinforcement): phản ứng tích cực của người xung quanh vô tình khuyến khích người bệnh lặp lại hành vi không mong muốn" }
+    ]
+  },
+  {
+    "id": 1586,
+    "intent_ko": "치매 대상자가 욕을 하며 의자를 던지려 할 때 안전하고 공감적인 대처법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp xử lý an toàn và đồng cảm khi người sa sút trí tuệ chửi bới và định ném ghế",
+    "choice_explanations": {
+      "ko": {
+        "1": "신속히 자리를 피하면 대상자가 방치된 느낌을 받아 흥분이 더 고조될 수 있다.",
+        "2": "물리적 제압은 대상자의 저항과 부상을 유발하여 상황을 악화시킨다.",
+        "3": "혼자 방에 두는 격리는 공포·외로움을 증가시키고 안전 모니터링도 어렵다.",
+        "4": "★ '화가 나셨군요, 이해해요'라며 부드럽고 공감적으로 말하면 대상자가 자신의 감정이 인정받는다고 느껴 흥분이 점차 가라앉는다. 치매 대상자에게는 감정 공감이 행동 진정의 가장 중요한 첫 단계다.",
+        "5": "퇴소 경고는 치매 대상자에게 위협으로 작용하여 불안과 공격성을 더욱 높인다."
+      },
+      "vi": {
+        "1": "Nhanh chóng rời khỏi chỗ khiến người bệnh cảm thấy bị bỏ rơi, dễ làm kích động leo thang hơn.",
+        "2": "Khống chế bằng vũ lực gây ra sự kháng cự và chấn thương, làm tình huống tồi tệ hơn.",
+        "3": "Cô lập người bệnh trong phòng một mình làm tăng sợ hãi và cô đơn, đồng thời khó theo dõi an toàn.",
+        "4": "★ Nhẹ nhàng nói 'Cháu hiểu ông/bà đang tức giận' thể hiện sự đồng cảm, khiến người bệnh cảm thấy cảm xúc của họ được thừa nhận và dần bình tĩnh lại. Với người sa sút trí tuệ, đồng cảm cảm xúc là bước đầu tiên quan trọng nhất để làm dịu hành vi.",
+        "5": "Cảnh báo xuất viện tạo ra mối đe dọa với người bệnh, làm tăng lo âu và tính hung hăng hơn nữa."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "감정 공감", "def_vi": "Đồng cảm cảm xúc: thừa nhận và phản chiếu cảm xúc của người bệnh thay vì phủ nhận hay lờ đi, là nền tảng giao tiếp trị liệu" },
+      { "term_ko": "물리적 제압", "def_vi": "Khống chế bằng vũ lực: dùng sức mạnh thể chất để kiểm soát người bệnh — bị cấm trong chăm sóc vì gây chấn thương và vi phạm nhân phẩm" },
+      { "term_ko": "격리", "def_vi": "Cô lập: tách biệt người bệnh khỏi môi trường xã hội — không phù hợp vì làm tăng sợ hãi và lo âu" }
+    ]
+  },
+  {
+    "id": 1585,
+    "intent_ko": "치매 대상자가 탁자를 치며 난폭한 행동을 보일 때 최선의 안정화 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp an định tốt nhất khi người sa sút trí tuệ đập bàn và có hành vi bạo lực",
+    "choice_explanations": {
+      "ko": {
+        "1": "탁자를 치우는 것은 대상자의 흥분을 더 자극할 수 있고 근본적 해결이 아니다.",
+        "2": "힘으로 제압하면 저항이 격화되어 대상자와 보호자 모두 부상 위험이 높아진다.",
+        "3": "흥분이 가라앉을 때까지 방치하는 것은 다른 대상자나 직원에 대한 위험이 지속된다.",
+        "4": "★ 정원이나 외부 공간으로 자리를 옮기면 환경 자극이 바뀌어 흥분이 빠르게 가라앉는다. 개방된 공간과 자연 환경은 안정적 감각 자극을 제공하여 치매 대상자의 공격적 행동을 줄이는 데 효과적이다.",
+        "5": "권위적·강압적 태도는 위협으로 인식되어 치매 대상자의 공격성과 불안을 더욱 증폭시킨다."
+      },
+      "vi": {
+        "1": "Dọn bàn đi có thể kích thích thêm sự hưng phấn và không giải quyết được vấn đề gốc rễ.",
+        "2": "Khống chế bằng lực lượng làm leo thang sự kháng cự, tăng nguy cơ chấn thương cho cả người bệnh và người chăm sóc.",
+        "3": "Chờ đợi mà không can thiệp giữ nguyên mối nguy hiểm với người bệnh và nhân viên khác.",
+        "4": "★ Đưa người bệnh ra khu vườn hoặc không gian ngoài trời thay đổi hoàn toàn kích thích môi trường, giúp hạ nhanh trạng thái hưng phấn. Không gian mở và môi trường thiên nhiên cung cấp kích thích giác quan ổn định, hiệu quả trong việc giảm hành vi hung hăng ở người sa sút trí tuệ.",
+        "5": "Thái độ uy quyền và áp đặt bị người bệnh cảm nhận như mối đe dọa, càng làm tăng tính hung hăng và lo âu."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "환경 변화(환경 요법)", "def_vi": "Thay đổi môi trường (liệu pháp môi trường): chuyển người bệnh sang không gian khác để thay đổi kích thích, làm giảm hành vi kích động" },
+      { "term_ko": "난폭한 행동", "def_vi": "Hành vi bạo lực/hung hăng: hành động gây hại hoặc đe dọa người khác, một trong các triệu chứng hành vi-tâm lý của sa sút trí tuệ (BPSD)" }
+    ]
+  },
+  {
+    "id": 1584,
+    "intent_ko": "프로그램 도중 치매 대상자가 갑자기 공격적으로 흥분할 때 즉각적인 대처법을 고르는 문제",
+    "intent_vi": "Chọn cách xử lý tức thì khi người sa sút trí tuệ đột ngột kích động và hung hăng giữa chương trình",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 진행 중인 활동을 즉시 중지하고 추가 자극을 차단하는 것이 가장 먼저 해야 할 조치다. 치매 대상자가 과자극(overstimulation) 상태일 때 자극을 제거하면 흥분이 빠르게 감소한다.",
+        "2": "스스로 화가 풀릴 때까지 방치하는 것은 주변 대상자와 직원 모두에게 위험하다.",
+        "3": "프로그램 제외 경고는 위협이 되어 공격성을 더욱 높인다.",
+        "4": "흥분 상태에서 새로운 자극(다른 프로그램)을 즉시 제공하면 과자극이 가중될 수 있다.",
+        "5": "진정 후 이상 행동을 상기시키는 것은 부적절하며 수치심을 줄 수 있다."
+      },
+      "vi": {
+        "1": "★ Dừng ngay hoạt động đang diễn ra và không đưa thêm kích thích mới là bước ưu tiên hàng đầu. Khi người sa sút trí tuệ bị quá kích thích (overstimulation), loại bỏ kích thích sẽ giúp giảm nhanh trạng thái hưng phấn.",
+        "2": "Bỏ mặc cho đến khi tự hết tức giận gây nguy hiểm cho người bệnh khác và nhân viên xung quanh.",
+        "3": "Cảnh báo loại khỏi chương trình tạo ra mối đe dọa, càng làm tăng tính hung hăng.",
+        "4": "Đưa kích thích mới ngay lập tức (chương trình khác) khi đang hưng phấn có thể làm tăng thêm quá kích thích.",
+        "5": "Nhắc lại hành vi bất thường sau khi bình tĩnh là không phù hợp và có thể gây cảm giác xấu hổ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "과자극", "def_vi": "Quá kích thích (overstimulation): trạng thái nhận quá nhiều kích thích cùng lúc, dẫn đến kích động và hành vi hung hăng ở người sa sút trí tuệ" },
+      { "term_ko": "공격적 행동", "def_vi": "Hành vi hung hăng/tấn công: một trong các triệu chứng hành vi-tâm lý của sa sút trí tuệ (BPSD), cần can thiệp kịp thời và không dùng bạo lực" }
+    ]
+  },
+  {
+    "id": 1583,
+    "intent_ko": "치매 대상자가 같은 방 동료와 매일 다툼 때 근본적인 환경 조정 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp điều chỉnh môi trường căn bản khi người sa sút trí tuệ xung đột hàng ngày với người cùng phòng",
+    "choice_explanations": {
+      "ko": {
+        "1": "단호한 어조는 치매 대상자에게 위협으로 받아들여져 감정을 더 악화시킬 수 있다.",
+        "2": "치매 대상자에게 사과를 요구하는 것은 인지 능력을 고려하지 않은 비현실적인 접근이다.",
+        "3": "이유를 물어보는 것은 감정이 고조된 상황에서 효과적이지 않으며, 갈등의 근본 원인을 해결하지 못한다.",
+        "4": "퇴소 경고는 심리적 위협이 되어 불안과 공격성을 증가시킬 수 있다.",
+        "5": "★ 방을 바꾸어 두 대상자가 서로 마주치지 않게 하는 것이 가장 근본적인 해결책이다. 치매 대상자 간의 반복적 갈등은 주로 성격·생활 습관 불일치에서 비롯되며, 공간 분리가 가장 현실적이고 효과적인 환경 개입이다."
+      },
+      "vi": {
+        "1": "Giọng điệu cứng rắn bị người sa sút trí tuệ cảm nhận như mối đe dọa, làm cảm xúc càng tệ hơn.",
+        "2": "Yêu cầu người sa sút trí tuệ xin lỗi là cách tiếp cận không thực tế vì không tính đến năng lực nhận thức của họ.",
+        "3": "Hỏi lý do không hiệu quả khi cảm xúc đang leo thang và không giải quyết được nguyên nhân gốc rễ của xung đột.",
+        "4": "Cảnh báo xuất viện tạo mối đe dọa tâm lý, làm tăng lo âu và tính hung hăng.",
+        "5": "★ Đổi phòng để hai người bệnh không gặp nhau là giải pháp căn bản nhất. Xung đột lặp đi lặp lại giữa những người sa sút trí tuệ thường xuất phát từ sự không phù hợp về tính cách và thói quen sinh hoạt; phân tách không gian là can thiệp môi trường thực tế và hiệu quả nhất."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "환경 개입", "def_vi": "Can thiệp môi trường: thay đổi điều kiện vật lý hoặc xã hội xung quanh người bệnh (ví dụ: đổi phòng, thay đổi bố trí) để giảm hành vi vấn đề" },
+      { "term_ko": "갈등", "def_vi": "Xung đột: mâu thuẫn hoặc va chạm giữa các cá nhân, thường xảy ra trong môi trường sống chung của người sa sút trí tuệ" }
+    ]
+  },
+  {
+    "id": 1582,
+    "intent_ko": "치매 대상자에게 나타나는 파괴적 행동의 대표적 특징을 파악하는 문제",
+    "intent_vi": "Xác định đặc điểm điển hình của hành vi phá hoại ở người sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "파괴적 행동은 매일 반복적으로 나타나지 않는다. 산발적·간헐적으로 발생하는 것이 특징이다.",
+        "2": "★ 파괴적 행동은 치매 초기에 나타나는 경우가 많으며, 질병이 진행될수록 에너지가 감소하여 행동 빈도가 줄어드는 경향이 있다. 이는 초기 분노 에너지가 행동의 주된 동력임을 보여준다.",
+        "3": "파괴적 행동은 초기 분노 에너지가 소모되면 자연히 중지된다. 에너지가 소모되어도 계속되는 것은 아니다.",
+        "4": "파괴적 행동은 수개월 이상 지속되는 것이 특징이 아니며, 개인차가 크고 초기에 집중된다.",
+        "5": "파괴적 행동은 모든 치매 대상자에게 나타나는 것이 아니라 일부에게만 발생한다."
+      },
+      "vi": {
+        "1": "Hành vi phá hoại không xuất hiện lặp đi lặp lại hàng ngày — đặc điểm là xảy ra rải rác, gián đoạn.",
+        "2": "★ Hành vi phá hoại thường xuất hiện ở giai đoạn đầu của bệnh sa sút trí tuệ. Khi bệnh tiến triển, năng lượng giảm dần nên tần suất hành vi cũng giảm. Điều này cho thấy năng lượng tức giận ban đầu là động lực chính của hành vi.",
+        "3": "Hành vi phá hoại tự dừng khi năng lượng tức giận ban đầu cạn kiệt — không phải tiếp diễn dù đã mất năng lượng.",
+        "4": "Hành vi phá hoại không đặc trưng bởi việc kéo dài nhiều tháng trở lên; có sự khác biệt lớn giữa các cá nhân và thường tập trung ở giai đoạn đầu.",
+        "5": "Hành vi phá hoại không xảy ra ở tất cả người sa sút trí tuệ mà chỉ ở một số trường hợp."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "파괴적 행동", "def_vi": "Hành vi phá hoại: hành vi bạo lực hoặc hung hăng xuất hiện ở người sa sút trí tuệ, thường ở giai đoạn đầu, có xu hướng tự dừng khi năng lượng cạn kiệt" },
+      { "term_ko": "BPSD(행동심리증상)", "def_vi": "Triệu chứng hành vi-tâm lý của sa sút trí tuệ (BPSD): nhóm triệu chứng bao gồm kích động, hung hăng, hoang tưởng, trầm cảm v.v. đi kèm với sa sút trí tuệ" }
+    ]
+  },
+  {
+    "id": 1581,
+    "intent_ko": "제시된 행동 특징(자주 발생 않음, 오래 지속 않음, 에너지 소모 후 중지)에 해당하는 치매 문제행동 유형을 고르는 문제",
+    "intent_vi": "Xác định loại hành vi vấn đề phù hợp với mô tả: không thường xuyên, không kéo dài, dừng khi hết năng lượng",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 파괴적 행동은 '자주 일어나지 않음, 오래 지속되지 않음, 초기 분노 에너지 소모 후 중지'라는 세 가지 특징을 모두 충족한다. 분노·흥분이 폭발적으로 나타났다가 에너지가 다하면 스스로 수그러드는 것이 파괴적 행동의 전형이다.",
+        "2": "망상은 비현실적 믿음이 지속적으로 존재하는 인지 증상으로, 에너지 소모와 무관하게 지속된다.",
+        "3": "배회는 목적 없이 걸어다니는 행동으로 에너지가 남아 있는 한 계속되며, 초기 분노 에너지와 관계없다.",
+        "4": "석양증후군은 저녁 시간대에 증상이 악화되는 패턴이며 하루 중 특정 시간대와 연관된다.",
+        "5": "섬망은 급성 혼돈 상태로 의식 수준 변화·인지 장애가 동반되며, 에너지 소모로 중지되는 행동과 다르다."
+      },
+      "vi": {
+        "1": "★ Hành vi phá hoại thỏa mãn cả ba đặc điểm được mô tả: không xảy ra thường xuyên, không kéo dài, và tự dừng sau khi năng lượng tức giận ban đầu cạn kiệt. Đây là đặc trưng điển hình — bùng phát mạnh rồi tự lắng xuống khi hết năng lượng.",
+        "2": "Hoang tưởng là triệu chứng nhận thức với niềm tin không thực tế tồn tại dai dẳng, không liên quan đến việc cạn kiệt năng lượng.",
+        "3": "Lang thang là hành vi đi lại không mục đích, tiếp diễn miễn là còn năng lượng, không liên quan đến năng lượng tức giận ban đầu.",
+        "4": "Hội chứng hoàng hôn là mẫu triệu chứng xấu đi vào buổi chiều tối — gắn với thời điểm trong ngày chứ không phải năng lượng cạn kiệt.",
+        "5": "Mê sảng (delirium) là trạng thái lú lẫn cấp tính kèm thay đổi mức độ ý thức và rối loạn nhận thức, khác với hành vi dừng khi hết năng lượng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "파괴적 행동", "def_vi": "Hành vi phá hoại: hành vi hung hăng/bạo lực bùng phát ngắn, không thường xuyên, tự dừng khi năng lượng cạn" },
+      { "term_ko": "망상", "def_vi": "Hoang tưởng: niềm tin sai lầm, cứng nhắc, không thay đổi dù có bằng chứng ngược lại, thường gặp trong sa sút trí tuệ" },
+      { "term_ko": "섬망", "def_vi": "Mê sảng (Delirium): trạng thái lú lẫn cấp tính với dao động ý thức, thường có nguyên nhân y tế có thể điều trị được" }
+    ]
+  },
+  {
+    "id": 1580,
+    "intent_ko": "치매 대상자가 공용 의자를 독점하려 할 때 권리를 존중하면서 행동을 유도하는 방법을 고르는 문제",
+    "intent_vi": "Chọn cách hướng dẫn hành vi tôn trọng quyền lợi khi người sa sút trí tuệ chiếm dụng ghế dùng chung",
+    "choice_explanations": {
+      "ko": {
+        "1": "의자를 없애는 것은 대상자의 기본 편의시설을 빼앗아 오히려 불만을 키울 수 있다.",
+        "2": "단호한 규칙 고지는 대립을 야기하여 치매 대상자의 흥분을 높일 수 있다.",
+        "3": "거실 출입 제한은 사회적 고립을 초래하여 인지 기능과 정서에 부정적 영향을 준다.",
+        "4": "날짜별 순서를 정하는 규칙은 치매 대상자가 기억하기 어려워 실용적이지 않다.",
+        "5": "★ 차분하게 다가가 다른 관심 대상(활동, 간식, 대화 등)으로 주의를 유도하는 것이 가장 효과적인 방법이다. 치매 대상자의 감정을 자극하지 않으면서 자연스럽게 행동을 변화시킬 수 있다."
+      },
+      "vi": {
+        "1": "Bỏ ghế đi tước đoạt tiện nghi cơ bản, dễ gây thêm bất mãn cho người bệnh.",
+        "2": "Thông báo quy định một cách cứng rắn tạo ra đối đầu, làm tăng kích động ở người sa sút trí tuệ.",
+        "3": "Cấm vào phòng khách gây cô lập xã hội, ảnh hưởng tiêu cực đến chức năng nhận thức và cảm xúc.",
+        "4": "Quy định lịch theo ngày không thực tế vì người sa sút trí tuệ khó ghi nhớ.",
+        "5": "★ Nhẹ nhàng tiếp cận và đánh lạc hướng sang mối quan tâm khác (hoạt động, đồ ăn nhẹ, trò chuyện) là phương pháp hiệu quả nhất. Cách này thay đổi hành vi một cách tự nhiên mà không kích thích cảm xúc của người bệnh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "관심 유도(주의전환)", "def_vi": "Đánh lạc hướng/dẫn dắt sự chú ý: kỹ thuật chuyển hướng sự tập trung của người bệnh sang kích thích tích cực khác để thay đổi hành vi không mong muốn" },
+      { "term_ko": "사회적 고립", "def_vi": "Cô lập xã hội: tình trạng thiếu tương tác xã hội, làm tăng tốc suy giảm nhận thức và trầm cảm ở người sa sút trí tuệ" }
+    ]
+  },
+  {
+    "id": 1579,
+    "intent_ko": "치매 대상자가 양말 도난을 의심할 때 불안감을 해소하는 실용적 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp thực tế giảm lo âu khi người sa sút trí tuệ nghi ngờ mất cắp tất",
+    "choice_explanations": {
+      "ko": {
+        "1": "누가 가져갔냐고 묻는 질문은 의심을 구체화하여 불안감을 더 키운다.",
+        "2": "'나중에 찾아주겠다'는 말은 막연하여 즉각적인 불안 해소 효과가 없다.",
+        "3": "★ 미리 같은 양말을 준비해 두었다가 '찾았다'고 보여주는 방법은 대상자의 불안을 즉각적으로 해소한다. 치매 대상자의 도둑망상에 논리적 반박보다 실물 제시가 훨씬 효과적인 접근이다.",
+        "4": "'아무도 가져간 사람이 없다'고 설명하는 것은 치매 대상자의 현실 인식과 충돌하여 신뢰를 잃게 한다.",
+        "5": "물건을 찾아준 뒤 훈계하는 것은 치매 대상자에게 수치심을 주어 관계를 손상시킨다."
+      },
+      "vi": {
+        "1": "Hỏi ai lấy sẽ cụ thể hóa sự nghi ngờ, làm tăng lo âu thêm.",
+        "2": "'Sau này sẽ tìm' là câu trả lời mơ hồ, không giải tỏa ngay được lo lắng.",
+        "3": "★ Chuẩn bị sẵn đôi tất giống hệt và cho người bệnh 'tìm thấy' ngay lập tức là cách hiệu quả nhất để giải tỏa lo âu tức thì. Với hoang tưởng trộm cắp trong sa sút trí tuệ, đưa ra vật thật hiệu quả hơn nhiều so với phản bác bằng lý lẽ.",
+        "4": "Giải thích 'không ai lấy cả' xung đột với nhận thức thực tế của người bệnh, khiến họ mất niềm tin vào người chăm sóc.",
+        "5": "Tìm đồ rồi giảng đạo gây cảm giác xấu hổ, làm tổn hại mối quan hệ chăm sóc."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "도둑망상", "def_vi": "Hoang tưởng trộm cắp: niềm tin sai lầm rằng đồ vật của mình bị người khác lấy cắp, triệu chứng phổ biến trong sa sút trí tuệ" },
+      { "term_ko": "실물 제시 기법", "def_vi": "Kỹ thuật đưa ra vật thật: thay vì tranh luận, chuẩn bị sẵn đồ vật để người bệnh 'tìm thấy', giải tỏa hoang tưởng hiệu quả hơn lý luận" }
+    ]
+  },
+  {
+    "id": 1578,
+    "intent_ko": "도둑망상으로 방을 지키려는 치매 대상자에게 자율성을 존중하는 대처법을 고르는 문제",
+    "intent_vi": "Chọn cách đối phó tôn trọng quyền tự chủ với người sa sút trí tuệ có hoang tưởng trộm cắp và cố thủ trong phòng",
+    "choice_explanations": {
+      "ko": {
+        "1": "도둑이 없다고 설득하는 것은 치매 대상자의 망상을 논리로 반박하는 것으로, 신뢰를 잃고 불안을 키운다.",
+        "2": "귀중품을 맡기라고 하면 대상자의 소지품에 대한 통제력을 빼앗아 오히려 불안을 가중시킨다.",
+        "3": "★ 위험하지 않은 상황이라면 방에 있고 싶어 하는 대상자의 의사를 존중하는 것이 가장 적절하다. 강제로 방 밖으로 데리고 나가거나 설득하기보다 자율성을 인정함으로써 불필요한 스트레스를 줄인다.",
+        "4": "화를 내며 강제로 데리고 나가는 것은 신체적 저항과 정서적 상처를 유발한다.",
+        "5": "방문을 잠그는 것은 대상자의 안전을 오히려 위협하고 밀실공포나 공황을 유발할 수 있다."
+      },
+      "vi": {
+        "1": "Thuyết phục rằng không có trộm là phản bác hoang tưởng bằng logic — làm mất niềm tin và tăng lo âu.",
+        "2": "Yêu cầu giao nộp đồ quý tước đoạt quyền kiểm soát tài sản của người bệnh, làm lo âu thêm trầm trọng.",
+        "3": "★ Trong tình huống không nguy hiểm, tôn trọng mong muốn ở lại phòng của người bệnh là cách phù hợp nhất. Thừa nhận quyền tự chủ thay vì ép buộc hay thuyết phục giúp giảm bớt stress không cần thiết.",
+        "4": "Tức giận và cưỡng ép đưa ra ngoài gây kháng cự thể chất và tổn thương cảm xúc.",
+        "5": "Khóa cửa phòng đe dọa sự an toàn của người bệnh và có thể gây sợ không gian hẹp hoặc hoảng loạn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "도둑망상", "def_vi": "Hoang tưởng trộm cắp: niềm tin cứng nhắc và sai lầm về việc bị mất cắp, thường gặp trong sa sút trí tuệ" },
+      { "term_ko": "자율성 존중", "def_vi": "Tôn trọng quyền tự chủ: nguyên tắc chăm sóc — tôn trọng quyết định của người bệnh trong phạm vi an toàn, không ép buộc" },
+      { "term_ko": "강제 개입", "def_vi": "Can thiệp cưỡng chế: hành động ép buộc người bệnh trái với ý muốn — cần tránh vì gây chấn thương tâm lý và mất tin tưởng" }
+    ]
+  },
+  {
+    "id": 1577,
+    "intent_ko": "치매 대상자가 같은 방 입소자를 이웃으로 착각하며 불만을 토로할 때 현실감을 회복시키는 방법을 고르는 문제",
+    "intent_vi": "Chọn cách giúp người sa sút trí tuệ nhận thức lại thực tế khi nhầm người cùng phòng là hàng xóm và phàn nàn",
+    "choice_explanations": {
+      "ko": {
+        "1": "반응하지 않는 것은 대상자를 무시하는 것으로 신뢰 관계를 해친다.",
+        "2": "누구에게 그런 말을 들었는지 확인하는 것은 상황 해결에 전혀 도움이 되지 않는다.",
+        "3": "가짜 납입증명서를 만드는 것은 거짓 정보 제공으로 신뢰를 크게 훼손하고 비윤리적이다.",
+        "4": "★ '여기는 시설이고 저분도 여기 사시는 분'이라는 사실을 반복적으로 알려주어 현실감을 지속적으로 유지하도록 돕는 것이 올바른 접근이다. 치매 대상자에게 현실 지향 요법(Reality Orientation)을 적용하는 것이 핵심이다.",
+        "5": "다른 대상자에게 귓속말로 신경 쓰지 말라고 하는 것은 문제를 해결하지 못하고 오히려 갈등 구조를 강화할 수 있다."
+      },
+      "vi": {
+        "1": "Không phản ứng đồng nghĩa với phớt lờ người bệnh, làm tổn hại mối quan hệ tin tưởng.",
+        "2": "Hỏi nghe từ ai không giúp ích gì trong việc giải quyết tình huống.",
+        "3": "Làm giả giấy tờ là cung cấp thông tin sai lệch — vi phạm đạo đức nghề nghiệp và phá vỡ niềm tin nghiêm trọng.",
+        "4": "★ Liên tục nhắc nhở người bệnh về thực tế — 'Đây là cơ sở chăm sóc, và người đó cũng là người ở đây' — giúp duy trì định hướng thực tế (Reality Orientation). Đây là cách tiếp cận cốt lõi để hỗ trợ nhận thức cho người sa sút trí tuệ.",
+        "5": "Nói thầm với người bệnh khác rằng 'đừng để ý' không giải quyết vấn đề và có thể củng cố cấu trúc xung đột."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "현실 지향 요법", "def_vi": "Liệu pháp định hướng thực tế (Reality Orientation): phương pháp liên tục cung cấp thông tin về thời gian, địa điểm, con người để giúp người sa sút trí tuệ duy trì nhận thức thực tế" },
+      { "term_ko": "요양보호사", "def_vi": "Người chăm sóc người cao tuổi (요양보호사): chuyên gia được đào tạo và cấp phép để cung cấp dịch vụ chăm sóc và hỗ trợ sinh hoạt hàng ngày cho người cao tuổi và người khuyết tật" }
+    ]
+  },
+  {
+    "id": 1576,
+    "intent_ko": "치매 대상자가 음식에 농약이 들었다는 망상으로 식사를 거부할 때 신뢰를 회복하는 대처법을 고르는 문제",
+    "intent_vi": "Chọn cách khôi phục niềm tin khi người sa sút trí tuệ có hoang tưởng cho rằng thức ăn có chất độc và từ chối ăn",
+    "choice_explanations": {
+      "ko": {
+        "1": "왜 농약이 들었다고 생각하냐고 묻는 것은 망상을 구체화하여 불안을 더 키운다.",
+        "2": "경찰서 신고 언급은 상황을 과도하게 긴장시키고 대상자의 불안을 증폭시킨다.",
+        "3": "누가 넣었냐고 묻는 것은 의심을 강화하는 최악의 반응이다.",
+        "4": "'넣지 않았으니 드세요'라는 단순한 부정은 망상 상태의 대상자에게 설득력이 없고 신뢰를 주지 못한다.",
+        "5": "★ '제가 먼저 먹어볼게요'라며 요양보호사가 직접 같은 음식을 먹어 보이는 것은 가장 직관적인 안전 증명이다. 행동으로 신뢰를 보여줌으로써 대상자의 공포를 해소하고 함께 식사를 유도할 수 있다."
+      },
+      "vi": {
+        "1": "Hỏi tại sao nghĩ có thuốc trừ sâu làm cụ thể hóa hoang tưởng, khiến lo âu thêm trầm trọng.",
+        "2": "Đề cập đến việc báo cảnh sát làm tình huống căng thẳng quá mức và khuếch đại lo âu của người bệnh.",
+        "3": "Hỏi ai bỏ vào là phản ứng tệ nhất — củng cố thêm sự nghi ngờ.",
+        "4": "Đơn giản phủ nhận 'không có thuốc trừ sâu, cứ ăn đi' không có sức thuyết phục với người đang trong trạng thái hoang tưởng và không tạo được niềm tin.",
+        "5": "★ Nói 'Để cháu ăn thử trước' và thực sự ăn cùng món ăn đó là cách chứng minh an toàn trực quan nhất. Thể hiện niềm tin bằng hành động giải tỏa nỗi sợ của người bệnh và khuyến khích họ cùng ăn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "피독망상(식사 거부)", "def_vi": "Hoang tưởng bị đầu độc (từ chối ăn): niềm tin sai lầm rằng thức ăn bị bỏ chất độc, dẫn đến từ chối ăn uống — cần can thiệp bằng hành động, không phải lý luận" },
+      { "term_ko": "신뢰 형성 기법", "def_vi": "Kỹ thuật xây dựng niềm tin: ăn thử cùng hay làm mẫu hành động để chứng minh an toàn, hiệu quả hơn giải thích bằng lời khi đối mặt với hoang tưởng" }
+    ]
+  },
+  {
+    "id": 1575,
+    "intent_ko": "치매 대상자가 없는 갈비 냄새를 맡으며 달라고 할 때 감정을 인정하며 함께 행동하는 대처법을 고르는 문제",
+    "intent_vi": "Chọn cách đồng hành hành động thừa nhận cảm xúc khi người sa sút trí tuệ ngửi thấy mùi thức ăn không có thật và đòi ăn",
+    "choice_explanations": {
+      "ko": {
+        "1": "무슨 말씀이냐며 갈비가 없다고 직접 부정하는 것은 대상자의 감각 경험을 무시하여 상처를 준다.",
+        "2": "방금 같이 먹었다고 하면 대상자가 자신의 기억력을 의심하게 만들어 혼란과 상실감을 준다.",
+        "3": "★ '갈비가 드시고 싶군요. 함께 사러 나가요'라고 반응하면 대상자의 욕구를 공감하면서 긍정적인 공동 활동으로 이어진다. 치매 대상자의 감각·욕구를 인정하고 행동을 함께 하는 것이 감정을 안정시키는 가장 좋은 방법이다.",
+        "4": "없는 냄새가 어디서 나냐고 반문하는 것은 대상자를 비하하는 표현으로 매우 부적절하다.",
+        "5": "어제도 그랬다고 반복을 지적하는 것은 대상자를 당혹스럽게 하고 자존심을 상하게 한다."
+      },
+      "vi": {
+        "1": "Trực tiếp phủ nhận 'không có thịt nướng' phớt lờ trải nghiệm giác quan của người bệnh và gây tổn thương.",
+        "2": "Nói 'vừa ăn cùng nhau xong' khiến người bệnh nghi ngờ trí nhớ của bản thân, gây nhầm lẫn và cảm giác mất mát.",
+        "3": "★ Phản ứng 'Ông/bà muốn ăn thịt nướng à. Cùng đi mua nhé' thừa nhận mong muốn của người bệnh và dẫn đến hoạt động chung tích cực. Thừa nhận cảm giác/mong muốn và cùng hành động là cách tốt nhất để ổn định cảm xúc cho người sa sút trí tuệ.",
+        "4": "Hỏi ngược 'mùi gì mà ngửi thấy' là biểu đạt coi thường người bệnh — rất không phù hợp.",
+        "5": "Nhắc lại 'hôm qua cũng vậy' làm người bệnh bối rối và tổn thương lòng tự trọng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "감각 인정 기법", "def_vi": "Kỹ thuật thừa nhận cảm giác: chấp nhận trải nghiệm giác quan của người bệnh thay vì phủ nhận, tạo nền tảng cho giao tiếp trị liệu" },
+      { "term_ko": "공감적 반응", "def_vi": "Phản ứng đồng cảm: đáp lại cảm xúc và mong muốn của người bệnh bằng sự hiểu biết và chấp nhận, không tranh cãi hay phủ nhận" }
+    ]
+  },
+  {
+    "id": 1574,
+    "intent_ko": "치매 대상자가 지갑을 잃었다며 의심할 때 기억을 자극하고 안정시키는 대처법을 고르는 문제",
+    "intent_vi": "Chọn cách kích thích trí nhớ và an định khi người sa sút trí tuệ nghi ngờ mất ví",
+    "choice_explanations": {
+      "ko": {
+        "1": "경찰서 신고를 제안하는 것은 불필요한 스트레스를 주며 실제 치매 대상자에게 적합하지 않다.",
+        "2": "원래부터 지갑이 없었다고 인식시키는 것은 대상자의 현실 감각을 부정하여 혼란을 가중시킨다.",
+        "3": "돈을 얼마나 넣었냐고 묻는 것은 분실에 대한 불안을 더욱 증폭시킨다.",
+        "4": "★ 평소에 지갑을 두는 장소로 함께 가서 찾아보는 것은 대상자의 절차 기억(procedural memory)을 자극하여 스스로 물건을 찾도록 돕고, 같이 있어주는 안정감도 제공한다.",
+        "5": "시설에서 보관 중이라고 설명하는 것은 사실이 아닐 경우 거짓말이 되며, 대상자의 불안을 실질적으로 해소하지 못한다."
+      },
+      "vi": {
+        "1": "Đề xuất báo cảnh sát gây stress không cần thiết và không phù hợp với người sa sút trí tuệ.",
+        "2": "Nói rằng ban đầu không có ví phủ nhận nhận thức thực tế của người bệnh, làm tăng nhầm lẫn.",
+        "3": "Hỏi trong ví có bao nhiêu tiền khuếch đại thêm lo âu về việc mất đồ.",
+        "4": "★ Cùng đến nơi người bệnh thường để ví và tìm cùng nhau kích thích trí nhớ thủ tục (procedural memory), giúp người bệnh tự tìm đồ vật và cung cấp cảm giác an tâm khi có người bên cạnh.",
+        "5": "Nói rằng cơ sở đang giữ có thể là nói dối nếu không đúng sự thật, và không thực sự giải tỏa lo âu của người bệnh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "절차 기억", "def_vi": "Trí nhớ thủ tục (procedural memory): loại trí nhớ liên quan đến thói quen và kỹ năng, thường được bảo tồn lâu hơn trong sa sút trí tuệ so với trí nhớ sự kiện" },
+      { "term_ko": "도둑망상", "def_vi": "Hoang tưởng trộm cắp: niềm tin sai lầm về bị mất cắp, phổ biến trong sa sút trí tuệ" }
+    ]
+  },
+  {
+    "id": 1573,
+    "intent_ko": "치매 대상자가 반지를 도난당했다고 의심할 때 즉각적으로 불안을 해소하는 대처법을 고르는 문제",
+    "intent_vi": "Chọn cách giải tỏa lo âu tức thì khi người sa sút trí tuệ nghi ngờ bị mất cắp nhẫn",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 함께 반지를 찾아보는 행동은 대상자의 불안을 즉각적으로 해소하고, 찾는 과정에서 기억을 자극하며, 보호자와의 신뢰를 강화한다. 논리적 반박 없이 공감과 행동으로 대응하는 것이 핵심이다.",
+        "2": "남을 의심하면 안 된다는 훈계는 대상자의 감정을 상처받게 하고 신뢰 관계를 해친다.",
+        "3": "새 반지를 사주겠다는 말은 대상자가 원하는 것(잃어버린 반지를 찾는 것)과 다르므로 근본적 해결이 아니다.",
+        "4": "귀중품 두는 곳을 알려달라고 하면 대상자가 오히려 더 의심스럽고 불안하게 느낄 수 있다.",
+        "5": "누가 가져갔냐고 묻는 것은 도둑망상을 더욱 강화한다."
+      },
+      "vi": {
+        "1": "★ Cùng tìm nhẫn ngay lập tức giải tỏa lo âu, kích thích trí nhớ trong quá trình tìm kiếm, và củng cố niềm tin với người chăm sóc. Cốt lõi là đáp lại bằng sự đồng cảm và hành động, không tranh luận bằng lý lẽ.",
+        "2": "Giảng đạo 'không nên nghi ngờ người khác' làm tổn thương cảm xúc và phá vỡ mối quan hệ tin tưởng.",
+        "3": "Hứa mua nhẫn mới không đáp ứng điều người bệnh muốn (tìm lại chiếc nhẫn cụ thể) nên không phải giải pháp căn bản.",
+        "4": "Yêu cầu cho biết nơi để đồ quý khiến người bệnh càng nghi ngờ và lo lắng hơn.",
+        "5": "Hỏi ai lấy đi củng cố thêm hoang tưởng trộm cắp."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "도둑망상", "def_vi": "Hoang tưởng trộm cắp: niềm tin sai lầm về bị mất cắp đồ vật" },
+      { "term_ko": "공감과 행동 대응", "def_vi": "Đáp lại bằng đồng cảm và hành động: nguyên tắc can thiệp — không tranh luận, thay vào đó hành động cùng người bệnh để giải quyết lo âu" },
+      { "term_ko": "귀중품", "def_vi": "Đồ vật quý giá: vật phẩm có giá trị vật chất hoặc tình cảm với người bệnh, thường là đối tượng của hoang tưởng trộm cắp" }
+    ]
+  },
+  {
+    "id": 1572,
+    "intent_ko": "망상증 있는 치매 대상자가 아들이 통장을 가져갔다고 화낼 때 감정을 공감하며 들어주는 대처법을 고르는 문제",
+    "intent_vi": "Chọn cách lắng nghe với sự đồng cảm khi người sa sút trí tuệ có hoang tưởng và tức giận vì cho rằng con trai lấy sổ tiết kiệm",
+    "choice_explanations": {
+      "ko": {
+        "1": "아들에게 직접 연락하여 확인하는 것은 망상을 현실로 받아들이는 것처럼 보여 대상자의 감정을 더 격화시킬 수 있다.",
+        "2": "통장을 직접 찾아주는 것은 망상을 강화하고 불신을 심화시킬 수 있다.",
+        "3": "아들은 그럴 사람이 아니라고 하는 것은 대상자의 감정을 부정하여 신뢰를 잃게 한다.",
+        "4": "통장을 가져가는 것을 보았냐고 묻는 것은 망상을 더욱 구체화하여 불안을 증폭시킨다.",
+        "5": "★ 이야기를 들어 주며 '속상하시겠어요'라고 공감하는 것이 가장 적절하다. 망상의 내용을 확인하거나 부정하지 않고 감정 자체를 인정하는 '감정 반영(emotional reflection)' 기법이 치매 대상자에게 가장 효과적이다."
+      },
+      "vi": {
+        "1": "Liên hệ trực tiếp với con trai để xác nhận có vẻ như đang coi hoang tưởng là thật, dễ làm cảm xúc người bệnh leo thang hơn.",
+        "2": "Tự tìm sổ tiết kiệm có thể củng cố hoang tưởng và làm sâu thêm sự bất tín.",
+        "3": "Nói 'con trai không phải người như vậy' phủ nhận cảm xúc của người bệnh, làm mất niềm tin.",
+        "4": "Hỏi có nhìn thấy con trai lấy không cụ thể hóa hoang tưởng và khuếch đại lo âu.",
+        "5": "★ Lắng nghe và nói 'Chắc ông/bà buồn lắm nhỉ' là cách phù hợp nhất. Kỹ thuật 'phản chiếu cảm xúc' (emotional reflection) — thừa nhận cảm xúc mà không xác nhận hay phủ nhận nội dung hoang tưởng — hiệu quả nhất với người sa sút trí tuệ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "망상증", "def_vi": "Hoang tưởng (paranoid delusion): niềm tin sai lầm và cứng nhắc, không thay đổi dù có bằng chứng ngược lại — triệu chứng BPSD phổ biến" },
+      { "term_ko": "감정 반영", "def_vi": "Phản chiếu cảm xúc (emotional reflection): kỹ thuật giao tiếp — thừa nhận và phản chiếu lại cảm xúc của người bệnh mà không tranh luận về nội dung, giúp người bệnh cảm thấy được lắng nghe" }
+    ]
+  },
+  {
+    "id": 1571,
+    "intent_ko": "치매 대상자가 없는 사람을 창밖에서 보인다며 나가려 할 때 감정을 공감하며 안전하게 붙잡아 두는 방법을 고르는 문제",
+    "intent_vi": "Chọn cách đồng cảm và giữ an toàn khi người sa sút trí tuệ nhìn thấy người không có thật qua cửa sổ và muốn ra ngoài",
+    "choice_explanations": {
+      "ko": {
+        "1": "아무도 없다고 부정하고 커튼을 치는 것은 대상자의 경험을 무시하여 상처와 혼란을 준다.",
+        "2": "★ '아들이 보고 싶으신가 봐요'라고 말하며 손을 잡는 것은 대상자의 감정(아들에 대한 그리움)을 인정하면서 신체 접촉으로 안정감을 제공한다. 환각이나 착각의 내용을 직접 부정하지 않고 감정을 반영하는 것이 가장 적절하다.",
+        "3": "눈을 크게 뜨고 보라는 말은 대상자를 무시하고 혼란스럽게 한다.",
+        "4": "기력이 없어서 헛것이 보인다는 말은 대상자를 부정적으로 평가하는 표현이다.",
+        "5": "아들이 지금 회사에 있다고 하면서 하던 일을 계속하는 것은 대상자의 감정을 무시하는 무관심한 반응이다."
+      },
+      "vi": {
+        "1": "Phủ nhận 'không có ai' và kéo rèm phớt lờ trải nghiệm của người bệnh, gây tổn thương và nhầm lẫn.",
+        "2": "★ Nói 'Chắc ông/bà nhớ con trai lắm' và nắm tay người bệnh thừa nhận cảm xúc (nỗi nhớ con) trong khi cung cấp cảm giác an tâm qua tiếp xúc thể chất. Phản chiếu cảm xúc mà không phủ nhận trực tiếp nội dung ảo giác/ảo tưởng là cách phù hợp nhất.",
+        "3": "Bảo mở to mắt nhìn lại là coi thường và gây nhầm lẫn cho người bệnh.",
+        "4": "Nói 'do sức yếu mà nhìn ra hình ảnh không có' là đánh giá tiêu cực về người bệnh.",
+        "5": "Nói 'con đang đi làm' rồi tiếp tục công việc là phản ứng thờ ơ, phớt lờ cảm xúc của người bệnh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "감정 반영", "def_vi": "Phản chiếu cảm xúc: kỹ thuật thừa nhận cảm xúc của người bệnh (nỗi nhớ, sợ hãi) thay vì tranh luận về thực tế của ảo giác" },
+      { "term_ko": "환각(시각적)", "def_vi": "Ảo giác thị giác: nhìn thấy người hoặc vật không có thật, có thể xảy ra trong sa sút trí tuệ với thể Lewy hoặc giai đoạn nặng" },
+      { "term_ko": "신체 접촉(안정화)", "def_vi": "Tiếp xúc thể chất (nắm tay, vỗ lưng): can thiệp phi ngôn ngữ giúp truyền cảm giác an toàn và kết nối cho người sa sút trí tuệ đang lo âu" }
+    ]
+  },
+  {
+    "id": 1570,
+    "intent_ko": "치매 대상자가 누군가 잡으러 온다는 공포로 책상 밑에 숨을 때 안심시키며 함께 있어주는 방법을 고르는 문제",
+    "intent_vi": "Chọn cách an ủi và ở bên cạnh khi người sa sút trí tuệ hoảng sợ có người đuổi bắt và trốn dưới bàn",
+    "choice_explanations": {
+      "ko": {
+        "1": "무슨 사건인지 이야기하게 하면 공포 망상을 더욱 구체화하여 불안을 키울 수 있다.",
+        "2": "잡으러 온 사람이 누구냐고 묻는 것은 망상을 강화하여 상황을 더 불안하게 만든다.",
+        "3": "책상 밑이 위험하다고 설명하는 것은 대상자가 공포 상태에서 이성적 설명을 받아들이기 어렵기 때문에 효과가 낮다.",
+        "4": "아무도 못 들어온다고 말하는 것은 신뢰를 줄 수 있지만 대상자 혼자 두는 것보다 낫지 않다.",
+        "5": "★ '이제 가고 없다'며 위협이 사라졌다고 안심시키고 옆에 함께 있어주는 것이 가장 효과적이다. 공포 상태의 치매 대상자에게 논리보다 안심과 동반이 훨씬 중요하다."
+      },
+      "vi": {
+        "1": "Yêu cầu kể chuyện gì xảy ra cụ thể hóa hoang tưởng sợ hãi, làm tăng lo âu.",
+        "2": "Hỏi kẻ đuổi bắt là ai củng cố hoang tưởng và làm tình huống căng thẳng hơn.",
+        "3": "Giải thích dưới bàn nguy hiểm ít hiệu quả vì người đang sợ hãi khó tiếp nhận lý luận.",
+        "4": "Nói không ai vào được có thể tạo niềm tin nhưng không bằng việc ở bên cạnh.",
+        "5": "★ Nói 'Người đó đi rồi, không còn ở đây nữa' để an tâm rằng mối đe dọa đã biến mất, và ở lại bên cạnh là hiệu quả nhất. Với người sa sút trí tuệ đang hoảng sợ, sự an ủi và đồng hành quan trọng hơn nhiều so với lý luận."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "공포 망상", "def_vi": "Hoang tưởng sợ hãi: niềm tin sai lầm rằng có ai đó nguy hiểm đang đến, gây ra phản ứng trốn tránh cực độ" },
+      { "term_ko": "동반(presence)", "def_vi": "Đồng hành/hiện diện (therapeutic presence): ở lại bên cạnh người bệnh mà không cần nói nhiều — một trong những can thiệp hiệu quả nhất khi người bệnh sợ hãi" }
+    ]
+  },
+  {
+    "id": 1569,
+    "intent_ko": "치매 할아버지가 요양보호사를 아내로 착각하고 따라다닐 때 감정을 공감하며 적절히 반응하는 방법을 고르는 문제",
+    "intent_vi": "Chọn cách đồng cảm và phản ứng phù hợp khi người cao tuổi sa sút trí tuệ nhầm người chăm sóc là vợ và đi theo",
+    "choice_explanations": {
+      "ko": {
+        "1": "할머니가 돌아가셨다고 직접적으로 말하는 것은 대상자에게 큰 슬픔과 충격을 줄 수 있다.",
+        "2": "정색하며 자신이 할머니가 아니라고 부정하면 할아버지가 혼란스럽고 상처받을 수 있다.",
+        "3": "★ '할머니가 보고 싶으신가 봐요'라고 말하며 마주보는 것은 대상자의 감정(아내에 대한 그리움)을 인정하는 공감적 반응이다. 착각 자체를 부정하거나 강화하지 않으면서 감정을 수용한다.",
+        "4": "여보 불렀냐고 대답하는 것은 착각을 강화하여 나중에 더 큰 혼란을 일으킬 수 있다.",
+        "5": "할머니로 보이냐고 되묻는 것은 대상자를 더 혼란스럽게 만들 수 있다."
+      },
+      "vi": {
+        "1": "Trực tiếp nói 'bà đã mất rồi' có thể gây đau khổ và sốc lớn cho người bệnh.",
+        "2": "Nghiêm mặt phủ nhận 'Cháu không phải bà' khiến người bệnh nhầm lẫn và bị tổn thương.",
+        "3": "★ Nói 'Chắc ông nhớ bà lắm' và nhìn thẳng vào mắt người bệnh là phản ứng đồng cảm — thừa nhận cảm xúc (nỗi nhớ vợ) mà không xác nhận hay phủ nhận sự nhầm lẫn.",
+        "4": "Đáp lại 'Gọi cháu à?' củng cố sự nhầm lẫn và có thể gây nhầm lẫn lớn hơn sau này.",
+        "5": "Hỏi ngược 'Ông thấy cháu là bà à?' làm người bệnh càng thêm nhầm lẫn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "인물 착각(오인)", "def_vi": "Nhầm lẫn nhân vật (misidentification): nhầm người này thành người khác (ví dụ: nhầm người chăm sóc thành người thân đã mất), thường gặp trong sa sút trí tuệ" },
+      { "term_ko": "그리움 인정", "def_vi": "Thừa nhận nỗi nhớ: phản chiếu cảm xúc thực sự ẩn sau hành vi nhầm lẫn (nỗi nhớ người thân) thay vì đối phó với bề mặt hành vi" }
+    ]
+  },
+  {
+    "id": 1568,
+    "intent_ko": "치매 대상자가 집에 가겠다며 소란을 피울 때 관심을 긍정적 활동으로 전환하는 방법을 고르는 문제",
+    "intent_vi": "Chọn cách chuyển hướng sang hoạt động tích cực khi người sa sút trí tuệ gây ồn ào đòi về nhà",
+    "choice_explanations": {
+      "ko": {
+        "1": "혼자서는 집에 못 간다는 말은 부정적·제한적 표현으로 대상자의 자존심을 상하게 한다.",
+        "2": "텔레비전만 보라는 권유는 대상자의 귀가 욕구를 무시한 일방적 지시다.",
+        "3": "집에 아무도 없다는 말은 대상자를 더 슬프고 외롭게 만든다.",
+        "4": "원장님께 혼난다는 말은 요양보호사의 불이익을 강조하여 대상자에게 무관한 압박이다.",
+        "5": "★ '아들이 모시러 올 때까지 우리 퍼즐 맞춰요'라고 하면 귀가 욕구를 공감하면서 구체적인 공동 활동으로 관심을 부드럽게 유도한다. 기다리는 이유(아들)를 제시하여 대상자가 납득하고 활동에 참여하도록 이끄는 효과적인 방법이다."
+      },
+      "vi": {
+        "1": "Nói 'một mình không về được' là biểu đạt tiêu cực và hạn chế, làm tổn thương lòng tự trọng.",
+        "2": "Chỉ bảo ngồi xem TV là chỉ thị một chiều, phớt lờ mong muốn về nhà của người bệnh.",
+        "3": "Nói 'về nhà cũng không có ai' làm người bệnh càng buồn và cô đơn hơn.",
+        "4": "Đề cập đến việc bị trưởng phòng mắng là áp lực không liên quan đến người bệnh.",
+        "5": "★ Nói 'Chờ con đến đón, mình ghép hình cùng nhau nhé' vừa đồng cảm với mong muốn về nhà vừa nhẹ nhàng dẫn dắt sang hoạt động chung cụ thể. Đưa ra lý do chờ đợi (con sẽ đến đón) giúp người bệnh chấp thuận và tham gia hoạt động."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "귀가 욕구", "def_vi": "Mong muốn về nhà: cảm giác muốn về nhà hoặc đến nơi quen thuộc, thường gặp ở người sa sút trí tuệ sống trong cơ sở chăm sóc" },
+      { "term_ko": "긍정적 활동 전환", "def_vi": "Chuyển hướng sang hoạt động tích cực: kỹ thuật dẫn dắt người bệnh tham gia hoạt động có ý nghĩa để giảm hành vi vấn đề" }
+    ]
+  },
+  {
+    "id": 1567,
+    "intent_ko": "야간에 거실을 배회하는 치매 대상자에게 정서적 안정과 유대감을 제공하는 방법을 고르는 문제",
+    "intent_vi": "Chọn cách cung cấp sự ổn định cảm xúc và kết nối cho người sa sút trí tuệ đi lang thang phòng khách ban đêm",
+    "choice_explanations": {
+      "ko": {
+        "1": "새로운 방으로 옮기면 낯선 환경이 되어 치매 대상자의 혼란과 불안이 더 커진다.",
+        "2": "실내조명을 어둡게 하면 불안감이 오히려 증가하고 낙상 위험도 높아진다.",
+        "3": "야간에 실외 배회 코스를 이용하는 것은 안전 위험이 크다.",
+        "4": "현관문을 여는 것은 대상자가 외부로 나가 실종될 위험이 있다.",
+        "5": "★ 학창시절 등 과거 추억에 대한 이야기를 나누는 것은 치매 대상자의 장기 기억을 자극하여 정서적 안정을 주고, 요양보호사와의 감정적 유대감도 형성한다. 야간 배회를 물리적으로 막기보다 대화와 정서적 연결이 더 안전하고 효과적이다."
+      },
+      "vi": {
+        "1": "Đổi phòng mới tạo ra môi trường lạ, làm tăng nhầm lẫn và lo âu ở người sa sút trí tuệ.",
+        "2": "Tắt bớt đèn làm tăng lo âu và nguy cơ té ngã.",
+        "3": "Dùng lộ trình đi bộ ngoài trời vào ban đêm có rủi ro an toàn lớn.",
+        "4": "Mở cửa ra vào có nguy cơ người bệnh ra ngoài và thất lạc.",
+        "5": "★ Chia sẻ kỷ niệm thời học sinh và quá khứ kích thích trí nhớ dài hạn của người bệnh, mang lại sự ổn định cảm xúc và xây dựng kết nối tình cảm với người chăm sóc. Kết nối cảm xúc qua đối thoại an toàn và hiệu quả hơn so với ngăn chặn vật lý việc đi lang thang ban đêm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "야간 배회", "def_vi": "Lang thang ban đêm: hành vi đi lại không mục đích vào ban đêm, phổ biến ở người sa sút trí tuệ do rối loạn nhịp sinh học" },
+      { "term_ko": "회상 요법", "def_vi": "Liệu pháp hồi tưởng (reminiscence therapy): sử dụng ký ức quá khứ và kỷ niệm để kích thích nhận thức và ổn định cảm xúc cho người sa sút trí tuệ" },
+      { "term_ko": "장기 기억", "def_vi": "Trí nhớ dài hạn: loại trí nhớ về các sự kiện và trải nghiệm xa xưa, thường được bảo tồn tốt hơn trí nhớ ngắn hạn trong sa sút trí tuệ" }
+    ]
+  },
+  {
+    "id": 1566,
+    "intent_ko": "치매 대상자가 남편 밥을 해야 한다며 집에 가겠다고 할 때 공감하며 산책으로 전환하는 방법을 고르는 문제",
+    "intent_vi": "Chọn cách đồng cảm và chuyển hướng qua đi dạo khi người sa sút trí tuệ muốn về nhà nấu ăn cho chồng",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ '저랑 같이 가실까요?'라며 산책을 제안하는 것은 대상자의 귀가 욕구를 직접 막지 않으면서 안전하게 밖으로 나가는 대안을 제시한다. 공동 활동을 통해 관심이 자연스럽게 전환되고 신체 활동도 얻을 수 있다.",
+        "2": "남편이 식사했다고 안심시키는 것은 사실 관계를 다루지만 대상자의 활동 욕구(나가고 싶은 마음)에는 부응하지 못한다.",
+        "3": "아들이 와야 나갈 수 있다는 말은 제한적 표현으로 대상자의 불안을 높인다.",
+        "4": "어르신만 신경 쓰라는 말은 대상자의 역할 정체성(아내·주부)을 무시하는 표현이다.",
+        "5": "밖이 어두워서 갈 수 없다는 말은 거짓이거나 대상자를 달래는 방식으로, 혼란과 불신을 초래할 수 있다."
+      },
+      "vi": {
+        "1": "★ Hỏi 'Đi cùng cháu nhé?' và đề xuất đi dạo không trực tiếp ngăn mong muốn về nhà mà đưa ra giải pháp thay thế an toàn. Hoạt động chung giúp chuyển hướng sự chú ý tự nhiên và cung cấp vận động thể chất.",
+        "2": "An tâm 'chồng ăn rồi' giải quyết nội dung sự kiện nhưng không đáp ứng nhu cầu hoạt động (muốn ra ngoài) của người bệnh.",
+        "3": "Nói 'phải đợi con đến mới ra được' là biểu đạt hạn chế, làm tăng lo âu.",
+        "4": "Nói 'chỉ cần nghĩ đến bản thân thôi' phủ nhận bản sắc vai trò (người vợ/nội trợ) của người bệnh.",
+        "5": "Nói 'trời tối rồi không ra được' có thể sai sự thật hoặc mang tính dỗ dành, gây nhầm lẫn và mất tin tưởng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "역할 정체성", "def_vi": "Bản sắc vai trò: nhận thức về vai trò xã hội của bản thân (vợ, mẹ, nội trợ) — thường được bảo tồn trong sa sút trí tuệ và cần được tôn trọng" },
+      { "term_ko": "산책 전환 기법", "def_vi": "Kỹ thuật chuyển hướng qua đi dạo: đề xuất đi bộ cùng nhau khi người bệnh muốn ra ngoài, đáp ứng một phần mong muốn trong khi đảm bảo an toàn" }
+    ]
+  },
+  {
+    "id": 1565,
+    "intent_ko": "치매 대상자가 집 안에서 목적 없이 배회할 때 집중력을 높이는 활동으로 행동을 줄이는 방법을 고르는 문제",
+    "intent_vi": "Chọn hoạt động tăng tập trung để giảm hành vi lang thang vô mục đích trong nhà của người sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "주의를 주는 것은 배회가 치매의 자연스러운 증상이기 때문에 효과적이지 않으며 오히려 불안을 줄 수 있다.",
+        "2": "★ 색칠하기 활동은 손의 움직임에 집중력을 유도하고 인지 자극을 제공하여 배회 행동을 줄이는 데 효과적이다. 치매 대상자에게는 단순하고 반복적이며 성취감을 주는 활동이 배회 감소에 가장 효과적이다.",
+        "3": "취침 직전 운동량을 늘리면 수면을 방해하고 흥분을 유발할 수 있다.",
+        "4": "증상이 사라질 때까지 기다리는 것은 수동적이며 예방적 접근이 부족하다.",
+        "5": "밖으로 나가 걷게 하는 것은 실종 위험이 있어 적절하지 않다."
+      },
+      "vi": {
+        "1": "Nhắc nhở không hiệu quả vì lang thang là triệu chứng tự nhiên của sa sút trí tuệ; có thể gây thêm lo âu.",
+        "2": "★ Hoạt động tô màu hướng sự tập trung vào cử động của tay và cung cấp kích thích nhận thức, hiệu quả trong việc giảm hành vi lang thang. Hoạt động đơn giản, lặp đi lặp lại và mang lại cảm giác thành công là hiệu quả nhất để giảm lang thang ở người sa sút trí tuệ.",
+        "3": "Tăng vận động ngay trước khi ngủ có thể cản trở giấc ngủ và gây kích động.",
+        "4": "Chờ đợi triệu chứng tự biến mất là cách tiếp cận thụ động, thiếu can thiệp phòng ngừa.",
+        "5": "Cho ra ngoài đi bộ có nguy cơ thất lạc nên không phù hợp."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "배회", "def_vi": "Lang thang (wandering): hành vi đi lại không mục đích, không theo lộ trình, triệu chứng thường gặp trong sa sút trí tuệ" },
+      { "term_ko": "인지 자극 활동", "def_vi": "Hoạt động kích thích nhận thức: các hoạt động như tô màu, xếp hình, làm thủ công giúp duy trì chức năng nhận thức và giảm hành vi vấn đề" }
+    ]
+  },
+  {
+    "id": 1564,
+    "intent_ko": "야간에 실내에서 계속 배회하는 치매 대상자를 안전하게 보호하기 위해 출입구를 통제하는 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp kiểm soát lối ra vào để bảo vệ an toàn người sa sút trí tuệ liên tục đi lang thang trong nhà ban đêm",
+    "choice_explanations": {
+      "ko": {
+        "1": "따뜻한 녹차 제공은 이완 효과가 있을 수 있으나 배회 자체를 예방하지 못한다.",
+        "2": "이불과 베개를 바꾸는 것만으로는 야간 배회 행동을 해결할 수 없다.",
+        "3": "실내조명을 끄면 어둠 속에서 대상자가 넘어지거나 불안해질 위험이 높아진다.",
+        "4": "★ 출입 가능한 모든 문(현관, 창문 등)을 잠그는 것은 야간 배회 중 대상자가 실외로 나가 실종되거나 사고를 당하는 것을 예방하는 가장 중요한 안전 조치다.",
+        "5": "빨래 개기는 낮 시간대 에너지 소모에 도움이 되지만 야간 배회의 즉각적 예방책은 아니다."
+      },
+      "vi": {
+        "1": "Cung cấp trà xanh ấm có thể giúp thư giãn nhưng không ngăn chặn được việc lang thang.",
+        "2": "Thay chăn gối mới không giải quyết được hành vi lang thang ban đêm.",
+        "3": "Tắt đèn làm tăng nguy cơ té ngã trong bóng tối và làm người bệnh thêm lo lắng.",
+        "4": "★ Khóa tất cả các cửa ra vào (cửa chính, cửa sổ) là biện pháp an toàn quan trọng nhất để ngăn người bệnh ra ngoài trong khi lang thang ban đêm, tránh thất lạc và tai nạn.",
+        "5": "Gấp quần áo giúp tiêu hao năng lượng ban ngày nhưng không phải biện pháp ngăn chặn trực tiếp việc lang thang ban đêm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "야간 배회", "def_vi": "Lang thang ban đêm: hành vi đi lại không mục đích vào ban đêm ở người sa sút trí tuệ, tiềm ẩn nguy cơ thất lạc và tai nạn" },
+      { "term_ko": "출입 통제", "def_vi": "Kiểm soát lối ra vào: khóa cửa và cửa sổ để ngăn người sa sút trí tuệ ra ngoài một mình, biện pháp an toàn cơ bản tại nhà và cơ sở chăm sóc" }
+    ]
+  },
+  {
+    "id": 1563,
+    "intent_ko": "야간에 배회하는 치매 대상자에게 실내 보행로를 따라 걷게 하여 안정감을 주는 방법을 고르는 문제",
+    "intent_vi": "Chọn cách cho người sa sút trí tuệ đi lang thang ban đêm đi theo lối đi trong nhà để cung cấp cảm giác an tâm",
+    "choice_explanations": {
+      "ko": {
+        "1": "침대 옆에 옷가지를 걸어두면 대상자가 낮과 밤을 혼동하거나 혼란스러워할 수 있다.",
+        "2": "복잡한 일은 야간에 대상자를 더 혼란스럽게 하여 오히려 흥분을 유발할 수 있다.",
+        "3": "★ 집 안의 보행로(복도 등)를 따라 안전하게 걷게 하는 것은 배회 욕구를 충족시키면서도 외부 위험을 차단하는 균형 잡힌 방법이다. 실내에서 안전하게 움직일 수 있는 공간을 제공하면 대상자의 불안이 줄고 신체적으로도 안정된다.",
+        "4": "실내조명을 어둡게 하면 낙상 위험이 높아지고 불안감이 증가한다.",
+        "5": "창문을 여는 것은 자연환기 효과가 있지만 배회 행동을 직접 해결하지는 않으며, 보안 문제도 있다."
+      },
+      "vi": {
+        "1": "Treo quần áo cạnh giường có thể khiến người bệnh nhầm lẫn giữa ngày và đêm.",
+        "2": "Giao việc phức tạp ban đêm có thể gây thêm nhầm lẫn và kích động.",
+        "3": "★ Cho đi theo lối đi trong nhà (hành lang) một cách an toàn vừa đáp ứng nhu cầu đi lại vừa ngăn nguy hiểm từ bên ngoài — đây là phương pháp cân bằng. Cung cấp không gian di chuyển an toàn trong nhà giúp giảm lo âu và ổn định thể chất cho người bệnh.",
+        "4": "Tắt bớt đèn làm tăng nguy cơ té ngã và gia tăng lo âu.",
+        "5": "Mở cửa sổ có tác dụng thông khí nhưng không giải quyết trực tiếp việc lang thang và còn có vấn đề bảo mật."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "실내 보행로", "def_vi": "Lối đi trong nhà: hành lang hoặc khu vực đi lại an toàn trong nhà/cơ sở, cho phép người sa sút trí tuệ thỏa mãn nhu cầu vận động mà không có nguy hiểm bên ngoài" },
+      { "term_ko": "배회 욕구 충족", "def_vi": "Đáp ứng nhu cầu đi lang thang: thay vì ngăn chặn hoàn toàn, cung cấp không gian đi lại an toàn để thỏa mãn nhu cầu vận động của người bệnh" }
+    ]
+  },
+  {
+    "id": 1562,
+    "intent_ko": "프로그램 도중 갑자기 안절부절 배회하는 치매 대상자에게 신체적 욕구 확인이 우선임을 묻는 문제",
+    "intent_vi": "Xác định rằng kiểm tra nhu cầu thể chất là ưu tiên hàng đầu khi người sa sút trí tuệ đột ngột bồn chồn và lang thang giữa chương trình",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 안절부절 배회의 원인이 통증, 배뇨 욕구, 배고픔 등 신체적 욕구일 수 있으므로 이를 가장 먼저 확인해야 한다. 신체 욕구 해소 후에 행동이 개선되는 경우가 많다.",
+        "2": "커튼을 쳐서 어둡게 하면 불안감이 증가하고 배회 행동에 아무 도움이 안 된다.",
+        "3": "프로그램을 그대로 진행하면서 대상자를 방치하는 것은 안전과 케어 원칙에 어긋난다.",
+        "4": "혼자 있게 하는 것은 대상자의 불안과 외로움을 증가시켜 상황을 악화시킨다.",
+        "5": "집중하라고 권유하는 것은 불안 상태에서 효과가 없으며 오히려 대상자를 더 압박한다."
+      },
+      "vi": {
+        "1": "★ Nguyên nhân của việc bồn chồn đi lang thang có thể là nhu cầu thể chất như đau, muốn đi vệ sinh, hoặc đói — cần kiểm tra những điều này trước tiên. Sau khi đáp ứng nhu cầu thể chất, hành vi thường cải thiện.",
+        "2": "Kéo rèm cho tối làm tăng lo âu và không có tác dụng gì với hành vi lang thang.",
+        "3": "Tiếp tục chương trình trong khi bỏ mặc người bệnh vi phạm nguyên tắc an toàn và chăm sóc.",
+        "4": "Để một mình làm tăng lo âu và cô đơn, làm tình huống tệ hơn.",
+        "5": "Yêu cầu tập trung khi đang lo âu không có hiệu quả và còn tạo thêm áp lực cho người bệnh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "신체적 욕구 확인", "def_vi": "Kiểm tra nhu cầu thể chất: bước đầu tiên khi người sa sút trí tuệ có hành vi vấn đề đột ngột — xác định có đau, cần đi vệ sinh, đói hay khát không" },
+      { "term_ko": "안절부절", "def_vi": "Bồn chồn (restlessness): trạng thái không thể ngồi yên, cử động liên tục — có thể là dấu hiệu của nhu cầu thể chất chưa được đáp ứng hoặc lo âu" }
+    ]
+  },
+  {
+    "id": 1561,
+    "intent_ko": "프로그램 도중 갑자기 안절부절 배회하는 치매 대상자에게 신체적 욕구 확인이 우선임을 묻는 문제 (재출제)",
+    "intent_vi": "Xác định ưu tiên kiểm tra nhu cầu thể chất khi người sa sút trí tuệ đột ngột bồn chồn và lang thang giữa chương trình (câu hỏi lặp)",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 치매 대상자가 갑자기 안절부절 못하는 것은 배뇨 욕구, 통증, 배고픔 등 신체적 욕구 때문일 수 있다. 원인을 먼저 파악해야 적절한 대처가 가능하므로 신체적 욕구 확인이 최우선이다.",
+        "2": "실내를 어둡게 하면 공간 지남력이 더 혼란스러워지고 불안이 증폭된다.",
+        "3": "대상자의 행동을 무시하고 프로그램을 진행하는 것은 보호 의무에 어긋난다.",
+        "4": "혼자 조용한 방에 두면 불안감과 고립감이 커진다.",
+        "5": "주의가 산만한 상태에서 집중을 요구하는 것은 치매 대상자에게 부적절하다."
+      },
+      "vi": {
+        "1": "★ Việc người sa sút trí tuệ đột ngột bồn chồn có thể do nhu cầu thể chất như muốn đi vệ sinh, đau, hoặc đói. Xác định nguyên nhân trước là bước cần thiết để có thể xử lý phù hợp — kiểm tra nhu cầu thể chất là ưu tiên hàng đầu.",
+        "2": "Làm tối không gian làm mất định hướng và khuếch đại lo âu.",
+        "3": "Phớt lờ hành vi người bệnh và tiếp tục chương trình vi phạm nghĩa vụ bảo vệ.",
+        "4": "Để một mình trong phòng yên tĩnh làm tăng cảm giác lo âu và cô lập.",
+        "5": "Yêu cầu tập trung khi đang mất chú ý là không phù hợp với người sa sút trí tuệ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "신체적 욕구", "def_vi": "Nhu cầu thể chất: nhu cầu cơ bản của cơ thể như đi vệ sinh, ăn uống, giảm đau — nguyên nhân phổ biến gây ra hành vi vấn đề đột ngột ở người sa sút trí tuệ" },
+      { "term_ko": "배회", "def_vi": "Lang thang (wandering): đi lại không mục đích hoặc theo lộ trình, triệu chứng phổ biến trong sa sút trí tuệ" }
+    ]
+  },
+  {
+    "id": 1560,
+    "intent_ko": "치매 대상자가 고향에 간다며 배회할 때 신분 확인과 사전 실종 예방을 위한 지문 등록이 가장 중요함을 묻는 문제",
+    "intent_vi": "Xác định việc đăng ký vân tay trước là biện pháp quan trọng nhất để phòng ngừa thất lạc khi người sa sút trí tuệ thường xuyên đi lang thang muốn về quê",
+    "choice_explanations": {
+      "ko": {
+        "1": "주소와 전화번호 암기는 단기 기억이 손상된 치매 대상자에게 실행 불가능한 방법이다.",
+        "2": "텔레비전을 크게 틀면 오히려 소음 자극이 되어 혼란을 가중시킬 수 있다.",
+        "3": "보호자가 신분증을 소지하면 대상자가 신분을 증명할 방법이 없어 실종 시 더 위험하다.",
+        "4": "겉옷을 문 입구에 걸어두면 대상자가 외출하려는 행동을 유발할 수 있다.",
+        "5": "★ 경찰청 등 관련 기관의 협조를 받아 사전에 지문을 등록해두면 대상자가 실종되었을 때 신속하게 신원을 확인하고 귀환을 도울 수 있다. 배회가 잦은 치매 대상자에게 가장 중요한 사전 예방 안전 조치다."
+      },
+      "vi": {
+        "1": "Ghi nhớ địa chỉ và số điện thoại là không thể thực hiện với người sa sút trí tuệ đã bị tổn thương trí nhớ ngắn hạn.",
+        "2": "Bật TV to có thể tạo kích thích ồn ào, làm tăng nhầm lẫn.",
+        "3": "Nếu người giám hộ giữ chứng minh thư, người bệnh không có cách chứng minh danh tính khi thất lạc — nguy hiểm hơn.",
+        "4": "Để áo khoác ở cửa ra vào có thể kích thích hành vi muốn ra ngoài.",
+        "5": "★ Đăng ký vân tay trước thông qua sự hỗ trợ của cảnh sát hoặc cơ quan liên quan giúp xác định danh tính nhanh chóng khi người bệnh thất lạc và hỗ trợ đưa họ về. Đây là biện pháp an toàn phòng ngừa quan trọng nhất cho người sa sút trí tuệ hay đi lang thang."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "지문 사전 등록", "def_vi": "Đăng ký vân tay trước: đăng ký dấu vân tay với cơ quan chức năng (cảnh sát) trước khi xảy ra thất lạc để hỗ trợ xác định danh tính và tìm kiếm nhanh hơn" },
+      { "term_ko": "배회 안전 조치", "def_vi": "Biện pháp an toàn phòng ngừa lang thang: các biện pháp trước (đăng ký vân tay, khóa cửa, vòng tay thông tin) để bảo vệ người sa sút trí tuệ hay đi lang thang" },
+      { "term_ko": "실종 예방", "def_vi": "Phòng ngừa thất lạc: tổng hợp các biện pháp giảm nguy cơ người sa sút trí tuệ đi lang thang và không tìm được đường về" }
+    ]
+  }
+]

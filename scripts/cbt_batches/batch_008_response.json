@@ -1,0 +1,764 @@
+[
+  {
+    "id": 1528,
+    "intent_ko": "치아가 없는 치매 대상자의 식후 구강위생 관리 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về phương pháp vệ sinh răng miệng sau ăn cho người bệnh sa sút trí tuệ không có răng",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 차 또는 물을 마시도록 하는 것은 구강 내 음식 잔여물을 씻어내고 구강 건조를 예방하는 가장 간단하고 안전한 방법이다. 치아가 없는 치매 대상자에게 적합하며, 협조가 어려운 경우에도 무리 없이 적용할 수 있다.",
+        "2": "소금물 헹굼도 위생에 도움이 되나, 치매 대상자가 뱉지 않고 삼킬 위험이 있어 물·차보다 적합하지 않다.",
+        "3": "면봉으로 잇몸을 닦는 것은 치아가 없는 경우 유용하지만, 이 문제의 정답은 '식후 1순위' 방법으로서 물/차 음용이다.",
+        "4": "거즈와 설압자를 이용한 닦기는 치매 대상자가 거부하거나 물릴 위험이 있어 협조적인 경우에만 가능하다.",
+        "5": "치아가 없어도 잇몸·혀·구강 점막에 세균이 번식하므로 구강위생은 반드시 실시해야 한다."
+      },
+      "vi": {
+        "1": "★ Cho uống nước hoặc trà là phương pháp đơn giản và an toàn nhất để loại bỏ thức ăn còn sót lại trong miệng và ngăn khô miệng. Phù hợp với người bệnh sa sút trí tuệ không có răng, có thể áp dụng ngay cả khi người bệnh khó hợp tác.",
+        "2": "Súc miệng bằng nước muối cũng có ích, nhưng người bệnh sa sút trí tuệ có thể nuốt thay vì nhổ ra, nên kém an toàn hơn nước/trà.",
+        "3": "Lau nướu bằng tăm bông hữu ích khi không có răng, nhưng phương án ưu tiên đầu tiên sau bữa ăn là uống nước/trà.",
+        "4": "Lau bằng gạc quấn dụng cụ ấn lưỡi có nguy cơ bị cắn hoặc bị từ chối, chỉ áp dụng được khi người bệnh hợp tác.",
+        "5": "Ngay cả khi không có răng, vi khuẩn vẫn sinh sôi trên nướu, lưỡi và niêm mạc miệng, nên vệ sinh răng miệng vẫn bắt buộc."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "구강위생", "def_vi": "Vệ sinh răng miệng — giữ sạch khoang miệng để ngăn vi khuẩn và mảng bám" },
+      { "term_ko": "설압자", "def_vi": "Dụng cụ ấn lưỡi — thanh dẹt dùng để ấn lưỡi xuống khi khám hoặc lau miệng" },
+      { "term_ko": "구강 건조", "def_vi": "Khô miệng — tình trạng thiếu nước bọt gây khó chịu và dễ nhiễm khuẩn" }
+    ]
+  },
+  {
+    "id": 1527,
+    "intent_ko": "누워서 지내는 치매 대상자의 양치질 보조 방법 중 옳은 것을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn phương pháp đánh răng đúng cho người bệnh sa sút trí tuệ nằm liệt",
+    "choice_explanations": {
+      "ko": {
+        "1": "잇몸 방향 닦기는 올바른 기본 방법이나, 누워 있는 대상자에게는 물·침 관리가 더 우선 과제이다.",
+        "2": "칫솔을 혀 안쪽까지 깊숙이 넣으면 구역반사(역류·구토)를 유발하므로 피해야 한다.",
+        "3": "차가운 물 한 번 헹굼만으로는 충분한 구강 세척이 이루어지지 않는다.",
+        "4": "★ 누운 자세에서는 침이나 물이 흘러내려 흡인(사레) 위험이 크다. 대상자의 뺨에 물받이 그릇을 대주면 흘러나오는 물·침을 안전하게 받아내어 흡인을 예방할 수 있다.",
+        "5": "치아가 없어도 잇몸·구강 점막 위생 관리는 필요하다."
+      },
+      "vi": {
+        "1": "Chải từ răng hướng về phía nướu là kỹ thuật đúng, nhưng với người nằm liệt thì kiểm soát nước và nước bọt mới là ưu tiên hàng đầu.",
+        "2": "Đưa bàn chải sâu vào trong lưỡi có thể kích thích phản xạ nôn, cần tránh.",
+        "3": "Chỉ súc miệng một lần bằng nước lạnh không đủ để làm sạch khoang miệng.",
+        "4": "★ Ở tư thế nằm, nước bọt và nước có thể chảy xuống gây nguy cơ hít sặc. Đặt bát hứng nước áp vào má người bệnh giúp hứng nước chảy ra an toàn, ngăn ngừa hít sặc hiệu quả.",
+        "5": "Dù không có răng, vệ sinh nướu và niêm mạc miệng vẫn cần thiết."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "물받이 그릇", "def_vi": "Bát hứng nước — dụng cụ đặt áp vào má để hứng nước hoặc nước bọt chảy ra khi vệ sinh miệng" },
+      { "term_ko": "구역반사", "def_vi": "Phản xạ nôn — phản xạ co thắt họng khi có vật chạm vào vùng sau miệng" },
+      { "term_ko": "흡인", "def_vi": "Hít sặc (hít vào phổi) — tình trạng chất lỏng hoặc thức ăn vô tình đi vào đường thở" }
+    ]
+  },
+  {
+    "id": 1526,
+    "intent_ko": "치매 대상자의 구강위생을 돕는 올바른 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn phương pháp vệ sinh răng miệng đúng cho người bệnh sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "딱딱한 모의 칫솔은 잇몸을 손상시킬 수 있어 치매 대상자에게 적합하지 않다.",
+        "2": "★ 치매 대상자는 치약을 삼킬 가능성이 높다. 어린이용 치약은 삼켜도 안전한 성분으로 구성되어 있어 가장 적합하다.",
+        "3": "의치는 취침 시 빼서 세척·보관해야 하며, 항상 끼워두면 잇몸 손상과 위생 문제가 생긴다.",
+        "4": "의치는 매일 닦아야 하지만 '매일 정해진 시간'만이 핵심이 아니라 취침 시 제거 여부가 더 중요하다.",
+        "5": "양치질 거부 시 면봉 닦기는 차선책으로 활용할 수 있으나, 이 문제에서 가장 올바른 원칙은 2번이다."
+      },
+      "vi": {
+        "1": "Bàn chải cứng có thể làm tổn thương nướu, không phù hợp với người bệnh sa sút trí tuệ.",
+        "2": "★ Người bệnh sa sút trí tuệ có nguy cơ nuốt kem đánh răng cao. Kem đánh răng dành cho trẻ em có thành phần an toàn khi nuốt, nên phù hợp nhất.",
+        "3": "Răng giả cần được tháo ra và vệ sinh khi đi ngủ; đeo liên tục gây tổn thương nướu và vấn đề vệ sinh.",
+        "4": "Việc vệ sinh răng giả hàng ngày quan trọng, nhưng việc tháo ra khi ngủ mới là điểm mấu chốt hơn.",
+        "5": "Lau bằng tăm bông khi người bệnh từ chối đánh răng là giải pháp thay thế, nhưng nguyên tắc đúng nhất trong câu này là đáp án 2."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "의치", "def_vi": "Răng giả — răng nhân tạo dùng để thay thế răng thật bị mất" },
+      { "term_ko": "잇몸 손상", "def_vi": "Tổn thương nướu — tình trạng nướu bị trầy xước hoặc viêm do tác động cơ học hoặc vệ sinh không đúng cách" }
+    ]
+  },
+  {
+    "id": 1525,
+    "intent_ko": "치매 대상자가 열이 있을 때 목욕 요구에 대한 올바른 대처 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về cách xử lý đúng khi người bệnh sa sút trí tuệ đang sốt nhưng đòi tắm",
+    "choice_explanations": {
+      "ko": {
+        "1": "고열 상태에서 시원한 물로 전신 목욕을 시키면 오한·쇼크 위험이 있어 매우 위험하다.",
+        "2": "해열제 투여는 반드시 의료인의 처방이 필요하며, 임의로 먹이는 것은 안전하지 않다.",
+        "3": "물놀이 역시 열이 있는 상태에서는 피해야 할 방법이다.",
+        "4": "★ 열이 있을 때는 전신 목욕을 피해야 한다. 미지근한 물수건으로 몸을 닦아주면 체온을 서서히 낮추면서 개인위생도 유지할 수 있는 안전한 방법이다.",
+        "5": "고열의 위험성 설명은 인지 저하가 있는 치매 대상자에게는 효과가 없으며, 즉각적인 행동 대응이 필요하다."
+      },
+      "vi": {
+        "1": "Tắm toàn thân bằng nước lạnh khi đang sốt cao có nguy cơ gây ớn lạnh và sốc, rất nguy hiểm.",
+        "2": "Cho uống thuốc hạ sốt phải có chỉ định của nhân viên y tế; tự ý cho uống là không an toàn.",
+        "3": "Chơi với nước cũng cần tránh khi đang sốt.",
+        "4": "★ Khi đang sốt, cần tránh tắm toàn thân. Lau người bằng khăn ướt ấm là phương pháp an toàn giúp hạ nhiệt từ từ trong khi vẫn duy trì vệ sinh cá nhân.",
+        "5": "Giải thích về nguy hiểm của sốt cao không hiệu quả với người bệnh sa sút trí tuệ có suy giảm nhận thức; cần hành động ngay."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "고열", "def_vi": "Sốt cao — tình trạng nhiệt độ cơ thể tăng cao bất thường (thường trên 38.5°C)" },
+      { "term_ko": "체온 조절", "def_vi": "Điều tiết thân nhiệt — khả năng duy trì nhiệt độ cơ thể trong giới hạn bình thường" },
+      { "term_ko": "미지근한 물수건", "def_vi": "Khăn ướt ấm — khăn thấm nước ấm (không nóng, không lạnh) dùng để lau người hạ sốt" }
+    ]
+  },
+  {
+    "id": 1524,
+    "intent_ko": "치매 대상자가 물을 거부할 때 목욕을 돕는 올바른 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn cách hỗ trợ tắm đúng khi người bệnh sa sút trí tuệ sợ nước",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 작은 그릇에 물을 떠서 물과 친숙해지게 해주는 것은 거부감을 서서히 줄이고 목욕으로 자연스럽게 유도할 수 있는 효과적인 방법이다.",
+        "2": "간식을 조건으로 위협하는 방식은 심리적 압박을 주어 대상자의 정서를 더 악화시킬 수 있다.",
+        "3": "기분이 좋아진다는 설득은 치매 대상자에게는 대체로 인지적 한계로 인해 효과가 낮다.",
+        "4": "거부하는 대상자를 강제로 목욕시키는 것은 인권 침해이며 불안·공격성을 유발한다.",
+        "5": "인지 저하가 있는 치매 대상자를 혼자 목욕하게 두는 것은 낙상·익사 등 안전 사고의 위험이 있다."
+      },
+      "vi": {
+        "1": "★ Múc nước vào bát nhỏ cho người bệnh làm quen với nước là cách giúp giảm dần cảm giác sợ hãi và dẫn dắt tự nhiên vào việc tắm — phương pháp hiệu quả và nhân ái.",
+        "2": "Đe dọa không cho ăn vặt nếu không tắm là cách tiêu cực, có thể làm tình trạng tâm lý của người bệnh tệ hơn.",
+        "3": "Thuyết phục rằng tắm sẽ làm dễ chịu thường kém hiệu quả với người bệnh sa sút trí tuệ do hạn chế về nhận thức.",
+        "4": "Cưỡng bức tắm là vi phạm nhân quyền và có thể gây lo lắng, hung hăng.",
+        "5": "Để người bệnh sa sút trí tuệ tắm một mình có nguy cơ té ngã và đuối nước."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "거부반응", "def_vi": "Phản ứng từ chối — hành vi hoặc cảm xúc phản đối, chống lại một hoạt động cụ thể" },
+      { "term_ko": "인권 침해", "def_vi": "Vi phạm nhân quyền — hành động xâm phạm quyền cơ bản của con người" }
+    ]
+  },
+  {
+    "id": 1523,
+    "intent_ko": "치매 대상자의 목욕 돕기에서 안전을 위한 올바른 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn biện pháp an toàn đúng khi hỗ trợ tắm cho người bệnh sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 욕조 바닥에 미끄럼방지 매트를 까는 것은 목욕 중 낙상을 예방하는 가장 기본적이고 효과적인 안전 조치이다.",
+        "2": "욕실 바닥에 물을 뿌려두면 오히려 미끄러질 위험이 커지므로 부적절하다.",
+        "3": "치매 대상자는 온도 감각이 저하되어 뜨거운 물을 적절히 판단하지 못할 수 있으므로, 요양보호사가 직접 수온을 확인해야 한다.",
+        "4": "치매 대상자를 혼자 욕실에 두는 것은 낙상·익사 등 안전 사고 위험이 크다.",
+        "5": "운동실조증이 있으면 균형 감각이 저하되어 샤워도 위험할 수 있으며 전문가 판단이 필요하다."
+      },
+      "vi": {
+        "1": "★ Trải thảm chống trơn dưới bồn tắm là biện pháp an toàn cơ bản và hiệu quả nhất để ngăn ngừa ngã trong khi tắm.",
+        "2": "Xịt nước lên sàn nhà tắm làm tăng nguy cơ trơn trượt, không phù hợp.",
+        "3": "Người bệnh sa sút trí tuệ có thể mất cảm giác nhiệt độ, không tự đánh giá được nước nóng; người chăm sóc phải kiểm tra nhiệt độ nước.",
+        "4": "Để người bệnh một mình trong phòng tắm có nguy cơ té ngã và đuối nước.",
+        "5": "Người có rối loạn vận động vẫn có thể gặp nguy hiểm khi tắm đứng; cần đánh giá của chuyên gia."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "미끄럼방지 매트", "def_vi": "Thảm chống trơn — tấm lót có bề mặt nhám đặt trong bồn tắm hoặc sàn nhà tắm để ngăn trượt ngã" },
+      { "term_ko": "운동실조증", "def_vi": "Rối loạn điều hòa vận động (mất điều phối) — tình trạng mất khả năng phối hợp các cử động cơ thể một cách chính xác" },
+      { "term_ko": "수온 확인", "def_vi": "Kiểm tra nhiệt độ nước — xác minh nước tắm không quá nóng hoặc quá lạnh trước khi cho người bệnh vào" }
+    ]
+  },
+  {
+    "id": 1522,
+    "intent_ko": "치매 대상자의 목욕 보조 방법 중 옳은 것을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn phương pháp hỗ trợ tắm đúng cho người bệnh sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "욕조에 앉힌 후 물을 채우면 수압과 수위 변화로 인한 낙상·익사 위험이 있어 위험하다.",
+        "2": "욕실 바닥에 물을 뿌리면 미끄러짐 위험이 증가한다.",
+        "3": "★ 목욕 과정을 단순화하고 강요하지 않는 것이 올바른 원칙이다. 물에 대한 거부반응이 있다면 억지로 목욕을 시키는 것은 인권 침해이며 심리적 외상을 줄 수 있다.",
+        "4": "목욕 강요 없이 과정을 단순화하는 것은 올바른 방법이다.",
+        "5": "사생활 보호를 이유로 욕실에 혼자 두는 것은 안전 사고로 이어질 수 있다."
+      },
+      "vi": {
+        "1": "Cho ngồi vào bồn rồi mới cho nước vào có nguy cơ ngã và đuối nước do thay đổi áp lực nước.",
+        "2": "Xịt nước lên sàn làm tăng nguy cơ trơn trượt.",
+        "3": "★ Nguyên tắc đúng là đơn giản hóa quy trình tắm và không ép buộc. Nếu người bệnh sợ nước, cưỡng bức tắm là vi phạm nhân quyền và có thể gây sang chấn tâm lý.",
+        "4": "Không ép buộc và đơn giản hóa quy trình tắm là phương pháp đúng.",
+        "5": "Để một mình trong phòng tắm với lý do bảo vệ sự riêng tư có thể dẫn đến tai nạn an toàn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "거부반응", "def_vi": "Phản ứng từ chối — cảm xúc hoặc hành vi phản đối một hoạt động nào đó" },
+      { "term_ko": "목욕과정 단순화", "def_vi": "Đơn giản hóa quy trình tắm — giảm thiểu các bước phức tạp trong khi tắm để giảm căng thẳng cho người bệnh" }
+    ]
+  },
+  {
+    "id": 1521,
+    "intent_ko": "치매 대상자의 변비 관리 방법으로 옳은 것을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn phương pháp xử lý táo bón đúng cho người bệnh sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "수분 섭취를 줄이면 대변이 더 굳어 변비를 악화시킨다.",
+        "2": "섬유질 섭취 제한은 장운동을 감소시켜 변비를 더 심하게 한다.",
+        "3": "관장은 의료 행위로 의료인의 지시 없이 임의로 시행하면 안 된다.",
+        "4": "다른 대상자의 변비약을 임의로 복용시키는 것은 약물 오남용으로 매우 위험하다.",
+        "5": "★ 일정한 시간 간격으로 변기에 앉혀 배변을 유도하면 장의 규칙적인 리듬을 만들어 변비를 예방하고 관리하는 데 효과적이다."
+      },
+      "vi": {
+        "1": "Giảm lượng nước uống làm phân cứng hơn, khiến táo bón nặng thêm.",
+        "2": "Hạn chế chất xơ làm giảm nhu động ruột, làm táo bón trầm trọng hơn.",
+        "3": "Thụt tháo là thủ thuật y tế, không được tự ý thực hiện khi chưa có chỉ định của nhân viên y tế.",
+        "4": "Tự ý cho uống thuốc táo bón của người khác là lạm dụng thuốc, rất nguy hiểm.",
+        "5": "★ Cho ngồi lên bồn cầu theo khung giờ cố định giúp tạo nhịp sinh học đều đặn cho ruột, từ đó phòng ngừa và kiểm soát táo bón hiệu quả."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "변비", "def_vi": "Táo bón — tình trạng khó đại tiện do phân cứng hoặc nhu động ruột kém" },
+      { "term_ko": "관장", "def_vi": "Thụt tháo (灌腸) — thủ thuật đưa dung dịch vào trực tràng để kích thích đại tiện" },
+      { "term_ko": "배변 유도", "def_vi": "Kích thích đại tiện — các biện pháp giúp tạo điều kiện để người bệnh đi đại tiện" }
+    ]
+  },
+  {
+    "id": 1520,
+    "intent_ko": "치매 대상자가 실금하여 옷이 젖었을 때 즉각적인 대처 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về cách xử lý ngay khi người bệnh sa sút trí tuệ bị tiểu không tự chủ làm ướt quần áo",
+    "choice_explanations": {
+      "ko": {
+        "1": "기저귀를 채우는 것은 즉각적 대처로 적절하지 않으며, 우선 옷을 갈아입히는 것이 필요하다.",
+        "2": "★ 더러워진 옷을 즉시 갈아입히고 대상자를 안정시켜 주는 것이 가장 먼저 해야 할 적절한 대처이다. 위생 유지와 정서적 안정 모두를 충족하는 방법이다.",
+        "3": "수분 섭취 제한은 탈수를 유발하며, 실금 해결책이 되지 않는다.",
+        "4": "간이변기 제공은 미래 예방에 도움이 되나, 이미 옷이 젖은 상황에서의 즉각 대처는 아니다.",
+        "5": "유치도뇨관 삽입 논의는 의료적 판단이 필요하며, 현재 상황의 즉각 대처가 아니다."
+      },
+      "vi": {
+        "1": "Mặc bỉm không phải biện pháp xử lý ngay lập tức phù hợp; việc thay quần áo mới là ưu tiên đầu tiên.",
+        "2": "★ Thay ngay quần áo bị bẩn và ổn định tâm lý cho người bệnh là biện pháp xử lý phù hợp nhất và cần làm đầu tiên — đáp ứng cả vệ sinh lẫn sự thoải mái tâm lý.",
+        "3": "Hạn chế nước uống gây mất nước và không giải quyết được vấn đề tiểu không tự chủ.",
+        "4": "Cung cấp bô di động hữu ích cho phòng ngừa, nhưng không phải biện pháp xử lý tức thì khi quần đã ướt.",
+        "5": "Thảo luận về đặt ống thông tiểu cần đánh giá y tế, không phải hành động xử lý ngay lập tức."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "실금", "def_vi": "Tiểu không tự chủ (thất cấm) — tình trạng tiểu tiện ngoài ý muốn không kiểm soát được" },
+      { "term_ko": "유치도뇨관", "def_vi": "Ống thông tiểu lưu — ống mềm được đặt vào bàng quang qua niệu đạo để dẫn nước tiểu ra ngoài liên tục" }
+    ]
+  },
+  {
+    "id": 1519,
+    "intent_ko": "치매 대상자의 요실금 관리 방법 중 옳은 것을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn phương pháp quản lý tiểu không tự chủ đúng cho người bệnh sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "수분 섭취를 제한하면 탈수 및 요로감염 위험이 증가하여 오히려 해롭다.",
+        "2": "★ 배뇨 후 치골상부(방광 아래 하복부)를 눌러주면 방광 내 잔뇨를 밀어내는 데 도움이 된다(크레데 수기). 이는 요실금 대상자의 방광 기능을 보조하는 적절한 방법이다.",
+        "3": "기저귀 상시 착용은 위생 문제와 피부 질환을 유발할 수 있어 상시 방법으로는 적절하지 않다.",
+        "4": "실금에 대해 주의를 주면 대상자의 자존감을 상하게 하고 수치심을 유발한다.",
+        "5": "배뇨훈련 권장 간격은 낮 2시간, 밤 4시간이 일반적이며, 이 보기는 낮·밤이 뒤바뀌어 있다."
+      },
+      "vi": {
+        "1": "Hạn chế nước uống làm tăng nguy cơ mất nước và nhiễm trùng đường tiểu, gây hại hơn là có lợi.",
+        "2": "★ Ấn nhẹ vùng trên xương mu (dưới rốn) sau khi tiểu giúp đẩy hết nước tiểu còn lại trong bàng quang (thủ thuật Credé) — biện pháp hỗ trợ chức năng bàng quang phù hợp cho người tiểu không tự chủ.",
+        "3": "Đeo bỉm liên tục gây vấn đề vệ sinh và bệnh da, không phù hợp dùng thường xuyên.",
+        "4": "Nhắc nhở người bệnh về việc tiểu không tự chủ làm tổn thương lòng tự trọng và gây xấu hổ.",
+        "5": "Khung giờ tập luyện đại tiểu tiện thông thường là 2 giờ ban ngày và 4 giờ ban đêm; đáp án này đảo ngược ban ngày và ban đêm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "요실금", "def_vi": "Tiểu không tự chủ — tình trạng không kiểm soát được việc tiểu tiện" },
+      { "term_ko": "치골상부", "def_vi": "Vùng trên xương mu — vùng bụng dưới ngay phía trên xương mu, tương ứng vị trí bàng quang" },
+      { "term_ko": "잔뇨", "def_vi": "Nước tiểu tồn dư — lượng nước tiểu còn lại trong bàng quang sau khi đã đi tiểu" },
+      { "term_ko": "배뇨훈련", "def_vi": "Tập luyện kiểm soát tiểu tiện — phương pháp lên lịch đi tiểu theo giờ cố định để tái lập thói quen" }
+    ]
+  },
+  {
+    "id": 1518,
+    "intent_ko": "요실금 대상자의 배설을 돕는 효과적인 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn phương pháp hỗ trợ bài tiết hiệu quả cho người tiểu không tự chủ",
+    "choice_explanations": {
+      "ko": {
+        "1": "이동변기는 편의 도구로서 도움이 되지만, 배설 자체를 직접 돕는 방법은 아니다.",
+        "2": "체중을 늘려 골반근육을 강화한다는 논리는 성립하지 않으며, 골반저근 운동(케겔 운동)이 적합한 방법이다.",
+        "3": "활동 제한은 배뇨 횟수를 줄이지 않으며, 전반적인 건강에도 해롭다.",
+        "4": "★ 아랫배(방광 위)를 가볍게 눌러 방광을 완전히 비우게 하는 방법(크레데 수기)은 요실금 대상자의 잔뇨를 줄이고 배설을 효과적으로 돕는 직접적인 방법이다.",
+        "5": "더운 물주머니를 복부에 대주는 것은 근육 이완에 도움이 될 수 있으나, 배설 자체를 직접 돕는 검증된 방법은 아니다."
+      },
+      "vi": {
+        "1": "Bô di động là công cụ tiện lợi nhưng không phải biện pháp trực tiếp hỗ trợ quá trình bài tiết.",
+        "2": "Tăng cân để tăng cường cơ vùng chậu không hợp lý; bài tập sàn chậu (Kegel) mới là phương pháp phù hợp.",
+        "3": "Hạn chế hoạt động không làm giảm tần suất đi tiểu và gây hại cho sức khỏe tổng thể.",
+        "4": "★ Ấn nhẹ vùng bụng dưới (trên bàng quang) để bàng quang xả hết nước tiểu (thủ thuật Credé) là phương pháp trực tiếp và hiệu quả để giảm nước tiểu tồn dư và hỗ trợ bài tiết cho người tiểu không tự chủ.",
+        "5": "Chườm túi nước nóng lên bụng có thể giúp giãn cơ nhưng không phải biện pháp được kiểm chứng để hỗ trợ bài tiết trực tiếp."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "요실금", "def_vi": "Tiểu không tự chủ — tình trạng không kiểm soát được việc tiểu tiện" },
+      { "term_ko": "골반저근 운동", "def_vi": "Bài tập cơ sàn chậu (Kegel) — bài tập co thắt cơ vùng chậu để cải thiện kiểm soát bàng quang" },
+      { "term_ko": "잔뇨", "def_vi": "Nước tiểu tồn dư — lượng nước tiểu còn lại trong bàng quang sau khi tiểu" }
+    ]
+  },
+  {
+    "id": 1517,
+    "intent_ko": "초기 치매 대상자의 배설 관리에서 야간 안전을 위한 올바른 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn phương pháp quản lý bài tiết ban đêm an toàn đúng cho người bệnh sa sút trí tuệ giai đoạn đầu",
+    "choice_explanations": {
+      "ko": {
+        "1": "안전 손잡이 설치는 유용한 보조 도구이지만 가장 중요한 야간 배설 관리 방법은 아니다.",
+        "2": "낮 시간에 기저귀를 채우는 것은 자립성을 저해하고 적극적 관리와 거리가 멀다.",
+        "3": "식사 전후마다 변기에 앉히는 것은 반드시 필요하지 않으며 스트레스를 유발할 수 있다.",
+        "4": "취침 전 화장실 이용은 권장되지만, 야간 안전의 핵심 방법은 아니다.",
+        "5": "★ 야간에는 어둠과 수면 중 방향감각 상실로 화장실까지 이동 중 낙상 위험이 크다. 이동식 변기를 침대 옆에 두면 안전하게 배설을 도울 수 있다."
+      },
+      "vi": {
+        "1": "Lắp tay vịn trước bồn cầu hữu ích nhưng không phải biện pháp quản lý bài tiết ban đêm quan trọng nhất.",
+        "2": "Mặc bỉm ban ngày làm giảm tính tự lập và không phải biện pháp quản lý tích cực.",
+        "3": "Cho ngồi bồn cầu sau mỗi bữa ăn không nhất thiết phải làm và có thể gây căng thẳng.",
+        "4": "Đi vệ sinh trước khi ngủ được khuyến khích nhưng không phải biện pháp cốt lõi cho an toàn ban đêm.",
+        "5": "★ Ban đêm, bóng tối và mất phương hướng khi ngủ làm tăng nguy cơ ngã khi di chuyển đến nhà vệ sinh. Đặt bô di động bên cạnh giường giúp người bệnh bài tiết an toàn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "이동식 변기", "def_vi": "Bô di động (ghế bô) — thiết bị vệ sinh di động đặt cạnh giường, giúp người bệnh không cần đi xa vào ban đêm" },
+      { "term_ko": "낙상 예방", "def_vi": "Phòng ngừa té ngã — các biện pháp giảm thiểu nguy cơ ngã đối với người cao tuổi hoặc người bệnh" }
+    ]
+  },
+  {
+    "id": 1516,
+    "intent_ko": "치매 대상자가 기저귀 안에 손을 넣어 상처를 낼 때 올바른 대처 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn cách xử lý đúng khi người bệnh sa sút trí tuệ hay đưa tay vào bỉm gây thương tích",
+    "choice_explanations": {
+      "ko": {
+        "1": "장갑 착용은 일시적인 방법이며, 근본 원인(손톱에 의한 상처)을 해결하지 못한다.",
+        "2": "★ 손톱을 짧게 깎아 두면 대상자가 기저귀 안에 손을 넣더라도 손톱으로 인한 피부 손상을 방지할 수 있다. 행동 자체를 막기 어려운 치매의 특성을 고려할 때 가장 현실적이고 안전한 예방 방법이다.",
+        "3": "부끄럽다고 지적하면 치매 대상자에게 수치심과 부정적 감정을 유발하여 역효과를 낳는다.",
+        "4": "하의를 벗겨두는 것은 체온 유지와 위생에 문제를 일으킬 수 있다.",
+        "5": "서비스 중단 위협은 강압적이며 치매 대상자의 심리에 해롭다."
+      },
+      "vi": {
+        "1": "Đeo găng tay chỉ là biện pháp tạm thời và không giải quyết được nguyên nhân gốc rễ (móng tay gây thương tích).",
+        "2": "★ Cắt ngắn móng tay giúp ngăn tổn thương da ngay cả khi người bệnh vẫn đưa tay vào bỉm. Đây là biện pháp phòng ngừa thực tế và an toàn nhất khi khó ngăn chặn hành vi ở người bệnh sa sút trí tuệ.",
+        "3": "Chỉ trích hành vi là xấu hổ gây tổn thương tâm lý và phản tác dụng với người bệnh sa sút trí tuệ.",
+        "4": "Bỏ quần có thể gây vấn đề về duy trì thân nhiệt và vệ sinh.",
+        "5": "Đe dọa ngừng dịch vụ là cưỡng bức và gây hại tâm lý cho người bệnh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "손톱 관리", "def_vi": "Chăm sóc móng tay — cắt và giũa móng tay thường xuyên để tránh gây thương tích" },
+      { "term_ko": "피부 손상 예방", "def_vi": "Phòng ngừa tổn thương da — các biện pháp ngăn da bị trầy xước hoặc nhiễm trùng" }
+    ]
+  },
+  {
+    "id": 1515,
+    "intent_ko": "치매 대상자의 배설 돕기 방법으로 자립심을 지원하는 올바른 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn phương pháp hỗ trợ bài tiết đúng và khuyến khích tính tự lập cho người bệnh sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "실금 후 이동변기를 4시간마다 대주는 방식은 배설 교육 효과를 낮추고 자립성을 저해할 수 있다.",
+        "2": "변기를 차갑게 하는 것은 불편함을 유발하며, 변의 자극 방법으로 적절하지 않다.",
+        "3": "★ 뒤처리 방법을 시범 보여 스스로 하게 하면 자존감을 지키고 독립성을 기를 수 있다. 치매 초기에는 잔존 기능을 유지하도록 지원하는 것이 중요한 원칙이다.",
+        "4": "화장실 위치를 표시하는 방법으로 화분은 효과적이지 않다; 그림이나 큰 글씨 안내판이 더 적합하다.",
+        "5": "취침 전 수분을 많이 마시면 야간 배뇨 횟수가 늘어 수면 방해와 야간 낙상 위험이 생긴다."
+      },
+      "vi": {
+        "1": "Dùng bô di động sau mỗi lần tiểu không tự chủ theo chu kỳ 4 giờ làm giảm hiệu quả tập luyện và hạn chế tính tự lập.",
+        "2": "Làm lạnh bồn cầu gây khó chịu và không phải cách kích thích đại tiện phù hợp.",
+        "3": "★ Làm mẫu cách tự vệ sinh và để người bệnh tự thực hiện giúp duy trì lòng tự trọng và phát triển tính độc lập. Hỗ trợ duy trì chức năng còn lại là nguyên tắc quan trọng trong chăm sóc sa sút trí tuệ giai đoạn đầu.",
+        "4": "Dùng chậu hoa để đánh dấu vị trí nhà vệ sinh không hiệu quả; biển hiệu chữ to hoặc hình ảnh phù hợp hơn.",
+        "5": "Uống nhiều nước trước khi ngủ làm tăng số lần tiểu đêm, gây mất ngủ và nguy cơ ngã ban đêm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "자존감", "def_vi": "Lòng tự trọng — cảm giác tôn trọng và đánh giá cao bản thân" },
+      { "term_ko": "잔존 기능", "def_vi": "Chức năng còn lại — khả năng thực hiện hoạt động mà người bệnh vẫn còn có thể tự làm được" },
+      { "term_ko": "독립성 지원", "def_vi": "Hỗ trợ tính tự lập — khuyến khích và tạo điều kiện để người bệnh tự thực hiện các hoạt động trong khả năng" }
+    ]
+  },
+  {
+    "id": 1514,
+    "intent_ko": "치매 대상자의 배설 환경 조성에서 올바른 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn biện pháp tạo môi trường bài tiết đúng cho người bệnh sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "정해진 시간에 배설을 강요하면 치매 대상자에게 심리적 스트레스를 줄 수 있다.",
+        "2": "★ 화장실과 가까운 곳에 방을 배치하면 이동 거리가 짧아져 배설 실패와 낙상 위험을 줄일 수 있다. 환경 조성을 통한 가장 효과적인 배설 지원 방법이다.",
+        "3": "야간 수분 섭취를 늘리면 야간 배뇨 횟수가 많아져 수면을 방해하고 낙상 위험이 증가한다.",
+        "4": "벨트나 단추 달린 바지는 급할 때 빠르게 벗기 어려워 실금을 유발할 수 있다; 벨크로나 고무줄 바지가 적합하다.",
+        "5": "배설물이 묻었을 때 주의를 주는 것은 수치심과 불안감을 줄 수 있다."
+      },
+      "vi": {
+        "1": "Bắt buộc đi vệ sinh đúng giờ gây căng thẳng tâm lý cho người bệnh sa sút trí tuệ.",
+        "2": "★ Bố trí phòng gần nhà vệ sinh giúp rút ngắn quãng đường di chuyển, giảm nguy cơ tiểu không kịp và ngã. Đây là biện pháp hỗ trợ bài tiết hiệu quả nhất thông qua điều chỉnh môi trường sống.",
+        "3": "Tăng lượng nước uống ban đêm làm tăng số lần tiểu đêm, gây mất ngủ và tăng nguy cơ ngã.",
+        "4": "Quần có dây lưng hoặc cúc khó cởi nhanh khi cần thiết, dễ dẫn đến tiểu không kịp; nên dùng quần thun hoặc dán velcro.",
+        "5": "Nhắc nhở khi quần có dính chất thải gây xấu hổ và lo lắng cho người bệnh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "배설 환경 조성", "def_vi": "Tạo môi trường bài tiết — bố trí không gian sống sao cho thuận tiện và an toàn cho việc đi vệ sinh" },
+      { "term_ko": "야간 배뇨", "def_vi": "Tiểu đêm (đái đêm) — tình trạng phải thức dậy để đi tiểu nhiều lần trong đêm" }
+    ]
+  },
+  {
+    "id": 1513,
+    "intent_ko": "대상자가 배변 의사 표현을 행동으로 나타낼 때 즉각 대처 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn cách xử lý ngay khi người bệnh biểu hiện hành vi cần đi vệ sinh",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 바지 뒷부분을 잡고 안절부절 못하며 구석을 찾는 행동은 배변 의사 표현의 전형적인 비언어적 신호이다. 즉시 화장실로 데리고 가는 것이 가장 적절한 대처이다.",
+        "2": "옷 갈아입히기는 배변 욕구를 해소하지 못한다.",
+        "3": "음식 제공은 배변 욕구와 무관하다.",
+        "4": "산책은 긴급한 배변 욕구가 있는 상황에 부적절하다.",
+        "5": "실내 온도 변화는 배변 욕구 해소와 관계없다."
+      },
+      "vi": {
+        "1": "★ Cầm vào phần sau quần, bồn chồn và tìm góc khuất là dấu hiệu phi ngôn ngữ điển hình của nhu cầu đi vệ sinh. Dẫn ngay đến nhà vệ sinh là phản ứng xử lý phù hợp nhất.",
+        "2": "Thay quần áo không giải quyết được nhu cầu đi vệ sinh.",
+        "3": "Cung cấp thức ăn không liên quan đến nhu cầu đi vệ sinh.",
+        "4": "Đi dạo không phù hợp khi có nhu cầu đi vệ sinh khẩn cấp.",
+        "5": "Thay đổi nhiệt độ phòng không liên quan đến việc giải quyết nhu cầu đi vệ sinh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "비언어적 신호", "def_vi": "Tín hiệu phi ngôn ngữ — cách biểu đạt nhu cầu qua hành động, cử chỉ thay vì lời nói" },
+      { "term_ko": "안절부절 못하다", "def_vi": "Bồn chồn, bất an — trạng thái lo lắng, không yên, cử động liên tục" }
+    ]
+  },
+  {
+    "id": 1512,
+    "intent_ko": "치매 대상자의 원인 불명 체중감소 시 적절한 영양 보충 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn phương pháp bổ sung dinh dưỡng phù hợp khi người bệnh sa sút trí tuệ giảm cân không rõ nguyên nhân",
+    "choice_explanations": {
+      "ko": {
+        "1": "기름진 음식은 소화 부담을 주며 영양 불균형을 초래할 수 있다.",
+        "2": "음식을 수시로 제공하는 것은 식욕 증진에 도움이 되지만, 체중 감소 대응을 위한 가장 효과적인 방법은 아니다.",
+        "3": "★ 고열량의 액체음식은 삼키기 쉽고 칼로리 밀도가 높아 식사량이 적은 치매 대상자의 체중 증가에 효과적이다. 씹기 어려운 경우에도 영양 공급이 가능하다.",
+        "4": "경관영양은 스스로 먹을 수 없는 극단적인 경우에 시행하며, 반드시 의료진의 판단이 필요하다.",
+        "5": "식사량을 두 배로 강제 증량하는 것은 소화 장애와 거부 반응을 유발할 수 있다."
+      },
+      "vi": {
+        "1": "Thức ăn nhiều dầu mỡ gây gánh nặng tiêu hóa và mất cân bằng dinh dưỡng.",
+        "2": "Cung cấp thức ăn thường xuyên hỗ trợ kích thích ăn uống nhưng không phải biện pháp hiệu quả nhất để tăng cân.",
+        "3": "★ Thức ăn lỏng có hàm lượng calo cao dễ nuốt và cung cấp nhiều năng lượng, hiệu quả để tăng cân cho người bệnh sa sút trí tuệ ăn ít. Có thể cung cấp dinh dưỡng ngay cả khi người bệnh khó nhai.",
+        "4": "Nuôi ăn qua ống thông (đặt sonde) chỉ dùng trong trường hợp cực kỳ nặng khi không thể tự ăn, cần chỉ định y tế.",
+        "5": "Tăng khẩu phần ăn gấp đôi cưỡng bức có thể gây rối loạn tiêu hóa và phản ứng từ chối."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "고열량 액체음식", "def_vi": "Thức ăn lỏng giàu calo — thực phẩm ở dạng lỏng hoặc sệt có hàm lượng năng lượng cao" },
+      { "term_ko": "경관영양", "def_vi": "Nuôi ăn qua ống thông (管腔營養) — cung cấp dinh dưỡng qua ống đưa vào dạ dày hoặc ruột" },
+      { "term_ko": "체중감소", "def_vi": "Giảm cân không chủ ý — sụt cân xảy ra mà không có chủ đích, thường là dấu hiệu bệnh lý" }
+    ]
+  },
+  {
+    "id": 1511,
+    "intent_ko": "치매 대상자가 식사를 하지 않아 체중이 감소할 때 첫 번째로 해야 할 대처를 고르는 문제",
+    "intent_vi": "Câu hỏi chọn bước xử lý đầu tiên khi người bệnh sa sút trí tuệ không ăn và sụt cân",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 식사 거부와 체중 감소의 원인은 다양하다(치아 통증, 우울증, 약물 부작용, 삼킴 장애 등). 의료진에게 알리고 원인을 먼저 파악하는 것이 가장 중요한 첫 번째 대처이다.",
+        "2": "원인 파악 없이 식사량을 두 배로 늘리는 것은 효과적이지 않다.",
+        "3": "걸쭉한 액체음식은 삼킴 장애 시 도움이 되지만, 원인 파악이 선행되어야 한다.",
+        "4": "고지방 음식이 반드시 체중 증가에 도움이 되는 것은 아니며 영양 균형을 해칠 수 있다.",
+        "5": "큰 그릇에 음식을 한꺼번에 담으면 시각적 과부하로 식욕을 떨어뜨릴 수 있다."
+      },
+      "vi": {
+        "1": "★ Nguyên nhân từ chối ăn và sụt cân rất đa dạng (đau răng, trầm cảm, tác dụng phụ thuốc, rối loạn nuốt...). Báo cáo cho nhân viên y tế và xác định nguyên nhân trước là bước xử lý quan trọng nhất.",
+        "2": "Tăng gấp đôi khẩu phần mà chưa biết nguyên nhân không đem lại hiệu quả.",
+        "3": "Thức ăn lỏng sệt hữu ích khi có rối loạn nuốt, nhưng phải xác định nguyên nhân trước.",
+        "4": "Thức ăn nhiều chất béo không nhất thiết giúp tăng cân và có thể làm mất cân bằng dinh dưỡng.",
+        "5": "Đựng nhiều thức ăn vào bát lớn có thể gây quá tải thị giác và làm giảm cảm giác thèm ăn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "의료진 보고", "def_vi": "Báo cáo cho nhân viên y tế — thông báo tình trạng người bệnh cho y tá, bác sĩ để được đánh giá và điều trị" },
+      { "term_ko": "삼킴 장애", "def_vi": "Rối loạn nuốt (dysphagia) — khó khăn trong việc nuốt thức ăn hoặc chất lỏng, thường gặp ở người bệnh sa sút trí tuệ" }
+    ]
+  },
+  {
+    "id": 1510,
+    "intent_ko": "치매 대상자의 식사 보조 방법 중 안전과 관련된 올바른 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn phương pháp hỗ trợ bữa ăn đúng liên quan đến an toàn cho người bệnh sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "식탁에 앉히고 음식을 차려주는 것은 기본이지만 이것만으로 충분하지 않다.",
+        "2": "여러 가지 음식을 한꺼번에 내놓으면 선택의 어려움과 혼란을 유발한다.",
+        "3": "유리컵은 깨질 위험이 있어 치매 대상자에게는 플라스틱 컵이 더 안전하다.",
+        "4": "★ 생선 가시는 질식 사고의 주요 원인이다. 미리 가시를 발라서 제공하면 흡인·질식 위험을 예방할 수 있어 치매 대상자의 식사 안전을 위한 올바른 방법이다.",
+        "5": "경쾌한 음악은 식사 분위기에 도움이 될 수 있으나, 직접적인 식사 안전 보조와는 거리가 있다."
+      },
+      "vi": {
+        "1": "Cho ngồi vào bàn và bày thức ăn là điều cơ bản nhưng chưa đủ.",
+        "2": "Bày nhiều món cùng lúc gây khó lựa chọn và nhầm lẫn.",
+        "3": "Cốc thủy tinh dễ vỡ; cốc nhựa an toàn hơn cho người bệnh sa sút trí tuệ.",
+        "4": "★ Xương cá là nguyên nhân phổ biến gây nghẹt thở. Gỡ xương trước khi phục vụ giúp phòng ngừa nguy cơ hít sặc và nghẹt thở — phương pháp đúng để đảm bảo an toàn bữa ăn cho người bệnh sa sút trí tuệ.",
+        "5": "Nhạc vui tươi có thể tạo không khí bữa ăn tốt hơn nhưng không liên quan trực tiếp đến hỗ trợ an toàn ăn uống."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "질식 예방", "def_vi": "Phòng ngừa nghẹt thở — các biện pháp giảm thiểu nguy cơ tắc đường thở trong khi ăn" },
+      { "term_ko": "생선 가시 제거", "def_vi": "Gỡ xương cá — loại bỏ xương cá trước khi phục vụ để ngăn nguy cơ hóc xương" }
+    ]
+  },
+  {
+    "id": 1509,
+    "intent_ko": "치매 대상자의 식사 제공 시 혼란 방지 및 집중력을 높이는 올바른 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn phương pháp cung cấp bữa ăn đúng để hạn chế nhầm lẫn và tăng tập trung cho người bệnh sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "앞치마보다 턱받이가 더 효과적이라는 설명은 참고 정보이나, 이 문제의 핵심 정답은 아니다.",
+        "2": "음식을 큼직하게 자르는 것은 씹기 어렵고 질식 위험을 높인다.",
+        "3": "가벼운 도구 선택은 좋지만 상황에 따라 무게감 있는 숟가락이 더 유리할 수도 있다.",
+        "4": "★ 한 번에 한 가지 음식을 제공하고 다 먹은 후 다음 음식을 내는 방식은 치매 대상자의 집중력을 유지하고 과도한 자극에 의한 혼란을 예방하는 올바른 방법이다.",
+        "5": "식사 온도는 요양보호사가 미리 확인해야 하며, 감각 저하가 있는 치매 대상자에게 직접 확인을 맡기면 화상 위험이 있다."
+      },
+      "vi": {
+        "1": "Yếm hiệu quả hơn tạp dề là thông tin tham khảo, nhưng không phải đáp án cốt lõi của câu này.",
+        "2": "Cắt thức ăn thành miếng lớn khó nhai và tăng nguy cơ nghẹt thở.",
+        "3": "Chọn dụng cụ nhẹ thường tốt, nhưng đôi khi thìa có trọng lượng vừa phải lại thuận tiện hơn.",
+        "4": "★ Phục vụ từng món một, sau khi ăn xong mới đưa món tiếp theo giúp duy trì sự tập trung và ngăn nhầm lẫn do kích thích quá mức — đây là phương pháp cung cấp bữa ăn đúng cho người bệnh sa sút trí tuệ.",
+        "5": "Nhiệt độ thức ăn phải được người chăm sóc kiểm tra trước; để người bệnh tự kiểm tra có nguy cơ bỏng do giảm cảm giác."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "턱받이", "def_vi": "Yếm ăn — miếng vải hoặc nhựa đeo trước ngực để ngăn thức ăn rơi vào quần áo" },
+      { "term_ko": "순차적 식사 제공", "def_vi": "Phục vụ ăn uống tuần tự — cung cấp từng món một thay vì bày tất cả cùng lúc, giúp giảm kích thích và duy trì tập trung" }
+    ]
+  },
+  {
+    "id": 1508,
+    "intent_ko": "치매 대상자의 식사 돕기에서 음료 섭취를 안전하게 돕는 올바른 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn phương pháp hỗ trợ uống nước an toàn đúng cho người bệnh sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "사발보다 접시가 반드시 더 적합한 것은 아니며, 상황에 따라 다르다.",
+        "2": "배고픔 호소 때마다 음식을 제공하는 것은 이미 먹은 것을 잊는 치매 특성상 과식으로 이어질 수 있어 주의가 필요하다.",
+        "3": "사레가 자주 걸리면 묽은 액체 대신 오히려 걸쭉하게 농도를 높인 음식이 흡인 예방에 더 적합하다.",
+        "4": "색깔이 있는 유리 그릇은 내용물 확인이 어렵고 깨질 위험이 있다.",
+        "5": "★ 빨대와 플라스틱 덮개가 있는 물컵은 치매 대상자가 음료를 쏟거나 사레 들리지 않고 안전하게 마실 수 있도록 돕는 가장 적합한 방법이다."
+      },
+      "vi": {
+        "1": "Đĩa không nhất thiết phù hợp hơn bát trong mọi tình huống.",
+        "2": "Cung cấp thức ăn mỗi khi người bệnh nói đói (vì quên đã ăn) có thể dẫn đến ăn quá nhiều; cần thận trọng.",
+        "3": "Khi hay bị sặc, nên dùng thức ăn đặc sệt hơn thay vì lỏng hơn để ngăn hít sặc.",
+        "4": "Bát thủy tinh có màu khó nhìn rõ nội dung và dễ vỡ.",
+        "5": "★ Cốc uống nước có nắp nhựa và ống hút giúp người bệnh sa sút trí tuệ uống mà không bị đổ hoặc sặc — phương pháp phù hợp và an toàn nhất."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "사레", "def_vi": "Hít sặc (bị sặc) — tình trạng thức ăn hoặc nước uống đi vào đường hô hấp thay vì thực quản" },
+      { "term_ko": "흡인 예방", "def_vi": "Phòng ngừa hít sặc — các biện pháp ngăn chất lỏng hoặc thức ăn vào phổi khi nuốt" }
+    ]
+  },
+  {
+    "id": 1507,
+    "intent_ko": "치매 대상자의 식사 시 안정감과 집중력을 높이는 올바른 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn phương pháp tăng cảm giác ổn định và tập trung khi ăn đúng cho người bệnh sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "TV를 크게 틀면 주의가 분산되어 식사 집중을 방해한다.",
+        "2": "식사 장소를 자주 바꾸면 혼란과 불안을 유발한다; 익숙한 장소가 바람직하다.",
+        "3": "식사 시간을 불규칙하게 하면 일상 리듬이 깨져 치매 증상이 악화될 수 있다.",
+        "4": "★ 무게감 있는 숟가락은 손 떨림이 있는 대상자에게 안정감을 주어 스스로 식사를 할 수 있도록 돕는다. 고유감각 피드백을 통해 식사 집중력도 높일 수 있다.",
+        "5": "모든 음식을 믹서로 갈아 제공하면 씹는 행위와 음식의 다양성을 박탈하여 삶의 질을 낮출 수 있다."
+      },
+      "vi": {
+        "1": "Bật TV to làm phân tán sự chú ý và cản trở việc tập trung ăn.",
+        "2": "Thay đổi chỗ ăn thường xuyên gây nhầm lẫn và lo lắng; nơi quen thuộc là tốt nhất.",
+        "3": "Không có giờ ăn cố định làm rối nhịp sinh hoạt hàng ngày, khiến triệu chứng sa sút trí tuệ nặng thêm.",
+        "4": "★ Thìa có trọng lượng vừa phải giúp ổn định tay cho người bị run tay, hỗ trợ tự ăn. Phản hồi cảm giác bản thể (proprioceptive feedback) còn giúp tăng tập trung trong bữa ăn.",
+        "5": "Xay nhuyễn tất cả thức ăn tước bỏ hành động nhai và sự đa dạng bữa ăn, làm giảm chất lượng cuộc sống."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "무게감 있는 숟가락", "def_vi": "Thìa có trọng lượng — thìa được thiết kế nặng hơn bình thường để giúp người có tay run ăn ổn định hơn" },
+      { "term_ko": "일상 리듬", "def_vi": "Nhịp sinh hoạt hàng ngày — thói quen sinh hoạt đều đặn theo giờ giúp ổn định tâm lý cho người bệnh sa sút trí tuệ" }
+    ]
+  },
+  {
+    "id": 1506,
+    "intent_ko": "치매 대상자가 음식으로 장난칠 때 요양보호사의 올바른 대처를 고르는 문제",
+    "intent_vi": "Câu hỏi chọn phản ứng đúng của nhân viên chăm sóc khi người bệnh sa sút trí tuệ nghịch thức ăn",
+    "choice_explanations": {
+      "ko": {
+        "1": "금식은 영양 공급을 끊어 오히려 불안감을 증가시키므로 부적절하다.",
+        "2": "야단치는 것은 치매 대상자의 정서를 상하게 하고 신뢰 관계를 훼손한다.",
+        "3": "여러 가지 음식을 내놓으면 혼란이 가중된다.",
+        "4": "방에 가두는 것은 인권 침해이며 절대 해서는 안 된다.",
+        "5": "★ 비닐 식탁보를 깔아두면 대상자가 음식을 손으로 만지거나 흘려도 청소가 쉽고, 행동을 제지하지 않으면서도 위생적으로 관리할 수 있다. 행동을 수용하되 환경을 조정하는 적절한 방법이다."
+      },
+      "vi": {
+        "1": "Bắt nhịn ăn cắt đứt nguồn dinh dưỡng và làm tăng lo lắng, không phù hợp.",
+        "2": "La mắng làm tổn thương tình cảm người bệnh sa sút trí tuệ và phá vỡ mối tin tưởng.",
+        "3": "Bày nhiều món làm tăng thêm sự nhầm lẫn.",
+        "4": "Nhốt vào phòng là vi phạm nhân quyền, tuyệt đối không được làm.",
+        "5": "★ Trải khăn trải bàn bằng nhựa giúp dễ lau chùi khi người bệnh nghịch hoặc đổ thức ăn, đồng thời không cần ngăn cấm hành vi. Đây là cách điều chỉnh môi trường để chấp nhận hành vi trong khi vẫn giữ vệ sinh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "환경 조정", "def_vi": "Điều chỉnh môi trường — thay đổi môi trường xung quanh thay vì kiểm soát hành vi, để giảm thiểu vấn đề và tăng an toàn" },
+      { "term_ko": "인권 침해", "def_vi": "Vi phạm nhân quyền — hành động xâm phạm các quyền cơ bản và phẩm giá của con người" }
+    ]
+  },
+  {
+    "id": 1505,
+    "intent_ko": "치매 대상자의 식사 돕기에서 사레 예방을 위한 올바른 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn phương pháp phòng ngừa sặc đúng khi hỗ trợ bữa ăn cho người bệnh sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "졸릴 때는 식사를 미루는 것이 원칙이며, 억지로 천천히 제공하는 것은 흡인 위험을 높인다.",
+        "2": "작고 딱딱한 음식은 질식 사고의 위험이 크므로 치매 대상자에게 부적절하다.",
+        "3": "소금·간장을 스스로 조절하게 하면 과도한 나트륨 섭취로 건강을 해칠 수 있다.",
+        "4": "★ 사레가 자주 걸리는 대상자에게는 묽은 액체보다 걸쭉한(점도를 높인) 액체음식을 제공하는 것이 흡인·사레 예방에 효과적이다. 점도가 높을수록 목을 넘어가는 속도가 느려져 흡인 위험이 줄어든다.",
+        "5": "투명한 유리 제품은 깨질 위험이 있어 치매 대상자에게 적합하지 않다."
+      },
+      "vi": {
+        "1": "Khi buồn ngủ nên hoãn bữa ăn; cưỡng ép ăn chậm làm tăng nguy cơ hít sặc.",
+        "2": "Thức ăn nhỏ và cứng có nguy cơ nghẹt thở cao, không phù hợp với người bệnh sa sút trí tuệ.",
+        "3": "Để tự điều chỉnh muối và nước mắm có thể dẫn đến ăn quá nhiều natri, hại sức khỏe.",
+        "4": "★ Với người hay bị sặc, cung cấp thức ăn lỏng sệt (độ đặc cao) thay vì lỏng hoàn toàn giúp phòng ngừa hít sặc. Độ sệt cao làm chậm tốc độ nuốt, giảm nguy cơ thức ăn vào đường thở.",
+        "5": "Dụng cụ thủy tinh trong suốt dễ vỡ, không phù hợp với người bệnh sa sút trí tuệ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "사레 (흡인)", "def_vi": "Sặc / hít sặc — thức ăn hoặc nước đi vào đường thở thay vì thực quản" },
+      { "term_ko": "걸쭉한 음식", "def_vi": "Thức ăn sệt — thức ăn được làm đặc hơn để giảm tốc độ nuốt và ngăn hít sặc" },
+      { "term_ko": "점도 조절", "def_vi": "Điều chỉnh độ sệt — tăng hoặc giảm độ đặc của thức ăn/nước uống phù hợp với khả năng nuốt của người bệnh" }
+    ]
+  },
+  {
+    "id": 1504,
+    "intent_ko": "씹는 행위를 잊은 치매 대상자에게 고기를 제공하는 올바른 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn cách cung cấp thịt đúng cho người bệnh sa sút trí tuệ quên cách nhai",
+    "choice_explanations": {
+      "ko": {
+        "1": "굵게 썰면 씹기 어려워 질식 위험이 있다.",
+        "2": "푹 삶으면 부드러워지지만 찢어 먹기 여전히 어려울 수 있다.",
+        "3": "★ 씹는 행위를 잊어버린 대상자에게는 고기를 믹서로 갈아서 제공하는 것이 가장 안전하다. 씹지 않아도 삼킬 수 있어 질식 위험을 최소화하고 영양 공급을 원활하게 한다.",
+        "4": "구운 고기는 수분이 빠져 딱딱해지므로 씹기 어려운 대상자에게 위험하다.",
+        "5": "잘게 썰어도 씹어야 하므로, 씹는 기능이 없는 대상자에게는 완전히 갈아주는 것이 더 안전하다."
+      },
+      "vi": {
+        "1": "Cắt thịt thành miếng to khó nhai, có nguy cơ nghẹt thở.",
+        "2": "Luộc kỹ giúp thịt mềm hơn nhưng vẫn có thể khó nuốt nếu không nhai.",
+        "3": "★ Với người quên cách nhai, xay nhuyễn thịt bằng máy xay là an toàn nhất. Có thể nuốt mà không cần nhai, giảm tối đa nguy cơ nghẹt thở và đảm bảo cung cấp đủ dinh dưỡng.",
+        "4": "Thịt nướng mất nước và cứng, nguy hiểm cho người không nhai được.",
+        "5": "Cắt nhỏ vẫn cần phải nhai; với người mất chức năng nhai, xay nhuyễn hoàn toàn an toàn hơn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "연하 기능", "def_vi": "Chức năng nuốt (연하기능) — khả năng nuốt thức ăn và chất lỏng một cách an toàn" },
+      { "term_ko": "저작 기능 저하", "def_vi": "Suy giảm chức năng nhai — mất hoặc giảm khả năng nhai thức ăn, thường gặp ở giai đoạn nặng của sa sút trí tuệ" }
+    ]
+  },
+  {
+    "id": 1503,
+    "intent_ko": "치매 대상자의 식사 보조에서 의치 관련 올바른 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn phương pháp hỗ trợ bữa ăn đúng liên quan đến răng giả cho người bệnh sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "손으로 음식을 먹을 때 턱받이를 해주는 것은 유용하지만, 손 위생과 피부 관리도 병행해야 한다.",
+        "2": "★ 의치가 느슨하면 식사 중 이탈하여 질식 위험이 생긴다. 느슨한 의치를 빼고 식사하는 것이 안전하며, 이후 의치 조정이 필요하다.",
+        "3": "알사탕과 떡은 딱딱하거나 끈적여 치매 대상자에게 질식 위험이 크다.",
+        "4": "처방 약물을 음식에 섞으면 약의 흡수 효율이 달라지거나 맛 변화로 식욕을 떨어뜨릴 수 있다; 반드시 의료진 지시에 따라야 한다.",
+        "5": "영상 시청은 식사 집중을 방해할 수 있다."
+      },
+      "vi": {
+        "1": "Đeo yếm khi ăn bằng tay hữu ích, nhưng cần đồng thời chú ý vệ sinh tay và chăm sóc da.",
+        "2": "★ Răng giả lỏng có thể bị bật ra trong khi ăn và gây nghẹt thở. Tháo răng giả lỏng trước bữa ăn là an toàn; sau đó cần chỉnh lại răng giả.",
+        "3": "Kẹo cứng và bánh gạo (tteok) dễ gây nghẹt thở do cứng hoặc dính, không phù hợp với người bệnh sa sút trí tuệ.",
+        "4": "Trộn thuốc được kê vào thức ăn có thể ảnh hưởng đến hấp thu thuốc hoặc làm giảm cảm giác thèm ăn do thay đổi mùi vị; phải theo hướng dẫn của nhân viên y tế.",
+        "5": "Xem video trong bữa ăn có thể làm phân tán sự chú ý."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "의치 이탈", "def_vi": "Răng giả bị bật ra — tình trạng răng giả trở nên lỏng và có thể bật ra ngoài, gây nguy cơ nghẹt thở" },
+      { "term_ko": "의치 조정", "def_vi": "Chỉnh răng giả — điều chỉnh lại răng giả để vừa khít, thường do nha sĩ thực hiện" }
+    ]
+  },
+  {
+    "id": 1502,
+    "intent_ko": "치매 대상자의 식사 돕기 기본원칙 중 흘림 방지에 관한 올바른 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn nguyên tắc cơ bản đúng về phòng đổ thức ăn khi hỗ trợ bữa ăn cho người bệnh sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "혼자 먹을 수 있더라도 자리를 완전히 비켜두는 것은 안전 감독이 없어 위험할 수 있다.",
+        "2": "사레가 잦을 때 수분 없는 음식을 제공하면 탈수와 구강 건조가 악화되어 잘못된 방법이다.",
+        "3": "초조한 상태에서 식사를 강행하면 사레나 흡인 위험이 증가한다; 상태가 안정된 후 제공해야 한다.",
+        "4": "★ 접시보다 사발(높은 테두리)을 사용하면 음식이 밖으로 흘러내리는 것을 방지하고 숟가락으로 음식을 담기 쉬워 치매 대상자의 식사 보조에 효과적이다.",
+        "5": "음식을 한꺼번에 섞어 제공하면 음식의 구별이 어렵고 식욕을 저하시킨다."
+      },
+      "vi": {
+        "1": "Dù người bệnh có thể tự ăn, rời chỗ hoàn toàn thiếu giám sát an toàn có thể nguy hiểm.",
+        "2": "Khi hay bị sặc, cho ăn thức ăn không có độ ẩm làm trầm trọng thêm tình trạng mất nước và khô miệng — sai.",
+        "3": "Buộc ăn khi đang bồn chồn làm tăng nguy cơ sặc và hít sặc; cần đợi khi người bệnh ổn định.",
+        "4": "★ Dùng bát (có thành cao) thay vì đĩa giúp ngăn thức ăn tràn ra ngoài và dễ xúc hơn bằng thìa — phương pháp hỗ trợ bữa ăn hiệu quả cho người bệnh sa sút trí tuệ.",
+        "5": "Trộn lẫn tất cả thức ăn làm khó phân biệt món ăn và giảm cảm giác thèm ăn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "사발 사용", "def_vi": "Dùng bát — sử dụng bát có thành cao thay vì đĩa phẳng để ngăn thức ăn tràn ra và dễ xúc hơn" },
+      { "term_ko": "흘림 방지", "def_vi": "Ngăn đổ thức ăn — các biện pháp và dụng cụ giúp hạn chế tình trạng thức ăn bị rơi vãi trong khi ăn" }
+    ]
+  },
+  {
+    "id": 1501,
+    "intent_ko": "의치를 사용하는 치매 대상자가 식사 중 가장 주의해야 할 위험 요소를 고르는 문제",
+    "intent_vi": "Câu hỏi chọn yếu tố nguy hiểm cần cẩn thận nhất trong bữa ăn đối với người bệnh sa sút trí tuệ dùng răng giả",
+    "choice_explanations": {
+      "ko": {
+        "1": "과식은 소화 문제를 유발하나, 즉각적 생명 위협은 아니다.",
+        "2": "구토는 불편하지만 즉각적인 생명 위험 요소는 아니다.",
+        "3": "★ 의치를 사용하는 치매 대상자는 의치가 이탈하거나 음식물이 기도를 막을 경우 질식 위험이 매우 크다. 질식은 즉각적인 생명을 위협하는 응급 상황으로, 가장 주의해야 할 위험 요소이다.",
+        "4": "기침은 기도 보호 반응으로 대부분 즉각적인 위험은 아니다.",
+        "5": "설사는 소화 관련 문제이며 당장 위험한 상황은 아니다."
+      },
+      "vi": {
+        "1": "Ăn quá nhiều gây vấn đề tiêu hóa nhưng không phải mối đe dọa tính mạng tức thì.",
+        "2": "Nôn gây khó chịu nhưng thường không nguy hiểm tính mạng ngay lập tức.",
+        "3": "★ Người bệnh sa sút trí tuệ dùng răng giả có nguy cơ nghẹt thở rất cao nếu răng giả bị bật ra hoặc thức ăn chặn đường thở. Nghẹt thở là tình huống cấp cứu đe dọa tính mạng ngay lập tức — đây là yếu tố cần cẩn thận nhất.",
+        "4": "Ho là phản xạ bảo vệ đường thở, thường không nguy hiểm ngay lập tức.",
+        "5": "Tiêu chảy là vấn đề tiêu hóa và không phải tình trạng nguy hiểm tức thì."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "질식", "def_vi": "Nghẹt thở (窒息) — tình trạng đường thở bị tắc hoàn toàn, ngăn không khí vào phổi, đe dọa tính mạng" },
+      { "term_ko": "의치 이탈", "def_vi": "Răng giả bị bật ra — răng giả lỏng và rơi ra khỏi miệng, có thể gây tắc đường thở" },
+      { "term_ko": "응급 상황", "def_vi": "Tình huống cấp cứu — tình trạng đột ngột nguy hiểm đến tính mạng cần xử lý ngay lập tức" }
+    ]
+  },
+  {
+    "id": 1500,
+    "intent_ko": "치매 대상자가 식사를 거부할 때 원인 파악을 위한 올바른 첫 번째 대처를 고르는 문제",
+    "intent_vi": "Câu hỏi chọn bước xử lý đầu tiên đúng khi người bệnh sa sút trí tuệ từ chối ăn",
+    "choice_explanations": {
+      "ko": {
+        "1": "식사 이유 설명은 인지 저하가 있는 치매 대상자에게는 효과가 제한적이다.",
+        "2": "음식 요청 때까지 금식시키는 것은 영양 결핍과 건강 악화를 초래하므로 절대 안 된다.",
+        "3": "모든 음식을 섞어 갈아주면 식사 거부의 근본 원인을 해결하지 못하며, 대상자의 음식 선호를 무시하는 것이다.",
+        "4": "직접 식사 준비를 시키는 것은 오히려 인지적 부담을 줄 수 있다.",
+        "5": "★ 치매 대상자의 식사 거부는 약물 부작용(구역감, 식욕 감소 등)이 원인일 수 있다. 복용 중인 약의 부작용 여부를 확인하는 것이 식사 거부의 원인 파악을 위한 중요한 첫 단계이다."
+      },
+      "vi": {
+        "1": "Giải thích lý do cần ăn ít hiệu quả với người bệnh sa sút trí tuệ có suy giảm nhận thức.",
+        "2": "Bắt nhịn ăn đến khi tự yêu cầu sẽ gây thiếu dinh dưỡng và suy giảm sức khỏe — tuyệt đối không làm.",
+        "3": "Xay nhuyễn tất cả thức ăn không giải quyết nguyên nhân gốc rễ từ chối ăn và bỏ qua sở thích của người bệnh.",
+        "4": "Bắt tự chuẩn bị bữa ăn có thể gây thêm áp lực nhận thức.",
+        "5": "★ Người bệnh sa sút trí tuệ từ chối ăn có thể do tác dụng phụ của thuốc (buồn nôn, chán ăn...). Kiểm tra tác dụng phụ của thuốc đang dùng là bước quan trọng đầu tiên để tìm ra nguyên nhân."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "약물 부작용", "def_vi": "Tác dụng phụ của thuốc — các phản ứng không mong muốn xảy ra khi dùng thuốc, ví dụ buồn nôn, chán ăn" },
+      { "term_ko": "식사 거부", "def_vi": "Từ chối ăn — hành vi không chịu ăn, có thể do nhiều nguyên nhân khác nhau cần được đánh giá" }
+    ]
+  },
+  {
+    "id": 1499,
+    "intent_ko": "치매 대상자에게 일상생활 사고가 많이 발생하는 근본 원인을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn nguyên nhân cơ bản khiến người bệnh sa sút trí tuệ hay gặp tai nạn trong sinh hoạt hàng ngày",
+    "choice_explanations": {
+      "ko": {
+        "1": "치매 대상자는 상황 분석과 평가 능력이 저하되므로 이 설명은 반대로 된 서술이다.",
+        "2": "★ 치매의 핵심 증상인 기억력 저하로 인해 위험했던 경험이나 주의사항을 금방 잊어버린다. 이는 같은 사고가 반복되는 주요 원인이 된다.",
+        "3": "치매 대상자는 병으로 어려워진 일을 쉽게 포기하지 않고 오히려 무리하게 시도하다 사고가 나기도 한다.",
+        "4": "치매 대상자는 새로운 일을 받아들이는 데 어려움이 있어 적응이 느리다.",
+        "5": "치매 대상자는 갑작스러운 변화에 대처하기 매우 어렵다."
+      },
+      "vi": {
+        "1": "Người bệnh sa sút trí tuệ bị suy giảm khả năng phân tích và đánh giá tình huống — mô tả này ngược lại với thực tế.",
+        "2": "★ Suy giảm trí nhớ — triệu chứng cốt lõi của sa sút trí tuệ — khiến người bệnh nhanh chóng quên đi những nguy hiểm đã trải qua hoặc những điều cần chú ý. Đây là nguyên nhân chính dẫn đến tai nạn lặp đi lặp lại.",
+        "3": "Người bệnh sa sút trí tuệ đôi khi vẫn cố gắng làm những việc đã vượt quá khả năng và gặp tai nạn.",
+        "4": "Người bệnh sa sút trí tuệ gặp khó khăn trong việc thích nghi với điều mới, thích ứng chậm.",
+        "5": "Người bệnh sa sút trí tuệ rất khó đối phó với những thay đổi đột ngột."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "기억력 저하", "def_vi": "Suy giảm trí nhớ — giảm khả năng ghi nhớ và hồi tưởng thông tin, triệu chứng chính của sa sút trí tuệ" },
+      { "term_ko": "일상생활 사고", "def_vi": "Tai nạn trong sinh hoạt hàng ngày — các sự cố xảy ra trong các hoạt động thường ngày như nấu ăn, di chuyển, vệ sinh cá nhân" }
+    ]
+  }
+]

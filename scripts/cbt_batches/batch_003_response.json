@@ -1,0 +1,774 @@
+[
+  {
+    "id": 1680,
+    "intent_ko": "감염 예방 원칙을 올바르게 준수한 행동을 고르는 문제",
+    "intent_vi": "Chọn hành động tuân thủ đúng nguyên tắc phòng ngừa lây nhiễm",
+    "choice_explanations": {
+      "ko": {
+        "1": "휴지는 세균을 완전히 제거하지 못하므로 손은 반드시 물과 비누로 세척한 후 장갑을 착용해야 합니다.",
+        "2": "배설물에는 다량의 병원균이 있으므로 맨손 접촉은 감염 예방 원칙을 명백히 위반한 행동입니다.",
+        "3": "★ 사용한 장갑은 이미 오염되어 있으므로, 그 상태로 깨끗한 물건을 만지지 않는 것은 교차 오염을 방지하는 올바른 감염 예방 행동입니다.",
+        "4": "혈액이 몸에 닿으면 즉시 해당 부위를 흐르는 물로 씻고 적절한 처치를 해야 하며, 업무 종료 후까지 방치하면 안 됩니다.",
+        "5": "분비물이 튈 우려가 있는 경우 장갑 외에 마스크, 보안경, 방수가운 등 추가적인 개인보호장구를 착용해야 합니다."
+      },
+      "vi": {
+        "1": "Khăn giấy không loại bỏ được vi khuẩn hoàn toàn — tay phải được rửa bằng nước và xà phòng trước khi đeo găng.",
+        "2": "Chất thải chứa nhiều mầm bệnh; tiếp xúc bằng tay trần là vi phạm rõ ràng nguyên tắc phòng ngừa lây nhiễm.",
+        "3": "★ Găng tay đã sử dụng là găng bị ô nhiễm. Không chạm vào đồ vật sạch trong khi đang đeo găng bẩn giúp ngăn lây chéo — đây là hành động phòng ngừa lây nhiễm đúng.",
+        "4": "Khi máu dính vào cơ thể phải rửa ngay dưới vòi nước và xử lý kịp thời; không được để đến hết ca làm việc mới xử lý.",
+        "5": "Khi có nguy cơ bắn chất tiết, ngoài găng tay còn phải mặc thêm khẩu trang, kính bảo hộ, áo choàng chống thấm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "교차 오염", "def_vi": "Lây nhiễm chéo — vi khuẩn từ vật bẩn truyền sang vật sạch qua tay hoặc dụng cụ" },
+      { "term_ko": "개인보호장구", "def_vi": "Trang bị bảo hộ cá nhân (găng tay, khẩu trang, kính, áo choàng)" },
+      { "term_ko": "분비물", "def_vi": "Chất tiết — dịch tiết ra từ cơ thể (đờm, mủ, v.v.)" }
+    ]
+  },
+  {
+    "id": 1679,
+    "intent_ko": "감염성 질환 대상자를 돌볼 때 올바른 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp chăm sóc đúng cho người bệnh truyền nhiễm",
+    "choice_explanations": {
+      "ko": {
+        "1": "젖은 수건은 세균이 번식하기 쉬우므로 반복 사용하지 않아야 합니다.",
+        "2": "오염된 장갑은 재사용하면 오염물질이 남아 감염을 유발할 수 있으므로 반드시 폐기해야 합니다.",
+        "3": "배설물을 처리할 때는 마스크만으로는 불충분하며, 장갑 등 추가 보호장구가 반드시 필요합니다.",
+        "4": "사용한 장갑 상태로 다른 업무를 보면 교차 오염이 발생합니다. 업무 후 반드시 장갑을 교체해야 합니다.",
+        "5": "★ 감염성 질환의 전파를 차단하기 위해 일회용 방수가운을 착용하는 것은 병원균이 요양보호사의 의복으로 이동하는 것을 막는 올바른 방법입니다."
+      },
+      "vi": {
+        "1": "Khăn ướt dễ sinh sôi vi khuẩn, không được tái sử dụng.",
+        "2": "Găng tay bị ô nhiễm vẫn còn mầm bệnh dù đã rửa; phải bỏ đi, không tái sử dụng.",
+        "3": "Chỉ đeo khẩu trang là không đủ khi xử lý chất thải — cần thêm găng tay và các trang bị bảo hộ khác.",
+        "4": "Tiếp tục công việc với găng tay bẩn gây lây nhiễm chéo; bắt buộc phải thay găng sau mỗi ca.",
+        "5": "★ Mặc áo choàng chống thấm dùng một lần ngăn mầm bệnh từ người bệnh truyền nhiễm di chuyển sang quần áo của nhân viên chăm sóc — đây là biện pháp đúng để chặn lây lan dịch bệnh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "감염성 질환", "def_vi": "Bệnh truyền nhiễm — bệnh do vi khuẩn hoặc virus gây ra và có thể lây từ người này sang người khác" },
+      { "term_ko": "일회용 방수가운", "def_vi": "Áo choàng chống thấm dùng một lần — trang bị bảo hộ ngăn dịch cơ thể thấm qua" },
+      { "term_ko": "전파", "def_vi": "Sự lây lan — mầm bệnh di chuyển từ nguồn đến vật chủ mới" }
+    ]
+  },
+  {
+    "id": 1678,
+    "intent_ko": "감염의 6가지 연결고리에 대한 올바른 설명을 고르는 문제",
+    "intent_vi": "Chọn mô tả đúng về 6 mắt xích trong chuỗi lây nhiễm",
+    "choice_explanations": {
+      "ko": {
+        "1": "미생물은 적절한 온도·습도 환경에서 인체 밖에서도 상당 기간 생존할 수 있습니다.",
+        "2": "★ 요양보호사는 감염에 취약한 대상자와 직접 접촉하므로 감염의 6가지 연결고리 중 '민감한 숙주(감수성 있는 대상자)'에 해당합니다. 직접 노출 위험이 높기 때문입니다.",
+        "3": "6가지 연결고리 중 하나라도 끊으면 감염 전파를 차단할 수 있습니다. '하나만으로는 막을 수 없다'는 설명은 틀렸습니다.",
+        "4": "미생물은 직접 접촉 외에도 공기, 비말, 오염된 물·식품, 매개체(곤충 등) 등 다양한 경로로 전파됩니다.",
+        "5": "면역기능이 저하된 대상자는 감염 위험이 높아 격리가 필요할 수 있으나, 이는 일반적 원칙이 아닌 특수 상황입니다."
+      },
+      "vi": {
+        "1": "Vi sinh vật có thể sống sót bên ngoài cơ thể trong thời gian dài nếu nhiệt độ và độ ẩm thích hợp.",
+        "2": "★ Nhân viên chăm sóc tiếp xúc trực tiếp với người có sức đề kháng yếu nên thuộc nhóm 'vật chủ cảm nhiễm' trong 6 mắt xích lây nhiễm — nguy cơ phơi nhiễm trực tiếp rất cao.",
+        "3": "Cắt đứt bất kỳ một mắt xích nào trong 6 mắt xích là đủ để ngăn lây lan — mô tả 'chỉ một mắt xích không thể ngăn được' là sai.",
+        "4": "Vi sinh vật lây qua nhiều đường: tiếp xúc trực tiếp, không khí, giọt bắn, thực phẩm/nước ô nhiễm, côn trùng trung gian.",
+        "5": "Người suy giảm miễn dịch có thể cần cách ly để bảo vệ họ khỏi lây nhiễm, nhưng đây không phải nguyên tắc chung."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "감염의 연결고리", "def_vi": "Mắt xích lây nhiễm — 6 yếu tố cần thiết để bệnh lây từ nguồn sang vật chủ mới (tác nhân, ổ chứa, đường ra, phương thức lây, đường vào, vật chủ cảm nhiễm)" },
+      { "term_ko": "감수성 있는 숙주", "def_vi": "Vật chủ cảm nhiễm — người có sức đề kháng yếu, dễ bị nhiễm bệnh" },
+      { "term_ko": "비말", "def_vi": "Giọt bắn — các hạt chất lỏng nhỏ phát sinh khi ho hoặc hắt hơi, có thể mang mầm bệnh" }
+    ]
+  },
+  {
+    "id": 1677,
+    "intent_ko": "전기 사고 예방을 위한 올바른 안전 수칙을 고르는 문제",
+    "intent_vi": "Chọn quy tắc an toàn đúng để phòng ngừa tai nạn điện",
+    "choice_explanations": {
+      "ko": {
+        "1": "전기 화재에 물을 뿌리면 감전 사고가 발생할 수 있어 매우 위험합니다. 전기 화재에는 이산화탄소 소화기를 사용해야 합니다.",
+        "2": "정전 중 해동된 냉동식품은 세균이 이미 증식했을 가능성이 있으므로 다시 냉동하지 말고 즉시 사용하거나 폐기해야 합니다.",
+        "3": "벗겨진 전기코드를 청테이프로 감는 것은 절연 성능이 불충분하여 누전·화재 위험이 있습니다. 반드시 전기 절연테이프로 처리하거나 교체해야 합니다.",
+        "4": "★ 정전 발생 시 누전차단기(두꺼비집)의 이상 유무를 확인하는 것은 전기 안전의 기본 대처로, 이상이 있으면 한국전력에 신고해야 합니다.",
+        "5": "플러그를 콘센트에서 뺄 때는 코드가 아닌 플러그 본체를 잡고 수직으로 당겨야 하며, 지그재그로 흔들면 콘센트 내부 금속 접점이 손상됩니다."
+      },
+      "vi": {
+        "1": "Phun nước vào đám cháy điện có thể gây điện giật nghiêm trọng. Phải dùng bình CO₂ để dập lửa điện.",
+        "2": "Thực phẩm đã rã đông trong lúc mất điện có thể đã bị vi khuẩn xâm nhập; không được đông lại mà phải dùng ngay hoặc bỏ đi.",
+        "3": "Băng keo xanh không cách điện đủ tiêu chuẩn — dây điện bị tróc vỏ phải được quấn băng cách điện chuyên dụng hoặc thay mới.",
+        "4": "★ Khi mất điện, kiểm tra cầu dao chống rò (ELCB/RCCB) là bước xử lý an toàn điện cơ bản; nếu phát hiện bất thường phải báo ngay cho công ty điện lực.",
+        "5": "Khi rút phích cắm phải cầm vào thân phích (không cầm dây) và kéo thẳng ra; kéo zích zắc làm hỏng tiếp điểm bên trong ổ cắm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "누전차단기", "def_vi": "Cầu dao chống rò điện (ELCB/RCCB) — thiết bị tự động ngắt điện khi phát hiện dòng rò" },
+      { "term_ko": "감전", "def_vi": "Điện giật — dòng điện chạy qua cơ thể người gây thương tích" },
+      { "term_ko": "전기 절연", "def_vi": "Cách điện — ngăn dòng điện rò ra bên ngoài dây dẫn" }
+    ]
+  },
+  {
+    "id": 1676,
+    "intent_ko": "가정용 산소호흡기 사용 재가대상자 가정에 정전 발생 시 올바른 대처법을 고르는 문제",
+    "intent_vi": "Chọn cách xử lý đúng khi mất điện tại nhà người dùng máy thở oxy",
+    "choice_explanations": {
+      "ko": {
+        "1": "정전 시 누전차단기를 직접 교체하는 것은 전문 지식이 없으면 위험하며, 산소호흡기 공급 중단 문제를 해결하지 못합니다.",
+        "2": "산소호흡기를 사용하는 대상자는 이동 자체가 위험할 수 있으므로 무조건 밖으로 대피하는 것은 적절하지 않습니다.",
+        "3": "★ 산소호흡기를 사용 중인 대상자에게 전기 공급이 끊기면 산소 공급이 중단되어 생명이 위험합니다. 즉시 119에 신고하여 긴급후송을 준비하는 것이 가장 안전한 대처입니다.",
+        "4": "전기가 흐르는 상태에서 전선을 잡고 플러그를 조작하는 것은 감전 사고 위험이 있습니다.",
+        "5": "젖은 수건으로 콘센트를 닦으면 누전·감전 사고를 유발할 수 있어 절대 해서는 안 됩니다."
+      },
+      "vi": {
+        "1": "Thay cầu dao khi mất điện đòi hỏi chuyên môn và không giải quyết được vấn đề gián đoạn oxy cho người bệnh.",
+        "2": "Người dùng máy thở oxy có thể nguy hiểm khi di chuyển; không phải lúc nào cũng có thể đưa ra ngoài.",
+        "3": "★ Khi mất điện, máy thở oxy ngừng hoạt động khiến người bệnh có nguy cơ thiếu oxy đe dọa tính mạng. Gọi ngay 119 để chuẩn bị chuyển viện khẩn cấp là biện pháp an toàn nhất.",
+        "4": "Cầm vào dây điện và thao tác phích cắm khi đang có điện có thể gây điện giật.",
+        "5": "Lau ổ cắm bằng khăn ướt có thể gây rò điện và điện giật — tuyệt đối không làm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "산소호흡기", "def_vi": "Máy thở oxy — thiết bị cung cấp oxy cho người có vấn đề về hô hấp" },
+      { "term_ko": "재가대상자", "def_vi": "Người được chăm sóc tại nhà — đối tượng nhận dịch vụ chăm sóc ngay tại nơi ở" },
+      { "term_ko": "긴급후송", "def_vi": "Chuyển viện khẩn cấp — vận chuyển bệnh nhân nhanh chóng đến cơ sở y tế" }
+    ]
+  },
+  {
+    "id": 1675,
+    "intent_ko": "지진으로 집이 흔들릴 때 올바른 대처 방법을 고르는 문제",
+    "intent_vi": "Chọn cách ứng phó đúng khi động đất xảy ra và nhà đang rung lắc",
+    "choice_explanations": {
+      "ko": {
+        "1": "지진 중 창문을 열면 유리 파편이 튀거나 건물 외벽 낙하물에 노출될 위험이 있습니다.",
+        "2": "가스밸브는 지진 후 흔들림이 완전히 멈춘 뒤 점검하고 닫아야 합니다. 열어두는 것은 폭발·화재 위험이 있습니다.",
+        "3": "흔들림이 멈춘 직후에는 가스 누출·누전 가능성이 있으므로 전기 사용을 자제하고 안전을 확인한 후 사용해야 합니다.",
+        "4": "★ 탁자나 딱딱한 가구가 없을 경우 두 팔로 머리와 목을 감싸고 몸을 웅크리는 자세(Drop-Cover-Hold On)가 낙하물로부터 신체를 보호하는 올바른 행동입니다.",
+        "5": "지진 중 건물 밖으로 나가다 낙하물에 맞을 위험이 있으며, 계단 밑 공간은 내진 설계에 따라 안전 여부가 다릅니다."
+      },
+      "vi": {
+        "1": "Mở cửa sổ khi động đất có thể làm vỡ kính hoặc bị trúng mảnh vỡ từ tường ngoài.",
+        "2": "Van khí cần kiểm tra và đóng lại sau khi rung lắc dừng hẳn; để mở van có nguy cơ rò khí gây nổ hoặc cháy.",
+        "3": "Ngay sau khi rung dừng, có thể xảy ra rò khí hoặc rò điện — nên tránh dùng điện cho đến khi đảm bảo an toàn.",
+        "4": "★ Khi không có bàn hay đồ vật chắc chắn, dùng hai tay che đầu và gáy rồi thu người lại (tư thế Drop-Cover-Hold On) là hành động đúng để bảo vệ bản thân khỏi vật rơi.",
+        "5": "Ra ngoài trong khi đất đang rung có nguy cơ bị trúng vật rơi; gầm cầu thang chưa chắc an toàn tùy thiết kế chống động đất của công trình."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "낙하물", "def_vi": "Vật rơi — đồ vật, mảnh vỡ rơi từ trên cao xuống trong thảm họa" },
+      { "term_ko": "웅크리다", "def_vi": "Thu người lại — co người thành tư thế nhỏ để bảo vệ các bộ phận quan trọng" }
+    ]
+  },
+  {
+    "id": 1674,
+    "intent_ko": "가정에서 지진 발생 시 올바른 대처 방법을 고르는 문제",
+    "intent_vi": "Chọn cách ứng phó đúng khi động đất xảy ra trong nhà",
+    "choice_explanations": {
+      "ko": {
+        "1": "흔들리는 동안 탁자 위에 엎드리면 낙하물을 직접 맞을 위험이 있어 매우 위험합니다.",
+        "2": "흔들림이 잠시 멈춘 뒤 출입문을 잠그는 것은 대피를 차단할 수 있어 잘못된 행동입니다.",
+        "3": "깨지기 쉬운 물건은 지진 시 낙하·파손 위험을 줄이기 위해 낮은 곳에 보관해야 합니다.",
+        "4": "지진 중 엘리베이터는 멈추거나 추락할 수 있으므로 절대 사용하지 않아야 합니다.",
+        "5": "★ 식탁(탁자) 밑으로 들어가 다리를 양손으로 잡고 몸을 웅크리는 것은 낙하물로부터 신체를 보호하는 국제 표준 대피 자세(Drop-Cover-Hold On)로 가장 안전한 방법입니다."
+      },
+      "vi": {
+        "1": "Nằm lên mặt bàn trong khi đất rung sẽ bị trúng trực tiếp bởi vật rơi — rất nguy hiểm.",
+        "2": "Khóa cửa khi rung lắc tạm dừng có thể cản trở thoát hiểm.",
+        "3": "Đồ dễ vỡ phải được đặt ở vị trí thấp để giảm nguy cơ rơi vỡ khi động đất.",
+        "4": "Thang máy có thể dừng đột ngột hoặc rơi trong động đất — tuyệt đối không sử dụng.",
+        "5": "★ Chui xuống gầm bàn, bám chặt vào chân bàn và thu người lại là tư thế thoát hiểm tiêu chuẩn quốc tế (Drop-Cover-Hold On), bảo vệ hiệu quả nhất khỏi vật rơi."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "대피 자세", "def_vi": "Tư thế thoát hiểm — tư thế cơ thể được khuyến nghị để giảm thiểu thương tích trong thảm họa" },
+      { "term_ko": "내진 설계", "def_vi": "Thiết kế kháng chấn — kết cấu công trình được xây dựng để chịu đựng rung lắc của động đất" }
+    ]
+  },
+  {
+    "id": 1673,
+    "intent_ko": "홍수(수해) 발생 시 올바른 대처 방법을 고르는 문제",
+    "intent_vi": "Chọn cách xử lý đúng khi xảy ra lũ lụt",
+    "choice_explanations": {
+      "ko": {
+        "1": "홍수 시 가스 누출 위험이 있으므로 가스밸브는 열지 말고 잠가야 합니다.",
+        "2": "★ 물이 집 안으로 밀려올 때 모래주머니로 문틈을 막는 것은 침수를 지연시키는 가장 현실적이고 안전한 초기 대처 방법입니다.",
+        "3": "물이 집 안에서 완전히 빠진 후에도 전기 차단기를 올리기 전에 누전 여부를 전문가가 점검해야 합니다. 물이 빠진 직후 바로 올리면 누전·감전 위험이 있습니다.",
+        "4": "홍수로 오염된 물에 몸이 젖은 경우 피부 감염 위험이 있으므로 깨끗한 물로 씻어야 하며, 단순히 수건으로 닦는 것은 충분하지 않습니다.",
+        "5": "물이 빠진 후 라이터를 사용하면 가스 누출 시 폭발·화재 위험이 있어 매우 위험합니다."
+      },
+      "vi": {
+        "1": "Khi lũ lụt có nguy cơ rò khí; phải đóng van khí lại, không mở.",
+        "2": "★ Khi nước tràn vào nhà, chặn bằng bao cát ở cửa là biện pháp ban đầu thực tế và an toàn nhất để làm chậm ngập lụt.",
+        "3": "Ngay cả sau khi nước rút, phải để chuyên gia kiểm tra rò điện trước khi bật cầu dao; bật ngay sau khi nước rút có nguy cơ điện giật.",
+        "4": "Nước lũ bị ô nhiễm có thể gây nhiễm trùng da; cần rửa bằng nước sạch, chỉ lau bằng khăn là không đủ.",
+        "5": "Dùng bật lửa sau khi nước rút có thể gây nổ nếu có khí rò — cực kỳ nguy hiểm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "모래주머니", "def_vi": "Bao cát — túi cát dùng để chặn dòng chảy của nước lũ" },
+      { "term_ko": "수해", "def_vi": "Thiệt hại do nước lũ gây ra cho nhà cửa và tài sản" },
+      { "term_ko": "누전", "def_vi": "Rò điện — dòng điện rò ra ngoài dây dẫn, gây nguy hiểm điện giật hoặc cháy" }
+    ]
+  },
+  {
+    "id": 1672,
+    "intent_ko": "태풍 예보 시 사전 대비 방법으로 옳은 것을 고르는 문제",
+    "intent_vi": "Chọn biện pháp chuẩn bị đúng khi có dự báo bão",
+    "choice_explanations": {
+      "ko": {
+        "1": "태풍 시 현관문과 창문은 완전히 잠가야 합니다. 열어두면 강풍으로 인해 피해가 발생합니다.",
+        "2": "태풍 시 차량은 침수 위험이 있는 낮은 지대에서 옮겨 높은 지대나 안전한 지하주차장으로 이동해야 합니다.",
+        "3": "★ 태풍으로 단수(断水)될 경우를 대비해 욕조에 물을 미리 받아두는 것은 생활용수·소화용수를 확보하는 현명한 사전 대비 방법입니다.",
+        "4": "차량 연료는 비상 대피 시 필요하므로 비우면 안 됩니다.",
+        "5": "태풍 상황에서는 정보 수신이 중요하므로 통신 기기(라디오, 휴대전화)를 끄면 안 됩니다. 전기 차단기도 필요 시에만 내려야 합니다."
+      },
+      "vi": {
+        "1": "Trong bão phải đóng chặt và khóa tất cả cửa; để mở sẽ bị gió mạnh gây thiệt hại.",
+        "2": "Xe cần chuyển đến nơi cao ráo hoặc bãi đỗ ngầm an toàn, tránh xa vùng thấp dễ ngập.",
+        "3": "★ Tích nước vào bồn tắm trước bão là biện pháp khôn ngoan để có nguồn nước sinh hoạt và chữa cháy phòng khi bị cúp nước trong bão.",
+        "4": "Nhiên liệu xe cần giữ đầy để sẵn sàng di tản khẩn cấp; không được đổ đi.",
+        "5": "Trong bão, cần theo dõi thông tin liên tục qua radio/điện thoại; không được tắt thiết bị thông tin liên lạc."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "태풍", "def_vi": "Bão nhiệt đới — hiện tượng thời tiết cực đoan với gió mạnh và mưa lớn" },
+      { "term_ko": "단수", "def_vi": "Cúp nước — tình trạng ngừng cung cấp nước máy" },
+      { "term_ko": "대비", "def_vi": "Chuẩn bị ứng phó — hành động phòng ngừa trước khi thảm họa xảy ra" }
+    ]
+  },
+  {
+    "id": 1671,
+    "intent_ko": "유해가스가 방출되는 화재 발생 시 올바른 대처 방법을 고르는 문제",
+    "intent_vi": "Chọn cách ứng phó đúng khi cháy có phát sinh khí độc",
+    "choice_explanations": {
+      "ko": {
+        "1": "수건은 젖은 수건으로 입과 코를 막아야 합니다. 마른 수건은 가스 차단 효과가 낮습니다.",
+        "2": "유해가스가 있는 공간에서 숨을 깊이 들이마시면 더 많은 독성 가스를 흡입하게 되어 매우 위험합니다.",
+        "3": "화재 시 벽을 짚으며 이동하는 것은 방향 감각 유지에 도움이 되나, 이것보다 먼저 119 신고와 대피 알림이 우선입니다.",
+        "4": "★ 화재 발견 즉시 '불이야'라고 외쳐 주변에 알리고 비상벨을 눌러 모든 재실자가 대피할 수 있도록 하는 것이 가장 우선적인 대처입니다.",
+        "5": "옥상 출입문을 항상 잠가두면 화재 시 옥상으로의 대피로가 차단될 수 있어 위험합니다."
+      },
+      "vi": {
+        "1": "Phải dùng khăn ướt để che miệng và mũi; khăn khô không có tác dụng lọc khí độc.",
+        "2": "Hít thở sâu trong môi trường có khí độc sẽ đưa nhiều chất độc vào phổi hơn — cực kỳ nguy hiểm.",
+        "3": "Bám tường khi di chuyển giúp định hướng nhưng không phải ưu tiên đầu tiên — phải báo động trước.",
+        "4": "★ Khi phát hiện cháy, hét to 'Cháy rồi!' và nhấn chuông báo động ngay để tất cả mọi người trong tòa nhà có thể sơ tán — đây là hành động ưu tiên hàng đầu.",
+        "5": "Luôn khóa cửa mái có thể chặn đường thoát hiểm lên sân thượng trong hỏa hoạn — rất nguy hiểm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "유해가스", "def_vi": "Khí độc — khí có hại phát sinh trong đám cháy (CO, HCN, v.v.) gây ngạt hoặc ngộ độc" },
+      { "term_ko": "비상벨", "def_vi": "Chuông báo động khẩn cấp — thiết bị cảnh báo cháy để thông báo cho mọi người sơ tán" },
+      { "term_ko": "대피로", "def_vi": "Đường thoát hiểm — lối đi được chỉ định để thoát khỏi tòa nhà trong trường hợp khẩn cấp" }
+    ]
+  },
+  {
+    "id": 1670,
+    "intent_ko": "시설 화재 발생 시 올바른 대처 방법을 고르는 문제",
+    "intent_vi": "Chọn cách ứng phó đúng khi xảy ra hỏa hoạn tại cơ sở chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "화재 시 엘리베이터는 정전으로 멈추거나 연기가 유입될 수 있어 절대 사용하지 않아야 합니다.",
+        "2": "연기로 앞이 보이지 않는 경우 그 자리에 서 있으면 더 많은 연기를 흡입하게 됩니다. 자세를 낮추고 안전 방향으로 이동해야 합니다.",
+        "3": "코와 입을 감싸는 것은 맞으나 자세를 높이면 연기(열기)가 높은 곳에 집중되어 더 위험합니다. 반드시 자세를 낮춰야 합니다.",
+        "4": "불길이 천장에 닿은 경우 소화기로 진화는 불가능하며, 즉각 대피해야 합니다.",
+        "5": "★ 연기로 방향을 잃었을 때 한쪽 손을 벽에 계속 짚으며 이동하면 같은 방향으로 출구를 향해 나아갈 수 있어 안전한 대피 방법입니다."
+      },
+      "vi": {
+        "1": "Thang máy có thể bị mất điện hoặc bị khói xâm nhập trong hỏa hoạn — tuyệt đối không dùng.",
+        "2": "Đứng im trong khói dày sẽ hít thêm khói độc; phải cúi thấp người và di chuyển về hướng an toàn.",
+        "3": "Che miệng mũi là đúng nhưng ngẩng người cao sẽ nguy hiểm hơn vì khói nóng tập trung ở trên cao; phải cúi thấp.",
+        "4": "Khi lửa đã bén lên trần, không thể dùng bình cứu hỏa để dập — phải sơ tán ngay.",
+        "5": "★ Khi mất phương hướng do khói, duy trì một tay chạm tường và di chuyển theo cùng một chiều giúp thoát ra lối ra một cách có hệ thống — đây là kỹ thuật thoát hiểm an toàn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "소화기", "def_vi": "Bình cứu hỏa — thiết bị dùng để dập lửa ở giai đoạn đầu đám cháy" },
+      { "term_ko": "연기 흡입", "def_vi": "Hít phải khói — nguyên nhân gây tử vong hàng đầu trong hỏa hoạn" },
+      { "term_ko": "진화", "def_vi": "Dập lửa — hành động làm tắt đám cháy" }
+    ]
+  },
+  {
+    "id": 1669,
+    "intent_ko": "화재 예방을 위한 올바른 안전 수칙을 고르는 문제",
+    "intent_vi": "Chọn quy tắc an toàn đúng để phòng ngừa hỏa hoạn",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 요리 중에는 주방을 떠나지 않고 지켜보는 것이 화재 예방의 기본 수칙입니다. 요리가 끝날 때까지 주방에 있는 것이 가장 중요합니다.",
+        "2": "세탁물을 난로 바로 옆에 널면 열원과 가연성 물질이 가까워져 화재 위험이 크게 증가합니다.",
+        "3": "소화기는 언제나 같은 위치에 비치해야 위기 상황에서 빠르게 찾을 수 있습니다. 위치를 자주 바꾸면 혼란을 초래합니다.",
+        "4": "소화기 사용 시에는 불을 등지지 말고 불길을 향해 서서 분말을 쏘아야 합니다.",
+        "5": "콘센트 하나에 여러 전열기구를 동시에 꽂으면 허용 전력량을 초과하여 과열·화재로 이어질 수 있습니다."
+      },
+      "vi": {
+        "1": "★ Ở lại bếp và theo dõi trong suốt quá trình nấu là quy tắc phòng cháy cơ bản nhất — đây là hành động đúng.",
+        "2": "Phơi quần áo ngay cạnh lò sưởi đặt vật dễ cháy gần nguồn nhiệt, làm tăng đáng kể nguy cơ hỏa hoạn.",
+        "3": "Bình cứu hỏa phải được đặt cố định ở một vị trí để có thể tìm thấy nhanh trong khẩn cấp; thay đổi vị trí thường xuyên gây nhầm lẫn.",
+        "4": "Khi dùng bình cứu hỏa phải đứng quay mặt về phía đám lửa (không quay lưng) rồi xịt vào gốc lửa.",
+        "5": "Cắm nhiều thiết bị điện vào một ổ cắm vượt quá công suất cho phép, gây quá nhiệt và có thể dẫn đến hỏa hoạn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "전열기구", "def_vi": "Thiết bị điện nhiệt — dụng cụ sử dụng điện để tạo nhiệt (máy sưởi, nồi cơm điện, v.v.)" },
+      { "term_ko": "과열", "def_vi": "Quá nhiệt — tình trạng nhiệt độ vượt mức an toàn, có thể gây cháy nổ" },
+      { "term_ko": "가연성", "def_vi": "Tính dễ cháy — đặc tính của vật liệu có thể bắt lửa dễ dàng" }
+    ]
+  },
+  {
+    "id": 1668,
+    "intent_ko": "가스레인지에 음식을 올려놓고 자꾸 잊어버리는 대상자를 돕는 올바른 방법을 고르는 문제",
+    "intent_vi": "Chọn cách hỗ trợ đúng cho người hay quên thức ăn đang nấu trên bếp gas",
+    "choice_explanations": {
+      "ko": {
+        "1": "배달 음식 식단표 작성은 화재 예방과 직접적인 관계가 없으며, 대상자의 조리 습관을 개선하는 방법이 아닙니다.",
+        "2": "휴대용 가스레인지 역시 동일한 망각 위험이 있어 상황을 개선하지 못합니다.",
+        "3": "가스레인지 자체를 없애는 것은 대상자의 자립성과 일상생활을 지나치게 제한하는 비현실적 접근입니다.",
+        "4": "★ 조리 중 주방을 떠나지 않도록 교육하는 것은 화재 예방의 핵심 원칙이며, 대상자가 안전하게 조리 활동을 지속할 수 있도록 돕는 가장 직접적이고 효과적인 방법입니다.",
+        "5": "일주일 분량을 한꺼번에 준비하는 것은 즉각적인 화재 예방에는 도움이 되지 않고 음식 위생 문제가 발생할 수 있습니다."
+      },
+      "vi": {
+        "1": "Lập thực đơn đặt đồ ăn không liên quan trực tiếp đến phòng cháy và không cải thiện thói quen nấu ăn của người được chăm sóc.",
+        "2": "Bếp gas di động cũng có cùng nguy cơ quên tắt lửa — không cải thiện tình huống.",
+        "3": "Bỏ bếp hoàn toàn hạn chế quá mức sự tự lập của người được chăm sóc và không thực tế.",
+        "4": "★ Hướng dẫn người được chăm sóc không rời bếp trong khi nấu là nguyên tắc phòng cháy cốt lõi và là cách hiệu quả nhất giúp họ tiếp tục nấu ăn an toàn.",
+        "5": "Chuẩn bị thức ăn cả tuần không giải quyết nguy cơ cháy ngay lập tức và có thể gây ra vấn đề vệ sinh thực phẩm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "가스레인지", "def_vi": "Bếp gas — thiết bị nấu ăn sử dụng khí đốt" },
+      { "term_ko": "망각", "def_vi": "Sự quên lãng — mất khả năng nhớ thông tin hoặc hành động đã thực hiện" }
+    ]
+  },
+  {
+    "id": 1667,
+    "intent_ko": "방문요양 중 응급상황 발생 시 요양보호사가 응급처치를 지속해야 하는 시점을 묻는 문제",
+    "intent_vi": "Hỏi thời điểm nhân viên chăm sóc tại nhà phải tiếp tục sơ cứu khi có tình huống khẩn cấp",
+    "choice_explanations": {
+      "ko": {
+        "1": "근무시간 종료는 응급처치를 중단하는 기준이 될 수 없습니다.",
+        "2": "시설장 도착은 응급처치 종료 기준이 아닙니다.",
+        "3": "보호자 도착을 기다리는 동안 처치가 중단되면 대상자의 상태가 악화될 수 있습니다.",
+        "4": "★ 요양보호사는 전문 의료인인 119 구급대원이 현장에 도착하여 처치를 인계받을 때까지 응급처치를 멈추지 않아야 합니다. 이는 생명 보호의 연속성을 위한 핵심 원칙입니다.",
+        "5": "동료 요양보호사는 의료 전문인이 아니므로 처치를 인계할 권한이 없습니다."
+      },
+      "vi": {
+        "1": "Hết giờ làm việc không phải lý do để ngừng sơ cứu.",
+        "2": "Sự xuất hiện của người quản lý cơ sở không phải tiêu chí để chấm dứt sơ cứu.",
+        "3": "Chờ người giám hộ đến trong khi ngừng xử lý có thể khiến tình trạng người bệnh xấu đi.",
+        "4": "★ Nhân viên chăm sóc phải tiếp tục sơ cứu không gián đoạn cho đến khi nhân viên cứu thương 119 — chuyên gia y tế có thẩm quyền — đến nơi và tiếp nhận xử lý. Đây là nguyên tắc cốt lõi để bảo vệ tính mạng liên tục.",
+        "5": "Nhân viên chăm sóc đồng nghiệp không phải chuyên gia y tế, không có thẩm quyền tiếp nhận xử lý."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "방문요양", "def_vi": "Dịch vụ chăm sóc tại nhà — nhân viên chăm sóc đến thăm và hỗ trợ người được chăm sóc tại nơi ở của họ" },
+      { "term_ko": "구급대원", "def_vi": "Nhân viên cứu thương — chuyên gia y tế được đào tạo để xử lý tình huống khẩn cấp tại hiện trường" },
+      { "term_ko": "응급처치", "def_vi": "Sơ cứu — biện pháp y tế ban đầu thực hiện ngay tại chỗ trước khi nhân viên y tế chuyên nghiệp đến" }
+    ]
+  },
+  {
+    "id": 1666,
+    "intent_ko": "위기 상황 대처 방법으로 옳은 것을 고르는 문제",
+    "intent_vi": "Chọn cách xử lý đúng trong tình huống nguy cấp",
+    "choice_explanations": {
+      "ko": {
+        "1": "119 신고와 응급처치는 동시에 또는 신고 먼저 진행할 수 있으며, 상황에 따라 신고를 먼저 하는 것이 더 중요할 수 있습니다.",
+        "2": "보호자와 연락이 안 된다고 응급처치를 미루는 것은 대상자의 생명을 위협하는 행동입니다. 응급처치는 즉시 시작해야 합니다.",
+        "3": "대상자가 의식이 있고 명료하게 대답하더라도 상황의 심각성에 따라 119 신고가 필요할 수 있습니다.",
+        "4": "119 신고 시 대상자의 위치와 상태가 가장 중요하며, 보호자 연락처도 알려주면 도움이 됩니다.",
+        "5": "★ 심한 통증을 호소하는 것은 내부 손상, 심근경색 등 즉각적인 전문 치료가 필요한 응급 상황의 신호일 수 있으므로 전문적인 치료가 필요하다고 판단하는 것은 올바릅니다."
+      },
+      "vi": {
+        "1": "Gọi 119 và sơ cứu có thể tiến hành đồng thời hoặc gọi trước, tùy tình huống cụ thể.",
+        "2": "Trì hoãn sơ cứu vì không liên lạc được người giám hộ đe dọa trực tiếp tính mạng người bệnh — phải bắt đầu sơ cứu ngay.",
+        "3": "Dù người bệnh còn tỉnh táo và trả lời rõ ràng, vẫn có thể cần gọi 119 tùy mức độ nghiêm trọng của tình huống.",
+        "4": "Khi gọi 119, vị trí và tình trạng người bệnh là quan trọng nhất; số liên lạc người giám hộ cũng hữu ích nếu có.",
+        "5": "★ Đau dữ dội có thể là dấu hiệu của tổn thương nội tạng, nhồi máu cơ tim, hoặc tình trạng khẩn cấp khác cần điều trị chuyên khoa ngay — nhận định cần điều trị chuyên nghiệp là đúng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "심근경색", "def_vi": "Nhồi máu cơ tim — tình trạng động mạch vành bị tắc gây hoại tử cơ tim, biểu hiện bằng đau ngực dữ dội" },
+      { "term_ko": "응급처치", "def_vi": "Sơ cứu — can thiệp y tế ban đầu tại chỗ" }
+    ]
+  },
+  {
+    "id": 1665,
+    "intent_ko": "의학적 위기상황 대처 방법으로 옳은 것을 고르는 문제",
+    "intent_vi": "Chọn cách xử lý đúng trong tình huống khủng hoảng y tế",
+    "choice_explanations": {
+      "ko": {
+        "1": "위기상황에서는 즉각적인 119 신고와 응급처치가 우선이며, 가족·기관장에게 보고는 그다음 단계입니다.",
+        "2": "신고 후 전화를 끊으면 119 상담원이 추가 지시를 내릴 수 없습니다. 상담원의 지시에 따라 통화를 유지하면서 응급처치를 병행해야 합니다.",
+        "3": "★ 신고 여부가 고민될 정도의 상황이라면 반드시 신고하는 것이 원칙입니다. 신고를 미루어 상황이 악화되는 것보다 불필요한 신고가 낫습니다.",
+        "4": "호흡과 맥박이 정상이더라도 의식 저하, 심한 통증, 낙상 후 부상 등 다른 위기 징후가 있으면 신고해야 합니다.",
+        "5": "상황이 종료된 후에도 발생 일시, 경과, 처치 내용 등을 반드시 기록해야 법적 보호와 추후 관리에 활용할 수 있습니다."
+      },
+      "vi": {
+        "1": "Trong khủng hoảng, ưu tiên là gọi 119 và sơ cứu ngay; báo cáo gia đình/người quản lý là bước tiếp theo.",
+        "2": "Cúp máy sau khi gọi 119 khiến nhân viên điều phối không thể hướng dẫn thêm; phải giữ đường dây và làm theo chỉ dẫn trong khi sơ cứu.",
+        "3": "★ Nếu phân vân có nên gọi 119 hay không, nguyên tắc là phải gọi. Gọi thừa còn tốt hơn để tình trạng xấu đi vì chần chừ.",
+        "4": "Dù nhịp thở và mạch bình thường, vẫn cần gọi nếu có dấu hiệu khủng hoảng khác như giảm ý thức, đau dữ dội, chấn thương sau ngã.",
+        "5": "Sau khi tình huống kết thúc phải ghi chép đầy đủ thời điểm xảy ra, diễn biến, biện pháp xử lý để bảo vệ pháp lý và quản lý tiếp theo."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "의학적 위기상황", "def_vi": "Tình huống khủng hoảng y tế — trường hợp khẩn cấp đe dọa tính mạng cần can thiệp y tế ngay" },
+      { "term_ko": "맥박", "def_vi": "Mạch — nhịp đập của tim cảm nhận qua động mạch, phản ánh hoạt động tim mạch" },
+      { "term_ko": "기록", "def_vi": "Ghi chép — tài liệu hóa các sự kiện, biện pháp xử lý để phục vụ pháp lý và chăm sóc tiếp theo" }
+    ]
+  },
+  {
+    "id": 1664,
+    "intent_ko": "응급처치가 필요한 의학적 위기 상황을 고르는 문제",
+    "intent_vi": "Chọn tình huống y tế khẩn cấp cần sơ cứu ngay",
+    "choice_explanations": {
+      "ko": {
+        "1": "호흡이 안정적인 것은 정상 상태를 나타내므로 응급처치가 필요하지 않습니다.",
+        "2": "기침이 자주 난다고 해서 즉각적인 응급처치가 필요한 위기 상황은 아닙니다.",
+        "3": "맥박이 강하게 뛰는 것은 운동 후 등 정상 반응일 수 있으며, 단독으로는 응급처치의 기준이 되지 않습니다.",
+        "4": "★ 의식의 변화(혼미, 혼수, 지남력 상실 등)는 뇌졸중, 저혈당, 쇼크 등 생명을 위협하는 응급 상태의 주요 징후로 즉각적인 응급처치와 119 신고가 필요합니다.",
+        "5": "전신 피로는 다양한 원인에 의한 일반적인 증상이며, 그 자체로 응급처치가 필요한 위기 상황은 아닙니다."
+      },
+      "vi": {
+        "1": "Nhịp thở ổn định là trạng thái bình thường, không cần sơ cứu.",
+        "2": "Ho thường xuyên không phải tình huống khẩn cấp cần sơ cứu ngay.",
+        "3": "Mạch đập mạnh có thể là phản ứng bình thường sau vận động; không phải tiêu chí đơn lẻ để xác định tình huống khẩn cấp.",
+        "4": "★ Thay đổi ý thức (mê man, mất định hướng, hôn mê) là dấu hiệu chính của đột quỵ, hạ đường huyết, sốc... — các trạng thái đe dọa tính mạng cần sơ cứu ngay và gọi 119.",
+        "5": "Mệt mỏi toàn thân là triệu chứng chung của nhiều nguyên nhân và không phải tình huống khẩn cấp cần sơ cứu."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "의식 변화", "def_vi": "Thay đổi ý thức — thay đổi mức độ tỉnh táo, định hướng hoặc phản ứng, dấu hiệu cấp cứu quan trọng" },
+      { "term_ko": "지남력", "def_vi": "Định hướng lực — khả năng nhận biết thời gian, địa điểm và bản thân" },
+      { "term_ko": "쇼크", "def_vi": "Sốc — tình trạng lưu lượng máu không đủ cung cấp cho các cơ quan, đe dọa tính mạng" }
+    ]
+  },
+  {
+    "id": 1663,
+    "intent_ko": "호스피스·완화의료 서비스 유형에 대한 올바른 설명을 고르는 문제",
+    "intent_vi": "Chọn mô tả đúng về các loại hình dịch vụ hospice và chăm sóc giảm nhẹ",
+    "choice_explanations": {
+      "ko": {
+        "1": "호스피스는 말기환자뿐 아니라 생명을 위협하는 다양한 질환(암, COPD, 만성 간경화, 후천성면역결핍증 등)을 가진 환자에게 제공됩니다.",
+        "2": "만성폐쇄성호흡기질환(COPD) 환자는 입원형 호스피스 이용 대상에 포함됩니다.",
+        "3": "자문형 서비스는 전문 인력이 병동에 입원 중인 환자에게 방문·상담하는 형태이며, 자택 방문이 아닌 경우가 일반적입니다.",
+        "4": "★ 만성 간경화(말기 간질환) 환자는 법령에서 정한 호스피스 이용 대상 질환에 해당하며, 자문형 서비스를 이용할 수 있습니다.",
+        "5": "입원형 서비스는 집에서 돌보기 어려운 환자(노인 한정 아님)를 위한 서비스이며, 노인에만 국한되지 않습니다."
+      },
+      "vi": {
+        "1": "Hospice không chỉ dành cho bệnh nhân ung thư giai đoạn cuối mà còn cho nhiều bệnh đe dọa tính mạng khác (COPD, xơ gan mạn, AIDS, v.v.).",
+        "2": "Bệnh nhân COPD (bệnh phổi tắc nghẽn mạn tính) thuộc diện được sử dụng dịch vụ hospice nhập viện.",
+        "3": "Dịch vụ tư vấn (자문형) là chuyên gia đến tư vấn cho bệnh nhân đang nằm viện, thường không phải thăm tại nhà.",
+        "4": "★ Bệnh nhân xơ gan mạn giai đoạn cuối thuộc danh mục bệnh được hưởng hospice theo quy định pháp luật, và có thể sử dụng dịch vụ tư vấn (자문형).",
+        "5": "Dịch vụ nhập viện (입원형) dành cho bệnh nhân khó chăm sóc tại nhà — không giới hạn ở người cao tuổi."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "호스피스", "def_vi": "Hospice — dịch vụ y tế và hỗ trợ tâm lý dành cho bệnh nhân giai đoạn cuối đời" },
+      { "term_ko": "완화의료", "def_vi": "Chăm sóc giảm nhẹ — y tế nhằm giảm đau và cải thiện chất lượng sống, không nhằm chữa khỏi bệnh" },
+      { "term_ko": "만성폐쇄성호흡기질환", "def_vi": "Bệnh phổi tắc nghẽn mạn tính (COPD) — bệnh hô hấp mạn tính gây khó thở tiến triển" },
+      { "term_ko": "자문형", "def_vi": "Hình thức tư vấn — chuyên gia hospice đến tư vấn cho bệnh nhân đang điều trị tại bệnh viện" }
+    ]
+  },
+  {
+    "id": 1662,
+    "intent_ko": "호스피스·완화의료의 이용 조건과 특성에 대한 올바른 설명을 고르는 문제",
+    "intent_vi": "Chọn mô tả đúng về điều kiện và đặc điểm sử dụng dịch vụ hospice và chăm sóc giảm nhẹ",
+    "choice_explanations": {
+      "ko": {
+        "1": "국내에는 입원형 외에 가정형, 자문형 호스피스 서비스도 제공됩니다.",
+        "2": "호스피스는 치료 불가능한 말기환자와 그 가족을 대상으로 하며, '치료 가능한' 환자는 대상이 아닙니다.",
+        "3": "후천성면역결핍증(AIDS) 환자는 호스피스 이용 대상 질환에 해당하나, 이 경우도 치료 불가능한 말기 상태여야 합니다.",
+        "4": "가정형 호스피스는 전문 인력이 환자의 집으로 방문하여 서비스를 제공하는 형태입니다. 환자가 외래처럼 방문하는 형태가 아닙니다.",
+        "5": "★ 호스피스·완화의료는 통증, 신체적·심리적·영적 고통을 완화하여 남은 삶의 질을 최대한 높이는 것을 목적으로 하는 의료서비스로, 이것이 핵심 개념입니다."
+      },
+      "vi": {
+        "1": "Ngoài hình thức nhập viện, Hàn Quốc còn cung cấp hospice tại nhà (가정형) và tư vấn (자문형).",
+        "2": "Hospice dành cho bệnh nhân giai đoạn cuối không thể điều trị khỏi và gia đình họ — không dành cho bệnh nhân 'có thể chữa khỏi'.",
+        "3": "Bệnh nhân AIDS thuộc diện đủ điều kiện dùng hospice, nhưng phải ở giai đoạn cuối không thể chữa khỏi.",
+        "4": "Hospice tại nhà (가정형) là hình thức chuyên gia đến thăm tại nhà bệnh nhân — bệnh nhân không phải đến cơ sở như khám ngoại trú.",
+        "5": "★ Hospice và chăm sóc giảm nhẹ là dịch vụ y tế nhằm giảm nhẹ đau đớn thể chất, tâm lý và tinh thần, nâng cao chất lượng cuộc sống còn lại — đây là định nghĩa cốt lõi."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "가정형 호스피스", "def_vi": "Hospice tại nhà — chuyên gia đến thăm và chăm sóc bệnh nhân ngay tại nhà" },
+      { "term_ko": "후천성면역결핍증", "def_vi": "AIDS (Hội chứng suy giảm miễn dịch mắc phải) — bệnh do HIV gây ra, làm suy yếu hệ miễn dịch" },
+      { "term_ko": "영적 고통", "def_vi": "Đau khổ tâm linh — cảm giác mất ý nghĩa, mục đích sống thường gặp ở bệnh nhân cuối đời" }
+    ]
+  },
+  {
+    "id": 1661,
+    "intent_ko": "사전연명의료의향서에 대한 올바른 설명을 고르는 문제",
+    "intent_vi": "Chọn mô tả đúng về văn bản chỉ thị y tế trước (사전연명의료의향서)",
+    "choice_explanations": {
+      "ko": {
+        "1": "사전연명의료의향서는 말기환자나 임종과정에 있는 사람뿐만 아니라 성인이면 누구나 미리 작성할 수 있습니다.",
+        "2": "★ 사전연명의료의향서는 보건복지부 지정 등록기관(호스피스 전문기관, 의료기관, 건강보험공단 지사 등)에 등록해야 법적 효력이 발생합니다.",
+        "3": "사전연명의료의향서는 등록 후에도 언제든지 변경하거나 철회할 수 있습니다.",
+        "4": "등록기관에 등록하면 국가 데이터베이스(국립연명의료관리기관)에 연동되어 의료기관에서 확인할 수 있습니다.",
+        "5": "사전연명의료의향서에서 중단되는 것은 심폐소생술, 혈액 투석, 항암제, 인공호흡기 등 연명의료이며, 통증완화를 위한 의료행위와 영양·수분 공급은 계속됩니다."
+      },
+      "vi": {
+        "1": "Văn bản này không chỉ dành cho bệnh nhân cuối đời — bất kỳ người trưởng thành nào cũng có thể lập trước.",
+        "2": "★ Văn bản chỉ thị y tế trước chỉ có hiệu lực pháp lý khi được đăng ký tại cơ quan đăng ký được Bộ Y tế Hàn Quốc chỉ định (cơ sở hospice, bệnh viện, chi nhánh BHYT, v.v.).",
+        "3": "Văn bản này có thể được sửa đổi hoặc rút lại bất cứ lúc nào sau khi đăng ký.",
+        "4": "Sau khi đăng ký, thông tin được kết nối với cơ sở dữ liệu quốc gia để các cơ sở y tế có thể tra cứu.",
+        "5": "Điều bị đình chỉ là các biện pháp duy trì sự sống (CPR, thẩm tách, hóa trị, máy thở); giảm đau và cung cấp dinh dưỡng/nước vẫn tiếp tục."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "사전연명의료의향서", "def_vi": "Văn bản chỉ thị y tế trước — tài liệu người trưởng thành lập trước để chỉ định không muốn áp dụng các biện pháp duy trì sự sống khi ở giai đoạn cuối" },
+      { "term_ko": "연명의료", "def_vi": "Điều trị duy trì sự sống — các biện pháp y tế chỉ kéo dài quá trình hấp hối mà không có tác dụng điều trị (CPR, máy thở, thẩm tách, hóa trị)" },
+      { "term_ko": "등록기관", "def_vi": "Cơ quan đăng ký — cơ sở được nhà nước chỉ định để tiếp nhận và đăng ký văn bản chỉ thị y tế trước" }
+    ]
+  },
+  {
+    "id": 1660,
+    "intent_ko": "사전연명의료의향서의 효력이 발생하는 적법한 경우를 고르는 문제",
+    "intent_vi": "Chọn trường hợp văn bản chỉ thị y tế trước có hiệu lực hợp pháp",
+    "choice_explanations": {
+      "ko": {
+        "1": "사전연명의료의향서는 만 19세 이상 성인만 작성할 수 있습니다. 17세 청소년은 미성년자이므로 효력이 없습니다.",
+        "2": "본인이 직접 작성해야 하며, 가족이 대신 작성한 경우 효력이 없습니다.",
+        "3": "★ 성인(만 19세 이상)인 65세 대장암 환자가 의사결정능력이 있는 상태에서 자발적으로 등록기관에서 직접 작성한 경우 법적으로 유효한 사전연명의료의향서입니다.",
+        "4": "담당 의사가 대신 작성할 수 없습니다. 반드시 본인이 직접 작성해야 합니다.",
+        "5": "요양보호사를 포함한 제3자는 대리 작성을 할 수 없습니다."
+      },
+      "vi": {
+        "1": "Chỉ người trưởng thành từ 19 tuổi trở lên mới được lập văn bản này; thanh thiếu niên 17 tuổi là vị thành niên, không có hiệu lực.",
+        "2": "Phải do chính người đó tự lập; gia đình lập thay không có hiệu lực.",
+        "3": "★ Bệnh nhân ung thư đại tràng 65 tuổi (đủ 19 tuổi trở lên), còn năng lực quyết định, tự nguyện đến cơ quan đăng ký và tự lập văn bản — đây là trường hợp văn bản có hiệu lực pháp lý.",
+        "4": "Bác sĩ phụ trách không thể lập thay; người bệnh phải tự tay viết.",
+        "5": "Người thứ ba kể cả nhân viên chăm sóc không được lập thay mặt."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "의사결정능력", "def_vi": "Năng lực quyết định — khả năng hiểu thông tin và đưa ra quyết định tự nguyện về điều trị của bản thân" },
+      { "term_ko": "자발적", "def_vi": "Tự nguyện — hành động xuất phát từ ý chí của chính bản thân, không bị ép buộc" }
+    ]
+  },
+  {
+    "id": 1659,
+    "intent_ko": "대상자가 사전연명의료의향서 대리 작성을 요청할 때 요양보호사의 올바른 반응을 고르는 문제",
+    "intent_vi": "Chọn phản ứng đúng của nhân viên chăm sóc khi người được chăm sóc yêu cầu lập thay văn bản chỉ thị y tế trước",
+    "choice_explanations": {
+      "ko": {
+        "1": "시설 입소 시기와 관계없이 요청 자체를 거절하거나 비판하는 것은 대상자 권리 침해입니다.",
+        "2": "시설장과의 상의가 필요할 수 있으나, 본인 직접 작성 원칙은 바뀌지 않으며 '상의해야만 한다'는 표현은 부적절합니다.",
+        "3": "가족 동의는 사전연명의료의향서 작성 요건이 아닙니다. 이는 잘못된 정보입니다.",
+        "4": "★ 사전연명의료의향서는 반드시 본인이 직접 작성해야 법적 효력이 생깁니다. 요양보호사는 대리 작성이 불가함을 알리고, 등록기관 안내 등 실질적인 지원을 제공해야 합니다.",
+        "5": "사전연명의료의향서는 작성 즉시 효력이 발생하지 않고, 지정 등록기관에 등록한 후 법적 효력이 생깁니다."
+      },
+      "vi": {
+        "1": "Từ chối hoặc chỉ trích yêu cầu liên quan đến thời điểm vào cơ sở là vi phạm quyền của người được chăm sóc.",
+        "2": "Có thể cần thảo luận với người quản lý, nhưng nguyên tắc tự lập không thay đổi; nói 'phải thảo luận mới được lập' là không phù hợp.",
+        "3": "Đồng ý của gia đình không phải điều kiện để lập văn bản này — đây là thông tin sai.",
+        "4": "★ Văn bản chỉ thị y tế trước phải do chính người đó tự lập mới có hiệu lực pháp lý. Nhân viên chăm sóc phải thông báo rằng không thể lập thay và hỗ trợ thực tế như hướng dẫn đến cơ quan đăng ký.",
+        "5": "Văn bản không có hiệu lực ngay khi viết xong — phải đăng ký tại cơ quan đăng ký được chỉ định mới có hiệu lực pháp lý."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "대리 작성", "def_vi": "Lập thay — việc người khác viết thay cho đương sự, không được phép đối với văn bản chỉ thị y tế trước" },
+      { "term_ko": "등록기관", "def_vi": "Cơ quan đăng ký — cơ sở nhà nước chỉ định để tiếp nhận và đăng ký văn bản chỉ thị y tế trước" }
+    ]
+  },
+  {
+    "id": 1658,
+    "intent_ko": "사전연명의료의향서에 관한 올바른 설명을 고르는 문제",
+    "intent_vi": "Chọn mô tả đúng về văn bản chỉ thị y tế trước",
+    "choice_explanations": {
+      "ko": {
+        "1": "사전연명의료의향서는 만 19세 이상 성인이면 나이 제한 없이 누구나 작성할 수 있습니다. 65세 제한은 없습니다.",
+        "2": "★ 사전연명의료의향서는 본인이 직접 작성해야만 법적 효력이 발생합니다. 타인이 대신 작성한 경우 효력이 없습니다.",
+        "3": "등록은 보건복지부 지정 등록기관(국민건강보험공단 지사, 지정 의료기관, 호스피스 기관 등)에서 해야 하며, 일반 병·의원에서는 등록할 수 없습니다.",
+        "4": "연명의료중단 시에도 통증 완화 의료와 물·영양분 공급은 계속 유지됩니다.",
+        "5": "작성자가 직접 서명할 수 없는 경우에는 지정 등록기관의 상담사 등이 보조하는 방식으로 작성이 가능합니다."
+      },
+      "vi": {
+        "1": "Bất kỳ người trưởng thành từ 19 tuổi trở lên đều có thể lập — không có giới hạn tuổi 65.",
+        "2": "★ Văn bản chỉ thị y tế trước chỉ có hiệu lực khi do chính người đó tự lập; người khác lập thay không có hiệu lực.",
+        "3": "Phải đăng ký tại cơ quan do Bộ Y tế chỉ định (chi nhánh BHYT, bệnh viện chỉ định, cơ sở hospice); không thể đăng ký tại phòng khám thông thường.",
+        "4": "Khi ngừng điều trị duy trì sự sống, việc giảm đau và cung cấp nước/dinh dưỡng vẫn được duy trì.",
+        "5": "Nếu người lập không thể tự viết, có thể được hỗ trợ bởi tư vấn viên tại cơ quan đăng ký."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "연명의료중단", "def_vi": "Ngừng điều trị duy trì sự sống — quyết định không tiếp tục áp dụng các biện pháp chỉ kéo dài quá trình hấp hối" },
+      { "term_ko": "지정 등록기관", "def_vi": "Cơ quan đăng ký được chỉ định — cơ sở do Bộ Y tế Hàn Quốc ủy quyền để tiếp nhận đăng ký văn bản chỉ thị y tế trước" }
+    ]
+  },
+  {
+    "id": 1657,
+    "intent_ko": "사전연명의료의향서 작성 후 치료 변화에 대한 요양보호사의 올바른 설명을 고르는 문제",
+    "intent_vi": "Chọn câu trả lời đúng của nhân viên chăm sóc khi bệnh nhân hỏi về thay đổi điều trị sau khi lập văn bản chỉ thị y tế trước",
+    "choice_explanations": {
+      "ko": {
+        "1": "사전연명의료의향서를 작성해도 모든 치료가 중단되지는 않습니다. 통증 완화, 수분·영양 공급은 계속됩니다.",
+        "2": "혈액 투석은 연명의료에 해당하므로 사전연명의료의향서에 따라 중단될 수 있습니다.",
+        "3": "항암제 치료 역시 연명의료에 해당하며, 의향서를 작성한 말기환자에게는 시행하지 않는 것이 원칙입니다.",
+        "4": "★ 사전연명의료의향서를 등록하더라도 통증 완화를 위한 진통제 투여와 기본적인 수분·영양 공급은 중단되지 않고 계속 제공됩니다. 이는 환자의 존엄성과 편안함을 위한 기본 돌봄입니다.",
+        "5": "인공호흡기 착용은 연명의료에 해당하며, 비용을 부담해도 의향서에 따라 시행하지 않는 것이 원칙입니다."
+      },
+      "vi": {
+        "1": "Lập văn bản này không có nghĩa là ngừng mọi điều trị; giảm đau và cung cấp nước/dinh dưỡng vẫn tiếp tục.",
+        "2": "Thẩm tách máu thuộc danh mục điều trị duy trì sự sống và có thể bị đình chỉ theo văn bản.",
+        "3": "Hóa trị cũng thuộc danh mục điều trị duy trì sự sống; nguyên tắc là không thực hiện với bệnh nhân cuối đời đã lập văn bản.",
+        "4": "★ Dù đã đăng ký văn bản chỉ thị y tế trước, thuốc giảm đau và cung cấp nước/dinh dưỡng cơ bản vẫn được tiếp tục — đây là chăm sóc thiết yếu bảo đảm phẩm giá và sự thoải mái của bệnh nhân.",
+        "5": "Máy thở thuộc danh mục điều trị duy trì sự sống; nguyên tắc là không áp dụng theo văn bản, dù người bệnh sẵn sàng trả chi phí."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "진통제", "def_vi": "Thuốc giảm đau — thuốc dùng để kiểm soát cơn đau, được duy trì ngay cả khi ngừng điều trị duy trì sự sống" },
+      { "term_ko": "혈액 투석", "def_vi": "Thẩm tách máu — phương pháp lọc máu nhân tạo thay thế chức năng thận, thuộc danh mục điều trị duy trì sự sống" },
+      { "term_ko": "인공호흡기", "def_vi": "Máy thở — thiết bị hỗ trợ hô hấp cơ học, thuộc danh mục điều trị duy trì sự sống" }
+    ]
+  },
+  {
+    "id": 1656,
+    "intent_ko": "사전연명의료의향서를 등록한 대상자가 임종과정에서 계속 제공받을 수 있는 의료 행위를 고르는 문제",
+    "intent_vi": "Chọn biện pháp y tế vẫn được cung cấp cho người đã đăng ký văn bản chỉ thị y tế trước khi ở giai đoạn hấp hối",
+    "choice_explanations": {
+      "ko": {
+        "1": "혈액 투석은 연명의료에 해당하여 사전연명의료의향서에 따라 임종과정에서 시행하지 않습니다.",
+        "2": "★ 산소 공급은 호흡 곤란을 완화하는 증상 완화 목적의 처치로, 임종과정에서도 환자의 편안함을 위해 계속 제공될 수 있습니다. 연명의료 대상에서 제외됩니다.",
+        "3": "심폐소생술은 연명의료에 해당하여 사전연명의료의향서에 따라 임종과정에서 시행하지 않습니다.",
+        "4": "항암제 투여는 연명의료에 해당하여 임종과정에서 시행하지 않습니다.",
+        "5": "혈압상승제 투여는 생명 연장을 목적으로 하는 연명의료에 해당하여 임종과정에서 시행하지 않습니다."
+      },
+      "vi": {
+        "1": "Thẩm tách máu thuộc danh mục điều trị duy trì sự sống — không thực hiện theo văn bản chỉ thị y tế trước.",
+        "2": "★ Cung cấp oxy là biện pháp giảm nhẹ triệu chứng khó thở, không thuộc danh mục điều trị duy trì sự sống, nên vẫn có thể được cung cấp để bảo đảm sự thoải mái trong giai đoạn hấp hối.",
+        "3": "CPR (hồi sức tim phổi) thuộc danh mục điều trị duy trì sự sống — không thực hiện theo văn bản.",
+        "4": "Hóa trị thuộc danh mục điều trị duy trì sự sống — không thực hiện trong giai đoạn hấp hối.",
+        "5": "Thuốc tăng huyết áp nhằm kéo dài sự sống thuộc danh mục điều trị duy trì sự sống — không thực hiện theo văn bản."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "임종과정", "def_vi": "Giai đoạn hấp hối — giai đoạn cuối cùng của sự sống, cơ thể dần ngừng hoạt động" },
+      { "term_ko": "심폐소생술", "def_vi": "Hồi sức tim phổi (CPR) — biện pháp khẩn cấp ép ngực và thổi ngạt khi tim ngừng đập" },
+      { "term_ko": "혈압상승제", "def_vi": "Thuốc tăng huyết áp (vasopressor) — thuốc nâng huyết áp để duy trì chức năng cơ quan, thuộc danh mục điều trị duy trì sự sống" }
+    ]
+  },
+  {
+    "id": 1655,
+    "intent_ko": "임종과정의 기간만 연장하는 의학적 시술에 대해 미리 의사결정을 하는 것이 무엇인지 고르는 문제",
+    "intent_vi": "Chọn khái niệm chỉ việc quyết định trước về các biện pháp y tế chỉ kéo dài giai đoạn hấp hối",
+    "choice_explanations": {
+      "ko": {
+        "1": "임종은 생명이 끝나는 과정 자체를 의미하며, 의사결정 문서가 아닙니다.",
+        "2": "심폐소생술은 심정지 시 시행하는 응급 처치 행위이며, 의사결정 문서가 아닙니다.",
+        "3": "★ 사전연명의료의향서는 성인이 미리 작성하는 법적 문서로, 임종과정에서 치료 효과 없이 기간만 연장하는 연명의료(심폐소생술, 혈액 투석, 항암제, 인공호흡기 등)를 받지 않겠다는 의사결정을 담은 것입니다.",
+        "4": "호스피스는 말기환자에게 제공되는 통합적 돌봄 서비스이지, 연명의료 의사결정 문서가 아닙니다.",
+        "5": "완화의료는 고통 경감을 목적으로 하는 의료 분야이지, 연명의료 의사결정 문서가 아닙니다."
+      },
+      "vi": {
+        "1": "Hấp hối (임종) là quá trình kết thúc cuộc sống, không phải tài liệu quyết định.",
+        "2": "CPR là hành động cấp cứu khi tim ngừng đập, không phải tài liệu quyết định.",
+        "3": "★ Văn bản chỉ thị y tế trước (사전연명의료의향서) là tài liệu pháp lý mà người trưởng thành lập trước, thể hiện quyết định không áp dụng các biện pháp duy trì sự sống (CPR, thẩm tách, hóa trị, máy thở) chỉ kéo dài giai đoạn hấp hối mà không có tác dụng điều trị.",
+        "4": "Hospice là dịch vụ chăm sóc toàn diện cho bệnh nhân cuối đời, không phải tài liệu quyết định về điều trị.",
+        "5": "Chăm sóc giảm nhẹ là lĩnh vực y tế nhằm giảm đau, không phải tài liệu quyết định về điều trị duy trì sự sống."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "연명의료", "def_vi": "Điều trị duy trì sự sống — các biện pháp y tế chỉ kéo dài giai đoạn hấp hối (CPR, máy thở, thẩm tách, hóa trị) mà không chữa khỏi bệnh" },
+      { "term_ko": "호스피스", "def_vi": "Hospice — dịch vụ chăm sóc toàn diện (y tế, tâm lý, tâm linh) dành cho bệnh nhân giai đoạn cuối" },
+      { "term_ko": "완화의료", "def_vi": "Chăm sóc giảm nhẹ — chuyên ngành y tế tập trung giảm đau và cải thiện chất lượng sống của bệnh nhân mắc bệnh nặng" }
+    ]
+  },
+  {
+    "id": 1654,
+    "intent_ko": "임종 대상자의 품위 유지 권리 중 잘못 된 것을 고르는 문제",
+    "intent_vi": "Chọn quyền được nêu sai trong danh sách quyền bảo vệ phẩm giá của người sắp qua đời",
+    "choice_explanations": {
+      "ko": {
+        "1": "치료를 거부할 권리는 자기결정권의 핵심으로 임종 대상자의 정당한 권리입니다.",
+        "2": "고통으로부터 자유로울 권리(통증 완화)는 완화의료의 핵심 목표이자 기본 권리입니다.",
+        "3": "사생활을 침해받지 않을 권리는 임종 대상자의 프라이버시 보호를 위한 권리입니다.",
+        "4": "★ '원하지 않는 사람을 만나지 않을 권리'는 임종 대상자의 권리이나, '원하지 않는 사람을 만날 권리'는 존재하지 않으며 오히려 대상자의 의사에 반합니다. 이것이 잘못된 항목입니다.",
+        "5": "평화와 존엄 속에서 죽을 권리는 임종 돌봄의 핵심 원칙입니다."
+      },
+      "vi": {
+        "1": "Quyền từ chối điều trị là quyền tự quyết cốt lõi của người sắp qua đời.",
+        "2": "Quyền không đau đớn (được giảm đau) là mục tiêu trung tâm của chăm sóc giảm nhẹ và là quyền cơ bản.",
+        "3": "Quyền không bị xâm phạm đời tư bảo vệ sự riêng tư của người sắp qua đời.",
+        "4": "★ Quyền của người sắp qua đời là 'không phải gặp người mình không muốn gặp', không phải 'phải gặp người mình không muốn gặp'. Mục 4 ghi ngược lại — đây là quyền bị nêu sai.",
+        "5": "Quyền được chết trong bình an và phẩm giá là nguyên tắc cốt lõi của chăm sóc cuối đời."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "품위 유지", "def_vi": "Bảo vệ phẩm giá — đảm bảo người sắp qua đời được đối xử với sự tôn trọng và nhân phẩm" },
+      { "term_ko": "자기결정권", "def_vi": "Quyền tự quyết — quyền của mỗi người được đưa ra quyết định về cơ thể và điều trị của chính mình" },
+      { "term_ko": "사생활", "def_vi": "Đời tư / Riêng tư — thông tin và không gian cá nhân không được phép xâm phạm" }
+    ]
+  },
+  {
+    "id": 1653,
+    "intent_ko": "임종 대상자의 가족을 돕는 올바른 방법을 고르는 문제",
+    "intent_vi": "Chọn cách đúng để hỗ trợ gia đình người sắp qua đời",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 임종을 앞둔 가족이 스스로를 잘 돌볼 수 있도록 격려하는 것은 가족이 지속적으로 대상자를 지지할 수 있게 하는 긍정적이고 올바른 지원 방식입니다.",
+        "2": "슬픈 감정을 억제하도록 돕는 것은 감정 억압을 유도하여 심리적 부담을 가중시키므로 바람직하지 않습니다.",
+        "3": "가족을 혼자 방치하는 것은 고립감을 줄 수 있으므로 적절한 지원 방식이 아닙니다.",
+        "4": "장례식 참석은 사후 지원의 일환이 될 수 있으나, 임종 전 가족을 돕는 주된 방법은 아닙니다.",
+        "5": "유품 정리는 반드시 가족이 직접 해야 하며, 대신 정리하는 것은 가족의 애도 과정을 방해하고 고인에 대한 예의에 어긋날 수 있습니다."
+      },
+      "vi": {
+        "1": "★ Khuyến khích gia đình tự chăm sóc bản thân tốt giúp họ duy trì sức lực để tiếp tục hỗ trợ người thân — đây là cách hỗ trợ đúng và tích cực.",
+        "2": "Khuyến khích kìm nén cảm xúc buồn gây thêm gánh nặng tâm lý — không phù hợp.",
+        "3": "Để gia đình một mình có thể gây cảm giác cô lập — không phải cách hỗ trợ phù hợp.",
+        "4": "Tham dự tang lễ có thể là hỗ trợ sau khi mất, nhưng không phải cách chính để giúp gia đình trước khi người thân qua đời.",
+        "5": "Sắp xếp di vật phải do gia đình tự làm; làm thay có thể cản trở quá trình tang thương và thiếu tôn trọng người đã khuất."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "애도", "def_vi": "Tang thương / Để tang — quá trình tâm lý đối phó với mất mát và đau buồn" },
+      { "term_ko": "유품", "def_vi": "Di vật — đồ vật để lại của người đã qua đời" }
+    ]
+  },
+  {
+    "id": 1652,
+    "intent_ko": "사별 전 가족을 위한 올바른 요양보호 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp chăm sóc đúng dành cho gia đình trước khi người thân qua đời",
+    "choice_explanations": {
+      "ko": {
+        "1": "임종이 임박한 시기에 가족 외 다른 사람의 만남을 제한하는 것은 대상자와 가족의 지지 체계를 좁히는 것으로 적절하지 않습니다.",
+        "2": "대상자가 하는 말을 가족에게 전달하는 것은 의사소통을 원활하게 하고 가족이 대상자의 마음을 이해하는 데 도움이 됩니다.",
+        "3": "임종이 임박했을 때 응급실로 이송하는 것은 대상자의 의향(연명의료의향서 등)에 반할 수 있으며, 가족이 곁을 지키는 것이 더 중요합니다.",
+        "4": "마음의 아픔을 들어주는 것은 중요하나, 가족의 부족한 점을 직접 지적하는 것은 상처를 줄 수 있습니다.",
+        "5": "★ 가족 구성원의 생일에 케이크를 준비하여 함께하게 하는 것은 힘든 시간에 일상의 기쁨을 나누고 가족 유대를 강화하는 좋은 정서적 지원 방법입니다."
+      },
+      "vi": {
+        "1": "Hạn chế gặp gỡ người ngoài gia đình vào giai đoạn sắp mất thu hẹp mạng lưới hỗ trợ của người bệnh và gia đình — không phù hợp.",
+        "2": "Chuyển đạt những gì người bệnh nói cho gia đình giúp giao tiếp thông suốt và gia đình hiểu tâm tư người thân.",
+        "3": "Đưa người bệnh vào phòng cấp cứu khi sắp qua đời có thể trái với nguyện vọng của họ; điều quan trọng hơn là gia đình được ở bên.",
+        "4": "Lắng nghe nỗi đau của gia đình là quan trọng, nhưng trực tiếp chỉ ra điểm yếu kém của họ có thể gây tổn thương.",
+        "5": "★ Chuẩn bị bánh sinh nhật và để thành viên gia đình chia sẻ khoảnh khắc vui trong giai đoạn khó khăn là cách hỗ trợ cảm xúc tích cực, giúp gắn kết tình cảm gia đình."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "사별", "def_vi": "Mất người thân — sự chia ly do cái chết gây ra" },
+      { "term_ko": "정서적 지원", "def_vi": "Hỗ trợ cảm xúc — sự quan tâm, lắng nghe và đồng hành giúp người khác vượt qua khó khăn tâm lý" }
+    ]
+  },
+  {
+    "id": 1651,
+    "intent_ko": "임종이 임박한 대상자를 위한 올바른 요양보호 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp chăm sóc đúng cho người sắp qua đời",
+    "choice_explanations": {
+      "ko": {
+        "1": "임종이 임박해도 대상자의 의사결정권은 존중되어야 합니다. 배제하는 것은 비윤리적입니다.",
+        "2": "말기 상태에서 회복 희망을 계속 강조하는 것은 현실과 괴리되어 대상자가 죽음을 준비하지 못하게 할 수 있습니다.",
+        "3": "★ 임종이 임박한 대상자가 만나고 싶어하는 사람을 만날 수 있도록 지원하는 것은 자기결정권을 존중하고 정서적 안정을 제공하는 중요한 요양보호 방법입니다.",
+        "4": "장례식 관련 사항은 대상자의 의사를 먼저 확인해야 하며, 가족과만 상의하고 알려주는 것은 대상자를 소외시킬 수 있습니다.",
+        "5": "요양보호사는 자신의 종교를 강요해서는 안 됩니다. 대상자의 종교적 신념과 원하는 임종의식을 존중해야 합니다."
+      },
+      "vi": {
+        "1": "Dù sắp qua đời, quyền tự quyết của người được chăm sóc vẫn phải được tôn trọng; loại trừ quyền này là vi phạm đạo đức.",
+        "2": "Liên tục nhấn mạnh hy vọng phục hồi trong giai đoạn cuối có thể khiến người bệnh không chuẩn bị được cho cái chết.",
+        "3": "★ Hỗ trợ người sắp qua đời được gặp những người họ muốn gặp là cách tôn trọng quyền tự quyết và cung cấp sự ổn định cảm xúc — đây là biện pháp chăm sóc quan trọng.",
+        "4": "Nên hỏi ý kiến người bệnh trước về các vấn đề tang lễ; chỉ bàn với gia đình rồi thông báo có thể khiến người bệnh bị gạt ra ngoài.",
+        "5": "Nhân viên chăm sóc không được áp đặt tôn giáo của mình; phải tôn trọng tín ngưỡng và nghi thức cuối đời theo mong muốn của người bệnh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "자기결정권", "def_vi": "Quyền tự quyết — quyền tự đưa ra quyết định về bản thân kể cả trong giai đoạn cuối đời" },
+      { "term_ko": "임종의식", "def_vi": "Nghi thức cuối đời — nghi lễ tôn giáo hoặc văn hóa được thực hiện trong giai đoạn sắp qua đời" },
+      { "term_ko": "임종", "def_vi": "Hấp hối / Lâm chung — giai đoạn cuối cùng của cuộc sống ngay trước khi qua đời" }
+    ]
+  }
+]

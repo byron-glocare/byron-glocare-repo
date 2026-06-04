@@ -1,0 +1,755 @@
+[
+  {
+    "id": 1226,
+    "intent_ko": "물약을 정확하게 계량하여 복용시키는 올바른 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về phương pháp đúng để đo lường và cho uống thuốc nước chính xác",
+    "choice_explanations": {
+      "ko": {
+        "1": "햇볕이 드는 곳에 보관하면 약의 성분이 분해되어 효능이 저하되므로 틀린 방법이다.",
+        "2": "병뚜껑 안쪽이 바닥을 향하면 오염될 위험이 있어 잘못된 방법이다.",
+        "3": "★ 계량컵을 눈높이로 들고 따르면 눈금이 눈과 수평이 되어 정확한 양을 측정할 수 있다. 시선이 위나 아래이면 눈금의 착시가 생겨 오차가 발생하므로 반드시 눈높이에서 확인해야 한다.",
+        "4": "계량컵에 따른 물약을 다시 병에 부어 넣으면 오염될 수 있어 금지된 방법이다.",
+        "5": "주사기에 나누어 보관하는 것은 비위생적이며 약효를 저하시킬 수 있다."
+      },
+      "vi": {
+        "1": "Bảo quản thuốc dưới ánh nắng mặt trời sẽ làm phân giải thành phần thuốc, giảm hiệu lực — không đúng.",
+        "2": "Để mặt trong của nắp chai hướng xuống dưới có nguy cơ bị nhiễm bẩn — sai.",
+        "3": "★ Nâng cốc đo lường ngang tầm mắt khi rót giúp vạch đo ngang với mắt, đo chính xác lượng thuốc. Nếu nhìn từ trên xuống hoặc dưới lên sẽ gây sai số do ảo giác thị giác, vì vậy phải kiểm tra ngang tầm mắt.",
+        "4": "Đổ thuốc từ cốc đo trở lại chai có thể gây ô nhiễm — phương pháp bị cấm.",
+        "5": "Chia thuốc vào xi-lanh để bảo quản là không vệ sinh và có thể làm giảm hiệu lực thuốc."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "계량컵", "def_vi": "Cốc đo lường dùng để đong thuốc nước theo đúng liều lượng" },
+      { "term_ko": "물약", "def_vi": "Thuốc ở dạng lỏng (thuốc nước)" }
+    ]
+  },
+  {
+    "id": 1225,
+    "intent_ko": "경구 약(알약·물약) 복용 보조 시 올바른 위생적 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về phương pháp vệ sinh đúng khi hỗ trợ uống thuốc đường miệng (viên thuốc, thuốc nước)",
+    "choice_explanations": {
+      "ko": {
+        "1": "알약 병에 손가락을 넣어 꺼내는 것은 비위생적이므로 틀린 방법이다.",
+        "2": "물약은 라벨이 있는 쪽을 잡고 따라야 라벨이 오염되지 않는다. 라벨이 없는 쪽을 잡으면 라벨이 약에 젖어 손상된다.",
+        "3": "색이 변하거나 혼탁한 약물은 변질된 것이므로 복용해서는 안 된다.",
+        "4": "★ 물약 뚜껑 안쪽이 위로 가도록 놓으면 뚜껑 내면이 바닥에 닿지 않아 오염을 방지할 수 있다. 이것이 올바른 위생 관리법이다.",
+        "5": "손으로 병 입구를 닦으면 오히려 세균을 옮길 수 있어 위생적 방법이 아니다."
+      },
+      "vi": {
+        "1": "Cho tay vào chai lấy viên thuốc là mất vệ sinh — sai.",
+        "2": "Khi rót thuốc nước phải cầm phía có nhãn, nếu cầm phía không có nhãn, nhãn sẽ bị thuốc thấm ướt và hỏng.",
+        "3": "Thuốc đã đổi màu hoặc đục là thuốc hỏng, không được cho uống.",
+        "4": "★ Đặt nắp chai thuốc nước với mặt trong hướng lên trên để mặt trong không chạm xuống sàn, tránh nhiễm bẩn. Đây là cách quản lý vệ sinh đúng.",
+        "5": "Dùng tay lau miệng chai thuốc có thể lây vi khuẩn — không phải cách vệ sinh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "경구", "def_vi": "Đường uống — dùng thuốc qua miệng" },
+      { "term_ko": "혼탁", "def_vi": "Đục, vẩn đục — trạng thái không trong suốt, dấu hiệu thuốc biến chất" }
+    ]
+  },
+  {
+    "id": 1224,
+    "intent_ko": "자주 사레들리는 대상자에게 가루약을 안전하게 복용시키는 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về cách cho người hay bị sặc uống thuốc bột một cách an toàn",
+    "choice_explanations": {
+      "ko": {
+        "1": "가루약을 먼저 입안에 넣은 후 물을 마시면 가루가 기도로 들어가 사레가 생길 수 있다.",
+        "2": "음식이나 우유에 섞으면 약효가 변할 수 있고, 사레 위험도 여전히 존재한다.",
+        "3": "물약에 섞어 빨대로 먹이면 물약과의 혼합에서 약효가 감소할 수 있다.",
+        "4": "입 안에 물을 먼저 넣고 가루약을 털어 넣으면 두 물질이 동시에 들어가 삼키기 어렵다.",
+        "5": "★ 숟가락에 가루약을 담아 물로 녹인 후 먹이는 방법이 가장 안전하다. 가루가 이미 용해되어 있으므로 사레들릴 위험이 적고 정확한 양을 섭취시킬 수 있다."
+      },
+      "vi": {
+        "1": "Cho thuốc bột vào miệng trước rồi mới uống nước có thể khiến bột lọt vào đường thở gây sặc.",
+        "2": "Trộn vào thức ăn hay sữa có thể làm giảm hiệu lực thuốc và vẫn còn nguy cơ sặc.",
+        "3": "Trộn vào thuốc nước rồi uống bằng ống hút có thể làm giảm hiệu lực thuốc do phản ứng hỗn hợp.",
+        "4": "Cho nước vào miệng trước rồi cho thuốc bột vào sẽ khó nuốt vì hai chất vào cùng lúc.",
+        "5": "★ Đặt thuốc bột vào muỗng, hòa tan bằng nước rồi cho uống là cách an toàn nhất. Vì bột đã được hòa tan, ít nguy cơ bị sặc và có thể cho uống đúng liều lượng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "사레", "def_vi": "Sặc — hiện tượng thức ăn hoặc chất lỏng lọt vào đường thở" },
+      { "term_ko": "가루약", "def_vi": "Thuốc bột — thuốc ở dạng bột mịn" }
+    ]
+  },
+  {
+    "id": 1223,
+    "intent_ko": "약 복용 보조 시 올바른 방법(개수 많은 알약 분할 투약)을 확인하는 문제",
+    "intent_vi": "Câu hỏi xác nhận phương pháp đúng khi hỗ trợ uống thuốc — chia viên thuốc nhiều lần",
+    "choice_explanations": {
+      "ko": {
+        "1": "처방에 없는 약을 섞어주는 것은 위험한 약물상호작용을 일으킬 수 있으므로 절대 금지이다.",
+        "2": "용량이 많은 물약은 주사기로 정확히 측정하는 것은 도움이 되나, 이것이 '복용 보조' 원칙의 핵심은 아니다.",
+        "3": "잘못 복용했을 때 구토를 유도하는 것은 위험하며, 즉시 의료진에게 연락해야 한다.",
+        "4": "★ 개수가 많은 알약을 한꺼번에 삼키면 목에 걸릴 위험이 있다. 2~3번에 나누어 투약하면 안전하게 복용시킬 수 있다.",
+        "5": "계량컵은 눈높이와 일치시켜 수평으로 들고 따라야 정확한 용량을 측정할 수 있다."
+      },
+      "vi": {
+        "1": "Cho uống thuốc ngoài đơn kê có thể gây tương tác thuốc nguy hiểm — tuyệt đối cấm.",
+        "2": "Dùng xi-lanh để đo thuốc nước liều cao là hữu ích nhưng không phải nguyên tắc cốt lõi của hỗ trợ uống thuốc.",
+        "3": "Khi uống nhầm thuốc, kích thích nôn là nguy hiểm; phải liên hệ ngay với nhân viên y tế.",
+        "4": "★ Nuốt nhiều viên thuốc cùng lúc có nguy cơ bị nghẹn. Chia thành 2–3 lần để uống sẽ giúp uống thuốc an toàn hơn.",
+        "5": "Phải nâng cốc đo ngang tầm mắt để đo đúng liều lượng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "투약", "def_vi": "Cho thuốc — hành động cấp phát hoặc cho uống thuốc" },
+      { "term_ko": "처방", "def_vi": "Đơn thuốc — loại thuốc và liều lượng do bác sĩ chỉ định" }
+    ]
+  },
+  {
+    "id": 1222,
+    "intent_ko": "경구약 복용 후 입안에 약이 남아 있는지 확인하는 것이 중요함을 묻는 문제",
+    "intent_vi": "Câu hỏi về tầm quan trọng của việc kiểm tra xem thuốc còn sót lại trong miệng sau khi uống thuốc đường miệng",
+    "choice_explanations": {
+      "ko": {
+        "1": "알약을 손바닥에 따르는 것은 위생 문제와 분실 위험이 있어 적절하지 않다.",
+        "2": "알약을 가루로 만들어 복용하면 약의 방출 기전이 달라져 약효에 영향을 줄 수 있다.",
+        "3": "약을 삼키기 위해서는 충분한 양의 물이 필요하므로 소량만 먹이는 것은 잘못이다.",
+        "4": "직접 손에 약을 주는 것보다 체계적인 복용 확인 절차가 더 중요하다.",
+        "5": "★ 복용 후 질문을 통해 입안에 약이 남아 있는지 확인하는 것은 매우 중요하다. 약이 입안에 남으면 점막을 자극하거나 제대로 흡수되지 않을 수 있어, 완전히 삼켰는지 반드시 확인해야 한다."
+      },
+      "vi": {
+        "1": "Rót thuốc viên ra lòng bàn tay dễ mất vệ sinh và đánh rơi — không phù hợp.",
+        "2": "Nghiền viên thuốc thành bột có thể thay đổi cơ chế giải phóng thuốc, ảnh hưởng hiệu lực.",
+        "3": "Cần uống đủ lượng nước để nuốt thuốc; cho uống ít nước là sai.",
+        "4": "Quy trình kiểm tra uống thuốc có hệ thống quan trọng hơn là chỉ đưa thuốc vào tay.",
+        "5": "★ Sau khi uống thuốc, đặt câu hỏi để kiểm tra xem thuốc còn sót trong miệng hay không là rất quan trọng. Thuốc còn trong miệng có thể kích thích niêm mạc hoặc không được hấp thu đúng cách, vì vậy phải xác nhận đã nuốt hoàn toàn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "경구약", "def_vi": "Thuốc uống — thuốc dùng qua đường miệng" }
+    ]
+  },
+  {
+    "id": 1221,
+    "intent_ko": "약물 복용 시 치아착색을 방지하기 위한 올바른 도구를 묻는 문제",
+    "intent_vi": "Câu hỏi về dụng cụ đúng để ngăn ngừa nhuộm màu răng khi uống thuốc",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 빨대를 사용하면 약물이 치아 표면에 직접 닿지 않고 넘어가므로 착색을 효과적으로 예방할 수 있다.",
+        "2": "유리컵은 약을 담는 용도이며, 마시는 방법을 바꾸지 않으므로 착색 방지에 도움이 되지 않는다.",
+        "3": "약병뚜껑은 소량을 따를 때 사용하지만 착색과 무관하다.",
+        "4": "플라스틱 스푼으로 먹여도 약이 치아에 닿으므로 착색을 방지하지 못한다.",
+        "5": "플라스틱 컵도 용기에 불과하며 착색 방지 효과가 없다."
+      },
+      "vi": {
+        "1": "★ Dùng ống hút giúp thuốc không tiếp xúc trực tiếp với bề mặt răng khi đi qua miệng, ngăn ngừa nhuộm màu răng hiệu quả.",
+        "2": "Ly thủy tinh chỉ là vật đựng thuốc, không thay đổi cách uống nên không ngăn nhuộm màu răng.",
+        "3": "Nắp chai thuốc dùng để rót lượng nhỏ nhưng không liên quan đến nhuộm màu răng.",
+        "4": "Dùng muỗng nhựa vẫn để thuốc tiếp xúc với răng nên không ngăn nhuộm màu.",
+        "5": "Cốc nhựa cũng chỉ là vật đựng, không có tác dụng ngăn nhuộm màu răng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "치아착색", "def_vi": "Nhuộm màu răng — sự đổi màu răng do tiếp xúc với chất có màu trong thuốc" }
+    ]
+  },
+  {
+    "id": 1220,
+    "intent_ko": "복약 보조 시 금식 중이라도 혈압약은 반드시 투약해야 함을 확인하는 문제",
+    "intent_vi": "Câu hỏi xác nhận rằng ngay cả khi nhịn ăn vẫn phải cho uống thuốc huyết áp",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 금식 중이라도 혈압약은 생명 유지와 직결되기 때문에 반드시 투약해야 한다. 혈압약을 갑자기 중단하면 혈압이 급격히 상승하여 뇌졸중·심장마비 등 위험한 합병증이 발생할 수 있다.",
+        "2": "유효기간이 지난 약은 효과가 없거나 유해할 수 있으므로 즉시 폐기해야 하며 냉장보관해서는 안 된다.",
+        "3": "잘못 복용했을 때는 즉시 의료진에게 연락해야 하며 물을 많이 마시게 하는 것은 권장되지 않는다.",
+        "4": "캡슐약을 벗겨서 복용하면 약의 방출 속도와 효과가 바뀌어 위험할 수 있다.",
+        "5": "약을 삼키지 못할 때는 반드시 의사와 상담하여 적절한 제형(물약, 가루약 등)으로 교체해야 한다."
+      },
+      "vi": {
+        "1": "★ Ngay cả khi nhịn ăn vẫn phải cho uống thuốc huyết áp vì thuốc này liên quan trực tiếp đến duy trì sự sống. Ngừng thuốc huyết áp đột ngột có thể khiến huyết áp tăng vọt, gây đột quỵ, nhồi máu cơ tim và các biến chứng nguy hiểm.",
+        "2": "Thuốc hết hạn có thể mất tác dụng hoặc có hại; phải bỏ ngay, không được bảo quản tủ lạnh.",
+        "3": "Khi uống nhầm thuốc phải liên hệ ngay với nhân viên y tế; không khuyến cáo cho uống nhiều nước.",
+        "4": "Tháo vỏ nang thuốc có thể thay đổi tốc độ giải phóng và hiệu lực thuốc — nguy hiểm.",
+        "5": "Khi không thể nuốt thuốc phải hỏi ý kiến bác sĩ để đổi dạng thuốc phù hợp (thuốc nước, thuốc bột...)."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "혈압약", "def_vi": "Thuốc huyết áp — thuốc điều chỉnh và kiểm soát huyết áp" },
+      { "term_ko": "캡슐약", "def_vi": "Thuốc nang — thuốc được bọc trong vỏ nang, không được tháo vỏ khi uống" },
+      { "term_ko": "유효기간", "def_vi": "Hạn sử dụng — khoảng thời gian thuốc còn an toàn và có hiệu quả" }
+    ]
+  },
+  {
+    "id": 1219,
+    "intent_ko": "경관 영양액 주입 중 즉시 보고해야 할 응급 증상(구토)을 묻는 문제",
+    "intent_vi": "Câu hỏi về triệu chứng khẩn cấp (nôn mửa) cần báo cáo ngay trong khi truyền dịch dinh dưỡng qua ống",
+    "choice_explanations": {
+      "ko": {
+        "1": "입 안의 건조는 경관영양 시 흔히 나타나는 증상으로 즉각 보고 수준은 아니다.",
+        "2": "갈증도 흔한 불편감이며 위급 상황으로 보기 어렵다.",
+        "3": "다뇨는 관찰이 필요하지만 즉각적인 위험을 의미하지는 않는다.",
+        "4": "변비는 흔한 문제이며 긴급 보고 사항에 해당하지 않는다.",
+        "5": "★ 구토는 경관 영양 주입 중 매우 위험한 증상이다. 영양액이 역류하여 기도로 흡인될 경우 흡인성 폐렴이 발생할 수 있으므로 즉시 주입을 중단하고 시설장·간호사에게 보고해야 한다."
+      },
+      "vi": {
+        "1": "Khô miệng là triệu chứng thường gặp khi truyền dinh dưỡng qua ống, chưa cần báo cáo ngay.",
+        "2": "Cảm giác khát nước cũng phổ biến và chưa phải tình trạng khẩn cấp.",
+        "3": "Tiểu nhiều cần theo dõi nhưng không đồng nghĩa với nguy hiểm ngay lập tức.",
+        "4": "Táo bón là vấn đề thường gặp, không phải diện báo cáo khẩn.",
+        "5": "★ Nôn mửa là triệu chứng rất nguy hiểm trong khi truyền dinh dưỡng qua ống. Dịch dinh dưỡng trào ngược có thể bị hít vào đường thở gây viêm phổi hít, vì vậy phải dừng truyền ngay và báo cáo ngay cho người phụ trách và y tá."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "경관영양", "def_vi": "Dinh dưỡng qua ống — phương pháp cung cấp dinh dưỡng qua ống thông vào dạ dày hoặc ruột" },
+      { "term_ko": "흡인성 폐렴", "def_vi": "Viêm phổi hít — viêm phổi do thức ăn hoặc dịch bị hít vào đường thở" },
+      { "term_ko": "구토", "def_vi": "Nôn mửa — sự trào ngược thức ăn từ dạ dày ra ngoài qua miệng" }
+    ]
+  },
+  {
+    "id": 1218,
+    "intent_ko": "경관영양 대상자 돕기 시 비위관 고정 확인이 핵심임을 묻는 문제",
+    "intent_vi": "Câu hỏi về việc kiểm tra cố định ống thông mũi-dạ dày là điều cốt lõi khi chăm sóc người dùng dinh dưỡng qua ống",
+    "choice_explanations": {
+      "ko": {
+        "1": "경관영양 대상자도 구강 청결이 필요하다. 구강간호를 생략하면 감염 위험이 높아진다.",
+        "2": "비위관이 빠졌을 때 요양보호사가 임의로 밀어 넣으면 매우 위험하며, 즉시 의료진에게 알려야 한다.",
+        "3": "고농도 영양액을 빠르게 주입하면 설사, 구토, 전해질 불균형 등을 유발할 수 있다.",
+        "4": "★ 비위관이 올바른 위치에 고정되어 있는지 확인하는 것은 경관영양의 핵심 절차이다. 관이 이탈하거나 위치가 변하면 영양액이 폐로 들어갈 위험이 있으므로 주입 전 반드시 확인해야 한다.",
+        "5": "영양 주머니에 영양액을 가득 채우면 과다 주입 위험이 있으므로 정해진 양만 넣어야 한다."
+      },
+      "vi": {
+        "1": "Người nhận dinh dưỡng qua ống cũng cần vệ sinh răng miệng. Bỏ qua vệ sinh miệng làm tăng nguy cơ nhiễm trùng.",
+        "2": "Khi ống thông bị tuột ra, nhân viên chăm sóc tự ý nhét lại rất nguy hiểm; phải thông báo ngay cho nhân viên y tế.",
+        "3": "Truyền dịch dinh dưỡng đặc nhanh có thể gây tiêu chảy, nôn mửa, rối loạn điện giải.",
+        "4": "★ Kiểm tra xem ống thông mũi-dạ dày có được cố định đúng vị trí không là bước cốt lõi của dinh dưỡng qua ống. Nếu ống bị lệch hoặc tuột, dịch dinh dưỡng có thể vào phổi, vì vậy phải kiểm tra trước khi truyền.",
+        "5": "Đổ đầy dịch vào túi dinh dưỡng có nguy cơ truyền quá liều; chỉ nên đổ đúng lượng quy định."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "비위관", "def_vi": "Ống thông mũi-dạ dày (NG tube) — ống được đặt từ mũi xuống dạ dày để truyền dinh dưỡng" },
+      { "term_ko": "구강간호", "def_vi": "Chăm sóc vệ sinh miệng — vệ sinh khoang miệng để ngăn ngừa nhiễm trùng" }
+    ]
+  },
+  {
+    "id": 1217,
+    "intent_ko": "경관영양 주입 시 대상자를 오른쪽으로 눕히는 이유(역류·흡인 예방)를 묻는 문제",
+    "intent_vi": "Câu hỏi về lý do nghiêng người sang phải khi truyền dinh dưỡng qua ống (ngăn trào ngược và hít sặc)",
+    "choice_explanations": {
+      "ko": {
+        "1": "비위관이 새지 않게 하는 것은 관의 상태나 고정 여부에 달려 있으며 자세와 직접적 관련이 없다.",
+        "2": "영양액 속도는 클램프·펌프로 조절하며 자세 변경과는 관계없다.",
+        "3": "비위관을 제자리에 두는 것은 고정 방법의 문제이지 눕히는 방향과 무관하다.",
+        "4": "편안한 자세를 위한 것도 고려사항이나 주된 이유가 아니다.",
+        "5": "★ 오른쪽으로 누우면 위의 유문부(위→소장 출구)가 중력에 의해 아래에 위치하여 영양액이 소장으로 빠르게 이동하고, 역류하여 기도로 흡인될 가능성이 줄어든다. 이를 통해 흡인성 폐렴을 예방할 수 있다."
+      },
+      "vi": {
+        "1": "Ngăn ống thông bị rò rỉ phụ thuộc vào tình trạng ống và cách cố định, không liên quan trực tiếp đến tư thế.",
+        "2": "Tốc độ truyền dịch được điều chỉnh bằng kẹp hoặc máy bơm, không liên quan đến việc thay đổi tư thế.",
+        "3": "Giữ ống thông đúng vị trí là vấn đề cố định, không liên quan đến hướng nghiêng.",
+        "4": "Duy trì tư thế thoải mái cũng là điều cần lưu ý nhưng không phải lý do chính.",
+        "5": "★ Nghiêng sang phải khiến môn vị (lối ra từ dạ dày vào ruột non) nằm thấp hơn nhờ trọng lực, giúp dịch dinh dưỡng chuyển nhanh vào ruột và giảm khả năng trào ngược lên đường thở, từ đó ngăn ngừa viêm phổi hít."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "역류", "def_vi": "Trào ngược — hiện tượng dịch chảy ngược lại từ dạ dày lên thực quản hoặc đường thở" },
+      { "term_ko": "흡인", "def_vi": "Hít sặc — hiện tượng thức ăn hoặc dịch bị hít vào đường hô hấp" }
+    ]
+  },
+  {
+    "id": 1216,
+    "intent_ko": "경관영양 대상자 돕기 시 침상머리를 올려 앉히는 것이 기본임을 묻는 문제",
+    "intent_vi": "Câu hỏi xác nhận việc nâng đầu giường để người được chăm sóc ngồi là nguyên tắc cơ bản khi thực hiện dinh dưỡng qua ống",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 경관영양을 실시할 때 침상머리를 30~45도 정도 올려 반좌위를 유지하는 것이 기본 원칙이다. 이 자세는 영양액이 역류하여 폐로 흡인되는 것을 방지한다.",
+        "2": "의식이 없는 경우만이 아니라 스스로 먹을 수 없는 다양한 상황에서 경관영양이 이루어진다.",
+        "3": "영양액 주머니는 중력에 의해 영양액이 흘러내릴 수 있도록 침대보다 높은 위치(난간 위)에 걸어야 한다.",
+        "4": "영양액이 역류할 때는 주입을 잠시 멈추거나 속도를 줄여야 하며, 주머니를 높이면 더 많이 역류할 수 있다.",
+        "5": "비위관이 막히거나 혼탁할 경우에는 세척하거나 의료진에게 보고해야 하며 임의로 제거해서는 안 된다."
+      },
+      "vi": {
+        "1": "★ Khi thực hiện dinh dưỡng qua ống, phải nâng đầu giường khoảng 30–45 độ để duy trì tư thế nửa ngồi. Tư thế này ngăn dịch dinh dưỡng trào ngược vào phổi.",
+        "2": "Không chỉ người mất ý thức mới cần dinh dưỡng qua ống; có nhiều trường hợp không thể tự ăn.",
+        "3": "Túi dinh dưỡng phải treo cao hơn giường (trên thanh chắn) để dịch chảy xuống nhờ trọng lực.",
+        "4": "Khi dịch trào ngược, phải dừng hoặc giảm tốc độ truyền; nâng túi cao hơn sẽ làm trào ngược nhiều hơn.",
+        "5": "Khi ống thông tắc hoặc đục, phải rửa thông hoặc báo cho nhân viên y tế; không được tự ý rút ra."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "반좌위", "def_vi": "Tư thế nửa ngồi — tư thế nằm với đầu giường nâng lên 30–45 độ" },
+      { "term_ko": "비위관", "def_vi": "Ống thông mũi-dạ dày — ống từ mũi xuống dạ dày để truyền dinh dưỡng" }
+    ]
+  },
+  {
+    "id": 1215,
+    "intent_ko": "경관영양 시 비위관 삽입 부위에 윤활제를 바르는 것이 올바른 방법임을 묻는 문제",
+    "intent_vi": "Câu hỏi về việc bôi chất bôi trơn vào vị trí đặt ống thông là phương pháp đúng khi thực hiện dinh dưỡng qua ống",
+    "choice_explanations": {
+      "ko": {
+        "1": "고농도의 진한 영양액은 삼투압 차이로 설사를 유발하므로 적절하게 희석하여 사용해야 한다.",
+        "2": "청색증은 저산소증의 징후이므로 즉시 주입을 멈추고 의료진에게 보고해야 하며, 단순히 천천히 주입하는 것으로는 해결되지 않는다.",
+        "3": "영양액 주입 후 입안을 닦는 데 알코올 솜은 점막을 건조하게 하므로 부적합하다.",
+        "4": "★ 비위관을 삽입할 때 삽입 부위(코, 인후)에 윤활제를 바르면 마찰을 줄여 점막 손상을 예방하고 관이 부드럽게 들어갈 수 있다.",
+        "5": "영양액 주머니는 매번 소독할 필요는 없으나 청결하게 관리해야 하며, 정기적으로 교체해야 한다."
+      },
+      "vi": {
+        "1": "Dịch dinh dưỡng đặc nồng độ cao có thể gây tiêu chảy do chênh lệch áp suất thẩm thấu; phải pha loãng đúng mức.",
+        "2": "Xanh tím là dấu hiệu thiếu oxy; phải dừng truyền ngay và báo cho nhân viên y tế, không chỉ đơn giản là truyền chậm hơn.",
+        "3": "Dùng bông cồn lau miệng sau khi truyền dịch sẽ làm khô niêm mạc — không phù hợp.",
+        "4": "★ Khi đặt ống thông mũi-dạ dày, bôi chất bôi trơn vào vị trí đặt ống (mũi, họng) giúp giảm ma sát, ngăn tổn thương niêm mạc và giúp ống vào dễ dàng hơn.",
+        "5": "Túi dinh dưỡng không cần khử trùng mỗi lần nhưng phải giữ sạch và thay định kỳ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "윤활제", "def_vi": "Chất bôi trơn — chất làm giảm ma sát khi đặt ống thông, bảo vệ niêm mạc" },
+      { "term_ko": "청색증", "def_vi": "Xanh tím (cyanosis) — tình trạng da và niêm mạc chuyển màu xanh do thiếu oxy" }
+    ]
+  },
+  {
+    "id": 1214,
+    "intent_ko": "경관영양액을 빠르게 또는 고농도로 주입할 때 설사가 발생함을 묻는 문제",
+    "intent_vi": "Câu hỏi về việc truyền dịch dinh dưỡng quá nhanh hoặc nồng độ cao gây tiêu chảy",
+    "choice_explanations": {
+      "ko": {
+        "1": "혈변은 소화관 출혈과 관련된 증상으로 영양액 주입 속도·농도와는 무관하다.",
+        "2": "변비는 영양액 주입 속도나 농도와 직접적인 연관이 없다.",
+        "3": "★ 영양액을 빠르게 주입하거나 고농도로 주입하면 삼투압 차이로 인해 장 내 수분이 급격히 이동하면서 설사가 발생한다. 이는 경관영양의 대표적인 합병증이다.",
+        "4": "혈뇨는 비뇨기계 문제로 영양액과 직접 관련이 없다.",
+        "5": "단백뇨는 신장 기능 이상 증상으로 영양액 주입 방식과는 무관하다."
+      },
+      "vi": {
+        "1": "Phân máu liên quan đến xuất huyết tiêu hóa, không liên quan đến tốc độ hoặc nồng độ dịch dinh dưỡng.",
+        "2": "Táo bón không có liên hệ trực tiếp với tốc độ hoặc nồng độ dịch truyền.",
+        "3": "★ Truyền dịch dinh dưỡng quá nhanh hoặc nồng độ quá cao gây chênh lệch áp suất thẩm thấu, khiến nước trong ruột dịch chuyển đột ngột gây tiêu chảy. Đây là biến chứng điển hình của dinh dưỡng qua ống.",
+        "4": "Tiểu ra máu là vấn đề của hệ tiết niệu, không liên quan đến dịch dinh dưỡng.",
+        "5": "Protein niệu là triệu chứng rối loạn chức năng thận, không liên quan đến phương pháp truyền dịch."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "고농도", "def_vi": "Nồng độ cao — dịch dinh dưỡng có nồng độ chất dinh dưỡng cao hơn bình thường" },
+      { "term_ko": "삼투압", "def_vi": "Áp suất thẩm thấu — áp lực điều chỉnh sự di chuyển của nước qua màng tế bào" },
+      { "term_ko": "설사", "def_vi": "Tiêu chảy — tình trạng phân lỏng và đi tiêu nhiều lần bất thường" }
+    ]
+  },
+  {
+    "id": 1213,
+    "intent_ko": "경관영양 대상자가 설사를 지속할 때 탈수를 주의해서 관찰해야 함을 묻는 문제",
+    "intent_vi": "Câu hỏi về việc phải theo dõi cẩn thận tình trạng mất nước khi người nhận dinh dưỡng qua ống bị tiêu chảy liên tục",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 설사가 지속되면 다량의 수분과 전해질이 손실된다. 이로 인해 탈수가 발생하면 혈압 저하, 의식 저하 등 위험한 상태가 될 수 있으므로 주의 깊게 관찰해야 한다.",
+        "2": "구토는 탈수와 관련될 수 있으나 설사 지속 시 가장 우선 관찰할 사항은 탈수이다.",
+        "3": "오심은 불편감을 유발하지만 탈수와 직접적 연관이 없다.",
+        "4": "부종은 오히려 수분이 과다한 상태로 설사와는 반대의 상황이다.",
+        "5": "다뇨는 다른 건강 문제를 시사하지만 설사와의 직접적 연관은 적다."
+      },
+      "vi": {
+        "1": "★ Tiêu chảy liên tục làm mất nhiều nước và điện giải. Mất nước do đó có thể gây hạ huyết áp, giảm ý thức và các tình trạng nguy hiểm, vì vậy phải theo dõi cẩn thận.",
+        "2": "Nôn mửa có thể liên quan đến mất nước nhưng khi tiêu chảy kéo dài, điều cần theo dõi trước tiên là mất nước.",
+        "3": "Buồn nôn gây khó chịu nhưng không liên quan trực tiếp đến mất nước.",
+        "4": "Phù nề là tình trạng thừa nước, ngược lại với tiêu chảy.",
+        "5": "Tiểu nhiều có thể gợi ý các vấn đề sức khỏe khác nhưng ít liên quan trực tiếp đến tiêu chảy."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "탈수", "def_vi": "Mất nước — tình trạng cơ thể thiếu nước do mất quá nhiều qua tiêu chảy, nôn mửa..." },
+      { "term_ko": "전해질", "def_vi": "Điện giải — các khoáng chất (natri, kali...) cần thiết cho chức năng cơ thể" },
+      { "term_ko": "부종", "def_vi": "Phù nề — tình trạng tích tụ dịch trong mô gây sưng" }
+    ]
+  },
+  {
+    "id": 1212,
+    "intent_ko": "경관영양 중 비위관이 새고 있을 때 즉시 보고해야 함을 묻는 문제",
+    "intent_vi": "Câu hỏi về việc phải báo cáo ngay khi ống thông mũi-dạ dày bị rò rỉ trong quá trình dinh dưỡng qua ống",
+    "choice_explanations": {
+      "ko": {
+        "1": "비위관이 눌려 있으면 주입이 차단될 수 있어 확인이 필요하지만 즉각 보고 수준은 아니다.",
+        "2": "★ 비위관이 새고 있다는 것은 연결 부위 이탈이나 관 손상을 의미한다. 영양액이 엉뚱한 곳에 주입되면 감염, 피부 손상 또는 기도 흡인 위험이 있으므로 즉시 시설장·간호사에게 보고해야 한다.",
+        "3": "영양액이 천천히 들어가면 클램프를 확인하거나 속도를 조절하면 되며, 즉각 보고 사항은 아니다.",
+        "4": "대상자가 관을 빼려고 하면 주의가 필요하나, 관이 실제로 이탈하지 않은 이상 즉각 보고 사항은 아니다.",
+        "5": "비위관이 꺾여 있으면 주입이 중단될 수 있어 자세를 바로잡고 확인하면 되며, 긴급 보고는 아니다."
+      },
+      "vi": {
+        "1": "Ống thông bị đè bẹp có thể chặn dòng truyền, cần kiểm tra nhưng chưa phải mức báo cáo khẩn.",
+        "2": "★ Ống thông bị rò rỉ cho thấy điểm kết nối bị hở hoặc ống bị tổn thương. Dịch dinh dưỡng thoát ra ngoài đường dẫn có thể gây nhiễm trùng, tổn thương da hoặc nguy cơ hít sặc, vì vậy phải báo cáo ngay cho người phụ trách và y tá.",
+        "3": "Dịch truyền vào chậm có thể điều chỉnh bằng kẹp hoặc chỉnh tốc độ; chưa phải diện báo cáo khẩn.",
+        "4": "Người được chăm sóc vô tình rút ống cần được chú ý, nhưng nếu ống chưa thực sự tuột ra thì chưa cần báo cáo khẩn.",
+        "5": "Ống bị gập có thể dừng truyền; điều chỉnh tư thế và kiểm tra là đủ, không cần báo khẩn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "비위관", "def_vi": "Ống thông mũi-dạ dày — ống đặt từ mũi qua thực quản xuống dạ dày" },
+      { "term_ko": "누출", "def_vi": "Rò rỉ — sự thoát ra của dịch ngoài ống dẫn do hở hoặc tổn thương" }
+    ]
+  },
+  {
+    "id": 1211,
+    "intent_ko": "경관영양 기본원칙 중 의식 없는 대상자에게도 식사 시작·끝을 알려야 함을 묻는 문제",
+    "intent_vi": "Câu hỏi về nguyên tắc cơ bản của dinh dưỡng qua ống — phải thông báo bắt đầu và kết thúc bữa ăn ngay cả khi đối tượng không có ý thức",
+    "choice_explanations": {
+      "ko": {
+        "1": "유효기간이 지난 영양액은 끓이더라도 안전하지 않으며 즉시 폐기해야 한다.",
+        "2": "영양주머니 세척 주기는 제조사 지침에 따라야 하며 매일이 아닐 수 있다.",
+        "3": "★ 대상자가 의식이 없더라도 식사 시작과 끝을 알리는 것은 대상자의 존엄성을 존중하고 심리적 안정을 제공하는 기본 원칙이다. 청각은 무의식 상태에서도 일부 기능하므로 의사소통은 지속해야 한다.",
+        "4": "비위관이 새거나 역류가 생기면 즉시 주입을 멈추고 의료진에게 보고해야 하며, 임의로 제거하는 것은 아니다.",
+        "5": "영양액은 반드시 처방된 속도로 천천히 주입해야 한다."
+      },
+      "vi": {
+        "1": "Dịch dinh dưỡng hết hạn không an toàn dù có đun sôi; phải bỏ ngay.",
+        "2": "Tần suất rửa túi dinh dưỡng theo hướng dẫn của nhà sản xuất, không nhất thiết là mỗi ngày.",
+        "3": "★ Ngay cả khi đối tượng không có ý thức, việc thông báo bắt đầu và kết thúc bữa ăn là nguyên tắc cơ bản để tôn trọng phẩm giá và mang lại sự ổn định tâm lý. Thính giác vẫn có thể hoạt động một phần trong trạng thái vô thức, nên phải duy trì giao tiếp.",
+        "4": "Khi ống rò rỉ hoặc dịch trào ngược, phải dừng truyền ngay và báo nhân viên y tế; không được tự ý rút ống.",
+        "5": "Dịch dinh dưỡng phải được truyền chậm theo tốc độ đã được chỉ định."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "경관영양", "def_vi": "Dinh dưỡng qua ống — cung cấp dinh dưỡng qua ống thông vào dạ dày hoặc ruột" },
+      { "term_ko": "유효기간", "def_vi": "Hạn sử dụng — thời gian sản phẩm còn an toàn và có hiệu quả" }
+    ]
+  },
+  {
+    "id": 1210,
+    "intent_ko": "경관영양이 필요한 대상자(의식 없거나 혼수 상태)를 파악하는 문제",
+    "intent_vi": "Câu hỏi xác định đối tượng cần dinh dưỡng qua ống — người mất ý thức hoặc hôn mê",
+    "choice_explanations": {
+      "ko": {
+        "1": "편식하는 대상자는 식이 지도로 해결할 수 있어 경관영양이 필요하지 않다.",
+        "2": "영양공급이 충분한 대상자는 경관영양이 불필요하다.",
+        "3": "식사를 거부하는 대상자는 설득이나 다른 방법을 먼저 시도해야 하며, 경관영양의 대표적 적응증은 아니다.",
+        "4": "★ 의식이 없거나 혼수에 빠진 대상자는 스스로 음식을 삼킬 수 없으므로 경관영양이 반드시 필요하다. 이 외에도 연하곤란이 심한 경우, 구강 섭취가 불가능한 경우 등이 적응증에 포함된다.",
+        "5": "의치를 착용한 대상자는 의치를 끼우면 식사가 가능하므로 경관영양 대상이 아니다."
+      },
+      "vi": {
+        "1": "Người kén ăn có thể giải quyết bằng tư vấn dinh dưỡng, không cần dinh dưỡng qua ống.",
+        "2": "Người đã được cung cấp đủ dinh dưỡng không cần dinh dưỡng qua ống.",
+        "3": "Người từ chối ăn nên thử thuyết phục hoặc các phương pháp khác trước; không phải chỉ định điển hình của dinh dưỡng qua ống.",
+        "4": "★ Người mất ý thức hoặc hôn mê không thể tự nuốt thức ăn, vì vậy dinh dưỡng qua ống là bắt buộc. Ngoài ra, các trường hợp khó nuốt nặng hoặc không thể ăn qua miệng cũng là chỉ định.",
+        "5": "Người đeo hàm giả có thể ăn khi đeo hàm vào, không phải đối tượng cần dinh dưỡng qua ống."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "혼수", "def_vi": "Hôn mê — trạng thái mất ý thức sâu, không phản ứng với kích thích" },
+      { "term_ko": "연하곤란", "def_vi": "Khó nuốt (dysphagia) — triệu chứng khó khăn khi nuốt thức ăn hoặc nước uống" }
+    ]
+  },
+  {
+    "id": 1209,
+    "intent_ko": "왼쪽 편마비 대상자 식사 후 마비측 입안 잔류 음식 확인의 중요성을 묻는 문제",
+    "intent_vi": "Câu hỏi về tầm quan trọng của việc kiểm tra thức ăn còn sót lại ở phía bên liệt (trái) trong miệng sau bữa ăn của người liệt nửa người bên trái",
+    "choice_explanations": {
+      "ko": {
+        "1": "편마비 환자는 건강한 쪽(오른쪽)에서 돕는 것이 기본이며, 마비측(왼쪽)에서 돕는 것은 불편할 수 있다.",
+        "2": "음식은 감각이 살아있는 건강한 쪽(오른쪽) 입안에 넣어야 안전하다.",
+        "3": "왼쪽 편마비라면 마비된 왼쪽 상체가 아닌 건강한 오른쪽을 보조할 필요가 있다.",
+        "4": "마비된 왼손이 아닌 건강한 오른손에 보조도구를 끼워주는 것이 맞다.",
+        "5": "★ 왼쪽 편마비 대상자는 마비측 입안에 감각이 저하되어 음식 찌꺼기가 남아 있어도 인지하지 못한다. 식후 왼쪽 구강에 잔류물이 있는지 확인하고 제거해야 흡인이나 충치를 예방할 수 있다."
+      },
+      "vi": {
+        "1": "Với người liệt nửa người, cần hỗ trợ từ phía lành (phải); hỗ trợ từ phía liệt (trái) có thể gây khó chịu.",
+        "2": "Cho thức ăn vào phía trong miệng còn cảm giác (bên phải lành) mới an toàn.",
+        "3": "Với liệt nửa người bên trái, cần hỗ trợ phía lành (phải), không phải phía liệt.",
+        "4": "Nên đeo dụng cụ hỗ trợ ăn vào tay lành (tay phải), không phải tay liệt.",
+        "5": "★ Người liệt nửa người bên trái có cảm giác giảm ở phía liệt, không nhận ra thức ăn còn sót trong miệng bên trái. Sau bữa ăn phải kiểm tra và làm sạch phần thức ăn còn lại ở miệng bên liệt để ngăn ngừa hít sặc và sâu răng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "편마비", "def_vi": "Liệt nửa người (hemiplegia) — tình trạng mất khả năng vận động một bên cơ thể" },
+      { "term_ko": "음식 찌꺼기", "def_vi": "Thức ăn thừa còn sót — phần thức ăn còn lại trong miệng sau khi ăn" }
+    ]
+  },
+  {
+    "id": 1208,
+    "intent_ko": "연하곤란 대상자 식사 전 입안을 물로 헹궈 목을 축이면 사레를 예방함을 묻는 문제",
+    "intent_vi": "Câu hỏi về việc súc miệng bằng nước trước bữa ăn giúp làm ẩm cổ họng ngăn ngừa sặc cho người khó nuốt",
+    "choice_explanations": {
+      "ko": {
+        "1": "대화하면서 식사하면 집중력이 분산되어 연하가 어려운 대상자에게 사레가 발생할 수 있다.",
+        "2": "국물이 많은 음식은 묽어서 기도로 흡인되기 쉬워 오히려 위험하다.",
+        "3": "★ 식사 전에 입안을 물로 헹궈 목을 축이면 구강 점막이 촉촉해지고 연하반사(삼키는 반사)가 활성화되어 삼키기가 더 수월해지고 사레를 예방할 수 있다.",
+        "4": "향신료가 강한 음식은 구강 점막을 자극하여 연하를 방해하고 사레를 유발할 수 있다.",
+        "5": "음식을 완전히 삼키기 전에 추가로 넣으면 구강 내 음식이 누적되어 기도 폐쇄 위험이 높아진다."
+      },
+      "vi": {
+        "1": "Vừa nói chuyện vừa ăn làm giảm tập trung, dễ gây sặc cho người khó nuốt.",
+        "2": "Thức ăn nhiều nước lỏng dễ bị hít vào đường thở — thực ra nguy hiểm hơn.",
+        "3": "★ Súc miệng bằng nước trước bữa ăn làm ẩm niêm mạc miệng và kích hoạt phản xạ nuốt, giúp nuốt dễ hơn và ngăn ngừa sặc.",
+        "4": "Thức ăn có nhiều gia vị mạnh kích thích niêm mạc miệng, cản trở nuốt và có thể gây sặc.",
+        "5": "Cho thêm thức ăn trước khi nuốt xong tạo nguy cơ thức ăn tích lại gây tắc đường thở."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "연하곤란", "def_vi": "Khó nuốt (dysphagia) — triệu chứng khó khăn khi nuốt thức ăn hoặc nước uống" },
+      { "term_ko": "연하반사", "def_vi": "Phản xạ nuốt — phản xạ tự nhiên điều phối việc nuốt thức ăn an toàn" },
+      { "term_ko": "사레", "def_vi": "Sặc — thức ăn hoặc nước lọt vào đường thở gây ho hoặc nguy hiểm" }
+    ]
+  },
+  {
+    "id": 1207,
+    "intent_ko": "편마비 대상자 식사 중 연하곤란 여부를 주의 깊게 관찰하는 것이 핵심임을 묻는 문제",
+    "intent_vi": "Câu hỏi xác định việc quan sát cẩn thận tình trạng khó nuốt trong bữa ăn là điều cốt lõi với người liệt nửa người",
+    "choice_explanations": {
+      "ko": {
+        "1": "시력 저하 대상자에게 음식을 섞어서 주면 선택권과 존엄성을 침해하며 혼란을 줄 수 있다.",
+        "2": "★ 편마비 대상자는 연하 관련 근육도 마비되어 있을 수 있어 식사 중 연하곤란 징후(사레, 기침, 음식물 흘림 등)를 주의 깊게 관찰하는 것이 매우 중요하다. 조기 발견이 흡인성 폐렴을 예방한다.",
+        "3": "마비측 입가에 흐르는 음식물은 즉시 닦아주어야 피부 자극이나 오염을 막을 수 있다.",
+        "4": "식사 중 지나친 질문은 집중력을 방해하고 오히려 사레를 유발할 수 있다.",
+        "5": "식사 후 바로 눕히면 역류와 흡인 위험이 있어 식후 30분~1시간은 앉은 자세를 유지해야 한다."
+      },
+      "vi": {
+        "1": "Trộn lẫn thức ăn cho người giảm thị lực xâm phạm quyền lựa chọn và phẩm giá, gây nhầm lẫn.",
+        "2": "★ Người liệt nửa người có thể liệt cả cơ nuốt, vì vậy quan sát kỹ các dấu hiệu khó nuốt trong bữa ăn (sặc, ho, thức ăn chảy ra...) là rất quan trọng. Phát hiện sớm giúp ngăn ngừa viêm phổi hít.",
+        "3": "Thức ăn chảy ra ở phía miệng bên liệt phải lau ngay để tránh kích ứng da và ô nhiễm.",
+        "4": "Hỏi quá nhiều trong bữa ăn làm mất tập trung và có thể gây sặc.",
+        "5": "Nằm ngay sau ăn có nguy cơ trào ngược và hít sặc; phải duy trì tư thế ngồi 30–60 phút sau bữa ăn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "편마비", "def_vi": "Liệt nửa người — mất khả năng vận động một bên cơ thể" },
+      { "term_ko": "연하곤란", "def_vi": "Khó nuốt — triệu chứng khó khăn khi nuốt thức ăn hoặc đồ uống" },
+      { "term_ko": "흡인성 폐렴", "def_vi": "Viêm phổi hít — viêm phổi do thức ăn hoặc dịch bị hít vào phổi" }
+    ]
+  },
+  {
+    "id": 1206,
+    "intent_ko": "숟가락으로 음식을 줄 때 끝부분을 입술 옆쪽에 대고 먹이는 것이 올바른 방법임을 묻는 문제",
+    "intent_vi": "Câu hỏi về phương pháp đúng khi dùng muỗng cho ăn — đặt đầu muỗng vào bên cạnh môi",
+    "choice_explanations": {
+      "ko": {
+        "1": "숟가락에 음식을 가득 담으면 한 번에 너무 많은 양이 들어가 사레가 생길 위험이 있다.",
+        "2": "★ 숟가락 끝부분으로 입술 옆쪽에 살짝 대고 먹이는 방법은 대상자가 스스로 입을 벌리고 음식을 받아들일 수 있어 자율성을 존중하고 안전하게 식사할 수 있다.",
+        "3": "숟가락을 입속 중앙(혀 가운데)으로 넣으면 구역반사를 유발하거나 사레가 생길 수 있다.",
+        "4": "오른손잡이 대상자는 오른쪽에서 식사 보조를 받는 것이 자연스럽다.",
+        "5": "편마비 대상자에게는 마비되지 않은 건강한 쪽에서 음식을 넣어주어야 안전하다."
+      },
+      "vi": {
+        "1": "Xúc đầy muỗng thức ăn rồi đưa vào miệng quá nhiều một lần có thể gây sặc.",
+        "2": "★ Đặt nhẹ đầu muỗng vào bên cạnh môi giúp người được chăm sóc tự mở miệng và đón thức ăn, tôn trọng sự tự chủ và ăn uống an toàn.",
+        "3": "Đưa muỗng vào giữa miệng (giữa lưỡi) có thể kích thích phản xạ nôn hoặc gây sặc.",
+        "4": "Người thuận tay phải được hỗ trợ từ bên phải là tự nhiên nhất.",
+        "5": "Với người liệt nửa người, phải đưa thức ăn vào phía bên lành (không bị liệt) mới an toàn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "구역반사", "def_vi": "Phản xạ nôn (gag reflex) — phản xạ bảo vệ co cơ họng khi bị kích thích ở cuống họng" }
+    ]
+  },
+  {
+    "id": 1205,
+    "intent_ko": "편마비 대상자 식사 보조 시 국을 한 숟가락 먹인 후 밥을 주는 방법이 올바름을 묻는 문제",
+    "intent_vi": "Câu hỏi về việc cho uống một muỗng canh trước rồi mới cho ăn cơm là phương pháp đúng khi hỗ trợ ăn cho người liệt nửa người",
+    "choice_explanations": {
+      "ko": {
+        "1": "똑바로 누운 자세는 역류와 흡인 위험이 높아 식사에 적합하지 않다.",
+        "2": "상체를 낮추면 음식이 역류하거나 사레가 생기기 쉬워 위험하다.",
+        "3": "★ 국(액체)을 먼저 한 숟가락 제공하면 구강 점막을 촉촉하게 하여 삼킴이 용이해지고, 이후 밥(고형식)을 주면 연하를 더 안전하게 도울 수 있다.",
+        "4": "마비된 쪽 입가로 음식을 넣으면 감각이 없어 씹거나 삼키지 못하고 흘리거나 사레가 생길 위험이 있다.",
+        "5": "가는 빨대는 연하곤란 대상자에게 오히려 흡인 위험을 높일 수 있다."
+      },
+      "vi": {
+        "1": "Tư thế nằm ngửa thẳng có nguy cơ trào ngược và hít sặc cao — không phù hợp để ăn.",
+        "2": "Hạ thấp thân trên dễ gây trào ngược hoặc sặc — nguy hiểm.",
+        "3": "★ Cho uống một muỗng canh (lỏng) trước giúp làm ẩm niêm mạc miệng, dễ nuốt hơn, sau đó mới cho ăn cơm (đặc) giúp hỗ trợ nuốt an toàn hơn.",
+        "4": "Đưa thức ăn vào phía miệng bên liệt sẽ không cảm nhận được, dễ chảy ra hoặc gây sặc.",
+        "5": "Ống hút nhỏ có thể tăng nguy cơ hít sặc cho người khó nuốt."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "편마비", "def_vi": "Liệt nửa người — mất khả năng vận động và cảm giác một bên cơ thể" },
+      { "term_ko": "연하", "def_vi": "Nuốt — hành động đưa thức ăn từ miệng xuống thực quản" }
+    ]
+  },
+  {
+    "id": 1204,
+    "intent_ko": "식사 돕기 전 가장 먼저 배설 여부를 확인해야 하는 이유를 묻는 문제",
+    "intent_vi": "Câu hỏi về lý do phải kiểm tra tình trạng bài tiết trước tiên khi hỗ trợ bữa ăn",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 식사 전 가장 먼저 배설 여부를 확인하는 이유는, 식사 도중 배변·배뇨 욕구가 생기면 식사가 중단되고 불쾌감을 유발하기 때문이다. 또한 화장실을 이용하지 못해 불안감이 생기면 식욕이 저하될 수 있다.",
+        "2": "구강 청결은 중요하지만 배설 여부 확인 이후에 이루어지는 단계이다.",
+        "3": "침대 머리를 올리는 것은 식사 직전 준비 단계이다.",
+        "4": "주변 환경 정리도 필요하나 생리적 욕구 확인이 우선이다.",
+        "5": "음식 안내는 식사 시작 직전에 하는 것으로 배설 확인 이후의 단계이다."
+      },
+      "vi": {
+        "1": "★ Trước bữa ăn phải kiểm tra tình trạng bài tiết trước tiên vì nếu giữa bữa ăn người được chăm sóc có nhu cầu đi vệ sinh, bữa ăn sẽ bị gián đoạn và gây khó chịu. Hơn nữa, lo lắng về vệ sinh có thể làm giảm cảm giác thèm ăn.",
+        "2": "Vệ sinh răng miệng quan trọng nhưng là bước tiếp theo sau khi kiểm tra bài tiết.",
+        "3": "Nâng đầu giường là bước chuẩn bị ngay trước khi ăn.",
+        "4": "Sắp xếp môi trường xung quanh cũng cần thiết nhưng ưu tiên kiểm tra nhu cầu sinh lý trước.",
+        "5": "Thông báo về thức ăn được thực hiện ngay trước khi bắt đầu ăn — sau bước kiểm tra bài tiết."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "배설", "def_vi": "Bài tiết — hành động thải chất cặn bã ra khỏi cơ thể (đi tiểu, đi đại tiện)" }
+    ]
+  },
+  {
+    "id": 1203,
+    "intent_ko": "사레들리기 쉬운 대상자가 주의해야 할 과일(자몽)을 파악하는 문제",
+    "intent_vi": "Câu hỏi xác định loại trái cây (bưởi chùm) mà người dễ bị sặc cần chú ý tránh",
+    "choice_explanations": {
+      "ko": {
+        "1": "배는 부드럽고 수분이 많아 사레 위험이 상대적으로 낮다.",
+        "2": "수박은 부드러운 과육이어서 사레 위험이 낮은 편이다.",
+        "3": "바나나는 부드럽고 씹기 쉬워 사레 위험이 낮은 편이다.",
+        "4": "홍시는 부드러운 과육이어서 일반적으로 비교적 안전하다.",
+        "5": "★ 자몽은 과즙이 많고 산도가 높으며, 과육 섬유질이 거칠어 씹고 삼키기 어렵다. 연하곤란이나 사레들리기 쉬운 대상자에게는 특히 위험한 과일이다."
+      },
+      "vi": {
+        "1": "Lê mềm và nhiều nước nên nguy cơ sặc tương đối thấp.",
+        "2": "Dưa hấu có thịt mềm nên nguy cơ sặc thấp.",
+        "3": "Chuối mềm và dễ nhai nên nguy cơ sặc thấp.",
+        "4": "Hồng chín mềm nên thường tương đối an toàn.",
+        "5": "★ Bưởi chùm (grapefruit) nhiều nước, độ axit cao và xơ thịt thô ráp, khó nhai và nuốt. Đây là loại trái cây đặc biệt nguy hiểm cho người dễ bị sặc hoặc có khó nuốt."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "사레", "def_vi": "Sặc — thức ăn hoặc nước lọt vào đường thở gây ho, nghẹt thở" },
+      { "term_ko": "연하곤란", "def_vi": "Khó nuốt — triệu chứng gặp khó khăn khi nuốt thức ăn" }
+    ]
+  },
+  {
+    "id": 1202,
+    "intent_ko": "신맛 나는 음식이 연하 자극으로 사레를 유발할 수 있어 대상자에게 제한하는 이유를 묻는 문제",
+    "intent_vi": "Câu hỏi về lý do hạn chế thức ăn có vị chua cho người được chăm sóc — vị chua kích thích gây sặc",
+    "choice_explanations": {
+      "ko": {
+        "1": "신맛이 식욕을 떨어뜨릴 수 있지만 제한의 주된 이유는 아니다.",
+        "2": "신맛이 설사를 유발하는 경우도 있으나 일반적이지 않다.",
+        "3": "신맛은 타액 분비를 촉진하지만 메스꺼움을 심화시키는 것이 주된 제한 이유는 아니다.",
+        "4": "★ 신맛이 나는 음식은 갑작스러운 타액 분비와 연하반사의 과도한 자극을 유발하여 삼키는 타이밍이 어긋나 사레가 들릴 수 있다. 이 때문에 연하곤란이나 사레들리기 쉬운 대상자에게 신맛 음식을 제한한다.",
+        "5": "신맛이 입안을 건조하게 하는 것은 일반적이지 않으며 제한의 이유로 보기 어렵다."
+      },
+      "vi": {
+        "1": "Vị chua có thể làm giảm cảm giác thèm ăn nhưng không phải lý do chính để hạn chế.",
+        "2": "Vị chua đôi khi gây tiêu chảy nhưng không phổ biến.",
+        "3": "Vị chua kích thích tiết nước bọt nhưng làm nặng thêm buồn nôn không phải lý do chính để hạn chế.",
+        "4": "★ Thức ăn chua gây tiết nước bọt đột ngột và kích thích phản xạ nuốt quá mức, làm lệch nhịp nuốt dẫn đến sặc. Vì vậy, hạn chế thức ăn chua với người dễ sặc hoặc có khó nuốt.",
+        "5": "Vị chua làm khô miệng là không phổ biến và khó coi là lý do hạn chế."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "연하반사", "def_vi": "Phản xạ nuốt — phản xạ điều phối việc nuốt thức ăn an toàn xuống thực quản" },
+      { "term_ko": "타액", "def_vi": "Nước bọt — dịch tiết từ tuyến nước bọt giúp tiêu hóa và làm ẩm thức ăn" },
+      { "term_ko": "사레", "def_vi": "Sặc — hiện tượng thức ăn lọt vào đường thở" }
+    ]
+  },
+  {
+    "id": 1201,
+    "intent_ko": "연하곤란 대상자에게 사레가 들리면 즉시 식사를 중단하고 보고해야 함을 묻는 문제",
+    "intent_vi": "Câu hỏi về việc phải dừng bữa ăn ngay và báo cáo khi người khó nuốt bị sặc",
+    "choice_explanations": {
+      "ko": {
+        "1": "기침이 나면 잠시 쉬게 하는 것은 맞으나, '쉬었다 먹인다'는 표현이 오래 쉬게 하는 것처럼 오해될 수 있어 3번이 더 명확한 정답이다.",
+        "2": "음식을 빠르게 먹도록 재촉하면 사레 위험이 극도로 높아진다.",
+        "3": "★ 사레가 들리면 즉시 식사를 중단하고 대상자의 상태를 확인한 후 시설장·간호사에게 보고해야 한다. 연하곤란 대상자의 사레는 흡인성 폐렴으로 이어질 수 있는 응급 상황이다.",
+        "4": "식사 전에 소량의 물(입 안 헹구기)은 목을 축여 사레를 예방하므로 전혀 먹이지 않는 것은 잘못이다.",
+        "5": "압박하는 옷은 호흡과 연하를 방해할 수 있어 피해야 한다."
+      },
+      "vi": {
+        "1": "Cho nghỉ khi ho là đúng nhưng câu trả lời 3 rõ ràng hơn như hành động chuẩn khi xảy ra sặc.",
+        "2": "Thúc giục ăn nhanh làm tăng cực độ nguy cơ sặc.",
+        "3": "★ Khi bị sặc phải dừng bữa ăn ngay, kiểm tra tình trạng người được chăm sóc và báo cáo cho người phụ trách, y tá. Sặc ở người khó nuốt có thể dẫn đến viêm phổi hít — đây là tình huống khẩn cấp.",
+        "4": "Một lượng nhỏ nước trước bữa ăn (súc miệng) làm ẩm cổ họng và ngăn sặc; không cho uống gì cả là sai.",
+        "5": "Quần áo bó chặt cản trở hô hấp và nuốt — phải tránh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "연하곤란", "def_vi": "Khó nuốt (dysphagia) — tình trạng khó khăn khi nuốt thức ăn hoặc nước uống" },
+      { "term_ko": "흡인성 폐렴", "def_vi": "Viêm phổi hít — viêm phổi do thức ăn hoặc dịch bị hít vào đường hô hấp" }
+    ]
+  },
+  {
+    "id": 1200,
+    "intent_ko": "사레들리기 쉬운 대상자에게 바나나를 숟가락으로 긁어서 제공하는 것이 안전한 방법임을 묻는 문제",
+    "intent_vi": "Câu hỏi về việc dùng muỗng cạo chuối là phương pháp an toàn cho người dễ bị sặc",
+    "choice_explanations": {
+      "ko": {
+        "1": "바나나를 불에 익히면 식감이 변하지만 씹고 삼키기 위험한 점이 해소되지 않는다.",
+        "2": "바나나를 통째로 주면 한 번에 많은 양을 삼켜야 해 사레 위험이 매우 높다.",
+        "3": "얼음으로 얼리면 딱딱해져 삼키기 더 어렵고 위험해진다.",
+        "4": "★ 숟가락으로 바나나를 긁어서 제공하면 부드러운 죽 형태가 되어 씹을 필요 없이 쉽게 삼킬 수 있다. 이는 사레들리기 쉬운 대상자에게 가장 안전한 제공 방법이다.",
+        "5": "한 입 크기로 잘라도 고형 덩어리여서 연하곤란 대상자에게는 여전히 위험할 수 있다."
+      },
+      "vi": {
+        "1": "Nướng chuối thay đổi kết cấu nhưng không giải quyết nguy cơ sặc khi nhai và nuốt.",
+        "2": "Cho chuối nguyên quả đòi hỏi nuốt một lượng lớn cùng lúc — nguy cơ sặc rất cao.",
+        "3": "Đông lạnh chuối làm cứng hơn, khó nuốt và nguy hiểm hơn.",
+        "4": "★ Dùng muỗng cạo chuối tạo ra dạng nhuyễn mịn, không cần nhai, dễ nuốt. Đây là cách cung cấp an toàn nhất cho người dễ bị sặc.",
+        "5": "Cắt thành miếng vừa miệng vẫn là thức ăn đặc, vẫn có thể nguy hiểm với người khó nuốt."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "연하곤란", "def_vi": "Khó nuốt — tình trạng gặp khó khăn khi nuốt thức ăn" },
+      { "term_ko": "사레", "def_vi": "Sặc — thức ăn lọt vào đường thở gây ho hoặc nguy hiểm" }
+    ]
+  },
+  {
+    "id": 1199,
+    "intent_ko": "연하곤란 대상자에게 충분히 삼킬 수 있는 적은 양을 입에 넣어주는 것이 올바름을 묻는 문제",
+    "intent_vi": "Câu hỏi về việc đưa vào miệng từng lượng nhỏ đủ để nuốt là phương pháp đúng cho người khó nuốt",
+    "choice_explanations": {
+      "ko": {
+        "1": "한꺼번에 많은 양의 음식을 제공하면 삼킴이 어려워 사레나 흡인 위험이 높아진다.",
+        "2": "딱딱한 음식은 씹기가 어렵고 기도를 막을 위험이 있어 연하곤란 대상자에게 부적합하다.",
+        "3": "레몬 소스 등 산성 음식은 타액 분비를 과도하게 자극하여 연하 타이밍을 방해할 수 있다.",
+        "4": "누운 자세에서 식사 제공은 기도 흡인 위험이 매우 높아 절대 피해야 한다.",
+        "5": "★ 연하곤란 대상자에게는 한 번에 충분히 삼킬 수 있는 소량(약 5mL 정도)의 음식을 입에 넣고, 완전히 삼킨 것을 확인한 후 다음 양을 제공하는 것이 안전하다."
+      },
+      "vi": {
+        "1": "Cho nhiều thức ăn một lúc làm khó nuốt, tăng nguy cơ sặc và hít sặc.",
+        "2": "Thức ăn cứng khó nhai và có thể tắc đường thở — không phù hợp với người khó nuốt.",
+        "3": "Thức ăn chua như nước sốt chanh kích thích tiết nước bọt quá mức, làm lệch nhịp nuốt.",
+        "4": "Cho ăn trong tư thế nằm ngửa có nguy cơ hít sặc rất cao — tuyệt đối phải tránh.",
+        "5": "★ Với người khó nuốt, đưa từng lượng nhỏ (khoảng 5mL) vào miệng, đợi nuốt xong hoàn toàn rồi mới cho thêm là phương pháp an toàn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "연하곤란", "def_vi": "Khó nuốt (dysphagia) — tình trạng khó khăn khi nuốt" },
+      { "term_ko": "흡인", "def_vi": "Hít sặc — thức ăn hoặc dịch bị hít vào đường hô hấp" }
+    ]
+  },
+  {
+    "id": 1198,
+    "intent_ko": "대상자의 식욕을 증진시키기 위해 식사 전 맑은 공기 마시기가 효과적임을 묻는 문제",
+    "intent_vi": "Câu hỏi về việc hít không khí trong lành trước bữa ăn là cách hiệu quả để tăng cảm giác thèm ăn cho người được chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "식사 전 수면은 몸을 이완시키지만 식욕을 증진시키지는 않는다.",
+        "2": "몸을 움직이지 못하게 하면 혈액순환이 저하되어 오히려 식욕이 감소한다.",
+        "3": "어두운 조명은 식욕을 높이기보다는 수면 유도에 가깝다.",
+        "4": "식사 전 간식은 포만감을 주어 본 식사의 식욕을 저하시킨다.",
+        "5": "★ 식사 전에 밖으로 나가 신선한 공기를 마시면 가벼운 신체 활동과 자연환경 자극으로 식욕 호르몬이 활성화되고 기분이 좋아져 식욕이 증진된다."
+      },
+      "vi": {
+        "1": "Ngủ trước bữa ăn giúp thư giãn cơ thể nhưng không tăng cảm giác thèm ăn.",
+        "2": "Không cho di chuyển làm giảm tuần hoàn máu, ngược lại làm giảm cảm giác thèm ăn.",
+        "3": "Ánh sáng tối hơn gần với kích thích ngủ hơn là tăng cảm giác thèm ăn.",
+        "4": "Ăn nhẹ trước bữa chính gây no, làm giảm cảm giác thèm ăn cho bữa chính.",
+        "5": "★ Ra ngoài hít không khí trong lành trước bữa ăn kết hợp vận động nhẹ và kích thích từ thiên nhiên giúp kích hoạt hormone thèm ăn và cải thiện tâm trạng, từ đó tăng cảm giác thèm ăn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "식욕", "def_vi": "Cảm giác thèm ăn — mong muốn ăn uống, phụ thuộc vào trạng thái thể chất và tâm lý" }
+    ]
+  },
+  {
+    "id": 1197,
+    "intent_ko": "구부정한 자세로 식사할 때 음식이 기도로 흡인되어 폐렴이 발생할 수 있음을 묻는 문제",
+    "intent_vi": "Câu hỏi về việc ăn trong tư thế cúi gù có thể khiến thức ăn bị hít vào đường thở gây viêm phổi",
+    "choice_explanations": {
+      "ko": {
+        "1": "식도염은 위산 역류와 관련이 있으며 식사 자세보다는 괄약근 기능과 연관이 깊다.",
+        "2": "천식은 알레르기 및 기도 과민반응과 관련된 만성 질환으로 식사 자세와 무관하다.",
+        "3": "폐결핵은 결핵균에 의한 전염성 질환으로 자세와 직접적인 관련이 없다.",
+        "4": "★ 등이 구부정한 상태로 식사하면 식도와 기도의 위치가 변형되어 음식물이 기도로 잘못 들어갈 수 있다. 이렇게 흡인된 음식물이 폐에 염증을 일으켜 흡인성 폐렴이 발생한다.",
+        "5": "후두염은 주로 바이러스 감염이나 목 과사용에 의해 발생하며 식사 자세와는 무관하다."
+      },
+      "vi": {
+        "1": "Viêm thực quản liên quan đến trào ngược axit dạ dày và chức năng cơ thắt, không liên quan đến tư thế ăn.",
+        "2": "Hen suyễn là bệnh mãn tính liên quan đến dị ứng và quá mẫn đường thở, không liên quan đến tư thế.",
+        "3": "Lao phổi là bệnh nhiễm khuẩn do vi khuẩn lao, không liên quan trực tiếp đến tư thế.",
+        "4": "★ Ăn trong tư thế cúi gù làm thay đổi vị trí thực quản và khí quản, khiến thức ăn dễ lọt vào đường thở. Thức ăn bị hít vào phổi gây viêm — gọi là viêm phổi hít (aspiration pneumonia).",
+        "5": "Viêm thanh quản chủ yếu do nhiễm virus hoặc sử dụng giọng quá nhiều, không liên quan đến tư thế ăn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "흡인성 폐렴", "def_vi": "Viêm phổi hít (aspiration pneumonia) — viêm phổi do thức ăn hoặc dịch bị hít nhầm vào đường hô hấp" },
+      { "term_ko": "구부정하다", "def_vi": "Cúi gù — tư thế lưng cong về phía trước, không thẳng" },
+      { "term_ko": "합병증", "def_vi": "Biến chứng — bệnh hoặc tình trạng phát sinh thêm từ một bệnh hoặc điều kiện ban đầu" }
+    ]
+  }
+]
