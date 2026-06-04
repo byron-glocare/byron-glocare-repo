@@ -39,7 +39,7 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [{ href: "/", label: "대시보드", icon: LayoutDashboard }],
   },
   {
-    label: "요양보호사",
+    label: "요양보호",
     items: [
       { href: "/customers", label: "교육생", icon: Users },
       { href: "/training-centers", label: "교육원", icon: GraduationCap },
@@ -49,13 +49,13 @@ export const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
-    label: "유학생",
+    label: "유학",
     items: [
       { href: "/students", label: "유학생", icon: Plane },
       { href: "/universities", label: "대학교", icon: School },
       { href: "/departments", label: "학과", icon: BookOpen },
       { href: "/admissions", label: "모집요강", icon: ClipboardList },
-      { href: "/student-data-types", label: "표준 데이터", icon: Database },
+      { href: "/student-data-types", label: "데이터", icon: Database },
       { href: "/study-centers", label: "유학센터", icon: Building2 },
       { href: "/study-cases", label: "사례", icon: Film },
       { href: "/study-channels", label: "SNS 채널", icon: Radio },
@@ -66,7 +66,7 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [
       { href: "/pricing-plans", label: "가격 플랜", icon: DollarSign },
       { href: "/center-orgs", label: "유학센터 회사", icon: Building2 },
-      { href: "/study-invoices", label: "인보이스", icon: FileText },
+      { href: "/study-invoices", label: "정산", icon: FileText },
     ],
   },
   {

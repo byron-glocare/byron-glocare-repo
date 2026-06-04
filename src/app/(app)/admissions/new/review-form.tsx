@@ -221,7 +221,7 @@ export function ReviewForm({
               name="admission_category"
               defaultValue={identityCategory}
               maxLength={200}
-              placeholder="예: 순수외국인 입학전형 — 글로벌요양복지과"
+              placeholder="예: 글로벌요양복지과"
               className="rounded-md border border-input bg-background px-3 py-2 text-sm"
             />
           </Field>

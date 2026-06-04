@@ -101,15 +101,6 @@ export default async function UniversityEditPage({
           { href: "/universities", label: "대학교" },
           { label: row.name_ko },
         ]}
-        actions={
-          <Link
-            href={`/admissions/forms?univ=${numericId}`}
-            className={buttonVariants({ variant: "outline", size: "sm" })}
-          >
-            <FileText className="size-4" />
-            양식 파일
-          </Link>
-        }
       />
       <div className="p-6 space-y-6">
         <UniversityForm
@@ -225,7 +216,7 @@ export default async function UniversityEditPage({
                 양식 파일
               </Link>
               <Link
-                href="/admissions/new"
+                href={`/admissions/new?university_id=${numericId}`}
                 className={buttonVariants({ variant: "outline", size: "sm" })}
               >
                 <Plus className="size-4" />
@@ -236,7 +227,7 @@ export default async function UniversityEditPage({
           {!specs || specs.length === 0 ? (
             <div className="p-8 text-center text-sm text-muted-foreground">
               등록된 모집요강이 없습니다.{" "}
-              <Link href="/admissions/new" className="text-primary hover:underline">
+              <Link href={`/admissions/new?university_id=${numericId}`} className="text-primary hover:underline">
                 PDF 업로드로 추가 →
               </Link>
             </div>

@@ -102,16 +102,13 @@ export async function POST(req: NextRequest) {
       { status: 413 }
     );
   }
-  if (typeof university_name_ko !== "string" || !university_name_ko.trim()) {
-    return NextResponse.json(
-      { ok: false, error: "대학을 선택해주세요" } satisfies CallExtractResult,
-      { status: 400 }
-    );
-  }
-  if (
-    typeof term !== "string" ||
-    !/^\d{4}-(Spring|Fall|Summer|Winter|Year)$/.test(term)
-  ) {
+  // 대학/학기는 AI 추출의 힌트일 뿐 → 선택값.
+  // (Flow B: 대학 생성 화면 프리필에서는 아직 대학/학기가 정해지지 않았을 수 있음)
+  // 값이 주어졌을 때만 학기 형식을 검증한다.
+  const uniHint =
+    typeof university_name_ko === "string" ? university_name_ko.trim() : "";
+  const termHint = typeof term === "string" ? term.trim() : "";
+  if (termHint && !/^\d{4}-(Spring|Fall|Summer|Winter|Year)$/.test(termHint)) {
     return NextResponse.json(
       {
         ok: false,
@@ -133,8 +130,8 @@ export async function POST(req: NextRequest) {
   // 4. 본 저장소 endpoint 호출 (server-side fetch multipart — 안정적)
   const result = await callExtractAdmission({
     file,
-    universityNameKo: university_name_ko.trim(),
-    term,
+    universityNameKo: uniHint,
+    term: termHint,
     admissionCategory:
       typeof admission_category === "string" && admission_category.trim()
         ? admission_category.trim()

@@ -13,7 +13,12 @@ import { ExtractForm, type UniversityOption } from "./extract-form";
 
 export const dynamic = "force-dynamic";
 
-export default async function NewAdmissionPage() {
+export default async function NewAdmissionPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ university_id?: string }>;
+}) {
+  const { university_id } = await searchParams;
   const supabase = await createClient();
 
   const { data: universities, error } = await supabase
@@ -21,6 +26,13 @@ export default async function NewAdmissionPage() {
     .select("id, name_ko, name_vi")
     .eq("active", true)
     .order("name_ko", { ascending: true });
+
+  // 대학교 상세에서 진입 시 해당 대학 자동완성
+  const presetId = university_id ? Number(university_id) : null;
+  const defaultUniversityNameKo =
+    presetId != null && Number.isFinite(presetId)
+      ? ((universities ?? []).find((u) => u.id === presetId)?.name_ko ?? "")
+      : "";
 
   return (
     <>
@@ -40,6 +52,7 @@ export default async function NewAdmissionPage() {
         ) : (
           <ExtractForm
             universities={(universities ?? []) as UniversityOption[]}
+            defaultUniversityNameKo={defaultUniversityNameKo}
           />
         )}
       </div>
