@@ -4,6 +4,10 @@
  * Flow B: 대학 생성 시 모집요강 PDF 를 첨부 → AI 추출 → 폼 기본 정보 자동 채움
  * + (선택) 모집요강 자체도 함께 등록(학과 자동 생성).
  *
+ * 추출 백엔드(glocare_homepage_abroad /api/admission/extract)가 university_name_ko
+ * 와 term 을 필수로 요구하므로, 업로드 전에 대학명·학기를 먼저 입력받는다.
+ * (대학명은 어차피 등록할 대학이라 운영자가 알고, 학기는 함께 등록에도 쓰임.)
+ *
  * 부모(UniversityForm, create 모드)에서만 사용.
  *  - onPrefill: 추출된 값으로 폼 필드 채움 (부모가 react-hook-form setValue)
  *  - onSpecStateChange: 함께 등록할 spec 페이로드 + 학기/과정/등록여부 전달
@@ -46,7 +50,6 @@ export type UniversitySpecState = {
   aiLog: unknown;
 };
 
-/** 중첩 경로 안전 읽기 */
 function pick(obj: unknown, path: string[]): unknown {
   let cur: unknown = obj;
   for (const k of path) {
@@ -84,14 +87,19 @@ export function UniversityAdmissionPrefill({
   const [done, setDone] = useState(false);
   const [fileName, setFileName] = useState("");
 
-  // 추출 후 컨트롤 상태
+  // 추출에 필요한 입력 (업로드 전)
+  const [uniName, setUniName] = useState("");
+  const [term, setTerm] = useState("");
+
+  // 추출 후 상태
   const [spec, setSpec] = useState<Record<string, unknown> | null>(null);
   const [aiLog, setAiLog] = useState<unknown>(null);
   const [register, setRegister] = useState(true);
-  const [term, setTerm] = useState("");
   const [programType, setProgramType] = useState("");
   const [admissionCategory, setAdmissionCategory] = useState("");
   const [deptCount, setDeptCount] = useState(0);
+
+  const canUpload = uniName.trim() !== "" && term !== "";
 
   function emit(next: Partial<UniversitySpecState>) {
     if (!spec) return;
@@ -127,8 +135,8 @@ export function UniversityAdmissionPrefill({
           file_base64,
           file_name: file.name,
           file_size: file.size,
-          university_name_ko: "",
-          term: "",
+          university_name_ko: uniName.trim(),
+          term,
           admission_category: "",
         }),
       });
@@ -139,32 +147,23 @@ export function UniversityAdmissionPrefill({
       }
 
       const s = json.spec;
+      const log = { raw: json.raw, confidence: json.confidence, usage: json.usage };
       setSpec(s);
-      setAiLog({
-        raw: json.raw,
-        confidence: json.confidence,
-        usage: json.usage,
-      });
+      setAiLog(log);
 
-      // 폼 프리필 (있는 값만)
-      const fields: UniversityPrefillFields = {};
-      const nameKo =
-        asStr(pick(s, ["identity", "university_name_ko"])) ??
-        asStr(pick(s, ["identity", "university"]));
+      // 폼 프리필 (대학명은 입력값, 나머지는 추출값 중 있는 것만)
+      const fields: UniversityPrefillFields = { name_ko: uniName.trim() };
       const nameVi = asStr(pick(s, ["identity", "university_name_vi"]));
       const website = asStr(pick(s, ["metadata", "contacts", "website"]));
       const addressKo = asStr(pick(s, ["metadata", "contacts", "address_ko"]));
-      if (nameKo) fields.name_ko = nameKo;
       if (nameVi) fields.name_vi = nameVi;
       if (website) fields.website_url = website;
       if (addressKo) {
-        // 주소 앞 2토큰을 지역으로 추정 (예: "경기도 수원시 ...")
         const region = addressKo.split(/\s+/).slice(0, 2).join(" ");
         if (region) fields.region_ko = region;
       }
       onPrefill(fields);
 
-      // 과정/카테고리/학과수 프리필
       const pt = asStr(pick(s, ["identity", "program_type"])) ?? "";
       const ac = asStr(pick(s, ["identity", "admission_category"])) ?? "";
       const depts = pick(s, ["departments"]);
@@ -176,16 +175,12 @@ export function UniversityAdmissionPrefill({
 
       onSpecStateChange({
         register: true,
-        term: "",
+        term,
         programType: pt,
         admissionCategory: ac || null,
         sourceFileName: file.name,
         spec: s,
-        aiLog: {
-          raw: json.raw,
-          confidence: json.confidence,
-          usage: json.usage,
-        },
+        aiLog: log,
       });
     } catch (e) {
       setError(`오류: ${e instanceof Error ? e.message : String(e)}`);
@@ -204,24 +199,66 @@ export function UniversityAdmissionPrefill({
               모집요강 PDF 로 시작하기 (선택)
             </h3>
             <p className="mt-0.5 text-xs text-amber-800">
-              모집요강을 올리면 대학 기본 정보를 자동으로 채우고, 원하면 모집요강과
-              학과도 함께 등록합니다 (학과는 비노출 상태로 생성).
+              대학명·학기를 입력하고 모집요강을 올리면 나머지 기본 정보를 자동으로
+              채우고, 원하면 모집요강·학과도 함께 등록합니다 (학과는 비노출 생성).
             </p>
           </div>
 
-          <input
-            type="file"
-            accept=".pdf,.hwp,.hwpx,application/pdf"
-            disabled={loading}
-            onChange={(e) => {
-              const f = e.target.files?.[0];
-              if (f) {
-                setFileName(f.name);
-                handleFile(f);
-              }
-            }}
-            className="text-sm file:mr-3 file:rounded-md file:border file:border-input file:bg-secondary file:px-3 file:py-1.5 file:text-sm file:font-medium hover:file:bg-secondary/80"
-          />
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <label className="flex flex-col gap-1 text-xs">
+              <span className="font-medium">
+                대학명 (한) <span className="text-destructive">*</span>
+              </span>
+              <input
+                type="text"
+                value={uniName}
+                onChange={(e) => setUniName(e.target.value)}
+                placeholder="예: 경연여자대학교"
+                className="rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+              />
+            </label>
+            <label className="flex flex-col gap-1 text-xs">
+              <span className="font-medium">
+                학기 <span className="text-destructive">*</span>
+              </span>
+              <select
+                value={term}
+                onChange={(e) => {
+                  setTerm(e.target.value);
+                  emit({ term: e.target.value });
+                }}
+                className="rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+              >
+                <option value="">— 선택 —</option>
+                {TERM_OPTIONS.map((t) => (
+                  <option key={t} value={t}>
+                    {t}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+
+          <div>
+            <input
+              type="file"
+              accept=".pdf,.hwp,.hwpx,application/pdf"
+              disabled={loading || !canUpload}
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) {
+                  setFileName(f.name);
+                  handleFile(f);
+                }
+              }}
+              className="text-sm file:mr-3 file:rounded-md file:border file:border-input file:bg-secondary file:px-3 file:py-1.5 file:text-sm file:font-medium hover:file:bg-secondary/80 disabled:opacity-50"
+            />
+            {!canUpload ? (
+              <p className="mt-1 text-xs text-muted-foreground">
+                대학명·학기를 먼저 입력하면 업로드가 활성화됩니다.
+              </p>
+            ) : null}
+          </div>
 
           {loading ? (
             <div className="flex items-center gap-2 text-xs text-amber-800">
@@ -257,54 +294,32 @@ export function UniversityAdmissionPrefill({
                   <span className="font-medium">이 모집요강도 함께 등록</span>
                   <span className="block text-xs text-muted-foreground">
                     체크 시 대학 저장과 함께 모집요강(초안) + 학과(비노출)가
-                    생성됩니다.
+                    생성됩니다. ({term} 기준)
                   </span>
                 </span>
               </label>
 
               {register ? (
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                  <label className="flex flex-col gap-1 text-xs">
-                    <span className="font-medium">
-                      학기 <span className="text-destructive">*</span>
-                    </span>
-                    <select
-                      value={term}
-                      onChange={(e) => {
-                        setTerm(e.target.value);
-                        emit({ term: e.target.value });
-                      }}
-                      className="rounded-md border border-input bg-background px-2 py-1.5 text-sm"
-                    >
-                      <option value="">— 선택 —</option>
-                      {TERM_OPTIONS.map((t) => (
-                        <option key={t} value={t}>
-                          {t}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <label className="flex flex-col gap-1 text-xs">
-                    <span className="font-medium">
-                      과정 <span className="text-destructive">*</span>
-                    </span>
-                    <select
-                      value={programType}
-                      onChange={(e) => {
-                        setProgramType(e.target.value);
-                        emit({ programType: e.target.value });
-                      }}
-                      className="rounded-md border border-input bg-background px-2 py-1.5 text-sm"
-                    >
-                      <option value="">— 선택 —</option>
-                      {PROGRAM_TYPE_OPTIONS.map((o) => (
-                        <option key={o.value} value={o.value}>
-                          {o.label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                </div>
+                <label className="flex max-w-xs flex-col gap-1 text-xs">
+                  <span className="font-medium">
+                    과정 <span className="text-destructive">*</span>
+                  </span>
+                  <select
+                    value={programType}
+                    onChange={(e) => {
+                      setProgramType(e.target.value);
+                      emit({ programType: e.target.value });
+                    }}
+                    className="rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+                  >
+                    <option value="">— 선택 —</option>
+                    {PROGRAM_TYPE_OPTIONS.map((o) => (
+                      <option key={o.value} value={o.value}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
               ) : null}
             </div>
           ) : null}
