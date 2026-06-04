@@ -171,5 +171,5 @@ export async function approveSpecAction(
     revalidatePath("/departments");
     revalidatePath(`/universities/${universityId}`);
   }
-  redirect(`/admissions/${inserted.id}`);
+  redirect(`/admissions/specs/${inserted.id}`);
 }

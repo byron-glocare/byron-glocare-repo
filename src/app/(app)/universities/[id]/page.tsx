@@ -209,11 +209,11 @@ export default async function UniversityEditPage({
             </div>
             <div className="flex items-center gap-2">
               <Link
-                href={`/admissions/forms?univ=${numericId}`}
+                href={`/admissions/${numericId}`}
                 className={buttonVariants({ variant: "outline", size: "sm" })}
               >
                 <FileText className="size-4" />
-                양식 파일
+                입학서류 (모집요강+양식)
               </Link>
               <Link
                 href={`/admissions/new?university_id=${numericId}`}
@@ -244,7 +244,7 @@ export default async function UniversityEditPage({
               </TableHeader>
               <TableBody>
                 {specs.map((s) => {
-                  const href = `/admissions/${s.id}`;
+                  const href = `/admissions/specs/${s.id}`;
                   const depts = Array.isArray(s.departments)
                     ? (s.departments as Array<{ name?: string }>)
                     : [];

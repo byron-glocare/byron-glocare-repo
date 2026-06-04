@@ -255,7 +255,8 @@ export async function uploadFormFileAction(
   }
 
   revalidatePath(`/universities/${data.university_id}/forms`);
-  revalidatePath("/admissions/forms");
+  revalidatePath("/admissions");
+  revalidatePath(`/admissions/${data.university_id}`);
   return {
     analyzeNotes,
     analyzedKeys,
@@ -464,7 +465,8 @@ export async function updateFormFileMetaAction(
   }
 
   revalidatePath(`/universities/${data.university_id}/forms`);
-  revalidatePath("/admissions/forms");
+  revalidatePath("/admissions");
+  revalidatePath(`/admissions/${data.university_id}`);
   return { success: true };
 }
 
@@ -523,7 +525,8 @@ export async function deleteFormFileAction(
   await delQuery;
 
   revalidatePath(`/universities/${universityId}/forms`);
-  revalidatePath("/admissions/forms");
+  revalidatePath("/admissions");
+  revalidatePath(`/admissions/${universityId}`);
 }
 
 /**
@@ -566,5 +569,6 @@ export async function restoreFormFileAction(
     .eq("id", formFileId);
 
   revalidatePath(`/universities/${universityId}/forms`);
-  revalidatePath("/admissions/forms");
+  revalidatePath("/admissions");
+  revalidatePath(`/admissions/${universityId}`);
 }

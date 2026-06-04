@@ -314,7 +314,7 @@ export function EditSpecForm({
             )}
           </Button>
           <a
-            href={`/admissions/${spec.id}`}
+            href={`/admissions/specs/${spec.id}`}
             className={buttonVariants({ variant: "outline" })}
           >
             취소

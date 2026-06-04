@@ -43,10 +43,10 @@ export default async function EditAdmissionPage({
         title="모집요강 편집"
         description="메타 정보 + 7 JSON 영역 + 상태"
         breadcrumbs={[
-          { label: "모집요강", href: "/admissions" },
+          { label: "입학서류", href: "/admissions" },
           {
             label: spec.admission_category ?? "상세",
-            href: `/admissions/${id}`,
+            href: `/admissions/specs/${id}`,
           },
           { label: "편집" },
         ]}

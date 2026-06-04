@@ -131,6 +131,6 @@ export async function updateSpecAction(
   }
 
   revalidatePath("/admissions");
-  revalidatePath(`/admissions/${specId}`);
-  redirect(`/admissions/${specId}`);
+  revalidatePath(`/admissions/specs/${specId}`);
+  redirect(`/admissions/specs/${specId}`);
 }

@@ -237,8 +237,12 @@ export default async function AdmissionDetailPage({
         title={university?.name_ko ?? "?"}
         description={`${spec.term} · ${PROGRAM_TYPE_LABEL[spec.program_type] ?? spec.program_type}`}
         breadcrumbs={[
-          { label: "모집요강", href: "/admissions" },
-          { label: university?.name_ko ?? "상세" },
+          { label: "입학서류", href: "/admissions" },
+          {
+            label: university?.name_ko ?? "상세",
+            href: `/admissions/${spec.university_id}`,
+          },
+          { label: "모집요강" },
         ]}
         actions={
           <div className="flex items-center gap-2">
@@ -246,7 +250,7 @@ export default async function AdmissionDetailPage({
               {STATUS_LABEL[spec.status] ?? spec.status}
             </Badge>
             <Link
-              href={`/admissions/${id}/edit`}
+              href={`/admissions/specs/${id}/edit`}
               className={buttonVariants({ variant: "outline", size: "sm" })}
             >
               <Pencil className="size-4" />
