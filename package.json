@@ -1,0 +1,18 @@
+{
+  "name": "glocare",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Glocare monorepo — admin(hub) + abroad(유학) + caregiver(요양보호사)",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:admin": "npm run dev -w admin",
+    "dev:abroad": "npm run dev -w abroad",
+    "dev:caregiver": "npm run dev -w caregiver",
+    "build:admin": "npm run build -w admin",
+    "build:abroad": "npm run build -w abroad",
+    "build:caregiver": "npm run build -w caregiver"
+  }
+}
