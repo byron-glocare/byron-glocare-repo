@@ -1,0 +1,136 @@
+{
+  "_meta": {
+    "source_file": "C:/1. glocare/5.사업/4.대학교/모집 요강_개별 대학/2026년_명지전문대_외국인전담학과_리플릿_KOR.pdf",
+    "extracted_at": "2026-05-26",
+    "extractor": "claude-opus-4-7 (manual from pdftotext extraction)",
+    "confidence": 0.62,
+    "filter": "vietnam_pure_foreigner",
+    "filter_note": "베트남 순수외국인 필터 적용. 본 자료는 36페이지 리플릿이지만 pdftotext 추출 결과 7KB 만 — **이미지 기반 페이지가 다수 있어 정보 일부 결락**. 핵심 정보(등록금·장학금·일정·자격)는 추출됐으나 세부 사항은 별도 확인 필요",
+    "notes_for_step2": [
+      "**가장 중요한 발견 — 정부 공식 지정**: 법무부·보건복지부 외국인 요양보호사 양성대학 (2025-03-05 법무부 제30차 외국인정책위원회). 비자 발급 재정요건 완화 + 체류 연장 요건 완화 + E-7 취업비자 발급 가능. **글로케어 핵심 ICP 와 정확히 부합**",
+      "TOPIK 3학기 이수 후 3급 이상 + 요양보호사 자격시험 합격 시 취업 알선 + 최저임금 이상 보장 — '취업까지 패스' 명시",
+      "전공심화과정(2+2) = 보건의료정보과 요양보건관리전공 별도반 — 전문학사 후 학사학위 연속 진행 가능",
+      "정원 외 특별전형 — 모집정원이 별도로 잡혀있음 (사회복지과 노인요양복지 별도반 40명, 보건의료정보과 요양보건관리 별도반 20명 각각 수시·정시)",
+      "본 자료의 추가 정보 (상세 등록금/장학금/제출서류/연락처 세부)는 PDF 후반부 이미지 페이지에 있어 OCR 또는 사용자 직접 확인 권장",
+      "어드민 입장에서 '글로케어 핵심 학과' 라벨링 필요 — 보건·요양보호 관련 학과들은 별도 표시"
+    ]
+  },
+
+  "identity": {
+    "university_name_ko": "명지전문대학",
+    "university_name_en": "Myongji College",
+    "term": "2026-Spring",
+    "program_type": "associate_2yr + bachelor_extension_2plus2",
+    "campus_location_ko": "서울시 서대문구 가좌로 134 (글로벌교육센터)",
+    "established_year": 1974,
+    "alumni_count": "10만 여명",
+    "official_designation": "법무부·보건복지부 공식 지정 외국인 요양보호사 양성대학 (2025-03-05 법무부 제30차 외국인정책위원회)"
+  },
+
+  "departments": [
+    {
+      "faculty": "전문학사",
+      "department": "사회복지과",
+      "track": "노인요양복지 별도반",
+      "capacity_susi2": 40,
+      "capacity_jeongsi": 40,
+      "category": "정원외 특별전형 (외국인)"
+    },
+    {
+      "faculty": "전공심화 학사과정 (2+2)",
+      "department": "보건의료정보과",
+      "track": "요양보건관리전공 별도반",
+      "capacity_susi2": 20,
+      "capacity_jeongsi": 20,
+      "category": "정원외 특별전형 (외국인)",
+      "notes": "전문학사 졸업 후 학사학위 연속 진행 가능"
+    }
+  ],
+
+  "eligibility": {
+    "applicant_categories": [
+      "외국인 — 베트남 국적",
+      "외국 고등학교 졸업자 (필수)",
+      "또는 해외 대학 간호학·보건학 관련 전공 졸업(예정)자"
+    ],
+    "education_required": "high_school_or_health_related_bachelor",
+    "korean_proficiency": {
+      "topik_min": 2,
+      "alternative_paths": []
+    }
+  },
+
+  "schedule": {
+    "rounds": [
+      {
+        "name": "수시2차",
+        "application_open": "2025-11-07",
+        "application_close": "2025-11-21",
+        "application_close_time": "21:00",
+        "document_submission": "2025-11-26",
+        "interview": "2025-11-29",
+        "result_announcement": "2025-12-12 15:00",
+        "online_document_registration": ["2025-12-15","2025-12-17"],
+        "payment_period": ["2026-02-03","2026-02-05"]
+      },
+      {
+        "name": "정시",
+        "application_open": "2025-12-29",
+        "application_close": "2026-01-14",
+        "application_close_time": "21:00",
+        "document_submission": "2026-01-17",
+        "interview": "2026-01-18",
+        "result_announcement": "2026-02-02 15:00",
+        "online_document_registration": null,
+        "payment_period": ["2026-02-03","2026-02-05"]
+      }
+    ],
+    "application_methods": ["진학사", "유웨이어플라이"]
+  },
+
+  "tuition": {
+    "currency": "KRW",
+    "notes": "본 리플릿 추출 텍스트에 등록금 구체 액수 없음 — 별도 확인 필요"
+  },
+
+  "scholarships": [
+    {
+      "name": "비자 발급 재정요건 완화 (정부 정책 혜택)",
+      "applies_to": "신입생",
+      "condition": "법무부·보건복지부 지정 외국인 요양보호사 양성대학 입학",
+      "benefit_type": "policy",
+      "notes": "본 대학 자체 장학금이 아닌 정부 정책 혜택"
+    },
+    {
+      "name": "체류 연장 요건 완화 (정부 정책 혜택)",
+      "applies_to": "재학생",
+      "condition": "본 대학 재학 외국인",
+      "benefit_type": "policy"
+    }
+  ],
+
+  "post_acceptance": {
+    "visa_type": "D-2",
+    "post_graduation_visa": "E-7 (취업비자)",
+    "employment_path": "3학기 과정 이수 후 TOPIK 3급 이상 + 요양보호사 자격시험 합격 → 취업 알선",
+    "salary_guarantee": "대한민국 법에 따른 최저임금 이상 보장",
+    "long_term_stay": "요양보호 시설 취업 후 지속 근무 가능"
+  },
+
+  "contacts": {
+    "phone": "02-300-1298",
+    "email": "globaledu@mjc.ac.kr",
+    "website": "https://ipsi.mjc.ac.kr",
+    "department": "글로벌교육센터 / 글로벌교육팀",
+    "address": "(03656) 서울시 서대문구 가좌로 134 명지전문대학 글로벌교육센터"
+  },
+
+  "extraction_gaps": [
+    "구체적 등록금 액수 (보건의료정보과 요양보건관리 / 사회복지과 노인요양복지)",
+    "TOPIK 등급별 신·재학생 장학금 구조 (등록금 % 감면)",
+    "제출서류 전체 목록 (입학원서·졸업증명·잔고증명 등)",
+    "재정 보증금 기준",
+    "기숙사 정보",
+    "전형 점수 가중 / 합격 컷오프"
+  ]
+}

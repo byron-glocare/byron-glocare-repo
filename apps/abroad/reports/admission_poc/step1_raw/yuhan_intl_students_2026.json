@@ -1,0 +1,172 @@
+{
+  "_meta": {
+    "source_file": "C:/1. glocare/5.사업/4.대학교/모집 요강_개별 대학/유한대학교_2026학년도 외국인 유학생 리플릿_국문.pdf",
+    "extracted_at": "2026-05-26",
+    "extractor": "claude-opus-4-7 (manual from pdftotext extraction)",
+    "confidence": 0.86,
+    "filter": "vietnam_pure_foreigner",
+    "filter_note": "베트남 순수외국인 필터 — 중국 호구부, CHSI 학력인증 등 제외. 베트남 적용 항목만",
+    "notes_for_step2": [
+      "**multi-faculty / multi-department** = 36개 이상 학과 (공학부 7 + 디자인문화 7 + 건강생활 9 + 건강보건 6 + 비즈니스 5 + 자유전공 1). 일부는 2년제, 일부는 3년제(전공심화 학사학위 ◆), 매우 다양 — `tracks` 또는 별도 row 분리 필요",
+      "**TOPIK 등급별 누적 장학금 — 가장 후함**: TOPIK 6급 60% / 5급 50% / 4급 40% / 3급 30% (신입생·재학생 동일 구조). 등급별 stepped 매트릭스 표현 필요",
+      "지원자격이 **부모도 외국인 OR 학생만 외국인** 둘 다 가능 — 다른 학교는 부모 양쪽 외국인 요구. 베트남 학생 적용 시 1순위 카테고리만",
+      "수시1차·수시2차·정시·자율 4단계 모집 — `schedule.rounds[]` 배열 4개로 확장"
+    ]
+  },
+
+  "identity": {
+    "university_name_ko": "유한대학교",
+    "university_name_en": "Yuhan University",
+    "term": "2026-Spring",
+    "program_type": "associate_2yr + bachelor_3yr_extension",
+    "campus_location_ko": "경기도 부천시 경인로 590 (유재라관 5층 8513호 대외협력처)",
+    "founder_legacy": "유한양행 창립자 유일한 박사 — '기업에서 얻은 이익은 사회 환원' 건학이념",
+    "topik_ibt_center": true
+  },
+
+  "departments": [
+    {
+      "faculty": "공학부",
+      "items": [
+        { "name": "기계공학전공", "years": 3, "extension_eligible": true },
+        { "name": "소방설비안전전공", "years": 3, "extension_eligible": true },
+        { "name": "전기공학전공", "years": 2 },
+        { "name": "전자공학전공", "years": 2 },
+        { "name": "컴퓨터소프트웨어전공", "years": 3, "extension_eligible": true },
+        { "name": "게임콘텐츠전공", "years": 3, "extension_eligible": true },
+        { "name": "인공지능전공", "years": 3, "extension_eligible": true }
+      ]
+    },
+    {
+      "faculty": "디자인문화학부",
+      "items": [
+        { "name": "산업디자인전공", "years": 3, "extension_eligible": true },
+        { "name": "시각디자인전공", "years": 3, "extension_eligible": true },
+        { "name": "패션디자인전공", "years": 3, "extension_eligible": true },
+        { "name": "실내건축전공", "years": 3, "extension_eligible": true },
+        { "name": "광고미디어전공", "years": 3 },
+        { "name": "방송영상전공", "years": 3 },
+        { "name": "애니메이션웹툰전공", "years": 3 },
+        { "name": "방송문예창작전공", "years": 3 },
+        { "name": "방송연예전공", "years": 3 }
+      ]
+    },
+    {
+      "faculty": "건강생활학부",
+      "items": [
+        { "name": "유한바이오제약전공", "years": 3, "extension_eligible": true },
+        { "name": "유한생명화공전공", "years": 3, "extension_eligible": true },
+        { "name": "피부메이크업전공", "years": 2 },
+        { "name": "뷰티화장품전공", "years": 2 },
+        { "name": "사회복지전공", "years": 3, "extension_eligible": true },
+        { "name": "스포츠재활전공", "years": 3 },
+        { "name": "반려동물산업전공", "years": 3 },
+        { "name": "호텔조리전공", "years": 2 },
+        { "name": "카페베이커리전공", "years": 2 }
+      ]
+    },
+    {
+      "faculty": "건강보건학부",
+      "items": [
+        { "name": "식품영양학과", "years": 3 },
+        { "name": "보건의료행정학과", "years": 3, "extension_eligible": true },
+        { "name": "작업치료과", "years": 3 },
+        { "name": "반려동물보건학과", "years": 3 },
+        { "name": "응급구조과", "years": 3 },
+        { "name": "치위생과", "years": 3, "notes": "신설" }
+      ]
+    },
+    {
+      "faculty": "비즈니스학부",
+      "items": [
+        { "name": "호텔관광전공", "years": 2 },
+        { "name": "일본비즈니스전공", "years": 2 },
+        { "name": "경영정보전공", "years": 2 },
+        { "name": "세무회계전공", "years": 2 },
+        { "name": "항공서비스학과", "years": 2 }
+      ]
+    },
+    { "faculty": "자유전공학과", "items": [ { "name": "자유전공", "years": 2 } ] }
+  ],
+
+  "required_documents": [
+    { "key": "application_form", "name_ko": "입학지원서", "required": true },
+    { "key": "highschool_diploma", "name_ko": "고등학교 졸업(예정)증명서", "required": true, "notarization": "apostille_or_consul", "notes": "베트남: 아포스티유 미가입국 → 주재국 한국영사 또는 주한 베트남공관 영사확인" },
+    { "key": "highschool_transcript", "name_ko": "고등학교 성적증명서", "required": true, "notarization": "consul_for_vietnam", "notes": "한글 또는 영문 번역 공증본 + 영사확인" },
+    { "key": "family_relations_certificate", "name_ko": "가족관계증명서 (한글 또는 영문 번역 공증본)", "required": true },
+    { "key": "nationality_proof", "name_ko": "외국국적증명서 — 본인 및 부모 여권/신분증 인적사항 표기부 사본", "required": true },
+    { "key": "alien_registration", "name_ko": "한국 외국인등록증", "required": false, "notes": "국내 체류자만" },
+    { "key": "bank_balance", "name_ko": "재정능력 입증 — 국내 소재 은행 2,000만원 이상 예금잔고증명서 (30일 이내 발급, 본인 또는 재정보증인)", "required": true },
+    { "key": "financial_pledge", "name_ko": "재정보증인 추가서류 — 재직증명서 또는 사업자등록증 + 유학경비부담 서약서", "required": false, "notes": "재정보증인이 잔고 제출 시" },
+    { "key": "korean_proof", "name_ko": "한국어 구사능력 서류 — 택 1", "required": true, "notes": "TOPIK 2급 이상 / 세종학당 한국어 초급2 이상 수료증 (오프라인 한정, 온라인 X) / KIIP 2단계 이수증 또는 사전평가 41점 이상" }
+  ],
+
+  "eligibility": {
+    "applicant_categories": [
+      "부모·학생 모두 외국인인 외국인 — 초·중등 12년 과정 전 이수 + 고등학교 졸업(예정)자 (1순위 — 베트남 순수외국인 적용)",
+      "학생 본인만 외국인 — 외국에서 초·중등 12년 과정 전 이수 + 고등학교 졸업(예정)자"
+    ],
+    "education_required": "high_school_12yrs",
+    "korean_proficiency": {
+      "topik_min": 2,
+      "alternative_paths": [
+        { "type": "sejong_institute", "level": "초급2 이상 (오프라인 수료증만, 온라인 세종학당 불인정)" },
+        { "type": "kiip", "level": "2단계 이수증 또는 사전평가 41점 이상" }
+      ]
+    },
+    "exclusions": []
+  },
+
+  "schedule": {
+    "rounds": [
+      { "name": "수시1차", "application_open": "2025-09-08", "application_close": "2025-09-30", "result_announcement": "2025-11-03", "registration_deposit": ["2025-12-15","2025-12-17"], "final_payment": ["2026-02-03","2026-02-05"] },
+      { "name": "수시2차", "application_open": "2025-11-07", "application_close": "2025-11-21", "result_announcement": "2025-12-11", "registration_deposit": ["2025-12-15","2025-12-17"], "final_payment": ["2026-02-03","2026-02-05"] },
+      { "name": "정시", "application_open": "2025-12-29", "application_close": "2026-01-14", "result_announcement": "2026-01-30", "final_payment": ["2026-02-03","2026-02-05"] },
+      { "name": "자율모집", "application_open": "별도 지정", "application_close": "별도 지정", "result_announcement": "개별 통보" }
+    ]
+  },
+
+  "tuition": {
+    "currency": "KRW",
+    "tuition_per_semester_by_category": {
+      "공학_예체능": 3530000,
+      "자연과학_작업치료_등": 3619000,
+      "자연과학_유한바이오제약_등": 3723000,
+      "인문사회_항공서비스_등": 3282000,
+      "인문사회_사회복지_등": 3191000
+    },
+    "notes": "2025학년도 기준. 2026학년도는 2026년 1월경 결정"
+  },
+
+  "scholarships": [
+    { "name": "외국인 신입생 장학금 (TOPIK 6급)", "applies_to": "신입생", "condition": "TOPIK 6급", "benefit_type": "tuition_pct", "benefit_value": 0.60, "duration": "입학 시" },
+    { "name": "외국인 신입생 장학금 (TOPIK 5급)", "applies_to": "신입생", "condition": "TOPIK 5급", "benefit_type": "tuition_pct", "benefit_value": 0.50, "duration": "입학 시" },
+    { "name": "외국인 신입생 장학금 (TOPIK 4급)", "applies_to": "신입생", "condition": "TOPIK 4급", "benefit_type": "tuition_pct", "benefit_value": 0.40, "duration": "입학 시" },
+    { "name": "외국인 신입생 장학금 (TOPIK 3급)", "applies_to": "신입생", "condition": "TOPIK 3급", "benefit_type": "tuition_pct", "benefit_value": 0.30, "duration": "입학 시" },
+    { "name": "외국인 재학생 장학금", "applies_to": "재학생", "condition": "직전학기 12학점 이상 이수 + 평점평균 1.5 이상 + TOPIK 등급별 (3급 40% / 4급 40% / 5급 50% / 6급 60%)", "benefit_type": "tuition_pct", "benefit_value": "30%~60% (TOPIK 등급별)", "notes": "PoC step2 정규화 시 stepped 매트릭스로 표현 필요" }
+  ],
+
+  "post_acceptance": {
+    "visa_type": "D-2",
+    "process": ["입학원서 인터넷 접수", "지원서류 제출", "서류 심사", "면접 진행", "합격자 발표", "등록금 납부", "표준입학허가서 발급", "사증(VISA) 신청 및 발급", "입학"]
+  },
+
+  "key_features": [
+    "한국어능력시험(TOPIK) IBT 운영기관",
+    "졸업생 취업률 72.1% (2022-2024 평균)",
+    "학생 1인당 장학금 3,676천원",
+    "전액장학금 비율 62.5%",
+    "지하철 1·7호선 더블 역세권 (서울 강남·이태원 등 접근성)",
+    "외국인 장학금 30% 감면 (기본)",
+    "1:1 평생지도교수제도",
+    "글로벌직무연수·교환학생·한일연수·해외취업·해외ESG봉사 등 글로벌 프로그램"
+  ],
+
+  "contacts": {
+    "phone": "+82-2-2610-0411",
+    "email": "foreignstudent@yuhan.ac.kr",
+    "address": "(14780) 경기도 부천시 경인로 590 유한대학교 유재라관 5층 8513호 대외협력처",
+    "website": "www.yuhan.ac.kr",
+    "admissions_site": "https://sky.yuhan.ac.kr"
+  }
+}

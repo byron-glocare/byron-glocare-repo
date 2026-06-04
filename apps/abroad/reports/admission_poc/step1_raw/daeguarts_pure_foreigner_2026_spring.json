@@ -1,0 +1,188 @@
+{
+  "_meta": {
+    "source_file": "C:/1. glocare/5.사업/4.대학교/모집 요강_개별 대학/2026년_대구예술대_외국인특별전형_모집요강_KOR.pdf",
+    "extracted_at": "2026-05-26",
+    "extractor": "claude-opus-4-7 (manual, prompt-version=poc-step1-v0)",
+    "confidence": 0.83,
+    "filter": "vietnam_pure_foreigner",
+    "filter_note": "베트남 순수외국인 필터 — 중국인 전용 조항(호구부, chsi.com.cn 학력인증), 영어 모국어/공용어 국적자 트랙 등 제외",
+    "notes_for_step2": [
+      "**중요 발견 — multi-department**: 모집요강 1건 = 11개 학과 (애니웹툰 3 / 예체능 3 / 국제 6). 학과별 등록금·학과별 한국어 요건이 다름. 스키마의 `study_admission_specs.UNIQUE(university_id, department_id, term)` 정책상 모집요강 1개를 11개 row 로 분리 저장하거나 'parent_spec_id' 같은 그루핑 도입 필요",
+      "학과별 어학 요건 분기 (한국어 2급 / 한국어 3급 / 영어 자격) → `eligibility` 가 학과별로 달라야 하므로 row 분리가 자연스러움",
+      "전형료 없음 (대구예술), 동남보건 35,000원 → `tuition.application_fee` 컬럼 활용",
+      "장학금이 모집단위 무관 일관 적용 → row 분리 시 장학금은 학교 레벨 정보로 별도 테이블 검토",
+      "본교 자체 한국어시험 / 본교 또는 타대학 부설 한국어교육센터 수료 = TOPIK 우회 경로의 일반 패턴 — 정규화 가능",
+      "원룸(교외) 2인1실 옵션 = 기숙사 외 거주 옵션. spec 의 housing 정보 별도 필드 검토"
+    ]
+  },
+
+  "identity": {
+    "university_name_ko": "대구예술대학교",
+    "university_name_en": "Daegu Arts University",
+    "term": "2026-Spring",
+    "program_type": "bachelor_4yr",
+    "admission_category": "순수외국인 특별전형 (부모 모두 외국인)",
+    "campus_address": "(주소 본문에 명시 없음)"
+  },
+
+  "departments": [
+    { "faculty": "애니웹툰학부", "department": "영상/만화애니메이션전공", "korean_min": "TOPIK 2", "tuition_per_semester_krw": 4299000, "capacity": "제한없음" },
+    { "faculty": "애니웹툰학부", "department": "게임·웹툰전공", "korean_min": "TOPIK 2", "tuition_per_semester_krw": 4299000, "capacity": "제한없음" },
+    { "faculty": "애니웹툰학부", "department": "커뮤니케이션디자인전공", "korean_min": "TOPIK 2", "tuition_per_semester_krw": 4299000, "capacity": "제한없음" },
+    { "faculty": "예체능학부", "department": "공연융합예술학과(음악전공)", "korean_min": "TOPIK 2", "tuition_per_semester_krw": 4330000, "capacity": "제한없음" },
+    { "faculty": "예체능학부", "department": "공연융합예술학과(무용전공)", "korean_min": "TOPIK 2", "tuition_per_semester_krw": 4330000, "capacity": "제한없음" },
+    { "faculty": "예체능학부", "department": "회화작가전공", "korean_min": "TOPIK 2", "tuition_per_semester_krw": 4330000, "capacity": "제한없음" },
+    { "faculty": "국제학부", "department": "건축기술디자인학과", "korean_min": "TOPIK 2", "tuition_per_semester_krw": 3703000, "capacity": "제한없음" },
+    { "faculty": "국제학부", "department": "국제스포츠학과", "korean_min": "TOPIK 2", "tuition_per_semester_krw": 3703000, "capacity": "제한없음" },
+    { "faculty": "국제학부", "department": "국제관광경영학과", "korean_min": null, "english_alt": true, "tuition_per_semester_krw": 3703000, "capacity": "제한없음", "notes": "영어 트랙 — 한국어 면제 가능" },
+    { "faculty": "국제학부", "department": "시각콘텐츠학과", "korean_min": "TOPIK 2", "tuition_per_semester_krw": 3703000, "capacity": "제한없음" },
+    { "faculty": "국제학부", "department": "뷰티아트학과", "korean_min": "TOPIK 2", "tuition_per_semester_krw": 3703000, "capacity": "제한없음" },
+    { "faculty": "국제학부", "department": "한국어·복지학과", "korean_min": "TOPIK 3", "english_alt": true, "tuition_per_semester_krw": 3703000, "capacity": "제한없음" }
+  ],
+
+  "required_documents": [
+    { "key": "application_form", "name_ko": "입학원서 (본교 소정양식)", "required": true },
+    { "key": "self_intro_and_study_plan", "name_ko": "자기소개서 및 학업계획서 (본교 소정양식)", "required": true },
+    { "key": "academic_record_release_and_financial_pledge", "name_ko": "학력조회 동의서 및 유학경비부담 서약서 (본교 소정양식)", "required": true },
+    { "key": "korean_or_english_proof", "name_ko": "한국어 또는 영어 능력 증빙 (택1)", "required": true, "notes": "한국어: TOPIK 성적 / 본교 자체 한국어시험 합격 / 한국어교육센터 수료증. 영어: TOEFL 530(iBT 71) / IELTS 5.5 / CEFR B2 / TEPS 600(NEW TEPS 326)" },
+    { "key": "passport_copy", "name_ko": "여권 사본 1부", "required": true },
+    { "key": "highschool_diploma", "name_ko": "고등학교 졸업(예정) 증명서 1부", "required": true, "notarization": "consul", "notes": "베트남: 아포스티유 미가입국 처리 → 주재국 한국영사 또는 주한 베트남공관 영사확인" },
+    { "key": "highschool_transcript", "name_ko": "고등학교 전학년 성적증명서 1부", "required": true, "notarization": "consul" },
+    { "key": "student_and_parents_id", "name_ko": "학생 및 부모의 현지 신분증(여권) 사본 각 1부", "required": true },
+    { "key": "family_relations_certificate", "name_ko": "가족(친족) 관계증명서 또는 출생증명서 1부", "required": true },
+    { "key": "bank_balance", "name_ko": "본인 또는 부모 명의 한화 1,600만원 이상 은행잔고 증명서 1부", "required": true }
+  ],
+
+  "eligibility": {
+    "applicant_categories": [
+      "외국인 — 지원자 본인과 부모 모두 베트남 국적 (생후 외국 국적 취득자 포함)",
+      "외국 소재 학교 또는 한국 소재 학교를 불문하고 초·중·고등교육과정(12년 이상) 이수",
+      "고등교육법 시행령 제29조 제2항 제6호 — 한국 고교과정 시작 전 부모와 학생 모두 외국 국적 취득"
+    ],
+    "education_required": "high_school",
+    "education_paths": [
+      "외국 소재 또는 한국 소재 학교 전 과정 12년 이상 이수",
+      "해당국 간 학제 차이 인정 (단, 한국 고교과정 시작 전 외국 국적 취득)"
+    ],
+    "gpa_min": null,
+    "korean_proficiency": {
+      "topik_min_by_track": {
+        "regular": 3,
+        "art_athletics": 2,
+        "korean_welfare_dept": 3
+      },
+      "alternative_paths": [
+        { "type": "university_internal_test", "name": "본교 자체 한국어시험 합격자" },
+        { "type": "korean_education_center", "description": "본교 또는 타대학 부설 한국어교육센터 수료(예정)자 — 본교 인증 한정" }
+      ],
+      "post_admission_requirement": "졸업 전까지 TOPIK 4급 이상(예체능 3급 이상) 취득 필수"
+    },
+    "english_proficiency": {
+      "topic_alt_for_dept": ["국제관광경영학과 — 영어 능력으로 대체 가능", "한국어·복지학과 — 영어 능력 자격 인정"],
+      "topic_alt_minimums": { "TOEFL_PBT": 530, "TOEFL_CBT": 197, "TOEFL_iBT": 71, "IELTS": 5.5, "CEFR": "B2", "TEPS": 600, "NEW_TEPS": 326 }
+    },
+    "exclusions": ["대한민국 국적 보유 복수국적자 (지원자 본인 또는 부모 어느 한쪽이라도)"]
+  },
+
+  "schedule": {
+    "rounds": [
+      {
+        "name": "1차",
+        "application_open": "2025-11-03",
+        "application_close": "2025-12-05",
+        "document_submission_close": "2025-12-12",
+        "review_period": ["2025-11-10", "2025-12-19"],
+        "result_announcement": "2025-12-22",
+        "registration_period": ["2025-12-22", "2026-01-16"],
+        "visa_certificate_issuance": ["2025-12-23", "2026-01-23"]
+      },
+      {
+        "name": "2차",
+        "application_open": "2025-12-15",
+        "application_close": "2026-01-16",
+        "document_submission_close": "2026-01-23",
+        "review_period": ["2025-12-22", "2026-01-16"],
+        "result_announcement": "2026-01-20",
+        "registration_period": ["2026-01-20", "2026-02-06"],
+        "visa_certificate_issuance": ["2026-01-21", "2026-02-10"]
+      }
+    ],
+    "semester_start": "2026-03-03",
+    "submission_method": "방문접수 또는 우편접수 (토·일·공휴일 방문접수 불가)"
+  },
+
+  "tuition": {
+    "currency": "KRW",
+    "application_fee": 0,
+    "by_faculty_per_semester": {
+      "애니웹툰학부": 4299000,
+      "예체능학부": 4330000,
+      "국제학부": 3703000
+    },
+    "notes": "학기당 등록금. 입학장학금 적용 시 50% 또는 40% 감면"
+  },
+
+  "scholarships": [
+    {
+      "name": "입학장학금 (상)",
+      "applies_to": "신입생",
+      "condition": "TOPIK 3-6급 / 영어능력 기준부터 10% 이상 / 본교 자체 한국어시험 3급 이상 또는 한국어교육센터 3급 이상 수료(예정)자",
+      "benefit_type": "tuition_pct",
+      "benefit_value": 0.5,
+      "duration": "입학 시"
+    },
+    {
+      "name": "입학장학금 (중)",
+      "applies_to": "신입생",
+      "condition": "TOPIK 2급 / 영어능력 기준부터 9%까지 / 본교 자체 한국어시험 2급 이상 또는 한국어교육센터 2급 이상 수료(예정)자",
+      "benefit_type": "tuition_pct",
+      "benefit_value": 0.4,
+      "duration": "입학 시"
+    },
+    {
+      "name": "재학생 장학금",
+      "applies_to": "재학생",
+      "condition": "취득학점 및 평점평균, TOPIK 취득 여부에 따라 지급",
+      "benefit_type": "tuition_pct",
+      "benefit_value": 0.3,
+      "benefit_value_max": true,
+      "notes": "최대 30%"
+    }
+  ],
+
+  "selection_process": {
+    "method": "서류전형 100%",
+    "evaluation_criteria": "지원자격, 서류 구비 여부, 종합적 학업수행 능력",
+    "pass_threshold": "60점 / 100점",
+    "interview_required": false,
+    "additional_for_art_dept": "애니웹툰·예체능학부: 자기소개서·학업계획서에 전공 적합성 확인 필수"
+  },
+
+  "post_acceptance": {
+    "visa_type": "D-2",
+    "insurance_required": "유학생보험 가입 필수",
+    "warnings": ["사증 발급 거부 시 합격 취소", "2개 이상 대학 이중 등록 시 합격 취소", "졸업예정증명서 제출 후 졸업증명서 미제출 시 합격 취소"]
+  },
+
+  "contacts": {
+    "submission_method": "방문접수 또는 우편접수",
+    "email_primary": "glcampusro@gmail.com",
+    "email_secondary": "glcampus@langli.com",
+    "weekend_visit": "불가 (토·일·공휴일)"
+  },
+
+  "university_forms_included_in_spec": [
+    "입학원서",
+    "자기소개서",
+    "학업계획서",
+    "유학경비 부담 서약서",
+    "개인정보의 수집·이용·제공 및 활용 동의서",
+    "학력 조회 동의서"
+  ],
+
+  "additional_notes": [
+    "베트남 학력입증: 아포스티유 미가입국 → 주재국 한국영사 또는 주한 베트남공관 영사확인",
+    "졸업증명서 원본은 전형 완료 후 반환, 나머지 제출 서류는 일체 반환 X",
+    "원룸(교외) 2인1실 옵션 — 보증금·월사용료 별도"
+  ]
+}
