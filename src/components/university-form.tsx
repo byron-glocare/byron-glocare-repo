@@ -16,7 +16,12 @@ import {
   createUniversity,
   updateUniversity,
   deleteUniversity,
+  createSpecFromExtraction,
 } from "@/app/(app)/universities/actions";
+import {
+  UniversityAdmissionPrefill,
+  type UniversitySpecState,
+} from "@/components/admission/university-admission-prefill";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -89,6 +94,7 @@ export function UniversityForm({
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [deleting, setDeleting] = useState(false);
+  const [specState, setSpecState] = useState<UniversitySpecState | null>(null);
 
   const form = useForm<UniversityInput, unknown, UniversityOutput>({
     resolver: zodResolver(universitySchema),
@@ -103,7 +109,32 @@ export function UniversityForm({
           toast.error("등록 실패", { description: r.error });
           return;
         }
-        toast.success("등록되었습니다.");
+        // Flow B: 첨부한 모집요강도 함께 등록 (학과 자동 생성)
+        let specMsg = "";
+        if (specState?.register && specState.spec) {
+          if (!specState.term || !specState.programType) {
+            toast("모집요강은 등록하지 않았습니다", {
+              description:
+                "함께 등록하려면 학기·과정을 선택하세요. 대학만 저장됨.",
+            });
+          } else {
+            const sr = await createSpecFromExtraction({
+              universityId: r.data.id,
+              term: specState.term,
+              programType: specState.programType,
+              admissionCategory: specState.admissionCategory,
+              sourceFileName: specState.sourceFileName,
+              spec: specState.spec,
+              aiLog: specState.aiLog,
+            });
+            if (sr.ok) {
+              specMsg = " + 모집요강(초안)·학과";
+            } else {
+              toast.error("모집요강 등록 실패", { description: sr.error });
+            }
+          }
+        }
+        toast.success(`등록되었습니다.${specMsg}`);
         navigateBackOrTo(router, "/universities");
       } else if (universityId != null) {
         const r = await updateUniversity(universityId, values);
@@ -130,6 +161,20 @@ export function UniversityForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        {mode === "create" ? (
+          <UniversityAdmissionPrefill
+            onPrefill={(fields) => {
+              (
+                Object.entries(fields) as [
+                  "name_ko" | "name_vi" | "region_ko" | "website_url",
+                  string,
+                ][]
+              ).forEach(([k, v]) => form.setValue(k, v, { shouldDirty: true }));
+            }}
+            onSpecStateChange={setSpecState}
+          />
+        ) : null}
+
         <div className="grid gap-6 lg:grid-cols-2">
           <Card>
             <CardHeader>
