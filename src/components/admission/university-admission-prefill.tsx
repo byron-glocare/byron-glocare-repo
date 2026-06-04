@@ -152,16 +152,18 @@ export function UniversityAdmissionPrefill({
       setAiLog(log);
 
       // 폼 프리필 (대학명은 입력값, 나머지는 추출값 중 있는 것만)
+      // 스키마 실제 경로: identity.campus_location_ko(지역), metadata.contacts.website.
+      // (베트남 대학명은 추출 스키마에 없음 — university_name_en 만 존재.)
       const fields: UniversityPrefillFields = { name_ko: uniName.trim() };
-      const nameVi = asStr(pick(s, ["identity", "university_name_vi"]));
       const website = asStr(pick(s, ["metadata", "contacts", "website"]));
-      const addressKo = asStr(pick(s, ["metadata", "contacts", "address_ko"]));
-      if (nameVi) fields.name_vi = nameVi;
+      const region =
+        asStr(pick(s, ["identity", "campus_location_ko"])) ??
+        (() => {
+          const a = asStr(pick(s, ["metadata", "contacts", "address_ko"]));
+          return a ? a.split(/\s+/).slice(0, 2).join(" ") : undefined;
+        })();
       if (website) fields.website_url = website;
-      if (addressKo) {
-        const region = addressKo.split(/\s+/).slice(0, 2).join(" ");
-        if (region) fields.region_ko = region;
-      }
+      if (region) fields.region_ko = region;
       onPrefill(fields);
 
       const pt = asStr(pick(s, ["identity", "program_type"])) ?? "";

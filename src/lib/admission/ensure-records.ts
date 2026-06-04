@@ -25,16 +25,21 @@ export type SpecDepartment = {
   tuition_per_semester_krw?: number | null;
 };
 
-const PROGRAM_TYPE_LABEL: Record<string, string> = {
-  language_program: "어학연수 (D-4)",
-  associate_2yr: "전문학사 2년",
-  bachelor_3yr_extension: "전공심화 (2+2)",
-  bachelor_4yr: "학사 4년",
-};
-
 /** 이름 매칭용 정규화: 앞뒤 공백 제거 + 내부 공백 압축 + 소문자 */
 function normalizeName(s: string): string {
   return s.trim().replace(/\s+/g, " ").toLowerCase();
+}
+
+/**
+ * 학과의 과정(course)은 **학과 자체의 track/years** 로 구성한다.
+ * spec 전체 program_type(어학연수/전문학사/전공심화/학사)을 학과에 평탄화하지 않음 —
+ * 학위 과정은 학과의 부속 정보이기 때문(예: 요양보호학과 · 2년/2+2/학사4년).
+ */
+function buildCourse(d: SpecDepartment): string | null {
+  const parts: string[] = [];
+  if (typeof d.years === "number") parts.push(`${d.years}년`);
+  if (d.track && d.track.trim()) parts.push(d.track.trim());
+  return parts.length > 0 ? parts.join(" ") : null;
 }
 
 export type EnsureResult = {
@@ -116,10 +121,6 @@ export async function ensureUniversityAndDepartments(opts: {
       0
     );
 
-    const courseDefault = opts.programType
-      ? PROGRAM_TYPE_LABEL[opts.programType] ?? null
-      : null;
-
     const seen = new Set<string>();
     const toInsert: TablesInsert<"departments">[] = [];
     for (const d of specDepts) {
@@ -135,7 +136,7 @@ export async function ensureUniversityAndDepartments(opts: {
         university_id: universityId,
         name_ko: d.name.trim(),
         active: false,
-        course: d.track ?? courseDefault,
+        course: buildCourse(d),
         degree_years: typeof d.years === "number" ? d.years : null,
         tuition_ko:
           typeof d.tuition_per_semester_krw === "number"
