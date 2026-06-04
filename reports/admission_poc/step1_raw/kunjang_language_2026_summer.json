@@ -1,0 +1,112 @@
+{
+  "_meta": {
+    "source_file": "C:/1. glocare/5.사업/4.대학교/모집 요강_개별 대학/2026년 2학기/군장대학교/군장대학교_어학당_26년2학기_kr.pdf",
+    "extracted_at": "2026-05-26",
+    "extractor": "claude-opus-4-7 (manual, prompt-version=poc-step1-v0)",
+    "confidence": 0.78,
+    "filter": "vietnam_pure_foreigner",
+    "filter_note": "베트남 순수외국인 필터 적용 — 우즈벡 전용 정보(KDB은행 잔고, 우즈벡 전용 연락처) 등은 의도적으로 생략",
+    "notes_for_step2": [
+      "이 자료는 학위과정 모집요강이 아니라 '어학연수(D-4) 1년 과정' 모집요강 — 기존 spec-schema 가 학위 가정인데, 'program_type' 같은 분류 필드가 필요",
+      "고등학교 성적 6.8 의 scale 명시 없음. 베트남 10점 만점 추정 → 단순히 gpa_min=6.8 로 두면 다른 학교의 100점 만점과 충돌. gpa_scale 컬럼 도입 필수 (이미 spec-schema 초안에 있음)",
+      "면접·합격발표·표준입학허가서 발급 일정의 절대 날짜가 본문에 없음 (다이어그램만 있음). schedule 의 nullable 표현이 필요한 케이스",
+      "비자 D-4, 6개월씩 최대 2년 연장 — 학위 모집요강의 schedule 과는 다른 정보. additional_metadata 또는 program 항목 별도 분리 필요"
+    ]
+  },
+
+  "identity": {
+    "university_name_ko": "군장대학교",
+    "university_name_en": "Kunjang University",
+    "department_name_ko": "어학센터 (한국어 연수 1년 과정)",
+    "program_type": "language_program",
+    "term": "2026-Summer",
+    "capacity": null
+  },
+
+  "required_documents": [
+    { "key": "application_form", "name_ko": "입학신청서 (지원서·자기소개서·수학계획서·개인정보 수집이용 동의서 포함)", "required": true },
+    { "key": "photo", "name_ko": "증명사진 원본 3장 + JPG 이미지", "required": true },
+    { "key": "passport_copy", "name_ko": "여권 사본 (컬러)", "required": true },
+    { "key": "family_relations_certificate", "name_ko": "가족관계증명서", "required": true, "notarization": "apostille_or_consul", "language": "ko_or_en", "notes": "영문 번역 공증본 첨부 필수" },
+    { "key": "birth_certificate", "name_ko": "출생증명서", "required": true, "notarization": "apostille_or_consul" },
+    { "key": "id_copies", "name_ko": "학생 및 부모 신분증 사본", "required": true },
+    { "key": "highschool_diploma", "name_ko": "고등학교 졸업증명서", "required": true, "notarization": "apostille_or_consul", "notes": "고등학교 성적 6.8 이상, 6개월 이내 발급, 영문 번역 공증" },
+    { "key": "highschool_transcript", "name_ko": "고등학교 성적증명서 인증", "required": true, "notarization": "apostille_or_consul" },
+    { "key": "bank_balance", "name_ko": "은행 잔고증명서", "required": true, "notes": "베트남: 한화 800만원 이상 한국 유학경비 보증금 예치" },
+    { "key": "financial_proof", "name_ko": "기본 재정 증명 서류", "required": true, "notes": "부모 재직증명서/근로계약서/급여명세서 또는 사업자등록증/납세증명서/면세확인서 또는 토지·차량 자산 증빙. 사업자등록 1년 이내 시 소명자료 필요. 재산 취득 3개월 이상 지속분만 인정" },
+    { "key": "visa_application", "name_ko": "사증발급인정 신청서", "required": true }
+  ],
+
+  "eligibility": {
+    "nationality": null,
+    "education_required": "high_school",
+    "gpa_min": 6.8,
+    "gpa_scale": null,
+    "korean_proficiency": null,
+    "english_proficiency": null,
+    "age_max": null,
+    "notes_ko": "고등학교 졸업 후 공백 2년 이상 시 소명자료 필요. 부모 직업 변경 시 소명자료 필요(베트남). 대학교 재학·졸업 시 재학·졸업증명서 추가 제출.",
+    "notes_vi": null
+  },
+
+  "schedule": {
+    "application_open": "2026-02-05",
+    "application_close_round1": "2026-03-19",
+    "application_close_final": "2026-04-17",
+    "document_submission_close": "2026-04-17",
+    "interview": null,
+    "result_announcement": null,
+    "group_arrival_in_korea": "2026-06-12",
+    "semester_start": "2026-06-15",
+    "semester_end": "2026-08-24"
+  },
+
+  "tuition": {
+    "currency": "KRW",
+    "application_fee": null,
+    "admission_fee": null,
+    "tuition_per_semester": null,
+    "tuition_per_year": 4400000,
+    "dorm_fee": 900000,
+    "dorm_fee_duration_months": 6,
+    "dorm_required": true,
+    "payment_method": "lump_sum",
+    "notes": "신입생 기숙사 6개월 의무 거주. 환불은 학교 환불규정 따름. 해외 송금 수수료 신청자 본인 부담. 입금 시 송금인 이름과 지원자 본인 이름이 동일해야 함",
+    "bank": {
+      "name": "KB국민은행",
+      "account": "502301-04-397054",
+      "account_holder": "군장대학",
+      "swift": "CZNBKRSEXXX"
+    }
+  },
+
+  "scholarships": [],
+
+  "program_details": {
+    "duration": "1 year (4 semesters × 10 weeks, 160시간/학기)",
+    "weekly_hours": 16,
+    "weekly_schedule": "월요일~목요일 (1일 4교시)",
+    "subjects": ["말하기", "듣기", "쓰기", "어휘와 문법", "읽기", "TOPIK"],
+    "completion_criteria": {
+      "average_score_min": 60,
+      "attendance_min_pct": 80
+    },
+    "visa_type": "D-4",
+    "visa_extension": "6개월씩 / 최대 2년"
+  },
+
+  "selection_process": [
+    "지원 서류 접수", "서류 심사", "면접", "합격자 발표",
+    "인보이스 발행", "학비 납부 확인", "표준입학허가서 발급",
+    "VISA 접수", "입학 및 입국 절차 진행", "학기 시작"
+  ],
+
+  "contacts": {
+    "submission_address_ko": "전북특별자치도 군산시 성산면 군장대길 13 제1학구관 3층 334호 국제교류원 사무실",
+    "submission_address_en": "Office of International Affairs, 13 Gunjangdae-gil, Seongsan-myeon, Gunsan-si, Jeonbuk-do, Korea (54045)",
+    "email": "roselee@kunjang.ac.kr",
+    "phone_vietnamese": "063-450-8470",
+    "phone_korean": "063-450-8151",
+    "fax": "063-450-8305"
+  }
+}

@@ -1,0 +1,164 @@
+{
+  "_meta": {
+    "source_file": "C:/1. glocare/5.사업/4.대학교/모집 요강_개별 대학/서정대학교_2026학년도 3월 순수외국인 입학전형 모집요강(글로벌요양복지과).pdf",
+    "extracted_at": "2026-05-26",
+    "extractor": "claude-opus-4-7 (manual, prompt-version=poc-step1-v0)",
+    "confidence": 0.85,
+    "filter": "vietnam_pure_foreigner",
+    "filter_note": "베트남 순수외국인 필터 적용 — 북한이탈주민·재외국민·결혼이주민·F-비자 소지자(F-4/F-1/F-3/E-7)·중국 학력인증 절차·지역정주외국인 동반가족 지원금 등 다른 카테고리 전용 정보는 의도적으로 생략",
+    "notes_for_step2": [
+      "schedule 의 1·2·3차 다단계 모집을 단일 application_open/close 로는 표현 불가 — schedule.rounds[] 배열 도입 필요 (큰 발견)",
+      "한국어 요건이 OR 형태로 5+ 경로(TOPIK, 세종학당, KIIP, 대학 자체 평가, 보건계열 학위, 요양보호 경력, 특정 비자 소지) — alternative 단일 string 으론 부족, alternative_paths[] 구조화 필요",
+      "등록금 액수가 본문에 없음 — 합격자 발표 시 안내. tuition 의 'pending_until_acceptance' boolean 또는 null 처리 검토",
+      "장학금 9개 (신입생 4 + 재학생 5) — 일부 중복불가 규칙 있음(어학장학금 ↔ 지역정주 / 어학장학금 ↔ 기타장학금). step2 에서 exclusivity_groups 필드 도입 고려",
+      "복수국적자 불가, Provisional/Temporary 졸업증명 불가 — eligibility 의 exclusions[] 또는 forbidden 필드 검토"
+    ]
+  },
+
+  "identity": {
+    "university_name_ko": "서정대학교",
+    "university_name_en": "Seojeong University",
+    "department_name_ko": "글로벌요양복지과",
+    "program_type": "associate_degree_2yr",
+    "academic_track": "전문학사 2년 / 인문사회",
+    "term": "2026-Spring",
+    "capacity": 40,
+    "closure_threshold": "합격자 20명 미만 시 학과 폐강 가능"
+  },
+
+  "required_documents": [
+    { "key": "photo", "name_ko": "사진 3.5×4.5cm 2매", "required": true, "notes": "최근 6개월 이내 컬러" },
+    { "key": "self_intro", "name_ko": "자기소개서 1부 (성격 장단점·지원동기·학업계획)", "required": true, "language": "free_format" },
+    { "key": "highschool_diploma", "name_ko": "최종학교 졸업증명서 원본 1부", "required": true, "notarization": "apostille_or_consul" },
+    { "key": "highschool_transcript", "name_ko": "최종학교 전 과정 성적증명서 원본 1부", "required": true, "notarization": "apostille_or_consul" },
+    { "key": "family_relations_certificate", "name_ko": "가족관계증명서 (외국정부 발급, 부모와의 관계 명시)", "required": true },
+    { "key": "nationality_proof", "name_ko": "외국국적증명서 — 본인 및 부모 여권사본 또는 신분증명서", "required": true },
+    { "key": "korean_proof", "name_ko": "한국어능력 증빙자료", "required": false, "notes": "해당자만 — TOPIK 2급 이상 / 세종학당 초급2 / KIIP 2단계 또는 사전평가 41점" },
+    { "key": "career_certificate", "name_ko": "경력증명서 (요양보호 관련, 기관 직인 포함 원본)", "required": false, "notes": "해당자만" },
+    { "key": "license_copy", "name_ko": "자격증 사본 (간호사·간호조무사 등)", "required": false, "notes": "해당자만" },
+  ],
+
+  "eligibility": {
+    "applicant_categories": [
+      "외국인 — 지원자 본인과 부모 양쪽이 모두 외국인 (베트남 국적)"
+    ],
+    "education_required": "high_school",
+    "education_paths": [
+      "베트남에서 학제 동일한 학교의 초·중·고 전 과정 이수"
+    ],
+    "gpa_min": null,
+    "gpa_scale": null,
+    "korean_proficiency": {
+      "topik_min": 2,
+      "alternative_paths": [
+        { "type": "sejong_institute", "level": "초급2 이상" },
+        { "type": "kiip", "level": "2단계 이수 또는 사전평가 41점 이상" },
+        { "type": "university_internal_test", "name": "SJ 한국어시험 — 본 대학 국제교류처 평가" },
+        { "type": "health_science_degree", "description": "국내외 대학 보건계열(간호학·약학 등) 전문학사 이상 학위" },
+        { "type": "elder_care_career", "description": "간호사·간호조무사 등 요양보호 관련 경력 (경력증명서 제출)" }
+      ]
+    },
+    "exclusions": [
+      "복수국적자 (지원자 본인 또는 부모 어느 한쪽이라도 대한민국 국적 보유 시)",
+      "Provisional / Temporary Certificate 등 임시 졸업증명서로는 지원 불가"
+    ],
+    "notes_ko": "허위서류 제출 시 합격·입학 취소"
+  },
+
+  "schedule": {
+    "rounds": [
+      {
+        "name": "1차",
+        "application_open": "2025-11-24",
+        "application_close": "2025-11-26",
+        "document_submission_close": "2025-11-28",
+        "interview_period": ["2025-12-02", "2025-12-03"],
+        "result_announcement": "2025-12-05",
+        "payment_period": ["2025-12-08", "2025-12-10"]
+      },
+      {
+        "name": "2차",
+        "application_open": "2025-12-15",
+        "application_close": "2025-12-17",
+        "document_submission_close": "2025-12-19",
+        "interview_period": ["2025-12-23", "2025-12-24"],
+        "result_announcement": "2025-12-26",
+        "payment_period": ["2025-12-29", "2025-12-31"]
+      },
+      {
+        "name": "3차",
+        "application_open": "2026-01-05",
+        "application_close": "2026-01-07",
+        "document_submission_close": "2026-01-09",
+        "interview_period": ["2026-01-13", "2026-01-14"],
+        "result_announcement": "2026-01-16",
+        "payment_period": ["2026-01-19", "2026-01-21"]
+      }
+    ],
+    "main_enrollment_period": ["2026-02-02", "2026-02-06"],
+    "additional_enrollment_period": ["2026-02-01", "2026-02-27"],
+    "orientation": "2026-02-24",
+    "semester_start": "2026-03-03"
+  },
+
+  "tuition": {
+    "currency": "KRW",
+    "application_fee": null,
+    "admission_fee": null,
+    "tuition_per_semester": null,
+    "tuition_per_year": null,
+    "dorm_fee": null,
+    "other_fees": null,
+    "amount_disclosure": "pending_until_acceptance",
+    "payment_method": "신한은행 지정 가상계좌",
+    "notes": "본문에 등록금 액수 명시 없음 — 합격자 발표 시 안내. 해외 송금 시 환율·송금 수수료 학생 본인 부담",
+    "refund_policy": {
+      "before_semester_start": "전액 환불",
+      "within_30_days": "5/6 환불",
+      "31_to_60_days": "2/3 환불",
+      "61_to_90_days": "1/2 환불",
+      "after_90_days": "환불 불가",
+      "notes": "장학금 받은 경우 별도 전액 반환. 국내 계좌로만 환불 가능"
+    }
+  },
+
+  "scholarships": [
+    { "name": "외국인요양보호사 지원장학금", "applies_to": "신입생", "condition": "글로벌요양복지과 최종 합격 외국인 유학생", "benefit_type": "tuition_amount", "benefit_value": 800000, "duration": "입학 시 1회" },
+    { "name": "어학장학금 (중급)", "applies_to": "신입생", "condition": "TOPIK 3-4급 / KIIP 3-4단계(사전평가 61-80점) / 세종학당 중급 1B-2B", "benefit_type": "tuition_amount", "benefit_value": 500000, "duration": "입학 시 1회" },
+    { "name": "어학장학금 (고급)", "applies_to": "신입생", "condition": "TOPIK 5-6급 / KIIP 5단계(사전평가 81점 이상) / 세종학당 고급 이상", "benefit_type": "tuition_amount", "benefit_value": 1000000, "duration": "입학 시 1회" },
+    { "name": "TOPIK장학금", "applies_to": "재학생", "condition": "TOPIK 3-6급 자격증 소지", "benefit_type": "tuition_amount", "benefit_value": "300000~600000 (3급=30만, 4급=40만, 5급=50만, 6급=60만)", "duration": "총 재학기간 중 급수별 1회 (우상향 시 추가 가능)" },
+    { "name": "사회통합프로그램(KIIP) 장학금", "applies_to": "재학생", "condition": "3-5단계 이수", "benefit_type": "tuition_amount", "benefit_value": "300000~500000 (3단계=30만, 4단계=40만, 5단계=50만)" },
+    { "name": "세종학당 장학금", "applies_to": "재학생", "condition": "중급1=30만 / 중급2=40만", "benefit_type": "tuition_amount", "benefit_value": "300000 or 400000" },
+    { "name": "성적장학금", "applies_to": "재학생", "condition": "평균평점 4.0 이상인 외국인 성인학습자", "benefit_type": "tuition_amount", "benefit_value": 500000, "notes": "D-2 체류자격자 제외", "exclusivity_with": ["어학장학금"] },
+    { "name": "요양보호사 합격생 장학금", "applies_to": "재학생", "condition": "요양보호사 시험 합격자", "benefit_type": "tuition_amount", "benefit_value": 500000, "exclusivity_with": ["어학장학금"] }
+  ],
+
+  "selection_process": {
+    "method": "서류심사 + 면접심사",
+    "screening": "서류 통과자만 면접 응시 → 면접 합격자가 최종 선발",
+    "interview_content": ["지원동기 및 학업계획 평가", "기본소양(이해력·표현력) 평가", "한국어 구술능력 평가", "학업능력(학업수행능력·전공이해도) 평가"],
+    "interview_required": true,
+    "language_screening_test": {
+      "name": "SJ 한국어시험",
+      "use_case": "어학 요건 충족 시 사용 가능",
+      "scheduled_dates": ["2025-11-14"]
+    }
+  },
+
+  "contacts": {
+    "submission_address_ko": "경기도 양주시 은현면 서정로 27 서정대학교 국제관별관 L층 국제교류처 입시담당자 앞",
+    "submission_address_en": "International Admissions Office, L Floor, International Building (Annex), Seojeong University, 27 Seojeong-ro, Eunhyeon-myeon, Yangju-si, Gyeonggi-do, 11429, Republic of Korea",
+    "phone": "+82-2-860-5263 (국제교류원)",
+    "phone_sj_test": "031-860-5265",
+    "email": "global@seojeong.ac.kr",
+    "online_apply_url": "https://apply.seojeong.ac.kr/GateWeb/Apply/ApplyStart.aspx",
+    "info_url": "https://seojeong.ac.kr/inter/degree-guide/admission-guide001.do"
+  },
+
+  "additional_notes": [
+    "비자: 합격 후 D-2 유학비자 발급. 학기 개시일 전까지 D-2 변경 결격사유 있으면 합격 취소",
+    "미입국 또는 OT 미참석 시 입학허가 취소될 수 있음",
+    "베트남 출신: 졸업증명서·성적증명서 모두 아포스티유(베트남은 아포스티유 협약 가입국) 또는 주베트남 한국대사관 영사확인",
+    "방문접수 시간: 10:00~17:00"
+  ]
+}

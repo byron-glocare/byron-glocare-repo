@@ -9,9 +9,12 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.100.0",
+    "@ssabrojs/hwpxjs": "^0.4.0",
     "@supabase/ssr": "^0.10.2",
     "@supabase/supabase-js": "^2.104.1",
     "clsx": "^2.1.1",
+    "exceljs": "^4.4.0",
     "lucide-react": "^1.11.0",
     "next": "16.2.4",
     "nodemailer": "^8.0.6",
@@ -20,6 +23,7 @@
     "resend": "^6.12.2",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.5.0",
+    "xlsx": "^0.18.5",
     "zod": "^4.3.6"
   },
   "devDependencies": {

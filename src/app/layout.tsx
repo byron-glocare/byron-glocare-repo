@@ -1,10 +1,16 @@
+/**
+ * Root layout — minimal.
+ *
+ * 공개 사이트 chrome (SiteHeader/Footer) 는 `src/app/(site)/layout.tsx` 로 분리.
+ * 외부 어드민(/center/*) chrome 은 `src/app/center/layout.tsx` 에서 별도 처리.
+ * 본 layout 은 html/body/font + 전역 Toaster 만.
+ */
+
 import type { Metadata } from "next";
 import { Be_Vietnam_Pro, Noto_Sans_KR, Noto_Serif_KR } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
 
-import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
 import { getLocale } from "@/lib/i18n";
 
 const beVietnam = Be_Vietnam_Pro({
@@ -47,9 +53,7 @@ export default async function RootLayout({
       className={`${beVietnam.variable} ${notoSansKr.variable} ${notoSerifKr.variable}`}
     >
       <body>
-        <SiteHeader locale={locale} />
-        <main>{children}</main>
-        <SiteFooter />
+        {children}
         <Toaster richColors position="top-center" />
       </body>
     </html>

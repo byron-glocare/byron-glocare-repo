@@ -888,6 +888,227 @@ export type Database = {
         Update: Partial<Database["public"]["Tables"]["study_insurance_claims"]["Insert"]>;
         Relationships: [];
       };
+
+      // =====================================================================
+      // Plan B 유학 B2B SaaS — 신규 study_* 11테이블 (B1_schema.sql)
+      // PoC step3 lock — 상세 sub-스키마는 src/lib/admission/spec-schema.ts
+      // 정확한 컬럼 타입은 src/types/study.ts (진실원)
+      // Insert/Update 는 단순 Partial — application 단 zod 검증 우선
+      // =====================================================================
+
+      study_pricing_plans: {
+        Row: import("./study").StudyPricingPlan;
+        Insert: Partial<import("./study").StudyPricingPlan>;
+        Update: Partial<import("./study").StudyPricingPlan>;
+        Relationships: [];
+      };
+
+      study_center_orgs: {
+        Row: import("./study").StudyCenterOrg;
+        Insert: Partial<import("./study").StudyCenterOrg>;
+        Update: Partial<import("./study").StudyCenterOrg>;
+        Relationships: [
+          {
+            foreignKeyName: "study_center_orgs_pricing_plan_id_fkey";
+            columns: ["pricing_plan_id"];
+            referencedRelation: "study_pricing_plans";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+
+      study_center_users: {
+        Row: import("./study").StudyCenterUser;
+        Insert: Partial<import("./study").StudyCenterUser>;
+        Update: Partial<import("./study").StudyCenterUser>;
+        Relationships: [
+          {
+            foreignKeyName: "study_center_users_org_id_fkey";
+            columns: ["org_id"];
+            referencedRelation: "study_center_orgs";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+
+      study_managed_students: {
+        Row: import("./study").StudyManagedStudent;
+        Insert: Partial<import("./study").StudyManagedStudent>;
+        Update: Partial<import("./study").StudyManagedStudent>;
+        Relationships: [
+          {
+            foreignKeyName: "study_managed_students_org_id_fkey";
+            columns: ["org_id"];
+            referencedRelation: "study_center_orgs";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+
+      study_admission_specs: {
+        Row: import("./study").StudyAdmissionSpec;
+        Insert: Partial<import("./study").StudyAdmissionSpec>;
+        Update: Partial<import("./study").StudyAdmissionSpec>;
+        Relationships: [
+          {
+            foreignKeyName: "study_admission_specs_university_id_fkey";
+            columns: ["university_id"];
+            referencedRelation: "universities";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+
+      study_admission_form_files: {
+        Row: import("./study").StudyAdmissionFormFile;
+        Insert: Partial<import("./study").StudyAdmissionFormFile>;
+        Update: Partial<import("./study").StudyAdmissionFormFile>;
+        Relationships: [
+          {
+            foreignKeyName: "study_admission_form_files_university_id_fkey";
+            columns: ["university_id"];
+            referencedRelation: "universities";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+
+      study_student_data_types: {
+        Row: import("./study").StudyStudentDataType;
+        Insert: Partial<import("./study").StudyStudentDataType>;
+        Update: Partial<import("./study").StudyStudentDataType>;
+        Relationships: [];
+      };
+
+      study_student_data_values: {
+        Row: import("./study").StudyStudentDataValue;
+        Insert: Partial<import("./study").StudyStudentDataValue>;
+        Update: Partial<import("./study").StudyStudentDataValue>;
+        Relationships: [
+          {
+            foreignKeyName: "study_student_data_values_student_id_fkey";
+            columns: ["student_id"];
+            referencedRelation: "study_managed_students";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+
+      study_student_essay_drafts: {
+        Row: import("./study").StudyStudentEssayDraft;
+        Insert: Partial<import("./study").StudyStudentEssayDraft>;
+        Update: Partial<import("./study").StudyStudentEssayDraft>;
+        Relationships: [
+          {
+            foreignKeyName: "study_student_essay_drafts_student_id_fkey";
+            columns: ["student_id"];
+            referencedRelation: "study_managed_students";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "study_student_essay_drafts_form_file_id_fkey";
+            columns: ["form_file_id"];
+            referencedRelation: "study_admission_form_files";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+
+      study_applications: {
+        Row: import("./study").StudyApplication;
+        Insert: Partial<import("./study").StudyApplication>;
+        Update: Partial<import("./study").StudyApplication>;
+        Relationships: [
+          {
+            foreignKeyName: "study_applications_student_id_fkey";
+            columns: ["student_id"];
+            referencedRelation: "study_managed_students";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "study_applications_admission_spec_id_fkey";
+            columns: ["admission_spec_id"];
+            referencedRelation: "study_admission_specs";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "study_applications_target_department_id_fkey";
+            columns: ["target_department_id"];
+            referencedRelation: "departments";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+
+      study_application_documents: {
+        Row: import("./study").StudyApplicationDocument;
+        Insert: Partial<import("./study").StudyApplicationDocument>;
+        Update: Partial<import("./study").StudyApplicationDocument>;
+        Relationships: [
+          {
+            foreignKeyName: "study_application_documents_application_id_fkey";
+            columns: ["application_id"];
+            referencedRelation: "study_applications";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+
+      study_review_feedback: {
+        Row: import("./study").StudyReviewFeedback;
+        Insert: Partial<import("./study").StudyReviewFeedback>;
+        Update: Partial<import("./study").StudyReviewFeedback>;
+        Relationships: [
+          {
+            foreignKeyName: "study_review_feedback_document_id_fkey";
+            columns: ["document_id"];
+            referencedRelation: "study_application_documents";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+
+      study_timelines: {
+        Row: import("./study").StudyTimeline;
+        Insert: Partial<import("./study").StudyTimeline>;
+        Update: Partial<import("./study").StudyTimeline>;
+        Relationships: [
+          {
+            foreignKeyName: "study_timelines_application_id_fkey";
+            columns: ["application_id"];
+            referencedRelation: "study_applications";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+
+      study_invoices: {
+        Row: import("./study").StudyInvoice;
+        Insert: Partial<import("./study").StudyInvoice>;
+        Update: Partial<import("./study").StudyInvoice>;
+        Relationships: [
+          {
+            foreignKeyName: "study_invoices_org_id_fkey";
+            columns: ["org_id"];
+            referencedRelation: "study_center_orgs";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+
+      study_settlements: {
+        Row: import("./study").StudySettlement;
+        Insert: Partial<import("./study").StudySettlement>;
+        Update: Partial<import("./study").StudySettlement>;
+        Relationships: [
+          {
+            foreignKeyName: "study_settlements_invoice_id_fkey";
+            columns: ["invoice_id"];
+            referencedRelation: "study_invoices";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
     };
     Views: { [_ in never]: never };
     Functions: { [_ in never]: never };

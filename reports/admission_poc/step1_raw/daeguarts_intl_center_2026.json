@@ -1,0 +1,104 @@
+{
+  "_meta": {
+    "source_file": "C:/1. glocare/5.사업/4.대학교/모집 요강_개별 대학/2026년_대구예술대_국제교류센터_유학생모집_KOR.pdf",
+    "extracted_at": "2026-05-26",
+    "extractor": "claude-opus-4-7 (manual from pdftotext extraction)",
+    "confidence": 0.72,
+    "filter": "vietnam_pure_foreigner",
+    "filter_note": "베트남 순수외국인 필터 적용 — 본 자료는 한국어학당(어학연수 D-4) + 국제학부 학과소개 리플릿. 본격 입학 정보는 [daeguarts_pure_foreigner_2026_spring.json](daeguarts_pure_foreigner_2026_spring.json) 에 더 자세함",
+    "notes_for_step2": [
+      "**같은 대학(대구예술대) 자료 2건** — 외국인특별전형 모집요강 + 국제교류센터 리플릿. 정보 보완 관계. step3 의 통합 시 두 자료의 학과별 정보 + 어학당·기숙사·일정 정보를 merge 필요",
+      "본 리플릿은 학과 소개 + 한국어학당 + 학사일정 + 비용 안내 — 외국인특별전형의 입학자격·전형방법은 빠져있음 (별도 모집요강 참조)",
+      "비용에 '한국어학당 1년 학비 + 기숙사 + 픽업 + 통신 + 교재' 까지 통합 표시 — `tuition` 외에 `living_cost` 객체 필요한 케이스. 이건 학생 의사결정에 중요한 정보"
+    ]
+  },
+
+  "identity": {
+    "university_name_ko": "대구예술대학교",
+    "university_name_en": "Daegu Arts University (DGAU)",
+    "term": "2026-Full year",
+    "program_type": "language_program + bachelor_4yr_intl_division",
+    "campus_location_ko": "대구 (한강 이남 유일 4년제 예술대학)"
+  },
+
+  "departments": [
+    { "faculty": "국제학부", "department": "건축기술디자인학과" },
+    { "faculty": "국제학부", "department": "국제스포츠학과" },
+    { "faculty": "국제학부", "department": "국제관광경영학과", "notes": "국제화·관광 산업 중심" },
+    { "faculty": "국제학부", "department": "시각콘텐츠학과", "notes": "광고·포스터·2D/3D 그래픽·영상" },
+    { "faculty": "국제학부", "department": "뷰티아트학과", "notes": "패션·뷰티 통합" },
+    { "faculty": "국제학부", "department": "한국어·복지학과", "notes": "한국어 + 사회복지, 국가공인자격 제공" }
+  ],
+
+  "language_program": {
+    "name": "한국어학당",
+    "location": "제4예술관 (학교 내)",
+    "session_type": "오전반 09:30-13:10 / 오후반 14:30-18:10 (성적·출결로 배정)",
+    "hours_per_semester": 200,
+    "hours_per_week": 20,
+    "weeks_per_semester": 10,
+    "cultural_activity": "매 학기 문화체험 / 봄·가을 단체 문화체험 행사"
+  },
+
+  "schedule": {
+    "academic_calendar": {
+      "winter_2025": { "start": "2025-12-08", "end": "2026-02-20" },
+      "spring_2026": { "start": "2026-03-09", "end": "2026-05-18" },
+      "summer_2026": { "start": "2026-06-08", "end": "2026-08-24" },
+      "fall_2026": { "start": "2026-09-07", "end": "2026-11-20" },
+      "winter_2026": { "start": "2026-12-07", "end": "2027-02-18" }
+    }
+  },
+
+  "eligibility": {
+    "applicant_categories": [
+      "외국인 — 베트남 국적"
+    ],
+    "education_required": "high_school",
+    "education_paths": ["고등학교 졸업(예정)자 또는 동등 이상 학력 인정자"],
+    "financial_requirement": "유학 기간 등록금과 체재비 일체를 지원받을 수 있는 재정 능력 입증",
+    "visa_requirement": "대한민국 사증(VISA) 발급에 문제가 없는 외국인 또는 해당 체류자격 소지자",
+    "exclusions": [
+      "대한민국 사증 발급 불허 이력자",
+      "한국에 불법체류 중인 사촌 이내 가족이 있는 자"
+    ]
+  },
+
+  "tuition": {
+    "currency": "KRW",
+    "application_fee": 50000,
+    "tuition_per_semester": 1350000,
+    "tuition_per_year_4_semesters": 5400000,
+    "insurance_per_year": 100000,
+    "total_academic_year_excl_living": 5550000,
+    "notes": "한국어학당 4학기 합계 + 보험 + 전형료. 전형료 환불 불가. 교재비 별도"
+  },
+
+  "living_cost": {
+    "currency": "KRW",
+    "dorm_fee_6_months": 1770000,
+    "dorm_fee_per_period": "2인 1실 기준",
+    "dorm_deposit": 500000,
+    "dorm_deposit_refundable_after": "6개월 뒤 환불",
+    "pickup_fee": 130000,
+    "telecom_per_month": 37500,
+    "telecom_total_12_months": 450000,
+    "textbook_per_month": 25000,
+    "textbook_total_6_months": 150000,
+    "total_living_for_year": 3000000,
+    "dorm_info": {
+      "name": "백운생활관",
+      "location": "교내",
+      "capacity": "남·여 총 115명 (남 84명 + 여 228명? 본문 데이터 모호)",
+      "room_types": "1인1실 / 2인1실",
+      "priority": "성적 우수자, 원거리 거주자, 농어업·장애·국가유공자·기초생활수급자, 신입생 우선",
+      "phone": "054-973-5305 / 5308"
+    }
+  },
+
+  "scholarships": [],
+
+  "selection_process": {
+    "note": "본 리플릿에 입학전형 절차 명시 없음 — 외국인특별전형 모집요강(별도 PDF) 참조 필요"
+  }
+}
