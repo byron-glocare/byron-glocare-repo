@@ -1,0 +1,769 @@
+[
+  {
+    "id": 1069,
+    "intent_ko": "음주 대상자가 절주 습관을 갖도록 돕는 올바른 방법을 파악한다.",
+    "intent_vi": "Xác định phương pháp đúng đắn để giúp đối tượng hình thành thói quen giảm uống rượu.",
+    "choice_explanations": {
+      "ko": {
+        "1": "공복에 술을 마시면 알코올이 빠르게 흡수되어 건강에 더욱 해롭고 절주에 도움이 되지 않는다.",
+        "2": "매일 식사와 함께 음주하는 것은 음주를 일과로 고착시켜 오히려 습관을 악화시킬 수 있다.",
+        "3": "★ 절주 결심을 주변 사람에게 공개하면 사회적 지지와 감시 효과가 생겨 절주를 지속하는 데 실질적인 도움이 된다.",
+        "4": "권유받은 경우에만 마시는 것은 외부 상황에 의존하는 방식이므로 자율적인 절주 습관 형성에 적합하지 않다.",
+        "5": "하루 2잔 이내 허용은 절주가 아닌 단순 음주 지침일 뿐이며, 습관 개선 전략이 될 수 없다."
+      },
+      "vi": {
+        "1": "Uống rượu khi đói khiến cơ thể hấp thụ cồn nhanh hơn, có hại cho sức khỏe và không giúp giảm uống.",
+        "2": "Uống rượu mỗi ngày cùng bữa ăn sẽ củng cố thói quen uống rượu, có thể làm tình trạng tệ hơn.",
+        "3": "★ Công khai quyết tâm giảm rượu với người xung quanh tạo ra sự hỗ trợ xã hội và áp lực tích cực, giúp duy trì thói quen giảm uống một cách hiệu quả.",
+        "4": "Chỉ uống khi được mời là cách phụ thuộc vào yếu tố bên ngoài, không giúp hình thành thói quen tự chủ.",
+        "5": "Giới hạn 2 ly mỗi ngày chỉ là hướng dẫn uống rượu có kiểm soát, không phải chiến lược giảm uống thực sự."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "절주", "def_vi": "Giảm lượng rượu uống, kiểm soát việc uống rượu" },
+      { "term_ko": "사회적 지지", "def_vi": "Sự hỗ trợ từ những người xung quanh trong cộng đồng xã hội" }
+    ]
+  },
+  {
+    "id": 1068,
+    "intent_ko": "절주를 실천하는 데 효과적인 방법을 이해한다.",
+    "intent_vi": "Hiểu phương pháp hiệu quả để thực hành giảm uống rượu.",
+    "choice_explanations": {
+      "ko": {
+        "1": "큰 잔을 사용하면 한 번에 더 많은 양을 마시게 되어 음주량이 늘어날 수 있다.",
+        "2": "★ 음주일지를 작성하면 스스로 음주 패턴을 인식하고 점검할 수 있어 절주에 효과적인 방법이다.",
+        "3": "여러 종류의 술을 섞어 마시면 알코올 도수 조절이 어려워지고 건강에 더 해롭다.",
+        "4": "도수가 높은 술은 소량으로도 더 많은 알코올을 섭취하게 되어 절주와 반대 효과를 낸다.",
+        "5": "술을 눈에 잘 띄는 곳에 두면 음주 충동이 높아지는 환경이 조성된다."
+      },
+      "vi": {
+        "1": "Dùng ly lớn dễ dẫn đến uống nhiều hơn mỗi lần, không hỗ trợ giảm uống.",
+        "2": "★ Ghi nhật ký uống rượu giúp bản thân nhận ra và kiểm soát thói quen uống, là phương pháp hiệu quả để giảm uống.",
+        "3": "Pha trộn nhiều loại rượu khó kiểm soát nồng độ cồn và gây hại cho sức khỏe hơn.",
+        "4": "Rượu có nồng độ cồn cao khiến cơ thể hấp thụ nhiều cồn hơn dù uống ít, ngược lại với mục tiêu giảm uống.",
+        "5": "Đặt rượu ở nơi dễ thấy tạo môi trường kích thích ham muốn uống rượu."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "음주일지", "def_vi": "Nhật ký ghi lại thói quen và lượng rượu đã uống mỗi ngày" },
+      { "term_ko": "알코올 도수", "def_vi": "Nồng độ cồn trong đồ uống có cồn" }
+    ]
+  },
+  {
+    "id": 1067,
+    "intent_ko": "흡연과 금연에 관한 올바른 사실을 구별한다.",
+    "intent_vi": "Phân biệt thông tin đúng về hút thuốc và cai thuốc.",
+    "choice_explanations": {
+      "ko": {
+        "1": "간접흡연은 폐활량을 증가시키지 않으며 오히려 폐기능을 저하시킨다.",
+        "2": "금연 시기를 놓쳐도 언제든 금연하면 건강 효과가 나타나므로 사실이 아니다.",
+        "3": "일시적 금연이 폐기능을 악화시키지 않으며, 금연은 전반적으로 폐기능 회복에 도움이 된다.",
+        "4": "★ 간접흡연은 폐암, 심혈관 질환 등 다양한 질병의 원인이 된다는 것이 여러 연구를 통해 입증되어 있다.",
+        "5": "금연 시 혈중 일산화탄소 수치는 증가가 아닌 감소하며, 이는 금연의 긍정적 효과 중 하나이다."
+      },
+      "vi": {
+        "1": "Hút thuốc thụ động không làm tăng dung tích phổi mà còn làm giảm chức năng phổi.",
+        "2": "Cai thuốc bất kỳ lúc nào cũng mang lại lợi ích cho sức khỏe, không có khái niệm 'muộn quá'.",
+        "3": "Cai thuốc tạm thời không làm xấu đi chức năng phổi; ngược lại, cai thuốc nói chung giúp phổi hồi phục.",
+        "4": "★ Hút thuốc thụ động có thể gây ra nhiều bệnh nghiêm trọng như ung thư phổi, bệnh tim mạch — điều này đã được chứng minh qua nhiều nghiên cứu.",
+        "5": "Khi cai thuốc, lượng carbon monoxide trong máu giảm xuống, không tăng — đây là một trong những lợi ích tích cực của việc cai thuốc."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "간접흡연", "def_vi": "Hút thuốc thụ động — hít phải khói thuốc từ người khác hút" },
+      { "term_ko": "폐활량", "def_vi": "Dung tích phổi — khả năng chứa không khí tối đa của phổi" },
+      { "term_ko": "일산화탄소", "def_vi": "Carbon monoxide (CO) — chất độc trong khói thuốc lá" }
+    ]
+  },
+  {
+    "id": 1066,
+    "intent_ko": "금연 후 신체에 나타나는 긍정적 변화를 정확히 이해한다.",
+    "intent_vi": "Hiểu đúng những thay đổi tích cực của cơ thể sau khi cai thuốc.",
+    "choice_explanations": {
+      "ko": {
+        "1": "금연은 기대수명을 증가시키므로 틀린 설명이다.",
+        "2": "★ 금연 후 혈압이 정상 수준으로 회복된다. 흡연은 혈관을 수축시켜 혈압을 높이는데, 금연하면 이 효과가 사라진다.",
+        "3": "금연 후 폐기능은 개선되며, 악화되지 않는다.",
+        "4": "금연은 성기능 및 정자 수를 감소가 아닌 증가시킨다.",
+        "5": "금연 후 혈중 산소량은 정상보다 감소가 아니라 증가한다."
+      },
+      "vi": {
+        "1": "Cai thuốc làm tăng tuổi thọ dự kiến, không phải giảm.",
+        "2": "★ Sau khi cai thuốc, huyết áp trở về mức bình thường. Thuốc lá gây co mạch và tăng huyết áp; khi cai thuốc, tác dụng này mất đi.",
+        "3": "Chức năng phổi được cải thiện sau khi cai thuốc, không bị xấu đi.",
+        "4": "Cai thuốc làm tăng chức năng sinh lý và số lượng tinh trùng, không giảm.",
+        "5": "Lượng oxy trong máu tăng lên sau khi cai thuốc, không giảm so với mức bình thường."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "기대수명", "def_vi": "Tuổi thọ dự kiến — thời gian sống trung bình được dự đoán" },
+      { "term_ko": "혈중 산소량", "def_vi": "Lượng oxy trong máu — chỉ số oxy hòa tan trong máu" },
+      { "term_ko": "정자 수", "def_vi": "Số lượng tinh trùng — số tế bào sinh sản nam trong tinh dịch" }
+    ]
+  },
+  {
+    "id": 1065,
+    "intent_ko": "금연 후 기대할 수 있는 신체 변화를 올바르게 선택한다.",
+    "intent_vi": "Chọn đúng những thay đổi cơ thể có thể kỳ vọng sau khi cai thuốc.",
+    "choice_explanations": {
+      "ko": {
+        "1": "금연 후 후각과 미각은 무뎌지는 것이 아니라 오히려 회복되어 예민해진다.",
+        "2": "금연 후 혈압은 정상보다 높아지는 것이 아니라 정상으로 낮아진다.",
+        "3": "금연은 심장병 발병 위험을 감소시키므로 틀린 설명이다.",
+        "4": "금연은 폐암으로 인한 사망 위험을 줄여 주므로 틀린 설명이다.",
+        "5": "★ 금연 후 혈중 일산화탄소량이 정상으로 회복된다. 흡연 중 축적된 CO가 배출되어 혈액의 산소 운반 능력이 향상된다."
+      },
+      "vi": {
+        "1": "Sau khi cai thuốc, khứu giác và vị giác không bị giảm mà ngược lại được phục hồi, trở nên nhạy cảm hơn.",
+        "2": "Sau khi cai thuốc, huyết áp không tăng cao hơn bình thường mà giảm về mức bình thường.",
+        "3": "Cai thuốc làm giảm nguy cơ mắc bệnh tim, không tăng.",
+        "4": "Cai thuốc giảm nguy cơ tử vong do ung thư phổi, không tăng.",
+        "5": "★ Sau khi cai thuốc, lượng carbon monoxide trong máu phục hồi về mức bình thường. CO tích lũy trong khi hút thuốc được đào thải, cải thiện khả năng vận chuyển oxy của máu."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "혈중 일산화탄소량", "def_vi": "Lượng carbon monoxide trong máu — chỉ số CO hòa tan trong máu, tăng cao khi hút thuốc" },
+      { "term_ko": "후각", "def_vi": "Khứu giác — khả năng ngửi mùi" },
+      { "term_ko": "미각", "def_vi": "Vị giác — khả năng cảm nhận vị của thức ăn" }
+    ]
+  },
+  {
+    "id": 1064,
+    "intent_ko": "노인 흡연의 특성을 이해하고 금연의 이점을 올바르게 파악한다.",
+    "intent_vi": "Hiểu đặc điểm hút thuốc ở người cao tuổi và nhận biết đúng lợi ích của việc cai thuốc.",
+    "choice_explanations": {
+      "ko": {
+        "1": "흡연으로 체중이 감소할 수 있으나 이는 건강에 해로운 방식으로, 긍정적 효과로 볼 수 없다.",
+        "2": "흡연은 우울증과 불면증을 개선하지 않으며 오히려 악화시킬 수 있다.",
+        "3": "흡연은 혈관을 수축시켜 혈액순환에 부정적인 영향을 미친다.",
+        "4": "하루 1~2개비의 흡연도 심혈관 질환, 폐 손상 등 건강에 나쁜 영향을 미친다.",
+        "5": "★ 오랫동안 흡연하였더라도 금연하면 폐기능 회복, 혈압 정상화, 심혈관 위험 감소 등 건강 증진 효과가 나타난다는 연구 결과가 다수 존재한다."
+      },
+      "vi": {
+        "1": "Hút thuốc có thể làm giảm cân nhưng đây là cách có hại cho sức khỏe, không thể coi là lợi ích.",
+        "2": "Hút thuốc không cải thiện mà còn có thể làm nặng thêm trầm cảm và mất ngủ.",
+        "3": "Hút thuốc co mạch máu, ảnh hưởng tiêu cực đến tuần hoàn máu.",
+        "4": "Hút thuốc dù chỉ 1-2 điếu mỗi ngày vẫn gây hại cho tim mạch và phổi.",
+        "5": "★ Dù hút thuốc lâu năm, khi cai thuốc vẫn có thể cải thiện sức khỏe — phục hồi chức năng phổi, bình thường hóa huyết áp, giảm nguy cơ tim mạch — điều này được chứng minh qua nhiều nghiên cứu."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "혈액순환", "def_vi": "Tuần hoàn máu — quá trình máu lưu thông khắp cơ thể" },
+      { "term_ko": "불면증", "def_vi": "Mất ngủ — tình trạng không thể ngủ hoặc ngủ không sâu giấc" }
+    ]
+  },
+  {
+    "id": 1063,
+    "intent_ko": "약물 복용 방법에서 올바른 원칙을 선택한다.",
+    "intent_vi": "Chọn nguyên tắc đúng trong cách uống thuốc.",
+    "choice_explanations": {
+      "ko": {
+        "1": "철분제를 우유와 함께 복용하면 칼슘이 철분 흡수를 방해하여 효과가 떨어진다.",
+        "2": "자몽주스는 특정 고혈압 약(칼슘통로차단제 등)의 대사를 억제하여 혈중 농도를 위험하게 높일 수 있다.",
+        "3": "인슐린은 경구 투여 시 소화효소에 의해 분해되므로 반드시 주사로 투여해야 한다.",
+        "4": "기관지확장제 흡입 시에는 머리를 약간 뒤로 젖히고 직립 자세를 유지해야 약이 기도 깊숙이 전달된다.",
+        "5": "★ 분할선(scoring line)이 있는 정제는 약의 성분이 균등하게 나뉘도록 설계되었으므로 쪼개어 복용할 수 있다. 분할선이 없거나 서방형·장용 코팅 제제는 쪼개면 안 된다."
+      },
+      "vi": {
+        "1": "Uống viên sắt cùng sữa khiến canxi cản trở hấp thụ sắt, làm giảm hiệu quả thuốc.",
+        "2": "Nước ép bưởi ức chế chuyển hóa một số thuốc huyết áp (như thuốc chẹn kênh canxi), làm tăng nồng độ thuốc trong máu đến mức nguy hiểm.",
+        "3": "Insulin bị phân hủy bởi enzym tiêu hóa nếu uống đường miệng, nên phải tiêm.",
+        "4": "Khi hít thuốc giãn phế quản, cần ngẩng nhẹ đầu và giữ tư thế thẳng để thuốc vào sâu đường thở.",
+        "5": "★ Viên thuốc có vạch chia (scoring line) được thiết kế để bẻ đôi đều thành phần, nên có thể chia đôi để uống. Không được bẻ các viên không có vạch chia hoặc viên bao tan chậm/bao tan trong ruột."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "분할선", "def_vi": "Vạch chia trên viên thuốc — rãnh được thiết kế để bẻ đôi viên thuốc đúng liều" },
+      { "term_ko": "기관지확장제", "def_vi": "Thuốc giãn phế quản — thuốc làm giãn đường thở để dễ thở hơn" },
+      { "term_ko": "장용 코팅제", "def_vi": "Viên bao tan trong ruột — thuốc được bọc để không tan ở dạ dày mà tan ở ruột" }
+    ]
+  },
+  {
+    "id": 1062,
+    "intent_ko": "노인 낙상 위험을 높이는 약물 종류를 파악한다.",
+    "intent_vi": "Xác định loại thuốc làm tăng nguy cơ ngã ở người cao tuổi.",
+    "choice_explanations": {
+      "ko": {
+        "1": "소염진통제는 통증과 염증을 완화하는 약물로, 낙상 위험과 직접적인 관련이 없다.",
+        "2": "스테로이드제는 면역 억제 및 항염 효과가 있으나 낙상을 직접 유발하는 기전은 없다.",
+        "3": "당뇨병 약제는 혈당 조절을 위한 것으로, 저혈당이 어지럼증을 유발할 수는 있으나 주된 낙상 원인 약물로 분류되지 않는다.",
+        "4": "항응고제는 출혈 시 지혈을 어렵게 하지만 낙상 자체를 유발하지는 않는다.",
+        "5": "★ 수면제 등 신경정신계 약물은 중추신경계를 억제하여 졸림, 균형 감각 저하, 반응속도 저하를 유발함으로써 낙상 위험을 직접적으로 높인다."
+      },
+      "vi": {
+        "1": "Thuốc chống viêm giảm đau có tác dụng giảm đau và viêm, không liên quan trực tiếp đến nguy cơ ngã.",
+        "2": "Thuốc steroid ức chế miễn dịch và chống viêm nhưng không có cơ chế gây ngã trực tiếp.",
+        "3": "Thuốc tiểu đường điều chỉnh đường huyết; hạ đường huyết có thể gây chóng mặt nhưng không phải loại thuốc gây ngã chính.",
+        "4": "Thuốc chống đông máu làm khó cầm máu khi bị thương nhưng không trực tiếp gây ngã.",
+        "5": "★ Thuốc ngủ và các thuốc tâm thần kinh ức chế hệ thần kinh trung ương, gây buồn ngủ, giảm thăng bằng và phản xạ chậm — đây là nguyên nhân trực tiếp làm tăng nguy cơ ngã ở người cao tuổi."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "신경정신계 약물", "def_vi": "Thuốc tâm thần kinh — nhóm thuốc tác động lên hệ thần kinh trung ương, bao gồm thuốc ngủ, an thần, chống trầm cảm" },
+      { "term_ko": "항응고제", "def_vi": "Thuốc chống đông máu — thuốc ngăn máu đông, dùng trong điều trị huyết khối" },
+      { "term_ko": "소염진통제", "def_vi": "Thuốc chống viêm giảm đau (NSAIDs) — thuốc giảm đau và kháng viêm không chứa steroid" }
+    ]
+  },
+  {
+    "id": 1061,
+    "intent_ko": "약물 흡수를 돕는 음식과 약물의 올바른 조합을 선택한다.",
+    "intent_vi": "Chọn sự kết hợp đúng giữa thuốc và thực phẩm hỗ trợ hấp thụ thuốc.",
+    "choice_explanations": {
+      "ko": {
+        "1": "칼슘제를 우유와 함께 복용하면 오히려 흡수가 방해될 수 있어 공복에 복용하는 것이 권장된다.",
+        "2": "와파린(항응고제) 복용 중 시금치(비타민 K 풍부)를 과다 섭취하면 약효가 감소한다. 흡수를 '돕는' 관계가 아니다.",
+        "3": "인삼·홍삼은 혈압약의 효과에 영향을 줄 수 있어 주의가 필요하며, 흡수를 돕는 식품이 아니다.",
+        "4": "★ 철분제는 오렌지주스(비타민 C)와 함께 복용하면 비타민 C가 철분을 환원형으로 유지시켜 장내 흡수율이 크게 향상된다.",
+        "5": "항생제와 프로바이오틱스를 동시에 복용하면 항생제가 유익균을 죽여 프로바이오틱스 효과가 줄어든다."
+      },
+      "vi": {
+        "1": "Uống viên canxi cùng sữa có thể cản trở hấp thụ; nên uống lúc đói.",
+        "2": "Warfarin (thuốc chống đông) kết hợp với rau bina (giàu vitamin K) làm giảm tác dụng thuốc, không phải kết hợp hỗ trợ hấp thụ.",
+        "3": "Nhân sâm và hồng sâm có thể ảnh hưởng đến hiệu quả thuốc huyết áp; không phải thực phẩm hỗ trợ hấp thụ.",
+        "4": "★ Uống viên sắt cùng nước cam (giàu vitamin C) giúp vitamin C duy trì sắt ở dạng dễ hấp thụ (Fe²⁺), làm tăng đáng kể tỷ lệ hấp thụ sắt tại ruột.",
+        "5": "Uống kháng sinh cùng probiotic khiến kháng sinh tiêu diệt vi khuẩn có lợi, làm giảm hiệu quả probiotic."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "철분제", "def_vi": "Viên bổ sung sắt — thuốc bổ sung khoáng chất sắt, thường dùng khi thiếu máu" },
+      { "term_ko": "와파린", "def_vi": "Warfarin — thuốc chống đông máu, cần thận trọng với thực phẩm giàu vitamin K" },
+      { "term_ko": "항생제", "def_vi": "Kháng sinh — thuốc tiêu diệt vi khuẩn gây bệnh" }
+    ]
+  },
+  {
+    "id": 1060,
+    "intent_ko": "편의점에서 구입 가능한 비상약의 종류를 파악한다.",
+    "intent_vi": "Xác định loại thuốc cấp cứu có thể mua tại cửa hàng tiện lợi.",
+    "choice_explanations": {
+      "ko": {
+        "1": "수면제는 처방이 필요하거나 약국에서만 판매되므로 편의점에서 구입할 수 없다.",
+        "2": "항생제는 반드시 의사 처방이 필요한 전문의약품이다.",
+        "3": "★ 해열진통제(아세트아미노펜 등)는 안전상비의약품으로 분류되어 편의점에서도 구입할 수 있는 대표적인 비상약이다.",
+        "4": "혈압약은 처방전이 필요한 전문의약품으로 편의점에서 구입할 수 없다.",
+        "5": "기관지확장제는 처방약에 해당하여 편의점에서 판매되지 않는다."
+      },
+      "vi": {
+        "1": "Thuốc ngủ cần đơn thuốc hoặc chỉ bán ở hiệu thuốc, không có tại cửa hàng tiện lợi.",
+        "2": "Kháng sinh là thuốc kê đơn bắt buộc, không thể mua tự do.",
+        "3": "★ Thuốc hạ sốt giảm đau (như acetaminophen) được phân loại là thuốc thiết yếu an toàn, có thể mua tại cửa hàng tiện lợi — đây là loại thuốc cấp cứu phổ biến nhất.",
+        "4": "Thuốc huyết áp là thuốc kê đơn, không bán tại cửa hàng tiện lợi.",
+        "5": "Thuốc giãn phế quản là thuốc kê đơn, không có tại cửa hàng tiện lợi."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "안전상비의약품", "def_vi": "Thuốc thiết yếu an toàn — thuốc không cần kê đơn được bán tại cửa hàng tiện lợi theo quy định của Hàn Quốc" },
+      { "term_ko": "해열진통제", "def_vi": "Thuốc hạ sốt giảm đau — thuốc vừa giảm nhiệt độ vừa giảm đau (ví dụ: acetaminophen, ibuprofen)" },
+      { "term_ko": "전문의약품", "def_vi": "Thuốc kê đơn — thuốc chỉ được cấp phát khi có đơn của bác sĩ" }
+    ]
+  },
+  {
+    "id": 1059,
+    "intent_ko": "올바른 약물 복용 관리 방법을 이해한다.",
+    "intent_vi": "Hiểu phương pháp quản lý uống thuốc đúng cách.",
+    "choice_explanations": {
+      "ko": {
+        "1": "복용을 빠뜨렸다고 다음 번에 두 배 용량을 복용하면 과다 복용 위험이 생기므로 금지된다.",
+        "2": "효과가 없다고 임의로 용량을 늘리는 것은 부작용과 독성 위험을 높이므로 절대 안 된다.",
+        "3": "처방약은 증상이 나아져도 처방 기간 동안 완료해야 치료 효과가 보장되며, 임의 중단은 재발이나 내성을 유발할 수 있다.",
+        "4": "약물과 건강기능식품 간에도 상호작용이 발생할 수 있으므로 반드시 의사와 상의 후 복용해야 한다.",
+        "5": "★ 다른 병원이나 약국 방문 시 이전 처방전을 보여 주면 중복 처방, 약물 상호작용, 과다 처방을 예방할 수 있어 안전한 약물 관리에 필수적이다."
+      },
+      "vi": {
+        "1": "Uống gấp đôi liều vào lần sau khi bỏ lỡ có thể gây quá liều — đây là điều cấm.",
+        "2": "Tự ý tăng liều khi không thấy hiệu quả làm tăng nguy cơ tác dụng phụ và độc tính.",
+        "3": "Thuốc kê đơn phải uống đủ liệu trình dù đã bớt triệu chứng; ngừng tùy tiện có thể gây tái phát hoặc kháng thuốc.",
+        "4": "Thuốc và thực phẩm chức năng có thể tương tác với nhau, nên phải hỏi bác sĩ trước khi dùng đồng thời.",
+        "5": "★ Khi đến bệnh viện hoặc hiệu thuốc khác, đưa đơn thuốc cũ giúp ngăn kê đơn trùng lặp, tương tác thuốc và quá liều — đây là yêu cầu thiết yếu để quản lý thuốc an toàn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "처방전", "def_vi": "Đơn thuốc — giấy tờ do bác sĩ cấp ghi rõ loại thuốc, liều lượng và cách dùng" },
+      { "term_ko": "건강기능식품", "def_vi": "Thực phẩm bổ sung chức năng — sản phẩm bổ sung dinh dưỡng hoặc có tác dụng tăng cường sức khỏe" },
+      { "term_ko": "약물 상호작용", "def_vi": "Tương tác thuốc — hiện tượng hai hay nhiều thuốc ảnh hưởng đến tác dụng của nhau khi dùng cùng lúc" }
+    ]
+  },
+  {
+    "id": 1058,
+    "intent_ko": "노인의 올바른 약물 관리 방법을 파악한다.",
+    "intent_vi": "Nắm vững phương pháp quản lý thuốc đúng đắn cho người cao tuổi.",
+    "choice_explanations": {
+      "ko": {
+        "1": "알코올은 많은 약물과 상호작용하여 효과를 변형하거나 부작용을 유발하므로 음주 후 복용은 위험하다.",
+        "2": "위장 장애가 있을 때 용량을 임의로 줄이는 것은 치료 효과를 떨어뜨릴 수 있으며 의사 상담이 필요하다.",
+        "3": "★ 약물을 중단하기 전에 반드시 의사와 상담해야 한다. 임의 중단은 치료 실패, 금단 증상, 질환 악화 등을 유발할 수 있다.",
+        "4": "여러 약물을 임의로 혼합하면 심각한 약물 상호작용이 발생할 수 있으므로 절대 해서는 안 된다.",
+        "5": "새 약을 처방받았을 때 이전 약과의 상호작용 여부를 확인하기 위해 의사나 약사에게 먼저 문의해야 한다."
+      },
+      "vi": {
+        "1": "Rượu tương tác với nhiều loại thuốc, thay đổi tác dụng hoặc gây tác dụng phụ nghiêm trọng.",
+        "2": "Tự ý giảm liều khi bị rối loạn tiêu hóa có thể làm giảm hiệu quả điều trị; cần hỏi bác sĩ.",
+        "3": "★ Trước khi ngừng thuốc, nhất định phải hỏi bác sĩ. Ngừng tùy tiện có thể dẫn đến thất bại điều trị, hội chứng cai thuốc hoặc bệnh nặng hơn.",
+        "4": "Tự ý pha trộn nhiều thuốc với nhau có thể gây tương tác thuốc nghiêm trọng, tuyệt đối không được làm.",
+        "5": "Khi được kê thuốc mới, cần hỏi bác sĩ hoặc dược sĩ về tương tác với thuốc cũ đang dùng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "약물관리", "def_vi": "Quản lý thuốc — quá trình bảo quản, sử dụng và theo dõi thuốc một cách an toàn" },
+      { "term_ko": "금단 증상", "def_vi": "Hội chứng cai thuốc — các triệu chứng khó chịu xảy ra khi ngừng đột ngột một số loại thuốc" }
+    ]
+  },
+  {
+    "id": 1057,
+    "intent_ko": "두통이 있는 대상자에게 안전한 약 복용 방법으로 대처하는 법을 이해한다.",
+    "intent_vi": "Hiểu cách xử trí an toàn về việc dùng thuốc khi đối tượng bị đau đầu.",
+    "choice_explanations": {
+      "ko": {
+        "1": "장용 코팅제는 위산에 녹지 않도록 설계된 것으로, 쪼개면 코팅이 파괴되어 약효가 감소하거나 위 자극이 생길 수 있다.",
+        "2": "한꺼번에 많은 양의 약을 구비해 두고 임의로 복용하는 것은 과다 복용 및 오용의 위험이 있다.",
+        "3": "약 용량을 증상에 따라 임의로 조절하는 것은 위험하며 의사의 지시가 있을 때만 가능하다.",
+        "4": "★ 비처방 약이라도 의사와 상담 후 복용하게 하는 것이 안전하다. 비처방 약도 다른 복용 중인 약과 상호작용하거나 기저 질환에 영향을 줄 수 있기 때문이다.",
+        "5": "다른 대상자의 약을 복용하는 것은 매우 위험하다. 동일 증상이라도 약의 종류, 용량, 금기증이 다를 수 있다."
+      },
+      "vi": {
+        "1": "Viên bao tan trong ruột được thiết kế để không tan ở dạ dày; nếu bẻ đôi, lớp bao bị phá vỡ, giảm tác dụng hoặc gây kích ứng dạ dày.",
+        "2": "Dự trữ nhiều thuốc và tự ý uống khi cần có nguy cơ dùng quá liều và lạm dụng thuốc.",
+        "3": "Tự điều chỉnh liều theo triệu chứng là nguy hiểm, chỉ được làm theo chỉ định của bác sĩ.",
+        "4": "★ Dù là thuốc không kê đơn, vẫn nên để đối tượng hỏi bác sĩ trước khi uống — thuốc không kê đơn cũng có thể tương tác với thuốc đang dùng hoặc ảnh hưởng đến bệnh nền.",
+        "5": "Uống thuốc của người khác rất nguy hiểm vì dù triệu chứng tương tự, loại thuốc, liều lượng và chống chỉ định có thể khác nhau."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "장용 코팅제", "def_vi": "Viên bao tan trong ruột — thuốc được bọc để tránh tan ở dạ dày, chỉ phóng thích hoạt chất tại ruột" },
+      { "term_ko": "비처방 약", "def_vi": "Thuốc không kê đơn (OTC) — thuốc có thể mua mà không cần đơn của bác sĩ" }
+    ]
+  },
+  {
+    "id": 1056,
+    "intent_ko": "노인에게 약물중독이 많이 발생하는 생리적 주원인을 이해한다.",
+    "intent_vi": "Hiểu nguyên nhân sinh lý chính khiến người cao tuổi dễ bị ngộ độc thuốc.",
+    "choice_explanations": {
+      "ko": {
+        "1": "노인에서는 약물 흡수능력이 증가하는 것이 아니라 감소하는 경향이 있다.",
+        "2": "노인의 심장 수축력은 증가가 아닌 감소하는 것이 노화의 특징이다.",
+        "3": "노인의 간 대사능력은 증가가 아닌 감소하여 약물이 더 오래 체내에 남는다. 그러나 주된 약물중독 원인은 신장이다.",
+        "4": "노인에서는 위산 분비가 증가가 아닌 감소하는 경향이 있다.",
+        "5": "★ 신장의 혈류량 감소는 노화에 따른 신장 기능 저하를 유발하여 약물 배설이 원활하지 않게 된다. 이로 인해 약물이 체내에 축적되어 약물중독 위험이 증가한다."
+      },
+      "vi": {
+        "1": "Ở người cao tuổi, khả năng hấp thụ thuốc có xu hướng giảm, không tăng.",
+        "2": "Sức co bóp của tim ở người cao tuổi giảm, không tăng — đây là đặc điểm của lão hóa.",
+        "3": "Chức năng chuyển hóa của gan ở người cao tuổi giảm, khiến thuốc tồn tại lâu hơn trong cơ thể. Tuy nhiên, nguyên nhân chính của ngộ độc thuốc là thận.",
+        "4": "Ở người cao tuổi, bài tiết axit dạ dày có xu hướng giảm, không tăng.",
+        "5": "★ Giảm lưu lượng máu đến thận theo tuổi dẫn đến suy giảm chức năng thận, làm chậm quá trình đào thải thuốc. Hậu quả là thuốc tích lũy trong cơ thể, tăng nguy cơ ngộ độc thuốc."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "약물중독", "def_vi": "Ngộ độc thuốc — tình trạng thuốc tích lũy quá mức trong cơ thể gây ra phản ứng độc hại" },
+      { "term_ko": "신장 혈류량", "def_vi": "Lưu lượng máu đến thận — lượng máu chảy qua thận mỗi phút, ảnh hưởng đến khả năng lọc và đào thải thuốc" },
+      { "term_ko": "약물 배설", "def_vi": "Đào thải thuốc — quá trình cơ thể loại bỏ thuốc sau khi sử dụng, chủ yếu qua thận" }
+    ]
+  },
+  {
+    "id": 1055,
+    "intent_ko": "노인에게 약물중독이 많이 발생하는 주된 생리적 이유를 파악한다.",
+    "intent_vi": "Nắm vững lý do sinh lý chính khiến người cao tuổi dễ bị ngộ độc thuốc.",
+    "choice_explanations": {
+      "ko": {
+        "1": "노인에서 약물 흡수능력은 증가가 아닌 감소하는 경향이 있다.",
+        "2": "노인에서 심장 수축력은 증가가 아닌 감소한다.",
+        "3": "노인의 간 대사능력은 감소하여 약물이 더 오래 체내에 머무는 것은 사실이나, 약물중독의 주된 원인은 신장 기능 저하이다.",
+        "4": "노인에서 위산 분비는 증가가 아닌 감소하는 경향이 있다.",
+        "5": "★ 신장 혈류량 감소로 인해 노인의 신장 기능이 저하되면 약물이 충분히 배설되지 못하고 체내에 축적되어 약물중독의 주된 원인이 된다."
+      },
+      "vi": {
+        "1": "Khả năng hấp thụ thuốc ở người cao tuổi có xu hướng giảm, không tăng.",
+        "2": "Sức co bóp tim ở người cao tuổi giảm, không tăng.",
+        "3": "Chức năng chuyển hóa gan ở người cao tuổi giảm khiến thuốc tồn tại lâu hơn, nhưng nguyên nhân chính của ngộ độc thuốc là suy giảm chức năng thận.",
+        "4": "Bài tiết axit dạ dày ở người cao tuổi có xu hướng giảm, không tăng.",
+        "5": "★ Giảm lưu lượng máu đến thận dẫn đến suy giảm chức năng thận ở người cao tuổi, khiến thuốc không được đào thải đủ và tích tụ trong cơ thể — đây là nguyên nhân chính gây ngộ độc thuốc."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "간 대사능력", "def_vi": "Khả năng chuyển hóa của gan — năng lực gan phân hủy và xử lý các chất, bao gồm thuốc" },
+      { "term_ko": "신장 혈류량", "def_vi": "Lưu lượng máu đến thận — lượng máu chảy qua thận, quyết định tốc độ đào thải thuốc" },
+      { "term_ko": "약물중독", "def_vi": "Ngộ độc thuốc — tình trạng thuốc tích lũy trong cơ thể vượt ngưỡng an toàn" }
+    ]
+  },
+  {
+    "id": 1054,
+    "intent_ko": "뇌졸중 대상자의 성생활 고민에 요양보호사가 올바르게 대처하는 방법을 이해한다.",
+    "intent_vi": "Hiểu cách hộ lý đáp ứng đúng đắn khi đối tượng bị đột quỵ băn khoăn về đời sống tình dục.",
+    "choice_explanations": {
+      "ko": {
+        "1": "성생활은 심리적·신체적으로 긍정적인 효과가 있을 수 있으므로 '건강에 도움이 안 된다'는 정보는 잘못된 것이다.",
+        "2": "★ '성생활로 뇌졸중이 악화되지 않는다'는 설명은 사실에 근거한 올바른 정보이다. 뇌졸중 환자도 적절한 방식으로 성생활을 영위할 수 있으며, 이를 전달하는 것이 요양보호사의 올바른 대처이다.",
+        "3": "윤활제는 성교 시 마찰을 줄여 통증을 완화하는 데 도움을 주며, 성기능을 감소시키지 않는다.",
+        "4": "항고혈압제 중 일부는 오히려 성기능을 저하시킬 수 있으므로 '좋아진다'는 표현은 부적절하다.",
+        "5": "체위변화를 위한 보조기구는 뇌졸중으로 인한 신체 불편을 보완하여 성생활에 도움을 줄 수 있다."
+      },
+      "vi": {
+        "1": "Đời sống tình dục có thể mang lại lợi ích tâm lý và thể chất; nói 'không tốt cho sức khỏe' là thông tin sai.",
+        "2": "★ 'Đời sống tình dục không làm nặng thêm bệnh đột quỵ' là thông tin đúng dựa trên thực tế. Người bị đột quỵ vẫn có thể có đời sống tình dục phù hợp — đây là cách hộ lý đáp ứng đúng đắn.",
+        "3": "Chất bôi trơn giúp giảm ma sát và giảm đau khi quan hệ, không làm giảm chức năng tình dục.",
+        "4": "Một số thuốc hạ huyết áp có thể làm giảm chức năng tình dục, nên nói 'sẽ tốt hơn' là không chính xác.",
+        "5": "Dụng cụ hỗ trợ thay đổi tư thế có thể giúp bù đắp hạn chế vận động do đột quỵ, hỗ trợ đời sống tình dục."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "뇌졸중", "def_vi": "Đột quỵ — bệnh do tắc nghẽn hoặc vỡ mạch máu não gây tổn thương thần kinh" },
+      { "term_ko": "항고혈압제", "def_vi": "Thuốc hạ huyết áp — thuốc điều trị cao huyết áp, một số loại có thể ảnh hưởng đến chức năng tình dục" },
+      { "term_ko": "윤활제", "def_vi": "Chất bôi trơn — chất lỏng hỗ trợ giảm ma sát trong quan hệ tình dục" }
+    ]
+  },
+  {
+    "id": 1053,
+    "intent_ko": "노인의 성기능 감소와 관계가 없는 대상자를 선별한다.",
+    "intent_vi": "Xác định đối tượng không liên quan đến việc giảm chức năng tình dục ở người cao tuổi.",
+    "choice_explanations": {
+      "ko": {
+        "1": "이뇨제는 혈압, 전해질 균형에 영향을 주어 성기능에 부정적인 영향을 미칠 수 있다.",
+        "2": "고혈압 약(특히 베타차단제, 일부 이뇨제)은 성기능 저하를 일으키는 대표적인 약물이다.",
+        "3": "관절염 치료에 사용되는 일부 약물(스테로이드, 소염제 등)도 호르몬 및 혈류에 영향을 주어 성기능에 영향을 줄 수 있다.",
+        "4": "★ 전립선 절제술은 성기능에 영향을 줄 수 있지만, 이 문제에서 '성기능 감소 요인과 관계없는' 대상자로 분류되어 있다. 전립선 절제술 자체가 성욕 감소(호르몬 요인)를 직접적으로 유발하지는 않는 점에서 다른 선택지와 구별된다.",
+        "5": "당뇨병은 신경 손상(신경병증)과 혈관 장애를 유발하여 성기능 감소와 직접적인 관련이 있다."
+      },
+      "vi": {
+        "1": "Thuốc lợi tiểu ảnh hưởng đến huyết áp và cân bằng điện giải, có thể tác động tiêu cực đến chức năng tình dục.",
+        "2": "Thuốc huyết áp (đặc biệt thuốc chẹn beta, một số thuốc lợi tiểu) là loại thuốc điển hình gây giảm chức năng tình dục.",
+        "3": "Một số thuốc điều trị viêm khớp (steroid, thuốc kháng viêm) cũng ảnh hưởng đến hormone và lưu thông máu, tác động đến chức năng tình dục.",
+        "4": "★ Phẫu thuật cắt tuyến tiền liệt có thể ảnh hưởng đến chức năng tình dục, nhưng trong câu hỏi này được xếp vào nhóm 'không liên quan đến giảm chức năng tình dục'. Phẫu thuật này không trực tiếp gây giảm ham muốn qua yếu tố hormone như các lựa chọn khác.",
+        "5": "Bệnh tiểu đường gây tổn thương thần kinh (bệnh thần kinh ngoại biên) và rối loạn mạch máu, liên quan trực tiếp đến giảm chức năng tình dục."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "이뇨제", "def_vi": "Thuốc lợi tiểu — thuốc kích thích thận tăng bài tiết nước tiểu, dùng trong điều trị phù và cao huyết áp" },
+      { "term_ko": "전립선 절제술", "def_vi": "Phẫu thuật cắt bỏ tuyến tiền liệt — phẫu thuật loại bỏ toàn bộ hoặc một phần tuyến tiền liệt" },
+      { "term_ko": "성기능", "def_vi": "Chức năng tình dục — khả năng hoạt động tình dục bình thường của cơ thể" }
+    ]
+  },
+  {
+    "id": 1052,
+    "intent_ko": "노인의 성적 변화에 대한 올바른 설명을 선택한다.",
+    "intent_vi": "Chọn mô tả đúng về thay đổi tình dục ở người cao tuổi.",
+    "choice_explanations": {
+      "ko": {
+        "1": "항염증성 약물이 성적 욕구를 증가시킨다는 근거는 없으며, 개인차가 크고 일반적으로 증가 효과는 나타나지 않는다.",
+        "2": "과도한 알코올 섭취는 중추신경계를 억제하여 성적 반응과 오르가슴을 지연 또는 저하시킨다.",
+        "3": "유방절제술은 신체상(body image)의 변화와 심리적 충격을 가져올 수 있으나, 생리적 성기능에 직접 영향을 주는 것은 아니다.",
+        "4": "노화로 인해 질 분비물은 오히려 감소하는 경향이 있어 성교 시 통증이 생길 수 있다.",
+        "5": "★ 자궁적출술은 자궁이 없어도 성적 반응과 오르가슴에 관여하는 신경과 구조물이 보존되므로 성기능에 직접적인 영향을 주지 않는다. 이는 여러 연구에서 지지되는 내용이다."
+      },
+      "vi": {
+        "1": "Không có bằng chứng thuốc kháng viêm làm tăng ham muốn tình dục; tác động cá nhân rất khác nhau.",
+        "2": "Uống rượu quá mức ức chế hệ thần kinh trung ương, làm chậm hoặc giảm phản ứng tình dục và cực khoái.",
+        "3": "Phẫu thuật cắt bỏ vú có thể gây thay đổi hình ảnh cơ thể và tác động tâm lý, nhưng không trực tiếp ảnh hưởng đến chức năng tình dục về mặt sinh lý.",
+        "4": "Do lão hóa, dịch tiết âm đạo có xu hướng giảm, có thể gây đau khi quan hệ, không phải tăng.",
+        "5": "★ Phẫu thuật cắt bỏ tử cung không ảnh hưởng trực tiếp đến chức năng tình dục vì các dây thần kinh và cấu trúc liên quan đến phản ứng tình dục và cực khoái vẫn được bảo tồn sau phẫu thuật — điều này được nhiều nghiên cứu ủng hộ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "유방절제술", "def_vi": "Phẫu thuật cắt bỏ vú — phẫu thuật loại bỏ một phần hoặc toàn bộ tuyến vú" },
+      { "term_ko": "자궁적출술", "def_vi": "Phẫu thuật cắt bỏ tử cung — phẫu thuật loại bỏ tử cung, không nhất thiết ảnh hưởng đến chức năng tình dục" },
+      { "term_ko": "신체상", "def_vi": "Hình ảnh cơ thể (body image) — nhận thức và cảm xúc của một người về ngoại hình cơ thể mình" }
+    ]
+  },
+  {
+    "id": 1051,
+    "intent_ko": "질환이 성생활에 미치는 영향의 올바른 연결을 선택한다.",
+    "intent_vi": "Chọn mối liên hệ đúng giữa bệnh lý và ảnh hưởng đến đời sống tình dục.",
+    "choice_explanations": {
+      "ko": {
+        "1": "뇌졸중은 신경계 손상으로 성기능에 영향을 줄 수 있으나 '성기능 감소'라는 연결이 정확하지 않으며, 뇌졸중의 영향은 손상 부위와 범위에 따라 다르다.",
+        "2": "★ 당뇨병은 말초신경 손상(당뇨병성 신경병증)과 혈관 장애를 유발하여 음경 발기에 필요한 혈류 공급을 방해함으로써 발기부전을 일으킨다. 이는 의학적으로 잘 확립된 인과관계이다.",
+        "3": "심근경색 후 성욕이 감소할 수 있으나 심리적 요인(두려움)이 더 크게 작용하며, 항상 감소한다고 단정할 수 없다.",
+        "4": "알코올 중독은 성기능을 증가가 아닌 감소시킨다. 만성 알코올 중독은 호르몬 불균형과 신경 손상으로 성기능 저하를 유발한다.",
+        "5": "전립선 절제술은 발기 및 사정 기능에 영향을 줄 수 있으나 성욕(욕구) 감소와의 연결은 부정확하다."
+      },
+      "vi": {
+        "1": "Đột quỵ có thể ảnh hưởng đến chức năng tình dục qua tổn thương thần kinh, nhưng mối liên hệ 'giảm chức năng tình dục' không chính xác vì phụ thuộc vào vùng và mức độ tổn thương.",
+        "2": "★ Bệnh tiểu đường gây tổn thương thần kinh ngoại biên (bệnh thần kinh tiểu đường) và rối loạn mạch máu, cản trở lưu lượng máu cần thiết cho cương dương, dẫn đến rối loạn cương dương. Đây là mối quan hệ nhân quả được y học xác lập rõ ràng.",
+        "3": "Sau nhồi máu cơ tim, ham muốn tình dục có thể giảm nhưng yếu tố tâm lý (sợ hãi) đóng vai trò lớn hơn; không thể khẳng định luôn giảm.",
+        "4": "Nghiện rượu làm giảm chức năng tình dục, không tăng. Nghiện rượu mạn tính gây mất cân bằng hormone và tổn thương thần kinh.",
+        "5": "Phẫu thuật cắt tuyến tiền liệt có thể ảnh hưởng đến cương dương và xuất tinh, nhưng liên hệ với 'giảm ham muốn' không chính xác."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "발기부전", "def_vi": "Rối loạn cương dương — tình trạng không thể đạt hoặc duy trì cương dương đủ để quan hệ tình dục" },
+      { "term_ko": "당뇨병성 신경병증", "def_vi": "Bệnh thần kinh tiểu đường — biến chứng thần kinh của bệnh tiểu đường gây tê bì, yếu cơ và rối loạn chức năng" },
+      { "term_ko": "알코올 중독", "def_vi": "Nghiện rượu — tình trạng phụ thuộc về thể chất và tâm lý vào rượu" }
+    ]
+  },
+  {
+    "id": 1050,
+    "intent_ko": "무더운 여름밤에 잠 못 이루는 치매 대상자를 적절히 돕는 방법을 이해한다.",
+    "intent_vi": "Hiểu cách hỗ trợ phù hợp cho đối tượng mắc sa sút trí tuệ không ngủ được vào đêm hè nóng bức.",
+    "choice_explanations": {
+      "ko": {
+        "1": "홍차에는 카페인이 포함되어 있어 각성 효과를 일으키므로 수면을 방해한다.",
+        "2": "★ 시원하고 얇은 이불을 덮어 주면 체온을 적절히 낮추고 편안함을 제공하여 치매 대상자가 숙면을 취하는 데 도움이 된다. 열 때문에 잠을 못 이루는 경우 온도 환경 개선이 우선이다.",
+        "3": "포만감이 있으면 소화 불편으로 오히려 잠들기 어려울 수 있다.",
+        "4": "치매 대상자에게 낮잠을 자게 하면 수면-각성 리듬이 더욱 혼란스러워져 야간 수면이 악화될 수 있다.",
+        "5": "수면제는 치매 노인에게 부작용(낙상, 인지 저하, 의존성)이 크며, 요양보호사가 임의로 투약해서는 안 된다."
+      },
+      "vi": {
+        "1": "Trà đen chứa caffeine gây kích thích thức tỉnh, cản trở giấc ngủ.",
+        "2": "★ Đắp chăn mỏng, thoáng mát giúp hạ nhiệt độ cơ thể và tạo sự thoải mái, hỗ trợ đối tượng sa sút trí tuệ ngủ ngon hơn. Khi không ngủ được vì nóng, cải thiện nhiệt độ môi trường là ưu tiên hàng đầu.",
+        "3": "Cảm giác no có thể gây khó chịu tiêu hóa, khiến khó ngủ hơn.",
+        "4": "Cho đối tượng sa sút trí tuệ ngủ trưa làm rối loạn thêm nhịp thức-ngủ, khiến giấc ngủ ban đêm tệ hơn.",
+        "5": "Thuốc ngủ có nhiều tác dụng phụ nghiêm trọng (ngã, giảm nhận thức, lệ thuộc) ở người cao tuổi mắc sa sút trí tuệ; hộ lý không được tự ý cho uống."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "치매", "def_vi": "Sa sút trí tuệ (dementia) — hội chứng suy giảm tiến triển về trí nhớ, tư duy và hành vi" },
+      { "term_ko": "수면-각성 리듬", "def_vi": "Nhịp thức-ngủ (sleep-wake cycle) — chu kỳ sinh học điều tiết thời điểm ngủ và thức" }
+    ]
+  },
+  {
+    "id": 1049,
+    "intent_ko": "공복감으로 잠을 못 이루는 수면장애 대상자를 돕는 올바른 방법을 선택한다.",
+    "intent_vi": "Chọn phương pháp đúng để giúp đối tượng rối loạn giấc ngủ do cảm giác đói.",
+    "choice_explanations": {
+      "ko": {
+        "1": "홍차와 녹차는 카페인을 포함하고 있어 수면을 방해할 수 있다.",
+        "2": "서늘한 실내 온도는 수면 환경 개선에 도움이 될 수 있으나 공복감 해소와 직접적인 관련이 없다.",
+        "3": "수면제는 장기 복용 시 의존성을 유발할 수 있으며 근본 원인(공복감) 해결이 아니다.",
+        "4": "저녁 식사를 과도하게 섭취하면 소화 부담이 생겨 오히려 수면에 방해가 된다.",
+        "5": "★ 따뜻한 우유는 트립토판(수면 유도 아미노산)과 칼슘을 함유하고 있어 공복감을 완화하면서 수면을 촉진하는 데 효과적이다."
+      },
+      "vi": {
+        "1": "Trà đen và trà xanh chứa caffeine có thể cản trở giấc ngủ.",
+        "2": "Nhiệt độ phòng mát mẻ giúp cải thiện môi trường ngủ nhưng không giải quyết trực tiếp cảm giác đói.",
+        "3": "Thuốc ngủ có thể gây lệ thuộc khi dùng lâu dài và không giải quyết nguyên nhân gốc rễ (cảm giác đói).",
+        "4": "Ăn tối quá no tạo gánh nặng tiêu hóa, cản trở giấc ngủ hơn.",
+        "5": "★ Sữa ấm chứa tryptophan (amino acid giúp gây ngủ) và canxi, vừa giảm cảm giác đói vừa thúc đẩy giấc ngủ hiệu quả."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "수면장애", "def_vi": "Rối loạn giấc ngủ — tình trạng gặp khó khăn trong việc ngủ hoặc duy trì giấc ngủ" },
+      { "term_ko": "트립토판", "def_vi": "Tryptophan — amino acid thiết yếu có trong sữa, giúp tổng hợp serotonin và melatonin, hỗ trợ giấc ngủ" },
+      { "term_ko": "공복감", "def_vi": "Cảm giác đói — cảm giác bụng trống, thiếu thức ăn" }
+    ]
+  },
+  {
+    "id": 1048,
+    "intent_ko": "공복감으로 인한 수면장애 대상자를 돕는 적절한 방법을 이해한다.",
+    "intent_vi": "Hiểu phương pháp phù hợp để giúp đối tượng rối loạn giấc ngủ do đói bụng.",
+    "choice_explanations": {
+      "ko": {
+        "1": "홍차와 녹차의 카페인은 각성 효과를 유발하여 수면을 방해할 수 있다.",
+        "2": "서늘한 실내 온도는 수면 환경에 도움이 되나 공복감 해결과는 무관하다.",
+        "3": "수면제는 의존성을 유발할 수 있어 장기적 해결책이 아니다.",
+        "4": "과도한 저녁 식사는 소화 불편을 초래하여 수면을 방해한다.",
+        "5": "★ 따뜻한 우유는 트립토판과 칼슘을 함유하여 공복감을 완화하고 수면을 자연스럽게 촉진한다."
+      },
+      "vi": {
+        "1": "Caffeine trong trà đen và trà xanh gây kích thích, cản trở giấc ngủ.",
+        "2": "Nhiệt độ phòng mát mẻ hỗ trợ môi trường ngủ nhưng không liên quan đến việc giải quyết cảm giác đói.",
+        "3": "Thuốc ngủ có thể gây lệ thuộc và không phải giải pháp lâu dài.",
+        "4": "Ăn tối quá nhiều gây khó chịu tiêu hóa, cản trở giấc ngủ.",
+        "5": "★ Sữa ấm chứa tryptophan và canxi, vừa làm dịu cảm giác đói vừa thúc đẩy giấc ngủ tự nhiên."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "수면장애", "def_vi": "Rối loạn giấc ngủ — khó ngủ hoặc không duy trì được giấc ngủ" },
+      { "term_ko": "의존성", "def_vi": "Sự lệ thuộc (phụ thuộc thuốc) — tình trạng cơ thể hoặc tâm lý phụ thuộc vào một chất để hoạt động bình thường" }
+    ]
+  },
+  {
+    "id": 1047,
+    "intent_ko": "수면을 방해하는 잘못된 생활 습관을 식별한다.",
+    "intent_vi": "Nhận biết thói quen sinh hoạt sai gây cản trở giấc ngủ.",
+    "choice_explanations": {
+      "ko": {
+        "1": "낮잠을 자지 않는 것은 야간 수면 욕구를 높여 밤에 잠들기 쉽게 하므로 올바른 습관이다.",
+        "2": "낮 시간 산책이나 운동은 자연스러운 피로를 유도하고 생체 리듬을 안정시켜 수면에 도움이 된다.",
+        "3": "★ 저녁 운동 후 녹차를 마시는 것은 이중으로 잘못된 습관이다. 녹차의 카페인이 각성 효과를 일으켜 수면을 방해하며, 저녁 운동 자체도 취침 직전에는 교감신경을 활성화시켜 수면을 어렵게 할 수 있다.",
+        "4": "침실 온도를 적절히 유지하는 것은 수면의 질을 높이는 올바른 습관이다.",
+        "5": "일정한 취침·기상 시간을 유지하는 것은 생체 리듬을 안정시켜 수면을 돕는 가장 기본적인 방법이다."
+      },
+      "vi": {
+        "1": "Không ngủ trưa giúp tăng nhu cầu ngủ ban đêm, dễ ngủ hơn vào buổi tối — đây là thói quen đúng.",
+        "2": "Đi dạo hoặc tập thể dục vào ban ngày gây mệt mỏi tự nhiên và ổn định nhịp sinh học, hỗ trợ giấc ngủ.",
+        "3": "★ Uống trà xanh sau khi tập thể dục buổi tối là thói quen sai kép: caffeine trong trà xanh gây kích thích làm khó ngủ; bản thân việc tập thể dục gần giờ ngủ cũng kích hoạt hệ thần kinh giao cảm, gây khó ngủ.",
+        "4": "Duy trì nhiệt độ phòng ngủ phù hợp là thói quen đúng, giúp nâng cao chất lượng giấc ngủ.",
+        "5": "Duy trì giờ ngủ và thức dậy cố định là phương pháp cơ bản nhất để ổn định nhịp sinh học và hỗ trợ giấc ngủ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "생체 리듬", "def_vi": "Nhịp sinh học (circadian rhythm) — chu kỳ sinh lý 24 giờ điều tiết các chức năng cơ thể như ngủ, thức, nhiệt độ" },
+      { "term_ko": "교감신경", "def_vi": "Hệ thần kinh giao cảm — phần của hệ thần kinh tự chủ phản ứng với kích thích, gây tỉnh táo và tăng nhịp tim" }
+    ]
+  },
+  {
+    "id": 1046,
+    "intent_ko": "잠들기 어려운 대상자의 수면을 돕는 올바른 방법을 선택한다.",
+    "intent_vi": "Chọn phương pháp đúng để hỗ trợ đối tượng khó ngủ có được giấc ngủ.",
+    "choice_explanations": {
+      "ko": {
+        "1": "알코올은 초기 수면을 유도하는 것처럼 보이지만 수면의 질(렘수면 감소)을 저하시키므로 권장하지 않는다.",
+        "2": "★ 매일 일정한 시간에 일어나는 것은 생체 리듬(일주기 리듬)을 조절하는 가장 효과적인 방법으로, 수면의 시작과 질을 개선한다.",
+        "3": "취침 전 TV 시청은 블루라이트와 자극적인 내용으로 인해 수면 호르몬(멜라토닌) 분비를 억제하여 수면을 방해한다.",
+        "4": "취침 전 집중이 필요한 활동은 뇌를 각성 상태로 유지시켜 수면을 방해한다.",
+        "5": "녹차는 카페인을 함유하고 있어 수면을 방해할 수 있으므로 공복감 해소를 위해서는 따뜻한 우유나 허브차가 더 적절하다."
+      },
+      "vi": {
+        "1": "Rượu tuy có vẻ giúp dễ ngủ ban đầu nhưng làm giảm chất lượng giấc ngủ (giảm giấc ngủ REM), không được khuyến khích.",
+        "2": "★ Thức dậy đúng giờ mỗi ngày là phương pháp hiệu quả nhất để điều tiết nhịp sinh học, cải thiện thời điểm đi vào giấc ngủ và chất lượng giấc ngủ.",
+        "3": "Xem TV trước khi ngủ ức chế tiết melatonin (hormone giấc ngủ) do ánh sáng xanh và nội dung kích thích.",
+        "4": "Làm việc cần tập trung trước khi ngủ giữ não ở trạng thái tỉnh táo, cản trở giấc ngủ.",
+        "5": "Trà xanh chứa caffeine có thể cản trở giấc ngủ; để giảm đói, nên dùng sữa ấm hoặc trà thảo mộc thay thế."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "멜라토닌", "def_vi": "Melatonin — hormone do tuyến tùng tiết ra điều tiết giấc ngủ, tăng cao vào ban đêm" },
+      { "term_ko": "일주기 리듬", "def_vi": "Nhịp sinh học ngày đêm (circadian rhythm) — chu kỳ sinh lý 24 giờ điều tiết giấc ngủ và thức" }
+    ]
+  },
+  {
+    "id": 1045,
+    "intent_ko": "노화로 인한 수면 양상의 변화를 올바르게 이해한다.",
+    "intent_vi": "Hiểu đúng những thay đổi về kiểu ngủ do lão hóa.",
+    "choice_explanations": {
+      "ko": {
+        "1": "노화에 따라 전체 수면 시간은 늘어나는 것이 아니라 줄어드는 경향이 있다.",
+        "2": "노인은 수면 개시(잠드는 것)가 어려워지는 경우가 많으므로 '쉽게 잠이 든다'는 표현은 부정확하다.",
+        "3": "★ 노화로 인해 깊은 수면(서파수면)이 감소하고 수면이 얕아져 작은 소리나 자극에도 자주 깨는 것이 일반적인 변화이다.",
+        "4": "노화에 따라 수면의 질은 향상이 아닌 저하되는 경향이 있다.",
+        "5": "노인은 낮잠을 거의 자지 않는 것이 아니라 야간 수면의 질 저하를 보완하기 위해 낮잠을 자는 경향이 있다."
+      },
+      "vi": {
+        "1": "Theo tuổi tác, tổng thời gian ngủ có xu hướng giảm, không tăng.",
+        "2": "Người cao tuổi thường gặp khó khăn trong việc đi vào giấc ngủ, không phải 'dễ ngủ'.",
+        "3": "★ Lão hóa làm giảm giấc ngủ sâu (sóng chậm) và làm giấc ngủ trở nên nông hơn, dẫn đến thức dậy thường xuyên khi có tiếng động nhỏ hoặc kích thích nhẹ — đây là thay đổi điển hình.",
+        "4": "Chất lượng giấc ngủ có xu hướng giảm theo tuổi, không cải thiện.",
+        "5": "Người cao tuổi thường ngủ trưa để bù đắp chất lượng giấc ngủ đêm kém, không phải ít ngủ trưa."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "서파수면", "def_vi": "Giấc ngủ sóng chậm (slow-wave sleep) — giai đoạn ngủ sâu nhất, giảm dần theo tuổi tác" },
+      { "term_ko": "수면 양상", "def_vi": "Kiểu ngủ (sleep pattern) — đặc điểm và cấu trúc của giấc ngủ bao gồm thời lượng, độ sâu và số lần thức dậy" }
+    ]
+  },
+  {
+    "id": 1044,
+    "intent_ko": "노인 대상자에게 적합한 운동관리 방법을 이해한다.",
+    "intent_vi": "Hiểu phương pháp quản lý vận động phù hợp cho đối tượng cao tuổi.",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 개인의 신체 능력에 맞는 운동을 선택하는 것이 노인 운동 관리의 기본 원칙이다. 과부하 없이 안전하고 효과적인 운동이 가능하다.",
+        "2": "고강도 운동은 노인의 심폐기능과 근골격계에 무리를 줄 수 있어 적합하지 않다.",
+        "3": "준비 운동(워밍업)은 2~3분으로 부족하며, 충분한 시간(최소 5~10분)을 들여야 부상을 예방할 수 있다.",
+        "4": "빠른 동작 운동은 노인에게 낙상과 근골격계 부상 위험을 높인다.",
+        "5": "운동 중간의 휴식은 회복과 안전을 위해 필요하며, 생략하면 과로와 부상 위험이 증가한다."
+      },
+      "vi": {
+        "1": "★ Chọn bài tập phù hợp với thể lực cá nhân là nguyên tắc cơ bản trong quản lý vận động cho người cao tuổi — giúp tập luyện an toàn và hiệu quả.",
+        "2": "Tập cường độ cao có thể tạo gánh nặng cho hệ tim phổi và xương khớp của người cao tuổi, không phù hợp.",
+        "3": "Khởi động 2-3 phút là quá ngắn; cần ít nhất 5-10 phút để phòng ngừa chấn thương.",
+        "4": "Bài tập đổi hướng nhanh làm tăng nguy cơ ngã và chấn thương cơ xương khớp ở người cao tuổi.",
+        "5": "Nghỉ ngơi giữa các bài tập là cần thiết để phục hồi và đảm bảo an toàn; bỏ qua sẽ tăng nguy cơ kiệt sức và chấn thương."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "준비 운동", "def_vi": "Khởi động (warm-up) — hoạt động nhẹ nhàng trước khi tập chính để làm nóng cơ và phòng chấn thương" },
+      { "term_ko": "근골격계", "def_vi": "Hệ cơ xương khớp — hệ thống gồm cơ, xương và khớp chịu trách nhiệm vận động cơ thể" }
+    ]
+  },
+  {
+    "id": 1043,
+    "intent_ko": "만성질환 예방을 위한 노인의 안전한 운동 방법을 선택한다.",
+    "intent_vi": "Chọn phương pháp tập thể dục an toàn cho người cao tuổi nhằm phòng ngừa bệnh mãn tính.",
+    "choice_explanations": {
+      "ko": {
+        "1": "최대 심박동수의 80%는 높은 강도의 운동에 해당하며, 노인에게는 과도한 심폐 부담을 줄 수 있어 적합하지 않다.",
+        "2": "이른 아침(저체온, 심혈관 위험 증가)이나 밤 시간대는 노인에게 적합한 운동 시간이 아닐 수 있다.",
+        "3": "고강도에서 저강도로 마무리하는 방식은 준비·마무리 운동의 원칙에 반하며, 운동은 저강도에서 시작해 서서히 높이는 것이 올바르다.",
+        "4": "★ 현재 복용 중인 약물을 확인한 후 운동하는 것은 필수적이다. 일부 약물(이뇨제, 베타차단제 등)은 운동 중 심박수, 혈압, 탈수 위험에 영향을 주므로 사전 확인이 안전을 보장한다.",
+        "5": "운동 중간의 휴식은 노인에게 특히 중요하며, 모두 마친 후에만 휴식하는 것은 위험하다."
+      },
+      "vi": {
+        "1": "80% nhịp tim tối đa là cường độ cao, có thể tạo gánh nặng tim phổi quá mức cho người cao tuổi.",
+        "2": "Tập lúc sáng sớm (nhiệt độ thấp, tăng nguy cơ tim mạch) hoặc ban đêm có thể không phù hợp với người cao tuổi.",
+        "3": "Bắt đầu cường độ cao rồi kết thúc cường độ thấp vi phạm nguyên tắc khởi động và hạ nhiệt; đúng ra phải bắt đầu nhẹ rồi tăng dần.",
+        "4": "★ Kiểm tra thuốc đang dùng trước khi tập là điều bắt buộc. Một số thuốc (thuốc lợi tiểu, thuốc chẹn beta...) ảnh hưởng đến nhịp tim, huyết áp và nguy cơ mất nước khi tập, nên xác nhận trước để đảm bảo an toàn.",
+        "5": "Nghỉ ngơi giữa bài tập đặc biệt quan trọng với người cao tuổi; chỉ nghỉ sau khi kết thúc hoàn toàn là nguy hiểm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "최대 심박동수", "def_vi": "Nhịp tim tối đa — số nhịp tim cao nhất có thể đạt được khi tập cường độ tối đa, thường ước tính bằng 220 trừ tuổi" },
+      { "term_ko": "만성질환", "def_vi": "Bệnh mãn tính — bệnh kéo dài từ 3 tháng trở lên như tiểu đường, cao huyết áp, tim mạch" },
+      { "term_ko": "베타차단제", "def_vi": "Thuốc chẹn beta — nhóm thuốc điều trị cao huyết áp và bệnh tim, làm chậm nhịp tim" }
+    ]
+  },
+  {
+    "id": 1042,
+    "intent_ko": "노인 대상자에게 안전하고 효과적인 운동관리 방법을 이해한다.",
+    "intent_vi": "Hiểu phương pháp quản lý vận động an toàn và hiệu quả cho người cao tuổi.",
+    "choice_explanations": {
+      "ko": {
+        "1": "빠른 방향 전환 운동은 노인의 균형 능력 저하로 인해 낙상 위험이 높아 적합하지 않다.",
+        "2": "★ 저강도 운동으로 시작하여 서서히 강도를 높이는 방법이 노인에게 가장 안전하고 효과적이다. 심폐 및 근골격계에 무리를 주지 않으면서 점진적으로 기능을 향상시킬 수 있다.",
+        "3": "땀복은 인위적으로 발한을 증가시켜 체온 조절을 방해하고 탈수 위험을 높이므로 노인에게 적합하지 않다.",
+        "4": "마무리 운동(쿨다운)은 심박수와 체온을 서서히 낮추고 근육 통증을 예방하기 위해 반드시 필요하다.",
+        "5": "운동 중간의 휴식도 중요하며, 운동을 마친 후에만 휴식하는 것은 노인에게 피로 누적과 부상 위험을 높인다."
+      },
+      "vi": {
+        "1": "Bài tập đổi hướng nhanh làm tăng nguy cơ ngã ở người cao tuổi do khả năng thăng bằng giảm.",
+        "2": "★ Bắt đầu bằng bài tập cường độ thấp rồi tăng dần là phương pháp an toàn và hiệu quả nhất cho người cao tuổi — cải thiện dần chức năng tim phổi và cơ xương khớp mà không gây quá tải.",
+        "3": "Mặc quần áo mồ hôi làm tăng đổ mồ hôi nhân tạo, cản trở điều tiết thân nhiệt và tăng nguy cơ mất nước ở người cao tuổi.",
+        "4": "Bài tập hạ nhiệt (cool-down) là bắt buộc để hạ dần nhịp tim, nhiệt độ và phòng ngừa đau cơ.",
+        "5": "Nghỉ ngơi giữa bài tập cũng quan trọng; chỉ nghỉ sau khi kết thúc hoàn toàn làm tích lũy mệt mỏi và tăng nguy cơ chấn thương ở người cao tuổi."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "마무리 운동", "def_vi": "Bài tập hạ nhiệt (cool-down) — hoạt động nhẹ nhàng sau khi tập chính để hạ dần nhịp tim và thư giãn cơ" },
+      { "term_ko": "민첩성", "def_vi": "Sự nhanh nhẹn — khả năng thay đổi hướng và tốc độ di chuyển nhanh chóng" }
+    ]
+  },
+  {
+    "id": 1041,
+    "intent_ko": "노화로 인해 노인이 운동할 때 힘이 드는 생리적 이유를 이해한다.",
+    "intent_vi": "Hiểu lý do sinh lý khiến người cao tuổi vất vả khi tập thể dục do lão hóa.",
+    "choice_explanations": {
+      "ko": {
+        "1": "노화에 따라 심장근육의 수축력은 증가가 아닌 감소하는 것이 일반적이다.",
+        "2": "균형 및 조정 능력은 노화에 따라 증가가 아닌 감소하며, 이는 운동을 더 힘들게 만드는 요인이다.",
+        "3": "★ 노화로 인해 폐 탄력성과 호흡근 기능이 저하되어 폐활량이 감소한다. 이로 인해 운동 시 충분한 산소를 공급받지 못하여 빠르게 피로해지고 힘이 든다.",
+        "4": "심근 두께의 변화는 개인차가 있으며, 운동 능력 저하의 주된 요인은 아니다.",
+        "5": "근육 피로도는 노인에서 증가하는 경향이 있어 운동이 더 힘들게 느껴지는 원인이 되지만, 이 문항에서는 '피로도 감소'로 제시되어 틀린 보기이다."
+      },
+      "vi": {
+        "1": "Theo lão hóa, sức co bóp cơ tim thường giảm, không tăng.",
+        "2": "Khả năng thăng bằng và phối hợp giảm theo tuổi, không tăng — điều này làm cho việc tập luyện khó khăn hơn.",
+        "3": "★ Lão hóa làm giảm đàn hồi phổi và chức năng cơ hô hấp, dẫn đến giảm dung tích phổi. Do đó khi tập thể dục, cơ thể không được cung cấp đủ oxy, gây mệt mỏi nhanh và cảm giác vất vả.",
+        "4": "Thay đổi độ dày cơ tim khác nhau theo cá nhân và không phải nguyên nhân chính làm giảm khả năng vận động.",
+        "5": "Mức độ mệt mỏi cơ bắp tăng theo tuổi khiến tập luyện khó hơn, nhưng trong câu này được đưa ra là 'giảm mệt mỏi cơ' nên đây là đáp án sai."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "폐활량", "def_vi": "Dung tích phổi — thể tích không khí tối đa phổi có thể chứa; giảm dần theo tuổi tác" },
+      { "term_ko": "심장근육 수축력", "def_vi": "Sức co bóp cơ tim — khả năng tim bơm máu mỗi lần đập; giảm theo lão hóa" }
+    ]
+  },
+  {
+    "id": 1040,
+    "intent_ko": "노인이 운동 시 힘이 드는 심리적·기능적 이유를 이해한다.",
+    "intent_vi": "Hiểu lý do tâm lý và chức năng khiến người cao tuổi vất vả khi tập thể dục.",
+    "choice_explanations": {
+      "ko": {
+        "1": "노화에 따라 관절의 운동 범위는 증가가 아닌 감소하는 경향이 있으며, 범위가 감소하면 운동이 더 힘들어진다.",
+        "2": "★ 낙상에 대한 두려움이 증가하면 운동 시 움직임이 위축되고 신체 활동을 회피하게 되어 결과적으로 운동이 더 힘들어진다. 이는 심리적 요인으로 노인 운동을 저해하는 중요한 원인이다.",
+        "3": "노화에 따라 폐조직의 탄력성은 증가가 아닌 감소한다. 탄력성 감소는 폐활량 저하로 이어진다.",
+        "4": "노화에 따라 골밀도는 증가가 아닌 감소한다. 골밀도 감소는 골절 위험을 높여 운동을 더 어렵게 한다.",
+        "5": "노화에 따라 자극에 대한 반응 속도는 증가가 아닌 감소한다. 반응 감소는 균형 유지와 운동 수행을 어렵게 한다."
+      },
+      "vi": {
+        "1": "Theo lão hóa, tầm vận động khớp có xu hướng giảm, không tăng; giảm tầm vận động làm tập luyện khó hơn.",
+        "2": "★ Khi nỗi sợ ngã tăng lên, người cao tuổi có xu hướng co rút động tác và tránh hoạt động thể chất, khiến việc tập luyện ngày càng vất vả hơn. Đây là yếu tố tâm lý quan trọng cản trở vận động ở người cao tuổi.",
+        "3": "Theo lão hóa, độ đàn hồi mô phổi giảm, không tăng; giảm đàn hồi dẫn đến giảm dung tích phổi.",
+        "4": "Mật độ xương giảm theo tuổi, không tăng; giảm mật độ xương làm tăng nguy cơ gãy xương khi tập.",
+        "5": "Tốc độ phản xạ với kích thích giảm theo tuổi, không tăng; giảm phản xạ khiến duy trì thăng bằng và thực hiện động tác khó hơn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "낙상에 대한 두려움", "def_vi": "Nỗi sợ ngã — tâm lý sợ bị ngã phổ biến ở người cao tuổi, dẫn đến giảm hoạt động thể chất" },
+      { "term_ko": "골밀도", "def_vi": "Mật độ xương — mức độ khoáng chất trong xương; giảm theo tuổi dẫn đến loãng xương" },
+      { "term_ko": "폐조직 탄력성", "def_vi": "Độ đàn hồi mô phổi — khả năng phổi co giãn; giảm theo lão hóa làm giảm dung tích phổi" }
+    ]
+  }
+]

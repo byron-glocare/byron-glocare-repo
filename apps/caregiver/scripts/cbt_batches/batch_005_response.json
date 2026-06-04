@@ -1,0 +1,760 @@
+[
+  {
+    "id": 1619,
+    "intent_ko": "빗소리·개구리 울음소리를 들으며 어린 시절을 회상할 때 향상되는 인지능력이 무엇인지 묻는 문제",
+    "intent_vi": "Câu hỏi về khả năng nhận thức nào được cải thiện khi hồi tưởng tuổi thơ qua âm thanh mưa và tiếng ếch",
+    "choice_explanations": {
+      "ko": {
+        "1": "순발력은 자극에 즉각 반응하는 신체·운동 능력으로, 과거 회상 활동과 무관하다.",
+        "2": "계산력은 수치를 처리하는 인지 능력으로, 회상 활동과 직접적 관련이 없다.",
+        "3": "통제력은 감정·행동을 억제하고 조절하는 능력으로, 이 활동과 거리가 멀다.",
+        "4": "★ 지남력은 시간·장소·사람에 대해 자신의 위치와 상황을 정확히 파악하는 능력이다. 익숙한 자연 소리를 통해 과거의 시간·장소를 회상하면 지남력 자극에 도움이 된다.",
+        "5": "지구력은 신체 활동을 오래 지속하는 체력 관련 능력으로, 인지 회상 활동과 무관하다."
+      },
+      "vi": {
+        "1": "Sức phản xạ là khả năng phản ứng nhanh với kích thích vận động, không liên quan đến hoạt động hồi tưởng.",
+        "2": "Khả năng tính toán xử lý con số, không liên quan trực tiếp đến hoạt động hồi tưởng.",
+        "3": "Khả năng kiểm soát là năng lực kìm chế cảm xúc và hành vi, không liên quan đến bài tập này.",
+        "4": "★ Khả năng định hướng (지남력) là năng lực nhận biết chính xác thời gian, địa điểm và con người xung quanh mình. Khi nghe âm thanh quen thuộc từ thiên nhiên và hồi tưởng tuổi thơ, năng lực định hướng về thời gian và không gian được kích thích và cải thiện.",
+        "5": "Sức bền là khả năng thể chất duy trì hoạt động lâu dài, không liên quan đến hoạt động nhận thức này."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "지남력", "def_vi": "Khả năng định hướng — năng lực nhận biết đúng thời gian, địa điểm và danh tính người xung quanh" },
+      { "term_ko": "회상요법", "def_vi": "Liệu pháp hồi tưởng — phương pháp trị liệu kích thích trí nhớ bằng cách gợi lại ký ức quá khứ" },
+      { "term_ko": "인지능력", "def_vi": "Khả năng nhận thức — tổng hợp các năng lực tư duy, ghi nhớ, phán đoán của não bộ" }
+    ]
+  },
+  {
+    "id": 1618,
+    "intent_ko": "치매 말기 대상자와 의사소통하는 올바른 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi về phương pháp giao tiếp đúng đắn với người bệnh sa sút trí tuệ giai đoạn cuối",
+    "choice_explanations": {
+      "ko": {
+        "1": "빠르게 말하면 말기 치매 대상자는 내용을 처리하지 못해 혼란이 가중된다.",
+        "2": "적절한 신체접촉(손 잡기, 어깨 토닥임 등)은 안정감을 주므로 무조건 피하는 것은 옳지 않다.",
+        "3": "★ 말기 치매 대상자는 언어 이해력과 반응 능력이 크게 저하되어 있다. 대답이 없어도 계속 말을 걸면 목소리 자체가 정서적 안정감을 제공하며, 고립감을 줄이는 데 도움이 된다.",
+        "4": "구체적 대답을 요구하는 질문은 인지 부담을 가중시켜 스트레스를 유발한다.",
+        "5": "전문 용어는 말기 치매 대상자가 이해하기 어려우므로 일상적이고 단순한 언어를 사용해야 한다."
+      },
+      "vi": {
+        "1": "Nói nhanh khiến người bệnh sa sút trí tuệ giai đoạn cuối không xử lý được thông tin, gây thêm nhầm lẫn.",
+        "2": "Tiếp xúc cơ thể phù hợp (cầm tay, vỗ vai) mang lại cảm giác an toàn, không nên tránh hoàn toàn.",
+        "3": "★ Ở giai đoạn cuối sa sút trí tuệ, khả năng hiểu ngôn ngữ và phản hồi suy giảm nặng nề. Dù người bệnh không trả lời, tiếp tục trò chuyện giúp giọng nói trở thành nguồn an ủi tinh thần, giảm cảm giác cô đơn và bị bỏ rơi.",
+        "4": "Câu hỏi yêu cầu trả lời cụ thể tạo gánh nặng nhận thức, gây stress cho người bệnh.",
+        "5": "Thuật ngữ chuyên môn khó hiểu đối với người sa sút trí tuệ giai đoạn cuối; cần dùng ngôn ngữ đơn giản, hàng ngày."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "치매 말기", "def_vi": "Giai đoạn cuối sa sút trí tuệ — giai đoạn bệnh tiến triển nặng nhất, mất hầu hết khả năng giao tiếp và tự chăm sóc" },
+      { "term_ko": "의사소통", "def_vi": "Giao tiếp — quá trình trao đổi thông tin và cảm xúc giữa người với người" }
+    ]
+  },
+  {
+    "id": 1617,
+    "intent_ko": "치매 말기 대상자와의 효과적인 의사소통 방법 중 옳은 것을 고르는 문제",
+    "intent_vi": "Câu hỏi về phương pháp giao tiếp hiệu quả với người bệnh sa sút trí tuệ giai đoạn cuối",
+    "choice_explanations": {
+      "ko": {
+        "1": "긍정적 신체접촉은 안정감을 주므로 무조건 피하는 것은 잘못된 접근이다.",
+        "2": "큰 소리는 오히려 위협감이나 불안을 유발할 수 있다.",
+        "3": "★ 이름을 먼저 부르면 대상자의 주의를 집중시키고 친밀감을 형성하여 대화 참여를 유도할 수 있다. 말기 치매 환자도 자신의 이름에는 반응하는 경우가 많아 효과적인 접근법이다.",
+        "4": "눈을 마주치지 않은 상태에서 계속 말하면 대상자가 말을 인지하지 못해 오히려 역효과가 날 수 있다.",
+        "5": "대화 후 조용히 나가면 대상자가 갑자기 혼자 남겨진 느낌을 받아 불안감이 생길 수 있다."
+      },
+      "vi": {
+        "1": "Tiếp xúc cơ thể tích cực mang lại cảm giác an toàn; tránh hoàn toàn là cách tiếp cận sai.",
+        "2": "Nói to có thể gây cảm giác bị đe dọa hoặc lo lắng cho người bệnh.",
+        "3": "★ Gọi tên người bệnh trước khi bắt đầu nói giúp thu hút sự chú ý và tạo cảm giác thân thiện, khuyến khích tham gia giao tiếp. Ngay cả người bệnh sa sút trí tuệ giai đoạn cuối thường vẫn phản ứng với tên của mình.",
+        "4": "Tiếp tục nói khi người bệnh không nhìn vào có thể phản tác dụng vì họ không nhận ra được lời nói.",
+        "5": "Rời đi im lặng sau cuộc trò chuyện có thể khiến người bệnh cảm thấy đột ngột bị bỏ lại một mình, gây lo lắng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "치매 말기", "def_vi": "Giai đoạn cuối sa sút trí tuệ — giai đoạn bệnh tiến triển nặng nhất" },
+      { "term_ko": "친밀감", "def_vi": "Cảm giác thân thiện, gần gũi — cảm giác tin tưởng và gắn kết trong quan hệ" }
+    ]
+  },
+  {
+    "id": 1616,
+    "intent_ko": "치매 말기 대상자의 의사소통 문제를 보여주는 전형적인 반응을 고르는 문제",
+    "intent_vi": "Câu hỏi về phản ứng điển hình thể hiện vấn đề giao tiếp của người sa sút trí tuệ giai đoạn cuối",
+    "choice_explanations": {
+      "ko": {
+        "1": "시간 감각의 혼란을 보이나, 말기 치매의 핵심 증상을 대표하지는 않는다.",
+        "2": "감정 표현은 가능하지만 질문에 직접 답하지 못하는 양상을 보인다.",
+        "3": "기억 혼란(먹었는지 모름)을 나타내지만 이는 중기에도 흔한 증상이다.",
+        "4": "기억 혼란을 나타내지만, 질문에 대해 부분적으로는 반응하고 있다.",
+        "5": "★ '식사는 하셨어요?'라고 그대로 따라 하는 것은 반향언어(에코랄리아)로, 치매 말기에 상대방의 말을 의미 없이 그대로 반복하는 전형적인 의사소통 장애 증상이다."
+      },
+      "vi": {
+        "1": "Thể hiện nhầm lẫn về thời gian nhưng không đại diện cho triệu chứng cốt lõi của giai đoạn cuối.",
+        "2": "Có thể biểu đạt cảm xúc nhưng không trả lời thẳng vào câu hỏi.",
+        "3": "Biểu hiện nhầm lẫn ký ức (không nhớ đã ăn chưa) nhưng cũng phổ biến ở giai đoạn giữa.",
+        "4": "Biểu hiện nhầm lẫn ký ức, nhưng vẫn phản ứng một phần với câu hỏi.",
+        "5": "★ Lặp lại nguyên xi câu hỏi 'Cụ đã ăn chưa?' là biểu hiện của ngôn ngữ vang vọng (echolalia) — triệu chứng giao tiếp điển hình ở giai đoạn cuối sa sút trí tuệ, khi bệnh nhân lặp lại lời người khác mà không có ý nghĩa."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "반향언어", "def_vi": "Ngôn ngữ vang vọng (echolalia) — triệu chứng lặp lại lời nói của người khác một cách máy móc, không có ý nghĩa" },
+      { "term_ko": "의사소통 장애", "def_vi": "Rối loạn giao tiếp — tình trạng mất khả năng trao đổi thông tin bình thường" }
+    ]
+  },
+  {
+    "id": 1615,
+    "intent_ko": "치매 말기 단계에서 자주 발생하는 의사소통 문제가 무엇인지 묻는 문제",
+    "intent_vi": "Câu hỏi về vấn đề giao tiếp thường gặp nhất ở giai đoạn cuối sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 앵무새처럼 상대방의 말을 그대로 따라 하는 반향언어(에코랄리아)는 치매 말기의 전형적인 의사소통 특징이다. 언어를 자발적으로 생성하는 능력이 거의 상실되어 자신의 의사 표현 대신 들은 말을 반복한다.",
+        "2": "시제 사용 오류는 중기에도 나타날 수 있으며, 말기를 특징짓는 대표 증상은 아니다.",
+        "3": "어휘 제한은 초기·중기부터 진행되며 말기에는 어휘 자체가 거의 소실된다.",
+        "4": "이름 지칭 어려움(명칭 실어증)은 초기부터 나타나며 말기에만 국한된 증상이 아니다.",
+        "5": "대화 중 말 끊김 증가는 중기에 두드러지는 증상이다."
+      },
+      "vi": {
+        "1": "★ Lặp lại lời nói của người khác như con vẹt (echolalia / ngôn ngữ vang vọng) là đặc điểm giao tiếp điển hình ở giai đoạn cuối sa sút trí tuệ. Khả năng tự tạo ngôn ngữ gần như mất hoàn toàn, bệnh nhân chỉ lặp lại những gì nghe được thay vì diễn đạt ý của mình.",
+        "2": "Lỗi sử dụng thì có thể xuất hiện từ giai đoạn giữa và không phải triệu chứng đặc trưng nhất của giai đoạn cuối.",
+        "3": "Hạn chế vốn từ bắt đầu từ giai đoạn đầu và giữa; ở giai đoạn cuối vốn từ gần như biến mất hoàn toàn.",
+        "4": "Khó gọi tên (thất ngôn danh từ) xuất hiện từ giai đoạn đầu, không giới hạn ở giai đoạn cuối.",
+        "5": "Tăng tần suất ngắt lời trong hội thoại là triệu chứng nổi bật hơn ở giai đoạn giữa."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "반향언어(에코랄리아)", "def_vi": "Echolalia / Ngôn ngữ vang vọng — triệu chứng lặp lại máy móc lời người khác, đặc trưng giai đoạn cuối sa sút trí tuệ" },
+      { "term_ko": "명칭 실어증", "def_vi": "Thất ngôn danh từ — mất khả năng nhớ tên sự vật, con người dù nhận ra chúng" }
+    ]
+  },
+  {
+    "id": 1614,
+    "intent_ko": "치매 중기 단계에서 자주 나타나는 의사소통 문제를 고르는 문제",
+    "intent_vi": "Câu hỏi về vấn đề giao tiếp thường gặp ở giai đoạn giữa sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 대화 중 말이 자꾸 끊기는 것은 치매 중기에 특징적으로 나타난다. 단어 인출 능력이 저하되고 사고의 흐름이 중단되어 문장을 완성하지 못하고 멈추는 현상이 잦아진다.",
+        "2": "반복적으로 확인하고 설명을 요구하는 것은 초기에 더 두드러지는 양상이다.",
+        "3": "이름 지칭 어려움(명칭 실어증)은 초기부터 나타나며 중기의 핵심 증상으로 보기 어렵다.",
+        "4": "시선 맞춤 어려움은 일부 환자에서 나타나지만 중기의 보편적 특징은 아니다.",
+        "5": "말이 없어지는 무언증은 말기에 주로 나타나는 증상이다."
+      },
+      "vi": {
+        "1": "★ Tăng tần suất ngắt lời trong hội thoại là đặc điểm của giai đoạn giữa sa sút trí tuệ. Khả năng tìm từ suy giảm và luồng suy nghĩ bị gián đoạn khiến bệnh nhân thường không hoàn thành câu, dừng lại giữa chừng.",
+        "2": "Thường xuyên hỏi lại và yêu cầu giải thích nổi bật hơn ở giai đoạn đầu.",
+        "3": "Khó gọi tên (thất ngôn danh từ) xuất hiện từ giai đoạn đầu, không phải triệu chứng cốt lõi của giai đoạn giữa.",
+        "4": "Khó giao tiếp bằng mắt xuất hiện ở một số bệnh nhân nhưng không phải đặc điểm phổ biến của giai đoạn giữa.",
+        "5": "Câm lặng (mutism) chủ yếu xuất hiện ở giai đoạn cuối."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "치매 중기", "def_vi": "Giai đoạn giữa sa sút trí tuệ — giai đoạn tiến triển với các triệu chứng ngôn ngữ và ký ức rõ rệt hơn" },
+      { "term_ko": "단어 인출 장애", "def_vi": "Khó tìm từ — mất khả năng tìm đúng từ muốn nói dù biết ý nghĩa" },
+      { "term_ko": "무언증", "def_vi": "Câm lặng (mutism) — mất khả năng nói chuyện, thường xuất hiện ở giai đoạn cuối sa sút trí tuệ" }
+    ]
+  },
+  {
+    "id": 1613,
+    "intent_ko": "치매 초기 단계에서 자주 나타나는 의사소통 문제를 고르는 문제",
+    "intent_vi": "Câu hỏi về vấn đề giao tiếp thường gặp ở giai đoạn đầu sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "애매모호한 내용을 이야기하는 것은 초기에 나타날 수 있으나, 초기를 특징짓는 핵심 증상은 아니다.",
+        "2": "명칭 실어증은 초기부터 나타나긴 하지만, 대화 주제 변환이 더 두드러진 초기 특징이다.",
+        "3": "★ 대화의 주제가 자주 바뀌는 것은 치매 초기에 가장 두드러지는 의사소통 문제 중 하나다. 주의 집중력과 단기 기억이 저하되면서 한 주제를 일관되게 유지하지 못하고 산만하게 화제가 바뀐다.",
+        "4": "시선 맞춤 어려움은 중·후기에 더 두드러지는 양상이다.",
+        "5": "무언증은 치매가 많이 진행된 말기에 나타나는 증상이다."
+      },
+      "vi": {
+        "1": "Nói nội dung mơ hồ có thể xuất hiện ở giai đoạn đầu nhưng không phải triệu chứng đặc trưng nhất.",
+        "2": "Thất ngôn danh từ bắt đầu từ giai đoạn đầu nhưng thay đổi chủ đề hội thoại là dấu hiệu nổi bật hơn ở giai đoạn này.",
+        "3": "★ Thường xuyên thay đổi chủ đề hội thoại là một trong những vấn đề giao tiếp nổi bật nhất ở giai đoạn đầu sa sút trí tuệ. Khi khả năng tập trung và trí nhớ ngắn hạn suy giảm, bệnh nhân không duy trì được một chủ đề nhất quán và chuyển sang chủ đề khác một cách phân tán.",
+        "4": "Khó giao tiếp bằng mắt nổi bật hơn ở giai đoạn giữa và cuối.",
+        "5": "Câm lặng (mutism) xuất hiện ở giai đoạn cuối khi bệnh tiến triển nặng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "치매 초기", "def_vi": "Giai đoạn đầu sa sút trí tuệ — giai đoạn khởi phát với các triệu chứng nhẹ về trí nhớ và giao tiếp" },
+      { "term_ko": "명칭 실어증", "def_vi": "Thất ngôn danh từ — mất khả năng nhớ tên sự vật, người dù nhận ra chúng" },
+      { "term_ko": "무언증", "def_vi": "Câm lặng (mutism) — mất khả năng nói, thường xuất hiện ở giai đoạn cuối sa sút trí tuệ" }
+    ]
+  },
+  {
+    "id": 1612,
+    "intent_ko": "치매 대상자와의 효과적인 의사소통 방법으로 옳은 것을 고르는 문제",
+    "intent_vi": "Câu hỏi về phương pháp giao tiếp hiệu quả với người mắc sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 치매 대상자는 단기 기억이 저하되어 현재 상황을 파악하지 못하는 경우가 많다. 지금 몇 시인지, 어디에 있는지, 무엇을 할 예정인지 등 현재 상황을 주기적으로 알려주면 지남력 유지에 도움이 된다.",
+        "2": "옆에서만 이야기하면 시선을 맞추기 어렵다. 눈을 마주보며 정면에서 대화하는 것이 더 효과적이다.",
+        "3": "목소리 톤을 높이면 불필요한 긴장과 불안을 유발할 수 있다.",
+        "4": "유행어는 치매 대상자가 이해하지 못하는 경우가 많아 혼란을 줄 수 있다.",
+        "5": "대상자의 행동을 복잡하게 해석하려 하면 정작 필요한 즉각적 대응이 늦어진다."
+      },
+      "vi": {
+        "1": "★ Người mắc sa sút trí tuệ thường mất khả năng nắm bắt tình huống hiện tại do trí nhớ ngắn hạn suy giảm. Thường xuyên thông báo về thời gian, địa điểm và hoạt động sắp tới giúp duy trì khả năng định hướng.",
+        "2": "Nói từ bên cạnh khiến khó giao tiếp bằng mắt; đứng đối diện và nhìn thẳng vào mắt người bệnh khi nói chuyện hiệu quả hơn.",
+        "3": "Nâng cao giọng có thể gây căng thẳng và lo lắng không cần thiết.",
+        "4": "Từ lóng thời thượng khó hiểu với người sa sút trí tuệ, gây thêm nhầm lẫn.",
+        "5": "Diễn giải hành vi quá phức tạp làm chậm phản ứng tức thời cần thiết."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "지남력 유지", "def_vi": "Duy trì khả năng định hướng — giúp người bệnh nhận biết thời gian, địa điểm và tình huống hiện tại" },
+      { "term_ko": "단기 기억", "def_vi": "Trí nhớ ngắn hạn — khả năng lưu giữ thông tin trong thời gian ngắn, thường suy giảm sớm trong sa sút trí tuệ" }
+    ]
+  },
+  {
+    "id": 1611,
+    "intent_ko": "제시된 요양보호사의 말이 언어적 의사소통 원칙 중 어떤 원칙을 어기고 있는지 찾는 문제",
+    "intent_vi": "Câu hỏi xác định nguyên tắc giao tiếp ngôn ngữ nào bị vi phạm trong lời nói của nhân viên chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "'양말을 벗지 말고', '거실에 앉아 계세요' 등 일상적 어휘를 사용하고 있으므로 이 원칙은 지켜졌다.",
+        "2": "'~세요'라는 적절한 존칭어를 사용하고 있으므로 이 원칙은 지켜졌다.",
+        "3": "★ '양말을 벗지 마세요'와 '거실에 앉아 계세요' 두 가지를 동시에 지시하고 있다. 치매 대상자에게는 한 번에 한 가지만 지시해야 하는데, 이 원칙을 어겼으므로 정답이다.",
+        "4": "'10시가 되면 병원에 가야 하니까'라며 현재 상황과 이유를 제시하고 있으므로 이 원칙은 지켜졌다.",
+        "5": "얼굴을 마주보는지 여부는 대화 내용에서 확인할 수 없으므로, 이것이 어긋난 원칙이라고 볼 수 없다."
+      },
+      "vi": {
+        "1": "Sử dụng từ ngữ hàng ngày như 'đừng cởi tất', 'ngồi ở phòng khách' — nguyên tắc này được tuân thủ.",
+        "2": "Dùng kính ngữ phù hợp '~세요' — nguyên tắc này được tuân thủ.",
+        "3": "★ Câu nói đưa ra hai chỉ dẫn cùng lúc: 'đừng cởi tất' và 'ngồi ở phòng khách'. Với người sa sút trí tuệ, chỉ nên đưa ra một hướng dẫn tại một thời điểm. Vi phạm nguyên tắc 'một lần một việc' là lỗi trong tình huống này.",
+        "4": "Cung cấp thông tin tình huống hiện tại '10 giờ phải đi bệnh viện' — nguyên tắc này được tuân thủ.",
+        "5": "Không thể xác định từ nội dung cuộc trò chuyện liệu có nhìn mặt trực tiếp hay không."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "존칭어", "def_vi": "Kính ngữ — ngôn ngữ thể hiện sự tôn trọng đối phương trong tiếng Hàn" },
+      { "term_ko": "언어적 의사소통 원칙", "def_vi": "Nguyên tắc giao tiếp ngôn ngữ — các quy tắc cơ bản cần tuân theo khi giao tiếp bằng lời với người sa sút trí tuệ" }
+    ]
+  },
+  {
+    "id": 1610,
+    "intent_ko": "치매 대상자와 대화할 때 올바른 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi về phương pháp đúng khi trò chuyện với người mắc sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "뒤에서 갑자기 다가가는 것은 놀람과 위축을 유발할 수 있어 좋지 않다.",
+        "2": "★ 가까운 거리에서 얼굴을 마주보고 말하면 대상자가 입술 모양과 표정을 함께 읽을 수 있어 이해도가 높아진다. 시각적 단서와 청각 정보를 결합해 의사소통 효과를 극대화하는 올바른 방법이다.",
+        "3": "과장된 몸동작은 오히려 주의를 분산시키고 혼란을 줄 수 있다.",
+        "4": "길고 자세한 설명은 치매 대상자의 인지 처리 능력을 초과하여 부담을 준다.",
+        "5": "이해하지 못한다고 대화를 멈추면 소외감을 줄 수 있으며, 반복하거나 다른 방식으로 표현을 바꾸는 것이 적절하다."
+      },
+      "vi": {
+        "1": "Tiếp cận từ phía sau đột ngột có thể gây giật mình và cảm giác bị đe dọa.",
+        "2": "★ Nói ở khoảng cách gần và nhìn thẳng vào mặt người bệnh giúp họ đọc được khẩu hình và biểu cảm khuôn mặt, tăng khả năng hiểu. Kết hợp tín hiệu thị giác và âm thanh tối ưu hóa hiệu quả giao tiếp.",
+        "3": "Cử chỉ phóng đại quá mức gây phân tán chú ý và thêm nhầm lẫn.",
+        "4": "Giải thích dài và chi tiết vượt quá khả năng xử lý nhận thức của người sa sút trí tuệ.",
+        "5": "Dừng nói khi người bệnh không hiểu gây cảm giác bị cô lập; nên lặp lại hoặc đổi cách diễn đạt."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "비언어적 단서", "def_vi": "Tín hiệu phi ngôn ngữ — thông tin được truyền qua biểu cảm, cử chỉ, khẩu hình thay vì lời nói" },
+      { "term_ko": "소외감", "def_vi": "Cảm giác bị cô lập, bị bỏ rơi khỏi môi trường xã hội xung quanh" }
+    ]
+  },
+  {
+    "id": 1609,
+    "intent_ko": "인지 저하로 자기 마음대로 생각하는 치매 대상자와의 효과적인 의사소통 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi về phương pháp giao tiếp hiệu quả với người sa sút trí tuệ có nhận thức suy giảm",
+    "choice_explanations": {
+      "ko": {
+        "1": "대화 주제를 자주 바꾸면 혼란만 가중된다.",
+        "2": "새로운 물건 활용이 도움될 수 있으나, 대답을 유도하기 위해서는 선택지를 제한하는 것이 더 중요하다.",
+        "3": "★ '네'/'아니오'로 답할 수 있는 폐쇄형 질문은 인지 부담이 낮고 응답 방식이 명확하여 치매 대상자가 쉽게 반응할 수 있다. 개방형 질문보다 훨씬 효과적인 방법이다.",
+        "4": "반응이 없을 때 바로 주제를 바꾸기보다 충분히 기다리는 것이 더 중요하다.",
+        "5": "행동을 자의적으로 해석하면 오해가 생기고 잘못된 대응으로 이어질 수 있다."
+      },
+      "vi": {
+        "1": "Thường xuyên thay đổi chủ đề chỉ làm tăng thêm nhầm lẫn.",
+        "2": "Dùng đồ vật mới có thể hữu ích nhưng quan trọng hơn là giới hạn lựa chọn để dễ phản hồi.",
+        "3": "★ Câu hỏi đóng chỉ cần trả lời 'có'/'không' có gánh nặng nhận thức thấp và cách phản hồi rõ ràng, giúp người sa sút trí tuệ dễ dàng đáp lại. Hiệu quả hơn nhiều so với câu hỏi mở.",
+        "4": "Khi không có phản hồi, điều quan trọng là kiên nhẫn chờ đợi thay vì vội chuyển chủ đề.",
+        "5": "Tự ý diễn giải hành vi có thể dẫn đến hiểu lầm và phản ứng sai."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "폐쇄형 질문", "def_vi": "Câu hỏi đóng — câu hỏi chỉ cần trả lời 'có' hoặc 'không', phù hợp với người suy giảm nhận thức" },
+      { "term_ko": "인지능력 저하", "def_vi": "Suy giảm khả năng nhận thức — giảm sút các chức năng tư duy, ghi nhớ, phán đoán" }
+    ]
+  },
+  {
+    "id": 1608,
+    "intent_ko": "종이접기 프로그램에서 치매 대상자가 따라하지 못하고 머뭇거릴 때 적절한 도움 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi về cách hỗ trợ phù hợp khi người sa sút trí tuệ lưỡng lự không làm được trong chương trình gấp giấy",
+    "choice_explanations": {
+      "ko": {
+        "1": "어린아이 대하듯 하는 것은 대상자의 자존감을 상하게 할 수 있어 부적절하다.",
+        "2": "★ 치매 대상자가 이해하지 못할 때 단계별로 반복해서 설명하는 것은 필수적인 지원 방법이다. 단순하고 짧은 설명을 반복함으로써 대상자가 각 단계를 따라올 수 있도록 돕는다.",
+        "3": "말 이외에 시범을 보여주거나 손동작으로 유도하는 비언어적 신호도 효과적이므로 사용하지 않는 것은 옳지 않다.",
+        "4": "'왜'라고 묻는 것은 치매 대상자에게 불필요한 스트레스와 혼란을 준다.",
+        "5": "한 번에 여러 단계를 알려주면 인지 과부하가 걸려 더 혼란스러워진다."
+      },
+      "vi": {
+        "1": "Đối xử như trẻ em xúc phạm lòng tự trọng của người bệnh, không phù hợp.",
+        "2": "★ Khi người sa sút trí tuệ không hiểu, giải thích lại từng bước một cách lặp đi lặp lại là phương pháp hỗ trợ thiết yếu. Lặp lại hướng dẫn ngắn gọn, đơn giản giúp người bệnh theo kịp từng bước.",
+        "3": "Ngoài lời nói, các tín hiệu phi ngôn ngữ như làm mẫu, hướng dẫn bằng tay cũng hiệu quả; không dùng chúng là sai.",
+        "4": "Hỏi 'tại sao' gây stress và nhầm lẫn không cần thiết cho người sa sút trí tuệ.",
+        "5": "Hướng dẫn nhiều bước cùng lúc gây quá tải nhận thức, làm người bệnh thêm bối rối."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "인지 과부하", "def_vi": "Quá tải nhận thức — tình trạng nhận quá nhiều thông tin cùng lúc vượt quá khả năng xử lý của não" },
+      { "term_ko": "단계적 설명", "def_vi": "Giải thích từng bước — phương pháp hướng dẫn chia nhỏ thành các bước đơn giản, thực hiện lần lượt" }
+    ]
+  },
+  {
+    "id": 1607,
+    "intent_ko": "치매 대상자와의 의사소통 원칙으로 옳은 것을 고르는 문제",
+    "intent_vi": "Câu hỏi về nguyên tắc giao tiếp đúng đắn với người mắc sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "'왜'라는 이유를 묻는 질문은 치매 환자에게 혼란과 심리적 압박을 줄 수 있다.",
+        "2": "★ 대상자의 말하는 속도, 이해 속도에 맞춰 대화를 진행하는 것은 의사소통의 핵심 원칙이다. 서두르지 않고 충분한 시간을 주면 대상자가 안정감을 느끼고 대화에 참여할 수 있다.",
+        "3": "자세하고 길게 설명하면 인지 부담이 커져 이해를 어렵게 만든다.",
+        "4": "적절한 신체적 접촉은 신뢰감을 높이므로 무조건 삼가는 것은 옳지 않다.",
+        "5": "과거 회상은 치매 환자의 장기 기억을 자극하여 긍정적 효과를 줄 수 있으므로 회상을 막는 것은 바람직하지 않다."
+      },
+      "vi": {
+        "1": "Câu hỏi hỏi lý do 'tại sao' gây nhầm lẫn và áp lực tâm lý cho người sa sút trí tuệ.",
+        "2": "★ Điều chỉnh nhịp nói và tốc độ giao tiếp theo khả năng của người bệnh là nguyên tắc cốt lõi. Không vội vàng, dành đủ thời gian giúp người bệnh cảm thấy thoải mái và tham gia vào cuộc trò chuyện.",
+        "3": "Giải thích dài và chi tiết tăng gánh nặng nhận thức, khó hiểu hơn.",
+        "4": "Tiếp xúc cơ thể phù hợp giúp xây dựng lòng tin; tránh hoàn toàn là không đúng.",
+        "5": "Hồi tưởng quá khứ kích thích trí nhớ dài hạn và có thể mang lại hiệu quả tích cực; ngăn cản hồi tưởng là không nên."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "회상요법", "def_vi": "Liệu pháp hồi tưởng — kỹ thuật kích thích trí nhớ dài hạn qua việc gợi lại ký ức quá khứ" },
+      { "term_ko": "의사소통 속도 조절", "def_vi": "Điều chỉnh tốc độ giao tiếp — thích nghi nhịp nói và chờ đợi theo khả năng tiếp nhận của người bệnh" }
+    ]
+  },
+  {
+    "id": 1606,
+    "intent_ko": "목욕을 했다고 주장하는 치매 대상자에게 실제로 목욕을 유도하는 올바른 의사소통 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi về cách giao tiếp đúng để dẫn dắt người sa sút trí tuệ thực sự đi tắm khi họ khăng khăng đã tắm rồi",
+    "choice_explanations": {
+      "ko": {
+        "1": "목욕을 안 했다고 직접 지적하면 대상자가 반발하거나 자존감이 상할 수 있다.",
+        "2": "외출을 조건으로 제시하는 것은 거부감을 줄 수 있다.",
+        "3": "언제 목욕했냐고 물으면 기억이 없는 대상자에게 혼란과 스트레스를 준다.",
+        "4": "★ '잘 하셨어요'라며 대상자의 말을 긍정적으로 수용한 뒤 '이제 샤워하실래요?'로 자연스럽게 연결하는 것은, 논쟁 없이 목욕을 유도하는 치매 의사소통의 핵심 기법이다. 부정하거나 논쟁하지 않고 대상자의 현실을 인정하면서 목표 행동으로 이끈다.",
+        "5": "부정적·위협적 어조는 대상자의 불안과 저항을 높인다."
+      },
+      "vi": {
+        "1": "Chỉ thẳng ra rằng chưa tắm khiến người bệnh phản kháng hoặc tổn thương lòng tự trọng.",
+        "2": "Đề nghị điều kiện đi ra ngoài có thể gây cảm giác bị ép buộc.",
+        "3": "Hỏi 'tắm hồi nào?' gây nhầm lẫn và stress cho người không nhớ được.",
+        "4": "★ Đáp lại tích cực 'Vâng, cụ làm tốt lắm' rồi chuyển sang 'Bây giờ cụ tắm nhé?' là kỹ thuật giao tiếp cốt lõi trong chăm sóc sa sút trí tuệ: không tranh luận, thừa nhận thực tế của người bệnh rồi dẫn dắt nhẹ nhàng đến hành vi mục tiêu.",
+        "5": "Giọng điệu tiêu cực và đe dọa làm tăng lo lắng và kháng cự của người bệnh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "현실 수용 기법", "def_vi": "Kỹ thuật chấp nhận thực tế của người bệnh — không tranh luận mà thừa nhận rồi dẫn dắt nhẹ nhàng" },
+      { "term_ko": "치매 의사소통 원칙", "def_vi": "Nguyên tắc giao tiếp trong chăm sóc sa sút trí tuệ — tập hợp các quy tắc ứng xử và ngôn ngữ phù hợp" }
+    ]
+  },
+  {
+    "id": 1605,
+    "intent_ko": "치매 대상자와의 의사소통에서 적절한 표현을 고르는 문제",
+    "intent_vi": "Câu hỏi về cách diễn đạt phù hợp khi giao tiếp với người mắc sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ '허리가 많이 아프세요?'는 신체 증상을 직접 확인하는 간단하고 명확한 폐쇄형 질문이다. '네'/'아니오'로 쉽게 답할 수 있어 치매 대상자에게 적합하며, 신체 불편함을 파악하는 데 효과적이다.",
+        "2": "'8시가 되면 약 드세요'는 시간을 지정한 지시문으로, 치매 환자에게 시간 엄수를 강조하면 혼란을 줄 수 있다.",
+        "3": "'오늘은 기분이 괜찮아?'는 반말로 존칭을 쓰지 않아 부적절하다.",
+        "4": "우유는 되고 콜라는 안 된다는 이중 정보를 한 번에 전달하면 혼란을 줄 수 있다.",
+        "5": "'왜 조금만 하세요?'처럼 이유를 묻는 질문은 치매 환자에게 심리적 압박을 준다."
+      },
+      "vi": {
+        "1": "★ 'Cụ đau lưng nhiều không?' là câu hỏi đóng đơn giản, rõ ràng để xác nhận triệu chứng thể chất. Dễ trả lời bằng 'có'/'không', phù hợp với người sa sút trí tuệ và hiệu quả trong việc nắm bắt khó chịu thể chất.",
+        "2": "'8 giờ thì uống thuốc nhé' nhấn mạnh đúng giờ cho người sa sút trí tuệ có thể gây nhầm lẫn.",
+        "3": "'Hôm nay bà có khỏe không?' dùng ngôn ngữ không kính trọng, không phù hợp.",
+        "4": "Truyền đạt hai thông tin cùng lúc (được uống sữa nhưng không được uống cola) có thể gây nhầm lẫn.",
+        "5": "Câu hỏi lý do 'Tại sao ăn ít vậy?' tạo áp lực tâm lý cho người sa sút trí tuệ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "폐쇄형 질문", "def_vi": "Câu hỏi đóng — câu hỏi chỉ cần trả lời 'có' hoặc 'không', thích hợp với người suy giảm nhận thức" },
+      { "term_ko": "존칭어", "def_vi": "Kính ngữ — ngôn ngữ thể hiện sự tôn trọng đối phương trong giao tiếp tiếng Hàn" }
+    ]
+  },
+  {
+    "id": 1604,
+    "intent_ko": "치매 대상자에게 질문할 때 올바른 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi về cách đặt câu hỏi đúng cho người mắc sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "'어떤 음식을 좋아하세요?'는 개방형 질문으로 치매 환자에게 너무 넓고 복잡하다.",
+        "2": "★ '사과 드실래요?'는 구체적인 선택지를 하나만 제시하는 단순하고 명확한 질문이다. 대상자가 쉽게 이해하고 '네'/'아니오'로 답할 수 있어 치매 환자와의 소통에 가장 적합하다.",
+        "3": "식사·양치·외출 세 가지 행동을 한 문장으로 지시하면 인지 과부하가 생긴다.",
+        "4": "명령형 표현은 대상자의 선택권을 박탈하며 의견을 물어보는 것이 아니다.",
+        "5": "두 가지 공간 규칙을 동시에 제시하면 치매 환자가 혼란스러워할 수 있다."
+      },
+      "vi": {
+        "1": "'Cụ thích ăn gì?' là câu hỏi mở quá rộng và phức tạp với người sa sút trí tuệ.",
+        "2": "★ 'Cụ ăn táo nhé?' là câu hỏi đơn giản, rõ ràng chỉ đưa ra một lựa chọn cụ thể. Người bệnh dễ hiểu và trả lời bằng 'có'/'không', phù hợp nhất để giao tiếp với người sa sút trí tuệ.",
+        "3": "Hướng dẫn ba hành động (ăn, đánh răng, ra ngoài) trong một câu gây quá tải nhận thức.",
+        "4": "Câu ra lệnh tước bỏ quyền lựa chọn của người bệnh và không phải câu hỏi.",
+        "5": "Đưa ra hai quy tắc không gian cùng lúc có thể gây nhầm lẫn cho người sa sút trí tuệ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "개방형 질문", "def_vi": "Câu hỏi mở — câu hỏi không giới hạn câu trả lời, không phù hợp với người suy giảm nhận thức nặng" },
+      { "term_ko": "인지 과부하", "def_vi": "Quá tải nhận thức — nhận quá nhiều thông tin vượt khả năng xử lý của não" }
+    ]
+  },
+  {
+    "id": 1603,
+    "intent_ko": "치매 대상자와 의사소통할 때 적절한 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi về phương pháp giao tiếp phù hợp với người mắc sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "'어제는 무엇을 드셨어요?'는 단기 기억을 요구하는 질문으로 치매 환자에게 부담이 된다.",
+        "2": "'몸이 어떻게 아프세요?'는 증상을 구체적으로 설명해야 하는 복잡한 개방형 질문이다.",
+        "3": "★ '우유 드실래요? 주스 드실래요?'는 두 가지 구체적인 선택지를 제공하는 방식으로, 치매 대상자가 복잡하게 생각하지 않고 선택만 하면 된다. 선택지를 좁혀주는 이 방법은 대답을 이끌어내기에 가장 효과적이다.",
+        "4": "'어디로 여행가고 싶으세요?'는 추상적이고 미래 계획을 요구하는 질문으로 치매 환자에게 어렵다.",
+        "5": "식사·양치·산책을 한 번에 제안하면 한 번에 한 가지 원칙을 어긴다."
+      },
+      "vi": {
+        "1": "'Hôm qua cụ ăn gì?' yêu cầu trí nhớ ngắn hạn, tạo gánh nặng cho người sa sút trí tuệ.",
+        "2": "'Cụ đau như thế nào?' là câu hỏi mở phức tạp, yêu cầu mô tả chi tiết triệu chứng.",
+        "3": "★ 'Cụ uống sữa hay nước trái cây?' cung cấp hai lựa chọn cụ thể, người bệnh chỉ cần chọn mà không phải suy nghĩ phức tạp. Phương pháp thu hẹp lựa chọn này hiệu quả nhất để gợi ra câu trả lời từ người sa sút trí tuệ.",
+        "4": "'Cụ muốn đi du lịch đâu?' là câu hỏi trừu tượng đòi hỏi lên kế hoạch tương lai, khó với người sa sút trí tuệ.",
+        "5": "Đề nghị ăn, đánh răng và đi dạo cùng một lúc vi phạm nguyên tắc một lần một việc."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "선택지 제한 질문", "def_vi": "Câu hỏi thu hẹp lựa chọn — đưa ra 2 phương án cụ thể để người bệnh dễ dàng quyết định" },
+      { "term_ko": "단기 기억", "def_vi": "Trí nhớ ngắn hạn — khả năng lưu giữ thông tin trong thời gian ngắn, thường suy giảm sớm trong sa sút trí tuệ" }
+    ]
+  },
+  {
+    "id": 1602,
+    "intent_ko": "손주와 여행 얘기를 꺼낸 치매 대상자에게 요양보호사가 해야 할 적절한 의사소통을 고르는 문제",
+    "intent_vi": "Câu hỏi về cách giao tiếp phù hợp của nhân viên chăm sóc khi người sa sút trí tuệ đề cập đến chuyến đi du lịch với cháu",
+    "choice_explanations": {
+      "ko": {
+        "1": "'어르신 생각은 어떠세요?'는 개방형으로 치매 환자가 자신의 생각을 정리해 말하기 어렵다.",
+        "2": "'하고 싶은 대로 하세요'는 지나치게 포괄적이어서 실질적인 도움이 되지 않는다.",
+        "3": "'어디로 여행가고 싶으세요?'는 치매 환자가 구체적 장소를 떠올리기 어려운 추상적 질문이다.",
+        "4": "★ '가고 싶으세요? 가고 싶지 않으세요?'는 '예'/'아니오'로만 답하면 되는 이분법적 폐쇄형 질문이다. 인지 부담이 낮아 치매 대상자가 쉽게 자신의 의사를 표현할 수 있는 가장 적절한 방법이다.",
+        "5": "건강검진·사진·여권 등 복잡한 준비 사항을 한꺼번에 언급하면 치매 환자에게 과부하가 된다."
+      },
+      "vi": {
+        "1": "'Cụ nghĩ sao?' là câu hỏi mở khiến người sa sút trí tuệ khó sắp xếp và diễn đạt suy nghĩ.",
+        "2": "'Cụ muốn làm gì thì làm' quá bao quát, không giúp ích thực tế.",
+        "3": "'Cụ muốn đi đâu du lịch?' là câu hỏi trừu tượng khó gợi lên địa điểm cụ thể với người sa sút trí tuệ.",
+        "4": "★ 'Cụ có muốn đi không? Hay không muốn đi?' là câu hỏi nhị phân đóng chỉ cần trả lời 'có'/'không'. Gánh nặng nhận thức thấp, giúp người sa sút trí tuệ dễ dàng bày tỏ ý muốn — đây là cách phù hợp nhất.",
+        "5": "Đề cập cùng lúc nhiều việc chuẩn bị (khám sức khỏe, chụp ảnh, làm hộ chiếu) gây quá tải cho người sa sút trí tuệ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "이분법적 질문", "def_vi": "Câu hỏi nhị phân — câu hỏi chỉ có hai đáp án đối lập (có/không), giảm gánh nặng nhận thức" },
+      { "term_ko": "인지 부담", "def_vi": "Gánh nặng nhận thức — mức độ nỗ lực tư duy cần thiết để xử lý thông tin" }
+    ]
+  },
+  {
+    "id": 1601,
+    "intent_ko": "배가 아프다는 대상자에게 요양보호사가 취해야 할 효과적인 의사소통 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi về phương pháp giao tiếp hiệu quả của nhân viên chăm sóc khi người được chăm sóc kêu đau bụng",
+    "choice_explanations": {
+      "ko": {
+        "1": "'또 왜 그러세요?'는 대상자를 무시하는 듯한 인상을 주어 공감 없는 반응이다.",
+        "2": "'점심 못 드시겠네요?'는 현재의 통증에 대한 직접적 대응이 아니다.",
+        "3": "'누워계세요'는 상황을 파악하지 않고 단순히 지시만 하는 것이다.",
+        "4": "'어제 무엇을 드셨어요?'는 과거 정보를 묻는 것으로, 현재 통증 원인 파악에 직접적이지 않다.",
+        "5": "★ 배를 직접 짚으며 '여기가 아프세요?'라고 묻는 것은 신체 접촉으로 공감을 표현하면서 동시에 통증 부위를 정확히 파악하는 가장 효과적인 대응이다. 언어와 비언어(신체 접촉)를 결합한 적극적 의사소통의 예시이다."
+      },
+      "vi": {
+        "1": "'Lại sao vậy?' tạo cảm giác bị coi thường, thiếu đồng cảm.",
+        "2": "'Trưa nay chắc không ăn được rồi?' không phải phản ứng trực tiếp với cơn đau hiện tại.",
+        "3": "'Thì nằm xuống đi' chỉ ra lệnh mà không tìm hiểu tình huống.",
+        "4": "'Hôm qua ăn gì?' hỏi thông tin quá khứ, không trực tiếp giúp xác định nguyên nhân đau hiện tại.",
+        "5": "★ Vừa nhẹ nhàng đặt tay lên bụng vừa hỏi 'Đau ở đây không?' vừa thể hiện sự đồng cảm qua tiếp xúc cơ thể vừa xác định chính xác vị trí đau. Đây là ví dụ về giao tiếp tích cực kết hợp ngôn ngữ và phi ngôn ngữ hiệu quả nhất."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "비언어적 의사소통", "def_vi": "Giao tiếp phi ngôn ngữ — truyền đạt thông tin qua cử chỉ, nét mặt và tiếp xúc cơ thể thay vì lời nói" },
+      { "term_ko": "공감적 반응", "def_vi": "Phản ứng đồng cảm — cách đáp lại thể hiện sự hiểu và chia sẻ cảm xúc của người bệnh" },
+      { "term_ko": "증상 파악", "def_vi": "Xác định triệu chứng — quá trình thu thập thông tin về dấu hiệu bệnh của người được chăm sóc" }
+    ]
+  },
+  {
+    "id": 1600,
+    "intent_ko": "혼자 요리할 수 없는 치매 대상자가 된장국을 끓이겠다고 고집할 때 올바른 대처 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi về cách ứng xử đúng khi người sa sút trí tuệ không thể tự nấu ăn nhưng khăng khăng muốn tự nấu canh",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ '같이 끓일까요?'라고 제안하면 대상자의 자율성을 존중하면서도 안전을 확보할 수 있다. 대상자가 참여한다는 만족감을 주면서 요양보호사가 곁에서 위험을 방지하는 가장 이상적인 접근이다.",
+        "2": "'하면 안 돼요, 위험해요'라며 직접 금지하는 것은 대상자의 자율성을 침해하고 반발을 유발한다.",
+        "3": "'제가 해드릴게요'는 대상자를 배제시켜 자존감과 참여 욕구를 무시한다.",
+        "4": "'끓여보세요'라며 그냥 허용하면 혼자 하다가 화상 등 안전사고가 발생할 수 있다.",
+        "5": "어떻게 끓일지 설명해 보라는 것은 인지 능력이 저하된 대상자에게 무리한 요구이다."
+      },
+      "vi": {
+        "1": "★ Đề nghị 'Để chúng ta nấu cùng nhau nhé?' vừa tôn trọng quyền tự chủ của người bệnh vừa đảm bảo an toàn. Người bệnh có cảm giác được tham gia trong khi nhân viên chăm sóc ở cạnh phòng ngừa tai nạn — đây là cách tiếp cận lý tưởng nhất.",
+        "2": "Trực tiếp cấm 'Không được làm, nguy hiểm lắm' xâm phạm quyền tự chủ và gây phản ứng chống đối.",
+        "3": "'Để tôi nấu cho' loại trừ người bệnh khỏi hoạt động, bỏ qua lòng tự trọng và mong muốn tham gia.",
+        "4": "Cho phép tự nấu một mình có thể dẫn đến tai nạn như bỏng.",
+        "5": "Yêu cầu giải thích cách nấu là đòi hỏi quá mức đối với người suy giảm nhận thức."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "자율성 존중", "def_vi": "Tôn trọng quyền tự chủ — nguyên tắc để người bệnh tham gia quyết định trong giới hạn an toàn" },
+      { "term_ko": "고집", "def_vi": "Cố chấp, khăng khăng — thái độ không chịu thay đổi ý kiến dù được khuyên ngăn" }
+    ]
+  },
+  {
+    "id": 1599,
+    "intent_ko": "딸의 말에 화가 난 치매 대상자에게 요양보호사가 해야 할 적절한 공감적 대처를 고르는 문제",
+    "intent_vi": "Câu hỏi về cách ứng xử đồng cảm phù hợp của nhân viên chăm sóc với người sa sút trí tuệ đang tức giận vì lời con gái",
+    "choice_explanations": {
+      "ko": {
+        "1": "딸의 의도를 대신 해석해 주는 것은 대상자의 감정을 정작 수용하지 않는 방식이다.",
+        "2": "'본인만 손해예요, 참으세요'는 대상자를 자극하고 감정을 억압하는 부적절한 말이다.",
+        "3": "★ '음식 솜씨가 예전 같지 않다고 하니 속상하시지요'는 대상자가 느끼는 감정(상처, 억울함)을 정확히 반영하고 공감하는 말이다. 감정을 판단하거나 해결하려 하지 않고 먼저 대상자의 감정을 수용하는 가장 올바른 대처이다.",
+        "4": "따님한테 맡기라는 말은 문제 회피이며 대상자에게 도움이 되지 않는다.",
+        "5": "'제가 만들어드릴게요'는 대상자의 능력을 더 위축시킬 수 있다."
+      },
+      "vi": {
+        "1": "Thay mặt người bệnh giải thích ý định của con gái không thực sự tiếp nhận cảm xúc của họ.",
+        "2": "'Thiệt hại cho cụ thôi, chịu đựng đi' kích thích và kìm nén cảm xúc người bệnh — không phù hợp.",
+        "3": "★ 'Nghe nói tay nghề nấu ăn không còn như xưa chắc cụ buồn lòng lắm' phản ánh chính xác cảm xúc (tổn thương, ấm ức) của người bệnh và thể hiện sự đồng cảm. Không phán xét hay tìm cách giải quyết mà trước tiên tiếp nhận cảm xúc — đây là cách ứng xử đúng nhất.",
+        "4": "Bảo để con gái lo là né tránh vấn đề, không giúp ích cho người bệnh.",
+        "5": "'Để tôi nấu cho' có thể làm người bệnh càng cảm thấy mình vô dụng hơn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "공감적 반응", "def_vi": "Phản ứng đồng cảm — cách đáp lại thừa nhận và chia sẻ cảm xúc của người được chăm sóc" },
+      { "term_ko": "감정 반영", "def_vi": "Phản chiếu cảm xúc — kỹ thuật diễn đạt lại cảm xúc của người bệnh bằng lời để họ cảm thấy được hiểu" },
+      { "term_ko": "음식 솜씨", "def_vi": "Tay nghề nấu ăn — kỹ năng và khéo léo trong việc nấu các món ăn" }
+    ]
+  },
+  {
+    "id": 1598,
+    "intent_ko": "시설에서 치매 대상자가 성기를 노출할 때 적절한 대처 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi về cách xử lý phù hợp khi người sa sút trí tuệ tại cơ sở phơi bày bộ phận sinh dục",
+    "choice_explanations": {
+      "ko": {
+        "1": "스스로 옷을 입을 때까지 기다리는 것은 다른 대상자를 불편하게 만들고 상황을 방치하는 것이다.",
+        "2": "경범죄 경고는 치매 환자에게 이해되지 않으며 오히려 불안을 조성한다.",
+        "3": "다른 사람들을 이동시키면 대상자가 계속 노출 행동을 하도록 두는 것이 된다.",
+        "4": "여러 사람 앞에서 망신을 주는 것은 치매 환자에게 심각한 심리적 상처를 줄 수 있어 절대 해서는 안 된다.",
+        "5": "★ 좋아하는 물건이나 활동으로 관심을 전환시키는 것은 치매 행동 증상 관리의 핵심 원칙이다. 비난하거나 강제하지 않고 자연스럽게 다른 곳으로 주의를 돌려 문제 행동을 완화한다."
+      },
+      "vi": {
+        "1": "Chờ người bệnh tự mặc quần trở lại gây khó chịu cho người khác và bỏ mặc tình huống.",
+        "2": "Cảnh báo về tội vi phạm nhỏ không được hiểu bởi người sa sút trí tuệ và gây thêm lo lắng.",
+        "3": "Di chuyển mọi người đi nơi khác đồng nghĩa với việc để người bệnh tiếp tục hành vi đó.",
+        "4": "Làm người bệnh xấu hổ trước đám đông gây tổn thương tâm lý nghiêm trọng — tuyệt đối không làm.",
+        "5": "★ Chuyển hướng sự chú ý bằng đồ vật hoặc hoạt động yêu thích là nguyên tắc cốt lõi trong quản lý triệu chứng hành vi của sa sút trí tuệ. Không chỉ trích hay ép buộc mà tự nhiên dẫn sự chú ý sang hướng khác để giảm hành vi có vấn đề."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "관심 전환", "def_vi": "Chuyển hướng sự chú ý — kỹ thuật dẫn người bệnh sang hoạt động hoặc đối tượng khác để giảm hành vi không phù hợp" },
+      { "term_ko": "치매 행동 증상", "def_vi": "Triệu chứng hành vi của sa sút trí tuệ — các hành vi bất thường như kích động, lang thang, không phù hợp xã hội" }
+    ]
+  },
+  {
+    "id": 1597,
+    "intent_ko": "치매 대상자가 요양보호사를 애인이라 부르며 부적절한 행동을 할 때 대처 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi về cách ứng xử khi người sa sút trí tuệ gọi nhân viên chăm sóc là người yêu và có hành vi không phù hợp",
+    "choice_explanations": {
+      "ko": {
+        "1": "계약 종료를 언급하는 것은 문제 해결이 아니라 관계 단절을 초래하는 극단적 방법이다.",
+        "2": "성희롱 신고를 언급하면 치매 환자는 이해하지 못하고 오히려 상황이 악화될 수 있다.",
+        "3": "증상이라고 그냥 넘어가는 것은 행동이 지속되도록 방치하는 것이어서 문제 해결이 되지 않는다.",
+        "4": "권위적인 어조로 관계를 정정하는 것은 치매 환자에게 혼란과 반발을 줄 수 있다.",
+        "5": "★ 행동이 멈추지 않으면 담당 요양보호사 변경을 요청하겠다고 명확하게 경고하는 것은 경계를 설정하면서도 전문적 태도를 유지하는 적절한 대처이다. 상황을 방치하지 않고 구체적인 결과를 제시해 행동 변화를 유도한다."
+      },
+      "vi": {
+        "1": "Đề cập chấm dứt hợp đồng là phương pháp cực đoan gây đứt gãy quan hệ, không giải quyết vấn đề.",
+        "2": "Nhắc đến tố cáo quấy rối tình dục người sa sút trí tuệ không hiểu được và có thể làm tình huống tệ hơn.",
+        "3": "Bỏ qua vì coi là triệu chứng là để hành vi tiếp diễn mà không giải quyết.",
+        "4": "Giọng quyền uy để điều chỉnh mối quan hệ gây nhầm lẫn và phản ứng chống đối từ người sa sút trí tuệ.",
+        "5": "★ Cảnh báo rõ ràng rằng nếu không dừng lại sẽ yêu cầu thay đổi nhân viên chăm sóc là cách ứng xử phù hợp: thiết lập ranh giới rõ ràng trong khi duy trì thái độ chuyên nghiệp. Không bỏ mặc tình huống mà đưa ra hậu quả cụ thể để thúc đẩy thay đổi hành vi."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "경계 설정", "def_vi": "Thiết lập ranh giới — xác định giới hạn rõ ràng về hành vi được chấp nhận trong quan hệ chăm sóc" },
+      { "term_ko": "성적 탈억제", "def_vi": "Mất kiểm soát tình dục — triệu chứng sa sút trí tuệ gây ra hành vi tình dục không phù hợp với hoàn cảnh xã hội" }
+    ]
+  },
+  {
+    "id": 1596,
+    "intent_ko": "프로그램 중 남자 치매 대상자가 여자 대상자의 가슴을 만질 때 적절한 대처 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi về cách xử lý phù hợp khi người sa sút trí tuệ nam chạm vào ngực người sa sút trí tuệ nữ trong chương trình",
+    "choice_explanations": {
+      "ko": {
+        "1": "손을 때리는 것은 신체적 폭력으로 부적절하며 오히려 상황을 악화시킨다.",
+        "2": "사과를 요구하는 것은 치매 환자에게 행동의 의미를 이해하도록 요구하는 것으로 적절하지 않다.",
+        "3": "참여를 금지하는 것은 근본적 해결이 아니며 처벌적 성격이 강하다.",
+        "4": "★ 피해를 입은 여자 대상자를 즉시 다른 장소로 이동시키는 것이 가장 신속하고 효과적으로 상황을 진정시키는 방법이다. 피해자를 보호하면서 추가적인 불쾌한 상황을 막는다.",
+        "5": "큰 소리로 방으로 들어가라고 하는 것은 위협적이며 치매 환자를 더 불안하게 만든다."
+      },
+      "vi": {
+        "1": "Đánh tay là bạo lực thể chất, không phù hợp và làm tình huống trầm trọng hơn.",
+        "2": "Yêu cầu xin lỗi đòi hỏi người sa sút trí tuệ hiểu ý nghĩa hành vi của mình — không phù hợp.",
+        "3": "Cấm tham gia không phải giải pháp căn bản và mang tính trừng phạt.",
+        "4": "★ Ngay lập tức đưa người phụ nữ bị ảnh hưởng sang địa điểm khác là cách nhanh nhất và hiệu quả nhất để xoa dịu tình huống, bảo vệ nạn nhân và ngăn chặn các tình huống khó chịu thêm.",
+        "5": "La to bảo vào phòng ngay là đe dọa và khiến người sa sút trí tuệ thêm lo lắng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "피해자 보호 조치", "def_vi": "Biện pháp bảo vệ nạn nhân — hành động ưu tiên bảo vệ người bị ảnh hưởng khỏi tình huống gây hại" },
+      { "term_ko": "성적 탈억제", "def_vi": "Mất kiểm soát tình dục — triệu chứng hành vi trong sa sút trí tuệ biểu hiện qua hành vi tình dục không phù hợp" }
+    ]
+  },
+  {
+    "id": 1595,
+    "intent_ko": "치매 대상자가 반복적으로 바지 지퍼를 내리며 올려달라고 할 때 적절한 대처 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi về cách xử lý phù hợp khi người sa sút trí tuệ liên tục kéo khóa quần xuống và nhờ kéo lên",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 지퍼가 없는 바지로 갈아입히면 문제 행동의 원인(지퍼)을 환경적으로 제거하여 행동 자체가 발생하지 않도록 하는 가장 실질적이고 비침습적인 해결책이다. 대상자를 비난하거나 제한하지 않으면서 안전하게 문제를 해결한다.",
+        "2": "창피를 주는 것은 치매 환자에게 심리적 상처를 주는 부적절한 방법이다.",
+        "3": "서비스 중단 위협은 치매 환자에게 이해되지 않으며 불안만 가중시킨다.",
+        "4": "퇴소를 권하는 것은 문제 회피로 적절한 해결책이 아니다.",
+        "5": "스스로 지퍼를 올리라고 요구하는 것은 인지·운동 능력 저하를 고려하지 않은 요구이다."
+      },
+      "vi": {
+        "1": "★ Thay quần không có khóa kéo giúp loại bỏ nguyên nhân hành vi (khóa kéo) theo cách thay đổi môi trường — giải pháp thực tế và không xâm lấn nhất. Giải quyết vấn đề an toàn mà không chỉ trích hay hạn chế người bệnh.",
+        "2": "Làm người bệnh xấu hổ gây tổn thương tâm lý — phương pháp không phù hợp.",
+        "3": "Đe dọa ngừng dịch vụ người sa sút trí tuệ không hiểu được, chỉ làm tăng lo lắng.",
+        "4": "Khuyên rời khỏi cơ sở là né tránh vấn đề, không phải giải pháp phù hợp.",
+        "5": "Yêu cầu tự kéo khóa lên không tính đến suy giảm nhận thức và vận động."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "환경적 수정", "def_vi": "Điều chỉnh môi trường — thay đổi môi trường vật lý để ngăn ngừa hành vi có vấn đề mà không cần đối đầu" },
+      { "term_ko": "성적 탈억제", "def_vi": "Mất kiểm soát tình dục — triệu chứng hành vi trong sa sút trí tuệ biểu hiện qua hành vi tình dục không phù hợp với hoàn cảnh" }
+    ]
+  },
+  {
+    "id": 1594,
+    "intent_ko": "해질녘에 퇴근한다며 나가려는 치매 대상자를 돕는 올바른 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi về cách giúp đỡ phù hợp khi người sa sút trí tuệ vào lúc hoàng hôn cứ muốn 'tan làm' và ra ngoài",
+    "choice_explanations": {
+      "ko": {
+        "1": "일이 끝나지 않았다고 말해도 치매 환자는 현실을 인식하지 못하므로 효과가 없다.",
+        "2": "요양시설이라 나갈 수 없다고 설득해도 치매 환자에게 설득이 통하지 않는다.",
+        "3": "조명을 어둡게 하면 해질녘 증후군(일몰 증후군)이 있는 대상자에게 오히려 불안을 가중시킬 수 있다.",
+        "4": "빠른 박자의 큰 음악은 자극이 과다하여 불안을 유발할 수 있다.",
+        "5": "★ 좋아하는 텔레비전 프로그램을 켜주면 대상자의 관심이 자연스럽게 전환되어 외출 시도가 완화된다. 논쟁하거나 제지하지 않고 선호하는 활동으로 주의를 돌리는 관심 전환 기법이다."
+      },
+      "vi": {
+        "1": "Nói rằng công việc chưa xong cũng không có tác dụng vì người sa sút trí tuệ không nhận thức được thực tế.",
+        "2": "Thuyết phục rằng không được ra ngoài vì đây là cơ sở dưỡng lão thường không hiệu quả với người sa sút trí tuệ.",
+        "3": "Làm tối đèn có thể làm tăng lo lắng cho người mắc hội chứng hoàng hôn (sundowning).",
+        "4": "Nhạc to nhịp nhanh gây kích thích quá mức và dễ tạo ra sự lo lắng.",
+        "5": "★ Bật chương trình truyền hình yêu thích giúp sự chú ý tự nhiên chuyển sang, làm dịu ý định ra ngoài. Đây là kỹ thuật chuyển hướng sự chú ý — dẫn đến hoạt động ưa thích mà không tranh luận hay ngăn cản trực tiếp."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "일몰 증후군", "def_vi": "Hội chứng hoàng hôn (sundowning) — triệu chứng sa sút trí tuệ gây kích động, bối rối tăng cao vào chiều tối" },
+      { "term_ko": "관심 전환 기법", "def_vi": "Kỹ thuật chuyển hướng sự chú ý — dẫn người bệnh đến hoạt động hoặc kích thích khác để giảm hành vi không phù hợp" }
+    ]
+  },
+  {
+    "id": 1593,
+    "intent_ko": "해질녘에 아들 집으로 가겠다며 가방을 드는 치매 대상자를 올바르게 대처하는 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi về cách ứng xử đúng với người sa sút trí tuệ cầm túi đòi đến nhà con trai vào lúc hoàng hôn",
+    "choice_explanations": {
+      "ko": {
+        "1": "가방을 치우면 대상자가 물건을 잃어버렸다고 생각해 더 불안해질 수 있다.",
+        "2": "침실 조명을 어둡게 하면 불안감을 오히려 높일 수 있다.",
+        "3": "★ 좋아하는 따뜻한 음료를 제안하면 대상자의 관심이 자연스럽게 전환되고 정서적으로 안정된다. 직접 거부하거나 논쟁하지 않고 긍정적인 방향으로 유도하는 관심 전환의 좋은 예다.",
+        "4": "아들이 여행 중이라고 거짓 정보를 주면 나중에 신뢰가 무너질 수 있다.",
+        "5": "내일 만나자고 하는 것은 현재의 강한 욕구를 무시하는 것으로, 즉각적인 안정 효과가 낮다."
+      },
+      "vi": {
+        "1": "Cất túi đi có thể khiến người bệnh nghĩ mình mất đồ và thêm lo lắng.",
+        "2": "Làm tối đèn phòng ngủ có thể làm tăng lo lắng thay vì giảm.",
+        "3": "★ Đề nghị đồ uống ấm yêu thích giúp sự chú ý tự nhiên chuyển sang và ổn định cảm xúc. Đây là ví dụ tốt về kỹ thuật chuyển hướng — dẫn đến điều tích cực mà không từ chối hoặc tranh luận trực tiếp.",
+        "4": "Nói thông tin sai rằng con trai đi du lịch có thể phá vỡ lòng tin về sau.",
+        "5": "Nói để mai gặp bỏ qua nhu cầu mạnh mẽ ngay lúc đó, hiệu quả ổn định tức thì thấp."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "일몰 증후군", "def_vi": "Hội chứng hoàng hôn — tình trạng bối rối và kích động tăng cao vào buổi chiều tối ở người sa sút trí tuệ" },
+      { "term_ko": "관심 전환", "def_vi": "Chuyển hướng sự chú ý — kỹ thuật dẫn người bệnh sang hoạt động hoặc kích thích dễ chịu khác" },
+      { "term_ko": "신뢰 관계", "def_vi": "Quan hệ tin tưởng — mối quan hệ dựa trên sự trung thực và nhất quán giữa người chăm sóc và người bệnh" }
+    ]
+  },
+  {
+    "id": 1592,
+    "intent_ko": "해질녘에 다른 대상자를 남편으로 착각하며 '여보 무서워'라고 하는 치매 대상자에게 적절한 대처를 고르는 문제",
+    "intent_vi": "Câu hỏi về cách ứng xử phù hợp khi người sa sút trí tuệ nhầm người khác là chồng và nói 'Anh ơi, em sợ' vào lúc hoàng hôn",
+    "choice_explanations": {
+      "ko": {
+        "1": "뭐가 무서운지 말해보라는 것은 감정 표현이 어려운 대상자에게 부담이 되는 질문이다.",
+        "2": "괴롭히면 나가라는 부정적 위협은 불안을 크게 악화시킨다.",
+        "3": "할아버지가 작년에 돌아가셨다고 사실을 말하면 대상자에게 충격과 혼란을 줄 수 있다.",
+        "4": "사진과 다르다며 착각을 지적하는 것은 대상자의 감정을 무시하고 비판하는 것이다.",
+        "5": "★ 할아버지를 많이 의지하셨냐고 물으며 이야기를 나누도록 유도하는 것은 대상자의 정서적 욕구(안정·의지)를 충족시키고, 긍정적 기억을 회상하게 하여 심리적 안정감을 준다. 착각을 교정하려 하지 않고 감정에 공감하는 접근이다."
+      },
+      "vi": {
+        "1": "Hỏi 'sợ cái gì' là câu hỏi gây áp lực cho người khó diễn đạt cảm xúc.",
+        "2": "Đe dọa tiêu cực 'cứ quấy rầy thì phải ra ngoài' làm tình trạng lo lắng trầm trọng hơn nhiều.",
+        "3": "Thông báo sự thật ông đã mất năm ngoái có thể gây sốc và nhầm lẫn cho người bệnh.",
+        "4": "Chỉ ra rằng người đó khác với ảnh là phủ nhận và phê bình cảm xúc người bệnh.",
+        "5": "★ Hỏi 'Có lẽ cụ đã rất dựa vào ông nhỉ, kể cho cháu nghe về ông đi' đáp ứng nhu cầu cảm xúc (an toàn, nương tựa) của người bệnh và khuyến khích hồi tưởng ký ức tích cực, mang lại cảm giác ổn định tâm lý. Không sửa ảo giác mà đồng cảm với cảm xúc."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "정서적 지지", "def_vi": "Hỗ trợ tinh thần — cung cấp sự an ủi và đồng hành về mặt cảm xúc cho người bệnh" },
+      { "term_ko": "일몰 증후군", "def_vi": "Hội chứng hoàng hôn — bối rối và kích động tăng cao vào chiều tối ở người sa sút trí tuệ" },
+      { "term_ko": "현실 교정 vs 공감 접근", "def_vi": "Sửa thực tế vs tiếp cận đồng cảm — trong sa sút trí tuệ, đồng cảm với cảm xúc hiệu quả hơn cố sửa nhận thức sai" }
+    ]
+  },
+  {
+    "id": 1591,
+    "intent_ko": "해질녘에 다른 대상자의 사물함에서 옷을 꺼내는 치매 대상자에게 적절한 대처를 고르는 문제",
+    "intent_vi": "Câu hỏi về cách ứng xử đúng khi người sa sút trí tuệ lấy quần áo từ tủ của người khác vào lúc hoàng hôn",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ '어르신 옷을 같이 찾아봐요'라며 이끄는 것은 대상자의 행동에 공감하면서(옷을 찾고 싶다는 욕구) 비비난적으로 다른 곳으로 관심을 유도하는 적절한 대처이다. 대상자를 존중하면서 문제 상황을 자연스럽게 해소한다.",
+        "2": "'왜 남의 옷에 손을 대세요!'라며 소리치는 것은 대상자를 혼란스럽게 하고 불안을 가중시킨다.",
+        "3": "다른 대상자에게 귓속말로 이해를 구하는 것은 문제 해결에 직접적이지 않다.",
+        "4": "조명을 끄고 자라고 하는 것은 일몰 증후군이 있는 대상자의 불안을 높일 수 있다.",
+        "5": "'남의 옷을 가져가면 안 돼요'라며 따지는 것은 치매 환자에게 수치심과 불쾌감을 준다."
+      },
+      "vi": {
+        "1": "★ Nói 'Mình cùng tìm quần áo của cụ nhé' và dẫn đi là cách ứng xử phù hợp: đồng cảm với nhu cầu (muốn tìm quần áo) và hướng sự chú ý sang nơi khác một cách không chỉ trích. Tôn trọng người bệnh trong khi tự nhiên giải quyết tình huống.",
+        "2": "La 'Sao cụ lại đụng vào quần áo của người ta!' khiến người bệnh thêm bối rối và lo lắng.",
+        "3": "Thì thầm nhờ người khác thông cảm không giải quyết trực tiếp vấn đề.",
+        "4": "Tắt đèn và bảo ngủ đi có thể làm tăng lo lắng ở người mắc hội chứng hoàng hôn.",
+        "5": "Mắng 'Không được lấy đồ của người khác' gây cảm giác xấu hổ và khó chịu cho người sa sút trí tuệ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "비비난적 대처", "def_vi": "Ứng xử không chỉ trích — cách tiếp cận không phán xét, không mắng mỏ người bệnh về hành vi của họ" },
+      { "term_ko": "일몰 증후군", "def_vi": "Hội chứng hoàng hôn — bối rối và hành vi bất thường tăng cao vào buổi chiều tối ở người sa sút trí tuệ" }
+    ]
+  },
+  {
+    "id": 1590,
+    "intent_ko": "해질녘에 '죽어야 하는데 죽지도 않는다'며 우는 치매 대상자에게 적절한 대처를 고르는 문제",
+    "intent_vi": "Câu hỏi về cách ứng xử đúng với người sa sút trí tuệ khóc và nói 'đáng lẽ phải chết rồi mà không chết được' vào lúc hoàng hôn",
+    "choice_explanations": {
+      "ko": {
+        "1": "죽음에 대해 말하지 말라고 하면 대상자의 감정을 억압하고 무시하는 것이다.",
+        "2": "★ 눈물을 닦아주며 옆에 있어주는 것은 언어적 설명 없이도 신체적 공감과 존재 자체로 대상자에게 정서적 지지를 제공하는 가장 적절한 대처이다. 죽음에 대한 발언을 부정하거나 교정하지 않고 대상자의 고통에 함께 있어주는 것이 핵심이다.",
+        "3": "'나이 들면 누구나 그런 생각을 해요'는 대상자의 개인적 고통을 일반화하여 감정을 무시하는 말이다.",
+        "4": "'그렇게 말하는 사람이 더 오래 산다'는 비유적 표현은 맥락을 이해하지 못하는 치매 환자에게 혼란을 준다.",
+        "5": "다른 대상자에게 피해가 된다며 조용히 하라는 것은 감정을 억압하고 수치심을 유발한다."
+      },
+      "vi": {
+        "1": "Bảo đừng nói về cái chết là kìm nén và phớt lờ cảm xúc của người bệnh.",
+        "2": "★ Lau nước mắt và ở bên cạnh là cách cung cấp hỗ trợ tinh thần qua tiếp xúc cơ thể và sự hiện diện mà không cần lời giải thích — đây là ứng xử phù hợp nhất. Không phủ nhận hay sửa lời nói về cái chết mà đơn giản là cùng chia sẻ nỗi đau với người bệnh.",
+        "3": "'Ai già cũng nghĩ vậy thôi' tổng quát hóa nỗi đau cá nhân và phớt lờ cảm xúc của người bệnh.",
+        "4": "'Người nói vậy lại sống lâu đấy' là cách diễn đạt bóng bẩy gây nhầm lẫn cho người sa sút trí tuệ không hiểu ngữ cảnh.",
+        "5": "Bảo im lặng vì ảnh hưởng người khác kìm nén cảm xúc và gây cảm giác xấu hổ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "정서적 지지", "def_vi": "Hỗ trợ tinh thần — cung cấp sự an ủi và đồng hành về cảm xúc, đặc biệt quan trọng khi người bệnh đau khổ" },
+      { "term_ko": "비언어적 공감", "def_vi": "Đồng cảm phi ngôn ngữ — thể hiện sự chia sẻ qua hành động và sự hiện diện thay vì lời nói" },
+      { "term_ko": "죽음 발언 대처", "def_vi": "Ứng xử với lời nói về cái chết — không tranh luận hay sửa chữa mà đồng hành và lắng nghe cảm xúc phía sau lời nói" }
+    ]
+  }
+]

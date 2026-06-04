@@ -1,0 +1,762 @@
+[
+  {
+    "id": 1161,
+    "intent_ko": "요양보호사의 업무보고 원칙 중 올바른 것을 고르는 문제",
+    "intent_vi": "Chọn nguyên tắc đúng trong báo cáo công việc của nhân viên chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "주관적 사실을 보고하면 신뢰성이 떨어지므로 옳지 않습니다. 보고는 객관적 사실에 근거해야 합니다.",
+        "2": "★ 육하원칙(누가·언제·어디서·무엇을·어떻게·왜)에 따라 보고하는 것이 업무 보고의 기본 원칙입니다. 빠짐없이 핵심 정보를 전달해 의료팀과 시설 전체가 동일한 정보를 공유할 수 있게 합니다.",
+        "3": "근무 종료 후 보고하면 긴급 상황에 즉각 대응하지 못해 업무 연속성을 해칩니다.",
+        "4": "중요한 내용은 반복이 아닌 명확하고 정확하게 한 번 보고해야 합니다.",
+        "5": "일주일 단위로 모아서 보고하면 즉각적인 정보 전달이 늦어져 사고 대응이 어렵습니다."
+      },
+      "vi": {
+        "1": "Báo cáo các sự kiện chủ quan làm giảm độ tin cậy. Báo cáo phải dựa trên sự thật khách quan.",
+        "2": "★ Báo cáo theo nguyên tắc 5W1H (Ai·Khi nào·Ở đâu·Cái gì·Như thế nào·Tại sao) là nguyên tắc cơ bản của báo cáo công việc. Truyền đạt đầy đủ thông tin cốt lõi để toàn bộ đội ngũ y tế và cơ sở chia sẻ thông tin giống nhau.",
+        "3": "Báo cáo sau khi kết thúc ca làm việc không thể ứng phó kịp thời trong tình huống khẩn cấp, làm gián đoạn tính liên tục của công việc.",
+        "4": "Các nội dung quan trọng cần được báo cáo một lần một cách rõ ràng và chính xác, không phải lặp đi lặp lại.",
+        "5": "Tổng hợp báo cáo theo tuần làm chậm trễ việc truyền đạt thông tin kịp thời, gây khó khăn trong ứng phó sự cố."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "육하원칙", "def_vi": "Nguyên tắc 5W1H: Ai (누가), Khi nào (언제), Ở đâu (어디서), Cái gì (무엇을), Như thế nào (어떻게), Tại sao (왜)" },
+      { "term_ko": "업무보고", "def_vi": "Báo cáo công việc: báo cáo tiến độ và tình trạng công việc lên cấp trên hoặc đồng nghiệp liên quan" }
+    ]
+  },
+  {
+    "id": 1160,
+    "intent_ko": "업무보고의 중요한 효과로 가장 적절한 것을 고르는 문제",
+    "intent_vi": "Chọn hiệu quả quan trọng nhất của việc báo cáo công việc",
+    "choice_explanations": {
+      "ko": {
+        "1": "대상자의 단점 파악은 업무보고의 직접적 목적이 아닙니다.",
+        "2": "보호자와의 관계 개선은 업무보고의 직접적 결과가 아닙니다.",
+        "3": "★ 업무보고를 통해 대상자의 이상 상황을 신속히 공유함으로써 사고에 빠르게 대응할 수 있습니다. 이것이 업무보고의 가장 핵심적인 효과입니다.",
+        "4": "질병 치료는 의사·간호사의 역할이며, 요양보호사의 업무보고로 직접 이루어지지 않습니다.",
+        "5": "업무성과 평가는 업무보고의 부수적인 효과일 수 있으나 주된 목적이 아닙니다."
+      },
+      "vi": {
+        "1": "Nắm bắt điểm yếu của đối tượng không phải là mục đích trực tiếp của báo cáo công việc.",
+        "2": "Cải thiện quan hệ với người bảo hộ không phải là kết quả trực tiếp của báo cáo công việc.",
+        "3": "★ Thông qua báo cáo công việc, thông tin bất thường của đối tượng được chia sẻ kịp thời, cho phép ứng phó nhanh chóng với sự cố. Đây là hiệu quả cốt lõi nhất của báo cáo công việc.",
+        "4": "Điều trị bệnh là vai trò của bác sĩ và y tá, không được thực hiện trực tiếp qua báo cáo công việc của nhân viên chăm sóc.",
+        "5": "Đánh giá kết quả công việc có thể là hiệu quả phụ của báo cáo, nhưng không phải mục đích chính."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "사고대응", "def_vi": "Ứng phó sự cố: phương án và hành động xử lý khi xảy ra sự cố hoặc tình huống bất thường" },
+      { "term_ko": "업무보고", "def_vi": "Báo cáo công việc: tổng hợp và truyền đạt tình trạng công việc lên cấp trên hoặc các bên liên quan" }
+    ]
+  },
+  {
+    "id": 1159,
+    "intent_ko": "장기요양급여 제공기록지 작성 방법 중 올바른 것을 고르는 문제",
+    "intent_vi": "Chọn phương pháp đúng khi điền biên bản cung cấp phúc lợi chăm sóc dài hạn",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 방문요양서비스는 서비스 제공의 시작 시간과 종료 시간을 모두 기록해야 합니다. 이는 실제 서비스 제공 시간을 정확히 증빙하기 위한 필수 기재 사항입니다.",
+        "2": "방문요양서비스의 세부 서비스별 제공시간은 '분' 단위로 기재하며, '시간' 단위가 아닙니다.",
+        "3": "방문목욕서비스는 장기요양요원 2명의 성명을 기재해야 합니다.",
+        "4": "주·야간 보호 서비스도 세부 서비스별 제공시간을 기재해야 합니다.",
+        "5": "시설급여서비스에서도 특이사항은 반드시 기재해야 합니다."
+      },
+      "vi": {
+        "1": "★ Dịch vụ chăm sóc tại nhà phải ghi lại cả thời gian bắt đầu và thời gian kết thúc cung cấp dịch vụ. Đây là mục bắt buộc phải ghi để chứng minh chính xác thời gian cung cấp dịch vụ thực tế.",
+        "2": "Thời gian cung cấp theo từng dịch vụ chi tiết của dịch vụ chăm sóc tại nhà được ghi theo đơn vị 'phút', không phải đơn vị 'giờ'.",
+        "3": "Dịch vụ tắm tại nhà phải ghi tên của 2 nhân viên chăm sóc dài hạn.",
+        "4": "Dịch vụ bảo vệ ban ngày và ban đêm cũng phải ghi thời gian cung cấp theo từng dịch vụ chi tiết.",
+        "5": "Ngay cả trong dịch vụ phúc lợi tại cơ sở, các điểm đặc biệt cũng phải được ghi lại."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "장기요양급여", "def_vi": "Phúc lợi chăm sóc dài hạn: dịch vụ và trợ cấp được cung cấp cho người cần chăm sóc dài hạn theo hệ thống bảo hiểm quốc gia" },
+      { "term_ko": "제공기록지", "def_vi": "Biên bản ghi chép cung cấp: tài liệu ghi lại nội dung, thời gian và kết quả dịch vụ chăm sóc đã cung cấp" },
+      { "term_ko": "방문목욕서비스", "def_vi": "Dịch vụ tắm tại nhà: dịch vụ nhân viên chăm sóc đến tận nhà giúp đối tượng tắm rửa, thường cần 2 nhân viên" }
+    ]
+  },
+  {
+    "id": 1158,
+    "intent_ko": "방문요양 시 장기요양급여 제공기록지에 반드시 기록해야 할 내용을 고르는 문제",
+    "intent_vi": "Chọn nội dung bắt buộc phải ghi trong biên bản cung cấp phúc lợi chăm sóc dài hạn khi chăm sóc tại nhà",
+    "choice_explanations": {
+      "ko": {
+        "1": "월 급여한도액은 제공기록지에 기재하는 항목이 아닙니다.",
+        "2": "수급자 가족 수는 제공기록지의 기재 항목이 아닙니다.",
+        "3": "수급자 희망급여는 제공기록지 기재 사항이 아닙니다.",
+        "4": "★ 총 급여제공시간은 방문요양 제공기록지에 반드시 기록해야 하는 핵심 항목입니다. 실제로 제공된 서비스 시간을 합산하여 급여비용 청구의 근거가 됩니다.",
+        "5": "보호자 직업은 제공기록지에 기재하지 않습니다."
+      },
+      "vi": {
+        "1": "Hạn mức phúc lợi hàng tháng không phải là mục ghi trong biên bản cung cấp.",
+        "2": "Số thành viên gia đình người hưởng trợ cấp không phải là mục ghi trong biên bản cung cấp.",
+        "3": "Phúc lợi mong muốn của người hưởng trợ cấp không phải là mục ghi trong biên bản cung cấp.",
+        "4": "★ Tổng thời gian cung cấp phúc lợi là mục cốt lõi bắt buộc phải ghi trong biên bản chăm sóc tại nhà. Tổng hợp thời gian dịch vụ thực tế đã cung cấp để làm căn cứ cho việc yêu cầu thanh toán chi phí phúc lợi.",
+        "5": "Nghề nghiệp của người bảo hộ không được ghi trong biên bản cung cấp."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "수급자", "def_vi": "Người hưởng trợ cấp: người được công nhận đủ điều kiện và nhận dịch vụ phúc lợi chăm sóc dài hạn" },
+      { "term_ko": "총 급여제공시간", "def_vi": "Tổng thời gian cung cấp phúc lợi: tổng thời gian các dịch vụ chăm sóc đã được cung cấp, là căn cứ để thanh toán bảo hiểm" }
+    ]
+  },
+  {
+    "id": 1157,
+    "intent_ko": "장기요양급여 제공기록지에 기재되지 않는 항목을 고르는 문제",
+    "intent_vi": "Chọn mục không được ghi trong biên bản cung cấp phúc lợi chăm sóc dài hạn",
+    "choice_explanations": {
+      "ko": {
+        "1": "장기요양등급은 제공기록지에 필수 기재 항목입니다.",
+        "2": "서비스 제공일자는 반드시 기재해야 합니다.",
+        "3": "장기요양 인정번호는 대상자를 식별하는 중요 항목으로 필수 기재합니다.",
+        "4": "★ 장기요양 유효기간은 제공기록지의 기재 항목이 아닙니다. 제공기록지에는 실제 서비스 제공 내용(일자, 시작·종료 시간, 서비스 종류 등)을 기재하며, 유효기간은 별도의 인정서 서류에서 확인합니다.",
+        "5": "서비스 시작시간 및 종료시간은 급여 청구의 근거가 되므로 반드시 기재합니다."
+      },
+      "vi": {
+        "1": "Cấp độ chăm sóc dài hạn là mục bắt buộc phải ghi trong biên bản cung cấp.",
+        "2": "Ngày cung cấp dịch vụ là mục bắt buộc phải ghi.",
+        "3": "Số chứng nhận chăm sóc dài hạn là mục quan trọng để xác định đối tượng, bắt buộc phải ghi.",
+        "4": "★ Thời hạn hiệu lực chăm sóc dài hạn không phải là mục ghi trong biên bản cung cấp. Biên bản cung cấp ghi lại nội dung dịch vụ thực tế (ngày, giờ bắt đầu và kết thúc, loại dịch vụ,...), còn thời hạn hiệu lực được kiểm tra trong giấy chứng nhận riêng.",
+        "5": "Thời gian bắt đầu và kết thúc dịch vụ là căn cứ cho việc yêu cầu thanh toán phúc lợi nên bắt buộc phải ghi."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "장기요양등급", "def_vi": "Cấp độ chăm sóc dài hạn: cấp độ được phân loại theo mức độ cần chăm sóc của đối tượng (cấp 1~5 và cấp nhận thức)" },
+      { "term_ko": "장기요양 인정번호", "def_vi": "Số chứng nhận chăm sóc dài hạn: mã số cá nhân được cấp khi được công nhận hưởng dịch vụ chăm sóc dài hạn" },
+      { "term_ko": "유효기간", "def_vi": "Thời hạn hiệu lực: khoảng thời gian có thể sử dụng dịch vụ chăm sóc dài hạn được công nhận" }
+    ]
+  },
+  {
+    "id": 1156,
+    "intent_ko": "요양보호 기록 관리 시 주의해야 할 옳은 사항을 고르는 문제",
+    "intent_vi": "Chọn lưu ý đúng trong quản lý hồ sơ chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "개인정보를 제3자에게 노출하는 것은 개인정보 보호법에 위배됩니다.",
+        "2": "업무상 알게 된 정보를 외부에 유출하는 것은 법적·윤리적으로 금지됩니다.",
+        "3": "대상자의 동의 없이 개인정보를 수집하는 것은 법적으로 금지됩니다.",
+        "4": "★ 기록은 반드시 잠금장치가 있는 장소에 보관해야 합니다. 개인정보 보호와 기록의 안전한 보존을 위해, 허가받지 않은 사람이 접근하지 못하도록 잠금 기능이 갖추어진 공간에 보관하는 것이 원칙입니다.",
+        "5": "대상자의 기록은 업무상 필요한 관련 담당자만 열람할 수 있으며, 누구에게나 공개되어서는 안 됩니다."
+      },
+      "vi": {
+        "1": "Tiết lộ thông tin cá nhân cho bên thứ ba vi phạm Luật bảo vệ thông tin cá nhân.",
+        "2": "Rò rỉ thông tin biết được trong công việc ra bên ngoài bị cấm về mặt pháp lý và đạo đức.",
+        "3": "Thu thập thông tin cá nhân mà không có sự đồng ý của đối tượng bị cấm theo quy định pháp luật.",
+        "4": "★ Hồ sơ phải được lưu trữ ở nơi có khóa. Để bảo vệ thông tin cá nhân và bảo quản hồ sơ an toàn, nguyên tắc là lưu trữ ở không gian có cơ chế khóa để người không được phép không thể tiếp cận.",
+        "5": "Hồ sơ của đối tượng chỉ được xem bởi người phụ trách liên quan cần thiết cho công việc, không được công khai cho bất kỳ ai."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "개인정보", "def_vi": "Thông tin cá nhân: thông tin có thể nhận dạng một cá nhân cụ thể như tên, ngày sinh, địa chỉ, tình trạng sức khỏe" },
+      { "term_ko": "잠금장치", "def_vi": "Thiết bị khóa: cơ chế khóa trên tủ hoặc phòng để ngăn người không được phép tiếp cận" },
+      { "term_ko": "유출", "def_vi": "Rò rỉ thông tin: tiết lộ hoặc truyền đạt thông tin bí mật ra bên ngoài mà không được phép" }
+    ]
+  },
+  {
+    "id": 1155,
+    "intent_ko": "요양보호사의 관찰 기록 방법으로 객관적이고 정확한 것을 고르는 문제",
+    "intent_vi": "Chọn phương pháp ghi chép quan sát khách quan và chính xác của nhân viên chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "'오래된 빵'은 주관적 판단(신선도 기준이 불명확)이 포함되어 객관적 기록으로 적합하지 않습니다.",
+        "2": "'한참'은 시간이 구체적이지 않아 기록으로 부적절합니다.",
+        "3": "'오래 걸렸다'는 주관적 표현으로 기록으로 적합하지 않습니다.",
+        "4": "★ '오전 10시에 죽 한 그릇을 드셨다'는 구체적인 시간(오전 10시)과 섭취 내용(죽 한 그릇)을 명시하여 객관적이고 정확한 기록입니다. 요양보호 기록은 이처럼 육하원칙에 따라 측정 가능한 사실을 기록해야 합니다.",
+        "5": "'시원하게'는 주관적 표현이고 '며칠만에'도 정확한 날짜가 아니어서 기록으로 부적절합니다."
+      },
+      "vi": {
+        "1": "'Bánh cũ' bao gồm phán đoán chủ quan (tiêu chuẩn về độ tươi không rõ ràng) nên không phù hợp với ghi chép khách quan.",
+        "2": "'Một lúc lâu' không cụ thể về thời gian nên không phù hợp để ghi chép.",
+        "3": "'Mất nhiều thời gian' là cách diễn đạt chủ quan, không phù hợp để ghi chép.",
+        "4": "★ '10 giờ sáng, ăn một bát cháo' là ghi chép khách quan và chính xác vì nêu rõ thời gian cụ thể (10 giờ sáng) và nội dung ăn uống (một bát cháo). Ghi chép chăm sóc phải ghi lại sự thật có thể đo lường được theo nguyên tắc 5W1H như vậy.",
+        "5": "'Thoải mái' là cách diễn đạt chủ quan và 'mấy ngày' cũng không phải ngày cụ thể nên không phù hợp để ghi chép."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "객관적 기록", "def_vi": "Ghi chép khách quan: ghi lại sự thật có thể quan sát và đo lường được, không bao gồm ý kiến hay cảm xúc cá nhân" },
+      { "term_ko": "주관적 판단", "def_vi": "Phán đoán chủ quan: đánh giá dựa trên cảm giác hoặc ý kiến cá nhân, không dựa trên tiêu chuẩn khách quan" }
+    ]
+  },
+  {
+    "id": 1154,
+    "intent_ko": "요양보호사의 업무기록 방법 중 객관적이고 구체적인 것을 고르는 문제",
+    "intent_vi": "Chọn phương pháp ghi chép công việc khách quan và cụ thể của nhân viên chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "'오랜만에', '좋아 보였다'는 주관적·모호한 표현으로 업무기록에 부적절합니다.",
+        "2": "'얼마 전부터', '꽤 늘었다'는 모두 주관적이고 불분명한 표현입니다.",
+        "3": "'평소보다 많이'는 구체적인 수치가 없는 주관적 기술입니다.",
+        "4": "★ '오후 3시에 간식으로 나온 수박을 안 드셨다'는 구체적인 시간(오후 3시), 제공 음식(수박), 섭취 여부(드시지 않음)가 명시된 객관적인 사실 기록입니다. 이처럼 요양보호 기록은 측정·확인 가능한 구체적 사실로 작성해야 합니다.",
+        "5": "'며칠 만에', '좋아 보인다'는 날짜도 불명확하고 주관적 감정 표현이 포함되어 부적절합니다."
+      },
+      "vi": {
+        "1": "'Lâu lắm rồi', 'trông có vẻ ngon miệng hơn' là những cách diễn đạt chủ quan và mơ hồ, không phù hợp với ghi chép công việc.",
+        "2": "'Từ một thời gian trước', 'tăng khá nhiều' đều là cách diễn đạt chủ quan và không rõ ràng.",
+        "3": "'Nhiều hơn bình thường' là mô tả chủ quan không có con số cụ thể.",
+        "4": "★ 'Lúc 3 giờ chiều, không ăn dưa hấu được mang ra làm đồ ăn nhẹ' là ghi chép sự thật khách quan với thời gian cụ thể (3 giờ chiều), thức ăn cung cấp (dưa hấu) và tình trạng ăn uống (không ăn) được nêu rõ. Ghi chép chăm sóc phải được viết bằng sự thật cụ thể có thể đo lường và kiểm chứng như vậy.",
+        "5": "'Mấy ngày' không rõ ngày cụ thể và 'trông có vẻ vui hơn' là cách diễn đạt cảm xúc chủ quan nên không phù hợp."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "업무기록", "def_vi": "Ghi chép công việc: tài liệu ghi lại nội dung, thời gian và kết quả dịch vụ chăm sóc đã thực hiện" },
+      { "term_ko": "주관적 기술", "def_vi": "Mô tả chủ quan: diễn đạt dựa trên cảm giác cá nhân, không rõ ràng và không thể đo lường được" }
+    ]
+  },
+  {
+    "id": 1153,
+    "intent_ko": "요양보호사의 기록 중 구체적이고 객관적으로 올바르게 기록된 것을 고르는 문제",
+    "intent_vi": "Chọn ghi chép đúng, cụ thể và khách quan trong các ghi chép của nhân viên chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "'평소보다 많이'는 비교 기준이 불명확한 주관적 표현으로 부적절합니다.",
+        "2": "'심하게'는 주관적인 정도 표현으로, 구체적인 면적이나 수치가 없어 기록으로 부적절합니다.",
+        "3": "'많이 줄었음'은 구체적인 수치(kg)가 없는 주관적 기술입니다.",
+        "4": "★ '7월 10일, 오후 3시, 방에서 300CC의 소변을 봄'은 날짜·시간·장소·구체적 수치(300CC)를 모두 포함한 객관적이고 정확한 기록입니다. 이처럼 측정 가능한 수치와 육하원칙 요소를 갖춘 기록이 올바른 요양보호 기록입니다.",
+        "5": "경관영양 기록은 양(400mL)이 있으나 시간, 대상자 반응 등 추가 정보가 부족하고 'ML'을 대문자로 쓴 표기도 비표준입니다."
+      },
+      "vi": {
+        "1": "'Nhiều hơn bình thường' là cách diễn đạt chủ quan với tiêu chuẩn so sánh không rõ ràng, không phù hợp.",
+        "2": "'Nặng' là cách diễn đạt mức độ chủ quan, không có diện tích hay con số cụ thể nên không phù hợp để ghi chép.",
+        "3": "'Giảm nhiều' là mô tả chủ quan không có số liệu cụ thể (kg).",
+        "4": "★ 'Ngày 10 tháng 7, 3 giờ chiều, đi tiểu 300CC trong phòng' là ghi chép khách quan và chính xác bao gồm đầy đủ ngày, giờ, địa điểm và con số cụ thể (300CC). Ghi chép có đủ yếu tố 5W1H và số liệu đo lường được như vậy là ghi chép chăm sóc đúng.",
+        "5": "Ghi chép dinh dưỡng qua ống có lượng (400mL) nhưng thiếu thông tin bổ sung như thời gian, phản ứng của đối tượng, và cách viết 'ML' hoa cũng không chuẩn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "피부 발적", "def_vi": "Đỏ da: tình trạng da đỏ lên do viêm nhiễm hoặc kích ứng" },
+      { "term_ko": "경관영양", "def_vi": "Nuôi dưỡng qua ống: phương pháp cung cấp dinh dưỡng qua ống đặt vào dạ dày cho người không thể ăn qua miệng" },
+      { "term_ko": "소변량", "def_vi": "Lượng nước tiểu: lượng nước tiểu bài tiết ra (đơn vị: mL hoặc CC)" }
+    ]
+  },
+  {
+    "id": 1152,
+    "intent_ko": "요양보호사의 업무기록 방법으로 옳은 것을 고르는 문제",
+    "intent_vi": "Chọn phương pháp ghi chép công việc đúng của nhân viên chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "주관적 판단으로 작성하면 기록의 신뢰성과 정확성이 떨어집니다.",
+        "2": "한꺼번에 모아서 기록하면 세부 내용이 누락되거나 왜곡될 수 있습니다.",
+        "3": "우회적이고 장황한 기록은 중요 정보를 신속히 파악하기 어렵게 만듭니다.",
+        "4": "정정 시 지우거나 덧칠하면 원래 내용을 확인할 수 없어 기록의 신뢰성을 해칩니다. 올바른 정정 방법은 줄을 긋고 정정자 서명을 추가하는 것입니다.",
+        "5": "★ 서비스의 과정과 결과를 정확하게 기록해야 합니다. 제공된 서비스의 전 과정(준비·제공·결과·특이사항)을 객관적 사실에 기반해 정확히 기록하는 것이 요양보호 기록의 핵심 원칙입니다."
+      },
+      "vi": {
+        "1": "Ghi chép theo phán đoán chủ quan làm giảm độ tin cậy và tính chính xác của hồ sơ.",
+        "2": "Ghi chép tổng hợp một lúc có thể bỏ sót hoặc làm sai lệch các chi tiết.",
+        "3": "Ghi chép vòng vo và dài dòng khiến khó nắm bắt thông tin quan trọng nhanh chóng.",
+        "4": "Xóa hoặc tô đè khi sửa làm mất khả năng kiểm tra nội dung gốc, gây hại cho độ tin cậy của hồ sơ. Cách sửa đúng là gạch một đường và thêm chữ ký của người sửa.",
+        "5": "★ Phải ghi lại chính xác quá trình và kết quả của dịch vụ. Ghi lại toàn bộ quá trình dịch vụ đã cung cấp (chuẩn bị, cung cấp, kết quả, điểm đặc biệt) dựa trên sự thật khách quan là nguyên tắc cốt lõi của ghi chép chăm sóc."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "정정", "def_vi": "Sửa chữa: hành động sửa nội dung đã ghi. Cách đúng là gạch một đường qua nội dung cũ và ký tên, không được xóa hay tô đè" },
+      { "term_ko": "우회적", "def_vi": "Vòng vo: cách diễn đạt gián tiếp, không thẳng thắn, khó hiểu" }
+    ]
+  },
+  {
+    "id": 1151,
+    "intent_ko": "요양보호 기록의 원칙 중 올바른 것을 고르는 문제",
+    "intent_vi": "Chọn nguyên tắc đúng trong ghi chép chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "대상자의 사생활은 기록에 포함되어서는 안 되며, 업무에 관련된 내용만 기록합니다.",
+        "2": "서비스의 결과뿐 아니라 과정도 함께 기록해야 합니다.",
+        "3": "기록은 서비스 제공 시마다 즉시 해야 하며, 한 달에 한 번으로 제한되지 않습니다.",
+        "4": "★ 공식화된 용어(표준 의학·복지 용어)를 사용해야 누구나 동일하게 이해할 수 있어 정보 전달의 명확성이 높아집니다. 요양보호 기록은 관련 전문가들이 공유하는 문서이므로 개인적 약어나 일상어 대신 공식 용어를 사용해야 합니다.",
+        "5": "요양보호사의 주관적인 생각이 아닌 객관적 사실을 기록해야 합니다."
+      },
+      "vi": {
+        "1": "Quyền riêng tư của đối tượng không được ghi vào hồ sơ; chỉ ghi những nội dung liên quan đến công việc.",
+        "2": "Phải ghi lại cả quá trình lẫn kết quả của dịch vụ, không chỉ kết quả.",
+        "3": "Phải ghi chép ngay mỗi khi cung cấp dịch vụ, không giới hạn ở mỗi tháng một lần.",
+        "4": "★ Sử dụng thuật ngữ chính thức (thuật ngữ y tế và phúc lợi tiêu chuẩn) giúp mọi người hiểu giống nhau, tăng tính rõ ràng trong truyền đạt thông tin. Vì ghi chép chăm sóc là tài liệu được chia sẻ giữa các chuyên gia liên quan nên phải dùng thuật ngữ chính thức thay vì viết tắt cá nhân hay ngôn ngữ thông thường.",
+        "5": "Phải ghi lại sự thật khách quan, không phải suy nghĩ chủ quan của nhân viên chăm sóc."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "공식화된 용어", "def_vi": "Thuật ngữ chính thức: thuật ngữ y tế và phúc lợi xã hội được tiêu chuẩn hóa, được các chuyên gia chấp nhận và sử dụng chung" },
+      { "term_ko": "사생활", "def_vi": "Quyền riêng tư: cuộc sống cá nhân của một người mà người khác không có quyền can thiệp hay tiết lộ" }
+    ]
+  },
+  {
+    "id": 1150,
+    "intent_ko": "요양보호 기록의 원칙으로 올바른 것을 고르는 문제",
+    "intent_vi": "Chọn nguyên tắc đúng trong ghi chép chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "서비스 제공 과정만 기록하는 것은 불완전한 기록입니다. 결과와 특이사항도 함께 기록해야 합니다.",
+        "2": "업무 종결 후 한꺼번에 기록하면 세부 사항이 누락될 수 있고, 실시간 대응이 어렵습니다.",
+        "3": "★ 서비스 내용은 간단명료하게 기록해야 합니다. 간결하면서도 핵심 정보(누가·언제·무엇을·결과)가 빠짐없이 담겨야 합니다. 불필요하게 길고 복잡한 기록은 오히려 정보 파악을 어렵게 합니다.",
+        "4": "기록은 주관적 생각이 아닌 객관적 사실에 근거해야 합니다.",
+        "5": "보호자의 동의가 필요한 경우도 있지만, 모든 기록에 보호자 동의를 요구하는 것은 원칙이 아닙니다."
+      },
+      "vi": {
+        "1": "Chỉ ghi quá trình cung cấp dịch vụ là ghi chép chưa đầy đủ. Phải ghi cả kết quả và điểm đặc biệt.",
+        "2": "Ghi chép tổng hợp sau khi kết thúc công việc có thể bỏ sót chi tiết và gây khó khăn cho ứng phó theo thời gian thực.",
+        "3": "★ Nội dung dịch vụ phải được ghi lại ngắn gọn và rõ ràng. Cần súc tích nhưng đầy đủ thông tin cốt lõi (ai, khi nào, cái gì, kết quả). Ghi chép quá dài và phức tạp không cần thiết lại gây khó khăn trong việc nắm bắt thông tin.",
+        "4": "Ghi chép phải dựa trên sự thật khách quan, không phải suy nghĩ chủ quan.",
+        "5": "Có trường hợp cần sự đồng ý của người bảo hộ, nhưng yêu cầu đồng ý cho mọi ghi chép không phải nguyên tắc."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "간단명료", "def_vi": "Ngắn gọn và rõ ràng: cách diễn đạt súc tích nhưng dễ hiểu, không thừa thãi" },
+      { "term_ko": "업무종결", "def_vi": "Kết thúc công việc: kết thúc ca làm việc hoặc kết thúc toàn bộ nhiệm vụ" }
+    ]
+  },
+  {
+    "id": 1149,
+    "intent_ko": "요양보호 기록의 원칙으로 올바른 것을 고르는 문제",
+    "intent_vi": "Chọn nguyên tắc đúng trong ghi chép chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "기록을 동료와 공유하면 개인정보 보호 원칙에 위배됩니다.",
+        "2": "요양보호사의 주관적 생각은 기록에 포함하지 않으며, 객관적 사실만 기록합니다.",
+        "3": "★ 육하원칙(누가·언제·어디서·무엇을·어떻게·왜)을 바탕으로 기록하는 것이 요양보호 기록의 기본 원칙입니다. 이를 통해 기록의 완결성과 객관성을 보장합니다.",
+        "4": "서비스 결과만이 아니라 제공 과정도 빠짐없이 기록해야 합니다.",
+        "5": "기록은 간결하고 명확해야 하며, 길고 자세한 것이 좋은 기록은 아닙니다."
+      },
+      "vi": {
+        "1": "Chia sẻ hồ sơ với đồng nghiệp vi phạm nguyên tắc bảo vệ thông tin cá nhân.",
+        "2": "Suy nghĩ chủ quan của nhân viên chăm sóc không được ghi vào hồ sơ; chỉ ghi sự thật khách quan.",
+        "3": "★ Ghi chép dựa trên nguyên tắc 5W1H (Ai·Khi nào·Ở đâu·Cái gì·Như thế nào·Tại sao) là nguyên tắc cơ bản của ghi chép chăm sóc. Điều này đảm bảo tính đầy đủ và khách quan của hồ sơ.",
+        "4": "Phải ghi đầy đủ cả quá trình cung cấp lẫn kết quả dịch vụ.",
+        "5": "Ghi chép phải ngắn gọn và rõ ràng; ghi dài và chi tiết không phải là ghi chép tốt."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "육하원칙", "def_vi": "Nguyên tắc 5W1H: nguyên tắc ghi chép theo 6 yếu tố Ai (누가), Khi nào (언제), Ở đâu (어디서), Cái gì (무엇을), Như thế nào (어떻게), Tại sao (왜)" },
+      { "term_ko": "보안", "def_vi": "Bảo mật: bảo vệ thông tin và hồ sơ khỏi sự tiếp cận trái phép" }
+    ]
+  },
+  {
+    "id": 1148,
+    "intent_ko": "요양보호사가 퇴직·휴직 시 업무 인수인계를 위해 작성하는 기록의 종류를 고르는 문제",
+    "intent_vi": "Chọn loại tài liệu được viết để bàn giao công việc khi nhân viên chăm sóc nghỉ việc hoặc nghỉ phép",
+    "choice_explanations": {
+      "ko": {
+        "1": "방문일지는 방문 날짜와 서비스 내용을 기록하는 문서이며, 인수인계 목적이 아닙니다.",
+        "2": "사고보고서는 사고 발생 시 작성하는 문서로, 인수인계와는 무관합니다.",
+        "3": "상태기록지는 대상자의 건강 상태를 기록하는 문서이며, 인수인계 목적이 아닙니다.",
+        "4": "장기요양급여제공기록지는 서비스 제공 내용을 기록하는 문서이며, 인수인계 목적으로 사용되지 않습니다.",
+        "5": "★ 인수인계서는 요양보호사가 퇴직·휴직 등으로 업무를 그만둘 때 후임자에게 대상자 정보, 진행 중인 업무, 주의 사항 등을 체계적으로 전달하기 위해 작성하는 문서입니다."
+      },
+      "vi": {
+        "1": "Nhật ký thăm viếng là tài liệu ghi lại ngày thăm và nội dung dịch vụ, không phải mục đích bàn giao.",
+        "2": "Báo cáo sự cố là tài liệu viết khi xảy ra sự cố, không liên quan đến bàn giao.",
+        "3": "Sổ ghi tình trạng là tài liệu ghi lại tình trạng sức khỏe của đối tượng, không phải mục đích bàn giao.",
+        "4": "Biên bản cung cấp phúc lợi chăm sóc dài hạn là tài liệu ghi lại nội dung cung cấp dịch vụ, không được dùng cho mục đích bàn giao.",
+        "5": "★ Biên bản bàn giao là tài liệu được viết khi nhân viên chăm sóc nghỉ việc hoặc nghỉ phép để truyền đạt có hệ thống cho người kế nhiệm về thông tin đối tượng, công việc đang tiến hành, và các lưu ý quan trọng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "인수인계서", "def_vi": "Biên bản bàn giao: tài liệu truyền đạt thông tin và nhiệm vụ cho người kế nhiệm khi thay đổi nhân sự" },
+      { "term_ko": "퇴직", "def_vi": "Nghỉ việc: chấm dứt quan hệ lao động, rời khỏi vị trí công tác" },
+      { "term_ko": "휴직", "def_vi": "Nghỉ phép dài hạn: tạm thời ngừng làm việc trong khi vẫn duy trì quan hệ lao động" }
+    ]
+  },
+  {
+    "id": 1147,
+    "intent_ko": "식사섭취·배설·목욕 등의 상태와 제공 내용을 기록하는 요양보호 기록지의 종류를 고르는 문제",
+    "intent_vi": "Chọn loại sổ ghi chép chăm sóc dùng để ghi tình trạng ăn uống, bài tiết, tắm rửa và nội dung cung cấp",
+    "choice_explanations": {
+      "ko": {
+        "1": "욕구사정은 대상자의 필요와 욕구를 평가하는 도구이며, 일상 상태를 기록하는 기록지가 아닙니다.",
+        "2": "방문일지는 방문 날짜·시간·활동 내용을 기록하는 문서입니다.",
+        "3": "상담일지는 상담 내용과 결과를 기록하는 문서입니다.",
+        "4": "★ 상태기록지는 대상자의 식사섭취, 배설, 목욕 등 일상생활 상태 및 요양보호사가 제공한 내용을 매일 체계적으로 기록하는 문서입니다.",
+        "5": "인수인계서는 요양보호사 간 업무 정보를 전달하기 위한 문서입니다."
+      },
+      "vi": {
+        "1": "Đánh giá nhu cầu là công cụ đánh giá nhu cầu và mong muốn của đối tượng, không phải sổ ghi tình trạng hàng ngày.",
+        "2": "Nhật ký thăm viếng là tài liệu ghi ngày, giờ thăm và nội dung hoạt động.",
+        "3": "Nhật ký tư vấn là tài liệu ghi nội dung và kết quả tư vấn.",
+        "4": "★ Sổ ghi tình trạng là tài liệu ghi chép có hệ thống hàng ngày về tình trạng sinh hoạt hàng ngày của đối tượng như ăn uống, bài tiết, tắm rửa và nội dung nhân viên chăm sóc đã cung cấp.",
+        "5": "Biên bản bàn giao là tài liệu truyền đạt thông tin công việc giữa các nhân viên chăm sóc."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "상태기록지", "def_vi": "Sổ ghi tình trạng: tài liệu ghi chép hàng ngày về tình trạng sức khỏe và sinh hoạt của đối tượng chăm sóc" },
+      { "term_ko": "식사섭취", "def_vi": "Ăn uống: hành động ăn thức ăn và uống đồ uống; trong chăm sóc, ghi lại lượng và loại thức ăn tiêu thụ" },
+      { "term_ko": "배설", "def_vi": "Bài tiết: quá trình thải chất thải ra khỏi cơ thể (đi tiểu, đại tiện)" },
+      { "term_ko": "욕구사정", "def_vi": "Đánh giá nhu cầu: quá trình đánh giá và xác định nhu cầu chăm sóc của đối tượng" }
+    ]
+  },
+  {
+    "id": 1146,
+    "intent_ko": "재가급여 제공 내용을 실시간 전송하고 급여비용 청구와 연계하는 관리체계를 고르는 문제",
+    "intent_vi": "Chọn hệ thống quản lý truyền tải nội dung cung cấp phúc lợi tại gia theo thời gian thực và liên kết với yêu cầu thanh toán chi phí",
+    "choice_explanations": {
+      "ko": {
+        "1": "보건복지포털은 보건복지부의 정보 제공 시스템으로, 실시간 전송 기능과는 거리가 있습니다.",
+        "2": "사회복지통합관리망은 여러 사회복지 정보를 통합 관리하는 시스템이며, 재가급여 전송 기능을 담당하지 않습니다.",
+        "3": "요양시설관리시스템은 시설 내부 관리에 초점을 두며, 재가급여와는 관련이 없습니다.",
+        "4": "★ 재가급여전자관리시스템(RFID 기반)은 요양보호사가 대상자에게 제공한 재가급여 내용을 국민건강보험공단에 실시간으로 전송하고, 이를 급여비용 청구와 자동 연계하여 투명하고 효율적인 관리를 가능하게 하는 시스템입니다.",
+        "5": "건강보험급여청구시스템은 의료기관의 건강보험 청구를 처리하는 시스템으로, 재가급여 실시간 전송과는 다릅니다."
+      },
+      "vi": {
+        "1": "Cổng thông tin y tế và phúc lợi là hệ thống cung cấp thông tin của Bộ Y tế và Phúc lợi, không liên quan đến chức năng truyền tải theo thời gian thực.",
+        "2": "Mạng quản lý tích hợp phúc lợi xã hội là hệ thống quản lý tích hợp nhiều thông tin phúc lợi xã hội, không phụ trách chức năng truyền tải phúc lợi tại gia.",
+        "3": "Hệ thống quản lý cơ sở chăm sóc tập trung vào quản lý nội bộ cơ sở, không liên quan đến phúc lợi tại gia.",
+        "4": "★ Hệ thống quản lý điện tử phúc lợi tại gia (dựa trên RFID) là hệ thống truyền tải nội dung phúc lợi tại gia nhân viên chăm sóc cung cấp cho đối tượng đến Cơ quan bảo hiểm y tế quốc gia theo thời gian thực, và tự động liên kết với yêu cầu thanh toán chi phí phúc lợi, cho phép quản lý minh bạch và hiệu quả.",
+        "5": "Hệ thống yêu cầu thanh toán bảo hiểm y tế là hệ thống xử lý yêu cầu bảo hiểm y tế của các cơ sở y tế, khác với truyền tải phúc lợi tại gia theo thời gian thực."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "재가급여전자관리시스템", "def_vi": "Hệ thống quản lý điện tử phúc lợi tại gia: hệ thống truyền tải dữ liệu cung cấp dịch vụ tại nhà theo thời gian thực và liên kết tự động với thanh toán bảo hiểm" },
+      { "term_ko": "재가급여", "def_vi": "Phúc lợi tại gia: dịch vụ chăm sóc được cung cấp tại nhà của đối tượng, bao gồm thăm viếng, tắm rửa, và các dịch vụ khác" },
+      { "term_ko": "급여비용 청구", "def_vi": "Yêu cầu thanh toán chi phí phúc lợi: thủ tục yêu cầu cơ quan bảo hiểm thanh toán chi phí cho các dịch vụ chăm sóc đã cung cấp" }
+    ]
+  },
+  {
+    "id": 1145,
+    "intent_ko": "요양보호사가 제공한 서비스 내용·시간·특이사항을 기록하는 문서를 고르는 문제",
+    "intent_vi": "Chọn tài liệu ghi lại nội dung, thời gian và điểm đặc biệt của dịch vụ nhân viên chăm sóc đã cung cấp",
+    "choice_explanations": {
+      "ko": {
+        "1": "상담일지는 상담 내용을 기록하는 문서이며, 서비스 제공 기록과는 다릅니다.",
+        "2": "상태기록지는 대상자의 건강 상태를 기록하는 문서입니다.",
+        "3": "사고보고서는 사고 발생 시 작성하는 문서로, 서비스 기록과 목적이 다릅니다.",
+        "4": "인수인계서는 직원 교체 시 업무 정보를 전달하기 위한 문서입니다.",
+        "5": "★ 장기요양급여 제공기록지는 요양보호사가 대상자에게 제공한 서비스의 종류·시간·과정·결과 및 특이사항을 공식적으로 기록하는 문서로, 급여비용 청구의 근거 서류이기도 합니다."
+      },
+      "vi": {
+        "1": "Nhật ký tư vấn là tài liệu ghi nội dung tư vấn, khác với hồ sơ cung cấp dịch vụ.",
+        "2": "Sổ ghi tình trạng là tài liệu ghi tình trạng sức khỏe của đối tượng.",
+        "3": "Báo cáo sự cố là tài liệu viết khi xảy ra sự cố, mục đích khác với hồ sơ dịch vụ.",
+        "4": "Biên bản bàn giao là tài liệu truyền đạt thông tin công việc khi thay đổi nhân sự.",
+        "5": "★ Biên bản cung cấp phúc lợi chăm sóc dài hạn là tài liệu chính thức ghi lại loại, thời gian, quá trình, kết quả và điểm đặc biệt của dịch vụ nhân viên chăm sóc đã cung cấp cho đối tượng, đồng thời là tài liệu căn cứ cho việc yêu cầu thanh toán chi phí phúc lợi."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "장기요양급여 제공기록지", "def_vi": "Biên bản cung cấp phúc lợi chăm sóc dài hạn: tài liệu chính thức ghi lại nội dung, thời gian và kết quả dịch vụ chăm sóc dài hạn đã cung cấp" },
+      { "term_ko": "특이사항", "def_vi": "Điểm đặc biệt: tình trạng hoặc sự kiện bất thường cần lưu ý, khác với tình trạng thông thường" }
+    ]
+  },
+  {
+    "id": 1144,
+    "intent_ko": "요양보호사가 서비스 내용을 기록하는 목적으로 가장 적절한 것을 고르는 문제",
+    "intent_vi": "Chọn mục đích phù hợp nhất của việc nhân viên chăm sóc ghi lại nội dung dịch vụ",
+    "choice_explanations": {
+      "ko": {
+        "1": "동료 평가·감독은 서비스 기록의 목적이 아닙니다.",
+        "2": "★ 서비스 내용을 기록함으로써 요양보호사는 자신의 행위에 대한 책임감을 갖게 되고, 기록 자체가 서비스 제공 사실을 증명하는 중요한 근거가 됩니다. 책임 있는 서비스 제공을 위한 핵심 목적입니다.",
+        "3": "대상자의 비밀은 업무 관련자 외 누구에게도 공유하면 안 됩니다.",
+        "4": "기록은 법적 책임을 회피하기 위해서가 아니라, 법적 증거로서 책임을 명확히 하기 위한 것입니다.",
+        "5": "서비스를 제한하거나 대상자를 평가하기 위한 것이 아닙니다."
+      },
+      "vi": {
+        "1": "Đánh giá và giám sát đồng nghiệp không phải mục đích của ghi chép dịch vụ.",
+        "2": "★ Bằng cách ghi lại nội dung dịch vụ, nhân viên chăm sóc có ý thức trách nhiệm với hành động của mình, và bản thân ghi chép trở thành căn cứ quan trọng chứng minh sự thật cung cấp dịch vụ. Đây là mục đích cốt lõi cho việc cung cấp dịch vụ có trách nhiệm.",
+        "3": "Bí mật của đối tượng không được chia sẻ với bất kỳ ai ngoài người liên quan đến công việc.",
+        "4": "Ghi chép không phải để tránh trách nhiệm pháp lý mà để làm rõ trách nhiệm như là bằng chứng pháp lý.",
+        "5": "Không phải để hạn chế dịch vụ hay đánh giá đối tượng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "책임감", "def_vi": "Ý thức trách nhiệm: thái độ và nhận thức chịu trách nhiệm về hành động và kết quả công việc của mình" },
+      { "term_ko": "법적 책임", "def_vi": "Trách nhiệm pháp lý: nghĩa vụ phải chịu trách nhiệm về hành động theo quy định của pháp luật" }
+    ]
+  },
+  {
+    "id": 1143,
+    "intent_ko": "요양보호 기록의 목적으로 올바른 것을 고르는 문제",
+    "intent_vi": "Chọn mục đích đúng của ghi chép chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "요양보호사의 능력 평가는 기록의 주된 목적이 아닙니다.",
+        "2": "기록은 책임성을 높이는 도구이며, 책임성을 줄이는 것이 아닙니다.",
+        "3": "기록의 목적은 단점 발견이 아니라 서비스 질 향상과 정보 공유입니다.",
+        "4": "★ 요양보호 기록은 서비스의 과정과 결과를 체계적으로 문서화하여 요양보호서비스의 표준화에 기여합니다. 표준화된 기록 체계는 서비스 질 관리, 법적 증거, 전문가 간 정보 공유 등 복합적 목적을 달성하게 합니다.",
+        "5": "근무 태도 비교는 기록의 목적이 아닙니다."
+      },
+      "vi": {
+        "1": "Đánh giá năng lực nhân viên chăm sóc không phải mục đích chính của ghi chép.",
+        "2": "Ghi chép là công cụ tăng trách nhiệm, không phải giảm trách nhiệm.",
+        "3": "Mục đích của ghi chép không phải là phát hiện điểm yếu mà là nâng cao chất lượng dịch vụ và chia sẻ thông tin.",
+        "4": "★ Ghi chép chăm sóc ghi lại có hệ thống quá trình và kết quả dịch vụ, góp phần vào việc tiêu chuẩn hóa dịch vụ chăm sóc. Hệ thống ghi chép tiêu chuẩn hóa giúp đạt được nhiều mục đích như quản lý chất lượng dịch vụ, bằng chứng pháp lý, và chia sẻ thông tin giữa các chuyên gia.",
+        "5": "So sánh thái độ làm việc không phải mục đích của ghi chép."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "표준화", "def_vi": "Tiêu chuẩn hóa: thiết lập và áp dụng các tiêu chuẩn thống nhất để đảm bảo chất lượng và tính nhất quán" },
+      { "term_ko": "책임성", "def_vi": "Trách nhiệm giải trình: khả năng và nghĩa vụ chứng minh và giải thích về các hành động và quyết định của mình" }
+    ]
+  },
+  {
+    "id": 1142,
+    "intent_ko": "요양보호 업무기록의 중요성으로 가장 적절한 것을 고르는 문제",
+    "intent_vi": "Chọn ý nghĩa quan trọng nhất của ghi chép công việc chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "기록하는 습관 유지는 부수적 효과이며, 핵심 중요성이 아닙니다.",
+        "2": "사생활 관리와 업무기록의 관계는 부수적이며, 핵심 목적이 아닙니다.",
+        "3": "보호자와의 유대관계 형성은 업무기록의 주된 목적이 아닙니다.",
+        "4": "★ 요양보호 업무기록은 의사, 간호사, 사회복지사 등 관련 전문가에게 대상자의 상태·변화·서비스 제공 현황을 정확히 전달함으로써 팀 케어를 가능하게 하는 중요한 의사소통 도구입니다.",
+        "5": "업무기록은 객관적 사실 기록이 목적이며, 대상자에 대한 주관적 판단을 돕는 것이 목적이 아닙니다."
+      },
+      "vi": {
+        "1": "Duy trì thói quen ghi chép là hiệu quả phụ, không phải tầm quan trọng cốt lõi.",
+        "2": "Mối liên hệ giữa quản lý quyền riêng tư và ghi chép công việc là phụ, không phải mục đích cốt lõi.",
+        "3": "Xây dựng mối quan hệ gắn bó với người bảo hộ không phải mục đích chính của ghi chép công việc.",
+        "4": "★ Ghi chép công việc chăm sóc là công cụ giao tiếp quan trọng giúp chăm sóc nhóm trở nên khả thi bằng cách truyền đạt chính xác tình trạng, thay đổi và tình hình cung cấp dịch vụ của đối tượng đến các chuyên gia liên quan như bác sĩ, y tá, và nhân viên công tác xã hội.",
+        "5": "Mục đích của ghi chép công việc là ghi lại sự thật khách quan, không phải hỗ trợ phán đoán chủ quan về đối tượng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "팀 케어", "def_vi": "Chăm sóc nhóm: phương thức chăm sóc phối hợp giữa nhiều chuyên gia (bác sĩ, y tá, nhân viên chăm sóc, nhân viên công tác xã hội) để cung cấp dịch vụ toàn diện" },
+      { "term_ko": "사회복지사", "def_vi": "Nhân viên công tác xã hội: chuyên gia hỗ trợ các dịch vụ phúc lợi và giải quyết các vấn đề xã hội cho đối tượng" }
+    ]
+  },
+  {
+    "id": 1141,
+    "intent_ko": "요양보호 기록의 목적으로 올바른 것을 고르는 문제",
+    "intent_vi": "Chọn mục đích đúng của ghi chép chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "시설장에게 잘 보이기 위한 것은 기록의 목적이 아닙니다.",
+        "2": "주관적 의견은 기록에 포함하지 않습니다.",
+        "3": "건강 진단은 의사·간호사 등 전문 의료인의 역할이며, 요양보호사의 기록 목적이 아닙니다.",
+        "4": "★ 요양보호 기록은 서비스의 연속성을 유지하기 위한 핵심 도구입니다. 교대 근무나 담당 변경 시에도 이전에 제공된 서비스 내용·대상자 상태·변화 등을 기록으로 확인하여 일관된 질의 서비스를 제공할 수 있습니다.",
+        "5": "근무 평가에 따른 수당 수령은 기록과 직접적인 관련이 없습니다."
+      },
+      "vi": {
+        "1": "Để được lòng giám đốc cơ sở không phải mục đích của ghi chép.",
+        "2": "Ý kiến chủ quan không được ghi vào hồ sơ.",
+        "3": "Chẩn đoán sức khỏe là vai trò của nhân viên y tế chuyên nghiệp như bác sĩ và y tá, không phải mục đích ghi chép của nhân viên chăm sóc.",
+        "4": "★ Ghi chép chăm sóc là công cụ cốt lõi để duy trì tính liên tục của dịch vụ. Khi thay ca hoặc thay đổi người phụ trách, có thể xác nhận nội dung dịch vụ đã cung cấp trước đó, tình trạng và thay đổi của đối tượng qua hồ sơ để cung cấp dịch vụ chất lượng nhất quán.",
+        "5": "Nhận phụ cấp theo đánh giá công việc không liên quan trực tiếp đến ghi chép."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "서비스 연속성", "def_vi": "Tính liên tục của dịch vụ: khả năng duy trì chất lượng và nội dung dịch vụ nhất quán ngay cả khi thay đổi nhân sự chăm sóc" },
+      { "term_ko": "건강 진단", "def_vi": "Chẩn đoán sức khỏe: quá trình đánh giá và xác định tình trạng sức khỏe do nhân viên y tế có chuyên môn thực hiện" }
+    ]
+  },
+  {
+    "id": 1140,
+    "intent_ko": "거동 불편·인지기능 저하 시설 대상자의 여가활동을 돕는 적절한 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp phù hợp để hỗ trợ hoạt động giải trí cho đối tượng tại cơ sở có khó khăn vận động hoặc suy giảm nhận thức",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 어렵지 않고 흥미로운 프로그램으로 배정하는 것이 가장 적절합니다. 거동이 불편하거나 인지기능이 저하된 대상자는 복잡하거나 어려운 활동에 참여하기 어려우므로, 쉽게 참여할 수 있고 흥미를 유발하는 프로그램이 정서적 만족감과 자존감 향상에 효과적입니다.",
+        "2": "여가활동은 가족의 의견보다 대상자 개인의 선호와 특성을 우선적으로 반영해야 합니다.",
+        "3": "프로그램은 요양보호사의 상황이 아니라 대상자의 특성·능력·선호를 중심으로 배정해야 합니다.",
+        "4": "움직임이 빠르고 신속한 프로그램은 거동이 불편한 대상자에게 위험하거나 부적합합니다.",
+        "5": "경제적 수준보다 대상자의 신체적·인지적 능력과 선호를 더 중요하게 고려해야 합니다."
+      },
+      "vi": {
+        "1": "★ Phân bổ chương trình không khó và thú vị là phù hợp nhất. Đối tượng có khó khăn vận động hoặc suy giảm nhận thức khó tham gia các hoạt động phức tạp hoặc khó khăn, nên chương trình dễ tham gia và tạo hứng thú có hiệu quả trong việc nâng cao sự thỏa mãn cảm xúc và lòng tự trọng.",
+        "2": "Hoạt động giải trí cần phản ánh ưu tiên sở thích và đặc điểm cá nhân của đối tượng hơn là ý kiến của gia đình.",
+        "3": "Chương trình phải được phân bổ tập trung vào đặc điểm, khả năng và sở thích của đối tượng, không phải tình trạng của nhân viên chăm sóc.",
+        "4": "Chương trình đòi hỏi chuyển động nhanh và linh hoạt là nguy hiểm hoặc không phù hợp cho đối tượng có khó khăn vận động.",
+        "5": "Phải coi trọng khả năng thể chất, nhận thức và sở thích của đối tượng hơn mức kinh tế."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "인지기능", "def_vi": "Chức năng nhận thức: khả năng nhận thức, ghi nhớ, phán đoán và tư duy; thường suy giảm ở người cao tuổi bị sa sút trí tuệ" },
+      { "term_ko": "거동", "def_vi": "Vận động: khả năng đi lại và di chuyển của cơ thể" },
+      { "term_ko": "여가활동", "def_vi": "Hoạt động giải trí: các hoạt động thực hiện trong thời gian rảnh rỗi nhằm nâng cao chất lượng cuộc sống" }
+    ]
+  },
+  {
+    "id": 1139,
+    "intent_ko": "대화에서 요양보호사가 추천한 여가활동이 어떤 유형인지 고르는 문제",
+    "intent_vi": "Chọn loại hoạt động giải trí mà nhân viên chăm sóc đề xuất trong đoạn hội thoại",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 상추 가꾸기는 흙을 다루는 원예 활동으로, 자연과 함께 시간을 보내며 소소하게 일하는 소일 활동에 해당합니다. 소일 활동은 심리적 안정감을 제공하고 과거의 익숙한 경험을 활용하게 해줍니다.",
+        "2": "운동 활동은 신체 단련이 주된 목적이며, 상추 가꾸기와는 범주가 다릅니다.",
+        "3": "가족 중심 활동은 가족과의 시간을 중시하는 활동으로, 이 대화와는 무관합니다.",
+        "4": "사교 오락 활동은 타인과의 교류가 중심인 활동으로, 원예와는 다릅니다.",
+        "5": "자기계발 활동은 새로운 기술·지식 습득을 목표로 하며, 상추 가꾸기와는 다른 범주입니다."
+      },
+      "vi": {
+        "1": "★ Trồng rau xà lách là hoạt động làm vườn tiếp xúc với đất, thuộc loại hoạt động thư giãn nhẹ nhàng (소일 활동) — dành thời gian cùng thiên nhiên và làm những việc quen thuộc. Loại hoạt động này mang lại sự ổn định tâm lý và giúp tận dụng những kinh nghiệm quen thuộc từ quá khứ.",
+        "2": "Hoạt động thể dục có mục đích chính là rèn luyện thể lực, thuộc phạm trù khác với trồng rau xà lách.",
+        "3": "Hoạt động gia đình tập trung vào thời gian với gia đình, không liên quan đến đoạn hội thoại này.",
+        "4": "Hoạt động giao lưu xã hội tập trung vào giao tiếp với người khác, khác với làm vườn.",
+        "5": "Hoạt động tự phát triển nhằm mục tiêu tiếp thu kỹ năng và kiến thức mới, thuộc phạm trù khác với trồng rau."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "소일 활동", "def_vi": "Hoạt động thư giãn nhẹ nhàng: các hoạt động đơn giản giúp điền vào thời gian rảnh, thường gắn với thiên nhiên hoặc công việc quen thuộc như làm vườn, đan lát" },
+      { "term_ko": "원예 활동", "def_vi": "Hoạt động làm vườn: hoạt động trồng và chăm sóc cây cối, có tác dụng trị liệu tâm lý và thể chất cho người cao tuổi" }
+    ]
+  },
+  {
+    "id": 1138,
+    "intent_ko": "산책(신진대사 촉진)이 해당하는 여가활동 유형을 고르는 문제",
+    "intent_vi": "Chọn loại hoạt động giải trí mà việc đi bộ (thúc đẩy trao đổi chất) thuộc về",
+    "choice_explanations": {
+      "ko": {
+        "1": "자기계발 활동은 기술이나 지식 향상이 목적이며, 산책과 직접적인 연관이 없습니다.",
+        "2": "사교 오락 활동은 타인과의 상호작용이 중심이며, 산책의 주된 효과와는 다릅니다.",
+        "3": "가족 중심 활동은 가족 유대 강화가 목적으로, 신진대사 촉진과는 거리가 있습니다.",
+        "4": "★ 산책은 신체를 움직여 심폐 기능을 향상시키고 신진대사를 촉진하는 운동 활동입니다. 노인에게 가장 안전하고 접근하기 쉬운 운동 활동 중 하나입니다.",
+        "5": "소일 활동은 시간을 보내기 위한 단순한 활동으로, 신진대사 촉진과는 직접 연관이 없습니다."
+      },
+      "vi": {
+        "1": "Hoạt động tự phát triển nhằm mục đích nâng cao kỹ năng hoặc kiến thức, không liên quan trực tiếp đến việc đi bộ.",
+        "2": "Hoạt động giao lưu xã hội tập trung vào tương tác với người khác, khác với hiệu quả chính của việc đi bộ.",
+        "3": "Hoạt động gia đình nhằm mục đích tăng cường gắn kết gia đình, ít liên quan đến thúc đẩy trao đổi chất.",
+        "4": "★ Đi bộ là hoạt động thể dục di chuyển cơ thể, cải thiện chức năng tim phổi và thúc đẩy trao đổi chất. Đây là một trong những hoạt động thể dục an toàn và dễ tiếp cận nhất cho người cao tuổi.",
+        "5": "Hoạt động thư giãn nhẹ nhàng là các hoạt động đơn giản để điền thời gian, không liên quan trực tiếp đến thúc đẩy trao đổi chất."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "신진대사", "def_vi": "Trao đổi chất: quá trình chuyển hóa các chất dinh dưỡng thành năng lượng trong cơ thể; tốc độ trao đổi chất giảm theo tuổi tác" },
+      { "term_ko": "운동 활동", "def_vi": "Hoạt động thể dục: các hoạt động vận động cơ thể nhằm duy trì hoặc cải thiện sức khỏe thể chất" }
+    ]
+  },
+  {
+    "id": 1137,
+    "intent_ko": "사별 후 사회적 교류를 꺼리는 노인에게 추천할 여가활동을 고르는 문제",
+    "intent_vi": "Chọn hoạt động giải trí phù hợp cho người cao tuổi né tránh giao tiếp xã hội sau khi mất vợ/chồng",
+    "choice_explanations": {
+      "ko": {
+        "1": "신문 보기는 정보 습득에 좋지만 외부와의 상호작용이 없어 고립감 해소에 효과적이지 않습니다.",
+        "2": "그림 그리기는 개인적 취미 활동으로 사회적 상호작용이 부족합니다.",
+        "3": "★ 친목 활동은 같은 처지의 사람들과 어울리고 정서적 지지를 받을 수 있어, 사별 후 외로움과 우울감을 극복하는 데 효과적입니다. 처음에는 저항감이 있더라도 점진적으로 사회적 관계를 넓히는 기회가 됩니다.",
+        "4": "책 읽기는 개인적 활동으로 사회적 상호작용 없이 혼자 하는 활동입니다.",
+        "5": "텔레비전 시청은 수동적·개인적 활동으로 대인관계 형성에 도움이 되지 않습니다."
+      },
+      "vi": {
+        "1": "Đọc báo tốt cho tiếp nhận thông tin nhưng không có tương tác với bên ngoài nên không hiệu quả trong việc giải tỏa cô đơn.",
+        "2": "Vẽ tranh là hoạt động sở thích cá nhân, thiếu tương tác xã hội.",
+        "3": "★ Hoạt động giao lưu xã hội giúp gặp gỡ những người cùng hoàn cảnh và nhận được sự hỗ trợ cảm xúc, có hiệu quả trong việc vượt qua cô đơn và trầm cảm sau khi mất vợ/chồng. Dù ban đầu có thể kháng cự, đây là cơ hội dần dần mở rộng các mối quan hệ xã hội.",
+        "4": "Đọc sách là hoạt động cá nhân, thực hiện một mình mà không có tương tác xã hội.",
+        "5": "Xem tivi là hoạt động thụ động và cá nhân, không giúp xây dựng các mối quan hệ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "사별", "def_vi": "Mất vợ/chồng: trải qua cái chết của người phối ngẫu; là một trong những sự kiện gây căng thẳng lớn nhất trong cuộc sống người cao tuổi" },
+      { "term_ko": "친목 활동", "def_vi": "Hoạt động giao lưu xã hội: hoạt động gặp gỡ và tương tác với người khác nhằm xây dựng và duy trì các mối quan hệ xã hội" }
+    ]
+  },
+  {
+    "id": 1136,
+    "intent_ko": "사별 후 사회적 교류를 꺼리는 노인에게 추천할 여가활동을 고르는 문제",
+    "intent_vi": "Chọn hoạt động giải trí phù hợp cho người cao tuổi né tránh giao tiếp xã hội sau khi mất vợ/chồng",
+    "choice_explanations": {
+      "ko": {
+        "1": "신문 보기는 개인적인 활동으로, 고립감을 해소하는 데 도움이 되지 않습니다.",
+        "2": "그림 그리기는 사회적 교류가 적은 개인 취미 활동입니다.",
+        "3": "★ 친목 활동은 타인과 함께하며 정서적 지지와 소속감을 얻을 수 있어, 사별 후 고립과 우울을 극복하는 데 가장 효과적인 여가활동입니다. 사회적 관계의 회복을 통해 정서적 안정을 도모할 수 있습니다.",
+        "4": "책 읽기는 혼자 하는 활동으로 사회적 상호작용이 없습니다.",
+        "5": "텔레비전 시청은 소극적 활동으로 대인관계 형성이 어렵습니다."
+      },
+      "vi": {
+        "1": "Đọc báo là hoạt động cá nhân, không giúp giải tỏa cảm giác cô lập.",
+        "2": "Vẽ tranh là hoạt động sở thích cá nhân với ít giao lưu xã hội.",
+        "3": "★ Hoạt động giao lưu xã hội giúp cùng người khác nhận được sự hỗ trợ cảm xúc và cảm giác thuộc về, là hoạt động giải trí hiệu quả nhất để vượt qua cô lập và trầm cảm sau khi mất vợ/chồng. Có thể thúc đẩy ổn định cảm xúc thông qua việc phục hồi các mối quan hệ xã hội.",
+        "4": "Đọc sách là hoạt động một mình, không có tương tác xã hội.",
+        "5": "Xem tivi là hoạt động thụ động, khó xây dựng quan hệ giữa người với người."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "사별", "def_vi": "Mất vợ/chồng: mất đi người phối ngẫu do qua đời; thường dẫn đến cô đơn, trầm cảm và thu mình lại" },
+      { "term_ko": "정서적 지지", "def_vi": "Hỗ trợ cảm xúc: sự đồng cảm, khuyến khích và quan tâm từ người khác giúp vượt qua khó khăn tâm lý" }
+    ]
+  },
+  {
+    "id": 1135,
+    "intent_ko": "친목회 회원들과 음악회·전시회를 즐기는 활동의 여가 유형을 고르는 문제",
+    "intent_vi": "Chọn loại hoạt động giải trí của việc cùng hội thân hữu thưởng thức hòa nhạc và triển lãm",
+    "choice_explanations": {
+      "ko": {
+        "1": "종교 참여 활동은 예배·기도 등 종교적 활동에 참여하는 것입니다.",
+        "2": "★ 사교 오락 활동은 친목회 등 단체로 모여 음악회·전시회·여행 등 즐거운 활동을 함께 즐기는 것입니다. 타인과의 교류를 통해 사회적 유대감을 강화하는 것이 특징입니다.",
+        "3": "운동 활동은 신체 건강을 위한 체조·산책·수영 등입니다.",
+        "4": "소일 활동은 원예·편물 등 소소하게 시간을 보내는 활동입니다.",
+        "5": "자기계발 활동은 새로운 기술이나 지식을 배우는 것을 목적으로 합니다."
+      },
+      "vi": {
+        "1": "Hoạt động tham gia tôn giáo là việc tham gia các hoạt động tôn giáo như lễ bái, cầu nguyện.",
+        "2": "★ Hoạt động giao lưu giải trí là việc tập hợp theo nhóm như hội thân hữu cùng thưởng thức các hoạt động vui vẻ như hòa nhạc, triển lãm, du lịch. Đặc trưng là tăng cường gắn kết xã hội thông qua giao lưu với người khác.",
+        "3": "Hoạt động thể dục là thể dục, đi bộ, bơi lội... nhằm duy trì sức khỏe thể chất.",
+        "4": "Hoạt động thư giãn nhẹ nhàng là các hoạt động đơn giản để điền thời gian như làm vườn, đan lát.",
+        "5": "Hoạt động tự phát triển nhằm mục đích học kỹ năng hoặc kiến thức mới."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "사교 오락 활동", "def_vi": "Hoạt động giao lưu giải trí: hoạt động tập hợp theo nhóm để thưởng thức âm nhạc, nghệ thuật, du lịch và các hoạt động vui vẻ khác" },
+      { "term_ko": "친목회", "def_vi": "Hội thân hữu: nhóm người gặp gỡ thường xuyên để duy trì mối quan hệ và tham gia các hoạt động cùng nhau" }
+    ]
+  },
+  {
+    "id": 1134,
+    "intent_ko": "장구 배우기를 제안한 대화에서 해당 여가활동 유형을 고르는 문제",
+    "intent_vi": "Chọn loại hoạt động giải trí trong đoạn hội thoại đề xuất học trống janggu",
+    "choice_explanations": {
+      "ko": {
+        "1": "소일 활동은 단순히 시간을 보내기 위한 활동으로, 새 기술 습득과는 다릅니다.",
+        "2": "★ 장구를 배우는 것은 새로운 악기 기술을 습득하고 자신을 발전시키는 자기계발 활동에 해당합니다. 과거 경험(사물놀이)을 다시 발전시켜 나가는 것이므로 더욱 의미 있는 자기계발입니다.",
+        "3": "운동 활동은 신체 단련이 주목적이며, 장구 배우기와는 다른 범주입니다.",
+        "4": "가족 중심 활동은 가족과 함께하는 활동이며, 이 대화와는 무관합니다.",
+        "5": "사교 오락 활동은 타인과의 교류가 중심이지만, 이 대화에서는 기술 습득이 핵심입니다."
+      },
+      "vi": {
+        "1": "Hoạt động thư giãn nhẹ nhàng là hoạt động đơn giản để điền thời gian, khác với việc tiếp thu kỹ năng mới.",
+        "2": "★ Học trống janggu là hoạt động tự phát triển tiếp thu kỹ năng nhạc cụ mới và phát triển bản thân. Đây là việc phát triển lại trải nghiệm trong quá khứ (nhạc dân gian Hàn Quốc), nên càng có ý nghĩa hơn trong tự phát triển.",
+        "3": "Hoạt động thể dục có mục đích chính là rèn luyện thể lực, thuộc phạm trù khác với học trống.",
+        "4": "Hoạt động gia đình là hoạt động cùng gia đình, không liên quan đến đoạn hội thoại này.",
+        "5": "Hoạt động giao lưu giải trí tập trung vào giao lưu với người khác, nhưng trong đoạn hội thoại này, tiếp thu kỹ năng mới là điểm cốt lõi."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "자기계발 활동", "def_vi": "Hoạt động tự phát triển: các hoạt động nhằm nâng cao kỹ năng, kiến thức và năng lực cá nhân như học nhạc cụ, ngoại ngữ, thư pháp" },
+      { "term_ko": "사물놀이", "def_vi": "Nhạc dân gian Hàn Quốc: thể loại âm nhạc truyền thống Hàn Quốc sử dụng bốn nhạc cụ gõ: trống janggu, kkwaenggwari, jing và buk" },
+      { "term_ko": "장구", "def_vi": "Trống janggu: nhạc cụ truyền thống Hàn Quốc hình trụ hai đầu, dùng dùi và tay để gõ" }
+    ]
+  },
+  {
+    "id": 1133,
+    "intent_ko": "보행이 불편한 대상자의 자기계발 여가활동으로 가장 적합한 것을 고르는 문제",
+    "intent_vi": "Chọn hoạt động giải trí tự phát triển phù hợp nhất cho đối tượng có khó khăn vận động",
+    "choice_explanations": {
+      "ko": {
+        "1": "텃밭 가꾸기는 이동·쪼그려 앉기 등 신체 활동이 많이 필요하여 보행이 불편한 대상자에게 부적합합니다.",
+        "2": "손자녀 돌보기는 빠른 움직임과 지속적인 주의가 필요하여 보행이 불편한 대상자에게 신체적 부담이 클 수 있습니다.",
+        "3": "산책하기는 보행이 불편한 대상자에게 위험하거나 어렵습니다.",
+        "4": "외식나들이는 이동과 보행이 필요하므로 보행이 불편한 대상자에게 어려움이 있습니다.",
+        "5": "★ 서예교실은 앉아서 하는 정적인 활동으로, 보행이 불편한 대상자도 안전하게 참여할 수 있습니다. 붓글씨를 통해 집중력과 심리적 안정을 높이고 전통 예술 기능을 배울 수 있어 자기계발 활동으로 적합합니다."
+      },
+      "vi": {
+        "1": "Làm vườn đòi hỏi nhiều hoạt động thể chất như di chuyển và ngồi xổm, không phù hợp cho đối tượng có khó khăn vận động.",
+        "2": "Trông cháu có thể tạo gánh nặng thể chất lớn cho đối tượng có khó khăn vận động vì cần chuyển động nhanh và chú ý liên tục.",
+        "3": "Đi bộ là hoạt động nguy hiểm hoặc khó khăn cho đối tượng có khó khăn vận động.",
+        "4": "Đi ăn bên ngoài đòi hỏi di chuyển và đi bộ nên gây khó khăn cho đối tượng có khó khăn vận động.",
+        "5": "★ Lớp học thư pháp là hoạt động tĩnh thực hiện khi ngồi, đối tượng có khó khăn vận động cũng có thể tham gia an toàn. Thông qua viết thư pháp, có thể nâng cao sự tập trung và ổn định tâm lý, học kỹ năng nghệ thuật truyền thống nên phù hợp như hoạt động tự phát triển."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "서예", "def_vi": "Thư pháp: nghệ thuật viết chữ Hán hoặc chữ Hangul bằng bút lông; là hoạt động tĩnh phù hợp với người cao tuổi" },
+      { "term_ko": "보행", "def_vi": "Đi bộ: khả năng đi lại; khó khăn vận động là tình trạng hạn chế khả năng đi lại do bệnh tật hoặc tuổi tác" }
+    ]
+  },
+  {
+    "id": 1132,
+    "intent_ko": "서예·책 읽기를 좋아하는 노인 대상자의 여가활동 유형을 고르는 문제",
+    "intent_vi": "Chọn loại hoạt động giải trí của đối tượng người cao tuổi yêu thích thư pháp và đọc sách",
+    "choice_explanations": {
+      "ko": {
+        "1": "운동 활동은 신체 건강을 위한 활동으로, 서예나 독서와는 다른 범주입니다.",
+        "2": "★ 서예와 책 읽기는 모두 개인의 지식, 집중력, 정서적 능력을 향상시키는 자기계발 활동에 해당합니다. 새로운 것을 배우거나 자신의 기술을 갈고닦는 과정이 포함되므로 자기계발의 대표적인 유형입니다.",
+        "3": "사교 오락 활동은 타인과의 교류가 중심으로, 독서나 서예는 주로 혼자 하는 활동입니다.",
+        "4": "종교 참여 활동은 예배나 종교 행사 참여가 중심입니다.",
+        "5": "가족 중심 활동은 가족과 함께하는 활동이며, 서예나 독서와는 다릅니다."
+      },
+      "vi": {
+        "1": "Hoạt động thể dục là hoạt động duy trì sức khỏe thể chất, thuộc phạm trù khác với thư pháp hay đọc sách.",
+        "2": "★ Thư pháp và đọc sách đều là hoạt động tự phát triển nâng cao kiến thức, khả năng tập trung và năng lực cảm xúc cá nhân. Vì bao gồm quá trình học điều mới hoặc rèn giũa kỹ năng của mình nên đây là loại hình tiêu biểu của tự phát triển.",
+        "3": "Hoạt động giao lưu giải trí tập trung vào giao lưu với người khác, còn đọc sách hay thư pháp chủ yếu là hoạt động một mình.",
+        "4": "Hoạt động tham gia tôn giáo tập trung vào tham dự lễ bái hoặc các sự kiện tôn giáo.",
+        "5": "Hoạt động gia đình là hoạt động cùng gia đình, khác với thư pháp hay đọc sách."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "자기계발 활동", "def_vi": "Hoạt động tự phát triển: hoạt động nhằm nâng cao khả năng, kiến thức và kỹ năng cá nhân như học thư pháp, đọc sách, học ngoại ngữ" },
+      { "term_ko": "서예", "def_vi": "Thư pháp: nghệ thuật viết chữ bằng bút lông, là hoạt động tự phát triển và giải trí tĩnh phổ biến với người cao tuổi" }
+    ]
+  }
+]

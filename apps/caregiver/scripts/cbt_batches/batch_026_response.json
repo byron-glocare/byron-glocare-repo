@@ -1,0 +1,766 @@
+[
+  {
+    "id": 979,
+    "intent_ko": "녹내장 환자가 일상생활에서 반드시 피해야 할 행동과 지켜야 할 주의사항을 묻는 문제",
+    "intent_vi": "Câu hỏi về những hành động cần tránh và lưu ý trong sinh hoạt hàng ngày của người bệnh tăng nhãn áp (glaucoma)",
+    "choice_explanations": {
+      "ko": {
+        "1": "낮에 직사광선이 눈에 들어오면 안압을 자극할 수 있으므로 일광욕은 피해야 합니다.",
+        "2": "★ 무거운 물건을 들면 복압과 안압이 동시에 상승하여 시신경 손상이 악화될 수 있습니다. 녹내장 환자는 힘을 주는 동작(무거운 것 들기, 윗몸일으키기, 숨참기 등)을 모두 피해야 합니다.",
+        "3": "윗몸일으키기는 복압을 높여 안압 상승을 유발하므로 녹내장 환자에게 금지됩니다.",
+        "4": "고개를 숙이면 머리 쪽으로 혈액이 몰려 안압이 상승할 수 있습니다.",
+        "5": "목을 조이는 넥타이는 경정맥 압박으로 안압을 높일 수 있어 피해야 합니다."
+      },
+      "vi": {
+        "1": "Phơi nắng ban ngày có thể kích thích nhãn áp do ánh sáng trực tiếp chiếu vào mắt, cần tránh.",
+        "2": "★ Mang vác vật nặng làm tăng đồng thời áp lực ổ bụng và nhãn áp, gây tổn thương thêm cho dây thần kinh thị giác. Người bệnh glaucoma phải tránh mọi động tác gắng sức (nhấc vật nặng, gập bụng, nín thở, v.v.).",
+        "3": "Gập bụng (sit-up) làm tăng áp lực ổ bụng, kéo theo tăng nhãn áp — bị cấm với người bệnh glaucoma.",
+        "4": "Cúi đầu khiến máu dồn lên vùng đầu, có thể làm tăng nhãn áp.",
+        "5": "Thắt cà vạt quá chặt ép tĩnh mạch cảnh, gây tăng nhãn áp, cần tránh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "녹내장", "def_vi": "Bệnh glaucoma — nhãn áp tăng cao gây tổn thương dây thần kinh thị giác, dẫn đến mất thị lực dần" },
+      { "term_ko": "안압", "def_vi": "Nhãn áp — áp lực bên trong nhãn cầu; tăng nhãn áp là nguyên nhân chính của glaucoma" },
+      { "term_ko": "시신경", "def_vi": "Dây thần kinh thị giác — dây thần kinh truyền tín hiệu hình ảnh từ mắt lên não" }
+    ]
+  },
+  {
+    "id": 978,
+    "intent_ko": "안압 상승으로 인한 시신경 손상(녹내장)의 대표 증상을 고르는 문제",
+    "intent_vi": "Câu hỏi nhận diện triệu chứng điển hình của tổn thương dây thần kinh thị giác do tăng nhãn áp (glaucoma)",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 좁은 시야(시야 협착)는 녹내장의 핵심 증상입니다. 시신경이 손상되면 주변 시야부터 점차 좁아져 결국 터널 시야가 됩니다.",
+        "2": "동공의 백색 혼탁은 수정체가 뿌옇게 변하는 백내장의 증상으로, 녹내장과 다릅니다.",
+        "3": "밝은 불빛에서의 눈부심은 백내장이나 각막 질환에서 나타나며, 녹내장의 주 증상이 아닙니다.",
+        "4": "통증 없이 흐린 시력은 백내장의 전형적인 증상입니다.",
+        "5": "불빛 주위에 무지개(홍시)가 보이는 현상은 급성 폐쇄각 녹내장 발작 때 나타날 수 있으나, 만성 녹내장의 대표 증상은 시야 협착입니다."
+      },
+      "vi": {
+        "1": "★ Tầm nhìn hẹp (thu hẹp thị trường) là triệu chứng cốt lõi của glaucoma. Khi dây thần kinh thị giác bị tổn thương, thị trường ngoại vi dần bị mất, tiến đến thị trường dạng đường hầm.",
+        "2": "Đục trắng đồng tử là triệu chứng của đục thủy tinh thể (cataract), không phải glaucoma.",
+        "3": "Nhìn chói khi có ánh sáng mạnh thường gặp trong đục thủy tinh thể hoặc bệnh giác mạc, không phải triệu chứng chính của glaucoma.",
+        "4": "Thị lực mờ không đau là triệu chứng điển hình của đục thủy tinh thể.",
+        "5": "Nhìn thấy quầng cầu vồng quanh đèn có thể xảy ra trong cơn glaucoma góc đóng cấp tính, nhưng không phải triệu chứng đặc trưng của glaucoma mạn tính."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "시야 협착", "def_vi": "Thu hẹp thị trường — dần mất tầm nhìn ngoại vi, đặc trưng của glaucoma" },
+      { "term_ko": "시신경", "def_vi": "Dây thần kinh thị giác — bị tổn thương do nhãn áp tăng cao trong glaucoma" },
+      { "term_ko": "안압", "def_vi": "Nhãn áp — áp lực nội nhãn cầu; tăng cao gây tổn thương dây thần kinh thị giác" }
+    ]
+  },
+  {
+    "id": 977,
+    "intent_ko": "좁은 시야, 이물감, 각막 혼탁, 안구통증, 두통 등의 증상에 해당하는 안과 질환을 감별하는 문제",
+    "intent_vi": "Câu hỏi phân biệt bệnh mắt dựa trên các triệu chứng: tầm nhìn hẹp, cảm giác dị vật, giác mạc đục, đau nhãn cầu, đau đầu",
+    "choice_explanations": {
+      "ko": {
+        "1": "백내장은 수정체 혼탁으로 시야가 뿌옇게 되지만, 안구통증·두통·시야 협착은 주 증상이 아닙니다.",
+        "2": "★ 녹내장은 안압 상승으로 인해 좁은 시야, 각막 혼탁(각막 부종), 안구통증, 두통이 복합적으로 나타납니다. 제시된 모든 증상이 녹내장의 특징과 일치합니다.",
+        "3": "결막염은 결막 충혈과 가려움·분비물이 주 증상이며, 시야 협착이나 심한 두통은 나타나지 않습니다.",
+        "4": "안구건조증은 이물감과 불편감이 있지만, 시야 협착·두통은 동반되지 않습니다.",
+        "5": "다래끼는 눈꺼풀의 국소 염증으로, 제시된 증상 군과 다릅니다."
+      },
+      "vi": {
+        "1": "Đục thủy tinh thể làm thị lực mờ nhưng không gây đau nhãn cầu dữ dội, đau đầu hay thu hẹp thị trường rõ rệt.",
+        "2": "★ Glaucoma (tăng nhãn áp) gây ra tập hợp triệu chứng: tầm nhìn hẹp, giác mạc đục do phù, đau nhãn cầu và đau đầu — khớp với toàn bộ triệu chứng được mô tả.",
+        "3": "Viêm kết mạc chủ yếu gây đỏ mắt, ngứa và tiết dịch; không gây thu hẹp thị trường hay đau đầu nặng.",
+        "4": "Khô mắt gây cảm giác dị vật và khó chịu, nhưng không kèm thu hẹp thị trường hay đau đầu.",
+        "5": "Chắp/lẹo là viêm cục bộ tuyến mi, không liên quan đến nhóm triệu chứng này."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "각막 혼탁", "def_vi": "Giác mạc đục — giác mạc mất độ trong suốt do viêm hoặc phù nề, thường gặp trong glaucoma cấp tính" },
+      { "term_ko": "이물감", "def_vi": "Cảm giác dị vật — cảm giác có gì đó trong mắt, thường gặp trong khô mắt, viêm kết mạc hoặc glaucoma" },
+      { "term_ko": "안구통증", "def_vi": "Đau nhãn cầu — đau trong hoặc xung quanh mắt, dấu hiệu quan trọng của glaucoma cấp tính" }
+    ]
+  },
+  {
+    "id": 976,
+    "intent_ko": "노화에 따른 후각·촉각 변화 중 옳은 것을 고르는 문제",
+    "intent_vi": "Câu hỏi về những thay đổi của khứu giác và xúc giác theo quá trình lão hóa",
+    "choice_explanations": {
+      "ko": {
+        "1": "노화에 따라 후각세포는 증가하지 않고 감소합니다.",
+        "2": "노화로 인해 후각 기능은 저하되므로 변화가 없다는 설명은 틀립니다.",
+        "3": "노화에 따라 촉각 수용체가 감소하여 접촉감은 오히려 둔해집니다.",
+        "4": "통증을 호소하는 주관적 표현은 개인차가 있으나, 생리적으로 통증 감수성은 감소합니다.",
+        "5": "★ 노화가 진행되면 통증 수용체의 기능이 저하되어 통증에 둔감해집니다. 이로 인해 골절·화상·심근경색 등 심각한 상태를 늦게 감지하는 위험이 있습니다."
+      },
+      "vi": {
+        "1": "Lão hóa không làm tăng tế bào khứu giác mà ngược lại làm giảm số lượng chúng.",
+        "2": "Khứu giác bị suy giảm theo tuổi tác, không phải không thay đổi.",
+        "3": "Các thụ thể xúc giác giảm theo lão hóa, khiến cảm giác tiếp xúc trở nên kém nhạy, không nhạy hơn.",
+        "4": "Về mặt sinh lý, ngưỡng cảm nhận đau tăng (tức nhạy cảm với đau giảm), không phải tăng.",
+        "5": "★ Khi lão hóa, chức năng thụ thể đau suy giảm khiến người cao tuổi phản ứng chậm với đau. Điều này tiềm ẩn nguy cơ phát hiện muộn các tình trạng nghiêm trọng như gãy xương, bỏng, nhồi máu cơ tim."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "후각세포", "def_vi": "Tế bào khứu giác — tế bào cảm thụ mùi, giảm dần theo lão hóa" },
+      { "term_ko": "통증 둔감", "def_vi": "Giảm nhạy cảm với đau — phản ứng đau chậm và yếu hơn do lão hóa thụ thể đau" },
+      { "term_ko": "촉각 수용체", "def_vi": "Thụ thể xúc giác — đầu dây thần kinh cảm nhận tiếp xúc, bị suy giảm theo tuổi" }
+    ]
+  },
+  {
+    "id": 975,
+    "intent_ko": "노화에 따른 미각 변화 중 옳은 것을 고르는 문제",
+    "intent_vi": "Câu hỏi về sự thay đổi của vị giác theo quá trình lão hóa",
+    "choice_explanations": {
+      "ko": {
+        "1": "혀의 미뢰 개수는 노화와 함께 감소합니다.",
+        "2": "맛의 감지 능력은 나이가 들면서 감소하는 경향이 있습니다.",
+        "3": "★ 노화에 따라 침샘 기능이 저하되어 구강 건조 증상이 증가합니다. 구강 건조는 미각 저하뿐만 아니라 씹기·삼키기 어려움, 구강 감염 위험 증가 등을 유발합니다.",
+        "4": "단맛을 포함한 전반적인 미각 감지 기능은 노화로 인해 감소합니다.",
+        "5": "구강 점막의 재생 능력도 노화에 따라 감소합니다."
+      },
+      "vi": {
+        "1": "Số lượng nụ vị giác trên lưỡi giảm dần theo lão hóa.",
+        "2": "Khả năng cảm nhận vị giác suy giảm theo tuổi tác.",
+        "3": "★ Lão hóa làm giảm chức năng tuyến nước bọt, dẫn đến khô miệng ngày càng tăng. Khô miệng không chỉ làm giảm vị giác mà còn gây khó nhai, khó nuốt và tăng nguy cơ nhiễm trùng miệng.",
+        "4": "Khả năng cảm nhận vị ngọt cùng các vị khác đều giảm theo lão hóa.",
+        "5": "Khả năng tái tạo niêm mạc miệng cũng giảm theo tuổi."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "미뢰", "def_vi": "Nụ vị giác — cơ quan cảm thụ vị giác trên lưỡi, giảm số lượng theo lão hóa" },
+      { "term_ko": "구강건조", "def_vi": "Khô miệng (xerostomia) — giảm tiết nước bọt, thường gặp ở người cao tuổi" },
+      { "term_ko": "침샘", "def_vi": "Tuyến nước bọt — tuyến tiết nước bọt, chức năng suy giảm theo lão hóa" }
+    ]
+  },
+  {
+    "id": 974,
+    "intent_ko": "노화에 따른 청각 변화 중 옳은 것을 고르는 문제",
+    "intent_vi": "Câu hỏi về sự thay đổi thính giác theo quá trình lão hóa",
+    "choice_explanations": {
+      "ko": {
+        "1": "귓바퀴 연골이 노화에 따라 위축되는 것은 사실이나, 이는 청력에 직접적인 영향보다는 외형적 변화에 가깝습니다.",
+        "2": "외이도의 건조증은 노화에 따라 증가하는 경향이 있어 '감소'는 틀립니다.",
+        "3": "이관은 내측으로 커지지 않습니다.",
+        "4": "★ 노화에 따라 고막은 두꺼워지고 탄력성이 떨어져 음의 전달 능력이 감소합니다. 이는 노인성 난청(특히 고음역 청력 손실)의 주요 기전 중 하나입니다.",
+        "5": "노인성 난청은 여성보다 남성에게 더 흔하게, 더 일찍 나타납니다."
+      },
+      "vi": {
+        "1": "Teo sụn vành tai theo lão hóa là thực tế nhưng chủ yếu là thay đổi hình dạng, ít ảnh hưởng trực tiếp đến thính lực.",
+        "2": "Khô ống tai ngoài có xu hướng tăng theo lão hóa, không giảm.",
+        "3": "Vòi nhĩ (ống Eustache) không mở rộng về phía trong theo lão hóa.",
+        "4": "★ Theo lão hóa, màng nhĩ dày lên và mất đàn hồi, làm giảm khả năng truyền âm thanh. Đây là một trong những cơ chế chính gây nghe kém ở người cao tuổi (đặc biệt mất thính lực ở dải tần cao).",
+        "5": "Nghe kém tuổi già (presbycusis) phổ biến ở nam giới hơn và xuất hiện sớm hơn so với nữ giới."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "노인성 난청", "def_vi": "Nghe kém tuổi già (presbycusis) — mất thính lực dần dần do lão hóa, đặc biệt ở tần số cao" },
+      { "term_ko": "고막", "def_vi": "Màng nhĩ — màng rung chuyển khi tiếp nhận âm thanh; dày lên và kém đàn hồi theo lão hóa" },
+      { "term_ko": "이관", "def_vi": "Vòi nhĩ (ống Eustache) — ống nối tai giữa với hầu họng, điều chỉnh áp lực tai giữa" }
+    ]
+  },
+  {
+    "id": 973,
+    "intent_ko": "노화에 따른 감각기계 전반의 변화 중 옳은 것을 고르는 문제",
+    "intent_vi": "Câu hỏi về những thay đổi tổng thể của hệ giác quan theo lão hóa",
+    "choice_explanations": {
+      "ko": {
+        "1": "노화로 인해 전정기관 기능이 저하되어 평형감각은 오히려 감소합니다.",
+        "2": "노화에 따라 통증 민감성은 일반적으로 감소하여 통증을 늦게 감지합니다.",
+        "3": "노화에 따라 수정체 황화현상으로 유사 색상(보라·남색 등) 구별이 어려워집니다.",
+        "4": "노인성 난청은 고음(고주파)이 먼저 들리지 않게 되는 질환으로, 고음을 '잘 들을 수 있다'는 설명은 틀립니다.",
+        "5": "★ 노화에 따라 동공이 작아지고(동공 축소) 빛에 대한 반응이 느려집니다. 빛을 충분히 받아들이지 못하므로 노인은 밝은 곳을 선호하게 됩니다."
+      },
+      "vi": {
+        "1": "Lão hóa làm suy giảm chức năng tiền đình, khiến cảm giác thăng bằng kém đi, không tốt hơn.",
+        "2": "Lão hóa thường làm giảm nhạy cảm với đau, không tăng.",
+        "3": "Hiện tượng vàng hóa thể thủy tinh khiến người cao tuổi khó phân biệt các màu cùng tông (tím, chàm, v.v.).",
+        "4": "Nghe kém tuổi già làm mất thính lực tần số cao trước tiên — nói 'nghe tốt âm cao hơn' là sai.",
+        "5": "★ Lão hóa làm thu hẹp đồng tử và phản xạ ánh sáng chậm lại. Do mắt tiếp nhận ít ánh sáng hơn, người cao tuổi thích ở nơi sáng để bù đắp."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "동공 축소", "def_vi": "Thu hẹp đồng tử — đồng tử nhỏ lại theo lão hóa, làm giảm lượng ánh sáng vào mắt" },
+      { "term_ko": "평형감각", "def_vi": "Cảm giác thăng bằng — chức năng duy trì thăng bằng cơ thể, suy giảm theo lão hóa do ảnh hưởng tiền đình" },
+      { "term_ko": "수정체 황화현상", "def_vi": "Vàng hóa thể thủy tinh — thể thủy tinh chuyển vàng theo lão hóa, làm khó phân biệt màu sắc" }
+    ]
+  },
+  {
+    "id": 972,
+    "intent_ko": "수정체 황화현상이 있는 노인이 구별하기 가장 어려운 색 조합을 고르는 문제",
+    "intent_vi": "Câu hỏi về cặp màu sắc khó phân biệt nhất với người cao tuổi bị vàng hóa thể thủy tinh",
+    "choice_explanations": {
+      "ko": {
+        "2": "★ 수정체가 황화되면 파란·보라 계열의 단파장 빛이 흡수되어 보라색과 남색(파란색 계열)을 구별하기 매우 어려워집니다. 이 두 색은 파장이 짧고 서로 유사하여 황화 수정체에서 가장 변별이 힘든 조합입니다.",
+        "1": "빨간색과 노란색은 장파장 색으로 황화 수정체의 영향을 덜 받아 비교적 잘 구별됩니다.",
+        "3": "빨간색과 초록색은 파장 차이가 커서 구별이 비교적 잘 됩니다.",
+        "4": "노란색과 남색은 명도 차이가 있어 구별에 어려움이 상대적으로 적습니다.",
+        "5": "흰색과 회색은 명도 차이로 구별하므로 황화 수정체의 영향이 적습니다."
+      },
+      "vi": {
+        "2": "★ Khi thể thủy tinh bị vàng hóa, ánh sáng bước sóng ngắn (xanh, tím) bị hấp thụ nhiều hơn, khiến người cao tuổi rất khó phân biệt màu tím và màu chàm (xanh đậm) — hai màu gần nhau về bước sóng và sắc độ.",
+        "1": "Đỏ và vàng là màu bước sóng dài, ít bị ảnh hưởng bởi vàng hóa thể thủy tinh, vẫn phân biệt được khá tốt.",
+        "3": "Đỏ và xanh lá có bước sóng chênh lệch lớn, tương đối dễ phân biệt.",
+        "4": "Vàng và chàm có độ sáng khác biệt nên ít bị nhầm lẫn hơn.",
+        "5": "Trắng và xám phân biệt bằng độ sáng, ít bị ảnh hưởng bởi vàng hóa thể thủy tinh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "수정체 황화현상", "def_vi": "Vàng hóa thể thủy tinh — thể thủy tinh chuyển màu vàng theo lão hóa, lọc và hấp thụ ánh sáng bước sóng ngắn (xanh, tím)" },
+      { "term_ko": "단파장", "def_vi": "Bước sóng ngắn — ánh sáng màu xanh lam, tím; dễ bị hấp thụ bởi thể thủy tinh vàng hóa" },
+      { "term_ko": "색 식별 능력", "def_vi": "Khả năng phân biệt màu sắc — suy giảm theo lão hóa, đặc biệt với các màu tông lạnh" }
+    ]
+  },
+  {
+    "id": 971,
+    "intent_ko": "노화에 따른 시각 변화의 특성 중 옳은 것을 고르는 문제",
+    "intent_vi": "Câu hỏi về đặc điểm thay đổi thị giác theo lão hóa",
+    "choice_explanations": {
+      "ko": {
+        "1": "각막반사는 노화와 무관하게 비교적 잘 유지되어 '증가'는 정확하지 않습니다.",
+        "2": "노화에 따라 동공이 작아지고 수정체가 혼탁해져 눈부심은 오히려 증가합니다.",
+        "3": "★ 노화로 인해 망막의 광수용체와 동공 반응이 저하되어 밝은 곳에서 어두운 곳, 어두운 곳에서 밝은 곳으로 이동할 때 빛 순응(암순응·명순응) 시간이 길어집니다.",
+        "4": "노화에 따라 눈물샘 기능이 저하되어 눈물의 양은 감소하여 안구건조증이 생깁니다.",
+        "5": "가까운 물체에 초점을 맞추는 능력(조절력)은 노화에 따라 감소하여 노안이 생깁니다."
+      },
+      "vi": {
+        "1": "Phản xạ giác mạc được duy trì tương đối tốt theo lão hóa; 'tăng' là không chính xác.",
+        "2": "Lão hóa thu hẹp đồng tử và làm đục thể thủy tinh, khiến nhạy cảm với ánh sáng chói tăng lên, không giảm.",
+        "3": "★ Lão hóa làm suy giảm tế bào thụ quang và phản xạ đồng tử, kéo dài thời gian thích nghi ánh sáng (thích ứng sáng-tối và tối-sáng). Người cao tuổi cần nhiều thời gian hơn khi chuyển giữa môi trường sáng và tối.",
+        "4": "Lão hóa làm giảm chức năng tuyến lệ, giảm lượng nước mắt, gây khô mắt.",
+        "5": "Khả năng điều tiết (tập trung vào vật gần) giảm theo lão hóa, gây viễn thị lão hóa (lão thị)."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "빛 순응", "def_vi": "Thích nghi ánh sáng — quá trình mắt thích ứng khi chuyển giữa môi trường sáng và tối; kéo dài hơn theo lão hóa" },
+      { "term_ko": "조절력", "def_vi": "Khả năng điều tiết — khả năng thay đổi tiêu cự của thể thủy tinh để nhìn gần; giảm theo lão hóa gây lão thị" },
+      { "term_ko": "노안", "def_vi": "Lão thị — mất khả năng nhìn gần do giảm đàn hồi thể thủy tinh theo lão hóa" }
+    ]
+  },
+  {
+    "id": 970,
+    "intent_ko": "노화에 따른 신경계 변화의 특성 중 옳은 것을 고르는 문제",
+    "intent_vi": "Câu hỏi về đặc điểm thay đổi hệ thần kinh theo lão hóa",
+    "choice_explanations": {
+      "ko": {
+        "1": "노화에 따라 감각 기능은 전반적으로 감소하여 예민함이 아니라 둔감해집니다.",
+        "2": "노화에 따라 정서 조절 능력이 불안정해질 수 있으며, '안정된다'는 설명은 정확하지 않습니다.",
+        "3": "전정기관 및 소뇌 기능 저하로 균형 능력은 감소합니다.",
+        "4": "신경세포(뉴런)는 노화에 따라 감소하고 신경전달 속도가 느려져 기능이 저하됩니다.",
+        "5": "★ 노화에 따른 신경계 변화의 가장 중요한 특성 중 하나는 단기 기억의 감퇴입니다. 해마 등 기억 관련 뇌 영역의 기능이 저하되어 최근 사건을 기억하는 능력이 떨어집니다."
+      },
+      "vi": {
+        "1": "Lão hóa làm giảm chức năng cảm giác toàn thân — trở nên kém nhạy, không nhạy hơn.",
+        "2": "Lão hóa có thể làm mất ổn định điều tiết cảm xúc; 'ổn định hơn' là không chính xác.",
+        "3": "Chức năng tiền đình và tiểu não suy giảm khiến khả năng giữ thăng bằng kém đi.",
+        "4": "Tế bào thần kinh (neuron) giảm số lượng và tốc độ dẫn truyền thần kinh chậm lại theo lão hóa.",
+        "5": "★ Một trong những thay đổi quan trọng nhất của hệ thần kinh theo lão hóa là suy giảm trí nhớ ngắn hạn. Chức năng vùng hải mã và các vùng não liên quan đến ký ức suy yếu, khiến người cao tuổi khó ghi nhớ các sự kiện gần đây."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "단기 기억 감퇴", "def_vi": "Suy giảm trí nhớ ngắn hạn — khó ghi nhớ thông tin mới, đặc trưng của lão hóa hệ thần kinh" },
+      { "term_ko": "신경세포", "def_vi": "Tế bào thần kinh (neuron) — đơn vị cơ bản của hệ thần kinh; giảm số lượng và chức năng theo lão hóa" },
+      { "term_ko": "신경전달 속도", "def_vi": "Tốc độ dẫn truyền thần kinh — tốc độ truyền xung điện thần kinh; chậm lại theo lão hóa" }
+    ]
+  },
+  {
+    "id": 969,
+    "intent_ko": "장기간 자외선 노출과 스테로이드 연고 사용으로 출혈이 생기며 노인학대로 오인될 수 있는 피부 질환을 고르는 문제",
+    "intent_vi": "Câu hỏi nhận diện bệnh da ở người cao tuổi gây chảy máu dưới da do tiếp xúc tia UV lâu dài và dùng thuốc mỡ steroid, có thể bị nhầm với lạm dụng người già",
+    "choice_explanations": {
+      "ko": {
+        "1": "간찰진은 피부 접힘 부위의 마찰·습윤으로 인한 질환으로, 자외선·스테로이드와 관련이 없습니다.",
+        "3": "★ 노인성 자반은 자외선 장기 노출과 스테로이드 연고 사용으로 피부가 얇아지고 혈관이 약해져 사소한 충격에도 피하출혈이 생기는 질환입니다. 멍처럼 보여 노인학대로 오해받을 수 있습니다.",
+        "2": "우정문신은 피부 질환이 아니라 문신의 한 종류로, 출혈·자반과 무관합니다.",
+        "4": "지루성 피부염은 피지선 과다 분비 부위에 발생하는 만성 피부염으로 출혈·자외선 노출과 관련이 없습니다.",
+        "5": "기저귀 피부염은 주로 영·유아에게 나타나며 노인의 자반과 관련이 없습니다."
+      },
+      "vi": {
+        "1": "Viêm kẽ da (intertrigo) xảy ra do ma sát và ẩm ướt ở vùng da gập, không liên quan đến tia UV hay steroid.",
+        "3": "★ Xuất huyết dưới da ở người già (senile purpura) xảy ra do da mỏng đi và mạch máu yếu sau tiếp xúc tia UV kéo dài và dùng thuốc mỡ steroid. Vết bầm xuất hiện dễ dàng khi va chạm nhẹ và có thể bị nhầm với dấu hiệu lạm dụng người cao tuổi.",
+        "2": "Hình xăm (우정문신) không phải bệnh da, không liên quan đến xuất huyết hay ban tím.",
+        "4": "Viêm da tiết bã (seborrheic dermatitis) liên quan đến vùng tiết bã nhờn nhiều, không gây xuất huyết hay liên quan đến tia UV.",
+        "5": "Viêm da tã lót chủ yếu gặp ở trẻ sơ sinh, không liên quan đến ban xuất huyết người già."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "노인성 자반", "def_vi": "Xuất huyết dưới da người già (senile purpura) — vết bầm tím do da và mạch máu mỏng manh theo lão hóa, tia UV và steroid" },
+      { "term_ko": "피하출혈", "def_vi": "Xuất huyết dưới da — máu chảy dưới da tạo vết bầm, không do chấn thương nặng" },
+      { "term_ko": "스테로이드 연고", "def_vi": "Thuốc mỡ steroid — làm mỏng da và yếu mạch máu khi dùng kéo dài, là yếu tố nguy cơ của ban xuất huyết người già" }
+    ]
+  },
+  {
+    "id": 968,
+    "intent_ko": "피부 접힘 부위에서 마찰·열·습윤·짓무름으로 발생하는 피부 질환을 고르는 문제",
+    "intent_vi": "Câu hỏi nhận diện bệnh da xảy ra ở vùng da gập do ma sát, nhiệt, ẩm ướt và thiếu thông khí",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 간찰진(間擦疹)은 피부가 서로 맞닿는 접힘 부위(겨드랑이, 서혜부, 유방 하부 등)에서 마찰·열·습윤·공기 순환 부족으로 발생하는 염증성 피부 질환입니다. 붉은 발진, 짓무름이 특징이며 2차 세균·진균 감염으로 악화될 수 있습니다.",
+        "2": "우정문신은 피부 질환이 아닙니다.",
+        "3": "노인성 자반은 자외선·스테로이드로 인한 피하출혈이며, 접힘 부위와 관련 없습니다.",
+        "4": "기저귀 피부염은 기저귀 착용 부위에 한정되며, 원인이 소변·대변 자극으로 간찰진과 다릅니다.",
+        "5": "지루성 피부염은 피지선이 많은 부위에서 발생하며 접힘 부위 마찰과는 원인이 다릅니다."
+      },
+      "vi": {
+        "1": "★ Viêm kẽ da (intertrigo) là bệnh viêm da xảy ra ở vùng da tiếp xúc nhau (nách, bẹn, dưới vú...) do ma sát, nhiệt, ẩm ướt và thiếu thông khí. Đặc trưng bởi ban đỏ, trợt da và có thể bội nhiễm vi khuẩn hoặc nấm.",
+        "2": "Hình xăm không phải bệnh da.",
+        "3": "Xuất huyết dưới da người già liên quan đến tia UV và steroid, không phải vùng da gập.",
+        "4": "Viêm da tã lót giới hạn ở vùng mặc tã, nguyên nhân là kích ứng từ nước tiểu và phân — khác với viêm kẽ.",
+        "5": "Viêm da tiết bã xảy ra ở vùng nhiều tuyến bã nhờn, nguyên nhân khác với viêm kẽ da."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "간찰진", "def_vi": "Viêm kẽ da (intertrigo) — viêm da ở vùng da tiếp xúc nhau do ma sát, ẩm và thiếu thông khí" },
+      { "term_ko": "짓무름", "def_vi": "Trợt da — tình trạng da bị mòn, ướt và đau do ma sát liên tục hoặc ẩm ướt kéo dài" },
+      { "term_ko": "2차 감염", "def_vi": "Bội nhiễm thứ phát — nhiễm trùng thêm (vi khuẩn hoặc nấm) xảy ra trên tổn thương da đã có sẵn" }
+    ]
+  },
+  {
+    "id": 967,
+    "intent_ko": "피부 질환과 그 설명이 올바르게 연결된 것을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn cặp ghép đúng giữa bệnh da và mô tả của nó",
+    "choice_explanations": {
+      "ko": {
+        "2": "★ 간찰진은 피부 접힘 부위에 발생하며 2차 세균·진균 감염에 의해 악화됩니다. 이 설명은 간찰진의 발생 부위와 악화 기전을 정확히 설명합니다.",
+        "1": "우정문신에 대한 설명이 아니라 노인성 자반(자외선 주의)에 가까운 내용입니다.",
+        "3": "통풍과 항진균제·스테로이드 연고 사용은 노인성 자반이 아니라 간찰진의 치료 방법입니다.",
+        "4": "마찰·열·습윤은 지루성 피부염이 아니라 간찰진의 원인입니다.",
+        "5": "피지선 활동이 많은 부위에 발생하고 흰색 인설이 동반되는 것은 지루성 피부염의 설명으로, 보기 번호가 없는 부완전한 선택지입니다."
+      },
+      "vi": {
+        "2": "★ Viêm kẽ da xảy ra ở vùng da gập và trầm trọng hơn do bội nhiễm vi khuẩn hoặc nấm. Mô tả này phản ánh đúng vị trí phát sinh và cơ chế nặng lên của viêm kẽ.",
+        "1": "Mô tả 'tránh kích thích quá mức, tia UV' gần hơn với senile purpura (xuất huyết người già), không phải hình xăm.",
+        "3": "Thông khí và bôi thuốc kháng nấm/steroid là điều trị của viêm kẽ da, không phải senile purpura.",
+        "4": "Ma sát, nhiệt, ẩm là nguyên nhân của viêm kẽ da, không phải viêm da tiết bã.",
+        "5": "Phát sinh ở vùng nhiều tuyến bã và có vảy trắng là mô tả đúng của viêm da tiết bã, nhưng đây là câu hỏi ghép không đầy đủ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "지루성 피부염", "def_vi": "Viêm da tiết bã (seborrheic dermatitis) — viêm da mạn tính ở vùng nhiều tuyến bã nhờn, kèm vảy trắng hoặc vàng" },
+      { "term_ko": "항진균제", "def_vi": "Thuốc kháng nấm — thuốc diệt hoặc ức chế nấm; dùng trong điều trị viêm kẽ da bội nhiễm nấm" },
+      { "term_ko": "인설", "def_vi": "Vảy da — mảng da chết bong tróc, đặc trưng của viêm da tiết bã" }
+    ]
+  },
+  {
+    "id": 966,
+    "intent_ko": "머릿니의 전파 방식과 올바른 관리 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về cách lây lan và biện pháp xử lý đúng đối với chấy đầu",
+    "choice_explanations": {
+      "ko": {
+        "1": "머릿니는 피부 속에 굴을 파지 않습니다. 피부 속에 굴을 파는 것은 옴(진드기)의 특징입니다.",
+        "2": "머릿니는 직접 접촉, 모자·빗 공유 등을 통해 전염됩니다.",
+        "3": "빗과 브러쉬는 흐르는 물에만 씻어서는 부족하며, 소독제나 뜨거운 물에 처리해야 합니다.",
+        "4": "머릿니는 모자·수건 등 개인용품을 통해 전파되므로 함께 사용하면 안 됩니다.",
+        "5": "★ 침구와 옷을 뜨거운 물(60℃ 이상)로 세탁하고 완전히 건조시키면 머릿니와 알을 사멸시킬 수 있습니다. 이는 머릿니 재감염 방지를 위한 핵심 처치입니다."
+      },
+      "vi": {
+        "1": "Chấy đầu không đào hang trong da. Đào hang trong da là đặc điểm của ghẻ (do ký sinh trùng Sarcoptes scabiei).",
+        "2": "Chấy đầu lây qua tiếp xúc trực tiếp và dùng chung đồ vật như mũ, lược.",
+        "3": "Chỉ rửa lược bằng nước chảy là không đủ; cần xử lý bằng nước nóng hoặc dung dịch sát khuẩn.",
+        "4": "Chấy đầu lây qua đồ dùng cá nhân như mũ, khăn — tuyệt đối không dùng chung.",
+        "5": "★ Giặt chăn gối và quần áo bằng nước nóng (trên 60°C) rồi sấy khô hoàn toàn sẽ tiêu diệt chấy và trứng chấy. Đây là biện pháp quan trọng để ngăn tái nhiễm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "머릿니", "def_vi": "Chấy đầu (Pediculus humanus capitis) — ký sinh trùng nhỏ sống trên da đầu, lây qua tiếp xúc trực tiếp" },
+      { "term_ko": "소독", "def_vi": "Khử khuẩn/tiệt trùng — tiêu diệt vi sinh vật gây bệnh; cần thiết để loại bỏ chấy trên đồ vật" },
+      { "term_ko": "침구류", "def_vi": "Đồ giường (chăn, gối, ga trải giường) — cần giặt nóng và sấy khô để phòng lây chấy" }
+    ]
+  },
+  {
+    "id": 965,
+    "intent_ko": "처방 연고를 밤에 바르고, 침구를 뜨거운 물로 세탁하며, 동거인 모두 동시 치료하는 관리법에 해당하는 감염성 피부 질환을 고르는 문제",
+    "intent_vi": "Câu hỏi nhận diện bệnh da truyền nhiễm cần bôi thuốc mỡ vào ban đêm, giặt đồ giường nước nóng và điều trị đồng thời cả người cùng nhà",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 옴은 옴진드기(Sarcoptes scabiei)가 피부 속에 굴을 파고 기생하여 극심한 가려움증을 유발하는 전염성 피부 질환입니다. 처방받은 퍼메트린 등의 연고를 밤에 바르고 다음 날 씻어내며, 침구와 옷을 뜨거운 물로 세탁하고, 동거인 전원이 동시에 치료를 받아야 재감염을 막을 수 있습니다.",
+        "2": "대상포진은 수두 바이러스의 재활성화로 인한 질환으로, 이러한 집단 처치가 필요 없습니다.",
+        "3": "두드러기는 알레르기 반응으로 전염성이 없어 위의 관리법이 필요 없습니다.",
+        "4": "피부건조증은 비감염성 만성 피부 상태로 집단 치료가 필요 없습니다.",
+        "5": "알레르기성 피부염은 감염성 질환이 아니므로 동거인 동시 치료가 필요 없습니다."
+      },
+      "vi": {
+        "1": "★ Ghẻ (scabies) do ký sinh trùng Sarcoptes scabiei đào hang trong da, gây ngứa dữ dội — đặc biệt về đêm. Cần bôi thuốc mỡ (như permethrin) vào ban đêm và rửa sáng hôm sau, giặt đồ giường bằng nước nóng, và toàn bộ người sống cùng phải điều trị đồng thời để tránh tái nhiễm.",
+        "2": "Bệnh zona (herpes zoster) do virus varicella-zoster tái hoạt động; không cần biện pháp xử lý tập thể như mô tả.",
+        "3": "Mề đay (urticaria) là phản ứng dị ứng, không lây truyền, không cần biện pháp tập thể.",
+        "4": "Khô da là tình trạng mạn tính không lây nhiễm, không cần điều trị tập thể.",
+        "5": "Viêm da dị ứng không phải bệnh truyền nhiễm, không cần điều trị đồng thời người cùng nhà."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "옴", "def_vi": "Bệnh ghẻ (scabies) — bệnh da do ký sinh trùng Sarcoptes scabiei, gây ngứa về đêm và lây qua tiếp xúc" },
+      { "term_ko": "퍼메트린 연고", "def_vi": "Thuốc mỡ permethrin — thuốc diệt ký sinh trùng dùng điều trị ghẻ, bôi toàn thân vào ban đêm" },
+      { "term_ko": "동시 치료", "def_vi": "Điều trị đồng thời — toàn bộ người tiếp xúc gần được điều trị cùng lúc để ngăn tái nhiễm" }
+    ]
+  },
+  {
+    "id": 964,
+    "intent_ko": "밤에 가려움증이 심해지고 사람 간 직접 감염되는 피부 질환을 고르는 문제",
+    "intent_vi": "Câu hỏi nhận diện bệnh da truyền nhiễm trực tiếp người sang người với ngứa nặng hơn về đêm",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 옴은 옴진드기가 피부 속에 굴을 파고 기생하여 밤에 가려움증이 심해지며, 알레르기 증상과 유사하고 직접 피부 접촉으로 사람 간 전염됩니다.",
+        "2": "수두는 가려움증을 동반하지만 공기 중 비말을 통해 전파되며, 사람 간 직접 피부 접촉 전염이 주된 경로가 아닙니다.",
+        "3": "건조증은 전염성이 없는 피부 상태입니다.",
+        "4": "대상포진은 수두 바이러스의 재활성화로 주로 노인·면역저하자에게 발생하며, 사람 간 직접 전염이 주 경로가 아닙니다.",
+        "5": "아토피 피부염은 알레르기성 만성 질환으로 직접적인 전염성이 없습니다."
+      },
+      "vi": {
+        "1": "★ Bệnh ghẻ do ký sinh trùng Sarcoptes scabiei đào hang trong da, gây ngứa dữ dội về đêm, triệu chứng tương tự dị ứng và lây trực tiếp qua tiếp xúc da người sang người.",
+        "2": "Thủy đậu gây ngứa nhưng lây chủ yếu qua không khí (giọt bắn), không phải tiếp xúc da trực tiếp là chủ yếu.",
+        "3": "Khô da là tình trạng không lây nhiễm.",
+        "4": "Zona xảy ra do virus varicella-zoster tái hoạt, chủ yếu ở người già/suy miễn dịch; không lây trực tiếp qua da là chính.",
+        "5": "Viêm da cơ địa (atopic dermatitis) là bệnh dị ứng mạn tính, không có tính lây nhiễm trực tiếp."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "옴진드기", "def_vi": "Ký sinh trùng ghẻ (Sarcoptes scabiei) — đào hang dưới da người, gây ghẻ lây truyền qua tiếp xúc" },
+      { "term_ko": "야간 소양감", "def_vi": "Ngứa về đêm — đặc trưng của bệnh ghẻ do ký sinh trùng hoạt động mạnh vào ban đêm" }
+    ]
+  },
+  {
+    "id": 963,
+    "intent_ko": "대상포진의 증상과 발생 원인에 대한 올바른 설명을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn mô tả đúng về triệu chứng và nguyên nhân của bệnh zona (herpes zoster)",
+    "choice_explanations": {
+      "ko": {
+        "1": "대상포진은 세균이 아니라 수두-대상포진 바이러스(Varicella-Zoster Virus)의 재활성화로 발생합니다.",
+        "2": "대상포진 수포에는 통증과 가려움증이 동반됩니다. '가려움이 없는 수포'는 틀립니다.",
+        "3": "격리는 면역이 없는 임산부나 신생아에게 전파를 막기 위해 활성 수포기에 시행하며, 신경통이 사라질 때까지 격리하지는 않습니다.",
+        "4": "대상포진은 과거 풍진이 아니라 수두를 앓았던 사람에게서 신경절에 잠복해 있던 바이러스가 면역저하 시 재활성화되어 발생합니다.",
+        "5": "★ 대상포진의 전형적 증상은 작열감(화끈거리는 통증)을 동반한 수포가 신경 분포 경로를 따라 띠 모양(帶狀)으로 나타나는 것입니다. 이는 바이러스가 신경절을 따라 이동하기 때문입니다."
+      },
+      "vi": {
+        "1": "Zona không do vi khuẩn mà do virus Varicella-Zoster (VZV) tái hoạt động sau khi tiềm ẩn trong hạch thần kinh.",
+        "2": "Bọng nước của zona đi kèm đau và ngứa — 'không ngứa' là sai.",
+        "3": "Cách ly áp dụng trong giai đoạn bọng nước còn hoạt động để tránh lây cho người chưa có miễn dịch (phụ nữ mang thai, trẻ sơ sinh), không phải chờ đến khi hết đau thần kinh.",
+        "4": "Zona xảy ra ở người đã từng bị thủy đậu (không phải rubella), virus tiềm ẩn trong hạch thần kinh và tái hoạt khi miễn dịch suy giảm.",
+        "5": "★ Triệu chứng điển hình của zona là bọng nước kèm cảm giác nóng rát dữ dội, xuất hiện thành dải theo đường phân bố thần kinh (dạng vành đai). Đây là do virus di chuyển dọc theo rễ thần kinh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "대상포진", "def_vi": "Zona (herpes zoster) — bệnh do virus VZV tái hoạt, gây bọng nước đau đớn theo đường thần kinh" },
+      { "term_ko": "작열감", "def_vi": "Cảm giác nóng rát — đau như bỏng, triệu chứng đặc trưng của zona" },
+      { "term_ko": "수포", "def_vi": "Bọng nước — túi dịch nhỏ trên da, đặc trưng của zona và thủy đậu" },
+      { "term_ko": "신경절", "def_vi": "Hạch thần kinh — nơi virus VZV tiềm ẩn sau khi mắc thủy đậu, tái hoạt khi miễn dịch giảm" }
+    ]
+  },
+  {
+    "id": 962,
+    "intent_ko": "대상포진의 특성과 올바른 관리 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi về đặc điểm và cách chăm sóc đúng cho bệnh nhân zona",
+    "choice_explanations": {
+      "ko": {
+        "1": "대상포진의 통증은 개인차가 크며, 일부에서는 수개월~수년간 지속되는 대상포진 후 신경통(PHN)으로 이어질 수 있습니다.",
+        "2": "수포는 자연히 건조·결딱지(가피)가 되도록 두는 것이 좋으며, 건조되지 않게 관리하는 것은 오히려 감염 위험을 높입니다.",
+        "3": "대상포진 치료에 스테로이드는 급성기 일부 경우에 단기간 사용될 수 있으나, 장기 복용은 면역 억제로 오히려 악화시킵니다.",
+        "4": "가려운 부위에 온찜질을 하면 열로 인해 피부 자극이 증가하고 수포가 악화될 수 있어 적절하지 않습니다.",
+        "5": "★ 대상포진은 수두-대상포진 바이러스(VZV)가 과거 수두 감염 이후 신경절에 잠복해 있다가 면역력이 저하될 때 재활성화되어 발생합니다. 따라서 과거 수두를 앓은 경험이 발생의 전제 조건입니다."
+      },
+      "vi": {
+        "1": "Đau do zona rất khác nhau tùy người; một số trường hợp diễn tiến thành đau thần kinh sau zona (PHN) kéo dài hàng tháng đến hàng năm.",
+        "2": "Bọng nước nên để khô tự nhiên, đóng vảy. Ngăn không cho khô sẽ tăng nguy cơ nhiễm trùng.",
+        "3": "Steroid có thể dùng ngắn hạn trong giai đoạn cấp ở một số trường hợp, nhưng dùng dài hạn ức chế miễn dịch và làm bệnh nặng hơn.",
+        "4": "Chườm nóng vào vùng ngứa làm tăng kích ứng da và có thể làm bọng nước vỡ sớm — không phù hợp.",
+        "5": "★ Zona xảy ra khi virus VZV tiềm ẩn trong hạch thần kinh sau lần nhiễm thủy đậu trước đây tái hoạt động khi miễn dịch suy giảm. Tiền sử mắc thủy đậu là điều kiện tiên quyết để phát bệnh zona."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "대상포진 후 신경통", "def_vi": "Đau thần kinh sau zona (PHN) — đau kéo dài sau khi bọng nước lành, biến chứng thường gặp của zona ở người cao tuổi" },
+      { "term_ko": "가피", "def_vi": "Vảy đóng (crust) — lớp khô đóng trên vết thương hoặc bọng nước khi lành; bọng nước zona nên để tự khô thành vảy" },
+      { "term_ko": "재활성화", "def_vi": "Tái hoạt động — virus tiềm ẩn trở nên hoạt động trở lại khi hệ miễn dịch suy yếu" }
+    ]
+  },
+  {
+    "id": 961,
+    "intent_ko": "노인 대상자에게 대상포진 발생 위험이 높은 원인을 고르는 문제",
+    "intent_vi": "Câu hỏi về nguyên nhân khiến người cao tuổi có nguy cơ mắc zona cao hơn",
+    "choice_explanations": {
+      "ko": {
+        "1": "과체중은 당뇨·심혈관 질환 등과 관련되지만, 대상포진 발생의 직접 원인은 아닙니다.",
+        "2": "피부 건조는 노인에게 흔하지만 대상포진의 발생 위험과 직접적인 연관이 없습니다.",
+        "3": "★ 대상포진은 신경절에 잠복해 있던 수두-대상포진 바이러스(VZV)가 면역력이 저하될 때 재활성화되어 발생합니다. 노인은 나이와 함께 세포성 면역 기능이 저하되어 대상포진 발생 위험이 현저히 높아집니다.",
+        "4": "혈액순환 장애는 심혈관 문제와 연관되지만, 대상포진의 직접 원인이 아닙니다.",
+        "5": "신장기능 저하는 대상포진 발생과 직접적인 관련이 없습니다."
+      },
+      "vi": {
+        "1": "Béo phì liên quan đến đái tháo đường, tim mạch nhưng không phải nguyên nhân trực tiếp của zona.",
+        "2": "Khô da phổ biến ở người cao tuổi nhưng không liên quan trực tiếp đến nguy cơ zona.",
+        "3": "★ Zona xảy ra khi VZV tiềm ẩn trong hạch thần kinh tái hoạt động do suy giảm miễn dịch. Người cao tuổi có chức năng miễn dịch tế bào suy yếu theo tuổi, làm tăng đáng kể nguy cơ mắc zona.",
+        "4": "Rối loạn tuần hoàn máu liên quan đến tim mạch nhưng không phải nguyên nhân trực tiếp của zona.",
+        "5": "Suy thận không có liên quan trực tiếp đến nguy cơ mắc zona."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "면역력 저하", "def_vi": "Suy giảm miễn dịch — yếu tố chính khiến VZV tiềm ẩn tái hoạt và gây zona" },
+      { "term_ko": "세포성 면역", "def_vi": "Miễn dịch tế bào — nhánh miễn dịch kiểm soát VZV tiềm ẩn; suy giảm theo lão hóa" },
+      { "term_ko": "잠복 바이러스", "def_vi": "Virus tiềm ẩn — VZV nằm im trong hạch thần kinh sau thủy đậu, chờ điều kiện để tái hoạt" }
+    ]
+  },
+  {
+    "id": 960,
+    "intent_ko": "피부·점막의 감각신경말단에 수포·통증·작열감·가려움이 나타나는 질환을 고르는 문제",
+    "intent_vi": "Câu hỏi nhận diện bệnh gây bọng nước, đau, nóng rát và ngứa ở đầu dây thần kinh cảm giác của da và niêm mạc",
+    "choice_explanations": {
+      "ko": {
+        "1": "욕창은 압력에 의한 피부 조직 손상으로 수포·작열감이 주 증상이 아닙니다.",
+        "2": "습진은 가려움증을 동반하지만, 특정 감각신경말단 분포에 따른 수포와 작열감이 두드러지지 않습니다.",
+        "3": "건조증은 수분 부족으로 가려움증은 있을 수 있으나 수포·작열감·심한 통증은 없습니다.",
+        "4": "★ 대상포진은 감각신경 경로를 따라 수포, 심한 통증, 작열감(화끈거림), 가려움이 복합적으로 나타납니다. 바이러스가 신경말단으로 이동하며 증상을 유발하기 때문입니다.",
+        "5": "아토피 피부염은 가려움이 주 증상이나, 특정 신경 경로를 따른 작열감·수포는 특징이 아닙니다."
+      },
+      "vi": {
+        "1": "Loét do tì đè gây tổn thương mô do áp lực; bọng nước và nóng rát không phải triệu chứng chính.",
+        "2": "Chàm (eczema) gây ngứa nhưng không có bọng nước và nóng rát rõ rệt theo phân bố thần kinh.",
+        "3": "Khô da có thể gây ngứa nhưng không có bọng nước, nóng rát hay đau dữ dội.",
+        "4": "★ Zona gây ra đồng thời bọng nước, đau dữ dội, cảm giác nóng rát và ngứa dọc theo đường phân bố thần kinh cảm giác. Đây là do virus di chuyển và gây tổn thương đầu dây thần kinh.",
+        "5": "Viêm da cơ địa chủ yếu gây ngứa mạn tính, không có bọng nước và nóng rát theo phân bố thần kinh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "감각신경말단", "def_vi": "Đầu dây thần kinh cảm giác — đầu cuối của dây thần kinh tiếp nhận cảm giác; bị tổn thương bởi virus zona" },
+      { "term_ko": "점막", "def_vi": "Niêm mạc — lớp lót ướt bên trong các khoang cơ thể; cũng có thể bị zona ảnh hưởng" },
+      { "term_ko": "작열감", "def_vi": "Cảm giác nóng rát — cảm giác bỏng rát dữ dội, đặc trưng của tổn thương dây thần kinh trong zona" }
+    ]
+  },
+  {
+    "id": 959,
+    "intent_ko": "피부 건조증이 있는 대상자의 목욕 보조 시 올바른 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi về phương pháp hỗ trợ tắm đúng cho người bệnh khô da",
+    "choice_explanations": {
+      "ko": {
+        "1": "뜨거운 물은 피부의 자연 유분과 수분을 빼앗아 건조증을 악화시킵니다. 미지근한 물을 사용해야 합니다.",
+        "2": "때를 불려 미는 행위는 피부 장벽을 손상시키고 건조증을 악화시킵니다.",
+        "3": "자극이 강한 비누는 피부 지질막을 파괴하여 건조증을 악화시킵니다.",
+        "4": "수건으로 문지르는 것은 피부에 물리적 자극을 주어 손상을 유발합니다. 가볍게 두드려 닦아야 합니다.",
+        "5": "★ 목욕 직후 피부가 약간 촉촉한 상태일 때 보습제를 바르면 수분이 피부 안으로 잠겨 효과가 극대화됩니다. 건조증 관리의 핵심 원칙입니다."
+      },
+      "vi": {
+        "1": "Nước nóng lấy đi dầu và ẩm tự nhiên của da, làm trầm trọng thêm khô da. Nên dùng nước ấm vừa.",
+        "2": "Kỳ cọ da làm tổn thương hàng rào da, khiến khô da nặng hơn.",
+        "3": "Xà phòng mạnh phá vỡ màng lipid bảo vệ da, làm khô da nặng hơn.",
+        "4": "Chà mạnh bằng khăn gây kích ứng cơ học. Nên thấm nhẹ bằng cách vỗ nhẹ.",
+        "5": "★ Thoa kem dưỡng ẩm ngay sau khi tắm khi da còn hơi ẩm sẽ giúp giữ nước trong da, tối đa hóa hiệu quả dưỡng ẩm. Đây là nguyên tắc cốt lõi trong chăm sóc da khô."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "보습제", "def_vi": "Kem dưỡng ẩm (moisturizer) — sản phẩm giữ ẩm cho da; cần thoa ngay sau khi tắm khi da còn ẩm" },
+      { "term_ko": "피부 장벽", "def_vi": "Hàng rào da — lớp bảo vệ ngoài cùng của da; dễ bị tổn thương khi kỳ cọ mạnh hoặc dùng xà phòng mạnh" }
+    ]
+  },
+  {
+    "id": 958,
+    "intent_ko": "노인의 피부건조증 예방에 효과적인 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi về biện pháp phòng ngừa khô da hiệu quả ở người cao tuổi",
+    "choice_explanations": {
+      "ko": {
+        "1": "수분 섭취를 제한하면 체내 수분이 줄어 피부 건조가 악화됩니다.",
+        "2": "목욕 후 물기를 그대로 두면 증발 시 피부 수분도 함께 빼앗겨 건조해집니다.",
+        "3": "실내 적정 습도는 40~60%이며, 30~40%는 너무 낮아 건조증 예방에 충분하지 않습니다.",
+        "4": "때를 문질러 닦는 것은 피부 표면 지질막과 각질층을 손상시켜 건조를 악화시킵니다.",
+        "5": "★ 순한 비누(저자극·무향)는 피부 지질막을 최소로 손상시키고, 보습제를 정기적으로 사용하면 피부 수분 손실을 막아 건조증 예방에 가장 효과적입니다."
+      },
+      "vi": {
+        "1": "Hạn chế uống nước làm giảm độ ẩm toàn thân, khiến khô da nặng hơn.",
+        "2": "Để nước bốc hơi sau tắm kéo theo ẩm của da, làm da khô hơn.",
+        "3": "Độ ẩm phòng thích hợp là 40–60%; 30–40% còn quá thấp để phòng khô da hiệu quả.",
+        "4": "Chà mạnh khi tắm phá hủy màng lipid và lớp sừng bảo vệ da, làm khô da nặng thêm.",
+        "5": "★ Xà phòng nhẹ (ít kích ứng, không mùi) giảm tổn thương màng lipid da, và dùng kem dưỡng ẩm thường xuyên ngăn mất nước qua da — đây là biện pháp hiệu quả nhất phòng khô da."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "실내습도", "def_vi": "Độ ẩm trong nhà — cần duy trì 40–60% để giảm khô da, đặc biệt vào mùa đông" },
+      { "term_ko": "피부 지질막", "def_vi": "Màng lipid da — lớp dầu bảo vệ da khỏi mất nước; dễ bị tổn thương bởi xà phòng mạnh và chà cọ" }
+    ]
+  },
+  {
+    "id": 957,
+    "intent_ko": "노인 대상자의 피부 건조 예방에 올바른 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi về phương pháp đúng để phòng ngừa khô da cho người cao tuổi",
+    "choice_explanations": {
+      "ko": {
+        "1": "겨울에 제습기를 사용하면 실내 습도가 낮아져 피부 건조가 더 심해집니다. 가습기를 사용해야 합니다.",
+        "2": "알코올 함유 제품은 피부의 수분과 지질을 빼앗아 건조증을 악화시킵니다.",
+        "3": "뜨거운 물과 잦은 샤워는 피부 자연 오일을 과도하게 제거하여 건조해집니다.",
+        "4": "때를 미는 행위는 피부 보호막인 각질층을 손상시켜 건조 및 감염 위험을 높입니다.",
+        "5": "★ 목욕 후 피부를 수건으로 문지르지 않고 가볍게 두드려 말리면 피부 자극을 최소화하면서 잔여 수분을 보존할 수 있습니다. 이후 즉시 보습제를 바르는 것과 함께 피부 건조 예방의 핵심 방법입니다."
+      },
+      "vi": {
+        "1": "Dùng máy hút ẩm vào mùa đông làm giảm độ ẩm phòng, khiến da khô nặng hơn. Cần dùng máy tạo ẩm.",
+        "2": "Sản phẩm có cồn lấy đi nước và dầu da, làm trầm trọng khô da.",
+        "3": "Tắm bằng nước nóng và tắm thường xuyên loại bỏ quá nhiều dầu tự nhiên của da, gây khô.",
+        "4": "Kỳ cọ làm tổn thương lớp sừng bảo vệ, tăng nguy cơ khô da và nhiễm trùng.",
+        "5": "★ Sau tắm, thấm nhẹ da bằng cách vỗ nhẹ khăn (không chà) giúp giảm kích ứng cơ học và giữ lại ẩm còn trên da. Kết hợp thoa kem dưỡng ẩm ngay sau đó là phương pháp cốt lõi phòng khô da."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "가습기", "def_vi": "Máy tạo ẩm — thiết bị tăng độ ẩm không khí trong phòng, quan trọng để phòng khô da mùa đông" },
+      { "term_ko": "각질층", "def_vi": "Lớp sừng (stratum corneum) — lớp ngoài cùng của biểu bì, bảo vệ da khỏi mất nước và nhiễm trùng" }
+    ]
+  },
+  {
+    "id": 956,
+    "intent_ko": "겨울철 저습도로 피부가 건조해지고 손·다리에 가려움증이 생기는 질환을 고르는 문제",
+    "intent_vi": "Câu hỏi nhận diện bệnh da xảy ra vào mùa đông khi độ ẩm thấp, da khô và ngứa ở tay và chân",
+    "choice_explanations": {
+      "ko": {
+        "3": "★ 피부 건조증은 겨울철 낮은 습도와 차가운 날씨로 피부 수분이 부족해져 피부가 거칠어지고 손·다리 등에 가려움증이 발생하는 질환입니다.",
+        "1": "옴은 기생충(진드기)에 의한 전염성 피부 질환으로 계절과 무관합니다.",
+        "2": "욕창은 장기간 압력이 가해져 발생하는 피부·조직 손상으로 건조증과 다릅니다.",
+        "4": "대상포진은 바이러스 재활성화에 의해 신경 경로를 따라 발생하며 계절·습도와 무관합니다.",
+        "5": "수두는 바이러스성 전신 감염 질환으로 계절성 건조와 무관합니다."
+      },
+      "vi": {
+        "3": "★ Khô da (xerosis) xảy ra vào mùa đông khi độ ẩm thấp làm da mất nước, trở nên thô ráp và ngứa, đặc biệt ở tay và chân.",
+        "1": "Bệnh ghẻ do ký sinh trùng, lây qua tiếp xúc, không phụ thuộc mùa hay độ ẩm.",
+        "2": "Loét do tì đè do áp lực kéo dài, không phải do độ ẩm không khí thấp.",
+        "4": "Zona do virus tái hoạt theo đường thần kinh, không liên quan đến độ ẩm hay mùa đông.",
+        "5": "Thủy đậu là nhiễm virus toàn thân, không liên quan đến khô da theo mùa."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "피부건조증", "def_vi": "Bệnh khô da (xerosis) — tình trạng da thiếu ẩm gây khô, nứt và ngứa, hay gặp vào mùa đông" }
+    ]
+  },
+  {
+    "id": 955,
+    "intent_ko": "욕창의 치료 및 예방을 위해 우선적으로 공급해야 하는 영양소를 고르는 문제 (보기 데이터 오류로 원래 보기: 단백질·비타민C·칼슘·탄수화물·철분 계열로 추정)",
+    "intent_vi": "Câu hỏi về chất dinh dưỡng cần cung cấp ưu tiên để điều trị và phòng ngừa loét tì đè (lưu ý: dữ liệu lựa chọn trong file gốc có lỗi nhập liệu)",
+    "choice_explanations": {
+      "ko": {
+        "3": "★ 욕창 치료 및 예방에 가장 중요한 영양소는 단백질입니다(파일 내 보기 데이터 오류로 3번 정답 처리). 단백질은 피부와 조직의 재생·회복에 필수적이며, 충분한 단백질 섭취가 없으면 욕창 치유가 지연됩니다. 비타민 C와 아연도 상처 치유에 중요한 보조 영양소입니다."
+      },
+      "vi": {
+        "3": "★ Chất dinh dưỡng quan trọng nhất trong điều trị và phòng ngừa loét tì đè là protein (ghi nhận lỗi dữ liệu lựa chọn trong file gốc, đáp án là số 3). Protein cần thiết cho tái tạo và phục hồi da và mô; thiếu protein làm lành vết loét chậm lại. Vitamin C và kẽm cũng hỗ trợ quan trọng cho quá trình lành vết thương."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "욕창", "def_vi": "Loét tì đè (pressure ulcer) — tổn thương da và mô do áp lực kéo dài, hay gặp ở người nằm lâu" },
+      { "term_ko": "단백질", "def_vi": "Protein — chất dinh dưỡng thiết yếu để tái tạo mô và lành vết thương, đặc biệt quan trọng trong điều trị loét tì đè" },
+      { "term_ko": "상처 치유", "def_vi": "Lành vết thương — quá trình phục hồi mô tổn thương; phụ thuộc vào đủ protein, vitamin C và kẽm" }
+    ]
+  },
+  {
+    "id": 954,
+    "intent_ko": "욕창 발생이 우려되는 요양보호사의 잘못된 행동을 고르는 문제",
+    "intent_vi": "Câu hỏi nhận diện hành vi của điều dưỡng viên có thể gây loét tì đè cho người được chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 천골 부위에 도넛 모양의 베개를 사용하면 도넛 안쪽 중앙부(천골)에 압력이 집중되고 혈액순환이 차단되어 오히려 욕창 발생 위험을 높입니다. 이 방법은 과거에 권장되었으나 현재는 금지됩니다.",
+        "2": "기저귀를 펴서 채워주면 피부와의 마찰을 줄여 욕창 예방에 도움이 됩니다.",
+        "3": "목욕 후 피부를 완전히 말려 습기를 제거하는 것은 피부 손상 예방에 바람직합니다.",
+        "4": "무릎 사이에 베개를 끼워 뼈 돌출 부위 간 직접 접촉을 방지하는 것은 욕창 예방에 효과적입니다.",
+        "5": "체위를 자주 변경하여 같은 부위에 압력이 지속되지 않도록 하는 것은 욕창 예방의 핵심입니다."
+      },
+      "vi": {
+        "1": "★ Đặt gối hình bánh donut vào vùng xương cùng cụt làm áp lực tập trung vào trung tâm (nơi xương cùng) và cắt đứt tuần hoàn máu tại đó, thực ra làm tăng nguy cơ loét. Phương pháp này đã bị loại bỏ khỏi hướng dẫn hiện đại.",
+        "2": "Trải phẳng tã giúp giảm ma sát với da, hỗ trợ phòng loét.",
+        "3": "Lau khô da hoàn toàn sau tắm giúp loại bỏ ẩm ướt, phòng tổn thương da.",
+        "4": "Kẹp gối giữa hai đầu gối ngăn tiếp xúc trực tiếp giữa các điểm xương nhô ra, hiệu quả phòng loét.",
+        "5": "Thay đổi tư thế thường xuyên tránh áp lực liên tục lên một vùng — đây là biện pháp cốt lõi phòng loét."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "도넛 모양 베개", "def_vi": "Gối hình bánh donut — tưởng giảm áp lực nhưng thực ra tập trung áp lực vào trung tâm; hiện không được khuyến dùng phòng loét" },
+      { "term_ko": "천골", "def_vi": "Xương cùng (sacrum) — xương phía dưới cột sống, điểm dễ bị loét tì đè nhất ở người nằm ngửa" },
+      { "term_ko": "체위 변경", "def_vi": "Thay đổi tư thế — xoay trở người bệnh định kỳ (thường mỗi 2 giờ) để phân bổ áp lực, phòng loét tì đè" }
+    ]
+  },
+  {
+    "id": 953,
+    "intent_ko": "욕창 예방에서 천골 부위에 도넛 모양 베개를 사용하지 않는 이유를 묻는 문제",
+    "intent_vi": "Câu hỏi về lý do không sử dụng gối hình bánh donut ở vùng xương cùng để phòng loét tì đè",
+    "choice_explanations": {
+      "ko": {
+        "2": "★ 도넛 모양 베개를 천골 부위에 사용하면 도넛의 테두리 부분이 주변 조직을 압박하고, 베개 중심에 위치한 천골 부위는 공중에 뜨지만 오히려 테두리 접촉 부위에 혈액순환이 저하되어 그 부위에 욕창이 발생할 수 있습니다.",
+        "1": "옷 갈아 입히기의 어려움은 도넛 베개 사용의 주된 문제가 아닙니다.",
+        "3": "피부 건조와 도넛 베개 사용은 직접적 연관이 없습니다.",
+        "4": "체위 변경이 어려울 수 있으나, 금지하는 핵심 이유는 혈액순환 저하입니다.",
+        "5": "배설물 처리와 도넛 베개의 금기 이유는 무관합니다."
+      },
+      "vi": {
+        "2": "★ Khi đặt gối donut dưới vùng xương cùng, phần vành gối ép lên mô xung quanh làm giảm tuần hoàn máu ở vùng tiếp xúc — chính vành gối tạo ra áp lực mới và có thể gây loét ở đó.",
+        "1": "Khó thay quần áo không phải lý do chính để không dùng gối donut.",
+        "3": "Khô da không liên quan trực tiếp đến việc dùng gối donut.",
+        "4": "Khó thay đổi tư thế có thể đúng nhưng không phải lý do cốt lõi để loại bỏ gối donut.",
+        "5": "Xử lý chất thải không liên quan đến lý do không dùng gối donut."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "혈액순환 저하", "def_vi": "Giảm tuần hoàn máu — lưu lượng máu đến mô giảm, gây thiếu oxy và dinh dưỡng, dẫn đến loét tì đè" },
+      { "term_ko": "천골부위", "def_vi": "Vùng xương cùng cụt — vùng phía dưới cột sống, điểm dễ bị loét nhất ở người nằm ngửa" }
+    ]
+  },
+  {
+    "id": 952,
+    "intent_ko": "장기간 누워 있는 대상자의 욕창 예방에 옳은 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi về biện pháp đúng phòng ngừa loét tì đè cho người nằm lâu dài",
+    "choice_explanations": {
+      "ko": {
+        "1": "두꺼운 이불은 오히려 무게로 인해 압력을 증가시켜 욕창 발생 위험을 높일 수 있습니다.",
+        "2": "욕창이 생긴 피부를 주무르듯 마사지하면 조직 손상이 악화될 수 있어 금기입니다.",
+        "3": "★ 침대 시트의 주름과 이물질(음식 부스러기 등)은 피부에 지속적인 압박과 마찰을 주어 욕창을 유발합니다. 시트를 팽팽하고 평평하게 유지하는 것은 욕창 예방의 기본입니다.",
+        "4": "특정 부위에 압력이 집중되면 혈류가 차단되어 욕창이 발생합니다.",
+        "5": "의자에서 앉아 있을 때도 체위를 자주 변경해야 하며, '침대에서만'이 아니라 의자 포함 모든 상황에서 체위 변경이 필요합니다."
+      },
+      "vi": {
+        "1": "Chăn dày nặng làm tăng áp lực lên da, có thể làm nặng thêm nguy cơ loét.",
+        "2": "Xoa bóp vùng da bị loét có thể làm tổn thương mô nặng hơn — bị chống chỉ định.",
+        "3": "★ Nếp nhăn và vụn thức ăn trên ga giường tạo áp lực và ma sát liên tục lên da, gây loét. Giữ ga giường phẳng và không có vật lạ là nguyên tắc cơ bản phòng loét.",
+        "4": "Áp lực tập trung vào một vùng cắt đứt lưu lượng máu và gây loét.",
+        "5": "Cần thay đổi tư thế thường xuyên ở mọi tình huống (cả khi ngồi ghế), không chỉ trên giường."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "침대 시트 주름", "def_vi": "Nếp nhăn ga giường — gây áp lực và ma sát lên da người nằm, là yếu tố nguy cơ loét tì đè" },
+      { "term_ko": "욕창 예방", "def_vi": "Phòng ngừa loét tì đè — các biện pháp như thay đổi tư thế, trải phẳng ga giường, giữ da khô sạch" }
+    ]
+  },
+  {
+    "id": 951,
+    "intent_ko": "욕창 예방에 효과적인 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn biện pháp hiệu quả để phòng ngừa loét tì đè",
+    "choice_explanations": {
+      "ko": {
+        "1": "뜨거운 물주머니는 피부에 화상을 입힐 수 있으며, 특히 감각이 저하된 노인·마비 환자에게 위험합니다.",
+        "2": "격일 피부 점검보다는 매일 혹은 체위 변경 시마다 피부 상태를 확인해야 합니다.",
+        "3": "파우더를 사용하면 오히려 굳어 피부 마찰을 증가시키고 세균 번식의 환경을 만들 수 있습니다.",
+        "4": "찬바람과 뜨거운 바람을 번갈아 사용하면 온도 자극으로 피부를 손상시킬 수 있습니다.",
+        "5": "★ 무릎 사이에 베개를 끼우면 골 돌출 부위(무릎·복사뼈 등)끼리의 직접 접촉과 압박을 예방하여 욕창 발생 위험을 줄입니다. 이는 측위(옆으로 누운 자세) 시 특히 중요한 욕창 예방 방법입니다."
+      },
+      "vi": {
+        "1": "Túi chườm nóng có thể gây bỏng da, đặc biệt nguy hiểm với người cao tuổi hoặc liệt cảm giác.",
+        "2": "Cần kiểm tra da hàng ngày hoặc mỗi lần thay đổi tư thế, không phải cách ngày.",
+        "3": "Bột phấn có thể vón cục tăng ma sát và tạo môi trường cho vi khuẩn phát triển.",
+        "4": "Luân phiên gió lạnh và gió nóng gây kích ứng nhiệt độ, có thể tổn thương da.",
+        "5": "★ Kẹp gối giữa hai đầu gối ngăn tiếp xúc trực tiếp giữa các điểm xương nhô (đầu gối, mắt cá) khi nằm nghiêng, giảm áp lực cục bộ và phòng loét. Đây là biện pháp đặc biệt quan trọng ở tư thế nằm nghiêng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "골 돌출 부위", "def_vi": "Điểm xương nhô — vùng xương gần da (đầu gối, mắt cá, xương cùng...) dễ bị loét nhất do áp lực tập trung" },
+      { "term_ko": "측위", "def_vi": "Tư thế nằm nghiêng — tư thế nằm về một bên; cần kẹp gối giữa hai đầu gối để phòng loét" }
+    ]
+  },
+  {
+    "id": 950,
+    "intent_ko": "욕창이 있는 대상자를 돌보는 올바른 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi về phương pháp chăm sóc đúng cho người bệnh có loét tì đè",
+    "choice_explanations": {
+      "ko": {
+        "1": "얼음 주머니를 대면 혈관이 수축하여 혈류가 더 감소하고 조직 손상이 악화됩니다.",
+        "2": "천골 부위에 도넛 모양 베개를 사용하면 주변부 압력이 증가하여 욕창을 악화시킬 수 있으므로 권장되지 않습니다.",
+        "3": "★ 젖은 침대 시트는 피부 습윤 환경을 만들어 피부 연화 및 감염 위험을 높입니다. 욕창이 있는 경우 시트가 젖으면 즉시 교체하여 피부를 건조하고 청결하게 유지해야 합니다.",
+        "4": "오염물질이 묻었을 때는 찬물보다 미지근한 물로 부드럽게 씻어야 피부 손상을 최소화합니다.",
+        "5": "의자에서는 매 1시간마다 자세를 바꾸어 주는 것이 권장되며, 2시간은 침대에서의 간격입니다."
+      },
+      "vi": {
+        "1": "Chườm đá làm co mạch, giảm lưu lượng máu và làm nặng thêm tổn thương mô.",
+        "2": "Gối donut ở vùng xương cùng làm tăng áp lực vành xung quanh — không được khuyến dùng.",
+        "3": "★ Ga giường ướt tạo môi trường ẩm ướt làm da mềm nhũn và tăng nguy cơ nhiễm trùng. Khi chăm sóc người có loét, phải thay ga ngay khi bị ướt để giữ da khô và sạch.",
+        "4": "Khi có chất bẩn, nên dùng nước ấm rửa nhẹ nhàng thay vì nước lạnh để tránh kích ứng thêm.",
+        "5": "Ở ghế, khuyến cáo thay đổi tư thế mỗi 1 giờ; 2 giờ là khoảng cách dành cho tư thế nằm trên giường."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "피부 연화", "def_vi": "Mềm nhũn da (maceration) — da bị ngâm trong ẩm ướt quá lâu trở nên mềm, dễ tổn thương và nhiễm trùng" },
+      { "term_ko": "욕창 관리", "def_vi": "Chăm sóc loét tì đè — giữ da khô sạch, thay đổi tư thế, thay ga ướt ngay, tránh chườm lạnh/nóng" },
+      { "term_ko": "체위 변경 간격", "def_vi": "Tần suất thay đổi tư thế — mỗi 2 giờ khi nằm giường, mỗi 1 giờ khi ngồi ghế" }
+    ]
+  }
+]

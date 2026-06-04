@@ -1,0 +1,780 @@
+[
+  {
+    "id": 1009,
+    "intent_ko": "섬망 비약물요법 중 개인 정체성 유지 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn phương pháp duy trì bản sắc cá nhân trong điều trị không dùng thuốc cho bệnh nhân mê sảng",
+    "choice_explanations": {
+      "ko": {
+        "1": "혼자 있게 하면 익숙한 사람과의 연결이 끊겨 오히려 정체성이 흔들릴 수 있다.",
+        "2": "새로운 친구를 사귀는 것은 낯선 관계로 혼란을 줄 수 있으며, 정체성 유지에는 기존 관계가 더 중요하다.",
+        "3": "★ 가족이 자주 방문하면 대상자가 친숙한 얼굴과 목소리를 접하면서 '내가 누구인가'를 인식하는 데 도움이 된다. 섬망 환자에게 가족은 정체성의 닻 역할을 한다.",
+        "4": "밤을 어둡게 하면 시각적 단서가 없어져 섬망 증상이 악화될 수 있다.",
+        "5": "낯선 사람이 많으면 혼란과 불안이 가중되어 정체성 유지에 방해가 된다."
+      },
+      "vi": {
+        "1": "Để bệnh nhân ở một mình sẽ cắt đứt kết nối với người quen, khiến bản sắc cá nhân dễ bị lung lay hơn.",
+        "2": "Kết bạn mới tạo ra các mối quan hệ xa lạ, có thể gây thêm nhầm lẫn; các mối quan hệ cũ quan trọng hơn để duy trì bản sắc.",
+        "3": "★ Khi gia đình thường xuyên thăm, bệnh nhân tiếp xúc với khuôn mặt và giọng nói quen thuộc, giúp họ nhận ra 'mình là ai'. Gia đình đóng vai trò như mỏ neo bản sắc cho bệnh nhân mê sảng.",
+        "4": "Phòng tối vào ban đêm loại bỏ các tín hiệu thị giác, có thể làm trầm trọng thêm triệu chứng mê sảng.",
+        "5": "Tiếp xúc với nhiều người lạ làm tăng nhầm lẫn và lo âu, cản trở việc duy trì bản sắc cá nhân."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "섬망", "def_vi": "Mê sảng — trạng thái rối loạn ý thức và nhận thức khởi phát cấp tính, thường gặp ở người cao tuổi" },
+      { "term_ko": "비약물요법", "def_vi": "Liệu pháp không dùng thuốc — phương pháp điều trị không sử dụng dược phẩm" },
+      { "term_ko": "정체성", "def_vi": "Bản sắc cá nhân — ý thức về chính mình, về con người mình là ai" }
+    ]
+  },
+  {
+    "id": 1008,
+    "intent_ko": "섬망 환자의 지남력 유지를 위한 효과적인 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn phương pháp hiệu quả để duy trì định hướng cho bệnh nhân mê sảng",
+    "choice_explanations": {
+      "ko": {
+        "1": "환경 변화는 오히려 혼란을 가중시켜 지남력 저하를 유발할 수 있다.",
+        "2": "달력과 시계는 시간 지남력을 도와주는 도구이므로 없애면 안 된다.",
+        "3": "텔레비전을 크게 틀면 소음으로 인해 집중이 어렵고 혼란이 증가한다.",
+        "4": "낮에 빛을 차단하면 일주기 리듬이 깨져 지남력 유지에 방해가 된다.",
+        "5": "★ 식사 제공 시 '지금은 점심 시간입니다' 처럼 시간을 알려주면 시간 지남력을 자연스럽게 강화할 수 있다. 규칙적인 일과와 시간 정보 제공이 핵심이다."
+      },
+      "vi": {
+        "1": "Thay đổi môi trường sẽ làm tăng thêm sự nhầm lẫn, dẫn đến giảm định hướng.",
+        "2": "Lịch và đồng hồ là công cụ hỗ trợ định hướng thời gian, không nên bỏ đi.",
+        "3": "Bật tivi to gây ra tiếng ồn làm bệnh nhân khó tập trung và tăng sự nhầm lẫn.",
+        "4": "Chắn ánh sáng ban ngày phá vỡ nhịp sinh học, gây cản trở cho việc duy trì định hướng.",
+        "5": "★ Khi mang bữa ăn, thông báo 'Bây giờ là giờ ăn trưa' giúp củng cố tự nhiên khả năng định hướng thời gian. Cung cấp thông tin thời gian đều đặn theo từng bữa ăn là phương pháp hiệu quả."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "지남력", "def_vi": "Khả năng định hướng — khả năng nhận thức đúng về thời gian, địa điểm và con người" },
+      { "term_ko": "섬망", "def_vi": "Mê sảng — rối loạn nhận thức cấp tính với triệu chứng dao động trong ngày" },
+      { "term_ko": "일주기 리듬", "def_vi": "Nhịp sinh học ngày đêm — chu kỳ sinh lý 24 giờ điều tiết giấc ngủ và thức" }
+    ]
+  },
+  {
+    "id": 1007,
+    "intent_ko": "섬망 환자의 지남력을 유지하는 방법으로 옳은 것을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn phương pháp đúng để duy trì định hướng cho bệnh nhân mê sảng",
+    "choice_explanations": {
+      "ko": {
+        "1": "환경을 바꾸면 낯선 자극이 늘어 혼란이 가중되어 지남력 유지에 도움이 되지 않는다.",
+        "2": "달력과 시계는 날짜·시간 인식에 필요한 도구로, 없애면 지남력이 저하된다.",
+        "3": "텔레비전 소음은 주의를 분산시키고 혼란을 초래하므로 도움이 되지 않는다.",
+        "4": "낮 동안의 빛을 차단하면 일주기 리듬이 교란되어 지남력 유지에 방해가 된다.",
+        "5": "★ 식사 시간에 '지금 몇 시입니다'라고 알려주면 대상자가 시간 개념을 반복적으로 접하게 되어 시간 지남력이 향상된다. 일상적인 활동에 시간 정보를 연결하는 것이 핵심 원리이다."
+      },
+      "vi": {
+        "1": "Thay đổi môi trường tăng thêm kích thích xa lạ, gây ra nhầm lẫn và không giúp duy trì định hướng.",
+        "2": "Lịch và đồng hồ cần thiết để nhận biết ngày giờ; bỏ đi sẽ làm giảm khả năng định hướng.",
+        "3": "Tiếng ồn từ tivi phân tán sự chú ý và gây nhầm lẫn, không có lợi cho bệnh nhân.",
+        "4": "Chắn ánh sáng ban ngày làm rối loạn nhịp sinh học, cản trở việc duy trì định hướng.",
+        "5": "★ Thông báo giờ giấc khi mang bữa ăn giúp bệnh nhân tiếp xúc lặp đi lặp lại với khái niệm thời gian, cải thiện định hướng thời gian. Nguyên tắc cốt lõi là gắn thông tin thời gian vào các hoạt động thường ngày."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "지남력", "def_vi": "Khả năng định hướng — nhận thức đúng về thời gian, nơi chốn và con người xung quanh" },
+      { "term_ko": "섬망", "def_vi": "Mê sảng — rối loạn ý thức cấp tính, triệu chứng dao động" },
+      { "term_ko": "일주기 리듬", "def_vi": "Nhịp sinh học ngày đêm — chu kỳ sinh lý 24 giờ điều tiết các chức năng cơ thể" }
+    ]
+  },
+  {
+    "id": 1006,
+    "intent_ko": "섬망의 특징적인 증상 중 옳은 설명을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn mô tả đúng về đặc điểm triệu chứng của mê sảng",
+    "choice_explanations": {
+      "ko": {
+        "1": "섬망은 수 시간~수일 내에 급격히 발생하는 급성 질환으로 만성질환이 아니다.",
+        "2": "섬망에서는 발열, 빈맥, 발한 등 신체 생리적 변화가 뚜렷하게 나타난다.",
+        "3": "★ 섬망의 핵심 특징 중 하나는 주의력 감소이다. 환자는 집중하기 어렵고 쉽게 주의가 분산된다. 주의력 저하가 치매와 섬망을 구분하는 중요한 지표이다.",
+        "4": "섬망의 증상은 기복이 매우 심하여 하루 중에도 좋아졌다 나빠졌다를 반복한다.",
+        "5": "섬망 환자의 수면양상은 불규칙적이며, 낮밤이 바뀌는 경우도 흔하다."
+      },
+      "vi": {
+        "1": "Mê sảng khởi phát cấp tính trong vài giờ đến vài ngày, không phải bệnh mãn tính.",
+        "2": "Mê sảng thường kèm theo các thay đổi sinh lý rõ rệt như sốt, nhịp tim nhanh, đổ mồ hôi.",
+        "3": "★ Một trong những đặc điểm cốt lõi của mê sảng là giảm khả năng chú ý. Bệnh nhân khó tập trung và dễ bị phân tán. Đây là chỉ số quan trọng phân biệt mê sảng với sa sút trí tuệ.",
+        "4": "Triệu chứng mê sảng dao động rất mạnh, thậm chí trong cùng một ngày có thể cải thiện rồi xấu đi xen kẽ.",
+        "5": "Mô hình giấc ngủ của bệnh nhân mê sảng rất bất thường, thường bị đảo lộn ngày đêm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "주의력", "def_vi": "Khả năng chú ý — năng lực tập trung và duy trì sự chú ý vào một đối tượng" },
+      { "term_ko": "기복", "def_vi": "Dao động — sự thay đổi lên xuống của triệu chứng trong thời gian ngắn" },
+      { "term_ko": "수면양상", "def_vi": "Mô hình giấc ngủ — đặc điểm và cách thức của chu kỳ ngủ-thức" }
+    ]
+  },
+  {
+    "id": 1005,
+    "intent_ko": "섬망 증상의 올바른 특성을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn đặc điểm đúng về triệu chứng mê sảng",
+    "choice_explanations": {
+      "ko": {
+        "1": "섬망은 서서히 나타나지 않고 수 시간에서 수일 내로 급격하게 발생한다.",
+        "2": "섬망은 원인을 치료하면 회복이 가능한 가역적 질환이다.",
+        "3": "섬망에서는 의식 수준이 변동하며, 의식에 변화가 없다는 설명은 틀리다.",
+        "4": "섬망은 단독으로 발생하기보다 감염·약물·대사 이상 등 다양한 원인과 함께 발생한다.",
+        "5": "★ 섬망의 특징적 경과는 호전과 악화가 반복되는 것이다. 낮에는 증상이 가라앉다가 밤에 악화되는 '일몰 증후군(sundowning)'이 대표적 예이다."
+      },
+      "vi": {
+        "1": "Mê sảng không xuất hiện từ từ mà khởi phát đột ngột trong vài giờ đến vài ngày.",
+        "2": "Mê sảng là bệnh có thể hồi phục nếu điều trị được nguyên nhân gốc rễ.",
+        "3": "Mê sảng có sự thay đổi mức độ ý thức, vì vậy mô tả 'không có thay đổi ý thức' là sai.",
+        "4": "Mê sảng thường không xảy ra đơn độc mà đi kèm các nguyên nhân như nhiễm trùng, thuốc, rối loạn chuyển hóa.",
+        "5": "★ Đặc điểm kinh điển của mê sảng là các triệu chứng cải thiện và xấu đi xen kẽ nhau. 'Hội chứng hoàng hôn (sundowning)' — triệu chứng dịu ban ngày nhưng nặng hơn vào ban đêm — là ví dụ điển hình."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "섬망", "def_vi": "Mê sảng — rối loạn ý thức cấp tính, có thể hồi phục, với triệu chứng dao động" },
+      { "term_ko": "가역적", "def_vi": "Có thể hồi phục — tính chất của bệnh có thể trở về trạng thái bình thường sau điều trị" },
+      { "term_ko": "일몰 증후군", "def_vi": "Hội chứng hoàng hôn — hiện tượng triệu chứng mê sảng nặng hơn vào buổi chiều tối" }
+    ]
+  },
+  {
+    "id": 1004,
+    "intent_ko": "급격히 발생하며 증상 기복이 심하고 인지장애·정서불안을 동반하는 질환을 고르는 문제",
+    "intent_vi": "Câu hỏi nhận diện bệnh khởi phát đột ngột, triệu chứng dao động mạnh, kèm rối loạn nhận thức và bất ổn cảm xúc",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 섬망은 수 시간~수일 내에 급격히 발생하고, 하루 중에도 증상이 오르내리며, 인지장애와 정서불안(초조, 환각 등)을 동반하는 급성 의식장애이다. 치매와 달리 급성 발현과 심한 기복이 특징이다.",
+        "2": "치매는 수개월~수년에 걸쳐 서서히 진행되며 기복이 덜하고 의식 자체는 상대적으로 유지된다.",
+        "3": "뇌졸중은 급성이지만 신경학적 결손이 고정적이며 섬망처럼 증상 기복이 심하지 않다.",
+        "4": "우울증은 정서 문제를 동반하지만 급격한 의식 변동이나 기복이 섬망만큼 심하지 않다.",
+        "5": "파킨슨병은 주로 운동 기능 장애(떨림, 강직)가 중심이며, 급격한 의식장애와는 다르다."
+      },
+      "vi": {
+        "1": "★ Mê sảng khởi phát đột ngột trong vài giờ đến vài ngày, triệu chứng dao động rõ ràng trong ngày, kèm rối loạn nhận thức và bất ổn cảm xúc (kích động, ảo giác). Khác với sa sút trí tuệ, đặc trưng là khởi phát cấp và dao động mạnh.",
+        "2": "Sa sút trí tuệ tiến triển chậm trong nhiều tháng đến nhiều năm, ít dao động hơn và ý thức tương đối còn nguyên.",
+        "3": "Đột quỵ khởi phát cấp nhưng tổn thương thần kinh cố định, không có triệu chứng dao động mạnh như mê sảng.",
+        "4": "Trầm cảm có vấn đề cảm xúc nhưng không có dao động ý thức đột ngột mạnh như mê sảng.",
+        "5": "Bệnh Parkinson chủ yếu liên quan đến rối loạn vận động (run, cứng cơ), khác với rối loạn ý thức cấp tính."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "의식장애", "def_vi": "Rối loạn ý thức — trạng thái thay đổi hoặc mất ý thức" },
+      { "term_ko": "인지장애", "def_vi": "Rối loạn nhận thức — suy giảm các chức năng tư duy, trí nhớ, phán đoán" },
+      { "term_ko": "정서불안", "def_vi": "Bất ổn cảm xúc — trạng thái cảm xúc dao động, lo âu, kích động" }
+    ]
+  },
+  {
+    "id": 1003,
+    "intent_ko": "우울증 대상자를 올바르게 돕는 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn phương pháp đúng để hỗ trợ người mắc trầm cảm",
+    "choice_explanations": {
+      "ko": {
+        "1": "'곧 괜찮아질 것'이라는 말은 현재 고통을 무시하는 것처럼 들려 환자에게 공감받지 못한다는 느낌을 준다.",
+        "2": "★ 햇볕을 쬐며 걷기 운동을 하면 세로토닌·엔도르핀 분비가 촉진되어 기분이 개선된다. 규칙적인 유산소 운동과 자연광 노출은 우울증 완화에 임상적으로 검증된 비약물요법이다.",
+        "3": "사회적 활동을 줄이고 혼자 있게 하면 고립감이 커져 우울증이 악화될 수 있다.",
+        "4": "약물 용량 조절은 반드시 의사가 결정해야 하며, 요양보호사가 권장해서는 안 된다.",
+        "5": "감정 표현을 억제하면 내면에 감정이 쌓여 우울증을 더 악화시킬 수 있다."
+      },
+      "vi": {
+        "1": "Nói 'sẽ ổn thôi' có thể bị cảm nhận là phủ nhận nỗi đau hiện tại, khiến bệnh nhân cảm thấy không được đồng cảm.",
+        "2": "★ Đi bộ dưới ánh nắng kích thích tiết serotonin và endorphin, cải thiện tâm trạng. Tập thể dục aerobic đều đặn và tiếp xúc ánh sáng tự nhiên là liệu pháp không dùng thuốc được chứng minh lâm sàng cho trầm cảm.",
+        "3": "Giảm hoạt động xã hội và để một mình làm tăng cảm giác cô lập, có thể làm nặng thêm trầm cảm.",
+        "4": "Điều chỉnh liều thuốc phải do bác sĩ quyết định, người chăm sóc không được khuyến nghị điều này.",
+        "5": "Kìm nén cảm xúc khiến cảm xúc tích tụ bên trong, có thể làm trầm cảm nặng hơn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "항우울제", "def_vi": "Thuốc chống trầm cảm — nhóm thuốc điều trị trầm cảm, phải được bác sĩ kê đơn và điều chỉnh liều" },
+      { "term_ko": "세로토닌", "def_vi": "Serotonin — chất dẫn truyền thần kinh liên quan đến điều hòa tâm trạng, giảm khi bị trầm cảm" },
+      { "term_ko": "비약물요법", "def_vi": "Liệu pháp không dùng thuốc — can thiệp điều trị không sử dụng dược phẩm, như tập thể dục, ánh sáng trị liệu" }
+    ]
+  },
+  {
+    "id": 1002,
+    "intent_ko": "우울증 발생 가능성을 높이는 상황을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn tình huống làm tăng nguy cơ mắc trầm cảm",
+    "choice_explanations": {
+      "ko": {
+        "1": "가족과 함께 사는 것은 정서적 지지 역할을 하여 우울증 위험을 낮춘다.",
+        "2": "타인에 대한 관심 증가는 사회적 연결이 강화되는 긍정적 변화로 우울증 위험을 줄인다.",
+        "3": "햇빛 노출과 운동은 우울증 예방·완화에 효과적이다.",
+        "4": "★ 갑상샘기능저하증은 갑상선 호르몬 부족으로 기분 저하, 무기력, 인지 둔화를 유발하며, 우울증과 매우 유사한 증상을 나타내 실제로 우울증 발생 위험을 높이는 신체적 요인이다.",
+        "5": "식욕과 체중이 변화 없이 유지된다는 것은 우울증의 신호가 아니다."
+      },
+      "vi": {
+        "1": "Sống cùng gia đình cung cấp hỗ trợ tinh thần, giảm nguy cơ trầm cảm.",
+        "2": "Tăng quan tâm đến người khác là thay đổi tích cực, củng cố kết nối xã hội, giảm nguy cơ trầm cảm.",
+        "3": "Tiếp xúc ánh nắng và tập thể dục có hiệu quả phòng ngừa và giảm nhẹ trầm cảm.",
+        "4": "★ Suy giáp (thiếu hormone tuyến giáp) gây ra khí sắc trầm, mệt mỏi, chậm tư duy — rất giống triệu chứng trầm cảm và thực sự là yếu tố thể chất làm tăng nguy cơ mắc trầm cảm.",
+        "5": "Ăn uống và cân nặng ổn định không phải là dấu hiệu của trầm cảm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "갑상샘기능저하증", "def_vi": "Suy giáp — tình trạng tuyến giáp sản xuất không đủ hormone, gây mệt mỏi, khí sắc thấp, tăng nguy cơ trầm cảm" },
+      { "term_ko": "정서적 지지", "def_vi": "Hỗ trợ tinh thần/cảm xúc — sự quan tâm và đồng hành về mặt cảm xúc từ người thân" }
+    ]
+  },
+  {
+    "id": 1001,
+    "intent_ko": "노인 우울증의 특징적인 증상을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn đặc điểm triệu chứng điển hình của trầm cảm ở người cao tuổi",
+    "choice_explanations": {
+      "ko": {
+        "1": "우울증은 인지기능에 영향을 줄 수 있어 인지기능이 그대로 유지된다는 설명은 정확하지 않다.",
+        "2": "무기력과 흥분이 교대로 나타나는 양상은 노인 우울증의 일반적인 특징이 아니다.",
+        "3": "노인은 우울감을 감정으로 표현하지 못하거나 자각하지 못하는 경우가 많아 본인이 쉽게 인식하지 못한다.",
+        "4": "노인 우울증은 신체 증상으로 나타나는 경우가 많아 주변 사람들도 우울증으로 인식하기 어렵다.",
+        "5": "★ 노인 우울증의 특징은 '나는 우울하다'고 말하는 대신 두통, 소화불량, 관절통 같은 신체 증상을 호소하는 것이다. 이를 '가면성 우울증(masked depression)'이라 하며, 신체 증상 뒤에 우울이 숨어 있다."
+      },
+      "vi": {
+        "1": "Trầm cảm có thể ảnh hưởng đến chức năng nhận thức, nên mô tả chức năng nhận thức vẫn nguyên vẹn là không chính xác.",
+        "2": "Sự xen kẽ giữa mệt mỏi và kích động không phải đặc điểm phổ biến của trầm cảm ở người cao tuổi.",
+        "3": "Người cao tuổi thường không diễn đạt được cảm xúc buồn hoặc không tự nhận ra, nên khó tự ý thức được trầm cảm.",
+        "4": "Trầm cảm ở người cao tuổi thường biểu hiện qua triệu chứng cơ thể nên người xung quanh cũng khó nhận ra đây là trầm cảm.",
+        "5": "★ Đặc điểm của trầm cảm ở người cao tuổi là thay vì nói 'tôi buồn', họ kêu đau đầu, khó tiêu, đau khớp. Đây gọi là 'trầm cảm ẩn (masked depression)' — trầm cảm ẩn sau các triệu chứng cơ thể."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "가면성 우울증", "def_vi": "Trầm cảm ẩn (masked depression) — trầm cảm biểu hiện chủ yếu qua triệu chứng cơ thể thay vì cảm xúc buồn rõ ràng" },
+      { "term_ko": "신체 증상", "def_vi": "Triệu chứng cơ thể — biểu hiện thể chất của bệnh như đau đầu, khó tiêu, mệt mỏi" },
+      { "term_ko": "인지기능", "def_vi": "Chức năng nhận thức — các khả năng tư duy, trí nhớ, phán đoán và xử lý thông tin" }
+    ]
+  },
+  {
+    "id": 1000,
+    "intent_ko": "말수 감소·무관심·식욕부진·수면 변화 등의 증상으로 의심할 수 있는 질환을 고르는 문제",
+    "intent_vi": "Câu hỏi nhận diện bệnh qua các triệu chứng giảm nói, thờ ơ, ăn kém, rối loạn giấc ngủ",
+    "choice_explanations": {
+      "ko": {
+        "1": "섬망은 주로 혼란과 급격한 의식 변동을 동반하며, 이 증상군과는 다르다.",
+        "2": "★ 말수가 줄고, 매사에 무관심하며, 식욕부진과 수면양상 변화가 함께 나타나는 것은 우울증의 전형적인 증상이다. 이 네 가지 증상은 DSM 진단 기준의 핵심 항목에 해당한다.",
+        "3": "치매는 인지기능 저하가 중심이며, 증상이 서서히 진행된다.",
+        "4": "환각은 실제로 없는 것을 보거나 듣는 감각적 경험으로, 이 상황의 주된 증상이 아니다.",
+        "5": "망상은 비현실적인 믿음을 의미하며, 제시된 증상과는 부합하지 않는다."
+      },
+      "vi": {
+        "1": "Mê sảng chủ yếu kèm theo nhầm lẫn và dao động ý thức đột ngột, khác với nhóm triệu chứng này.",
+        "2": "★ Giảm nói chuyện, thờ ơ với mọi thứ, ăn kém và thay đổi mô hình giấc ngủ là những triệu chứng điển hình của trầm cảm. Bốn triệu chứng này thuộc tiêu chuẩn chẩn đoán cốt lõi theo DSM.",
+        "3": "Sa sút trí tuệ tập trung vào suy giảm nhận thức và tiến triển chậm.",
+        "4": "Ảo giác là trải nghiệm cảm giác về điều không có thực (thấy hoặc nghe), không phải triệu chứng chính trong trường hợp này.",
+        "5": "Hoang tưởng là niềm tin phi thực tế, không phù hợp với các triệu chứng được mô tả."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "식욕부진", "def_vi": "Chán ăn (mất cảm giác thèm ăn) — giảm hoặc mất nhu cầu ăn uống, thường gặp trong trầm cảm" },
+      { "term_ko": "수면양상", "def_vi": "Mô hình giấc ngủ — đặc điểm của chu kỳ ngủ-thức, thường bị rối loạn trong trầm cảm" },
+      { "term_ko": "우울증", "def_vi": "Trầm cảm — rối loạn tâm thần với đặc điểm khí sắc thấp, mất hứng thú, kèm các triệu chứng thể chất" }
+    ]
+  },
+  {
+    "id": 999,
+    "intent_ko": "당뇨병 관리 방법 중 옳은 것을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn phương pháp quản lý đúng cho bệnh tiểu đường",
+    "choice_explanations": {
+      "ko": {
+        "1": "격렬한 운동은 저혈당 위험을 높이고 발 상처 등 합병증을 유발할 수 있어 당뇨 환자에게 권장되지 않는다.",
+        "2": "공복에만 운동하면 저혈당 위험이 높고, 혈당 조절 효과도 제한적이다.",
+        "3": "★ 당뇨병 환자는 말초신경 장애와 혈액 순환 저하로 발 상처를 감지하기 어렵고, 감염 시 괴저로 진행할 수 있어 발 상처를 주의 깊게 관찰하는 것이 필수적이다.",
+        "4": "탄수화물은 에너지의 주 공급원이므로 완전히 금하면 안 되며, 적절한 양과 종류를 선택하는 것이 중요하다.",
+        "5": "운동량이 많으면 포도당 소모가 증가하므로 인슐린을 무조건 늘리면 오히려 저혈당이 올 수 있다."
+      },
+      "vi": {
+        "1": "Tập thể dục mạnh tăng nguy cơ hạ đường huyết và có thể gây thương tổn chân, không được khuyến nghị cho bệnh nhân tiểu đường.",
+        "2": "Chỉ tập khi đói dẫn đến nguy cơ hạ đường huyết cao và hiệu quả kiểm soát đường huyết hạn chế.",
+        "3": "★ Bệnh nhân tiểu đường dễ không cảm nhận được vết thương ở chân do tổn thương thần kinh ngoại vi và giảm tuần hoàn; nếu nhiễm trùng có thể tiến triển thành hoại thư, vì vậy quan sát kỹ vết thương ở chân là bắt buộc.",
+        "4": "Carbohydrate là nguồn năng lượng chính, không được loại bỏ hoàn toàn; quan trọng là chọn đúng loại và lượng phù hợp.",
+        "5": "Khi vận động nhiều, glucose tiêu thụ tăng; tăng insulin tùy tiện có thể gây hạ đường huyết."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "말초신경 장애", "def_vi": "Tổn thương thần kinh ngoại vi — biến chứng tiểu đường làm giảm cảm giác, đặc biệt ở bàn chân" },
+      { "term_ko": "저혈당", "def_vi": "Hạ đường huyết — tình trạng đường trong máu xuống dưới mức bình thường, gây nguy hiểm" },
+      { "term_ko": "인슐린", "def_vi": "Insulin — hormone do tuyến tụy tiết ra, điều tiết lượng đường trong máu" }
+    ]
+  },
+  {
+    "id": 998,
+    "intent_ko": "당뇨병 환자의 올바른 발 관리 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn phương pháp chăm sóc bàn chân đúng cho bệnh nhân tiểu đường",
+    "choice_explanations": {
+      "ko": {
+        "1": "발톱은 양 끝을 둥글게 자르면 내성 발톱(감입 발톱)이 생길 위험이 있으므로 일자로 잘라야 한다.",
+        "2": "뜨거운 물은 당뇨 환자의 감각 저하로 화상을 입힐 수 있어 미지근한 물을 사용해야 한다.",
+        "3": "굳은살과 티눈을 스스로 자르면 감염 위험이 크므로 반드시 전문가에게 맡겨야 한다.",
+        "4": "★ 양말을 신으면 발가락과 발 전체가 외부 충격·마찰·오염으로부터 보호되고, 체온이 유지된다. 당뇨 환자는 맨발로 다니다 상처를 입어도 감각이 둔해 모를 수 있으므로 반드시 양말 착용이 권장된다.",
+        "5": "발을 씻은 후 물기를 남기면 세균·곰팡이 번식 환경이 조성되므로 수건으로 잘 닦아 건조하게 유지해야 한다."
+      },
+      "vi": {
+        "1": "Cắt móng chân bo tròn hai đầu có nguy cơ gây móng chân mọc ngược (móng quặp), nên cắt thẳng ngang.",
+        "2": "Nước nóng có thể gây bỏng do bệnh nhân tiểu đường giảm cảm giác; phải dùng nước ấm vừa.",
+        "3": "Tự cắt da chai và mụn nước có nguy cơ nhiễm trùng cao; phải nhờ chuyên gia xử lý.",
+        "4": "★ Đi tất bảo vệ ngón chân và toàn bộ bàn chân khỏi va đập, ma sát và bụi bẩn, đồng thời giữ ấm. Bệnh nhân tiểu đường dễ bị thương mà không hay biết do cảm giác giảm, vì vậy luôn đi tất là bắt buộc.",
+        "5": "Để ẩm sau khi rửa chân tạo môi trường cho vi khuẩn và nấm phát triển; phải lau khô kỹ bằng khăn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "내성 발톱", "def_vi": "Móng chân mọc ngược (móng quặp) — móng chân mọc cắm vào da gây đau và dễ nhiễm trùng" },
+      { "term_ko": "감각 저하", "def_vi": "Giảm cảm giác — suy giảm khả năng cảm nhận đau, nóng lạnh do tổn thương thần kinh tiểu đường" },
+      { "term_ko": "굳은살", "def_vi": "Da chai — vùng da dày cứng do ma sát lặp đi lặp lại, cần xử lý bởi chuyên gia với bệnh nhân tiểu đường" }
+    ]
+  },
+  {
+    "id": 997,
+    "intent_ko": "당뇨병 환자에게 권장되는 올바른 운동요법을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn phương pháp vận động đúng được khuyến nghị cho bệnh nhân tiểu đường",
+    "choice_explanations": {
+      "ko": {
+        "1": "하루 10분 이내의 운동은 혈당 조절 효과가 불충분하다. 적어도 30분 이상의 중강도 운동이 권장된다.",
+        "2": "★ 식사 후 30~60분은 혈당이 상승하는 시점이므로 이때 운동을 하면 혈당을 효과적으로 낮출 수 있다. 식후 혈당 스파이크를 줄이는 데 가장 효과적인 운동 타이밍이다.",
+        "3": "공복에 운동할 때는 저혈당 응급 상황에 대비해 당분(사탕, 주스)을 갖고 다녀야 하며, 혈당강하제를 상시 복용하는 것이 아니라 저혈당 발생 시 대처해야 한다.",
+        "4": "혈당이 300mg/dL 이상이면 케톤산증 위험이 있어 운동을 피하고 즉시 의료 도움을 받아야 한다.",
+        "5": "약물 복용 중에도 적절한 운동은 인슐린 감수성을 높이고 혈당 조절에 긍정적으로 작용한다."
+      },
+      "vi": {
+        "1": "Tập dưới 10 phút mỗi ngày không đủ để kiểm soát đường huyết; khuyến nghị ít nhất 30 phút cường độ vừa.",
+        "2": "★ Sau bữa ăn 30-60 phút là lúc đường huyết tăng cao nhất; tập thể dục vào thời điểm này giúp hạ đường huyết hiệu quả, giảm đỉnh đường huyết sau ăn. Đây là thời điểm vận động tối ưu nhất.",
+        "3": "Khi tập lúc đói cần mang theo đường (kẹo, nước trái cây) để xử lý hạ đường huyết khẩn cấp; không phải dùng thuốc hạ đường thường xuyên mà chỉ xử lý khi xảy ra hạ đường.",
+        "4": "Đường huyết ≥300 mg/dL có nguy cơ nhiễm toan ceton; phải tránh tập và tìm kiếm hỗ trợ y tế ngay.",
+        "5": "Ngay cả khi đang dùng thuốc, vận động phù hợp vẫn tăng độ nhạy insulin và có tác động tích cực lên kiểm soát đường huyết."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "혈당강하제", "def_vi": "Thuốc hạ đường huyết — nhóm thuốc làm giảm lượng đường trong máu, dùng trong điều trị tiểu đường" },
+      { "term_ko": "케톤산증", "def_vi": "Nhiễm toan ceton — biến chứng nguy hiểm khi đường huyết quá cao và cơ thể phân hủy mỡ tạo ceton" },
+      { "term_ko": "인슐린 감수성", "def_vi": "Độ nhạy insulin — mức độ tế bào phản ứng với insulin; tập thể dục làm tăng độ nhạy này" }
+    ]
+  },
+  {
+    "id": 996,
+    "intent_ko": "저혈당 응급처치 미실시 시 발생할 수 있는 합병증을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn biến chứng có thể xảy ra khi không xử trí kịp thời tình trạng hạ đường huyết",
+    "choice_explanations": {
+      "ko": {
+        "1": "위염은 저혈당과 직접적인 관련이 없다.",
+        "2": "간 손상은 저혈당과의 연관이 낮으며, 주로 간 자체의 대사·독소 문제와 관련된다.",
+        "3": "★ 뇌는 포도당만을 에너지원으로 사용하며, 저혈당이 지속되면 뇌에 공급되는 포도당이 부족해져 뇌세포가 손상될 수 있다. 심한 저혈당이 장시간 방치되면 영구적인 뇌 손상이나 사망에 이를 수 있다.",
+        "4": "요도염은 요로 감염으로 저혈당과 직접적인 연관이 없다.",
+        "5": "방광염은 방광의 염증으로 저혈당과 관련이 없다."
+      },
+      "vi": {
+        "1": "Viêm dạ dày không liên quan trực tiếp đến hạ đường huyết.",
+        "2": "Tổn thương gan ít liên quan đến hạ đường huyết, chủ yếu liên quan đến vấn đề chuyển hóa hoặc độc chất của gan.",
+        "3": "★ Não chỉ sử dụng glucose làm năng lượng; khi hạ đường huyết kéo dài, lượng glucose cung cấp cho não không đủ, các tế bào thần kinh bị tổn thương. Hạ đường huyết nặng không được xử trí có thể dẫn đến tổn thương não vĩnh viễn hoặc tử vong.",
+        "4": "Viêm niệu đạo là nhiễm trùng đường tiết niệu, không liên quan đến hạ đường huyết.",
+        "5": "Viêm bàng quang là viêm bàng quang, không liên quan đến hạ đường huyết."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "저혈당", "def_vi": "Hạ đường huyết — tình trạng lượng đường trong máu thấp hơn mức bình thường, cần xử trí khẩn cấp" },
+      { "term_ko": "합병증", "def_vi": "Biến chứng — vấn đề sức khỏe phát sinh thêm do bệnh hoặc do không điều trị kịp thời" },
+      { "term_ko": "응급처치", "def_vi": "Xử trí khẩn cấp (sơ cứu) — can thiệp y tế ngay lập tức trong tình huống nguy cấp" }
+    ]
+  },
+  {
+    "id": 995,
+    "intent_ko": "당뇨병을 올바르게 관리하는 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn phương pháp quản lý tiểu đường đúng đắn",
+    "choice_explanations": {
+      "ko": {
+        "1": "맨발로 운동하면 발 상처가 생길 위험이 크다. 당뇨 환자는 항상 적절한 신발과 양말을 착용해야 한다.",
+        "2": "인슐린은 소화 효소에 의해 분해되므로 반드시 주사로 투여해야 하며, 경구 복용은 불가능하다.",
+        "3": "감염 시에는 혈당이 오히려 높아지는(고혈당) 경향이 있으므로, 저혈당보다는 고혈당 관리가 더 중요하다.",
+        "4": "주 1회 운동은 혈당 조절 효과가 불충분하다. 주 3회 이상, 하루 30분 이상의 규칙적인 운동이 권장된다.",
+        "5": "★ 활동량이 늘면 근육이 포도당을 더 많이 소모하여 혈당이 낮아지므로, 인슐린 투여 중인 당뇨 환자는 저혈당에 대비해 당분을 준비해 두는 것이 필수이다."
+      },
+      "vi": {
+        "1": "Tập chân trần có nguy cơ cao gây vết thương ở chân; bệnh nhân tiểu đường phải luôn đi giày và tất phù hợp.",
+        "2": "Insulin bị phân hủy bởi enzyme tiêu hóa nên phải tiêm; không thể uống được.",
+        "3": "Khi nhiễm trùng, đường huyết thường tăng (tăng đường huyết), nên kiểm soát tăng đường huyết quan trọng hơn hạ đường huyết lúc này.",
+        "4": "Tập 1 lần/tuần không đủ để kiểm soát đường huyết; khuyến nghị ít nhất 3 lần/tuần, mỗi lần ≥30 phút.",
+        "5": "★ Khi vận động nhiều, cơ bắp tiêu thụ nhiều glucose hơn, làm đường huyết giảm; bệnh nhân tiểu đường đang dùng insulin cần chuẩn bị đường (kẹo, nước đường) để đề phòng hạ đường huyết."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "인슐린 주사", "def_vi": "Tiêm insulin — phương thức bắt buộc để đưa insulin vào cơ thể vì insulin bị phá hủy trong đường tiêu hóa" },
+      { "term_ko": "저혈당 대비", "def_vi": "Đề phòng hạ đường huyết — chuẩn bị sẵn đường hoặc thức ăn ngọt khi hoạt động nhiều hoặc dùng insulin" }
+    ]
+  },
+  {
+    "id": 994,
+    "intent_ko": "인슐린 주사 후 식사를 하지 않았을 때 나타나는 증상을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn triệu chứng xuất hiện khi tiêm insulin nhưng không ăn",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 인슐린을 주사했지만 식사를 하지 않으면 혈당이 급격히 낮아지는 저혈당이 발생한다. 식은땀은 저혈당 시 교감신경 활성화로 나타나는 대표적인 증상이다. 이 외에 떨림, 심계항진, 두통, 창백함 등도 나타난다.",
+        "2": "소화불량은 저혈당과 관련이 없다.",
+        "3": "체온 상승은 저혈당의 증상이 아니며, 오히려 감염이나 열사병과 관련된다.",
+        "4": "저혈당 시에는 뇌에서 공복감 신호가 나올 수 있으나, 식욕이 증가하기보다는 오히려 기력 저하와 무기력이 나타나는 경우가 많다.",
+        "5": "소변량 증가는 고혈당 당뇨병 증상으로, 저혈당과는 반대 상황에서 나타난다."
+      },
+      "vi": {
+        "1": "★ Tiêm insulin nhưng không ăn khiến đường huyết giảm đột ngột, gây hạ đường huyết. Mồ hôi lạnh là triệu chứng điển hình do kích thích hệ giao cảm khi hạ đường huyết. Ngoài ra còn có run rẩy, hồi hộp, đau đầu, tái nhợt.",
+        "2": "Khó tiêu không liên quan đến hạ đường huyết.",
+        "3": "Tăng thân nhiệt không phải triệu chứng hạ đường huyết; thường liên quan đến nhiễm trùng hoặc say nóng.",
+        "4": "Khi hạ đường huyết não có thể phát tín hiệu đói, nhưng thường biểu hiện là mệt lả chứ không phải tăng cảm giác thèm ăn rõ rệt.",
+        "5": "Tăng lượng nước tiểu là triệu chứng của tăng đường huyết trong tiểu đường, ngược với tình huống hạ đường huyết."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "식은땀", "def_vi": "Mồ hôi lạnh — triệu chứng hạ đường huyết do hệ thần kinh giao cảm kích hoạt để phản ứng khẩn cấp" },
+      { "term_ko": "저혈당", "def_vi": "Hạ đường huyết — đường huyết xuống dưới mức bình thường, xảy ra khi tiêm insulin mà không ăn" },
+      { "term_ko": "교감신경", "def_vi": "Hệ thần kinh giao cảm — hệ thần kinh kích hoạt phản ứng 'chiến hay chạy', gây mồ hôi lạnh và run khi hạ đường huyết" }
+    ]
+  },
+  {
+    "id": 993,
+    "intent_ko": "당뇨병의 원인 중 옳은 것을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn nguyên nhân đúng gây ra bệnh tiểu đường",
+    "choice_explanations": {
+      "ko": {
+        "1": "규칙적인 식사는 혈당 안정에 도움이 되어 당뇨병 예방에 긍정적이며, 원인이 아니다.",
+        "2": "고섬유질 음식 섭취는 혈당 상승을 완화하여 당뇨 예방에 유익하며, 원인이 아니다.",
+        "3": "규칙적인 운동은 인슐린 감수성을 높여 당뇨병을 예방하는 요소이다.",
+        "4": "표준체중 유지는 인슐린 저항성을 낮춰 당뇨 예방에 도움이 되며, 원인이 아니다.",
+        "5": "★ 유전적 요인은 당뇨병, 특히 1형 당뇨병 발생에 중요한 원인이다. 부모가 당뇨병인 경우 자녀의 발병 위험이 높아진다. 2형 당뇨병도 유전적 소인에 비만·운동 부족 등 환경 요인이 더해져 발생한다."
+      },
+      "vi": {
+        "1": "Ăn đúng giờ giúp ổn định đường huyết, có lợi cho phòng ngừa tiểu đường — không phải nguyên nhân.",
+        "2": "Ăn nhiều chất xơ làm chậm hấp thu đường, có lợi cho phòng ngừa — không phải nguyên nhân.",
+        "3": "Tập thể dục đều đặn tăng độ nhạy insulin, giúp phòng ngừa tiểu đường.",
+        "4": "Duy trì cân nặng chuẩn giảm kháng insulin, hỗ trợ phòng ngừa — không phải nguyên nhân.",
+        "5": "★ Yếu tố di truyền là nguyên nhân quan trọng của tiểu đường, đặc biệt tiểu đường type 1. Nếu cha mẹ bị tiểu đường, con cái có nguy cơ cao hơn. Tiểu đường type 2 cũng phát sinh khi yếu tố di truyền kết hợp với lối sống như béo phì, ít vận động."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "유전적 요인", "def_vi": "Yếu tố di truyền — yếu tố liên quan đến gen di truyền từ cha mẹ, đóng vai trò quan trọng trong nguy cơ mắc tiểu đường" },
+      { "term_ko": "인슐린 저항성", "def_vi": "Kháng insulin — tình trạng tế bào không phản ứng tốt với insulin, thường gặp trong tiểu đường type 2" }
+    ]
+  },
+  {
+    "id": 992,
+    "intent_ko": "당뇨병의 대표적인 증상을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn triệu chứng điển hình của bệnh tiểu đường",
+    "choice_explanations": {
+      "ko": {
+        "1": "당뇨병에서는 오히려 갈증이 증가하고 수분 섭취량도 증가한다.",
+        "2": "당뇨병에서는 식욕과 식사량이 증가하는 것이 더 일반적이다.",
+        "3": "당뇨병 환자에서는 면역 저하로 질 감염이 증가하는 경향이 있다.",
+        "4": "말초 부종은 당뇨병의 대표 증상이 아니며, 심부전·신부전 등과 관련된다.",
+        "5": "★ 당뇨병에서는 혈중 포도당이 신장의 재흡수 한계를 초과하면 소변으로 배출되며(당뇨), 삼투압 효과로 수분도 함께 배출되어 소변량이 증가한다(다뇨). 다뇨·다음·다식이 당뇨병의 3대 증상이다."
+      },
+      "vi": {
+        "1": "Trong tiểu đường, khát nước tăng và lượng nước uống cũng tăng.",
+        "2": "Trong tiểu đường, cảm giác đói và lượng ăn thường tăng, không giảm.",
+        "3": "Bệnh nhân tiểu đường dễ bị nhiễm trùng vùng kín hơn do suy giảm miễn dịch.",
+        "4": "Phù ngoại vi không phải triệu chứng điển hình của tiểu đường; thường liên quan đến suy tim, suy thận.",
+        "5": "★ Trong tiểu đường, khi glucose máu vượt ngưỡng tái hấp thu của thận, glucose thoát ra nước tiểu (tiểu đường); hiệu ứng thẩm thấu kéo theo nước ra ngoài, gây tăng lượng nước tiểu (đa niệu). Đa niệu, đa khát, đa thực là 3 triệu chứng kinh điển của tiểu đường."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "다뇨", "def_vi": "Đa niệu — tiểu nhiều, triệu chứng điển hình của tiểu đường do glucose kéo nước vào nước tiểu" },
+      { "term_ko": "삼투압", "def_vi": "Áp suất thẩm thấu — áp lực do sự chênh lệch nồng độ chất tan, khiến nước di chuyển qua màng bán thấm" },
+      { "term_ko": "소변 배설량", "def_vi": "Lượng nước tiểu bài tiết — lượng nước tiểu thải ra trong một khoảng thời gian, tăng trong tiểu đường" }
+    ]
+  },
+  {
+    "id": 991,
+    "intent_ko": "인슐린 분비 부족으로 나타나는 증상을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn triệu chứng xuất hiện khi thiếu hụt insulin",
+    "choice_explanations": {
+      "ko": {
+        "1": "인슐린 분비 부족(1형 당뇨병 등)에서는 오히려 체중이 감소하는 경향이 있다.",
+        "2": "질 분비물 감소는 인슐린과 관련이 없다.",
+        "3": "인슐린 부족 시 혈당 상승으로 오히려 식욕이 증가하는 경우가 많다.",
+        "4": "★ 인슐린 부족으로 혈당이 높아지면 백혈구 기능이 저하되고 혈액 순환이 나빠져 상처 치유 속도가 느려진다. 이는 당뇨병의 중요한 합병증 중 하나로, 작은 상처가 궤양으로 진행될 수 있다.",
+        "5": "성기능 증가는 인슐린 부족과 관련이 없으며, 당뇨병에서는 오히려 성기능 장애가 나타날 수 있다."
+      },
+      "vi": {
+        "1": "Khi thiếu insulin (như tiểu đường type 1), cơ thể thường giảm cân chứ không tăng.",
+        "2": "Giảm tiết dịch âm đạo không liên quan đến insulin.",
+        "3": "Khi thiếu insulin, đường huyết tăng cao thường kèm tăng cảm giác đói (đa thực).",
+        "4": "★ Khi thiếu insulin làm đường huyết tăng cao, chức năng bạch cầu suy giảm và tuần hoàn máu kém đi, khiến vết thương lành chậm. Đây là biến chứng quan trọng của tiểu đường; vết thương nhỏ có thể tiến triển thành loét.",
+        "5": "Tăng ham muốn tình dục không liên quan đến thiếu insulin; tiểu đường thực ra thường gây rối loạn chức năng tình dục."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "상처 치유 지연", "def_vi": "Chậm lành vết thương — biến chứng tiểu đường do đường huyết cao làm suy giảm chức năng miễn dịch và tuần hoàn" },
+      { "term_ko": "백혈구 기능", "def_vi": "Chức năng bạch cầu — khả năng của bạch cầu chống lại nhiễm trùng, bị suy giảm khi đường huyết cao" }
+    ]
+  },
+  {
+    "id": 990,
+    "intent_ko": "노화로 인한 인슐린 부족 시 나타나는 증상으로 옳은 것을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn triệu chứng đúng khi thiếu insulin do lão hóa",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 인슐린이 부족하면 포도당이 세포로 들어가지 못하고 혈중에 남아 공복혈당이 상승한다. 이는 당뇨병의 진단 지표인 공복혈당 126mg/dL 이상과 직결된다.",
+        "2": "시력 향상은 인슐린 부족과 관련이 없다. 당뇨병에서는 오히려 당뇨망막병증으로 시력이 저하된다.",
+        "3": "인슐린 부족(1형, 인슐린 분비 감소)에서는 체중 감소가 더 흔하다.",
+        "4": "인슐린 부족 시 삼투압 이뇨로 수분 손실이 생겨 갈증이 증가한다.",
+        "5": "성 욕구 증가는 인슐린 부족과 관련이 없다."
+      },
+      "vi": {
+        "1": "★ Khi thiếu insulin, glucose không vào được tế bào mà tích tụ trong máu, làm tăng đường huyết lúc đói. Đây liên quan trực tiếp đến chỉ số chẩn đoán tiểu đường (đường huyết lúc đói ≥126 mg/dL).",
+        "2": "Cải thiện thị lực không liên quan đến thiếu insulin; tiểu đường thực ra gây bệnh võng mạc tiểu đường làm giảm thị lực.",
+        "3": "Thiếu insulin (type 1, giảm tiết) thường gây giảm cân hơn là tăng cân.",
+        "4": "Thiếu insulin gây tiểu thẩm thấu, mất nước, dẫn đến tăng khát nước chứ không giảm.",
+        "5": "Tăng ham muốn tình dục không liên quan đến thiếu insulin."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "공복혈당", "def_vi": "Đường huyết lúc đói — lượng đường trong máu sau khi nhịn ăn ≥8 giờ; chỉ số chẩn đoán tiểu đường" },
+      { "term_ko": "내분비계", "def_vi": "Hệ nội tiết — hệ thống các tuyến tiết hormone điều tiết các chức năng cơ thể" },
+      { "term_ko": "삼투압 이뇨", "def_vi": "Tiểu thẩm thấu — hiện tượng glucose kéo nước vào nước tiểu, gây tiểu nhiều và khát nước" }
+    ]
+  },
+  {
+    "id": 989,
+    "intent_ko": "노화에 따른 내분비계 특성으로 옳은 것을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn đặc điểm đúng của hệ nội tiết khi lão hóa",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 노화가 진행되면 췌장의 인슐린 분비 능력이 저하되고 세포의 인슐린 저항성이 증가하여 포도당 대사능력이 전반적으로 감소한다. 이것이 노인에서 2형 당뇨병 발생 위험이 높아지는 주된 이유다.",
+        "2": "노화와 함께 인슐린에 대한 민감성은 오히려 감소(인슐린 저항성 증가)하여 고혈당 경향이 생긴다.",
+        "3": "갑상선 크기는 노화에 따라 대체로 위축되어 작아지는 경향이 있다.",
+        "4": "갑상선 호르몬 분비량은 노화에 따라 감소하는 경향이 있다.",
+        "5": "기초대사율은 노화로 근육량이 감소하면서 함께 낮아진다."
+      },
+      "vi": {
+        "1": "★ Khi lão hóa, khả năng tiết insulin của tuyến tụy giảm và tế bào kháng insulin tăng, làm giảm tổng thể khả năng chuyển hóa glucose. Đây là lý do chính khiến người cao tuổi có nguy cơ mắc tiểu đường type 2 cao hơn.",
+        "2": "Theo lão hóa, độ nhạy insulin giảm (kháng insulin tăng), dẫn xu hướng đường huyết cao hơn — không phải hạ đường huyết.",
+        "3": "Tuyến giáp thường teo nhỏ lại theo tuổi, không phải phì đại.",
+        "4": "Lượng hormone tuyến giáp tiết ra có xu hướng giảm theo tuổi.",
+        "5": "Tỷ lệ trao đổi chất cơ bản giảm theo tuổi cùng với sự suy giảm khối lượng cơ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "포도당 대사능력", "def_vi": "Khả năng chuyển hóa glucose — năng lực cơ thể xử lý và sử dụng glucose, giảm theo tuổi" },
+      { "term_ko": "인슐린 저항성", "def_vi": "Kháng insulin — tình trạng tế bào không đáp ứng đủ với insulin, tăng theo lão hóa" },
+      { "term_ko": "기초대사율", "def_vi": "Tỷ lệ trao đổi chất cơ bản — lượng năng lượng tiêu thụ khi nghỉ ngơi, giảm theo tuổi" }
+    ]
+  },
+  {
+    "id": 988,
+    "intent_ko": "노화로 인한 내분비계 변화 중 옳은 것을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn thay đổi đúng của hệ nội tiết theo lão hóa",
+    "choice_explanations": {
+      "ko": {
+        "1": "노화에 따른 뇌하수체 크기 변화는 일정하지 않으며, 반드시 커지지는 않는다.",
+        "2": "인슐린 분비량은 노화와 함께 대체로 유지되거나 감소하는 경향이 있다.",
+        "3": "★ 에스트로겐은 여성의 주요 성호르몬으로, 폐경 전후에 급격히 감소하며 노화가 진행될수록 분비량이 현저히 줄어든다. 이로 인해 골다공증, 심혈관 위험 증가, 피부 변화 등이 나타난다.",
+        "4": "노화에 따라 포도당 대사능력은 저하되며, 좋아지지 않는다.",
+        "5": "노화에 따라 콜레스테롤 수치는 오히려 증가하는 경향이 있다."
+      },
+      "vi": {
+        "1": "Sự thay đổi kích thước tuyến yên theo lão hóa không cố định và không nhất thiết phải tăng.",
+        "2": "Lượng insulin tiết ra thường giữ nguyên hoặc giảm theo lão hóa.",
+        "3": "★ Estrogen là hormone giới tính chính của nữ; giảm mạnh quanh giai đoạn mãn kinh và tiếp tục giảm theo lão hóa. Hệ quả là loãng xương, tăng nguy cơ tim mạch, thay đổi da.",
+        "4": "Khả năng chuyển hóa glucose giảm theo lão hóa, không cải thiện.",
+        "5": "Nồng độ cholesterol thường có xu hướng tăng theo lão hóa, không giảm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "에스트로겐", "def_vi": "Estrogen — hormone giới tính nữ, giảm mạnh khi mãn kinh và lão hóa, gây loãng xương và thay đổi tim mạch" },
+      { "term_ko": "폐경", "def_vi": "Mãn kinh — chấm dứt kinh nguyệt tự nhiên, thường xảy ra ở độ tuổi 45-55, kèm giảm estrogen mạnh" },
+      { "term_ko": "골다공증", "def_vi": "Loãng xương — mật độ xương giảm do thiếu estrogen và canxi, dễ gãy xương" }
+    ]
+  },
+  {
+    "id": 987,
+    "intent_ko": "노인성 난청 대상자와 올바르게 의사소통하는 방법을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn phương pháp giao tiếp đúng với người cao tuổi bị điếc tuổi già",
+    "choice_explanations": {
+      "ko": {
+        "1": "귀에 대고 큰 소리로 말하면 불쾌감을 주고 보청기 착용 시 오히려 통증을 유발할 수 있다.",
+        "2": "소음 환경에서는 말소리가 묻혀 의사소통이 더욱 어려워진다.",
+        "3": "★ 얼굴을 마주 보며 천천히 또박또박 말하면 입 모양(독순술)을 보고 이해를 보완할 수 있다. 노인성 난청은 고음 영역부터 저하되므로 낮고 명확한 발음으로 말하는 것이 효과적이다.",
+        "4": "보청기는 소리를 증폭하는 기기이므로 갑자기 고음의 큰 소리를 내면 불편하고 해롭다.",
+        "5": "노인성 난청은 내이의 퇴행성 변화로 발생하며, 약물로 청력을 복구하는 치료법은 일반적으로 없다."
+      },
+      "vi": {
+        "1": "Nói to vào tai gây khó chịu và khi dùng máy trợ thính có thể gây đau.",
+        "2": "Ở môi trường ồn ào, tiếng nói bị lấn át, giao tiếp trở nên khó khăn hơn.",
+        "3": "★ Nhìn thẳng vào mặt và nói chậm, rõ ràng giúp bệnh nhân đọc hình miệng (đọc môi) để bù trợ hiểu biết. Điếc tuổi già bắt đầu từ tần số cao, nên nói bằng giọng thấp, rõ ràng là hiệu quả nhất.",
+        "4": "Máy trợ thính khuếch đại âm thanh; nếu đột ngột phát ra âm thanh cao và to sẽ gây khó chịu và có hại.",
+        "5": "Điếc tuổi già do thoái hóa tai trong; hiện không có thuốc phục hồi thính lực."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "노인성 난청", "def_vi": "Điếc tuổi già (presbycusis) — giảm thính lực do thoái hóa tai trong theo tuổi, bắt đầu ở tần số cao" },
+      { "term_ko": "독순술", "def_vi": "Đọc hình miệng (đọc môi) — kỹ thuật hiểu lời nói bằng cách quan sát chuyển động của miệng người nói" },
+      { "term_ko": "보청기", "def_vi": "Máy trợ thính — thiết bị điện tử khuếch đại âm thanh để hỗ trợ người nghe kém" }
+    ]
+  },
+  {
+    "id": 986,
+    "intent_ko": "노인성 난청의 핵심 특징을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn đặc điểm cốt lõi của điếc tuổi già",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 노인성 난청은 내이 달팽이관의 고음 담당 부위가 먼저 퇴화하여 고음 영역(고주파 대역)에서의 청력이 먼저 저하된다. 이 때문에 자음 구분이 어려워져 말소리가 들려도 내용을 이해하기 어렵다.",
+        "2": "음의 전달 능력은 감소하며 증가하지 않는다.",
+        "3": "노인성 난청은 평형감각의 감소를 동반하는 경우가 있다.",
+        "4": "언어 구분 능력은 저하되어 소리가 들려도 내용을 이해하기 어렵다.",
+        "5": "노인성 난청에서는 소리에 대한 민감성이 감소한다."
+      },
+      "vi": {
+        "1": "★ Điếc tuổi già do ốc tai thoái hóa, vùng phụ trách âm cao thoái hóa trước, dẫn đến giảm thính lực ở dải tần số cao trước tiên. Do đó bệnh nhân khó phân biệt phụ âm, nghe thấy tiếng nhưng khó hiểu nội dung.",
+        "2": "Khả năng truyền âm giảm đi, không tăng.",
+        "3": "Điếc tuổi già đôi khi đi kèm giảm cảm giác thăng bằng.",
+        "4": "Khả năng phân biệt ngôn ngữ giảm; nghe được tiếng nhưng khó hiểu nội dung.",
+        "5": "Độ nhạy với âm thanh giảm trong điếc tuổi già."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "노인성 난청", "def_vi": "Điếc tuổi già (presbycusis) — giảm thính lực do lão hóa, đặc trưng là giảm nghe tần số cao trước" },
+      { "term_ko": "고음", "def_vi": "Âm tần số cao — âm thanh có tần số cao, bị mất trước tiên trong điếc tuổi già" },
+      { "term_ko": "언어 구분능력", "def_vi": "Khả năng phân biệt ngôn ngữ — khả năng hiểu và phân biệt âm thanh ngôn ngữ, giảm trong điếc tuổi già" }
+    ]
+  },
+  {
+    "id": 985,
+    "intent_ko": "노화로 인한 고막·내이 퇴행성 변화로 청력이 감소되는 질환을 고르는 문제",
+    "intent_vi": "Câu hỏi nhận diện bệnh gây giảm thính lực do thoái hóa màng nhĩ và tai trong theo lão hóa",
+    "choice_explanations": {
+      "ko": {
+        "1": "이석증은 내이의 이석 이탈로 인한 어지럼증 질환으로, 퇴행성 청력 저하와는 다르다.",
+        "2": "중이염은 세균·바이러스 감염으로 인한 중이 염증으로, 노화에 의한 퇴행성 변화와는 다르다.",
+        "3": "★ 노인성 난청(노인성 감각신경성 난청)은 노화에 따른 달팽이관·청신경의 퇴행성 변화로 발생하며, 노인에서 가장 흔한 청력 장애이다. 고음 청력부터 서서히 저하되고 회복이 어렵다.",
+        "4": "내이염은 내이에 염증이 생기는 질환으로 주로 감염이 원인이며, 노화와의 직접적 연관은 적다.",
+        "5": "이명은 외부 자극 없이 귓속에서 소리가 들리는 증상으로, 소음 노출·혈관 이상 등 다양한 원인이 있다."
+      },
+      "vi": {
+        "1": "Chóng mặt tư thế lành tính (BPPV) do tinh thể tai trong bị lệch, gây chóng mặt — khác với giảm thính lực thoái hóa.",
+        "2": "Viêm tai giữa do nhiễm trùng vi khuẩn/virus, không phải thoái hóa do lão hóa.",
+        "3": "★ Điếc tuổi già (lão thính) xảy ra do thoái hóa ốc tai và dây thần kinh thính giác theo lão hóa; là rối loạn thính giác phổ biến nhất ở người cao tuổi. Thính lực giảm dần từ tần số cao và khó phục hồi.",
+        "4": "Viêm tai trong chủ yếu do nhiễm trùng, ít liên quan trực tiếp đến lão hóa.",
+        "5": "Ù tai là triệu chứng nghe thấy âm thanh không có nguồn gốc bên ngoài, do nhiều nguyên nhân như tiếng ồn, bất thường mạch máu."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "노인성 난청", "def_vi": "Điếc tuổi già (lão thính/presbycusis) — giảm thính lực do thoái hóa tai trong theo lão hóa, không thể hồi phục" },
+      { "term_ko": "고막", "def_vi": "Màng nhĩ — màng mỏng ngăn cách ống tai ngoài với tai giữa, rung động để truyền âm thanh" },
+      { "term_ko": "퇴행성 변화", "def_vi": "Thay đổi thoái hóa — sự suy thoái cấu trúc và chức năng của cơ quan theo thời gian" },
+      { "term_ko": "이명", "def_vi": "Ù tai — cảm giác nghe thấy âm thanh (tiếng rít, tiếng ve) dù không có nguồn âm bên ngoài" }
+    ]
+  },
+  {
+    "id": 984,
+    "intent_ko": "고혈압·당뇨병 합병증으로 올 수 있는 안과질환을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn bệnh mắt có thể xảy ra như biến chứng của tăng huyết áp và tiểu đường",
+    "choice_explanations": {
+      "ko": {
+        "1": "녹내장은 안압 상승으로 시신경이 손상되는 질환으로, 고혈압에 의해 악화될 수 있으나 직접적인 합병증으로 분류하기는 어렵다.",
+        "2": "★ 백내장은 수정체가 혼탁해지는 질환으로, 당뇨병에서 고혈당이 지속되면 수정체 내 당알코올(소르비톨)이 축적되어 수정체가 혼탁해진다. 당뇨병 환자에서 조기 발생하는 대표적 안과 합병증이다.",
+        "3": "결막염은 주로 감염·알레르기로 발생하며 만성 대사 질환과의 연관이 낮다.",
+        "4": "망막염은 다양한 원인으로 발생하나, 당뇨망막병증은 '망막증'으로 분류되며 망막염보다 더 직접적인 합병증이다.",
+        "5": "각막염은 주로 감염이나 외상으로 발생하며 만성 질환의 직접 합병증과는 거리가 멀다."
+      },
+      "vi": {
+        "1": "Glaucoma do tăng nhãn áp gây tổn thương thần kinh thị giác; tăng huyết áp có thể làm nặng hơn nhưng không phải biến chứng trực tiếp điển hình.",
+        "2": "★ Đục thủy tinh thể xảy ra khi thủy tinh thể bị mờ đục; trong tiểu đường, đường huyết cao kéo dài khiến sorbitol tích tụ trong thủy tinh thể làm đục nó. Đây là biến chứng mắt điển hình xuất hiện sớm ở bệnh nhân tiểu đường.",
+        "3": "Viêm kết mạc chủ yếu do nhiễm trùng hoặc dị ứng, ít liên quan đến bệnh chuyển hóa mãn tính.",
+        "4": "Viêm võng mạc do nhiều nguyên nhân; bệnh võng mạc tiểu đường là 'bệnh võng mạc' — biến chứng trực tiếp hơn viêm võng mạc.",
+        "5": "Viêm giác mạc chủ yếu do nhiễm trùng hoặc chấn thương, không phải biến chứng trực tiếp của bệnh mãn tính."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "백내장", "def_vi": "Đục thủy tinh thể — bệnh làm mờ thủy tinh thể, là biến chứng mắt của tiểu đường do tích tụ sorbitol" },
+      { "term_ko": "당뇨망막병증", "def_vi": "Bệnh võng mạc tiểu đường — tổn thương mạch máu võng mạc do đường huyết cao, có thể gây mù" },
+      { "term_ko": "녹내장", "def_vi": "Glaucoma (tăng nhãn áp) — bệnh tổn thương thần kinh thị giác do áp lực trong mắt tăng cao" },
+      { "term_ko": "합병증", "def_vi": "Biến chứng — vấn đề sức khỏe thứ phát phát sinh từ bệnh chính, như mắt, thận, thần kinh trong tiểu đường" }
+    ]
+  },
+  {
+    "id": 983,
+    "intent_ko": "백내장 환자에게 나타나는 증상을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn triệu chứng xuất hiện ở bệnh nhân được chẩn đoán đục thủy tinh thể",
+    "choice_explanations": {
+      "ko": {
+        "1": "좁은 시야는 녹내장의 특징적 증상이다.",
+        "2": "안구 통증은 백내장보다 녹내장(급성 폐쇄각 녹내장)에서 더 두드러진다.",
+        "3": "어두움 적응장애는 야맹증과 관련된 증상으로 백내장의 주된 증상이 아니다.",
+        "4": "색깔 변화 인식장애는 황반변성에서 더 두드러지는 증상이다.",
+        "5": "★ 동공이 하얗게 혼탁해 보이는 것은 백내장의 가장 시각적으로 뚜렷한 증상이다. 수정체가 혼탁해져 동공 중심부에 백색 혼탁이 나타나며, 이는 백내장의 외관상 특징적 소견이다."
+      },
+      "vi": {
+        "1": "Thu hẹp thị trường (thị giác đường hầm) là triệu chứng đặc trưng của glaucoma.",
+        "2": "Đau nhãn cầu nổi bật hơn ở glaucoma (glaucoma góc đóng cấp tính) hơn đục thủy tinh thể.",
+        "3": "Rối loạn thích nghi bóng tối liên quan đến quáng gà, không phải triệu chứng chính của đục thủy tinh thể.",
+        "4": "Rối loạn nhận biết màu sắc nổi bật hơn trong thoái hóa điểm vàng.",
+        "5": "★ Đồng tử có màu trắng đục là dấu hiệu nhìn thấy rõ nhất của đục thủy tinh thể. Khi thủy tinh thể bị đục, vùng trung tâm đồng tử xuất hiện màu trắng — đây là đặc điểm ngoại quan điển hình của bệnh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "동공", "def_vi": "Đồng tử — lỗ tròn ở trung tâm mống mắt cho phép ánh sáng vào mắt, trở nên trắng đục trong đục thủy tinh thể" },
+      { "term_ko": "백내장", "def_vi": "Đục thủy tinh thể — bệnh làm thủy tinh thể mờ đục, biểu hiện bằng đồng tử trắng và nhìn mờ" },
+      { "term_ko": "황반변성", "def_vi": "Thoái hóa điểm vàng — bệnh tổn thương vùng trung tâm võng mạc, gây mất thị lực trung tâm" }
+    ]
+  },
+  {
+    "id": 982,
+    "intent_ko": "수정체가 혼탁해져 뿌옇게 보일 때의 증상을 고르는 문제",
+    "intent_vi": "Câu hỏi chọn triệu chứng xảy ra khi thủy tinh thể bị đục làm nhìn mờ",
+    "choice_explanations": {
+      "ko": {
+        "1": "두통과 구역질은 수정체 혼탁과 직접적인 연관이 없으며, 녹내장(급성)에서 더 잘 나타난다.",
+        "2": "눈 이물감은 결막염이나 각막 이상과 더 관련된 증상이다.",
+        "3": "안구 통증은 수정체 혼탁과 직접적 관련이 낮으며, 녹내장에서 더 두드러진다.",
+        "4": "★ 수정체가 혼탁해지면 빛이 불규칙하게 산란되어 밝은 불빛 아래에서 강한 눈부심(눩부심)이 발생한다. 이는 백내장의 대표적인 초기 증상으로, 야간 운전 시 맞은편 차량 헤드라이트에 더욱 두드러진다.",
+        "5": "실명은 백내장 말기의 결과이지, 수정체 혼탁이 시작될 때의 초기 증상이 아니다."
+      },
+      "vi": {
+        "1": "Đau đầu và buồn nôn không liên quan trực tiếp đến đục thủy tinh thể; thường gặp hơn ở glaucoma cấp tính.",
+        "2": "Cảm giác dị vật trong mắt liên quan nhiều hơn đến viêm kết mạc hoặc bất thường giác mạc.",
+        "3": "Đau nhãn cầu ít liên quan trực tiếp đến đục thủy tinh thể; nổi bật hơn trong glaucoma.",
+        "4": "★ Khi thủy tinh thể đục, ánh sáng bị tán xạ không đều, gây chói mắt (lóa mắt) mạnh khi đứng dưới ánh sáng chói. Đây là triệu chứng sớm điển hình của đục thủy tinh thể, rõ hơn khi lái xe ban đêm gặp đèn pha xe ngược chiều.",
+        "5": "Mù là hậu quả giai đoạn cuối của đục thủy tinh thể, không phải triệu chứng ban đầu khi thủy tinh thể mới bắt đầu đục."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "수정체", "def_vi": "Thủy tinh thể — thấu kính trong suốt của mắt, điều chỉnh tiêu cự; khi đục gây nhìn mờ và chói sáng" },
+      { "term_ko": "눈부심", "def_vi": "Chói mắt (lóa mắt) — cảm giác khó chịu khi tiếp xúc ánh sáng mạnh, triệu chứng sớm của đục thủy tinh thể" },
+      { "term_ko": "혼탁", "def_vi": "Đục mờ — tình trạng mất trong suốt của thủy tinh thể, cản trở ánh sáng đi qua đúng hướng" }
+    ]
+  },
+  {
+    "id": 981,
+    "intent_ko": "백내장이 발생하는 눈의 구조를 고르는 문제",
+    "intent_vi": "Câu hỏi chọn cấu trúc mắt nơi xảy ra bệnh đục thủy tinh thể",
+    "choice_explanations": {
+      "ko": {
+        "1": "공막은 눈의 흰자위를 이루는 단단한 섬유층으로 백내장 발생 부위가 아니다.",
+        "2": "각막은 눈 앞쪽의 투명한 막으로 빛을 굴절시키며, 백내장과는 관련이 없다.",
+        "3": "홍채는 눈의 색깔을 결정하고 동공 크기를 조절하는 구조로, 백내장 발생 부위가 아니다.",
+        "4": "황반은 망막 중심부의 선명한 시력 담당 부위로, 황반변성과 관련되지 백내장과는 무관하다.",
+        "5": "★ 백내장은 눈의 수정체에서 발생한다. 수정체는 눈동자 뒤에 위치한 투명한 렌즈로, 이것이 혼탁해져 하얗게 변하면 시력이 저하되고 동공이 하얗게 보이게 된다."
+      },
+      "vi": {
+        "1": "Củng mạc là lớp sợi cứng tạo nên lòng trắng của mắt, không phải nơi xảy ra đục thủy tinh thể.",
+        "2": "Giác mạc là màng trong suốt phía trước mắt, có chức năng khúc xạ ánh sáng, không liên quan đến đục thủy tinh thể.",
+        "3": "Mống mắt xác định màu mắt và điều chỉnh kích thước đồng tử, không phải nơi xảy ra đục thủy tinh thể.",
+        "4": "Điểm vàng là vùng trung tâm võng mạc đảm nhiệm thị lực sắc nét, liên quan đến thoái hóa điểm vàng chứ không phải đục thủy tinh thể.",
+        "5": "★ Đục thủy tinh thể xảy ra ở thủy tinh thể — thấu kính trong suốt nằm sau đồng tử. Khi thủy tinh thể bị đục và chuyển màu trắng, thị lực giảm và đồng tử trông có màu trắng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "수정체", "def_vi": "Thủy tinh thể — thấu kính trong suốt nằm sau đồng tử, điều tiết tiêu cự; nơi xảy ra đục thủy tinh thể" },
+      { "term_ko": "공막", "def_vi": "Củng mạc — lớp sợi cứng trắng bao ngoài nhãn cầu, tạo nên lòng trắng mắt" },
+      { "term_ko": "황반", "def_vi": "Điểm vàng — vùng trung tâm võng mạc chịu trách nhiệm thị lực sắc nét, tổn thương gây mù trung tâm" }
+    ]
+  },
+  {
+    "id": 980,
+    "intent_ko": "수정체 혼탁으로 빛이 들어가지 못해 뿌옇게 보이는 질환을 고르는 문제",
+    "intent_vi": "Câu hỏi nhận diện bệnh gây nhìn mờ do thủy tinh thể đục không cho ánh sáng đi qua",
+    "choice_explanations": {
+      "ko": {
+        "1": "녹내장은 안압 상승으로 시신경이 손상되는 질환으로, 수정체 혼탁과는 관련이 없다.",
+        "2": "★ 백내장은 수정체(눈의 렌즈)가 혼탁해져 빛이 제대로 통과하지 못해 시야가 뿌옇게 흐려지는 질환이다. 주요 증상은 시야 혼탁, 눈부심, 야간 시력 저하 등이며, 수술로 혼탁한 수정체를 제거하고 인공수정체로 교체하면 치료가 가능하다.",
+        "3": "결막염은 눈의 결막(흰자위와 눈꺼풀 안쪽을 덮는 막)에 염증이 생기는 질환으로, 수정체 혼탁과는 무관하다.",
+        "4": "망막증은 망막에 문제가 생기는 질환으로, 당뇨망막병증이 대표적이며 수정체와는 관련이 없다.",
+        "5": "황반변성은 망막 중심의 황반이 손상되는 질환으로, 수정체 혼탁과는 무관하다."
+      },
+      "vi": {
+        "1": "Glaucoma do tăng nhãn áp gây tổn thương thần kinh thị giác, không liên quan đến đục thủy tinh thể.",
+        "2": "★ Đục thủy tinh thể (bạch nội chướng) là bệnh do thủy tinh thể bị đục mờ, ánh sáng không đi qua được đúng cách, khiến nhìn mờ đục như qua màn sương. Triệu chứng chính gồm nhìn mờ, chói sáng, giảm thị lực ban đêm. Điều trị bằng phẫu thuật thay thủy tinh thể nhân tạo.",
+        "3": "Viêm kết mạc là viêm màng kết mạc (màng bao phủ lòng trắng mắt và mặt trong mi mắt), không liên quan đến thủy tinh thể.",
+        "4": "Bệnh võng mạc liên quan đến võng mạc (đặc trưng là bệnh võng mạc tiểu đường), không liên quan đến thủy tinh thể.",
+        "5": "Thoái hóa điểm vàng là tổn thương điểm vàng trung tâm võng mạc, không liên quan đến thủy tinh thể."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "백내장", "def_vi": "Đục thủy tinh thể — bệnh thủy tinh thể mờ đục, ánh sáng không đi qua đủ, gây nhìn mờ; điều trị bằng phẫu thuật" },
+      { "term_ko": "수정체", "def_vi": "Thủy tinh thể — thấu kính trong suốt của mắt, bị đục trong bệnh đục thủy tinh thể" },
+      { "term_ko": "망막증", "def_vi": "Bệnh võng mạc — tổn thương võng mạc, thường do tiểu đường hoặc tăng huyết áp gây ra" }
+    ]
+  }
+]

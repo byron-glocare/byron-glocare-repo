@@ -1,0 +1,761 @@
+[
+  {
+    "id": 1101,
+    "intent_ko": "'나-전달법'의 핵심인 자신의 감정과 영향을 표현하는 방식을 구별하는 문제",
+    "intent_vi": "Phân biệt cách diễn đạt cảm xúc và ảnh hưởng của bản thân — đặc trưng cốt lõi của 'Thông điệp Tôi'",
+    "choice_explanations": {
+      "ko": {
+        "1": "규칙 위반을 지적하는 '너-전달법'으로, 자신의 감정을 드러내지 않음.",
+        "2": "상황을 회피하는 제안이며, 감정 표현이 없어 나-전달법이 아님.",
+        "3": "조건부 허락이지만 명령조로 끝나 자신의 감정을 진정성 있게 전달하지 못함.",
+        "4": "상대방을 비난하는 '너-전달법'으로, 공격적이고 건설적이지 않음.",
+        "5": "★ '나-전달법'의 정석: 상대방 행동이 자신의 생활에 미치는 구체적 영향('생활에 지장')과 감정('함께 일하기 불편')을 1인칭으로 표현하여 비난 없이 문제를 전달함."
+      },
+      "vi": {
+        "1": "Chỉ trích việc vi phạm quy tắc — là 'Thông điệp Bạn', không bộc lộ cảm xúc của bản thân.",
+        "2": "Đề xuất né tránh tình huống, không có biểu đạt cảm xúc nên không phải Thông điệp Tôi.",
+        "3": "Cho phép có điều kiện nhưng kết thúc bằng giọng ra lệnh, chưa truyền đạt chân thực cảm xúc.",
+        "4": "Đổ lỗi cho đối phương — là 'Thông điệp Bạn' mang tính tấn công, không mang tính xây dựng.",
+        "5": "★ Điển hình của 'Thông điệp Tôi': dùng ngôi thứ nhất nêu rõ ảnh hưởng cụ thể đến bản thân ('gây trở ngại cho sinh hoạt') và cảm xúc ('bất tiện khi làm việc chung') mà không đổ lỗi cho đối phương."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "나-전달법", "def_vi": "Thông điệp Tôi (I-message): phương pháp giao tiếp diễn đạt cảm xúc và ảnh hưởng của bản thân bằng ngôi thứ nhất, không đổ lỗi cho đối phương" },
+      { "term_ko": "사적인 부탁", "def_vi": "Yêu cầu cá nhân (không liên quan đến công việc chuyên môn)" }
+    ]
+  },
+  {
+    "id": 1100,
+    "intent_ko": "구체적인 상황에서 자신의 감정을 솔직하게 표현하는 '나-전달법'을 식별하는 문제",
+    "intent_vi": "Nhận diện 'Thông điệp Tôi' — biểu đạt thành thật cảm xúc của bản thân trong tình huống cụ thể",
+    "choice_explanations": {
+      "ko": {
+        "1": "불만을 간접적으로 묻는 형태로, 감정 표현이 빠져 있음.",
+        "2": "지시·명령 형태여서 상대를 압박할 수 있고, 나의 감정을 담지 않음.",
+        "3": "상대방 행동을 비판하는 '너-전달법'으로, 관계를 악화시킬 수 있음.",
+        "4": "★ 중요한 전화를 받지 못할까 봐 느끼는 '조바심'과 '걱정'이라는 감정을 1인칭으로 솔직하게 표현—상대방을 탓하지 않고 자신의 내면 상태를 전달하는 나-전달법의 핵심 사례임.",
+        "5": "상대방에게 행동 변화를 요구하는 명령조 표현으로, 감정이 담기지 않음."
+      },
+      "vi": {
+        "1": "Hỏi gián tiếp về sự bất mãn, thiếu biểu đạt cảm xúc.",
+        "2": "Dạng ra lệnh/hướng dẫn, có thể gây áp lực cho đối phương và không chứa cảm xúc của bản thân.",
+        "3": "Phê bình hành vi của đối phương — là 'Thông điệp Bạn', có thể làm xấu đi mối quan hệ.",
+        "4": "★ Diễn đạt thành thật bằng ngôi thứ nhất về cảm xúc 'bồn chồn' và 'lo lắng' khi sợ bỏ lỡ cuộc gọi quan trọng — không đổ lỗi đối phương mà truyền đạt trạng thái nội tâm, đây là ví dụ điển hình của Thông điệp Tôi.",
+        "5": "Yêu cầu đối phương thay đổi hành vi theo giọng ra lệnh, không chứa cảm xúc của bản thân."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "나-전달법", "def_vi": "Thông điệp Tôi (I-message): phương pháp giao tiếp bày tỏ cảm xúc bản thân bằng ngôi thứ nhất mà không phê phán đối phương" },
+      { "term_ko": "조바심", "def_vi": "Sự bồn chồn, nôn nóng khi lo lắng về điều gì đó có thể xảy ra" }
+    ]
+  },
+  {
+    "id": 1099,
+    "intent_ko": "대상자와 효과적으로 말하기 위한 올바른 의사소통 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp giao tiếp đúng đắn để trò chuyện hiệu quả với đối tượng được chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "감정을 숨기면 상대방과의 신뢰 형성이 어려워짐.",
+        "2": "★ 의사전달을 분명하게 하는 것은 오해를 줄이고 신뢰를 쌓는 효과적인 의사소통의 핵심 원칙임.",
+        "3": "자신감 없는 태도는 상대에게 불안감을 주며 신뢰를 저하시킴.",
+        "4": "모든 것에 전문가를 자처하면 오히려 신뢰성을 잃고 상대를 불편하게 함.",
+        "5": "과거의 부정적인 일을 상기시키면 불필요한 긴장과 갈등을 유발함."
+      },
+      "vi": {
+        "1": "Che giấu cảm xúc khiến việc xây dựng lòng tin với đối phương trở nên khó khăn.",
+        "2": "★ Truyền đạt ý kiến rõ ràng là nguyên tắc cốt lõi của giao tiếp hiệu quả — giúp giảm hiểu lầm và xây dựng lòng tin.",
+        "3": "Thái độ thiếu tự tin gây lo ngại cho đối phương và làm giảm sự tin tưởng.",
+        "4": "Tự nhận mình là chuyên gia trong mọi việc sẽ mất đi uy tín và khiến đối phương khó chịu.",
+        "5": "Nhắc lại những chuyện tiêu cực trong quá khứ gây căng thẳng và xung đột không cần thiết."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "의사전달", "def_vi": "Truyền đạt ý kiến/thông tin: hành động chuyển tải suy nghĩ hoặc thông tin đến người khác một cách rõ ràng" },
+      { "term_ko": "신뢰", "def_vi": "Lòng tin: niềm tin được xây dựng qua sự chân thành và nhất quán trong giao tiếp" }
+    ]
+  },
+  {
+    "id": 1098,
+    "intent_ko": "대상자의 의사를 존중하며 공감적으로 반응하는 올바른 대화를 고르는 문제",
+    "intent_vi": "Chọn câu trả lời thể hiện sự tôn trọng ý kiến và phản ứng đồng cảm đúng đắn với đối tượng",
+    "choice_explanations": {
+      "ko": {
+        "1": "밤에 잠을 못 잔 대상자에게 '기분이 좋아 보인다'는 것은 상황을 잘못 판단한 부적절한 반응임.",
+        "2": "산책 제안은 행동 위주의 단순 제안으로, 대상자의 감정을 공감하거나 의사를 존중하지 못함.",
+        "3": "★ 대상자가 스스로 '낮잠을 자지 말아야겠다'고 결정한 것을 긍정적으로 수용하고, '그렇게 해보시겠어요?'라고 되물어 의사 결정을 존중하는 공감적 반응임.",
+        "4": "잠 못 잔 것과 직접 관계없는 고민이 있냐는 질문은 불필요하고 동문서답에 가까움.",
+        "5": "나이를 이유로 수면 감소를 일반화하는 것은 개인의 고충을 무시하는 공감 부족한 반응임."
+      },
+      "vi": {
+        "1": "Nói 'trông có vẻ vui' với người vừa mất ngủ cả đêm là phản ứng nhận định sai tình huống, không phù hợp.",
+        "2": "Đề xuất đi dạo là gợi ý thiên về hành động, không thể hiện sự đồng cảm hay tôn trọng ý kiến của đối tượng.",
+        "3": "★ Tiếp nhận tích cực quyết định của đối tượng ('không ngủ trưa nữa') và hỏi lại 'Cụ thử làm vậy được không?' — đây là phản ứng đồng cảm tôn trọng quyền tự quyết của đối tượng.",
+        "4": "Hỏi về nỗi lo lắng không liên quan trực tiếp đến việc mất ngủ là câu hỏi không cần thiết, lạc chủ đề.",
+        "5": "Tổng quát hóa việc ít ngủ theo tuổi tác là phản ứng thiếu đồng cảm, phủ nhận khó khăn cá nhân của đối tượng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "공감적 대화", "def_vi": "Trò chuyện đồng cảm: giao tiếp thể hiện sự hiểu biết và chia sẻ cảm xúc, tôn trọng ý kiến của đối phương" },
+      { "term_ko": "의사 결정 존중", "def_vi": "Tôn trọng quyết định: thừa nhận và ủng hộ lựa chọn của đối tượng mà không áp đặt ý kiến cá nhân" }
+    ]
+  },
+  {
+    "id": 1097,
+    "intent_ko": "대상자가 통증을 호소할 때 요양보호사의 공감적 반응이 무엇인지 판별하는 문제",
+    "intent_vi": "Xác định phản ứng đồng cảm đúng đắn của nhân viên chăm sóc khi đối tượng than đau",
+    "choice_explanations": {
+      "ko": {
+        "1": "나이 탓으로 돌리는 것은 감정을 무시하고 당연시하는 비공감적 반응임.",
+        "2": "의학적 제안이지만 감정적 공감이 전혀 없어 대상자가 고립감을 느낄 수 있음.",
+        "3": "참으라고 권유하는 것은 위로 의도가 있으나, 감정을 충분히 인정하지 못해 공감이 부족함.",
+        "4": "★ '아프시니까 많이 힘드시죠'는 대상자의 통증을 직접 인정하고 그에 따른 힘겨움에 공감하는 표현—판단이나 충고 없이 감정에 집중하는 공감적 반응의 정석임.",
+        "5": "타인과 비교하며 기운내라고 하는 것은 개인의 고통을 경시하고 감정에 공감하지 못함."
+      },
+      "vi": {
+        "1": "Đổ lỗi cho tuổi tác là phản ứng không đồng cảm, coi nỗi đau của đối tượng là điều hiển nhiên.",
+        "2": "Đề xuất thuốc giảm đau là phản ứng y tế nhưng hoàn toàn thiếu sự đồng cảm cảm xúc, khiến đối tượng cảm thấy cô đơn.",
+        "3": "Khuyến khích chịu đựng thêm tuy có ý an ủi nhưng chưa đủ thừa nhận cảm xúc, thiếu đồng cảm thực sự.",
+        "4": "★ 'Cụ đau như vậy chắc rất vất vả' — trực tiếp thừa nhận cơn đau và đồng cảm với sự khó khăn của đối tượng; tập trung vào cảm xúc mà không phán xét hay khuyên bảo — đây là phản ứng đồng cảm điển hình.",
+        "5": "So sánh với người khác và khuyên lên tinh thần là coi nhẹ nỗi đau cá nhân, không thể hiện sự đồng cảm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "공감적 반응", "def_vi": "Phản ứng đồng cảm: phản ứng thể hiện sự thừa nhận và chia sẻ cảm xúc của đối phương một cách chân thành" },
+      { "term_ko": "감정 인정", "def_vi": "Thừa nhận cảm xúc: xác nhận cảm xúc của đối tượng mà không phán xét hay phủ nhận" }
+    ]
+  },
+  {
+    "id": 1096,
+    "intent_ko": "이전 요양보호사와 비교당하는 상황에서 공감적으로 대처하는 올바른 반응을 고르는 문제",
+    "intent_vi": "Chọn phản ứng đồng cảm đúng đắn trong tình huống bị đối tượng so sánh với nhân viên chăm sóc trước",
+    "choice_explanations": {
+      "ko": {
+        "1": "대상자의 말을 막는 것으로 감정을 무시하고 방어적인 태도임.",
+        "2": "★ 대상자의 감정(전 요양보호사에 대한 그리움과 만족감)을 인정하고 공감('참 잘하셨나봐요')한 뒤, 앞으로 열심히 하겠다는 긍정적 의지를 표현—비교를 방어적으로 받아들이지 않고 공감과 다짐으로 응하는 가장 바람직한 공감적 반응임.",
+        "3": "다른 분을 소개시켜 주겠다는 것은 관계를 포기하는 듯한 인상을 주어 부적절함.",
+        "4": "자신의 불편한 감정을 먼저 드러내어 공감과는 거리가 있음.",
+        "5": "서운함을 표출하는 감정적 반응으로 대상자를 배려하지 못함."
+      },
+      "vi": {
+        "1": "Ngăn đối tượng nói là thái độ phòng thủ, bác bỏ cảm xúc của họ.",
+        "2": "★ Thừa nhận cảm xúc của đối tượng (nhớ và hài lòng với nhân viên cũ) qua câu 'Có lẽ người trước làm rất tốt', rồi bày tỏ quyết tâm cố gắng — không phòng thủ trước sự so sánh mà đáp lại bằng sự đồng cảm và cam kết, đây là phản ứng đồng cảm lý tưởng nhất.",
+        "3": "Đề nghị giới thiệu người khác tạo ấn tượng từ bỏ mối quan hệ, không phù hợp.",
+        "4": "Bộc lộ cảm xúc không thoải mái của bản thân trước tiên, cách xa sự đồng cảm thực sự.",
+        "5": "Phản ứng cảm xúc thể hiện sự tủi thân, không quan tâm đến cảm xúc của đối tượng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "공감적 태도", "def_vi": "Thái độ đồng cảm: cách tiếp cận thể hiện sự hiểu biết và chấp nhận cảm xúc của đối phương" },
+      { "term_ko": "방어적", "def_vi": "Mang tính phòng thủ: xu hướng bảo vệ bản thân bằng cách phủ nhận hoặc biện hộ khi bị chỉ trích" }
+    ]
+  },
+  {
+    "id": 1095,
+    "intent_ko": "대상자가 불만을 표현할 때 요양보호사의 공감적 반응을 고르는 문제",
+    "intent_vi": "Chọn phản ứng đồng cảm của nhân viên chăm sóc khi đối tượng bày tỏ sự bất mãn",
+    "choice_explanations": {
+      "ko": {
+        "1": "대상자의 말을 부정하고 반박하는 방어적 태도로, 공감과 정반대임.",
+        "2": "대상자의 표현 방식을 비난하는 것으로 관계를 더 악화시킴.",
+        "3": "자신의 입장만 내세우며 상대방의 감정을 외면하는 반응임.",
+        "4": "★ '일일이 간섭하고 성가시게 해서 기분이 상하셨군요'는 대상자가 느끼는 불편함과 상한 감정을 그대로 반영하고 인정하는 적극적 경청과 공감의 표본—방어하거나 설명하지 않고 감정 자체에 집중함.",
+        "5": "대상자를 어린애에 비유하며 무시하는 발언으로 공감을 전혀 하지 못함."
+      },
+      "vi": {
+        "1": "Phủ nhận và phản bác lời đối tượng là thái độ phòng thủ — hoàn toàn trái với sự đồng cảm.",
+        "2": "Chỉ trích cách diễn đạt của đối tượng sẽ làm xấu thêm mối quan hệ.",
+        "3": "Chỉ nêu lập trường của bản thân mà bỏ qua cảm xúc của đối phương.",
+        "4": "★ 'Cụ khó chịu vì bị can thiệp từng chi tiết và bị quấy rầy phải không' — phản chiếu và thừa nhận chính xác cảm giác khó chịu và tổn thương của đối tượng; không biện hộ hay giải thích mà tập trung hoàn toàn vào cảm xúc — đây là mẫu mực của lắng nghe tích cực và đồng cảm.",
+        "5": "Ví đối tượng như trẻ nhỏ là lời nói coi thường, hoàn toàn thiếu sự đồng cảm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "적극적 경청", "def_vi": "Lắng nghe tích cực: kỹ năng lắng nghe chủ động, phản chiếu lại cảm xúc và nội dung của đối phương để thể hiện sự hiểu biết" },
+      { "term_ko": "신경질", "def_vi": "Nổi cáu, bực bội: trạng thái tức giận và mất kiên nhẫn biểu hiện ra bên ngoài" }
+    ]
+  },
+  {
+    "id": 1094,
+    "intent_ko": "경청을 방해하는 행동과 도움이 되는 행동을 구별하는 문제",
+    "intent_vi": "Phân biệt hành động cản trở và hành động hỗ trợ việc lắng nghe chú ý",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 충분히 듣기 전에 조언하면 상대방의 말을 끝까지 듣지 않게 되어 경청을 방해하는 대표적 행동임—조언은 상대방 말을 완전히 이해한 후에 해야 함.",
+        "2": "흥분을 자제하고 비판적 태도를 버리는 것은 경청에 매우 도움이 되는 자세임.",
+        "3": "말의 의미를 파악하고 이해하려는 것은 경청의 핵심 요소임.",
+        "4": "경청하고 있음을 표현(고개 끄덕임, 눈맞춤 등)하는 것은 상대방이 더 잘 말할 수 있도록 돕는 행동임.",
+        "5": "말을 가로막지 않는 것은 올바른 경청 태도의 기본임."
+      },
+      "vi": {
+        "1": "★ Đưa ra lời khuyên trước khi lắng nghe đầy đủ khiến người nghe không nghe hết lời đối phương — đây là hành động điển hình cản trở việc lắng nghe; lời khuyên chỉ nên đưa ra sau khi đã hiểu hoàn toàn.",
+        "2": "Kiềm chế sự興phấn khích và bỏ thái độ phê phán là tư thế rất tốt cho việc lắng nghe.",
+        "3": "Cố gắng nắm bắt và hiểu ý nghĩa lời nói là yếu tố cốt lõi của lắng nghe.",
+        "4": "Biểu đạt rằng mình đang lắng nghe (gật đầu, duy trì ánh mắt...) giúp đối phương thoải mái nói hơn.",
+        "5": "Không ngắt lời là nguyên tắc cơ bản của thái độ lắng nghe đúng đắn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "경청", "def_vi": "Lắng nghe chú ý: nghe một cách tập trung, chủ động để hiểu trọn vẹn ý của đối phương" },
+      { "term_ko": "비판적 태도", "def_vi": "Thái độ phê phán: xu hướng đánh giá tiêu cực và chỉ trích khi nghe người khác nói, cản trở việc tiếp nhận thông tin khách quan" }
+    ]
+  },
+  {
+    "id": 1093,
+    "intent_ko": "대상자와의 효과적인 의사소통 방법 중 옳은 것을 고르는 문제",
+    "intent_vi": "Chọn phương pháp giao tiếp hiệu quả đúng đắn khi làm việc với đối tượng được chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "듣고 싶지 않은 말을 걸러내면 편향된 정보만 받아들여 정확한 의사소통이 불가능함.",
+        "2": "듣는 중간에 조언을 계속하면 상대방 말을 충분히 들을 수 없고, 신뢰를 잃음.",
+        "3": "우회적으로 말하면 의도가 전달되지 않아 오해가 생기기 쉬움.",
+        "4": "★ 대상자의 말(언어적 표현)과 표정(비언어적 표현)이 일치하는지 확인하면 감정 상태를 정확히 파악할 수 있어 의사소통의 정확성이 크게 높아짐.",
+        "5": "요양보호사 자신의 경험으로 판단하면 대상자의 고유한 상황을 왜곡할 위험이 있음."
+      },
+      "vi": {
+        "1": "Lọc bỏ những điều không muốn nghe khiến chỉ tiếp nhận thông tin phiến diện, không thể giao tiếp chính xác.",
+        "2": "Liên tục đưa lời khuyên trong khi đang nghe khiến không nghe được đầy đủ và mất đi sự tin tưởng.",
+        "3": "Nói vòng vo làm ý định không được truyền đạt, dễ gây hiểu lầm.",
+        "4": "★ Kiểm tra xem lời nói (biểu đạt ngôn ngữ) và nét mặt (biểu đạt phi ngôn ngữ) của đối tượng có khớp nhau không — giúp nắm bắt chính xác trạng thái cảm xúc, từ đó nâng cao độ chính xác của giao tiếp đáng kể.",
+        "5": "Phán đoán dựa trên kinh nghiệm cá nhân của nhân viên chăm sóc có nguy cơ bóp méo tình huống đặc thù của đối tượng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "비언어적 표현", "def_vi": "Biểu đạt phi ngôn ngữ: giao tiếp thông qua nét mặt, cử chỉ, tư thế cơ thể thay vì lời nói" },
+      { "term_ko": "우회적", "def_vi": "Vòng vo, gián tiếp: không nói thẳng vào vấn đề mà diễn đạt theo cách vòng vèo" }
+    ]
+  },
+  {
+    "id": 1091,
+    "intent_ko": "대상자와 효과적으로 의사소통하기 위한 올바른 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp giao tiếp hiệu quả đúng đắn với đối tượng được chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "의견 충돌 시 주제를 바꾸는 것은 문제를 회피하는 행동으로 효과적인 의사소통이 아님.",
+        "2": "상황에 맞지 않는 말을 직접 지적하면 대화의 흐름이 끊기고 상대방이 방어적이 될 수 있음.",
+        "3": "★ 대상자의 표정을 관찰하며 듣는 것은 언어적 내용과 비언어적 신호를 동시에 파악하는 효과적인 의사소통 방법임—감정 상태를 정확히 이해하고 적절히 반응할 수 있음.",
+        "4": "상대방이 말하는 동안 미리 대답을 준비하면 상대의 말을 충분히 듣지 못해 핵심을 놓칠 수 있음.",
+        "5": "요양보호사 자신의 경험으로 대상자의 말을 판단하면 개인적 상황의 특수성을 왜곡할 수 있음."
+      },
+      "vi": {
+        "1": "Đổi chủ đề khi bất đồng ý kiến là hành vi né tránh vấn đề, không phải giao tiếp hiệu quả.",
+        "2": "Trực tiếp chỉ ra lời nói không phù hợp có thể làm gián đoạn cuộc trò chuyện và khiến đối phương phòng thủ.",
+        "3": "★ Quan sát nét mặt của đối tượng trong khi lắng nghe là phương pháp giao tiếp hiệu quả — nắm bắt đồng thời nội dung ngôn ngữ và tín hiệu phi ngôn ngữ, từ đó hiểu chính xác trạng thái cảm xúc và phản ứng phù hợp.",
+        "4": "Chuẩn bị câu trả lời trong khi đối phương đang nói khiến bỏ lỡ nội dung quan trọng.",
+        "5": "Phán đoán lời nói của đối tượng dựa trên kinh nghiệm cá nhân của nhân viên có thể bóp méo tính đặc thù của từng hoàn cảnh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "비언어적 신호", "def_vi": "Tín hiệu phi ngôn ngữ: thông tin được truyền đạt qua biểu cảm khuôn mặt, cử chỉ và tư thế thay vì lời nói" },
+      { "term_ko": "회피적 행동", "def_vi": "Hành vi né tránh: xu hướng lẩn tránh xung đột hoặc vấn đề thay vì đối mặt và giải quyết trực tiếp" }
+    ]
+  },
+  {
+    "id": 1090,
+    "intent_ko": "대상자와 친밀한 관계 형성에 도움이 되는 의사소통 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp giao tiếp giúp xây dựng mối quan hệ thân thiết với đối tượng được chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "듣기 전에 대답을 준비하는 것은 상대방 의견을 존중하지 않는 태도로, 신뢰 형성을 방해함.",
+        "2": "비교하며 설득하는 방식은 상대방의 자존감을 해치고 관계를 악화시킬 수 있음.",
+        "3": "전문성을 강조하는 것은 위계를 느끼게 하여 친밀감 형성과는 거리가 있음.",
+        "4": "★ 의견 차이가 있을 때 대상자의 주장을 먼저 충분히 들어주는 것은 상대방을 존중하고 있다는 신호를 보내, 친밀한 신뢰 관계 형성에 직접적으로 기여함.",
+        "5": "침묵 상황에서 요양보호사가 주도적으로 이야기하면 대상자가 느끼는 필요나 감정을 무시하게 되어 관계 형성을 방해함."
+      },
+      "vi": {
+        "1": "Chuẩn bị câu trả lời trước khi nghe là thái độ không tôn trọng ý kiến đối phương, cản trở việc xây dựng lòng tin.",
+        "2": "Thuyết phục bằng cách so sánh với người khác có thể tổn thương lòng tự trọng của đối phương và làm xấu mối quan hệ.",
+        "3": "Nhấn mạnh chuyên môn tạo cảm giác cấp bậc, đi ngược lại việc xây dựng sự thân thiết.",
+        "4": "★ Khi có bất đồng, lắng nghe đầy đủ quan điểm của đối tượng trước tiên là tín hiệu tôn trọng đối phương — trực tiếp góp phần xây dựng mối quan hệ tin cậy và thân thiết.",
+        "5": "Khi đối tượng im lặng mà nhân viên chủ động nói sẽ bỏ qua nhu cầu và cảm xúc của đối tượng, cản trở việc xây dựng mối quan hệ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "친밀한 관계 형성", "def_vi": "Xây dựng mối quan hệ thân thiết: quá trình tạo dựng sự gần gũi và tin tưởng lẫn nhau qua giao tiếp tôn trọng" },
+      { "term_ko": "침묵", "def_vi": "Sự im lặng: khoảng dừng trong cuộc hội thoại có thể mang nhiều ý nghĩa cảm xúc cần được tôn trọng" }
+    ]
+  },
+  {
+    "id": 1089,
+    "intent_ko": "비언어적 의사소통에서 바람직한 태도를 고르는 문제",
+    "intent_vi": "Chọn thái độ đáng mong đợi trong giao tiếp phi ngôn ngữ",
+    "choice_explanations": {
+      "ko": {
+        "1": "입술을 깨물거나 꼭 다무는 것은 긴장, 불안, 거부감을 나타내는 부정적 비언어 신호임.",
+        "2": "눈높이가 맞지 않으면 상하 관계처럼 보여 신뢰감이 떨어지고 소통이 어려워짐.",
+        "3": "★ 따뜻하고 배려하는 표정은 말하지 않아도 안정감과 신뢰를 전달하며, 비언어적 의사소통에서 가장 긍정적 영향을 주는 핵심 요소임.",
+        "4": "손가락으로 지적하는 행동은 위협적·공격적으로 받아들여질 수 있음.",
+        "5": "큰소리로 말하기는 언어적 의사소통에 해당하며, 비언어적 맥락에서도 공격적 인상을 줄 수 있음."
+      },
+      "vi": {
+        "1": "Cắn môi hoặc mím môi chặt là tín hiệu phi ngôn ngữ tiêu cực biểu hiện căng thẳng, lo lắng hoặc từ chối.",
+        "2": "Không ngang tầm mắt tạo ấn tượng quan hệ trên-dưới, làm giảm cảm giác tin tưởng và gây khó khăn trong giao tiếp.",
+        "3": "★ Biểu cảm ấm áp và quan tâm truyền đạt sự an tâm và tin tưởng mà không cần lời nói — đây là yếu tố cốt lõi tác động tích cực nhất trong giao tiếp phi ngôn ngữ.",
+        "4": "Hành động chỉ tay có thể bị hiểu là đe dọa hoặc tấn công.",
+        "5": "Nói to thuộc về giao tiếp ngôn ngữ và trong bối cảnh phi ngôn ngữ cũng có thể tạo ấn tượng hung hăng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "비언어적 의사소통", "def_vi": "Giao tiếp phi ngôn ngữ: truyền đạt thông tin qua biểu cảm, cử chỉ, tư thế cơ thể mà không dùng lời nói" },
+      { "term_ko": "배려하는 표정", "def_vi": "Nét mặt quan tâm/ân cần: biểu hiện khuôn mặt thể hiện sự chú ý và lo lắng chân thành đến đối phương" }
+    ]
+  },
+  {
+    "id": 1088,
+    "intent_ko": "대상자와 의사소통할 때 올바른 신체 자세를 고르는 문제",
+    "intent_vi": "Chọn tư thế cơ thể đúng đắn khi giao tiếp với đối tượng được chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "팔짱 끼기는 거부감, 비협조적 태도, 폐쇄성을 나타내는 부정적 비언어 신호임.",
+        "2": "잦은 하품은 피로감·무관심을 드러내어 상대방에게 실례가 됨.",
+        "3": "눈썹을 치켜뜨는 것은 놀람이나 불신의 인상을 줌.",
+        "4": "★ 대상자와 같은 눈높이를 맞추면 수직적 권력 차이 없이 동등한 관계임을 보여주어 신뢰감과 편안함을 주는, 비언어적 의사소통에서 가장 효과적인 자세임.",
+        "5": "지나친 머리 끄덕임은 내용을 듣지 않고도 습관적으로 동의하는 것처럼 보여 진정성이 느껴지지 않음."
+      },
+      "vi": {
+        "1": "Khoanh tay là tín hiệu phi ngôn ngữ tiêu cực biểu hiện sự từ chối, không hợp tác và tính khép kín.",
+        "2": "Ngáp thường xuyên bộc lộ sự mệt mỏi và thờ ơ, thiếu lịch sự với đối phương.",
+        "3": "Nhướng mày tạo ấn tượng ngạc nhiên hoặc ngờ vực.",
+        "4": "★ Ngang tầm mắt với đối tượng thể hiện mối quan hệ bình đẳng không có sự chênh lệch quyền lực theo chiều dọc — tạo cảm giác tin tưởng và thoải mái, đây là tư thế hiệu quả nhất trong giao tiếp phi ngôn ngữ.",
+        "5": "Gật đầu quá nhiều trông như đồng ý thói quen mà không thực sự lắng nghe, không tạo được cảm giác chân thành."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "눈높이", "def_vi": "Tầm nhìn ngang: chiều cao tầm mắt; trong giao tiếp nghĩa là duy trì ánh mắt ngang bằng với đối phương để tạo sự bình đẳng" },
+      { "term_ko": "팔짱", "def_vi": "Khoanh tay: tư thế bắt chéo hai tay trước ngực, thường biểu hiện sự phòng thủ hoặc không muốn giao tiếp" }
+    ]
+  },
+  {
+    "id": 1087,
+    "intent_ko": "비언어적 의사소통 시 요양보호사에게 올바른 자세를 고르는 문제",
+    "intent_vi": "Chọn tư thế đúng đắn của nhân viên chăm sóc trong giao tiếp phi ngôn ngữ",
+    "choice_explanations": {
+      "ko": {
+        "1": "너무 긴 침묵은 대화의 흐름을 끊어 어색한 분위기를 만들고 소통을 방해함.",
+        "2": "희미한 미소는 진정성 없이 형식적으로 보여 오히려 비인격적 인상을 줄 수 있음.",
+        "3": "시선을 한 곳에 고정하면 응시(staring)로 느껴져 불편하고, 자연스러운 눈맞춤이 아님.",
+        "4": "습관적인 머리 끄덕임은 실제로 경청하지 않는 것처럼 느껴져 진정한 이해를 전달하지 못함.",
+        "5": "★ 대상자를 향해 약간 몸을 기울이는 자세는 관심·참여·개방성을 나타내는 긍정적 비언어 신호로, 상대방이 심리적으로 편안하게 이야기할 수 있도록 돕는 가장 바람직한 자세임."
+      },
+      "vi": {
+        "1": "Im lặng quá lâu làm đứt mạch cuộc trò chuyện, tạo bầu không khí gượng gạo và cản trở giao tiếp.",
+        "2": "Nụ cười mờ nhạt trông có vẻ hình thức, thiếu chân thành — có thể tạo ấn tượng không nhiệt tình.",
+        "3": "Cố định ánh mắt vào một điểm bị cảm nhận như nhìn chằm chằm (staring), gây khó chịu và không phải giao tiếp mắt tự nhiên.",
+        "4": "Gật đầu theo thói quen khiến cảm giác không thực sự lắng nghe, không truyền đạt được sự hiểu biết thật sự.",
+        "5": "★ Nghiêng người nhẹ về phía đối tượng là tín hiệu phi ngôn ngữ tích cực thể hiện sự quan tâm, tham gia và cởi mở — giúp đối phương cảm thấy thoải mái tâm lý khi chia sẻ; đây là tư thế đáng mong đợi nhất."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "비언어적 의사소통", "def_vi": "Giao tiếp phi ngôn ngữ: hình thức truyền đạt thông tin không dùng lời nói, bao gồm tư thế, cử chỉ và biểu cảm" },
+      { "term_ko": "개방성", "def_vi": "Tính cởi mở: thái độ sẵn sàng lắng nghe và tiếp nhận người khác, thể hiện qua ngôn ngữ cơ thể" }
+    ]
+  },
+  {
+    "id": 1086,
+    "intent_ko": "언어적 의사소통과 비언어적 의사소통의 차이를 이해하고 언어적 표현을 고르는 문제",
+    "intent_vi": "Hiểu sự khác biệt giữa giao tiếp ngôn ngữ và phi ngôn ngữ, chọn ví dụ thuộc giao tiếp ngôn ngữ",
+    "choice_explanations": {
+      "ko": {
+        "1": "자세는 신체 언어에 해당하는 비언어적 의사소통임.",
+        "2": "★ 말의 내용은 언어(단어·문장)를 통해 의미를 직접 전달하는 언어적 의사소통의 핵심 수단임—텍스트, 발화 내용이 모두 언어적 표현에 해당함.",
+        "3": "눈맞춤은 시선을 통한 비언어적 의사소통임.",
+        "4": "옷차림은 외모를 통한 비언어적 신호임.",
+        "5": "얼굴표정은 감정을 전달하는 비언어적 의사소통의 대표적 수단임."
+      },
+      "vi": {
+        "1": "Tư thế thuộc ngôn ngữ cơ thể — là giao tiếp phi ngôn ngữ.",
+        "2": "★ Nội dung lời nói là phương tiện cốt lõi của giao tiếp ngôn ngữ — trực tiếp truyền đạt ý nghĩa qua ngôn ngữ (từ ngữ, câu); văn bản và lời nói đều thuộc biểu đạt ngôn ngữ.",
+        "3": "Giao tiếp mắt là giao tiếp phi ngôn ngữ thông qua ánh nhìn.",
+        "4": "Trang phục là tín hiệu phi ngôn ngữ thông qua ngoại hình.",
+        "5": "Biểu cảm khuôn mặt là phương tiện tiêu biểu của giao tiếp phi ngôn ngữ truyền đạt cảm xúc."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "언어적 의사소통", "def_vi": "Giao tiếp ngôn ngữ: giao tiếp thông qua lời nói hoặc chữ viết, truyền đạt ý nghĩa bằng từ ngữ và câu" },
+      { "term_ko": "비언어적 의사소통", "def_vi": "Giao tiếp phi ngôn ngữ: giao tiếp qua tư thế, cử chỉ, biểu cảm, trang phục — không dùng lời nói hay chữ viết" }
+    ]
+  },
+  {
+    "id": 1085,
+    "intent_ko": "대화에 영향을 미치는 요소 중 가장 중요한 것을 고르는 문제",
+    "intent_vi": "Chọn yếu tố quan trọng nhất ảnh hưởng đến cuộc giao tiếp",
+    "choice_explanations": {
+      "ko": {
+        "1": "억양은 감정 전달에 도움이 되지만 단독으로 가장 중요한 요소는 아님.",
+        "2": "표현력도 중요하나, 비언어적 채널인 얼굴표정에 비해 상대적 비중이 낮음.",
+        "3": "★ 얼굴표정은 메라비언 법칙 등 여러 연구에서 대화의 감정·의미 전달에 가장 큰 비중을 차지하는 비언어적 의사소통 요소로, 말의 내용보다 더 강한 인상을 남김.",
+        "4": "말의 내용은 정보 전달에 필수적이지만, 비언어적 신호인 표정이 감정 전달에 더 큰 영향을 미침.",
+        "5": "말의 속도도 이해도에 영향을 주지만, 얼굴표정이 더 큰 비중을 차지함."
+      },
+      "vi": {
+        "1": "Ngữ điệu giúp truyền đạt cảm xúc nhưng không phải yếu tố quan trọng nhất một mình nó.",
+        "2": "Khả năng diễn đạt cũng quan trọng nhưng có tỷ trọng thấp hơn so với biểu cảm khuôn mặt — kênh phi ngôn ngữ.",
+        "3": "★ Biểu cảm khuôn mặt là yếu tố phi ngôn ngữ chiếm tỷ trọng lớn nhất trong việc truyền đạt cảm xúc và ý nghĩa cuộc hội thoại (theo quy tắc Mehrabian và nhiều nghiên cứu khác) — để lại ấn tượng mạnh hơn nội dung lời nói.",
+        "4": "Nội dung lời nói không thể thiếu để truyền tải thông tin nhưng biểu cảm khuôn mặt — tín hiệu phi ngôn ngữ — tác động mạnh hơn đến truyền đạt cảm xúc.",
+        "5": "Tốc độ nói cũng ảnh hưởng đến mức độ hiểu nhưng biểu cảm khuôn mặt có tỷ trọng lớn hơn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "억양", "def_vi": "Ngữ điệu: sự thay đổi cao độ giọng nói khi phát âm, có thể truyền đạt cảm xúc và thái độ" },
+      { "term_ko": "표현력", "def_vi": "Khả năng diễn đạt: năng lực trình bày ý kiến và cảm xúc một cách sinh động và hiệu quả" }
+    ]
+  },
+  {
+    "id": 1084,
+    "intent_ko": "업무 수행 과정에서 의사소통이 필요한 핵심 이유를 고르는 문제",
+    "intent_vi": "Chọn lý do cốt lõi vì sao cần giao tiếp trong quá trình thực hiện công việc chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "업무 평가는 의사소통의 부수적 효과일 수 있으나, 의사소통 자체의 목적은 아님.",
+        "2": "활동 입증은 문서화·기록 차원이지, 의사소통의 본질적 필요성과 거리가 있음.",
+        "3": "전문성 향상은 교육·훈련을 통해 이루어지는 것으로, 의사소통의 직접적 목적이 아님.",
+        "4": "책임성 제고는 의사소통의 효과 중 하나일 수 있으나 핵심 필요성은 아님.",
+        "5": "★ 의사소통의 가장 근본적인 목적은 신뢰 관계를 형성하고 유지하는 것임—신뢰가 바탕이 되어야 대상자가 요양보호사를 받아들이고, 원활한 돌봄 서비스가 가능해짐."
+      },
+      "vi": {
+        "1": "Đánh giá công việc có thể là hiệu quả phụ của giao tiếp nhưng không phải mục đích của giao tiếp.",
+        "2": "Chứng minh hoạt động thuộc về ghi chép/lưu trữ hồ sơ, không liên quan đến bản chất của nhu cầu giao tiếp.",
+        "3": "Nâng cao chuyên môn được thực hiện qua đào tạo và kinh nghiệm, không phải mục tiêu trực tiếp của giao tiếp.",
+        "4": "Nâng cao trách nhiệm có thể là một trong các hiệu quả của giao tiếp nhưng không phải nhu cầu cốt lõi.",
+        "5": "★ Mục đích căn bản nhất của giao tiếp là xây dựng và duy trì mối quan hệ tin cậy — chỉ khi có nền tảng tin tưởng, đối tượng mới chấp nhận nhân viên chăm sóc và dịch vụ chăm sóc mới có thể diễn ra suôn sẻ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "신뢰관계", "def_vi": "Mối quan hệ tin cậy: mối quan hệ dựa trên sự tin tưởng lẫn nhau, được xây dựng qua giao tiếp trung thực và nhất quán" },
+      { "term_ko": "책임성 제고", "def_vi": "Nâng cao trách nhiệm: tăng cường mức độ chịu trách nhiệm về hành vi và kết quả công việc" }
+    ]
+  },
+  {
+    "id": 1083,
+    "intent_ko": "저체온증 발생 시 올바른 응급 대처 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp xử lý cấp cứu đúng đắn khi xảy ra hạ thân nhiệt",
+    "choice_explanations": {
+      "ko": {
+        "1": "젖은 옷은 체온을 빼앗으므로 반드시 제거한 후 담요로 감싸야 함—젖은 채로 감싸면 오히려 위험함.",
+        "2": "피부·피하조직 손상으로 무감각해지는 것은 동상의 증상이며, 저체온증의 대처 방법이 아님.",
+        "3": "손가락·발가락이 단단해지고 변색되는 것도 동상 증상으로, 저체온증 대처법으로 맞지 않음.",
+        "4": "★ 의식이 있는 저체온증 환자에게 따뜻한 음료와 초콜릿을 섭취하게 하면 내부에서부터 체온을 높이고 에너지를 보충할 수 있는 적절한 응급 처치임.",
+        "5": "따뜻한 장소로 이동하는 것은 맞지만, 호전이 없을 때까지 기다리는 것은 위험하며 즉각 119 신고가 필요한 상황도 있음."
+      },
+      "vi": {
+        "1": "Quần áo ướt hút nhiệt cơ thể nên phải cởi ra trước khi quấn chăn — quấn chăn trong khi còn ướt càng nguy hiểm hơn.",
+        "2": "Tổn thương da và mô dưới da gây mất cảm giác là triệu chứng của tê cóng (đông lạnh), không phải cách xử lý hạ thân nhiệt.",
+        "3": "Ngón tay ngón chân cứng lại và đổi màu cũng là triệu chứng tê cóng, không phải phương pháp xử lý hạ thân nhiệt.",
+        "4": "★ Cho bệnh nhân hạ thân nhiệt còn ý thức uống đồ uống ấm và ăn sô cô la giúp tăng nhiệt độ từ bên trong và bổ sung năng lượng — đây là biện pháp cấp cứu phù hợp.",
+        "5": "Đưa đến nơi ấm là đúng nhưng chờ đến khi có cải thiện mới gọi 119 là nguy hiểm; trong nhiều trường hợp cần gọi ngay."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "저체온증", "def_vi": "Hạ thân nhiệt: tình trạng nhiệt độ cơ thể giảm xuống dưới mức bình thường (dưới 35°C) do tiếp xúc với lạnh, gây rối loạn chức năng cơ thể" },
+      { "term_ko": "피하조직", "def_vi": "Mô dưới da: lớp mô liên kết và mỡ nằm ngay bên dưới da, đóng vai trò cách nhiệt và bảo vệ" },
+      { "term_ko": "응급 처치", "def_vi": "Sơ cứu / xử lý cấp cứu: các biện pháp y tế ban đầu được thực hiện ngay tại hiện trường trước khi được hỗ trợ chuyên môn" }
+    ]
+  },
+  {
+    "id": 1082,
+    "intent_ko": "한랭 관련 질환(동상, 저체온증)의 증상과 처치에 대한 옳은 설명을 고르는 문제",
+    "intent_vi": "Chọn mô tả đúng về triệu chứng và xử lý các bệnh liên quan đến lạnh (tê cóng, hạ thân nhiệt)",
+    "choice_explanations": {
+      "ko": {
+        "1": "동상은 노출된 말단 부위(손·발·코·귀)에 주로 발생하며, 가슴·배·등에는 잘 생기지 않음.",
+        "2": "저체온증 환자에게 옷을 벗기면 체온이 더욱 급격히 떨어져 위험하므로 잘못된 처치임.",
+        "3": "동상 부위는 38~42°C의 따뜻한 물에 담가야 하며, 차가운 물은 오히려 상태를 악화시킴.",
+        "4": "★ 저체온증에서는 핵심 체온 저하로 인해 착란(의식 혼탁), 어눌한 말투, 기억상실 등 신경학적 증상이 나타남—이는 저체온증을 판별하는 중요한 임상 증상임.",
+        "5": "겨울철 추위는 혈관을 수축시키고 혈압을 상승시켜 심뇌혈관 질환 위험을 높이므로, '혈관 이완·혈압 저하'는 틀린 설명임."
+      },
+      "vi": {
+        "1": "Tê cóng chủ yếu xảy ra ở các chi ngọn (tay, chân, mũi, tai) tiếp xúc trực tiếp với lạnh; không xảy ra ở ngực, bụng hay lưng.",
+        "2": "Cởi quần áo cho bệnh nhân hạ thân nhiệt khiến nhiệt độ cơ thể giảm nhanh hơn — đây là xử lý sai lầm và nguy hiểm.",
+        "3": "Vùng bị tê cóng cần được ngâm vào nước ấm 38–42°C; nước lạnh làm tình trạng trở nên tệ hơn.",
+        "4": "★ Hạ thân nhiệt gây ra các triệu chứng thần kinh do nhiệt độ cốt lõi giảm: lú lẫn (rối loạn ý thức), nói ngọng/khó khăn và mất trí nhớ — đây là các triệu chứng lâm sàng quan trọng để nhận biết hạ thân nhiệt.",
+        "5": "Cái lạnh mùa đông gây co mạch và tăng huyết áp, làm tăng nguy cơ bệnh tim mạch não — mô tả 'giãn mạch, giảm huyết áp' là sai."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "동상", "def_vi": "Tê cóng (đông lạnh): tổn thương mô do tiếp xúc với nhiệt độ cực thấp, thường xảy ra ở các chi ngọn" },
+      { "term_ko": "착란", "def_vi": "Rối loạn ý thức / lú lẫn: trạng thái nhận thức mơ hồ, mất định hướng thời gian-không gian, thường gặp trong hạ thân nhiệt nặng" },
+      { "term_ko": "혈관 수축", "def_vi": "Co mạch: phản ứng thu hẹp lòng mạch máu do lạnh, dẫn đến tăng huyết áp và giảm lưu lượng máu ngoại vi" }
+    ]
+  },
+  {
+    "id": 1081,
+    "intent_ko": "겨울철 뇌졸중 예방을 위한 올바른 안전수칙을 고르는 문제",
+    "intent_vi": "Chọn quy tắc an toàn đúng đắn để phòng ngừa đột quỵ trong mùa đông",
+    "choice_explanations": {
+      "ko": {
+        "1": "겨울철 실외 운동은 급격한 체온 저하와 혈압 변화를 유발할 수 있어 실내 운동이 권장됨.",
+        "2": "음주 다음 날 아침 운동은 탈수 상태와 심혈관 부담이 겹쳐 위험하므로 부적절함.",
+        "3": "기온이 낮은 새벽 시간대 운동은 혈압 급상승과 혈관 수축 위험이 높아 권장되지 않음.",
+        "4": "따뜻한 실내에서 갑자기 차가운 곳으로 나가면 혈압이 급격히 오르고 혈관이 수축되어 뇌졸중 위험이 증가함.",
+        "5": "★ 외출 시 방한복과 모자를 착용하면 체온을 유지하고 갑작스러운 혈관 수축을 예방하여 뇌졸중 발생 위험을 효과적으로 줄임—겨울철 뇌졸중 예방의 핵심 수칙임."
+      },
+      "vi": {
+        "1": "Tập thể dục ngoài trời mùa đông có thể gây hạ thân nhiệt đột ngột và thay đổi huyết áp — tập trong nhà được khuyến nghị.",
+        "2": "Tập thể dục sáng sớm sau khi uống rượu nguy hiểm do kết hợp trạng thái mất nước và gánh nặng tim mạch.",
+        "3": "Tập vào rạng sáng khi nhiệt độ thấp nhất làm tăng nguy cơ tăng huyết áp đột ngột và co mạch — không được khuyến nghị.",
+        "4": "Ra khỏi nơi ấm vào nơi lạnh đột ngột khiến huyết áp tăng nhanh và mạch máu co lại, làm tăng nguy cơ đột quỵ.",
+        "5": "★ Mặc quần áo ấm và đội mũ khi ra ngoài giúp duy trì nhiệt độ cơ thể và ngăn ngừa co mạch đột ngột — giảm hiệu quả nguy cơ đột quỵ; đây là quy tắc an toàn cốt lõi phòng ngừa đột quỵ mùa đông."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "뇌졸중", "def_vi": "Đột quỵ: bệnh xảy ra khi lưu lượng máu đến não bị gián đoạn đột ngột do tắc mạch hoặc vỡ mạch, gây tổn thương não" },
+      { "term_ko": "방한복", "def_vi": "Quần áo giữ ấm / trang phục chống lạnh: quần áo được thiết kế để duy trì nhiệt độ cơ thể trong thời tiết lạnh" },
+      { "term_ko": "혈관 수축", "def_vi": "Co mạch máu: phản xạ thu hẹp lòng mạch khi tiếp xúc với lạnh, làm tăng huyết áp và nguy cơ đột quỵ" }
+    ]
+  },
+  {
+    "id": 1080,
+    "intent_ko": "노인의 겨울철 안전수칙 중 올바른 것을 고르는 문제",
+    "intent_vi": "Chọn quy tắc an toàn mùa đông đúng đắn dành cho người cao tuổi",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 노인은 실내 운동과 균형 잡힌 영양섭취를 통해 면역력과 체온을 유지해야 하며, 이것이 겨울철 안전의 기본 수칙임.",
+        "2": "심혈관질환 환자는 오히려 야외활동을 줄이고 안전한 실내 활동을 해야 함.",
+        "3": "보온에는 여러 겹의 얇은 옷이 더 효과적이며, 두꺼운 옷은 움직임을 제한하고 낙상 위험을 높임.",
+        "4": "동상 부위에 헤어드라이어를 사용하면 감각이 없는 상태에서 화상을 입을 수 있으므로 절대 금지—따뜻한 물에 담그거나 의료진에게 의뢰해야 함.",
+        "5": "의식이 없는 저체온증 환자에게 음식을 먹이면 기도 흡인 위험이 있어 즉시 119 신고 및 응급처치가 필요함."
+      },
+      "vi": {
+        "1": "★ Người cao tuổi cần duy trì miễn dịch và nhiệt độ cơ thể qua tập thể dục trong nhà và dinh dưỡng cân bằng — đây là quy tắc an toàn cơ bản trong mùa đông.",
+        "2": "Bệnh nhân tim mạch cần giảm hoạt động ngoài trời và ưu tiên các hoạt động an toàn trong nhà.",
+        "3": "Mặc nhiều lớp quần áo mỏng giữ ấm hiệu quả hơn; quần áo dày hạn chế vận động và tăng nguy cơ té ngã.",
+        "4": "Dùng máy sấy tóc lên vùng tê cóng có thể gây bỏng vì mất cảm giác — tuyệt đối cấm; cần ngâm nước ấm hoặc nhờ nhân viên y tế.",
+        "5": "Cho bệnh nhân hạ thân nhiệt mất ý thức ăn uống có nguy cơ hít sặc vào đường thở — cần gọi 119 ngay và thực hiện sơ cứu."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "심혈관질환", "def_vi": "Bệnh tim mạch: nhóm bệnh ảnh hưởng đến tim và hệ thống mạch máu, bao gồm cao huyết áp, bệnh mạch vành, và suy tim" },
+      { "term_ko": "동상", "def_vi": "Tê cóng: tổn thương mô do tiếp xúc với nhiệt độ cực thấp, cần được xử lý đúng cách bằng nước ấm" },
+      { "term_ko": "흡인", "def_vi": "Hít sặc (aspiration): tình trạng thức ăn hoặc chất lỏng đi vào đường thở thay vì thực quản, nguy hiểm đến tính mạng" }
+    ]
+  },
+  {
+    "id": 1079,
+    "intent_ko": "겨울철 실내에서 차가운 바깥으로 나갈 때 가장 주의해야 할 증상을 고르는 문제",
+    "intent_vi": "Chọn triệu chứng cần cảnh giác nhất khi ra khỏi nơi ấm vào nơi lạnh trong mùa đông",
+    "choice_explanations": {
+      "ko": {
+        "1": "차가운 환경에서는 심장이 더 열심히 일해 맥박이 증가하는 경향이 있으며, 맥박 저하는 주된 위험 신호가 아님.",
+        "2": "★ 차가운 환경에 갑자기 노출되면 혈관이 수축하여 혈압이 급격히 상승하며, 이는 뇌졸중과 심근경색을 유발할 수 있는 핵심 위험 요인임—특히 노인과 고혈압 환자에서 주의가 필요함.",
+        "3": "호흡수 감소는 차가운 환경의 주된 반응이 아님.",
+        "4": "심박동수 저하는 추위보다는 서맥 관련 질환이나 특정 약물에서 나타나며, 차가운 환경의 주 반응이 아님.",
+        "5": "차가운 환경에서는 체온 유지를 위해 열 생산이 늘어나지만 외부 환경에서 체온 상승은 일어나지 않음."
+      },
+      "vi": {
+        "1": "Trong môi trường lạnh, tim có xu hướng làm việc nhiều hơn, nhịp tim tăng; giảm nhịp tim không phải dấu hiệu nguy hiểm chính.",
+        "2": "★ Tiếp xúc đột ngột với môi trường lạnh khiến mạch máu co lại, huyết áp tăng vọt — đây là yếu tố nguy cơ cốt lõi có thể gây đột quỵ và nhồi máu cơ tim; đặc biệt cần chú ý ở người cao tuổi và bệnh nhân tăng huyết áp.",
+        "3": "Giảm nhịp thở không phải phản ứng chính của cơ thể khi tiếp xúc với lạnh.",
+        "4": "Nhịp tim chậm liên quan đến bệnh nhịp chậm hoặc một số thuốc hơn là phản ứng với môi trường lạnh.",
+        "5": "Trong môi trường lạnh cơ thể tăng sinh nhiệt để duy trì thân nhiệt nhưng nhiệt độ cơ thể không tăng trong môi trường bên ngoài lạnh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "혈압 상승", "def_vi": "Tăng huyết áp đột ngột: sự tăng vọt áp lực máu trong mạch do co mạch, có thể gây đột quỵ hoặc nhồi máu cơ tim" },
+      { "term_ko": "혈관 수축", "def_vi": "Co mạch: phản xạ thu hẹp lòng mạch máu khi tiếp xúc với nhiệt độ thấp, dẫn đến tăng huyết áp" }
+    ]
+  },
+  {
+    "id": 1078,
+    "intent_ko": "열탈진(일사병) 발생 시 올바른 응급조치를 고르는 문제",
+    "intent_vi": "Chọn biện pháp sơ cứu đúng đắn khi xảy ra kiệt sức do nhiệt (say nắng nhẹ)",
+    "choice_explanations": {
+      "ko": {
+        "1": "119 신고는 중요하지만, 즉각적으로 시행해야 할 우선순위 조치는 수분과 전해질 보충임.",
+        "2": "따뜻한 물 목욕은 이미 과열된 체온을 더 올려 증상을 악화시킴.",
+        "3": "경련 근육을 마사지하는 것은 열탈진의 응급조치와 관련이 없으며, 잘못된 처치임.",
+        "4": "★ 열탈진은 탈수와 전해질 손실이 주원인이므로 스포츠 음료나 주스 같은 전해질을 포함한 음료를 마시게 하는 것이 수분과 전해질을 동시에 보충하는 가장 효과적인 응급조치임.",
+        "5": "따뜻한 음료와 초콜릿은 저체온증 환자에게 적합한 처치이며, 열탈진 환자에게는 부적절함."
+      },
+      "vi": {
+        "1": "Gọi 119 quan trọng nhưng biện pháp ưu tiên thực hiện ngay là bổ sung nước và điện giải.",
+        "2": "Tắm nước ấm làm tăng thêm nhiệt độ cơ thể đã quá nóng, khiến triệu chứng nặng hơn.",
+        "3": "Xoa bóp cơ bị chuột rút không liên quan đến sơ cứu kiệt sức do nhiệt và là xử lý sai.",
+        "4": "★ Kiệt sức do nhiệt chủ yếu do mất nước và điện giải — cho uống nước thể thao hoặc nước trái cây chứa điện giải là biện pháp sơ cứu hiệu quả nhất vì bổ sung đồng thời nước và điện giải.",
+        "5": "Đồ uống ấm và sô cô la phù hợp cho bệnh nhân hạ thân nhiệt, không phù hợp cho người bị kiệt sức do nhiệt."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "열탈진", "def_vi": "Kiệt sức do nhiệt (say nắng nhẹ / heat exhaustion): tình trạng cơ thể mất nước và điện giải do tiếp xúc nhiệt độ cao kéo dài, ít nghiêm trọng hơn say nắng nặng" },
+      { "term_ko": "전해질", "def_vi": "Điện giải: các khoáng chất (natri, kali, magiê...) hòa tan trong dịch cơ thể, cần thiết cho chức năng cơ và thần kinh" }
+    ]
+  },
+  {
+    "id": 1077,
+    "intent_ko": "제시된 응급조치(서늘한 휴식, 수분 보충, 근육 마사지)에 해당하는 온열질환을 고르는 문제",
+    "intent_vi": "Chọn loại bệnh lý do nhiệt phù hợp với các biện pháp sơ cứu được mô tả (nghỉ mát, bổ sung nước, xoa bóp cơ)",
+    "choice_explanations": {
+      "ko": {
+        "1": "열발진은 땀구멍이 막혀 피부에 붉은 발진이 생기는 상태로, 근육 마사지가 필요하지 않음.",
+        "2": "열성부종은 하지 부종이 나타나는 상태로, 제시된 응급조치와 맞지 않음.",
+        "3": "★ 열경련은 더운 환경에서 땀을 많이 흘려 전해질(특히 나트륨)이 고갈되어 근육 경련이 발생하는 온열질환임—서늘한 곳에서 휴식하고 스포츠 음료로 전해질을 보충하며 경련 근육을 마사지하는 것이 정확한 응급조치임.",
+        "4": "열사병은 생명을 위협하는 중증 온열질환으로 즉각적인 전신 냉각과 119 신고가 필요하며, 문제의 단순 조치로는 부족함.",
+        "5": "열실신은 기립성 저혈압으로 인한 일시적 의식 소실이며, 근육 마사지가 응급조치에 포함되지 않음."
+      },
+      "vi": {
+        "1": "Phát ban nhiệt (rôm sảy) do tắc lỗ chân lông gây nổi mẩn đỏ trên da — không cần xoa bóp cơ.",
+        "2": "Phù do nhiệt gây phù chi dưới — không phù hợp với các biện pháp sơ cứu được đề cập.",
+        "3": "★ Chuột rút do nhiệt xảy ra khi cơ thể đổ mồ hôi nhiều làm cạn kiệt điện giải (đặc biệt natri), gây chuột rút cơ — biện pháp đúng là nghỉ ngơi nơi mát, bổ sung điện giải bằng nước thể thao và xoa bóp cơ bị chuột rút.",
+        "4": "Say nắng nặng (heat stroke) là bệnh lý do nhiệt nghiêm trọng đe dọa tính mạng, cần làm mát toàn thân ngay lập tức và gọi 119; các biện pháp đơn giản trong đề bài không đủ.",
+        "5": "Ngất do nhiệt là mất ý thức tạm thời do hạ huyết áp tư thế đứng — xoa bóp cơ không nằm trong biện pháp sơ cứu."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "열경련", "def_vi": "Chuột rút do nhiệt (heat cramps): tình trạng cơ bắp co thắt đau đớn do mất điện giải (đặc biệt natri) qua mồ hôi khi làm việc trong môi trường nóng" },
+      { "term_ko": "온열질환", "def_vi": "Bệnh lý do nhiệt: nhóm bệnh xảy ra do cơ thể tiếp xúc quá mức với nhiệt độ cao, bao gồm phát ban nhiệt, chuột rút, kiệt sức và say nắng nặng" },
+      { "term_ko": "탈수", "def_vi": "Mất nước: tình trạng cơ thể thiếu lượng nước cần thiết, ảnh hưởng đến chức năng sinh lý bình thường" }
+    ]
+  },
+  {
+    "id": 1076,
+    "intent_ko": "열사병으로 의식이 없는 대상자에 대한 올바른 응급처치를 고르는 문제",
+    "intent_vi": "Chọn biện pháp sơ cứu đúng đắn cho đối tượng bất tỉnh do say nắng nặng (heat stroke)",
+    "choice_explanations": {
+      "ko": {
+        "1": "의식이 없는 상태에서 음료를 마시게 하면 기도로 흡인될 위험이 매우 높으므로 절대 금지.",
+        "2": "이불로 감싸는 것은 체온을 더 올려 열사병을 악화시키므로 절대 금지.",
+        "3": "살포제(분무형 약품) 사용은 의식이 없는 환자에게 적절하지 않으며, 근거 없는 처치임.",
+        "4": "의식이 없는 열사병 환자를 기다리는 것은 매우 위험하며, 즉각적인 냉각과 119 신고가 필요함.",
+        "5": "★ 열사병 의식 소실 환자에게는 체온을 빠르게 낮추는 것이 최우선—옷을 시원한 물로 적시고 선풍기로 증발 냉각(evaporative cooling)을 시행하는 것은 핵심 응급처치이며, 119에 즉시 신고해야 함."
+      },
+      "vi": {
+        "1": "Cho uống khi bất tỉnh có nguy cơ cao hít sặc vào đường thở — tuyệt đối cấm.",
+        "2": "Đắp chăn làm tăng thêm nhiệt độ cơ thể, khiến say nắng nặng hơn — tuyệt đối cấm.",
+        "3": "Dùng thuốc dạng xịt không phù hợp với bệnh nhân bất tỉnh và không có căn cứ khoa học.",
+        "4": "Chờ đợi bệnh nhân say nắng bất tỉnh hồi phục là rất nguy hiểm — cần làm mát ngay và gọi 119.",
+        "5": "★ Với bệnh nhân say nắng mất ý thức, hạ thân nhiệt nhanh chóng là ưu tiên hàng đầu — làm ướt quần áo bằng nước mát và dùng quạt để làm bay hơi (evaporative cooling) là biện pháp sơ cứu cốt lõi; đồng thời phải gọi 119 ngay lập tức."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "열사병", "def_vi": "Say nắng nặng (heat stroke): bệnh lý do nhiệt nguy hiểm tính mạng, nhiệt độ cơ thể vượt 40°C kèm rối loạn thần kinh; cần hạ thân nhiệt khẩn cấp" },
+      { "term_ko": "증발 냉각", "def_vi": "Làm mát bằng bay hơi (evaporative cooling): phương pháp hạ thân nhiệt bằng cách làm ướt da và dùng quạt để tăng bay hơi nước" },
+      { "term_ko": "기도 흡인", "def_vi": "Hít sặc vào đường thở (aspiration): tình trạng chất lỏng hoặc thức ăn đi vào đường thở, có thể gây ngạt hoặc viêm phổi" }
+    ]
+  },
+  {
+    "id": 1075,
+    "intent_ko": "여름철 폭염 대응 안전수칙 중 올바른 것을 고르는 문제",
+    "intent_vi": "Chọn quy tắc an toàn đúng đắn để đối phó với nắng nóng cực đoan trong mùa hè",
+    "choice_explanations": {
+      "ko": {
+        "1": "폭염 시 야외 활동은 온열질환 위험을 높이므로 권장하지 않음.",
+        "2": "폭염 시에는 수분 보충이 더욱 중요하며, 물을 적게 마시면 탈수와 열탈진 위험이 커짐.",
+        "3": "두통은 폭염으로 인한 증상일 수 있으며, 이때 운동보다 시원한 장소에서의 휴식이 필요함.",
+        "4": "현기증·메스꺼움 시 뜨거운 차는 체온을 더 올려 상태를 악화시키므로 금지.",
+        "5": "★ 외출 시 챙이 넓은 모자로 직사광선을 차단하고, 수시로 물을 마셔 수분을 보충하는 것이 폭염 예방의 핵심 안전수칙임."
+      },
+      "vi": {
+        "1": "Hoạt động ngoài trời khi nắng nóng cực đoan làm tăng nguy cơ bệnh lý do nhiệt — không được khuyến nghị.",
+        "2": "Khi nắng nóng, bổ sung nước càng quan trọng hơn; uống ít nước tăng nguy cơ mất nước và kiệt sức do nhiệt.",
+        "3": "Đau đầu có thể là triệu chứng của nắng nóng — cần nghỉ ngơi ở nơi mát thay vì tập thể dục.",
+        "4": "Uống trà nóng khi chóng mặt và buồn nôn làm tăng nhiệt độ cơ thể và khiến tình trạng nặng hơn — không được làm.",
+        "5": "★ Đội mũ vành rộng để che nắng trực tiếp và thường xuyên uống nước để bổ sung độ ẩm là quy tắc an toàn cốt lõi phòng ngừa nắng nóng khi ra ngoài."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "폭염", "def_vi": "Nắng nóng cực đoan: thời tiết nắng nóng bất thường kéo dài, nhiệt độ vượt ngưỡng nguy hiểm, có thể gây các bệnh lý do nhiệt" },
+      { "term_ko": "현기증", "def_vi": "Chóng mặt: cảm giác quay cuồng hoặc mất thăng bằng, có thể là triệu chứng cảnh báo của bệnh lý do nhiệt" }
+    ]
+  },
+  {
+    "id": 1074,
+    "intent_ko": "폭염 외출 후 현기증·메스꺼움·두통을 호소하는 대상자에게 적절한 대처방법을 고르는 문제",
+    "intent_vi": "Chọn biện pháp xử lý phù hợp khi đối tượng kêu chóng mặt, buồn nôn và đau đầu sau khi ra ngoài trời nóng",
+    "choice_explanations": {
+      "ko": {
+        "1": "낮잠은 휴식을 제공하지만, 탈수·열 관련 증상에는 수분 보충이 더 우선임.",
+        "2": "따뜻한 물 목욕은 체온을 올려 증상을 악화시킬 수 있음.",
+        "3": "메스꺼움이 있는 상태에서 식사를 늘리면 오히려 불편함이 심해질 수 있음.",
+        "4": "★ 현기증·메스꺼움·두통은 탈수와 열에 의한 증상이므로, 시원한 물이나 음료를 천천히 마시게 하면 수분을 보충하고 체온을 낮추는 데 효과적인 가장 적절한 대처법임.",
+        "5": "문을 닫고 선풍기만 트는 것은 환기가 부족해 효과가 제한적이며, 수분 보충이 더 중요함."
+      },
+      "vi": {
+        "1": "Ngủ trưa mang lại nghỉ ngơi nhưng bổ sung nước là ưu tiên hơn cho các triệu chứng mất nước và nhiệt.",
+        "2": "Tắm nước ấm làm tăng nhiệt độ cơ thể và có thể khiến triệu chứng nặng hơn.",
+        "3": "Ăn nhiều hơn khi đang buồn nôn có thể làm tăng sự khó chịu.",
+        "4": "★ Chóng mặt, buồn nôn và đau đầu là triệu chứng mất nước và nhiệt — cho uống từ từ nước mát hoặc đồ uống mát bổ sung nước và hạ thân nhiệt hiệu quả; đây là biện pháp xử lý phù hợp nhất.",
+        "5": "Đóng cửa và bật quạt hạn chế thông gió nên hiệu quả thấp; bổ sung nước quan trọng hơn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "열탈진", "def_vi": "Kiệt sức do nhiệt: tình trạng suy giảm sức lực do cơ thể mất nước và điện giải trong môi trường nóng, biểu hiện qua chóng mặt, buồn nôn và đau đầu" },
+      { "term_ko": "수분 보충", "def_vi": "Bổ sung nước: cung cấp đủ lượng nước cho cơ thể, đặc biệt quan trọng trong thời tiết nóng để ngăn ngừa mất nước" }
+    ]
+  },
+  {
+    "id": 1072,
+    "intent_ko": "파상풍·디프테리아 예방접종의 정확한 주기를 고르는 문제",
+    "intent_vi": "Chọn chu kỳ tiêm chủng đúng cho vắc-xin uốn ván và bạch hầu",
+    "choice_explanations": {
+      "ko": {
+        "1": "6개월 간격은 일부 다른 백신(예: 인플루엔자 기초 접종 등)에 해당하며, 파상풍·디프테리아와는 다름.",
+        "2": "1년 간격은 파상풍·디프테리아 추가 접종 주기와 다름.",
+        "3": "3년 간격으로 접종하지 않음.",
+        "4": "5년 간격은 파상풍·디프테리아 접종 주기가 아님.",
+        "5": "★ 파상풍·디프테리아(Td) 혼합 예방접종은 기초 접종 완료 후 10년마다 1회씩 추가 접종(booster)을 권장함—면역 지속 기간이 약 10년이기 때문임."
+      },
+      "vi": {
+        "1": "Khoảng cách 6 tháng áp dụng cho một số vắc-xin khác, không phải uốn ván và bạch hầu.",
+        "2": "Khoảng cách 1 năm không phải chu kỳ tiêm nhắc lại của vắc-xin uốn ván và bạch hầu.",
+        "3": "Không tiêm theo chu kỳ 3 năm.",
+        "4": "5 năm không phải chu kỳ tiêm của vắc-xin uốn ván và bạch hầu.",
+        "5": "★ Vắc-xin kết hợp uốn ván-bạch hầu (Td) được khuyến nghị tiêm nhắc lại (booster) mỗi 10 năm một lần sau khi hoàn thành tiêm cơ bản — vì miễn dịch kéo dài khoảng 10 năm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "파상풍", "def_vi": "Uốn ván (tetanus): bệnh nhiễm khuẩn do độc tố vi khuẩn Clostridium tetani gây co cứng cơ nguy hiểm tính mạng" },
+      { "term_ko": "디프테리아", "def_vi": "Bạch hầu (diphtheria): bệnh nhiễm khuẩn do Corynebacterium diphtheriae gây viêm họng nặng và tổn thương tim, thần kinh" },
+      { "term_ko": "추가 접종", "def_vi": "Tiêm nhắc lại (booster): mũi tiêm bổ sung sau tiêm cơ bản để duy trì và tăng cường miễn dịch theo định kỳ" }
+    ]
+  },
+  {
+    "id": 1071,
+    "intent_ko": "노인에게 매년 1회 접종이 권장되는 예방접종을 고르는 문제",
+    "intent_vi": "Chọn vắc-xin được khuyến nghị tiêm mỗi năm một lần cho người cao tuổi",
+    "choice_explanations": {
+      "ko": {
+        "1": "파상풍은 10년마다 1회 추가 접종이 권장되며, 매년 접종 대상이 아님.",
+        "2": "디프테리아도 파상풍과 함께 10년마다 1회 추가 접종임.",
+        "3": "폐렴구균은 일반적으로 65세 이상에게 1~2회(1회 또는 2회 접종 스케줄) 접종하며, 매년 접종하는 백신이 아님.",
+        "4": "★ 인플루엔자(독감) 바이러스는 매년 유행 바이러스 주가 변하기 때문에 매년 새로운 백신을 1회씩 접종해야 하며, 노인에게 특히 중요한 예방접종임.",
+        "5": "유행성 이하선염(볼거리)은 MMR 백신으로 소아기에 접종하며, 노인에게 매년 권장되는 예방접종이 아님."
+      },
+      "vi": {
+        "1": "Uốn ván được khuyến nghị tiêm nhắc lại mỗi 10 năm, không phải hàng năm.",
+        "2": "Bạch hầu cũng tiêm nhắc lại cùng với uốn ván mỗi 10 năm.",
+        "3": "Phế cầu khuẩn thường tiêm 1–2 lần cho người từ 65 tuổi trở lên, không phải tiêm hàng năm.",
+        "4": "★ Virus cúm (influenza) thay đổi chủng lưu hành mỗi năm nên cần tiêm vắc-xin mới mỗi năm một lần — đây là vắc-xin đặc biệt quan trọng cho người cao tuổi.",
+        "5": "Quai bị được tiêm bằng vắc-xin MMR từ thời thơ ấu và không phải vắc-xin được khuyến nghị tiêm hàng năm cho người cao tuổi."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "인플루엔자", "def_vi": "Cúm (influenza): bệnh nhiễm virus đường hô hấp cấp tính, chủng lưu hành thay đổi hàng năm nên cần tiêm vắc-xin cập nhật mỗi năm" },
+      { "term_ko": "폐렴구균", "def_vi": "Phế cầu khuẩn (Streptococcus pneumoniae): vi khuẩn gây viêm phổi, viêm màng não và nhiễm trùng huyết; có vắc-xin phòng ngừa cho người cao tuổi" },
+      { "term_ko": "유행성 이하선염", "def_vi": "Quai bị (mumps): bệnh do virus gây sưng tuyến nước bọt, được phòng ngừa bằng vắc-xin MMR từ thời thơ ấu" }
+    ]
+  },
+  {
+    "id": 1070,
+    "intent_ko": "노인에게 권장되는 각 예방접종의 정확한 주기를 고르는 문제",
+    "intent_vi": "Chọn mô tả đúng về chu kỳ tiêm chủng được khuyến nghị cho từng loại vắc-xin ở người cao tuổi",
+    "choice_explanations": {
+      "ko": {
+        "1": "결핵(BCG) 예방접종은 성인·노인에게 일반적으로 권장되지 않으며, '10년마다 1회'는 잘못된 정보임.",
+        "2": "인플루엔자는 3년마다가 아니라 매년 1회 접종이 권장됨.",
+        "3": "파상풍은 5년마다가 아니라 10년마다 1회 추가 접종이 권장됨.",
+        "4": "폐렴구균은 매년 접종하는 백신이 아니며, 고위험군에서 5년 간격(또는 1회)이 권장됨.",
+        "5": "★ 대상포진 예방접종은 60세 이상에게 1회 접종을 권장하며, 수두-대상포진 바이러스에 대한 면역을 강화해 대상포진 발병과 신경통 후유증을 예방하는 중요한 백신임."
+      },
+      "vi": {
+        "1": "Vắc-xin lao (BCG) thường không được khuyến nghị cho người lớn và người cao tuổi; '10 năm một lần' là thông tin sai.",
+        "2": "Cúm được khuyến nghị tiêm mỗi năm một lần, không phải 3 năm.",
+        "3": "Uốn ván được khuyến nghị tiêm nhắc lại mỗi 10 năm, không phải 5 năm.",
+        "4": "Phế cầu khuẩn không phải vắc-xin tiêm hàng năm; nhóm nguy cơ cao được khuyến nghị tiêm theo lịch 5 năm (hoặc 1 lần).",
+        "5": "★ Vắc-xin zona thần kinh (herpes zoster) được khuyến nghị tiêm một lần cho người từ 60 tuổi trở lên — tăng cường miễn dịch với virus varicella-zoster, phòng ngừa bùng phát zona và di chứng đau thần kinh sau zona."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "대상포진", "def_vi": "Zona thần kinh (herpes zoster): bệnh do virus varicella-zoster tái hoạt động gây phát ban đau dọc theo dây thần kinh; thường gặp ở người cao tuổi và người suy giảm miễn dịch" },
+      { "term_ko": "예방접종 주기", "def_vi": "Chu kỳ tiêm chủng: khoảng thời gian giữa các lần tiêm vắc-xin được khuyến nghị để duy trì miễn dịch hiệu quả" },
+      { "term_ko": "고위험군", "def_vi": "Nhóm nguy cơ cao: nhóm người dễ bị biến chứng nặng khi mắc bệnh, được ưu tiên tiêm chủng hoặc tiêm theo lịch đặc biệt" }
+    ]
+  }
+]

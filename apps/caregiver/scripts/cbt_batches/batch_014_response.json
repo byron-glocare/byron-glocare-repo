@@ -1,0 +1,749 @@
+[
+  {
+    "id": 1346,
+    "intent_ko": "편마비 대상자가 욕조에 들어가고 나올 때 안전한 순서를 묻는 문제",
+    "intent_vi": "Câu hỏi về trình tự an toàn khi người bị liệt nửa người vào và ra khỏi bồn tắm",
+    "choice_explanations": {
+      "ko": {
+        "1": "건강한 쪽으로 먼저 들어가고 마비된 쪽으로 먼저 나오면 나올 때 마비된 쪽에 힘을 의지해야 하므로 낙상 위험이 높아진다.",
+        "2": "마비된 쪽으로 먼저 들어가면 불안정하여 입욕 자체가 위험하다.",
+        "3": "★ 건강한 쪽으로 먼저 들어가고 건강한 쪽으로 먼저 나오는 방법이 올바르다. 입욕과 퇴욕 모두 건강한 쪽이 욕조 벽이나 손잡이를 지지하여 체중을 안전하게 옮길 수 있기 때문이다.",
+        "4": "마비된 쪽으로 들어가고 나오는 것은 신체 지지력이 없어 가장 위험하다.",
+        "5": "편마비 환자는 마비 측의 근력·균형 능력이 없으므로 방향이 반드시 중요하다."
+      },
+      "vi": {
+        "1": "Vào bằng bên lành, ra bằng bên liệt sẽ phải dồn lực lên bên liệt khi bước ra, làm tăng nguy cơ ngã.",
+        "2": "Vào bằng bên liệt trước khiến tư thế mất ổn định ngay từ bước đầu tiên.",
+        "3": "★ Vào bằng bên lành trước và ra bằng bên lành trước là cách đúng. Cả hai lần bước, bên lành có thể bám vào thành bồn hoặc tay vịn để chuyển trọng lượng cơ thể một cách an toàn.",
+        "4": "Vào và ra bằng bên liệt đều không có lực đỡ, nguy hiểm nhất.",
+        "5": "Người bị liệt nửa người không có sức cơ và khả năng giữ thăng bằng ở bên liệt, vì vậy hướng vào/ra bồn tắm rất quan trọng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "편마비", "def_vi": "Liệt nửa người — tình trạng một bên cơ thể mất chức năng vận động" },
+      { "term_ko": "낙상", "def_vi": "Ngã — tai nạn do mất thăng bằng và ngã xuống" }
+    ]
+  },
+  {
+    "id": 1345,
+    "intent_ko": "통 목욕 전 욕조에 들어가기 전에 씻기는 올바른 순서를 묻는 문제",
+    "intent_vi": "Câu hỏi về thứ tự đúng khi tắm trước khi vào bồn",
+    "choice_explanations": {
+      "ko": {
+        "1": "팔→몸통→회음부→다리 순서는 더러운 회음부를 다리보다 먼저 씻어 위생적이지 않다.",
+        "2": "팔→몸통→다리→회음부는 회음부를 마지막에 씻는 점은 맞으나, 발 끝에서 심장 방향으로 올라가는 원칙에 어긋난다.",
+        "3": "회음부를 맨 먼저 씻으면 이후 다리·팔을 씻을 때 세균이 역으로 오염될 수 있다.",
+        "4": "다리→회음부→팔→몸통은 회음부를 중간에 씻어 이후 부위가 오염될 위험이 있다.",
+        "5": "★ 다리→팔→몸통→회음부 순서가 옳다. 먼지가 많은 발·다리부터 씻어 올라가고, 회음부를 가장 마지막에 씻어야 위생을 유지할 수 있다."
+      },
+      "vi": {
+        "1": "Thứ tự tay→thân→vùng kín→chân: rửa vùng kín trước chân là không vệ sinh.",
+        "2": "Tay→thân→chân→vùng kín: rửa vùng kín cuối cùng là đúng, nhưng không theo nguyên tắc từ dưới lên.",
+        "3": "Rửa vùng kín đầu tiên có thể làm ô nhiễm ngược lại các bộ phận rửa sau.",
+        "4": "Chân→vùng kín→tay→thân: rửa vùng kín ở giữa khiến các bộ phận sau có nguy cơ bị ô nhiễm.",
+        "5": "★ Thứ tự đúng là chân→tay→thân→vùng kín. Rửa từ chân (nhiều bụi bẩn) lên trên và để vùng kín cuối cùng đảm bảo vệ sinh tốt nhất."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "회음부", "def_vi": "Vùng tầng sinh môn — vùng giữa cơ quan sinh dục và hậu môn" }
+    ]
+  },
+  {
+    "id": 1344,
+    "intent_ko": "대상자의 통목욕을 안전하고 올바르게 돕는 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về cách hỗ trợ tắm toàn thân đúng và an toàn cho người được chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "욕조에 30분 이상 담그면 체온이 급격히 변하고 피부가 약해지며 혈압이 떨어질 수 있다.",
+        "2": "목욕물 온도 22~26도는 너무 낮아 체온을 떨어뜨려 저체온 위험이 있다. 적정 온도는 38~40도 전후이다.",
+        "3": "욕조에 들어가기 전에 목욕의자에서 머리를 감기는 것은 절차상 맞지 않고 안전을 저해할 수 있다.",
+        "4": "★ 목욕 중에 몸에 따뜻한 물을 자주 뿌려주어 체온이 떨어지지 않도록 유지하는 것이 올바른 방법이다.",
+        "5": "혈액순환을 위해서는 말초(손발 끝)에서 심장 방향으로 닦아야 하며, 중심→말초 방향은 잘못된 방법이다."
+      },
+      "vi": {
+        "1": "Ngâm trong bồn 30 phút làm thân nhiệt thay đổi đột ngột, da yếu đi và huyết áp có thể tụt.",
+        "2": "Nhiệt độ nước 22–26°C quá thấp, có nguy cơ hạ thân nhiệt. Nhiệt độ phù hợp là khoảng 38–40°C.",
+        "3": "Gội đầu trên ghế tắm trước khi vào bồn không đúng quy trình và ảnh hưởng đến an toàn.",
+        "4": "★ Thường xuyên dội nước ấm lên người trong khi tắm để duy trì thân nhiệt là phương pháp đúng.",
+        "5": "Để thúc đẩy tuần hoàn máu, phải lau từ ngoại vi (đầu ngón tay, chân) về phía tim, không phải từ trung tâm ra ngoại vi."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "통목욕", "def_vi": "Tắm toàn thân — tắm cho toàn bộ cơ thể, thường trong bồn" },
+      { "term_ko": "체온", "def_vi": "Thân nhiệt — nhiệt độ bên trong cơ thể" },
+      { "term_ko": "말초", "def_vi": "Ngoại vi — phần xa tim nhất như đầu ngón tay, ngón chân" }
+    ]
+  },
+  {
+    "id": 1343,
+    "intent_ko": "목욕 돕기의 올바른 방법 중 하나를 선택하는 문제",
+    "intent_vi": "Câu hỏi chọn phương pháp đúng khi hỗ trợ tắm cho người được chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "기분이 불쾌하거나 피로할 때는 목욕을 피해야 한다. 컨디션이 좋을 때 실시한다.",
+        "2": "★ 욕실에 손잡이를 설치하면 대상자가 안전하게 이동하고 지지할 수 있어 낙상을 예방하는 올바른 방법이다.",
+        "3": "목욕은 보통 10~20분 이내로 마치는 것이 적절하며, 1시간 이상은 과도하게 길어 체온 저하·피로 위험이 있다.",
+        "4": "목욕 중에도 대상자와 가볍게 대화하며 상태를 확인하는 것이 안전 관리에 필요하다.",
+        "5": "식사 직후나 직전 목욕은 혈액이 소화기로 집중되어 저혈압·실신 위험이 있으므로 피해야 한다."
+      },
+      "vi": {
+        "1": "Khi tâm trạng không tốt hoặc mệt mỏi, nên tránh tắm. Chỉ tắm khi sức khỏe ổn định.",
+        "2": "★ Lắp tay vịn trong phòng tắm giúp người được chăm sóc di chuyển và bám víu an toàn, phòng ngừa ngã — đây là phương pháp đúng.",
+        "3": "Tắm thường nên kết thúc trong 10–20 phút; hơn 1 tiếng là quá lâu, có nguy cơ hạ thân nhiệt và kiệt sức.",
+        "4": "Trong khi tắm vẫn cần trò chuyện nhẹ nhàng để kiểm tra tình trạng của người được chăm sóc.",
+        "5": "Tắm ngay trước hoặc sau bữa ăn có thể gây tụt huyết áp và ngất do máu tập trung vào hệ tiêu hóa."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "손잡이", "def_vi": "Tay vịn — thanh bám cố định trên tường phòng tắm để phòng ngã" },
+      { "term_ko": "낙상 예방", "def_vi": "Phòng ngừa ngã — các biện pháp giảm nguy cơ ngã trong môi trường chăm sóc" }
+    ]
+  },
+  {
+    "id": 1342,
+    "intent_ko": "대상자의 목욕 돕기에서 올바른 방법 한 가지를 선택하는 문제",
+    "intent_vi": "Câu hỏi chọn một phương pháp đúng khi hỗ trợ tắm cho người được chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 목욕 전에 미리 대·소변을 보게 하면 목욕 중 배설로 인한 위생 문제와 사고를 방지할 수 있어 올바른 방법이다.",
+        "2": "욕실 문을 열어 놓으면 사생활이 침해되고 외부 시선에 노출될 수 있다. 안전 확인이 필요하면 노크 후 부분적으로 열 수 있다.",
+        "3": "심장에서 가까운 곳부터 물을 대면 심장에 갑작스러운 부담을 줄 수 있다. 말초(발 끝)에서 심장 쪽으로 물을 접촉해야 한다.",
+        "4": "치매 대상자가 목욕을 거부할 때는 강제로 실시하지 않고 시간을 바꾸거나 설득하는 방식을 취해야 한다.",
+        "5": "대상자를 전적으로 대신하면 잔존 기능이 저하된다. 스스로 할 수 있는 부분은 스스로 하도록 돕는 것이 원칙이다."
+      },
+      "vi": {
+        "1": "★ Cho người được chăm sóc đi vệ sinh trước khi tắm giúp tránh vấn đề vệ sinh và tai nạn trong khi tắm — đây là phương pháp đúng.",
+        "2": "Để cửa phòng tắm mở xâm phạm quyền riêng tư. Nếu cần kiểm tra an toàn, có thể gõ cửa và hé mở một phần.",
+        "3": "Tiếp xúc nước từ vùng gần tim trước có thể gây gánh nặng đột ngột cho tim. Nên bắt đầu từ ngoại vi (bàn chân) về phía tim.",
+        "4": "Khi người bị sa sút trí tuệ từ chối tắm, không được ép buộc; hãy thay đổi thời điểm hoặc thuyết phục nhẹ nhàng.",
+        "5": "Làm thay toàn bộ cho người được chăm sóc sẽ làm suy giảm chức năng còn lại. Nguyên tắc là hỗ trợ để họ tự làm những gì có thể."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "잔존 기능", "def_vi": "Chức năng còn lại — khả năng tự thực hiện hoạt động mà người được chăm sóc vẫn còn duy trì được" },
+      { "term_ko": "자율성", "def_vi": "Tự chủ — quyền tự quyết định và tự thực hiện của người được chăm sóc" }
+    ]
+  },
+  {
+    "id": 1341,
+    "intent_ko": "면도 시 피부손상을 예방하는 올바른 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về cách đúng để phòng ngừa tổn thương da khi cạo râu",
+    "choice_explanations": {
+      "ko": {
+        "1": "수염이 자란 반대 방향으로 면도하면 피부 자극이 심해지고 면도 상처가 생기기 쉽다.",
+        "2": "면도크림은 수염 방향과 관계없이 수염이 있는 부위 전체에 충분히 바르는 것이 중요하다.",
+        "3": "★ 짧게 나누어 일정한 속도로 면도하면 피부에 과도한 압력이 가해지지 않아 피부손상을 효과적으로 예방할 수 있다.",
+        "4": "면도 전에 거품을 씻어내면 피부 보호막이 제거되어 오히려 면도 자극이 커진다.",
+        "5": "수염이 단단한 부위에서 부드러운 부위로 면도하는 것은 피부 자극을 고르지 않게 하여 손상 위험을 높인다."
+      },
+      "vi": {
+        "1": "Cạo ngược chiều râu mọc làm kích ứng da và dễ gây vết cắt.",
+        "2": "Kem cạo râu cần được thoa đều lên toàn bộ vùng có râu, không phụ thuộc vào chiều râu mọc.",
+        "3": "★ Cạo từng đoạn ngắn với tốc độ đều giúp tránh áp lực quá mức lên da, là cách hiệu quả nhất để phòng ngừa tổn thương da.",
+        "4": "Rửa sạch bọt trước khi cạo làm mất lớp bảo vệ da, khiến dao cạo gây kích ứng nhiều hơn.",
+        "5": "Cạo từ vùng râu cứng sang vùng râu mềm tạo ra lực không đồng đều, tăng nguy cơ tổn thương da."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "피부손상", "def_vi": "Tổn thương da — tình trạng da bị cắt, xước hoặc kích ứng trong quá trình cạo râu" },
+      { "term_ko": "면도크림", "def_vi": "Kem cạo râu — kem bôi lên da trước khi cạo để làm mềm râu và bảo vệ da" }
+    ]
+  },
+  {
+    "id": 1340,
+    "intent_ko": "대상자 면도 시 옳은 방법을 선택하는 문제",
+    "intent_vi": "Câu hỏi chọn phương pháp đúng khi hỗ trợ cạo râu cho người được chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "침상에 반듯하게 누운 자세는 면도하기 어렵고 면도크림이나 물이 기도로 흘러들어갈 위험이 있다. 상체를 약 45도 올린 자세가 적합하다.",
+        "2": "주름진 피부를 위로 잡아당기면 피부가 팽팽해져 면도는 쉬워지지만 너무 강하게 당기면 피부를 손상시킬 수 있어 주의가 필요하다.",
+        "3": "★ 면도 전에 따뜻한 물수건으로 얼굴을 2~3분 덮어주면 수염이 부드러워지고 피부 건조함이 완화되어 면도가 쉽고 피부 자극이 줄어든다.",
+        "4": "면도날을 피부와 90도로 세우면 날이 피부를 파고들어 상처 위험이 크다. 일반적으로 30~45도 각도가 적절하다.",
+        "5": "전기면도기는 피부 자극이 적고 안전하므로 요양 대상자에게 적극 활용할 수 있다."
+      },
+      "vi": {
+        "1": "Nằm thẳng trên giường khi cạo râu gây khó khăn và có nguy cơ kem/nước chảy vào đường thở. Nên nâng thân trên khoảng 45 độ.",
+        "2": "Kéo căng da nhăn giúp cạo dễ hơn, nhưng kéo quá mạnh có thể gây tổn thương da.",
+        "3": "★ Đắp khăn ấm lên mặt 2–3 phút trước khi cạo làm râu mềm hơn và giảm khô da, giúp cạo dễ dàng và ít kích ứng da hơn.",
+        "4": "Giữ dao cạo vuông góc 90 độ với da làm lưỡi dao cắm vào da, nguy hiểm. Góc phù hợp thường là 30–45 độ.",
+        "5": "Máy cạo điện ít gây kích ứng và an toàn, có thể sử dụng tốt cho người được chăm sóc."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "물수건", "def_vi": "Khăn ấm ướt — khăn thấm nước ấm dùng để đắp lên da trước khi cạo râu" },
+      { "term_ko": "면도날 각도", "def_vi": "Góc lưỡi dao cạo — góc giữa lưỡi dao và bề mặt da, ảnh hưởng đến an toàn khi cạo" }
+    ]
+  },
+  {
+    "id": 1339,
+    "intent_ko": "대상자의 세수를 돕는 올바른 방법 중 하나를 선택하는 문제",
+    "intent_vi": "Câu hỏi chọn phương pháp đúng khi hỗ trợ rửa mặt cho người được chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "침대를 완전히 수평으로 하면 세수 시 물이 귀나 목으로 흘러내려 불편하고 위험하다. 상체를 약간 올린 자세가 적절하다.",
+        "2": "귓바퀴와 귀 뒷면은 땀과 분비물이 잘 쌓이는 곳으로 반드시 부드럽게 닦아야 한다.",
+        "3": "눈 주변은 점막이 예민하여 비누를 직접 사용하면 자극과 염증을 유발할 수 있다.",
+        "4": "코털은 먼지·이물질을 걸러주는 중요한 역할을 하므로 모두 제거해서는 안 되며, 세수와 직접 관련 없는 시술이다.",
+        "5": "★ 안경을 하루 한 번 이상 깨끗하게 닦아주는 것은 위생 관리와 시력 보조 기구의 기능 유지를 위한 올바른 지침이다."
+      },
+      "vi": {
+        "1": "Để giường nằm ngang hoàn toàn khiến nước chảy vào tai hoặc cổ khi rửa mặt, gây bất tiện và nguy hiểm.",
+        "2": "Vành tai và mặt sau tai dễ tích tụ mồ hôi và chất tiết, cần lau nhẹ nhàng khi rửa mặt.",
+        "3": "Da quanh mắt rất nhạy cảm; dùng xà phòng trực tiếp có thể gây kích ứng và viêm.",
+        "4": "Lông mũi có vai trò lọc bụi và dị vật quan trọng, không nên cắt hết; và đây không liên quan trực tiếp đến rửa mặt.",
+        "5": "★ Lau kính sạch ít nhất một lần mỗi ngày là hướng dẫn đúng để duy trì vệ sinh và chức năng của dụng cụ hỗ trợ thị lực."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "귓바퀴", "def_vi": "Vành tai — phần sụn bên ngoài của tai, nơi dễ tích tụ chất bẩn" },
+      { "term_ko": "점막", "def_vi": "Niêm mạc — lớp màng ẩm ướt nhạy cảm lót bên trong các hốc tự nhiên của cơ thể" }
+    ]
+  },
+  {
+    "id": 1338,
+    "intent_ko": "대상자의 세수를 돕는 올바른 방법을 선택하는 문제",
+    "intent_vi": "Câu hỏi về phương pháp đúng khi hỗ trợ rửa mặt cho người được chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "눈썹을 면도칼로 다듬는 것은 안전 사고의 위험이 있고 요양보호사의 업무 범위를 벗어난다.",
+        "2": "면봉으로 귀 안쪽을 깊이 후비면 고막 손상의 위험이 있다. 귀 입구 바깥 부분만 닦는다.",
+        "3": "★ 코 안쪽, 코 볼, 코 둘레를 세심하게 닦아주는 것이 세수를 돕는 올바른 방법이다. 콧속 분비물과 오염물을 부드럽게 제거하여 청결을 유지한다.",
+        "4": "입술과 주변에 알코올 솜을 사용하면 피부가 건조해지고 자극을 받는다. 물에 적신 부드러운 천으로 닦아야 한다.",
+        "5": "같은 수건 면으로 양쪽 눈을 번갈아 닦으면 한쪽 눈의 세균이 반대쪽으로 전파될 수 있다. 각 눈마다 깨끗한 면을 사용해야 한다."
+      },
+      "vi": {
+        "1": "Dùng dao cạo để tỉa lông mày có nguy cơ gây tai nạn và vượt ngoài phạm vi công việc của người chăm sóc.",
+        "2": "Dùng tăm bông đưa sâu vào tai có thể làm tổn thương màng nhĩ. Chỉ lau phần bên ngoài gần miệng tai.",
+        "3": "★ Lau kỹ bên trong mũi, cánh mũi và vùng quanh mũi là phương pháp đúng khi hỗ trợ rửa mặt. Giúp loại bỏ chất tiết và bụi bẩn nhẹ nhàng.",
+        "4": "Dùng bông cồn lau môi và vùng xung quanh làm da khô và kích ứng. Cần dùng vải mềm thấm nước.",
+        "5": "Lau hai mắt bằng cùng một mặt khăn có thể truyền vi khuẩn từ mắt này sang mắt kia. Mỗi mắt cần dùng một mặt vải sạch riêng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "귀지", "def_vi": "Ráy tai — chất bài tiết tự nhiên trong ống tai, không nên lấy sâu bằng tăm bông" },
+      { "term_ko": "교차감염", "def_vi": "Lây nhiễm chéo — sự lây lan vi khuẩn từ vùng này sang vùng khác khi dùng chung dụng cụ" }
+    ]
+  },
+  {
+    "id": 1337,
+    "intent_ko": "침상에 누운 대상자의 세수를 돕는 올바른 방법을 선택하는 문제",
+    "intent_vi": "Câu hỏi về phương pháp đúng khi hỗ trợ rửa mặt cho người nằm trên giường",
+    "choice_explanations": {
+      "ko": {
+        "1": "코 안을 알코올 솜으로 닦으면 점막이 자극·손상되고 감염 위험이 증가하므로 부적절하다.",
+        "2": "★ 귀 입구, 귓바퀴, 귀 뒷면을 순서대로 닦아주는 것이 올바른 방법이다. 이 부위에는 분비물과 이물질이 쌓이기 쉬우며 세수 시 반드시 포함해야 한다.",
+        "3": "눈은 안쪽(코 쪽)에서 바깥쪽 방향으로 닦아야 이물질이 눈 중심으로 들어가지 않는다. 바깥→안쪽은 잘못된 방향이다.",
+        "4": "면봉으로 귀지를 깊이 제거하면 고막을 손상시킬 수 있다. 귀 입구 부분만 닦는 것이 안전하다.",
+        "5": "세수 순서는 이마→눈→코→입→턱 순이 일반적이며, 이마→눈→귀→코는 일반적인 세수 절차에서 귀의 위치가 맞지 않다."
+      },
+      "vi": {
+        "1": "Lau bên trong mũi bằng bông cồn gây kích ứng và tổn thương niêm mạc, tăng nguy cơ nhiễm trùng.",
+        "2": "★ Lau miệng tai, vành tai và mặt sau tai theo thứ tự là phương pháp đúng. Các vùng này dễ tích tụ chất tiết và phải được vệ sinh khi rửa mặt.",
+        "3": "Mắt phải lau từ góc trong (phía mũi) ra ngoài để không đẩy dị vật vào trung tâm mắt. Lau từ ngoài vào trong là sai chiều.",
+        "4": "Dùng tăm bông lấy ráy tai sâu có thể làm tổn thương màng nhĩ. Chỉ lau phần gần miệng tai là an toàn.",
+        "5": "Thứ tự rửa mặt thông thường là trán→mắt→mũi→miệng→cằm; thứ tự trán→mắt→tai→mũi đặt tai không đúng vị trí."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "점막", "def_vi": "Niêm mạc — lớp màng nhạy cảm lót bên trong các hốc tự nhiên như mũi, miệng" },
+      { "term_ko": "고막", "def_vi": "Màng nhĩ — màng mỏng trong tai có thể bị thủng nếu đưa vật cứng vào sâu" }
+    ]
+  },
+  {
+    "id": 1336,
+    "intent_ko": "남성 대상자의 회음부를 청결하게 하는 올바른 방법을 선택하는 문제",
+    "intent_vi": "Câu hỏi về phương pháp đúng để vệ sinh vùng kín cho người được chăm sóc nam giới",
+    "choice_explanations": {
+      "ko": {
+        "1": "방수포를 먼저 깔고 변기를 나중에 넣어야 하는데, 순서가 반대이므로 잘못된 방법이다.",
+        "2": "차가운 물을 사용하면 피부에 불쾌감과 혈관 수축을 줄 수 있다. 따뜻한 물을 사용해야 한다.",
+        "3": "★ 음경을 수건으로 잡고 피부가 겹치는 주름 부분과 음낭 뒷면까지 세심하게 닦는 것이 남성 회음부 청결의 올바른 방법이다.",
+        "4": "젖은 수건으로 물기를 닦으면 오히려 습기가 남아 청결에 방해된다. 건조한 수건으로 물기를 완전히 제거해야 한다.",
+        "5": "목욕담요를 마름모꼴로 펴는 것은 회음부 청결 시 사생활 보호를 위해 사용하는 방법으로, 무릎 아래가 아니라 무릎 위를 덮어야 한다."
+      },
+      "vi": {
+        "1": "Cần trải vải chống nước trước rồi mới đặt bô vào; thứ tự ngược lại là sai.",
+        "2": "Dùng nước lạnh gây khó chịu và co mạch. Phải dùng nước ấm.",
+        "3": "★ Dùng khăn giữ dương vật và lau kỹ phần da chồng lên nhau và mặt sau bìu là phương pháp đúng để vệ sinh vùng kín nam giới.",
+        "4": "Lau bằng khăn ướt để lại độ ẩm, cản trở vệ sinh. Phải dùng khăn khô để thấm hết nước.",
+        "5": "Trải khăn tắm hình thoi là cách bảo vệ sự riêng tư khi vệ sinh; phải phủ lên đầu gối, không phải dưới đầu gối."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "음경", "def_vi": "Dương vật — bộ phận sinh dục nam bên ngoài" },
+      { "term_ko": "음낭", "def_vi": "Bìu — túi da bảo vệ tinh hoàn ở nam giới" },
+      { "term_ko": "방수포", "def_vi": "Vải chống nước — tấm lót không thấm nước để bảo vệ giường khi vệ sinh" }
+    ]
+  },
+  {
+    "id": 1335,
+    "intent_ko": "회음부 청결을 돕는 올바른 방법을 선택하는 문제",
+    "intent_vi": "Câu hỏi chọn phương pháp đúng khi hỗ trợ vệ sinh vùng kín",
+    "choice_explanations": {
+      "ko": {
+        "1": "스크린(가리개)을 치지 않으면 대상자의 사생활이 침해되어 정신적 불편함을 줄 수 있다.",
+        "2": "회음부 염증에 연고를 임의로 바르는 것은 요양보호사의 업무 범위를 벗어나며, 의료인의 처방이 필요하다.",
+        "3": "★ 따뜻한 물을 음부에 끼얹은 후 비눗물을 묻혀 씻기는 것은 회음부 청결의 올바른 방법이다. 오염물을 불려서 닦아내기 쉽게 한다.",
+        "4": "회음부는 앞(요도)에서 뒤(항문) 방향으로 닦아야 한다. 뒤에서 앞으로 닦으면 항문 세균이 요도로 이동하여 요로감염이 발생할 수 있다.",
+        "5": "대상자가 스스로 할 수 있는 부분은 스스로 하도록 하여 자율성과 존엄성을 유지해야 한다."
+      },
+      "vi": {
+        "1": "Không dùng màn che (bình phong) xâm phạm quyền riêng tư của người được chăm sóc, gây khó chịu về tâm lý.",
+        "2": "Tự ý bôi thuốc mỡ vào vùng viêm vượt ngoài phạm vi của người chăm sóc; cần có chỉ định của nhân viên y tế.",
+        "3": "★ Dội nước ấm vào vùng kín rồi dùng nước xà phòng để rửa là phương pháp đúng. Nước ấm làm mềm chất bẩn, giúp lau sạch dễ hơn.",
+        "4": "Vùng kín phải lau từ trước (niệu đạo) về sau (hậu môn). Lau ngược từ sau ra trước có thể đưa vi khuẩn từ hậu môn vào niệu đạo gây nhiễm trùng đường tiết niệu.",
+        "5": "Những gì người được chăm sóc có thể tự làm, hãy để họ tự làm để duy trì tự chủ và phẩm giá."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "요로감염", "def_vi": "Nhiễm trùng đường tiết niệu — nhiễm khuẩn ở niệu đạo, bàng quang hoặc thận, dễ xảy ra khi vệ sinh sai chiều" },
+      { "term_ko": "비눗물", "def_vi": "Nước xà phòng — hỗn hợp xà phòng và nước dùng để vệ sinh" }
+    ]
+  },
+  {
+    "id": 1334,
+    "intent_ko": "여성 대상자의 회음부를 청결하게 하는 올바른 방법을 선택하는 문제",
+    "intent_vi": "Câu hỏi chọn phương pháp đúng để vệ sinh vùng kín cho người được chăm sóc nữ giới",
+    "choice_explanations": {
+      "ko": {
+        "1": "침대 머리를 높이면 회음부 접근이 어려워진다. 수평이나 약간 낮은 자세가 적합하다.",
+        "2": "소독제 손 씻기와 멸균장갑 착용은 기본 위생 절차이지만, 회음부 청결 방법 자체를 묻는 질문의 정답은 아니다.",
+        "3": "다리를 쭉 편 자세는 회음부 노출이 어려워 청결 도움이 불편하다. 무릎을 세운 자세가 더 적절하다.",
+        "4": "★ 목욕담요를 마름모꼴로 펴서 아랫단 가운데 부분으로 회음부를 덮어주면, 필요한 부분만 노출하면서 사생활을 보호하고 청결 돕기를 수행할 수 있는 올바른 방법이다.",
+        "5": "좌욕은 분비물이 있을 때 도움이 되지만 기본 청결 방법은 아니며, 의료적 판단이 필요할 수 있다."
+      },
+      "vi": {
+        "1": "Nâng đầu giường lên khiến khó tiếp cận vùng kín. Tư thế nằm ngang hoặc hơi nghiêng xuống phù hợp hơn.",
+        "2": "Rửa tay bằng chất khử khuẩn và đeo găng tay tiệt trùng là quy trình vệ sinh cơ bản, nhưng không phải câu trả lời cho cách vệ sinh vùng kín.",
+        "3": "Duỗi thẳng chân khiến khó để lộ vùng kín. Tư thế co gối thích hợp hơn.",
+        "4": "★ Trải khăn tắm hình thoi và dùng phần giữa cạnh dưới che vùng kín là phương pháp đúng: chỉ để lộ phần cần thiết, vừa bảo vệ sự riêng tư vừa thực hiện vệ sinh.",
+        "5": "Ngâm rửa (좌욕) hữu ích khi có dịch tiết nhưng không phải phương pháp vệ sinh cơ bản; có thể cần đánh giá y tế."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "목욕담요", "def_vi": "Khăn tắm lớn — khăn dùng khi tắm để che phủ bảo vệ sự riêng tư" },
+      { "term_ko": "멸균장갑", "def_vi": "Găng tay vô khuẩn — găng tay đã được khử trùng hoàn toàn, dùng trong chăm sóc vùng nhạy cảm" },
+      { "term_ko": "좌욕", "def_vi": "Ngâm rửa vùng kín — ngâm vùng hạ thân trong nước ấm để vệ sinh hoặc điều trị" }
+    ]
+  },
+  {
+    "id": 1333,
+    "intent_ko": "회음부 청결을 위해 닦아주는 올바른 순서를 선택하는 문제",
+    "intent_vi": "Câu hỏi về thứ tự đúng khi lau vệ sinh vùng kín",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 요도→질→항문 순서가 올바르다. 가장 청결해야 하는 요도에서 시작하여 항문(가장 오염된 부위)을 마지막에 닦아야 세균의 역방향 이동을 막을 수 있다.",
+        "2": "질→요도→항문은 요도 앞에 질을 닦아 분비물이 요도로 유입될 가능성이 있다.",
+        "3": "질→항문→요도는 가장 오염된 항문 다음에 요도를 닦아 요로감염 위험이 매우 높다.",
+        "4": "항문→요도→질은 가장 오염된 항문을 먼저 닦아 이후 모든 부위를 오염시키는 최악의 순서이다.",
+        "5": "항문→질→요도도 항문에서 시작하므로 세균이 역으로 전파될 위험이 크다."
+      },
+      "vi": {
+        "1": "★ Thứ tự niệu đạo→âm đạo→hậu môn là đúng. Bắt đầu từ niệu đạo (cần sạch nhất) và kết thúc ở hậu môn (bẩn nhất) giúp ngăn vi khuẩn di chuyển ngược chiều.",
+        "2": "Âm đạo→niệu đạo→hậu môn: lau âm đạo trước niệu đạo có thể đưa dịch tiết vào niệu đạo.",
+        "3": "Âm đạo→hậu môn→niệu đạo: lau niệu đạo sau hậu môn có nguy cơ nhiễm trùng đường tiết niệu rất cao.",
+        "4": "Hậu môn→niệu đạo→âm đạo: bắt đầu từ hậu môn làm ô nhiễm tất cả các bộ phận sau đó — thứ tự tệ nhất.",
+        "5": "Hậu môn→âm đạo→niệu đạo cũng bắt đầu từ hậu môn nên nguy cơ lây lan vi khuẩn ngược chiều rất lớn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "요도", "def_vi": "Niệu đạo — ống dẫn nước tiểu từ bàng quang ra ngoài, dễ bị nhiễm khuẩn ngược dòng" },
+      { "term_ko": "항문", "def_vi": "Hậu môn — lỗ cuối đường tiêu hóa, nơi có nhiều vi khuẩn nhất nên phải lau sau cùng" }
+    ]
+  },
+  {
+    "id": 1332,
+    "intent_ko": "여성 대상자의 회음부 청결로 예방할 수 있는 질환을 선택하는 문제",
+    "intent_vi": "Câu hỏi về bệnh có thể phòng ngừa thông qua vệ sinh vùng kín cho người được chăm sóc nữ giới",
+    "choice_explanations": {
+      "ko": {
+        "1": "자궁암은 주로 HPV 바이러스 감염이나 유전적 요인으로 발생하며 회음부 청결과 직접적 관련이 없다.",
+        "2": "치질은 항문 혈관의 문제로 청결과 직접적 관련이 없다.",
+        "3": "요실금은 골반저근 약화로 발생하는 문제로 청결과는 관련이 없다.",
+        "4": "★ 요로감염은 요도 주변의 세균 증식으로 발생하며, 회음부를 청결하게 유지하면 세균이 요도로 침입하는 것을 효과적으로 예방할 수 있다.",
+        "5": "매독은 성관계를 통해 전파되는 성병으로 회음부 청결만으로는 예방되지 않는다."
+      },
+      "vi": {
+        "1": "Ung thư cổ tử cung chủ yếu do virus HPV hoặc yếu tố di truyền, không liên quan trực tiếp đến vệ sinh vùng kín.",
+        "2": "Bệnh trĩ là vấn đề về mạch máu hậu môn, không liên quan đến vệ sinh.",
+        "3": "Tiểu không kiểm soát do cơ sàn chậu yếu, không liên quan đến vệ sinh.",
+        "4": "★ Nhiễm trùng đường tiết niệu xảy ra do vi khuẩn sinh sôi quanh niệu đạo. Giữ vùng kín sạch sẽ ngăn vi khuẩn xâm nhập niệu đạo, phòng bệnh hiệu quả.",
+        "5": "Giang mai lây qua quan hệ tình dục, không thể phòng ngừa chỉ bằng vệ sinh vùng kín."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "요로감염", "def_vi": "Nhiễm trùng đường tiết niệu — nhiễm khuẩn ở niệu đạo hoặc bàng quang, có thể phòng ngừa bằng vệ sinh đúng cách" },
+      { "term_ko": "요실금", "def_vi": "Tiểu không kiểm soát — tình trạng rò rỉ nước tiểu do cơ sàn chậu yếu" },
+      { "term_ko": "치질", "def_vi": "Bệnh trĩ — tình trạng tĩnh mạch vùng hậu môn bị giãn và viêm" }
+    ]
+  },
+  {
+    "id": 1331,
+    "intent_ko": "회음부 씻기를 거부하는 대상자에게 올바른 대처방법을 선택하는 문제",
+    "intent_vi": "Câu hỏi về cách xử lý đúng khi người được chăm sóc từ chối vệ sinh vùng kín vì xấu hổ",
+    "choice_explanations": {
+      "ko": {
+        "1": "요청을 기다리기만 하면 청결 문제가 방치되어 요로감염 등 건강 문제가 발생할 수 있다.",
+        "2": "보호자 연락이 필요한 경우도 있지만, 우선은 대상자의 자율성을 존중하는 방법을 찾아야 한다.",
+        "3": "본인 의사와 관계없이 강제로 씻기는 것은 대상자의 존엄성과 자기결정권을 침해하는 행위이다.",
+        "4": "★ 전용 물수건을 제공하여 스스로 씻을 수 있도록 하는 방법이 가장 적절하다. 대상자의 수치심을 배려하면서 자율성을 존중하고 청결도 유지할 수 있다.",
+        "5": "거부 의사만 수용하고 아무 조치도 하지 않으면 청결 문제가 해결되지 않는다."
+      },
+      "vi": {
+        "1": "Chỉ chờ đến khi người được chăm sóc yêu cầu có thể để lại vấn đề vệ sinh, dẫn đến nhiễm trùng đường tiết niệu.",
+        "2": "Liên hệ người giám hộ đôi khi cần thiết, nhưng trước tiên cần tìm cách tôn trọng quyền tự chủ của người được chăm sóc.",
+        "3": "Cưỡng bức vệ sinh bất kể ý muốn của người được chăm sóc xâm phạm phẩm giá và quyền tự quyết của họ.",
+        "4": "★ Cung cấp khăn ẩm riêng để người được chăm sóc tự vệ sinh là cách phù hợp nhất. Vừa tôn trọng sự xấu hổ và quyền tự chủ, vừa duy trì vệ sinh.",
+        "5": "Chỉ chấp nhận lời từ chối mà không có biện pháp nào khác thì vấn đề vệ sinh vẫn không được giải quyết."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "자기결정권", "def_vi": "Quyền tự quyết — quyền của người được chăm sóc trong việc quyết định về bản thân" },
+      { "term_ko": "존엄성", "def_vi": "Phẩm giá — sự tôn trọng nhân cách và quyền riêng tư của người được chăm sóc" }
+    ]
+  },
+  {
+    "id": 1330,
+    "intent_ko": "발톱이 살 안쪽으로 파고들어 상처가 난 대상자에 대한 올바른 대처방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về cách xử lý đúng khi móng chân người được chăm sóc mọc ngược vào da gây thương tích",
+    "choice_explanations": {
+      "ko": {
+        "1": "온찜질은 내성 발톱 문제를 해결하지 못하며 염증이 있을 경우 오히려 악화될 수 있다.",
+        "2": "★ 내성 발톱으로 상처가 생긴 경우는 요양보호사가 임의로 처치하지 않고 간호사에게 보고하여 전문적인 처치를 받게 하는 것이 올바른 대처이다.",
+        "3": "상처가 난 상태에서 발톱을 임의로 짧게 자르면 더 깊은 손상을 줄 수 있다.",
+        "4": "붕대로 감싸는 것은 응급 처치이나, 근본적인 내성 발톱 문제 해결을 위해서는 전문가 처치가 필요하다.",
+        "5": "발톱을 둥글게 자르는 것은 오히려 내성 발톱을 유발하는 원인이 된다. 발톱은 일자(직선)로 잘라야 한다."
+      },
+      "vi": {
+        "1": "Chườm ấm không giải quyết được vấn đề móng chân mọc ngược; nếu có viêm có thể làm tình trạng tệ hơn.",
+        "2": "★ Khi móng chân mọc ngược gây thương tích, người chăm sóc không được tự xử lý mà phải báo cáo cho y tá để được xử lý chuyên nghiệp.",
+        "3": "Tự cắt ngắn móng chân khi đã có thương tích có thể gây tổn thương sâu hơn.",
+        "4": "Băng bó là sơ cứu tạm thời; giải quyết gốc rễ vấn đề móng chân mọc ngược cần chuyên gia.",
+        "5": "Cắt móng chân tròn là nguyên nhân gây móng chân mọc ngược. Phải cắt thẳng theo đường ngang."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "내성 발톱", "def_vi": "Móng chân mọc ngược (móng quặp) — tình trạng móng chân mọc cắm vào da thịt xung quanh, gây đau và viêm" }
+    ]
+  },
+  {
+    "id": 1329,
+    "intent_ko": "대상자 발의 청결을 돕는 올바른 방법을 선택하는 문제",
+    "intent_vi": "Câu hỏi về phương pháp đúng khi hỗ trợ vệ sinh bàn chân cho người được chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 가능하면 대상자를 앉힌 자세에서 발을 씻겨야 안정적으로 작업할 수 있고, 낙상 위험도 줄어든다.",
+        "2": "발가락 사이를 알코올로 닦으면 피부가 건조해지고 자극을 줄 수 있다. 따뜻한 물과 비누를 사용해야 한다.",
+        "3": "발톱은 발을 씻은 후, 발톱이 부드러워진 상태에서 자르는 것이 안전하다.",
+        "4": "무좀이 있는 발을 젖은 수건으로 감싸두면 습한 환경이 유지되어 곰팡이균이 더 잘 번식한다.",
+        "5": "살 안쪽으로 파고든 발톱은 요양보호사가 임의로 잘라내지 않고 간호사에게 보고해야 한다."
+      },
+      "vi": {
+        "1": "★ Cho người được chăm sóc ngồi khi rửa chân giúp thực hiện ổn định hơn và giảm nguy cơ ngã.",
+        "2": "Lau kẽ ngón chân bằng cồn làm da khô và kích ứng. Cần dùng nước ấm và xà phòng.",
+        "3": "Cắt móng chân sau khi rửa, khi móng đã mềm hơn, là thứ tự an toàn hơn.",
+        "4": "Bọc chân bị nấm bằng khăn ướt duy trì môi trường ẩm, tạo điều kiện cho nấm phát triển thêm.",
+        "5": "Móng chân mọc ngược vào da không được tự cắt; phải báo cáo cho y tá."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "무좀", "def_vi": "Nấm chân (hắc lào bàn chân) — nhiễm nấm da ở bàn chân, ưa môi trường ẩm ướt" },
+      { "term_ko": "발가락 사이", "def_vi": "Kẽ ngón chân — vùng dễ tích tụ ẩm và vi khuẩn, cần vệ sinh kỹ khi rửa chân" }
+    ]
+  },
+  {
+    "id": 1328,
+    "intent_ko": "대상자의 손과 발을 관리하는 올바른 방법을 선택하는 문제",
+    "intent_vi": "Câu hỏi về phương pháp đúng khi chăm sóc tay và chân cho người được chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "모직 양말은 통기성이 나빠 땀이 차고 피부 트러블을 일으킬 수 있다. 면 소재 양말이 적합하다.",
+        "2": "발의 티눈을 손톱깎이로 제거하는 것은 피부를 손상시킬 수 있으며 요양보호사의 업무 범위를 벗어난다. 전문가의 처치가 필요하다.",
+        "3": "★ 따뜻한 물에 손과 발을 10~15분간 담그면 혈액순환이 촉진되고 각질이 부드러워져 위생 관리가 용이해진다.",
+        "4": "두꺼워진 발톱은 식초물 처치보다 따뜻한 물에 충분히 불린 후 조심스럽게 자르거나 전문가의 도움을 받아야 한다.",
+        "5": "발톱 주위 염증은 요양보호사가 임의로 소독하기보다 간호사에게 보고하여 전문 처치를 받아야 한다."
+      },
+      "vi": {
+        "1": "Tất len thông khí kém, gây đổ mồ hôi và kích ứng da. Tất cotton phù hợp hơn.",
+        "2": "Dùng dụng cụ cắt móng để lấy mắt cá chân có thể làm tổn thương da và vượt ngoài phạm vi công việc của người chăm sóc.",
+        "3": "★ Ngâm tay và chân trong nước ấm 10–15 phút giúp thúc đẩy tuần hoàn máu và làm mềm da, tạo điều kiện vệ sinh dễ dàng hơn.",
+        "4": "Móng chân dày cần ngâm đủ lâu trong nước ấm rồi cắt cẩn thận hoặc nhờ chuyên gia, không dùng giấm.",
+        "5": "Viêm quanh móng chân cần báo cáo y tá để được xử lý chuyên nghiệp, không tự ý sát khuẩn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "티눈", "def_vi": "Mắt cá (da chai cứng) — vùng da dày cứng do ma sát liên tục, cần chuyên gia xử lý" },
+      { "term_ko": "혈액순환 촉진", "def_vi": "Thúc đẩy tuần hoàn máu — cải thiện lưu thông máu đến các chi bằng cách ngâm nước ấm" }
+    ]
+  },
+  {
+    "id": 1327,
+    "intent_ko": "노인의 피부 건조를 예방하는 올바른 방법을 선택하는 문제",
+    "intent_vi": "Câu hỏi về phương pháp đúng để phòng ngừa khô da ở người cao tuổi",
+    "choice_explanations": {
+      "ko": {
+        "1": "수분 섭취를 줄이면 체내 수분이 부족해져 피부 건조가 더 심해진다.",
+        "2": "지성용 비누는 피지 제거력이 강해 노인의 건조한 피부를 더욱 건조하게 만든다. 순한 보습 비누가 적합하다.",
+        "3": "★ 오일이나 로션을 목욕 후나 정기적으로 발라주면 피부 표면에 보습막이 형성되어 수분 손실을 막고 건조를 예방한다.",
+        "4": "실내 온도를 높이고 습도를 낮게 하면 공기가 건조해져 피부에서 수분이 더 빠르게 증발한다.",
+        "5": "뜨거운 물 목욕은 피부의 천연 유분(피지막)을 제거하여 건조를 악화시킨다. 미온수 목욕이 적절하다."
+      },
+      "vi": {
+        "1": "Giảm uống nước làm thiếu nước trong cơ thể, khiến da khô hơn.",
+        "2": "Xà phòng dành cho da dầu tẩy rửa mạnh, làm da người cao tuổi vốn đã khô càng khô hơn. Nên dùng sữa tắm dịu nhẹ có dưỡng ẩm.",
+        "3": "★ Thường xuyên thoa dầu hoặc kem dưỡng ẩm (đặc biệt sau khi tắm) tạo màng bảo vệ trên bề mặt da, ngăn mất nước và phòng ngừa khô da.",
+        "4": "Tăng nhiệt độ phòng và giảm độ ẩm làm không khí khô, nước bốc hơi từ da nhanh hơn.",
+        "5": "Tắm nước nóng mỗi ngày loại bỏ lớp dầu tự nhiên (bã nhờn) của da, làm khô da nặng hơn. Nước ấm vừa phải là thích hợp."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "피지막", "def_vi": "Màng bã nhờn — lớp dầu tự nhiên trên bề mặt da giúp giữ ẩm và bảo vệ da" },
+      { "term_ko": "보습", "def_vi": "Dưỡng ẩm — giữ hoặc bổ sung độ ẩm cho da bằng kem hoặc dầu" }
+    ]
+  },
+  {
+    "id": 1326,
+    "intent_ko": "침상에 누워 지내는 대상자의 머리를 손질하는 올바른 방법을 선택하는 문제",
+    "intent_vi": "Câu hỏi về phương pháp đúng khi chăm sóc tóc cho người nằm trên giường",
+    "choice_explanations": {
+      "ko": {
+        "1": "엉킨 머리카락을 잘라내는 것은 대상자의 동의 없이 시행해서는 안 되며, 먼저 물이나 컨디셔너로 풀어보아야 한다.",
+        "2": "빗질은 모발 끝에서 두피 방향이 아니라, 두피에서 끝 방향으로 빗는 것이 일반적이나 엉킨 경우에는 끝에서 두피 방향으로 풀어가며 빗는다. 실제로 이 보기의 해설에서는 3번이 정답으로 표시되어 있으므로 거울 제공이 정답이다.",
+        "3": "★ 거울을 제공하여 대상자가 자신의 머리 모양을 직접 확인하고 의견을 낼 수 있게 하는 것은 대상자의 자율성과 자존감을 존중하는 올바른 방법이다.",
+        "4": "탈모 예방을 위해 매일 빗질하는 것이 좋으나, 이틀에 한 번은 빈도가 부족하다.",
+        "5": "머리 모양은 요양보호사가 아닌 대상자의 의사와 취향에 따라 결정되어야 한다."
+      },
+      "vi": {
+        "1": "Cắt tóc rối không được thực hiện khi chưa có sự đồng ý; trước tiên cần thử gỡ bằng nước hoặc dầu xả.",
+        "2": "Chải tóc thông thường từ da đầu xuống ngọn; khi tóc rối thì gỡ từ ngọn lên. Theo đáp án, chọn 3 là đúng.",
+        "3": "★ Cung cấp gương để người được chăm sóc tự kiểm tra và đưa ra ý kiến về kiểu tóc của mình là phương pháp tôn trọng sự tự chủ và lòng tự trọng của họ.",
+        "4": "Chải tóc hàng ngày tốt hơn cho phòng ngừa rụng tóc; hai ngày một lần là không đủ.",
+        "5": "Kiểu tóc phải được quyết định theo ý muốn của người được chăm sóc, không phải theo sở thích của người chăm sóc."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "두피", "def_vi": "Da đầu — lớp da bao phủ hộp sọ, nơi tóc mọc ra" },
+      { "term_ko": "탈모", "def_vi": "Rụng tóc — tình trạng tóc rụng nhiều hơn bình thường" }
+    ]
+  },
+  {
+    "id": 1325,
+    "intent_ko": "대상자의 머리카락이 엉켰을 때 올바른 손질 방법을 선택하는 문제",
+    "intent_vi": "Câu hỏi về phương pháp đúng khi chăm sóc tóc rối cho người được chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "머리카락을 세게 잡아당기면 두피에 통증을 주고 모발이 끊어질 수 있다.",
+        "2": "★ 물을 적신 후 큰 빗(넓은 이빨 빗)으로 엉킨 끝부터 천천히 빗어 올라가는 방법이 가장 효과적이다. 물이 머리카락을 부드럽게 하여 무리 없이 풀 수 있다.",
+        "3": "두피세정제는 엉킨 상태에서 사용하면 오히려 더 엉킬 수 있고, 헹굼이 필요하여 침상 대상자에게는 불편하다.",
+        "4": "참빗(이 촘촘한 빗)은 엉킨 머리에 사용하면 더 엉키고 두피 자극이 심해진다.",
+        "5": "머리카락을 자르는 것은 대상자의 동의와 가족 동의를 받더라도 최후의 수단이며, 먼저 비침습적 방법을 시도해야 한다."
+      },
+      "vi": {
+        "1": "Kéo mạnh tóc gây đau da đầu và làm gãy sợi tóc.",
+        "2": "★ Làm ẩm tóc rồi dùng lược răng thưa chải nhẹ từ ngọn tóc lên trên là phương pháp hiệu quả nhất. Nước làm mềm tóc, giúp gỡ rối không gây đau.",
+        "3": "Dầu gội đầu dùng khi tóc đang rối có thể làm rối thêm và cần xả nước, bất tiện cho người nằm giường.",
+        "4": "Lược răng dày dùng trên tóc rối làm tóc bị kéo và kích ứng da đầu nhiều hơn.",
+        "5": "Cắt tóc dù được sự đồng ý của người được chăm sóc và gia đình vẫn là biện pháp cuối cùng; phải thử các cách không xâm lấn trước."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "두피세정제", "def_vi": "Dầu gội đầu (chất tẩy rửa da đầu) — sản phẩm làm sạch da đầu và tóc" },
+      { "term_ko": "참빗", "def_vi": "Lược răng dày — loại lược có răng rất sát nhau, không phù hợp dùng cho tóc rối" }
+    ]
+  },
+  {
+    "id": 1324,
+    "intent_ko": "드라이샴푸를 이용하여 머리를 감기는 올바른 방법을 선택하는 문제",
+    "intent_vi": "Câu hỏi về phương pháp đúng khi gội đầu bằng dầu gội khô",
+    "choice_explanations": {
+      "ko": {
+        "1": "드라이샴푸는 물과 섞어 사용하는 것이 아니라 물 없이 그대로 사용하는 제품이다.",
+        "2": "샴푸를 바르고 수건으로 덮어두는 방법은 드라이샴푸 사용법이 아니다.",
+        "3": "거품을 두피에 바르고 물로 헹구는 것은 일반 샴푸 사용법이다. 드라이샴푸는 물로 헹구지 않는다.",
+        "4": "★ 드라이샴푸는 머리카락에 뿌리거나 바른 후 잠시 기다렸다가 수건으로 가볍게 문질러 닦아내는 방식으로 사용한다. 물이 필요 없어 침상 대상자에게 적합하다.",
+        "5": "물을 적신 후 샴푸를 바르는 것은 일반 샴푸 방법이며, 드라이샴푸의 특성과 다르다."
+      },
+      "vi": {
+        "1": "Dầu gội khô không pha với nước; được thiết kế để dùng không cần nước.",
+        "2": "Thoa dầu gội rồi đắp khăn lên không phải cách dùng dầu gội khô.",
+        "3": "Thoa bọt rồi xả nước là cách dùng dầu gội thông thường. Dầu gội khô không cần xả nước.",
+        "4": "★ Dầu gội khô được xịt hoặc thoa lên tóc, chờ một lúc rồi lau nhẹ bằng khăn. Không cần nước, phù hợp cho người nằm giường.",
+        "5": "Làm ẩm tóc rồi thoa dầu gội là phương pháp gội thông thường, khác với bản chất của dầu gội khô."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "드라이샴푸", "def_vi": "Dầu gội khô — sản phẩm làm sạch tóc không cần nước, phù hợp cho người nằm giường" }
+    ]
+  },
+  {
+    "id": 1323,
+    "intent_ko": "침상에 누운 대상자의 머리를 감기는 올바른 방법을 선택하는 문제",
+    "intent_vi": "Câu hỏi về phương pháp đúng khi gội đầu cho người nằm trên giường",
+    "choice_explanations": {
+      "ko": {
+        "1": "눈과 귀에 수건을 올려 덮는 것은 시야를 가리고 불편함을 줄 수 있으며, 귀에는 솜을 막는 것이 적절하다.",
+        "2": "수건은 가슴부터 허리가 아니라 어깨나 목 부분을 감싸서 물이 흘러내리지 않도록 해야 한다.",
+        "3": "어깨를 침대 모서리에 위치시키는 것은 맞으나, 가장 중요하고 직접적인 방법은 아니다.",
+        "4": "★ 뒷머리를 헹굴 때 목을 좌우로 돌리면서 헹구면 뒷머리까지 골고루 헹굴 수 있어 효과적인 방법이다.",
+        "5": "린스 후 수건으로 닦아 말리는 것은 순서상 적절하지만, 머리를 감기는 핵심 방법을 묻는 질문의 정답이 아니다."
+      },
+      "vi": {
+        "1": "Đặt khăn lên mắt và tai che tầm nhìn và gây khó chịu; nên dùng bông gòn nhét tai.",
+        "2": "Khăn cần quấn quanh vai hoặc cổ để nước khỏi chảy xuống, không phải từ ngực đến hông.",
+        "3": "Đặt vai ở mép giường là đúng nhưng không phải điểm mấu chốt nhất.",
+        "4": "★ Khi xả phần sau đầu, xoay cổ sang hai bên giúp xả sạch đều toàn bộ phần tóc sau — đây là phương pháp hiệu quả và đúng.",
+        "5": "Xả dầu xả rồi lau khăn theo thứ tự là đúng nhưng không phải câu trả lời cho phương pháp gội đầu cốt lõi."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "린스", "def_vi": "Dầu xả tóc — sản phẩm dưỡng tóc dùng sau khi gội để làm mềm và dễ chải" }
+    ]
+  },
+  {
+    "id": 1322,
+    "intent_ko": "침대에서 대상자의 머리를 감기기 위한 준비 방법으로 옳은 것을 선택하는 문제",
+    "intent_vi": "Câu hỏi về phương pháp chuẩn bị đúng khi gội đầu cho người nằm trên giường",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 대상자의 머리가 침대 모서리에 오도록 위치시키면 머리 아래에 물받이(세면기 등)를 놓기 쉬워 효율적으로 머리를 감길 수 있다.",
+        "2": "방수포는 머리 아래부터 어깨 정도까지 까는 것으로 충분하며, 엉덩이까지 필요하지 않다.",
+        "3": "이불은 다리까지 접어 내리는 것이 아니라 몸을 덮어둔 채로 머리만 감기는 것이 체온 유지와 편의에 적절하다.",
+        "4": "머리 밑에 패드를 펴는 것은 맞으나, 패드 끝을 매트리스 밑으로 접어 넣는 것은 필수 사항이 아니다.",
+        "5": "패드가 없을 경우 이불을 말아 사용하는 것은 방수 기능이 없어 적절하지 않다."
+      },
+      "vi": {
+        "1": "★ Đặt đầu người được chăm sóc ở mép giường giúp dễ dàng đặt chậu hứng nước bên dưới, thực hiện gội đầu hiệu quả.",
+        "2": "Vải chống nước chỉ cần trải từ đầu đến vai là đủ, không cần đến mông.",
+        "3": "Chăn nên được giữ che phủ người để duy trì thân nhiệt; không cần gập xuống tận chân.",
+        "4": "Trải tấm lót dưới đầu là đúng, nhưng không nhất thiết phải nhét mép tấm lót vào dưới nệm.",
+        "5": "Dùng chăn cuộn thay tấm lót không có chức năng chống nước, không phù hợp."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "방수포", "def_vi": "Vải chống nước — tấm lót không thấm nước để bảo vệ giường khi gội đầu tại giường" }
+    ]
+  },
+  {
+    "id": 1321,
+    "intent_ko": "두발 청결을 위한 머리 감기기 방법 중 올바른 것을 선택하는 문제",
+    "intent_vi": "Câu hỏi về phương pháp đúng khi gội đầu để giữ vệ sinh tóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "문과 창문을 열면 차가운 외기가 들어와 감기 위험이 있다. 환기는 필요하지만 머리 감기는 동안은 닫아두어야 한다.",
+        "2": "겨울에는 오전보다 낮의 따뜻한 시간대를 이용하는 것이 체온 유지에 유리하다. 오전은 기온이 낮아 적합하지 않다.",
+        "3": "★ 귀(외이도) 입구에 솜을 막아두면 머리를 감기는 동안 물이 귀 안으로 들어가는 것을 예방할 수 있어 올바른 방법이다.",
+        "4": "목욕의자에 앉혀 머리를 뒤로 젖히는 방법은 목에 부담을 줄 수 있고 자세가 불안정하다.",
+        "5": "지나치게 뜨거운 물은 두피와 피부를 손상시킬 수 있다. 38~40도의 미온수가 적절하다."
+      },
+      "vi": {
+        "1": "Mở cửa sổ và cửa ra vào làm không khí lạnh vào, có nguy cơ cảm lạnh. Cần đóng cửa trong khi gội.",
+        "2": "Mùa đông nên gội vào ban ngày khi trời ấm hơn, không phải buổi sáng khi nhiệt độ còn thấp.",
+        "3": "★ Nhét bông gòn vào lỗ tai ngăn nước vào trong khi gội đầu — đây là phương pháp đúng.",
+        "4": "Ngồi trên ghế tắm và ngả đầu ra sau gây căng cổ và tư thế không ổn định.",
+        "5": "Nước quá nóng gây tổn thương da đầu và da. Nước ấm khoảng 38–40°C là phù hợp."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "외이도", "def_vi": "Ống tai ngoài — đường dẫn từ lỗ tai ngoài vào màng nhĩ, cần bảo vệ khỏi nước khi gội đầu" }
+    ]
+  },
+  {
+    "id": 1320,
+    "intent_ko": "대상자의 머리를 감기는 올바른 방법을 선택하는 문제",
+    "intent_vi": "Câu hỏi về phương pháp đúng khi gội đầu cho người được chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "저녁 식사 후에는 혈액이 소화기로 집중되어 저혈압 위험이 있고, 젖은 머리 상태로 취침하면 두피 건강에 좋지 않다.",
+        "2": "10도 물은 매우 차가워 체온을 급격히 낮추고 혈관을 수축시켜 위험하다. 38~40도 미온수가 적절하다.",
+        "3": "★ 머리를 감기기 전에 대소변을 먼저 보게 하면 감기는 도중 배설 욕구로 인한 중단이나 사고를 방지할 수 있어 중요한 사전 준비이다.",
+        "4": "두피에 염증이 있으면 두피보호제보다 의료인의 확인과 처방이 먼저 이루어져야 한다.",
+        "5": "수건으로 머리를 비비며 물기를 제거하면 두피 마찰로 인해 모발이 손상되고 두피 자극이 심해진다. 가볍게 두드려 수분을 흡수시켜야 한다."
+      },
+      "vi": {
+        "1": "Sau bữa tối máu tập trung vào tiêu hóa, nguy cơ tụt huyết áp tăng; đầu ẩm khi ngủ ảnh hưởng xấu đến da đầu.",
+        "2": "Nước 10°C rất lạnh, hạ thân nhiệt nhanh và co mạch máu, rất nguy hiểm. Nước ấm 38–40°C là phù hợp.",
+        "3": "★ Cho người được chăm sóc đi vệ sinh trước khi gội đầu ngăn tình trạng phải dừng giữa chừng do muốn đi vệ sinh — đây là bước chuẩn bị quan trọng.",
+        "4": "Khi da đầu bị viêm, cần nhân viên y tế kiểm tra và kê đơn trước khi dùng bất kỳ sản phẩm bảo vệ nào.",
+        "5": "Chà mạnh khăn lên đầu gây ma sát làm hỏng tóc và kích ứng da đầu. Nên dùng khăn thấm nhẹ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "두피 염증", "def_vi": "Viêm da đầu — tình trạng viêm hoặc kích ứng trên da đầu cần được nhân viên y tế đánh giá" }
+    ]
+  },
+  {
+    "id": 1319,
+    "intent_ko": "대상자의 머리를 감기는 방법 중 올바른 주의사항을 선택하는 문제",
+    "intent_vi": "Câu hỏi chọn lưu ý đúng khi gội đầu cho người được chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "두피를 손톱으로 마사지하면 손톱에 의해 두피가 긁히거나 상처가 날 수 있다. 손가락 지문 부분(지복)으로 부드럽게 마사지해야 한다.",
+        "2": "★ 공복 상태나 식사 직후에는 저혈압, 어지럼증, 구토 위험이 있으므로 이 시간대를 피하여 머리를 감기는 것이 안전하다.",
+        "3": "두피 상처에 임의로 연고를 바르는 것은 요양보호사의 업무 범위를 벗어난다. 간호사에게 보고해야 한다.",
+        "4": "머리를 감긴 후 자연 건조는 체온을 낮추고 두피에 세균이 번식할 수 있어 드라이어로 빠르게 말려야 한다.",
+        "5": "헤어드라이어를 두피에 바짝 대면 고온에 의해 화상을 입을 수 있다. 20~30cm 거리를 유지하고 약풍으로 말려야 한다."
+      },
+      "vi": {
+        "1": "Massage da đầu bằng móng tay có thể làm xước và gây thương tích. Phải dùng phần thịt đầu ngón tay để xoa nhẹ nhàng.",
+        "2": "★ Lúc đói hoặc ngay sau bữa ăn có nguy cơ tụt huyết áp, chóng mặt, buồn nôn; tránh những thời điểm này khi gội đầu để đảm bảo an toàn.",
+        "3": "Tự ý bôi thuốc mỡ lên vết thương da đầu vượt ngoài phạm vi của người chăm sóc; cần báo cáo y tá.",
+        "4": "Để tóc khô tự nhiên hạ thân nhiệt và tạo điều kiện vi khuẩn phát triển ở da đầu; nên sấy khô nhanh bằng máy sấy.",
+        "5": "Để máy sấy quá gần da đầu có thể gây bỏng do nhiệt độ cao. Giữ cách 20–30 cm và dùng chế độ gió nhẹ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "공복", "def_vi": "Lúc đói — trạng thái chưa ăn, dễ bị tụt huyết áp khi làm các hoạt động như gội đầu" },
+      { "term_ko": "지복", "def_vi": "Phần thịt đầu ngón tay — vùng mềm ở đầu ngón tay, dùng để massage da đầu an toàn" }
+    ]
+  },
+  {
+    "id": 1318,
+    "intent_ko": "의치세정제가 없을 때 대신 사용할 수 있는 것을 선택하는 문제",
+    "intent_vi": "Câu hỏi về chất có thể thay thế dung dịch vệ sinh hàm giả khi không có sẵn",
+    "choice_explanations": {
+      "ko": {
+        "1": "알코올은 의치의 플라스틱 소재를 손상시키고 건조하게 만들어 변형될 수 있다.",
+        "2": "표백제는 의치의 색을 변색시키고 소재를 손상시킬 수 있다.",
+        "3": "레몬즙의 산성 성분이 의치 표면을 부식시킬 수 있어 장기 사용은 부적절하다.",
+        "4": "★ 주방세제는 중성 세척제로 의치세정제가 없을 때 대용으로 사용할 수 있다. 부드럽고 세척력이 있으며 의치 소재에 손상을 주지 않는다.",
+        "5": "과산화수소는 농도에 따라 의치의 소재를 손상시키거나 구강 점막에 자극을 줄 수 있다."
+      },
+      "vi": {
+        "1": "Cồn làm hỏng vật liệu nhựa của hàm giả và khiến hàm bị biến dạng do khô.",
+        "2": "Chất tẩy trắng làm đổi màu và phá hủy bề mặt hàm giả.",
+        "3": "Axit trong nước chanh có thể ăn mòn bề mặt hàm giả nếu dùng lâu dài.",
+        "4": "★ Nước rửa bát (trung tính) có thể dùng thay thế dung dịch vệ sinh hàm giả khi không có. Có khả năng làm sạch nhẹ và không làm hỏng vật liệu hàm giả.",
+        "5": "Hydrogen peroxide tùy nồng độ có thể làm hỏng vật liệu hàm giả hoặc kích ứng niêm mạc miệng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "의치", "def_vi": "Hàm giả (răng giả) — bộ răng nhân tạo có thể tháo lắp, cần vệ sinh và bảo quản đúng cách" },
+      { "term_ko": "의치세정제", "def_vi": "Dung dịch vệ sinh hàm giả — sản phẩm chuyên dụng để làm sạch hàm giả" }
+    ]
+  },
+  {
+    "id": 1317,
+    "intent_ko": "대상자의 의치를 올바르게 관리하는 방법을 선택하는 문제",
+    "intent_vi": "Câu hỏi về phương pháp đúng khi quản lý hàm giả cho người được chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "표백제는 의치를 손상시키고 변색시킬 수 있어 소독에 사용해서는 안 된다. 전용 소독액이나 의치세정제를 사용해야 한다.",
+        "2": "격일로 의치를 빼놓으면 잇몸에 지속적인 자극이 없어지기는 하지만, 실제로는 매일 식후 제거하여 세척하고 취침 시 잇몸 휴식을 주는 것이 표준이다.",
+        "3": "윗니 의치를 낄 때는 손바닥으로 세게 밀어 넣지 않고 앞쪽부터 천천히 맞춰 넣은 후 부드럽게 눌러야 한다.",
+        "4": "전자레인지에 의치를 데우면 플라스틱이 변형되거나 파손될 수 있다.",
+        "5": "★ 의치는 건조해지면 변형되므로, 사용하지 않을 때는 반드시 찬물(또는 의치보관액)에 담가 보관하여 형태를 유지해야 한다."
+      },
+      "vi": {
+        "1": "Chất tẩy trắng làm hỏng và đổi màu hàm giả, không được dùng để khử trùng. Phải dùng dung dịch chuyên dụng.",
+        "2": "Tháo hàm giả cách ngày không phải tiêu chuẩn; nên tháo sau mỗi bữa ăn để vệ sinh và tháo khi ngủ để nướu nghỉ ngơi.",
+        "3": "Khi đeo hàm giả hàm trên, không đẩy mạnh bằng lòng bàn tay; cần lắp từ phía trước rồi nhẹ nhàng ấn vào.",
+        "4": "Hâm hàm giả trong lò vi sóng làm biến dạng hoặc vỡ nhựa.",
+        "5": "★ Hàm giả bị khô sẽ biến dạng; khi không dùng phải ngâm trong nước lạnh (hoặc dung dịch bảo quản hàm giả) để duy trì hình dạng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "의치 보관", "def_vi": "Bảo quản hàm giả — phương pháp giữ hàm giả trong nước lạnh khi không sử dụng để tránh biến dạng" },
+      { "term_ko": "잇몸", "def_vi": "Nướu răng — mô mềm xung quanh chân răng, cần được nghỉ ngơi khi tháo hàm giả" }
+    ]
+  }
+]

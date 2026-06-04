@@ -1,0 +1,740 @@
+[
+  {
+    "id": 1740,
+    "intent_ko": "치매 환자를 돌보는 주보호자의 감정을 공감하는 올바른 대처 방법을 선택한다.",
+    "intent_vi": "Chọn cách ứng xử đúng đắn thể hiện sự đồng cảm với cảm xúc của người chăm sóc chính bệnh nhân sa sút trí tuệ.",
+    "choice_explanations": {
+      "ko": {
+        "1": "남편에게 직접 해보라고 권유하는 것은 요양보호사가 가족 관계에 개입하는 것으로, 문제를 악화시킬 수 있어 부적절하다.",
+        "2": "★ 며느리의 감정을 그대로 반영하고 공감을 표현하는 응답이다. 요양보호사는 판단이나 조언 없이 보호자의 감정을 먼저 수용해야 하며, '속상하시겠어요'라는 표현이 감정 공감의 핵심이다.",
+        "3": "딸을 비난하는 말은 가족 갈등을 심화시킬 수 있어 부적절하다. 요양보호사가 제3자를 편 들어 비판하는 것은 중립성을 잃는 행동이다.",
+        "4": "며느리가 돌보는 것이 당연하다는 말은 보호자의 노고를 무시하고 감정을 억압하는 발언이어서 매우 부적절하다.",
+        "5": "가족에게 도와달라고 말해주겠다는 것은 의도는 좋으나, 먼저 보호자의 감정에 공감하는 것이 우선이며 허락 없이 가족에게 개입하는 것은 부적절할 수 있다."
+      },
+      "vi": {
+        "1": "Khuyến nghị chồng tự thử chăm sóc là can thiệp vào mối quan hệ gia đình, có thể làm trầm trọng thêm vấn đề — không phù hợp.",
+        "2": "★ Đây là câu trả lời phản chiếu và thể hiện sự đồng cảm với cảm xúc của con dâu. Người chăm sóc cần tiếp nhận cảm xúc của người chăm sóc chính trước tiên mà không phán xét hay đưa ra lời khuyên. Cụm từ '속상하시겠어요 (chắc chị rất buồn)' là cốt lõi của kỹ thuật đồng cảm cảm xúc.",
+        "3": "Chỉ trích con gái có thể làm leo thang mâu thuẫn gia đình — không phù hợp. Người chăm sóc không nên mất tính trung lập bằng cách chỉ trích người thứ ba.",
+        "4": "Nói rằng con dâu chăm sóc là điều hiển nhiên là phủ nhận công lao và kìm nén cảm xúc của người chăm sóc — rất không phù hợp.",
+        "5": "Ý định tốt nhưng trước tiên cần đồng cảm với cảm xúc của người chăm sóc; can thiệp vào gia đình mà không có sự cho phép có thể không phù hợp."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "주보호자", "def_vi": "Người chăm sóc chính — người trực tiếp hỗ trợ bệnh nhân nhiều nhất trong cuộc sống hàng ngày" },
+      { "term_ko": "공감", "def_vi": "Đồng cảm — kỹ thuật giao tiếp thể hiện sự hiểu biết và chia sẻ cảm xúc của người khác" }
+    ]
+  },
+  {
+    "id": 1739,
+    "intent_ko": "치매 대상자가 환각(헛것이 보임) 증상을 보일 때 올바른 대처 방법을 선택한다.",
+    "intent_vi": "Chọn cách xử lý đúng khi người bị sa sút trí tuệ có triệu chứng ảo giác (nhìn thấy thứ không có thật).",
+    "choice_explanations": {
+      "ko": {
+        "1": "아무도 없다고 직접 부정하면 대상자는 자신의 경험이 무시당한다고 느끼고 불안과 흥분이 더 심해질 수 있다.",
+        "2": "함께 소리치는 행동은 상황을 고조시키고 대상자를 더욱 혼란스럽게 만들어 매우 부적절하다.",
+        "3": "잘못을 혼내려고 왔다는 말은 대상자에게 공포와 혼란을 유발하므로 부적절하다.",
+        "4": "★ 간식 제공이나 좋아하는 활동으로 주의를 전환하는 것이 환각 증상 대처의 핵심 원칙이다. 환각을 직접 부정하거나 논쟁하지 않고, 안전하고 긍정적인 자극으로 관심을 돌려 불안을 낮춘다.",
+        "5": "기운이 없어 헛것이 보인다고 설명하는 것은 대상자를 불안하게 만들고 자존감을 저하시킬 수 있어 부적절하다."
+      },
+      "vi": {
+        "1": "Trực tiếp phủ nhận rằng không có ai khiến bệnh nhân cảm thấy bị phớt lờ, làm tăng lo lắng và kích động.",
+        "2": "Hét cùng với bệnh nhân sẽ leo thang tình huống và gây thêm hỗn loạn — rất không phù hợp.",
+        "3": "Nói rằng ai đó đến để la mắng gây ra sự sợ hãi và nhầm lẫn cho bệnh nhân — không phù hợp.",
+        "4": "★ Cung cấp đồ ăn nhẹ hoặc hoạt động yêu thích để chuyển hướng sự chú ý là nguyên tắc cốt lõi khi xử lý triệu chứng ảo giác. Không phủ nhận hay tranh luận về ảo giác; thay vào đó dùng kích thích tích cực để giảm lo lắng.",
+        "5": "Giải thích rằng bệnh nhân mệt mỏi nên thấy ảo giác làm tăng lo lắng và giảm lòng tự trọng — không phù hợp."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "환각", "def_vi": "Ảo giác — nhìn thấy, nghe thấy hoặc cảm nhận những thứ không có thật trong thực tế" },
+      { "term_ko": "정신행동증상", "def_vi": "Triệu chứng hành vi tâm thần — các biểu hiện tâm lý và hành vi bất thường thường gặp trong sa sút trí tuệ (ảo giác, hoang tưởng, hung hăng...)" },
+      { "term_ko": "주의 전환", "def_vi": "Chuyển hướng sự chú ý — kỹ thuật can thiệp dùng kích thích tích cực để đưa sự chú ý của bệnh nhân ra khỏi hành vi hoặc cảm xúc tiêu cực" }
+    ]
+  },
+  {
+    "id": 1738,
+    "intent_ko": "치매 대상자의 도둑망상(물건 도난 의심) 증상에 대한 올바른 대처 방법을 선택한다.",
+    "intent_vi": "Chọn cách ứng phó đúng đắn với triệu chứng hoang tưởng trộm cắp (nghi ngờ đồ vật bị lấy cắp) của người bị sa sút trí tuệ.",
+    "choice_explanations": {
+      "ko": {
+        "1": "이전에도 그랬다고 지적하는 것은 대상자를 비난하고 감정을 무시하는 행동으로, 신뢰를 깨뜨리고 불안을 악화시킨다.",
+        "2": "다른 물건의 분실 여부를 묻는 것은 의심을 확산시킬 수 있어 적절하지 않다.",
+        "3": "앞으로 맡기라고 하면 책임 회피처럼 보여 신뢰 관계 형성에 방해가 된다.",
+        "4": "여기 있다고 보여주며 '왜 의심이 많냐'고 하는 것은 대상자를 비난하는 행동으로 감정 상태를 더 악화시킨다.",
+        "5": "★ 대상자의 감정('속상하시겠어요')을 먼저 공감하고, 함께 물건을 찾아주는 방법이 가장 적절하다. 도둑망상은 치매의 대표적 정신행동증상으로, 사실 여부를 논쟁하지 않고 감정을 수용한 뒤 행동으로 함께 문제를 해결하는 접근이 핵심이다."
+      },
+      "vi": {
+        "1": "Chỉ ra rằng lần trước cũng vậy là chỉ trích và phớt lờ cảm xúc — phá vỡ lòng tin và làm tăng lo lắng.",
+        "2": "Hỏi về việc mất đồ vật khác có thể làm lan rộng sự nghi ngờ — không phù hợp.",
+        "3": "Đề nghị để bảo quản hộ trông như né tránh trách nhiệm, cản trở việc xây dựng mối quan hệ tin tưởng.",
+        "4": "Chỉ trích 'sao hay nghi ngờ vậy' trong khi chỉ vào đồ vật làm tổn thương cảm xúc và làm tình trạng xấu hơn.",
+        "5": "★ Trước tiên đồng cảm với cảm xúc của bệnh nhân ('chắc bà rất buồn'), rồi cùng tìm đồ vật — đây là cách phù hợp nhất. Hoang tưởng trộm cắp là triệu chứng hành vi tâm thần điển hình của sa sút trí tuệ; không tranh luận về thực hư mà tiếp nhận cảm xúc và cùng hành động giải quyết vấn đề."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "도둑망상", "def_vi": "Hoang tưởng trộm cắp — triệu chứng bệnh nhân sa sút trí tuệ tin rằng đồ vật của mình bị người khác lấy cắp, ngay cả khi không có bằng chứng" },
+      { "term_ko": "정신행동증상", "def_vi": "Triệu chứng hành vi tâm thần — biểu hiện tâm lý và hành vi bất thường (hoang tưởng, ảo giác, kích động...) xuất hiện trong bệnh sa sút trí tuệ" },
+      { "term_ko": "감정 수용", "def_vi": "Tiếp nhận cảm xúc — kỹ thuật chấp nhận và thừa nhận cảm xúc của bệnh nhân mà không phán xét hay bác bỏ" }
+    ]
+  },
+  {
+    "id": 1737,
+    "intent_ko": "치매 대상자가 옷에 배설했을 때 존엄성을 지키는 올바른 대처 방법을 선택한다.",
+    "intent_vi": "Chọn cách xử lý đúng đắn bảo vệ phẩm giá khi người bị sa sút trí tuệ đại tiện ra quần áo.",
+    "choice_explanations": {
+      "ko": {
+        "1": "냄새를 언급하는 것은 대상자에게 수치심을 유발하고 자존감을 해치므로 부적절하다.",
+        "2": "왜 실수했냐고 꾸짖는 것은 치매 대상자의 인지 한계를 무시하는 행동으로, 수치심과 불안을 심화시킨다.",
+        "3": "★ 조용하고 부드럽게 화장실에 가서 옷을 갈아입도록 유도하는 것이 올바른 방법이다. 치매 대상자는 배설을 인지하지 못할 수 있으므로, 비난이나 꾸짖음 없이 차분하게 안내하여 수치심을 최소화해야 한다.",
+        "4": "말씀을 하셨어야지 하며 책임을 묻는 말은 대상자를 비난하는 것으로, 자존감을 훼손하고 부정적 감정을 유발한다.",
+        "5": "음식 섭취량을 줄여야 한다는 발언은 문제의 원인을 오해한 것이며, 수분·영양 제한은 오히려 건강에 해롭다."
+      },
+      "vi": {
+        "1": "Đề cập đến mùi hôi gây ra cảm giác xấu hổ và tổn thương lòng tự trọng của bệnh nhân — không phù hợp.",
+        "2": "Trách hỏi tại sao lại lỡ tay phớt lờ giới hạn nhận thức của bệnh nhân sa sút trí tuệ, làm tăng xấu hổ và lo lắng.",
+        "3": "★ Nhẹ nhàng và điềm tĩnh hướng dẫn bệnh nhân vào nhà vệ sinh để thay quần áo là cách đúng đắn. Người bị sa sút trí tuệ có thể không nhận thức được việc bài tiết; cần hướng dẫn bình tĩnh, không trách mắng để giảm thiểu cảm giác xấu hổ.",
+        "4": "Trách sao không nói là chỉ trích bệnh nhân, tổn thương lòng tự trọng và gây cảm xúc tiêu cực.",
+        "5": "Đề xuất giảm lượng thức ăn hiểu sai nguyên nhân của vấn đề; hạn chế dinh dưỡng và nước uống thực ra có hại cho sức khỏe."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "배설", "def_vi": "Bài tiết — hành động thải chất thải (phân, nước tiểu) ra khỏi cơ thể" },
+      { "term_ko": "존엄성", "def_vi": "Phẩm giá — quyền được tôn trọng và đối xử xứng đáng của mỗi con người, đặc biệt quan trọng trong chăm sóc bệnh nhân" }
+    ]
+  },
+  {
+    "id": 1736,
+    "intent_ko": "치매로 인해 식사를 했음에도 밥을 안 먹었다고 주장하는 대상자에게 적절한 대처 방법을 선택한다.",
+    "intent_vi": "Chọn cách xử lý phù hợp khi người bị sa sút trí tuệ do bệnh khăng khăng rằng chưa được ăn dù đã ăn rồi.",
+    "choice_explanations": {
+      "ko": {
+        "1": "방금 드렸다고 직접 부정하면 대상자는 자신의 기억이 무시당한다고 느껴 불안과 혼란이 심해질 수 있다.",
+        "2": "바빠서 준비할 수 없다고 말하면 대상자를 실망시키고 불안감을 높일 수 있다.",
+        "3": "★ 잠깐 기다려 달라고 한 뒤 화초 닦기 같은 간단한 활동을 제안하여 주의를 전환하는 것이 올바른 방법이다. 치매로 인한 기억 오류를 직접 교정하려 하지 않고, 긍정적 활동으로 관심을 돌려 식사 요구를 잊게 하거나 시간을 벌 수 있다.",
+        "4": "너무 많이 먹었다고 말하는 것은 대상자의 감정을 상하게 하고 자존심을 다칠 수 있다.",
+        "5": "가족(따님)을 핑계로 대는 것은 대상자에게 혼란을 주고 가족에 대한 불신을 심을 수 있다."
+      },
+      "vi": {
+        "1": "Trực tiếp phủ nhận 'vừa mới cho ăn rồi' khiến bệnh nhân cảm thấy ký ức bị bác bỏ, làm tăng lo lắng và hỗn loạn.",
+        "2": "Nói bận không thể chuẩn bị được khiến bệnh nhân thất vọng và tăng cảm giác lo lắng.",
+        "3": "★ Xin bệnh nhân chờ một chút rồi đề nghị hoạt động đơn giản như lau cây để chuyển hướng sự chú ý — đây là cách đúng đắn. Không cố sửa lỗi ký ức do sa sút trí tuệ; thay vào đó dùng hoạt động tích cực để bệnh nhân quên yêu cầu ăn hoặc tranh thủ thời gian.",
+        "4": "Nói đã ăn quá nhiều làm tổn thương cảm xúc và lòng tự trọng của bệnh nhân.",
+        "5": "Lấy gia đình (con gái) làm cái cớ gây nhầm lẫn và có thể gieo sự không tin tưởng vào gia đình."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "기억 오류", "def_vi": "Lỗi ký ức — tình trạng não bộ ghi nhận sai thông tin, điển hình trong sa sút trí tuệ, khiến bệnh nhân nhớ nhầm những gì đã xảy ra" },
+      { "term_ko": "주의 전환", "def_vi": "Chuyển hướng sự chú ý — kỹ thuật đưa ra hoạt động khác để đánh lạc hướng bệnh nhân khỏi hành vi hoặc yêu cầu khó xử lý" }
+    ]
+  },
+  {
+    "id": 1735,
+    "intent_ko": "치매 대상자가 반복 행동(왔다 갔다, 침 뱉기)을 할 때 올바른 대처 방법을 선택한다.",
+    "intent_vi": "Chọn cách xử lý đúng khi người bị sa sút trí tuệ có hành vi lặp lại (đi qua đi lại, nhổ nước bọt).",
+    "choice_explanations": {
+      "ko": {
+        "1": "야단치는 것은 치매 대상자에게 혼란과 불안을 유발하며, 행동을 교정하지 못한다.",
+        "2": "반복 행동을 강제로 못하게 막는 것은 대상자의 자율성을 침해하고 오히려 흥분과 저항을 유발할 수 있다.",
+        "3": "지적하여 바로 잡으려 해도 치매로 인해 인지 능력이 저하된 대상자는 이해하지 못하므로 효과가 없다.",
+        "4": "뒤에서 갑자기 큰소리로 부르면 대상자를 놀라게 하여 낙상이나 더 큰 혼란을 일으킬 수 있다.",
+        "5": "★ 수건 접기와 같은 단순한 목적 있는 활동을 제안하여 관심을 전환하는 것이 가장 적절하다. 반복 행동은 치매의 흔한 증상으로, 억제하거나 비난하는 대신 대상자가 의미 있게 참여할 수 있는 활동으로 자연스럽게 유도하는 것이 핵심이다."
+      },
+      "vi": {
+        "1": "La mắng gây hỗn loạn và lo lắng cho bệnh nhân sa sút trí tuệ, không sửa được hành vi.",
+        "2": "Ngăn cưỡng bức hành vi lặp lại xâm phạm quyền tự chủ và có thể gây kích động và kháng cự.",
+        "3": "Chỉ trích để sửa chữa không hiệu quả vì bệnh nhân sa sút trí tuệ không thể hiểu do khả năng nhận thức suy giảm.",
+        "4": "Bất ngờ gọi to từ phía sau có thể làm bệnh nhân giật mình, gây ngã hoặc hỗn loạn lớn hơn.",
+        "5": "★ Đề xuất hoạt động đơn giản có mục đích như gấp khăn để chuyển hướng sự chú ý — đây là cách phù hợp nhất. Hành vi lặp lại là triệu chứng thường gặp trong sa sút trí tuệ; thay vì ngăn chặn hay chỉ trích, hãy tự nhiên hướng bệnh nhân vào hoạt động có ý nghĩa để họ tham gia."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "반복 행동", "def_vi": "Hành vi lặp lại — triệu chứng bệnh nhân sa sút trí tuệ thực hiện cùng một hành động hoặc nói cùng một câu nhiều lần không kiểm soát được" },
+      { "term_ko": "목적 있는 활동", "def_vi": "Hoạt động có mục đích — các hoạt động đơn giản, có ý nghĩa (gấp khăn, phân loại đồ vật...) dùng để chuyển hướng hành vi và tạo cảm giác hữu ích cho bệnh nhân" }
+    ]
+  },
+  {
+    "id": 1734,
+    "intent_ko": "공격성을 보이는 치매 대상자의 옷을 갈아입힐 때 올바른 방법을 선택한다.",
+    "intent_vi": "Chọn cách thay quần áo đúng đắn cho người bị sa sút trí tuệ có biểu hiện hung hăng.",
+    "choice_explanations": {
+      "ko": {
+        "1": "강제로 옷을 갈아입히면 대상자의 공격성이 더욱 심해지고 신체 손상 위험도 있어 부적절하다.",
+        "2": "대상자와 같이 화를 내는 것은 상황을 악화시키고 신뢰 관계를 파괴한다.",
+        "3": "★ 옷에 물을 쏟아 젖게 만들면 대상자 스스로 불편함을 느껴 자연스럽게 옷을 갈아입으려는 의향을 갖게 된다. 강제 없이 대상자가 스스로 필요성을 느끼도록 유도하는 간접적 방법으로, 공격성을 최소화하면서 목적을 달성할 수 있다.",
+        "4": "요양보호사의 기분에 따라 돌봄 시기를 결정하는 것은 비전문적이며, 대상자의 필요가 항상 우선이다.",
+        "5": "가족의 도움을 요청하는 것도 방법이 될 수 있으나, 혼자서 대처할 수 있는 방법(3번)이 더 직접적인 정답이다."
+      },
+      "vi": {
+        "1": "Cưỡng ép thay quần áo làm tăng thêm tính hung hăng và có nguy cơ gây thương tích — không phù hợp.",
+        "2": "Tức giận cùng với bệnh nhân làm tình huống xấu hơn và phá vỡ mối quan hệ tin tưởng.",
+        "3": "★ Làm ướt quần áo khiến bệnh nhân tự cảm thấy không thoải mái và tự muốn thay — đây là phương pháp gián tiếp không cưỡng ép, giúp đạt mục tiêu trong khi giảm thiểu tính hung hăng.",
+        "4": "Quyết định thời điểm chăm sóc theo tâm trạng người chăm sóc là không chuyên nghiệp; nhu cầu của bệnh nhân luôn là ưu tiên.",
+        "5": "Nhờ sự hỗ trợ của gia đình có thể là phương án nhưng phương pháp tự xử lý (đáp án 3) là câu trả lời trực tiếp hơn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "공격성", "def_vi": "Tính hung hăng — hành vi bùng phát cảm xúc mạnh (đánh, la hét, chống cự) thường gặp trong sa sút trí tuệ khi bệnh nhân cảm thấy bị đe dọa hoặc bất an" },
+      { "term_ko": "간접적 유도", "def_vi": "Hướng dẫn gián tiếp — kỹ thuật tạo ra điều kiện để bệnh nhân tự nguyện thực hiện hành động cần thiết mà không dùng cưỡng ép trực tiếp" }
+    ]
+  },
+  {
+    "id": 1733,
+    "intent_ko": "치매 대상자가 무반응으로 가만히 앉아 있을 때 올바른 대처 방법을 선택한다.",
+    "intent_vi": "Chọn cách ứng phó đúng đắn khi người bị sa sút trí tuệ không phản ứng và chỉ ngồi yên lặng.",
+    "choice_explanations": {
+      "ko": {
+        "1": "대답이 없다고 그냥 두면 대상자와의 소통이 단절되어 고립감이 심해질 수 있다.",
+        "2": "★ 대상자의 흥미를 유발할 수 있는 활동(음악 듣기, 손 마사지, 사진 보기 등)을 시도하는 것이 가장 효과적이다. 말로 반응하기 어려운 치매 대상자에게는 언어적 접근보다 감각적·행동적 자극으로 접근하면 반응을 이끌어낼 수 있다.",
+        "3": "사소한 말이나 행동에 관심을 두지 않으면 소통 기회를 놓치고 대상자와의 신뢰 관계가 약해진다.",
+        "4": "혼자 있는 시간을 주는 것은 방치로 이어질 수 있으며, 무반응 상태의 치매 대상자에게는 적절하지 않다.",
+        "5": "반응이 없는 상태에서 걱정거리를 물어보면 대상자에게 부담을 줄 수 있다."
+      },
+      "vi": {
+        "1": "Bỏ mặc khi không trả lời làm đứt đoạn giao tiếp và tăng cảm giác cô lập cho bệnh nhân.",
+        "2": "★ Thử các hoạt động kích thích hứng thú (nghe nhạc, xoa bóp tay, xem ảnh...) là hiệu quả nhất. Với bệnh nhân sa sút trí tuệ khó phản ứng bằng lời, tiếp cận qua kích thích giác quan và hành động sẽ hiệu quả hơn ngôn ngữ.",
+        "3": "Không quan tâm đến lời nói hay hành động nhỏ bỏ lỡ cơ hội giao tiếp và làm yếu đi mối quan hệ tin tưởng.",
+        "4": "Để một mình có thể dẫn đến bỏ bê; không phù hợp với bệnh nhân sa sút trí tuệ không có phản ứng.",
+        "5": "Hỏi về lo lắng trong khi bệnh nhân không phản ứng có thể tạo thêm áp lực."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "무반응", "def_vi": "Không phản ứng — tình trạng bệnh nhân không đáp lại các kích thích giao tiếp, thường do suy giảm nhận thức trong sa sút trí tuệ" },
+      { "term_ko": "감각적 자극", "def_vi": "Kích thích giác quan — phương pháp tiếp cận bệnh nhân thông qua âm nhạc, xúc giác, hình ảnh... để khơi gợi phản ứng khi giao tiếp ngôn ngữ không hiệu quả" }
+    ]
+  },
+  {
+    "id": 1732,
+    "intent_ko": "목욕 중 놀라서 도망가려는 치매 대상자에게 안전하고 효과적인 목욕 지원 방법을 선택한다.",
+    "intent_vi": "Chọn phương pháp hỗ trợ tắm an toàn và hiệu quả khi người bị sa sút trí tuệ bị giật mình và muốn chạy ra ngoài trong lúc tắm.",
+    "choice_explanations": {
+      "ko": {
+        "1": "욕실 문을 잠그는 것은 대상자를 강제로 가두는 행위로 안전을 위협하고 공포를 심화시킨다.",
+        "2": "소리를 질러도 무시하는 것은 대상자의 불안을 방치하는 것으로 신뢰를 심각하게 해친다.",
+        "3": "혼자 욕실에 두고 나오는 것은 낙상 등 심각한 안전사고 위험이 있는 위험한 행동이다.",
+        "4": "★ 목욕 후 좋아하는 활동을 하자고 약속함으로써 목욕의 긍정적 동기를 부여하는 방법이다. 대상자가 목욕을 거부할 때 강제하지 않고, 이후의 보상(좋아하는 활동)을 제시하여 자발적 협력을 이끌어내는 것이 핵심이다.",
+        "5": "대상자보다 큰소리로 야단치는 것은 공포와 불신을 심화시키며 치매 돌봄의 기본 원칙에 완전히 위배된다."
+      },
+      "vi": {
+        "1": "Khóa cửa nhà tắm là hành động giam giữ cưỡng bức, đe dọa an toàn và làm tăng thêm sự sợ hãi.",
+        "2": "Phớt lờ tiếng hét là bỏ mặc lo lắng của bệnh nhân, nghiêm trọng phá vỡ lòng tin.",
+        "3": "Để bệnh nhân một mình trong nhà tắm có nguy cơ ngã và tai nạn an toàn nghiêm trọng — rất nguy hiểm.",
+        "4": "★ Hứa hẹn hoạt động yêu thích sau khi tắm tạo động lực tích cực để bệnh nhân hợp tác. Không cưỡng ép khi bệnh nhân từ chối; thay vào đó đưa ra phần thưởng (hoạt động yêu thích) để khuyến khích sự hợp tác tự nguyện.",
+        "5": "La to hơn bệnh nhân làm tăng sự sợ hãi và mất tin tưởng — hoàn toàn vi phạm nguyên tắc cơ bản trong chăm sóc sa sút trí tuệ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "목욕 거부", "def_vi": "Từ chối tắm — hành vi kháng cự tắm rửa thường gặp ở bệnh nhân sa sút trí tuệ do lo lắng, mất phương hướng hoặc sợ nước" },
+      { "term_ko": "긍정적 강화", "def_vi": "Củng cố tích cực — phương pháp tạo động lực bằng cách hứa hẹn phần thưởng hoặc hoạt động yêu thích để khuyến khích hành vi mong muốn" }
+    ]
+  },
+  {
+    "id": 1731,
+    "intent_ko": "편마비와 치매가 동시에 있는 대상자가 옷 갈아입기를 거부할 때 올바른 돕는 방법을 선택한다.",
+    "intent_vi": "Chọn cách hỗ trợ đúng đắn khi người bị liệt nửa người và sa sút trí tuệ từ chối thay quần áo.",
+    "choice_explanations": {
+      "ko": {
+        "1": "냄새나도 모른 척하는 것은 대상자의 위생과 건강을 방치하는 행동으로 돌봄 의무를 저버리는 것이다.",
+        "2": "편마비 대상자가 혼자 옷을 갈아입는 것은 낙상 등 위험이 있어 안전하지 않다.",
+        "3": "강제로 입히는 것은 신뢰를 무너뜨리고 대상자의 공격성을 유발할 수 있다.",
+        "4": "치매 대상자에게 거부 이유를 논리적으로 설명해달라고 요청하는 것은 인지 능력의 한계 때문에 효과가 없다.",
+        "5": "★ 가족과 상의하여 대상자가 편안하게 느끼는 동일한 유형의 옷(익숙한 스타일·색상)을 구입해 입게 하는 방법이 가장 적절하다. 치매 대상자는 변화를 싫어하므로 익숙한 옷 스타일을 유지하면 거부감을 줄일 수 있으며, 편마비를 고려한 입기 쉬운 옷도 함께 고려할 수 있다."
+      },
+      "vi": {
+        "1": "Giả vờ không biết dù có mùi là bỏ bê vệ sinh và sức khỏe của bệnh nhân — vi phạm nghĩa vụ chăm sóc.",
+        "2": "Để người bị liệt nửa người tự thay quần áo có nguy cơ ngã và không an toàn.",
+        "3": "Cưỡng ép thay quần áo phá vỡ lòng tin và có thể gây ra tính hung hăng ở bệnh nhân.",
+        "4": "Yêu cầu bệnh nhân sa sút trí tuệ giải thích lý do từ chối bằng lý lẽ không hiệu quả do giới hạn nhận thức.",
+        "5": "★ Bàn với gia đình để mua quần áo cùng kiểu (kiểu dáng và màu sắc quen thuộc) mà bệnh nhân thích — đây là cách phù hợp nhất. Bệnh nhân sa sút trí tuệ không thích thay đổi; duy trì kiểu quần áo quen thuộc giảm sự từ chối, đồng thời quần áo dễ mặc cũng phù hợp với tình trạng liệt nửa người."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "중풍(편마비)", "def_vi": "Tai biến mạch máu não (liệt nửa người) — tình trạng mất chức năng vận động một bên cơ thể do đột quỵ, ảnh hưởng đến khả năng tự chăm sóc" },
+      { "term_ko": "익숙한 자극", "def_vi": "Kích thích quen thuộc — nguyên tắc dùng đồ vật, môi trường, thói quen quen thuộc để giảm lo lắng và kháng cự ở bệnh nhân sa sút trí tuệ" }
+    ]
+  },
+  {
+    "id": 1730,
+    "intent_ko": "목욕을 심하게 거부하는 치매 대상자에게 효과적인 돌봄 방법을 선택한다.",
+    "intent_vi": "Chọn phương pháp chăm sóc hiệu quả cho người bị sa sút trí tuệ từ chối tắm một cách mạnh mẽ.",
+    "choice_explanations": {
+      "ko": {
+        "1": "진정제를 임의로 투여하는 것은 의사의 처방 없이 약물을 사용하는 것으로, 법적·윤리적으로 절대 허용되지 않는다.",
+        "2": "가족과 강제로 씻기면 대상자의 저항이 더 심해지고 신뢰를 잃게 된다.",
+        "3": "더럽다고 설득하는 단순한 언어적 설명은 인지 능력이 저하된 치매 대상자에게 효과가 없으며, 수치심만 유발한다.",
+        "4": "★ 요양보호사가 직접 물로 씻는 시늉(모델링)을 보여주면서 대상자가 따라 하도록 유도하는 방법이다. 대상자의 자율성을 존중하고, 강제 없이 모방 행동을 통해 자연스럽게 씻도록 이끌어 불안을 완화할 수 있다.",
+        "5": "서비스 제공이 어렵다고 위협하는 것은 돌봄 관계를 단절시키고 대상자의 권리를 침해하는 부적절한 행동이다."
+      },
+      "vi": {
+        "1": "Tự ý dùng thuốc an thần mà không có đơn của bác sĩ là hoàn toàn không được phép về mặt pháp lý và đạo đức.",
+        "2": "Cưỡng ép tắm cùng gia đình làm tăng sự kháng cự và mất lòng tin của bệnh nhân.",
+        "3": "Chỉ thuyết phục bằng lý lẽ 'bẩn thì phải tắm' không hiệu quả với bệnh nhân sa sút trí tuệ và chỉ gây xấu hổ.",
+        "4": "★ Người chăm sóc tự làm mẫu động tác rửa với nước (mô phỏng) để bệnh nhân bắt chước theo — tôn trọng tính tự chủ, không cưỡng ép, hướng dẫn qua hành vi bắt chước tự nhiên và giảm lo lắng.",
+        "5": "Đe dọa ngừng cung cấp dịch vụ làm đứt đoạn mối quan hệ chăm sóc và xâm phạm quyền của bệnh nhân — không phù hợp."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "모델링(시범)", "def_vi": "Mô phỏng/làm mẫu — kỹ thuật người chăm sóc tự thực hiện hành động để bệnh nhân quan sát và bắt chước, hiệu quả với bệnh nhân sa sút trí tuệ" },
+      { "term_ko": "자율성 존중", "def_vi": "Tôn trọng tính tự chủ — nguyên tắc đạo đức trong chăm sóc: để bệnh nhân tự quyết định trong khả năng có thể, không cưỡng ép" },
+      { "term_ko": "진정제", "def_vi": "Thuốc an thần — thuốc làm giảm kích động, chỉ được dùng theo đơn bác sĩ; tự ý sử dụng là vi phạm pháp luật" }
+    ]
+  },
+  {
+    "id": 1729,
+    "intent_ko": "수저 사용이 어려운 치매 대상자의 식사를 지원하는 올바른 방법을 선택한다.",
+    "intent_vi": "Chọn cách hỗ trợ ăn uống đúng đắn cho người bị sa sút trí tuệ gặp khó khăn khi dùng thìa.",
+    "choice_explanations": {
+      "ko": {
+        "1": "포크나 젓가락은 수저보다 다루기 어려워 치매 대상자에게 더 적합하지 않을 수 있다.",
+        "2": "더럽다고 말하고 먹여주는 것은 수치심을 유발하고 자율성을 빼앗는 부적절한 방법이다.",
+        "3": "★ 부드럽고 친근한 말과 함께 몸짓(제스처)으로 수저 사용법을 시범 보이며 유도하는 방법이 가장 적절하다. 치매로 인해 수저 사용법을 잊어도 언어와 시각적 모델링을 함께 사용하면 대상자가 따라 할 수 있으며, 강제나 비난 없이 자존감을 유지시킬 수 있다.",
+        "4": "대상자를 고집스럽다고 비난하는 것은 돌봄에 부적절하고 대상자의 감정을 해친다.",
+        "5": "식사를 치우는 것은 영양 공급 의무를 저버리는 것으로 매우 부적절하다."
+      },
+      "vi": {
+        "1": "Nĩa hoặc đũa khó sử dụng hơn thìa nên có thể không phù hợp hơn với bệnh nhân sa sút trí tuệ.",
+        "2": "Nói 'bẩn' rồi đút ăn gây xấu hổ và tước đoạt tính tự chủ — không phù hợp.",
+        "3": "★ Nhẹ nhàng nói kết hợp với cử chỉ (làm mẫu) để hướng dẫn cách dùng thìa — đây là cách phù hợp nhất. Dù bệnh nhân quên cách dùng thìa do sa sút trí tuệ, dùng ngôn ngữ và mô hình hóa trực quan giúp bệnh nhân làm theo, đồng thời giữ được lòng tự trọng mà không cưỡng ép hay chỉ trích.",
+        "4": "Chỉ trích bệnh nhân bướng bỉnh là không phù hợp trong chăm sóc và gây tổn thương cảm xúc.",
+        "5": "Dọn thức ăn đi là vi phạm nghĩa vụ cung cấp dinh dưỡng — rất không phù hợp."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "시각적 모델링", "def_vi": "Mô hình hóa trực quan — kỹ thuật kết hợp lời nói và cử chỉ để làm mẫu hành động, giúp bệnh nhân sa sút trí tuệ bắt chước mà không cần giải thích phức tạp" },
+      { "term_ko": "식사 자립", "def_vi": "Tự lập trong ăn uống — khả năng tự ăn uống của bệnh nhân; duy trì tối đa khả năng này là mục tiêu quan trọng trong chăm sóc" }
+    ]
+  },
+  {
+    "id": 1728,
+    "intent_ko": "물 마시기가 불편한 치매 대상자에게 적절한 수분 섭취 방법을 선택한다.",
+    "intent_vi": "Chọn phương pháp cung cấp đủ nước phù hợp cho người bị sa sút trí tuệ gặp khó khăn khi uống nước.",
+    "choice_explanations": {
+      "ko": {
+        "1": "국이 수분을 제공하더라도 치매 대상자는 국과 물의 차이를 인지하기 어렵고, 충분한 수분 보충 수단으로는 부족하다.",
+        "2": "빨대를 꽂는 방법은 흡입 능력이 있는 경우에 유용하지만, 이 문제에서 가장 적절한 정답은 아니다.",
+        "3": "컵 사용을 금지하면 자율성을 침해하고 수분 섭취 방법 자체를 없애버려 탈수 위험이 생긴다.",
+        "4": "요실금 예방을 위해 물 섭취를 제한하는 것은 탈수를 유발하여 신장·심혈관 건강을 심각하게 위협하므로 절대 해서는 안 된다.",
+        "5": "★ 마지막으로 물을 마신 시간을 파악하고 정기적으로 물을 마시게 유도하는 것이 적절하다. 치매 대상자는 갈증을 잘 인식하지 못하므로, 요양보호사가 수분 섭취 시간을 기억하고 규칙적으로 제공하는 것이 탈수를 예방하는 핵심이다."
+      },
+      "vi": {
+        "1": "Nước súp cung cấp độ ẩm nhưng bệnh nhân sa sút trí tuệ khó phân biệt và không đủ để bù nước đầy đủ.",
+        "2": "Dùng ống hút hữu ích khi bệnh nhân còn khả năng hút nhưng không phải đáp án phù hợp nhất cho câu hỏi này.",
+        "3": "Cấm dùng cốc xâm phạm tính tự chủ và loại bỏ phương tiện uống nước, tăng nguy cơ mất nước.",
+        "4": "Hạn chế uống nước để phòng tiểu không tự chủ gây mất nước, đe dọa nghiêm trọng sức khỏe thận và tim mạch — tuyệt đối không được làm.",
+        "5": "★ Ghi nhớ thời điểm bệnh nhân uống nước lần cuối và thường xuyên nhắc uống nước là cách phù hợp. Bệnh nhân sa sút trí tuệ thường không nhận thức được cảm giác khát nên người chăm sóc cần chủ động theo dõi và cung cấp nước đều đặn để phòng mất nước."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "수분 섭취", "def_vi": "Uống nước / cung cấp nước — lượng chất lỏng đưa vào cơ thể; duy trì đủ nước đặc biệt quan trọng với người cao tuổi và bệnh nhân sa sút trí tuệ" },
+      { "term_ko": "요실금", "def_vi": "Tiểu không tự chủ — tình trạng không kiểm soát được việc đi tiểu; không được dùng lý do này để hạn chế uống nước vì sẽ gây mất nước" },
+      { "term_ko": "탈수", "def_vi": "Mất nước — tình trạng cơ thể thiếu chất lỏng, nguy hiểm đặc biệt với người cao tuổi, có thể gây rối loạn ý thức và suy tạng" }
+    ]
+  },
+  {
+    "id": 1727,
+    "intent_ko": "심폐소생술 중 자동심장충격기 사용 방법으로 옳은 것을 선택한다.",
+    "intent_vi": "Chọn cách sử dụng máy khử rung tim tự động (AED) đúng trong quá trình hồi sức tim phổi (CPR).",
+    "choice_explanations": {
+      "ko": {
+        "1": "전원은 사용 시작 시 바로 켜야 하며, 가슴압박 30회 후에 켜는 것은 잘못된 순서이다.",
+        "2": "패드는 반드시 맨 피부에 직접 붙여야 감전 효과가 전달된다. 옷 위에 붙이면 전기가 제대로 전달되지 않아 효과가 없고 위험하다.",
+        "3": "심장리듬 분석 중에는 모든 접촉을 멈추고 아무도 대상자에게 닿아서는 안 된다. 이 시점에 심폐소생술을 시작하면 분석 결과가 부정확해진다.",
+        "4": "정상 호흡이 있는 사람에게는 자동심장충격기를 사용하지 않는다. 심정지 환자에게만 적용한다.",
+        "5": "★ 심장충격(제세동) 후 즉시 가슴압박을 재개하는 것이 올바른 방법이다. 충격 후 심장이 즉시 정상 박동을 회복하지 못할 수 있으므로, 지체 없이 30:2 비율의 심폐소생술을 재시작하여 혈액 순환을 유지해야 한다."
+      },
+      "vi": {
+        "1": "Nguồn điện phải bật ngay khi bắt đầu sử dụng; bật sau 30 lần ép ngực là sai thứ tự.",
+        "2": "Miếng dán phải dán trực tiếp lên da trần để truyền điện hiệu quả. Dán lên quần áo điện không truyền được và nguy hiểm.",
+        "3": "Trong khi phân tích nhịp tim, tất cả mọi người phải dừng tiếp xúc với bệnh nhân. Tiếp tục CPR lúc này làm kết quả phân tích không chính xác.",
+        "4": "Không dùng AED cho người đang thở bình thường — chỉ dùng cho bệnh nhân ngừng tim.",
+        "5": "★ Ngay sau khi sốc điện (khử rung), phải lập tức tiếp tục ép ngực. Tim có thể chưa hồi phục nhịp bình thường ngay sau sốc điện nên cần tái bắt đầu CPR tỷ lệ 30:2 ngay lập tức để duy trì tuần hoàn máu."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "자동심장충격기(AED)", "def_vi": "Máy khử rung tim tự động (AED) — thiết bị phân tích nhịp tim và tự động cung cấp sốc điện để khôi phục nhịp tim bình thường trong trường hợp rung thất hoặc nhanh thất vô mạch" },
+      { "term_ko": "제세동", "def_vi": "Khử rung — sốc điện có kiểm soát để cắt đứt nhịp tim hỗn loạn (rung thất) và cho phép tim hồi phục nhịp bình thường" },
+      { "term_ko": "전극패드", "def_vi": "Miếng dán điện cực — điện cực của AED dán trực tiếp lên da để truyền và nhận tín hiệu điện tim" }
+    ]
+  },
+  {
+    "id": 1726,
+    "intent_ko": "자동심장충격기 사용 후 심장충격 직후 즉시 해야 하는 행동을 선택한다.",
+    "intent_vi": "Chọn hành động cần thực hiện ngay lập tức sau khi sốc điện bằng máy khử rung tim tự động.",
+    "choice_explanations": {
+      "ko": {
+        "1": "심장충격 직후 인공호흡을 하는 것은 권장되지 않는다. 충격 후에는 가슴압박으로 즉시 순환을 재개해야 한다.",
+        "2": "★ 심장충격 직후 즉시 가슴압박을 시작해야 한다. 심장이 충격 후 바로 정상 박동을 시작하지 않을 수 있으므로, 중단 없이 가슴압박을 재개하여 뇌와 심장에 혈류를 공급하는 것이 생존율을 높이는 핵심이다.",
+        "3": "충격 버튼을 누르기 전에 대상자에게서 손을 떼야 하며, 충격 직후에는 즉시 가슴압박을 해야 한다.",
+        "4": "기도 개방(턱 올리기)은 인공호흡 전 단계로, 심장충격 직후 첫 번째 행동이 아니다.",
+        "5": "패드는 계속 부착된 상태를 유지하며, 떼었다가 다시 붙이는 것은 불필요하고 시간 낭비이다."
+      },
+      "vi": {
+        "1": "Thực hiện hô hấp nhân tạo ngay sau sốc điện không được khuyến nghị — sau sốc phải lập tức tái bắt đầu ép ngực để tuần hoàn.",
+        "2": "★ Ngay sau khi sốc điện phải lập tức bắt đầu ép ngực. Tim có thể chưa đập bình thường ngay; liên tục ép ngực để cung cấp máu cho não và tim là chìa khóa tăng tỷ lệ sống sót.",
+        "3": "Rời tay khỏi bệnh nhân là việc làm trước khi nhấn nút sốc; ngay sau sốc phải ép ngực ngay.",
+        "4": "Mở đường thở (nâng cằm) là bước trước hô hấp nhân tạo, không phải hành động đầu tiên ngay sau sốc điện.",
+        "5": "Miếng dán giữ nguyên vị trí trong suốt quá trình; lột ra dán lại là không cần thiết và lãng phí thời gian."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "심장충격(제세동)", "def_vi": "Sốc điện (khử rung) — phóng điện có kiểm soát để cắt đứt nhịp tim hỗn loạn; sau sốc phải ép ngực ngay" },
+      { "term_ko": "가슴압박 재개", "def_vi": "Tái bắt đầu ép ngực — hành động tiếp tục ép ngực ngay sau sốc điện để duy trì tuần hoàn máu không bị gián đoạn" }
+    ]
+  },
+  {
+    "id": 1725,
+    "intent_ko": "자동심장충격기의 쇼크 버튼을 눌러야 하는 올바른 시점을 선택한다.",
+    "intent_vi": "Chọn thời điểm đúng để nhấn nút sốc của máy khử rung tim tự động.",
+    "choice_explanations": {
+      "ko": {
+        "1": "전원을 켜자마자 쇼크 버튼을 누르는 것은 심장리듬 분석이 이루어지지 않아 위험하다.",
+        "2": "인공호흡 후에는 심장리듬을 분석해야 하며, 이 시점이 쇼크 버튼을 누르는 때가 아니다.",
+        "3": "패드 부착 직후에는 심장리듬 분석이 시작되어야 하며, 바로 쇼크를 주면 안 된다.",
+        "4": "심장리듬 분석 직전은 아직 분석이 이루어지지 않은 상태이므로 버튼을 누르면 안 된다.",
+        "5": "★ 자동심장충격기가 에너지 충전 완료 신호를 보낸 후에 쇼크 버튼을 눌러야 한다. 순서: 전원 켜기 → 패드 부착 → 심장리듬 분석(접촉 금지) → 충격 필요 시 에너지 충전 → 충전 완료 후 모든 사람이 물러서고 → 쇼크 버튼 누름."
+      },
+      "vi": {
+        "1": "Nhấn nút sốc ngay khi bật nguồn là nguy hiểm vì chưa phân tích nhịp tim.",
+        "2": "Sau hô hấp nhân tạo cần phân tích nhịp tim; đây không phải thời điểm nhấn nút sốc.",
+        "3": "Ngay sau khi gắn miếng dán, quá trình phân tích nhịp tim bắt đầu; không được sốc ngay.",
+        "4": "Ngay trước khi phân tích nhịp tim chưa có kết quả phân tích nên không nhấn nút.",
+        "5": "★ Nhấn nút sốc sau khi máy báo hiệu đã nạp đủ năng lượng. Trình tự: bật nguồn → gắn miếng dán → phân tích nhịp tim (không chạm) → nếu cần sốc thì nạp năng lượng → sau nạp xong mọi người lùi ra → nhấn nút sốc."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "에너지 충전", "def_vi": "Nạp năng lượng — quá trình AED tích lũy đủ điện năng cần thiết trước khi phóng sốc điện; phải chờ hoàn tất trước khi nhấn nút" },
+      { "term_ko": "심장리듬 분석", "def_vi": "Phân tích nhịp tim — quá trình AED tự động đọc hoạt động điện của tim để xác định có cần sốc điện không; mọi người không được chạm vào bệnh nhân" }
+    ]
+  },
+  {
+    "id": 1724,
+    "intent_ko": "자동심장충격기 사용 중 가슴압박을 반드시 중단해야 하는 상황을 선택한다.",
+    "intent_vi": "Chọn tình huống bắt buộc phải ngừng ép ngực khi sử dụng máy khử rung tim tự động.",
+    "choice_explanations": {
+      "ko": {
+        "1": "전원을 켜는 동안에는 가슴압박을 계속 실시할 수 있다. 중단할 필요가 없다.",
+        "2": "패드 부착 중에는 가슴압박을 잠시 멈출 수 있으나, 반드시 중단해야 하는 경우는 아니다.",
+        "3": "★ 심장리듬을 분석하는 동안에는 반드시 가슴압박을 중단해야 한다. 분석 중 접촉이 있으면 외부 진동이 신호에 섞여 심장리듬 분석 결과가 부정확해지므로, 모든 사람이 대상자에게서 손을 떼야 한다.",
+        "4": "에너지 충전 중에는 가슴압박을 계속할 수 있다(충전이 완료되면 중단). 충전 중 압박을 완전히 멈추어야 한다는 것은 정확히는 충격 직전 단계이다.",
+        "5": "쇼크 버튼을 누른 후 2분 동안은 가슴압박을 계속해야 한다. 중단이 아니라 재개이다."
+      },
+      "vi": {
+        "1": "Khi bật nguồn có thể tiếp tục ép ngực — không cần ngừng.",
+        "2": "Khi gắn miếng dán có thể tạm dừng ép ngực nhưng không phải trường hợp bắt buộc phải ngừng.",
+        "3": "★ Khi máy phân tích nhịp tim, bắt buộc phải ngừng ép ngực. Nếu có tiếp xúc trong lúc phân tích, rung động bên ngoài trộn vào tín hiệu làm kết quả phân tích không chính xác; mọi người phải rời tay khỏi bệnh nhân.",
+        "4": "Trong khi nạp điện có thể tiếp tục ép ngực (dừng khi nạp xong, trước khi nhấn nút sốc).",
+        "5": "Sau khi nhấn nút sốc phải tiếp tục ép ngực 2 phút — đây là tái bắt đầu, không phải dừng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "심장리듬 분석 중 접촉 금지", "def_vi": "Không chạm vào bệnh nhân khi phân tích nhịp tim — quy tắc an toàn bắt buộc: mọi người phải rời tay để đảm bảo phân tích chính xác và tránh điện giật" }
+    ]
+  },
+  {
+    "id": 1723,
+    "intent_ko": "자동심장충격기를 올바르게 사용하고 관리하는 방법을 선택한다.",
+    "intent_vi": "Chọn cách sử dụng và bảo quản máy khử rung tim tự động đúng đắn.",
+    "choice_explanations": {
+      "ko": {
+        "1": "충전 중 가슴압박을 멈추어야 한다는 것은 잘못된 정보이다. 충전 중에는 가슴압박을 계속할 수 있다.",
+        "2": "★ 심장충격 버튼을 누르기 전에 모든 사람은 반드시 대상자에게서 손을 떼야 한다. 버튼을 누를 때 전기가 흐르므로, 접촉하고 있으면 감전 위험이 있다.",
+        "3": "전극패드 부착 후 즉시 심장충격을 시행하면 안 된다. 반드시 심장리듬을 분석한 후 충격 필요 여부를 판단해야 한다.",
+        "4": "전기 충격이 전달된 후(충격 완료 후)에는 즉시 가슴압박을 재개해야 하며, 충격 전에 손을 떼는 것이지 충격 후 떼는 설명은 순서가 혼란스럽다.",
+        "5": "자동심장충격기는 매월 점검하고, 사용 후 반드시 즉시 점검 및 소모품(패드·배터리) 교체가 필요하다. '매년 1회'는 부족한 관리 주기이다."
+      },
+      "vi": {
+        "1": "Ngừng ép ngực khi nạp điện là thông tin sai — có thể tiếp tục ép ngực trong khi nạp điện.",
+        "2": "★ Trước khi nhấn nút sốc tim, tất cả mọi người phải rời tay khỏi bệnh nhân. Khi nhấn nút điện chạy qua; ai đang chạm vào sẽ bị điện giật.",
+        "3": "Không được sốc điện ngay sau khi gắn miếng dán — phải phân tích nhịp tim trước rồi mới quyết định có cần sốc không.",
+        "4": "Sau khi điện truyền xong phải lập tức tái bắt đầu ép ngực; mô tả về thời điểm rời tay dễ gây nhầm lẫn về thứ tự.",
+        "5": "AED cần kiểm tra hàng tháng và phải kiểm tra + thay vật tư (miếng dán, pin) ngay sau khi sử dụng. 'Mỗi năm một lần' là tần suất bảo dưỡng không đủ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "전극패드", "def_vi": "Miếng dán điện cực — bộ phận AED dán lên ngực bệnh nhân để truyền và nhận tín hiệu điện; phải thay sau mỗi lần sử dụng" },
+      { "term_ko": "충격 전 안전 확인", "def_vi": "Kiểm tra an toàn trước sốc điện — quy trình đảm bảo không ai chạm vào bệnh nhân trước khi nhấn nút sốc để tránh điện giật cho người xung quanh" }
+    ]
+  },
+  {
+    "id": 1722,
+    "intent_ko": "심폐소생술 중 자동심장충격기 사용 방법으로 옳은 것을 선택한다.",
+    "intent_vi": "Chọn cách sử dụng máy khử rung tim tự động đúng trong quá trình hồi sức tim phổi.",
+    "choice_explanations": {
+      "ko": {
+        "1": "자동심장충격기의 순서는 전원 켜기 → 패드 부착 순이다. 패드를 붙인 후 전원을 켜는 것은 순서가 잘못되었다.",
+        "2": "심장리듬 분석 중에는 인공호흡을 포함한 모든 접촉을 중단해야 한다. 분석 중 인공호흡을 하는 것은 분석 오류를 유발한다.",
+        "3": "★ 심장충격을 위한 에너지 충전 중에는 가슴압박을 계속해야 한다. 충전 중 멈추면 혈류가 끊기므로, 충전이 완료되어 충격 버튼을 누르기 직전까지 가슴압박을 지속한다.",
+        "4": "쇼크 버튼과 가슴압박을 동시에 하면 안 된다. 충격 직전에는 모든 접촉을 중단해야 한다.",
+        "5": "충격 후에는 반응·호흡 확인이 아니라 즉시 가슴압박을 재개해야 한다. 반응·호흡 확인은 나중 단계이다."
+      },
+      "vi": {
+        "1": "Thứ tự của AED là bật nguồn → gắn miếng dán. Gắn miếng dán rồi mới bật nguồn là sai thứ tự.",
+        "2": "Trong khi phân tích nhịp tim phải ngừng mọi tiếp xúc kể cả hô hấp nhân tạo — làm hô hấp nhân tạo lúc này gây lỗi phân tích.",
+        "3": "★ Trong khi nạp điện để sốc tim phải tiếp tục ép ngực. Dừng lại trong khi nạp sẽ cắt đứt tuần hoàn máu; tiếp tục ép ngực cho đến ngay trước khi nhấn nút sốc.",
+        "4": "Không được nhấn nút sốc đồng thời với ép ngực — ngay trước sốc phải ngừng mọi tiếp xúc.",
+        "5": "Sau sốc phải lập tức tái bắt đầu ép ngực chứ không phải kiểm tra phản ứng và hơi thở ngay — kiểm tra đó là bước sau."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "충전 중 가슴압박 지속", "def_vi": "Tiếp tục ép ngực trong khi nạp điện — nguyên tắc quan trọng: không ngừng ép ngực trong khi AED đang nạp điện để duy trì tuần hoàn máu liên tục" }
+    ]
+  },
+  {
+    "id": 1721,
+    "intent_ko": "심폐소생술 중 자동심장충격기 사용 방법으로 옳은 것을 선택한다.",
+    "intent_vi": "Chọn cách sử dụng máy khử rung tim tự động đúng trong quá trình hồi sức tim phổi.",
+    "choice_explanations": {
+      "ko": {
+        "1": "패드 부착은 심장리듬 분석 전에 이루어져야 한다. 분석 후 패드를 붙이는 것은 잘못된 순서이다.",
+        "2": "심장리듬 분석 중에는 반드시 가슴압박을 중단해야 한다. 분석 중 압박을 지속하면 결과가 부정확해진다.",
+        "3": "심장충격 버튼을 누르기 전에는 모든 사람이 대상자에게서 손을 떼야 한다. 대상자를 꽉 잡는 것은 감전 위험이 있어 매우 위험하다.",
+        "4": "★ 심폐소생술 중 자동심장충격기가 도착하면 즉시 전원을 켜고 사용 준비를 해야 한다. 시간이 지연될수록 소생 가능성이 급격히 낮아지므로, 기기가 도착하는 즉시 가슴압박을 중단하지 않고 기기 세팅을 시작하는 것이 핵심이다.",
+        "5": "심장충격 후 즉시(1분이 아니라 즉시) 가슴압박을 시작해야 한다. 1분 후 시작은 너무 늦다."
+      },
+      "vi": {
+        "1": "Gắn miếng dán phải thực hiện trước khi phân tích nhịp tim. Gắn sau khi phân tích là sai thứ tự.",
+        "2": "Trong khi phân tích nhịp tim phải ngừng ép ngực — tiếp tục ép trong lúc phân tích làm kết quả không chính xác.",
+        "3": "Trước khi nhấn nút sốc mọi người phải rời tay khỏi bệnh nhân. Giữ chặt bệnh nhân lúc này rất nguy hiểm vì có nguy cơ bị điện giật.",
+        "4": "★ Khi AED đến trong quá trình CPR, phải bật nguồn ngay lập tức để chuẩn bị sử dụng. Mỗi giây trì hoãn giảm đáng kể khả năng hồi phục; bắt đầu thiết lập máy ngay khi đến mà không ngừng ép ngực là điều cốt lõi.",
+        "5": "Sau sốc điện phải bắt đầu ép ngực ngay lập tức (không phải 1 phút sau). Bắt đầu sau 1 phút là quá muộn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "즉시 전원 켜기", "def_vi": "Bật nguồn ngay lập tức — nguyên tắc: khi AED đến phải bật ngay không chần chừ vì mỗi giây đều quan trọng trong cấp cứu ngừng tim" }
+    ]
+  },
+  {
+    "id": 1720,
+    "intent_ko": "자동심장충격기 사용 방법으로 옳은 것을 선택한다.",
+    "intent_vi": "Chọn cách sử dụng máy khử rung tim tự động đúng đắn.",
+    "choice_explanations": {
+      "ko": {
+        "1": "자동심장충격기 사용 순서는 전원 켜기 → 패드 부착 순이다. 패드를 먼저 부착하고 전원을 켜는 것은 잘못된 순서이다.",
+        "2": "심장 리듬 분석은 자동심장충격기가 자동으로 필요 시마다 수행하며, 5분 간격 같은 고정 시간이 없다.",
+        "3": "★ 심장리듬 분석 중에는 모든 접촉을 중단하고 가슴압박을 멈춰야 한다. 외부 진동이 없어야 심장의 전기적 신호를 정확히 분석할 수 있기 때문이다.",
+        "4": "심장충격 버튼을 누르기 전에 인공호흡을 집중적으로 하는 것은 권장되지 않는다. 충격 전에는 모든 접촉을 중단해야 한다.",
+        "5": "전극 패드의 올바른 위치는 오른쪽 빗장뼈(쇄골) 아래와 왼쪽 젖꼭지 아래(왼쪽 겨드랑이 방향)이다. 왼쪽 빗장뼈와 오른쪽 젖꼭지 아래는 잘못된 위치이다."
+      },
+      "vi": {
+        "1": "Thứ tự sử dụng AED là bật nguồn → gắn miếng dán. Gắn miếng dán trước rồi bật nguồn là sai thứ tự.",
+        "2": "Phân tích nhịp tim do AED tự thực hiện khi cần, không theo khoảng thời gian cố định 5 phút.",
+        "3": "★ Khi phân tích nhịp tim phải ngừng mọi tiếp xúc và dừng ép ngực. Không có rung động bên ngoài thì AED mới phân tích chính xác tín hiệu điện của tim.",
+        "4": "Tập trung hô hấp nhân tạo trước khi nhấn nút sốc không được khuyến nghị — trước khi sốc phải ngừng mọi tiếp xúc.",
+        "5": "Vị trí đúng của miếng dán điện cực là dưới xương đòn phải và dưới núm vú trái (hướng về nách trái). Xương đòn trái và dưới núm vú phải là vị trí sai."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "전극 패드 부착 위치", "def_vi": "Vị trí dán miếng điện cực — đúng là: một miếng dưới xương đòn phải, một miếng dưới núm vú trái (hướng nách trái); vị trí sai làm giảm hiệu quả khử rung" },
+      { "term_ko": "심장리듬 분석 정확도", "def_vi": "Độ chính xác phân tích nhịp tim — chỉ đạt được khi không có tiếp xúc hay rung động bên ngoài trong quá trình AED phân tích" }
+    ]
+  },
+  {
+    "id": 1719,
+    "intent_ko": "자동심장충격기를 사용해야 하는 적응 대상자를 선택한다.",
+    "intent_vi": "Chọn đối tượng cần sử dụng máy khử rung tim tự động.",
+    "choice_explanations": {
+      "ko": {
+        "1": "호흡이 미세하게 있는 경우는 심정지가 아니므로 자동심장충격기 대상이 아니다.",
+        "2": "★ 심정지 대상자에게만 자동심장충격기를 사용해야 한다. 심정지란 심장이 멈추어 맥박과 호흡이 없는 상태를 말하며, 이때 심실세동 등 치명적 부정맥이 있을 수 있다. 자동심장충격기는 이러한 부정맥을 전기 충격으로 제거하여 정상 박동을 회복시킨다.",
+        "3": "의식이 없는 것만으로는 심정지를 의미하지 않는다. 맥박·호흡 유무를 확인 후 심정지로 판단될 때만 사용한다.",
+        "4": "출혈이 심한 경우는 심정지와 다른 응급 상황이며, 자동심장충격기가 아닌 지혈 처치가 필요하다.",
+        "5": "경련 중인 경우는 심정지 상태가 아니므로 자동심장충격기를 사용하지 않는다."
+      },
+      "vi": {
+        "1": "Có hơi thở yếu không phải là ngừng tim — không phải đối tượng dùng AED.",
+        "2": "★ Chỉ dùng AED cho bệnh nhân ngừng tim. Ngừng tim là tình trạng tim ngừng đập, không có mạch và không thở; có thể có rung thất hoặc rối loạn nhịp nguy hiểm. AED loại bỏ rối loạn nhịp này bằng sốc điện để tim hồi phục nhịp bình thường.",
+        "3": "Mất ý thức không có nghĩa là ngừng tim — phải kiểm tra mạch và hơi thở trước khi xác định ngừng tim rồi mới dùng AED.",
+        "4": "Chảy máu nhiều là tình trạng cấp cứu khác với ngừng tim — cần cầm máu, không dùng AED.",
+        "5": "Đang co giật không phải là ngừng tim — không dùng AED."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "심정지", "def_vi": "Ngừng tim — tình trạng tim ngừng đập hoàn toàn, không có mạch và không thở; là chỉ định duy nhất để sử dụng AED" },
+      { "term_ko": "심실세동", "def_vi": "Rung thất — rối loạn nhịp tim nguy hiểm nhất, tim rung không đều và không bơm máu; AED được thiết kế chủ yếu để điều trị rung thất" },
+      { "term_ko": "경련", "def_vi": "Co giật — co cơ không kiểm soát, thường do động kinh; không phải là ngừng tim và không phải chỉ định dùng AED" }
+    ]
+  },
+  {
+    "id": 1718,
+    "intent_ko": "자동심장충격기 사용 순서를 올바르게 배열한 것을 선택한다.",
+    "intent_vi": "Chọn thứ tự sử dụng máy khử rung tim tự động đúng đắn.",
+    "choice_explanations": {
+      "ko": {
+        "3": "★ 올바른 순서: 가(전원 켜기) → 라(패드 부착) → 나(심장리듬 분석) → 다(심장충격 시행) → 마(즉시 심폐소생술 시행). 전원을 켠 후 패드를 부착하여 리듬을 분석하고, 충격이 필요하면 시행한 뒤 즉시 심폐소생술을 재개하는 것이 표준 프로토콜이다."
+      },
+      "vi": {
+        "3": "★ Thứ tự đúng: 가(bật nguồn) → 라(gắn miếng dán) → 나(phân tích nhịp tim) → 다(thực hiện sốc điện) → 마(lập tức thực hiện CPR). Sau khi bật nguồn gắn miếng dán, phân tích nhịp, sốc nếu cần rồi lập tức tái bắt đầu CPR — đây là quy trình chuẩn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "자동심장충격기 사용 순서", "def_vi": "Thứ tự sử dụng AED — bật nguồn → gắn miếng dán → phân tích nhịp tim → sốc điện (nếu cần) → lập tức CPR; thuộc lòng trình tự này là yêu cầu cơ bản" },
+      { "term_ko": "심폐소생술 재개", "def_vi": "Tái bắt đầu CPR — hành động lập tức ép ngực sau sốc điện để duy trì tuần hoàn máu, không chờ tim tự đập lại" }
+    ]
+  },
+  {
+    "id": 1717,
+    "intent_ko": "요양보호사가 심폐소생술을 종료해야 하는 올바른 시점을 선택한다.",
+    "intent_vi": "Chọn thời điểm đúng để người chăm sóc ngừng hồi sức tim phổi.",
+    "choice_explanations": {
+      "ko": {
+        "1": "맥박이 없어도 심폐소생술을 계속해야 한다. 맥박이 없는 것이 종료 이유가 될 수 없다.",
+        "2": "호흡이 없어도 심폐소생술을 계속해야 한다. 호흡이 없는 것이 종료 이유가 될 수 없다.",
+        "3": "자동심장충격기를 사용한 후에도 심폐소생술은 계속해야 한다. 충격 후 즉시 가슴압박을 재개하는 것이 원칙이다.",
+        "4": "가족이 멈추길 원하더라도 요양보호사는 전문 응급 대원이 인계받기 전까지 심폐소생술을 계속해야 한다.",
+        "5": "★ 119 구급 대원에게 인계할 때 심폐소생술을 종료한다. 요양보호사는 전문 의료인이 아니므로, 119 구급 대원이 현장에 도착하여 인계받는 순간까지 심폐소생술을 중단 없이 계속 시행해야 한다."
+      },
+      "vi": {
+        "1": "Dù không có mạch vẫn phải tiếp tục CPR — không có mạch không phải lý do để dừng.",
+        "2": "Dù không thở vẫn phải tiếp tục CPR — không thở không phải lý do để dừng.",
+        "3": "Sau khi dùng AED vẫn phải tiếp tục CPR — nguyên tắc là tái bắt đầu ép ngực ngay sau sốc.",
+        "4": "Dù gia đình muốn dừng, người chăm sóc phải tiếp tục CPR cho đến khi bàn giao cho nhân viên cấp cứu chuyên nghiệp.",
+        "5": "★ Ngừng CPR khi bàn giao cho nhân viên cấp cứu 119. Người chăm sóc không phải nhân viên y tế chuyên nghiệp nên phải tiếp tục CPR không ngừng cho đến khi nhân viên cấp cứu 119 đến và tiếp nhận."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "119 구급 대원 인계", "def_vi": "Bàn giao cho nhân viên cấp cứu 119 — thời điểm duy nhất người chăm sóc được phép ngừng CPR; trước đó phải duy trì liên tục" },
+      { "term_ko": "심폐소생술 지속 원칙", "def_vi": "Nguyên tắc duy trì CPR liên tục — CPR không được ngừng vì lý do không có mạch, không thở, hoặc ý kiến gia đình; chỉ dừng khi nhân viên y tế chuyên nghiệp tiếp nhận" }
+    ]
+  },
+  {
+    "id": 1716,
+    "intent_ko": "심폐소생술 시 올바른 가슴압박 방법을 선택한다.",
+    "intent_vi": "Chọn phương pháp ép ngực đúng đắn trong hồi sức tim phổi.",
+    "choice_explanations": {
+      "ko": {
+        "1": "가슴압박 깊이는 성인 기준 5~6cm이다. 3cm는 너무 얕아 혈액 순환에 효과가 없다.",
+        "2": "명치 부위(검상돌기)를 직접 압박하면 간 손상 등 내장 손상 위험이 있어 잘못된 방법이다.",
+        "3": "★ 대상자의 몸과 수직이 되도록 하여 가슴을 압박해야 한다. 양팔을 곧게 펴고 체중을 실어 수직으로 압박해야 적절한 깊이(5~6cm)와 힘이 전달되어 효과적인 혈액 순환을 만들 수 있다.",
+        "4": "압박 후 가슴이 완전히 이완되어야(원상태로 돌아와야) 심장에 혈액이 채워져 다음 압박에서 혈액을 내보낼 수 있다. 이완되지 않으면 심장충전량이 감소하여 효과가 떨어진다.",
+        "5": "두 손의 손바닥으로 체중을 실어 압박하는 방법 자체는 맞으나, 수직으로 압박하는 조건(3번)이 함께 포함되어야 완전한 정답이므로 3번이 더 정확한 정답이다."
+      },
+      "vi": {
+        "1": "Độ sâu ép ngực cho người lớn là 5-6cm. 3cm quá nông, không đủ để tuần hoàn máu.",
+        "2": "Ép trực tiếp vào mỏ ác (mũi kiếm) có nguy cơ tổn thương gan và nội tạng — cách sai.",
+        "3": "★ Phải ép ngực vuông góc với cơ thể bệnh nhân. Duỗi thẳng hai tay và dùng sức nặng cơ thể ép thẳng đứng để đạt độ sâu phù hợp (5-6cm) và tạo tuần hoàn máu hiệu quả.",
+        "4": "Sau mỗi lần ép, ngực phải nở lại hoàn toàn (hồi phục hoàn toàn) để tim được lấp đầy máu trước lần ép tiếp theo. Không hồi phục làm giảm lưu lượng tim và hiệu quả.",
+        "5": "Dùng lòng bàn tay với sức nặng cơ thể để ép về cơ bản đúng, nhưng điều kiện ép vuông góc (đáp án 3) cần kết hợp để có câu trả lời đầy đủ; do đó đáp án 3 chính xác hơn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "가슴압박 깊이", "def_vi": "Độ sâu ép ngực — tiêu chuẩn cho người lớn là 5-6cm; quá nông không hiệu quả, quá sâu gây gãy xương sườn" },
+      { "term_ko": "가슴 이완", "def_vi": "Nở lại ngực — ngực phải hồi phục hoàn toàn sau mỗi lần ép để tim lấp đầy máu; không để tay đè liên tục" },
+      { "term_ko": "수직 압박", "def_vi": "Ép vuông góc — hai tay duỗi thẳng ép thẳng đứng xuống để truyền lực hiệu quả; tay cong hoặc nghiêng làm giảm hiệu quả" }
+    ]
+  },
+  {
+    "id": 1715,
+    "intent_ko": "심폐소생술 시 올바른 가슴압박 속도를 선택한다.",
+    "intent_vi": "Chọn tốc độ ép ngực đúng trong hồi sức tim phổi.",
+    "choice_explanations": {
+      "ko": {
+        "1": "복장뼈 하단 칼돌기(검상돌기)를 직접 압박하면 내장 손상 위험이 있으므로 잘못된 위치이다.",
+        "2": "★ 분당 100~120회 속도로 가슴을 압박하는 것이 국제 표준(2020 AHA 가이드라인) 가슴압박 속도이다. 너무 느리면 혈류 공급이 부족하고, 너무 빠르면 가슴이 충분히 이완되지 않아 효과가 감소한다.",
+        "3": "대상자의 골반에 걸터앉아서 압박하면 체중 전달이 불안정하고 골반 손상을 줄 수 있어 잘못된 자세이다.",
+        "4": "등 밑에 베개를 대면 바닥이 불안정해져 압박이 분산되어 효과가 감소한다. 단단한 바닥에 눕혀야 한다.",
+        "5": "압박 위치를 바꾸어 가면서 실시하면 효과적인 압박이 이루어지지 않는다. 위치는 흉골 하단 절반부위로 고정해야 한다."
+      },
+      "vi": {
+        "1": "Ép trực tiếp vào mũi kiếm (đầu dưới xương ức) có nguy cơ tổn thương nội tạng — vị trí sai.",
+        "2": "★ Tốc độ ép ngực 100-120 lần/phút là tiêu chuẩn quốc tế (hướng dẫn AHA 2020). Quá chậm thì cung cấp máu không đủ; quá nhanh thì ngực không hồi phục đủ làm giảm hiệu quả.",
+        "3": "Ngồi lên hông bệnh nhân để ép tạo ra lực không ổn định và có thể gây tổn thương hông — tư thế sai.",
+        "4": "Kê gối dưới lưng làm nền không ổn định, lực ép bị phân tán. Phải đặt bệnh nhân trên sàn cứng.",
+        "5": "Thay đổi vị trí ép không tạo ra lực ép hiệu quả. Vị trí phải cố định ở nửa dưới xương ức."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "가슴압박 속도(분당 100~120회)", "def_vi": "Tốc độ ép ngực (100-120 lần/phút) — tiêu chuẩn quốc tế; cần nhớ con số này cho kỳ thi" },
+      { "term_ko": "검상돌기(칼돌기)", "def_vi": "Mũi kiếm (đầu xương ức) — phần cuối dưới cùng của xương ức; không được ép vào đây vì sẽ gây tổn thương gan" }
+    ]
+  },
+  {
+    "id": 1714,
+    "intent_ko": "심폐소생술 시 올바른 가슴압박 깊이를 선택한다.",
+    "intent_vi": "Chọn độ sâu ép ngực đúng đắn trong hồi sức tim phổi.",
+    "choice_explanations": {
+      "ko": {
+        "1": "압박 후 가슴이 완전히 이완되어야 심장에 혈액이 채워진다. 눌린 상태를 유지하면 심장이 혈액을 다음 압박에서 내보낼 수 없어 효과가 없다.",
+        "2": "분당 60회는 너무 느린 속도이다. 올바른 속도는 분당 100~120회이다.",
+        "3": "손가락으로 압박하면 면적이 좁고 힘이 부족하여 효과적인 심장 압박이 이루어지지 않는다. 손꿈치(손바닥 아랫부분)를 사용해야 한다.",
+        "4": "팔을 45도 굽히면 체중을 충분히 실을 수 없어 압박 깊이가 부족해진다. 팔은 수직으로 곧게 펴야 한다.",
+        "5": "★ 가슴이 5cm(성인 기준 5~6cm) 눌릴 정도로 압박하는 것이 올바른 깊이이다. 이 깊이로 압박해야 심장이 충분히 짜여 혈액이 뇌와 전신으로 순환할 수 있으며, 생존율을 높이는 핵심 요소이다."
+      },
+      "vi": {
+        "1": "Ngực phải hồi phục hoàn toàn sau mỗi lần ép để tim lấp đầy máu. Giữ ngực bị nén thì tim không thể bơm máu ở lần ép tiếp theo.",
+        "2": "60 lần/phút quá chậm. Tốc độ đúng là 100-120 lần/phút.",
+        "3": "Ép bằng ngón tay diện tích hẹp và lực yếu, không đủ ép tim hiệu quả. Phải dùng gót bàn tay (phần dưới lòng bàn tay).",
+        "4": "Cong tay 45 độ không thể dùng đủ sức nặng cơ thể, làm độ sâu ép không đủ. Phải duỗi thẳng tay vuông góc.",
+        "5": "★ Ép ngực sâu 5cm (tiêu chuẩn người lớn 5-6cm) là độ sâu đúng đắn. Với độ sâu này tim bị bóp đủ để máu tuần hoàn đến não và toàn thân — yếu tố then chốt tăng tỷ lệ sống sót."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "가슴압박 깊이 5~6cm", "def_vi": "Độ sâu ép ngực 5-6cm — tiêu chuẩn cho người lớn; phải thuộc lòng con số này cho kỳ thi" },
+      { "term_ko": "손꿈치 압박", "def_vi": "Ép bằng gót bàn tay — phần dưới lòng bàn tay (không phải ngón tay) đặt lên xương ức để ép; diện tích và lực phù hợp" }
+    ]
+  },
+  {
+    "id": 1713,
+    "intent_ko": "심폐소생술 시 가슴압박을 위한 올바른 손 위치를 선택한다.",
+    "intent_vi": "Chọn vị trí đặt tay đúng để ép ngực trong hồi sức tim phổi.",
+    "choice_explanations": {
+      "ko": {
+        "1": "오른쪽 가슴은 심장이 없는 부위로 효과적인 압박이 불가능하다.",
+        "2": "왼쪽 가슴도 유방 조직이 있어 심장에 직접적인 압박을 가하기 어렵다.",
+        "3": "★ 흉골(복장뼈) 아래쪽 절반 부위가 가슴압박의 정확한 손 위치이다. 이 위치에 손꿈치를 대고 수직으로 압박하면 심장이 효과적으로 눌려 혈액이 순환된다. 너무 위(흉골 상단)나 너무 아래(검상돌기)는 효과가 없거나 내장 손상을 일으킨다.",
+        "4": "명치(상복부 위) 아래는 검상돌기 아래로, 이 부위를 압박하면 간 손상 위험이 있다.",
+        "5": "상복부 압박은 복강 내 장기 손상을 유발할 수 있어 심폐소생술에 사용하지 않는다."
+      },
+      "vi": {
+        "1": "Ngực phải không có tim, không thể ép hiệu quả.",
+        "2": "Ngực trái có mô vú nên khó ép trực tiếp vào tim.",
+        "3": "★ Nửa dưới xương ức là vị trí đặt tay đúng để ép ngực. Đặt gót bàn tay ở đây và ép thẳng đứng bóp tim hiệu quả để tuần hoàn máu. Quá cao (nửa trên xương ức) hoặc quá thấp (mũi kiếm) không hiệu quả hoặc gây tổn thương nội tạng.",
+        "4": "Dưới mỏ ác (dưới mũi kiếm) là vùng bụng trên; ép ở đây có nguy cơ tổn thương gan.",
+        "5": "Ép bụng trên có thể gây tổn thương tạng trong ổ bụng — không dùng trong CPR."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "흉골 하단 절반", "def_vi": "Nửa dưới xương ức — vị trí chính xác để ép ngực trong CPR; không phải toàn bộ xương ức mà chỉ phần nửa dưới" },
+      { "term_ko": "흉골(복장뼈)", "def_vi": "Xương ức — xương dài ở giữa ngực; nơi đặt tay khi thực hiện ép ngực trong CPR" }
+    ]
+  },
+  {
+    "id": 1712,
+    "intent_ko": "심폐소생술을 시행하는 올바른 순서를 선택한다.",
+    "intent_vi": "Chọn thứ tự đúng đắn để thực hiện hồi sức tim phổi.",
+    "choice_explanations": {
+      "ko": {
+        "4": "★ 올바른 순서: 반응확인 → 도움요청(119 신고) → 호흡확인 → 가슴압박 → 회복자세. 먼저 대상자의 반응을 확인하여 심정지 여부를 판단하고, 즉시 119에 신고하거나 주변에 도움을 요청한 뒤, 호흡을 확인하고 없으면 가슴압박을 시작한다. 자발 순환이 회복되면 회복자세를 취한다."
+      },
+      "vi": {
+        "4": "★ Thứ tự đúng: kiểm tra phản ứng → gọi cấp cứu (gọi 119) → kiểm tra hơi thở → ép ngực → tư thế hồi phục. Trước tiên kiểm tra phản ứng để xác định ngừng tim, lập tức gọi 119 hoặc nhờ giúp đỡ, rồi kiểm tra hơi thở, nếu không thở thì bắt đầu ép ngực. Khi tuần hoàn tự phục hồi thì chuyển sang tư thế hồi phục."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "심폐소생술 순서", "def_vi": "Thứ tự CPR — kiểm tra phản ứng → gọi cấp cứu → kiểm tra hơi thở → ép ngực → tư thế hồi phục; thứ tự này phải thuộc lòng" },
+      { "term_ko": "회복자세", "def_vi": "Tư thế hồi phục — tư thế nằm nghiêng ổn định cho bệnh nhân đã hồi phục ý thức để phòng ngạt thở do nôn mửa hoặc tụt lưỡi" }
+    ]
+  },
+  {
+    "id": 1711,
+    "intent_ko": "쓰러진 대상자를 발견했을 때 가장 먼저 해야 하는 행동을 선택한다.",
+    "intent_vi": "Chọn hành động đầu tiên cần thực hiện khi phát hiện người ngã xuống.",
+    "choice_explanations": {
+      "ko": {
+        "1": "도움 요청은 반응 확인 후에 해야 한다. 먼저 반응을 확인해야 심정지 여부를 판단할 수 있다.",
+        "2": "★ 쓰러진 대상자를 발견하면 가장 먼저 반응을 확인해야 한다. 어깨를 가볍게 두드리며 '괜찮으세요?'라고 묻거나, 이름을 불러 반응이 있는지 확인한다. 반응 유무에 따라 이후 조치(도움 요청, 호흡 확인, 심폐소생술 등)가 결정된다.",
+        "3": "호흡 확인은 반응 확인 후에 시행한다.",
+        "4": "가슴압박은 반응·호흡이 없는 것을 확인한 후 시작한다.",
+        "5": "회복 자세는 자발 순환이 회복된 후에 취하는 자세이다."
+      },
+      "vi": {
+        "1": "Gọi giúp đỡ phải làm sau khi kiểm tra phản ứng. Kiểm tra phản ứng trước mới xác định được có phải ngừng tim không.",
+        "2": "★ Khi phát hiện người ngã, hành động đầu tiên là kiểm tra phản ứng. Vỗ nhẹ vai và hỏi 'Bạn có ổn không?' hoặc gọi tên để xem có phản ứng không. Kết quả kiểm tra phản ứng quyết định các bước tiếp theo (gọi cấp cứu, kiểm tra hơi thở, CPR...).",
+        "3": "Kiểm tra hơi thở thực hiện sau khi kiểm tra phản ứng.",
+        "4": "Ép ngực bắt đầu sau khi xác nhận không có phản ứng và không thở.",
+        "5": "Tư thế hồi phục là tư thế áp dụng sau khi tuần hoàn tự phục hồi."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "반응 확인", "def_vi": "Kiểm tra phản ứng — hành động đầu tiên trong CPR: vỗ vai nhẹ và gọi hỏi để xác định bệnh nhân còn ý thức không" },
+      { "term_ko": "심정지 판단", "def_vi": "Xác định ngừng tim — dựa trên kết quả kiểm tra phản ứng và hơi thở; không có cả hai mới bắt đầu CPR" }
+    ]
+  }
+]

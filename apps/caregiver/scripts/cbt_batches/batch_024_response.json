@@ -1,0 +1,774 @@
+[
+  {
+    "id": 1039,
+    "intent_ko": "한국인을 위한 올바른 식생활 지침을 고르는 문제",
+    "intent_vi": "Chọn hướng dẫn chế độ ăn uống đúng đắn cho người Hàn Quốc",
+    "choice_explanations": {
+      "ko": {
+        "1": "수분 섭취를 제한하면 탈수와 각종 건강 문제가 생긴다. 오히려 충분한 수분 섭취가 권장된다.",
+        "2": "간헐적 단식은 일반 식생활 지침으로 권장되지 않으며, 개인 건강 상태에 따라 위험할 수 있다.",
+        "3": "많은 양을 한꺼번에 준비하면 과식이나 음식 낭비로 이어질 수 있어 균형 잡힌 식사와 거리가 있다.",
+        "4": "★ 신선한 채소와 과일을 매일 섭취하면 비타민·무기질·식이섬유를 고루 보충하여 균형 잡힌 영양을 유지할 수 있다. 한국인 식생활 지침의 핵심 원칙이다.",
+        "5": "단순당이 많은 음식은 혈당을 급격히 올려 비만·당뇨 등 만성 질환 위험을 높인다."
+      },
+      "vi": {
+        "1": "Hạn chế uống nước gây mất nước và các vấn đề sức khỏe. Trên thực tế, cần uống đủ nước mỗi ngày.",
+        "2": "Nhịn ăn gián đoạn không được khuyến nghị trong hướng dẫn ăn uống chung và có thể nguy hiểm tùy tình trạng sức khỏe.",
+        "3": "Chuẩn bị quá nhiều thức ăn một lần dễ dẫn đến ăn quá no hoặc lãng phí, không phù hợp với bữa ăn cân bằng.",
+        "4": "★ Ăn rau và trái cây tươi mỗi ngày giúp bổ sung đầy đủ vitamin, khoáng chất và chất xơ, duy trì dinh dưỡng cân bằng. Đây là nguyên tắc cốt lõi trong hướng dẫn ăn uống của người Hàn Quốc.",
+        "5": "Thực phẩm nhiều đường đơn làm tăng đường huyết đột ngột, tăng nguy cơ béo phì và tiểu đường."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "식생활 지침", "def_vi": "Hướng dẫn chế độ ăn uống — nguyên tắc dinh dưỡng được khuyến nghị chính thức" },
+      { "term_ko": "단순당", "def_vi": "Đường đơn — loại carbohydrate được hấp thụ nhanh, gây tăng đường huyết đột ngột" }
+    ]
+  },
+  {
+    "id": 1038,
+    "intent_ko": "노인에게 영양 문제가 발생하는 주요 요인을 파악하는 문제",
+    "intent_vi": "Xác định yếu tố chính gây ra vấn đề dinh dưỡng ở người cao tuổi",
+    "choice_explanations": {
+      "ko": {
+        "1": "나트륨은 기준 이하 섭취보다는 오히려 과다 섭취가 더 흔한 영양 문제다.",
+        "2": "★ 노인은 전체 식사 중 탄수화물 비중이 지나치게 높아 단백질·지방·비타민 섭취가 상대적으로 부족해지는 영양 불균형이 발생한다. 이것이 대표적인 노인 영양 문제 요인이다.",
+        "3": "비타민 A, C, D는 노인에게 오히려 부족하게 섭취되는 경우가 많아 과다 섭취는 사실과 다르다.",
+        "4": "75세 이상 고령자는 에너지 섭취량이 감소하는 경향이 있어 에너지 과다 섭취는 일반적이지 않다.",
+        "5": "소득 수준이 낮으면 충분한 식품을 구입하지 못해 영양소 부족이 발생한다. 과다 섭취는 잘못된 설명이다."
+      },
+      "vi": {
+        "1": "Vấn đề phổ biến hơn ở người cao tuổi là ăn quá nhiều natri, không phải thiếu natri.",
+        "2": "★ Người cao tuổi thường có tỉ lệ carbohydrate quá cao trong tổng lượng ăn vào, dẫn đến thiếu hụt protein, chất béo và vitamin — đây là nguyên nhân điển hình gây mất cân bằng dinh dưỡng ở người già.",
+        "3": "Vitamin A, C, D thường bị thiếu hụt ở người cao tuổi, không phải dư thừa.",
+        "4": "Người từ 75 tuổi trở lên có xu hướng giảm tổng lượng năng lượng tiêu thụ, nên nạp thừa năng lượng là không phổ biến.",
+        "5": "Thu nhập thấp dẫn đến thiếu dinh dưỡng do không đủ khả năng mua thực phẩm. Nói là ăn thừa là sai."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "탄수화물", "def_vi": "Carbohydrate — chất bột đường, nguồn cung cấp năng lượng chính" },
+      { "term_ko": "영양 불균형", "def_vi": "Mất cân bằng dinh dưỡng — tình trạng các chất dinh dưỡng không được tiêu thụ theo tỉ lệ hợp lý" },
+      { "term_ko": "나트륨", "def_vi": "Natri (muối) — khoáng chất liên quan đến huyết áp và cân bằng nước trong cơ thể" }
+    ]
+  },
+  {
+    "id": 1037,
+    "intent_ko": "노인에게 탈수 증상이 쉽게 나타나는 원인을 이해하는 문제",
+    "intent_vi": "Hiểu nguyên nhân khiến người cao tuổi dễ bị mất nước",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 노인은 갈증반응이 감소하여 몸에 수분이 부족해도 갈증을 잘 느끼지 못한다. 따라서 수분 섭취를 스스로 줄이게 되어 탈수가 쉽게 발생한다. 이것이 노인 탈수의 가장 직접적인 원인이다.",
+        "2": "타액 분비 감소는 구강 건조와 관련되지만, 탈수의 주된 원인은 갈증반응 감소다.",
+        "3": "염분 섭취 증가는 삼투압을 높여 탈수를 유발할 수 있으나, 노인 탈수의 주된 원인은 갈증반응 감소다.",
+        "4": "칼슘 흡수 증가는 탈수와 직접적인 연관이 없다.",
+        "5": "위 소화액 분비 감소는 소화 기능에 영향을 주지만 탈수와 직접적인 관련은 없다."
+      },
+      "vi": {
+        "1": "★ Người cao tuổi bị giảm phản xạ khát, nên dù cơ thể thiếu nước họ cũng không cảm thấy khát. Điều này khiến họ ít uống nước hơn và dễ bị mất nước. Đây là nguyên nhân trực tiếp nhất gây mất nước ở người già.",
+        "2": "Giảm tiết nước bọt liên quan đến khô miệng, nhưng nguyên nhân chính của mất nước là giảm phản xạ khát.",
+        "3": "Tăng tiêu thụ muối có thể gây mất nước do tăng áp suất thẩm thấu, nhưng nguyên nhân chính ở người già vẫn là giảm phản xạ khát.",
+        "4": "Tăng hấp thụ canxi không có mối liên hệ trực tiếp với mất nước.",
+        "5": "Giảm tiết dịch tiêu hóa ảnh hưởng đến chức năng tiêu hóa nhưng không liên quan trực tiếp đến mất nước."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "탈수", "def_vi": "Mất nước — tình trạng cơ thể thiếu nước nghiêm trọng" },
+      { "term_ko": "갈증반응", "def_vi": "Phản xạ khát — cơ chế cảm nhận thiếu nước của cơ thể để kích thích uống nước" },
+      { "term_ko": "타액", "def_vi": "Nước bọt — dịch do tuyến nước bọt tiết ra trong miệng, giúp tiêu hóa" }
+    ]
+  },
+  {
+    "id": 1036,
+    "intent_ko": "영양 문제 발생 위험이 가장 높은 대상자를 파악하는 문제",
+    "intent_vi": "Xác định đối tượng có nguy cơ cao nhất về vấn đề dinh dưỡng",
+    "choice_explanations": {
+      "ko": {
+        "1": "보청기 사용은 청력 보조 수단으로 영양 문제와 직접적인 관련이 없다.",
+        "2": "배변 활동이 양호하다는 것은 소화 기능이 정상임을 의미하며 영양 문제 위험과 관련이 없다.",
+        "3": "★ 인지기능이 저하된 대상자는 식사 시간을 인지하지 못하거나 먹는 행위 자체를 잊어버릴 수 있어 영양 섭취가 불규칙하고 부족해진다. 이로 인해 영양 문제 발생 위험이 가장 높다.",
+        "4": "잘 맞는 의치를 사용하면 음식을 씹을 수 있어 영양 섭취에 큰 지장이 없다.",
+        "5": "시력 교정용 안경 착용은 영양 문제와 직접적인 관련이 없다."
+      },
+      "vi": {
+        "1": "Dùng máy trợ thính là hỗ trợ thính lực, không liên quan trực tiếp đến vấn đề dinh dưỡng.",
+        "2": "Hoạt động đại tiện tốt cho thấy chức năng tiêu hóa bình thường, không liên quan đến nguy cơ dinh dưỡng.",
+        "3": "★ Người bị suy giảm chức năng nhận thức có thể không nhận biết được giờ ăn hoặc quên mất việc ăn, dẫn đến chế độ ăn không đều và thiếu hụt dinh dưỡng. Đây là đối tượng có nguy cơ cao nhất về vấn đề dinh dưỡng.",
+        "4": "Dùng hàm giả vừa khớp giúp nhai thức ăn được, không ảnh hưởng nhiều đến dinh dưỡng.",
+        "5": "Đeo kính điều chỉnh thị lực không liên quan trực tiếp đến vấn đề dinh dưỡng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "인지기능 저하", "def_vi": "Suy giảm chức năng nhận thức — giảm khả năng suy nghĩ, ghi nhớ và nhận biết" },
+      { "term_ko": "의치", "def_vi": "Hàm giả — răng giả tháo lắp dùng để thay thế răng thật bị mất" }
+    ]
+  },
+  {
+    "id": 1035,
+    "intent_ko": "노인에게 영양 관련 문제가 발생하기 쉬운 생리적 이유를 이해하는 문제",
+    "intent_vi": "Hiểu nguyên nhân sinh lý khiến người cao tuổi dễ gặp vấn đề dinh dưỡng",
+    "choice_explanations": {
+      "ko": {
+        "1": "노화에 따라 위장 운동은 오히려 감소하므로, 증가한다는 설명은 틀렸다.",
+        "2": "★ 노인은 미각과 후각 기능이 저하되어 음식의 맛과 향을 제대로 느끼지 못한다. 이로 인해 식욕이 떨어지고 음식 섭취가 줄어 영양 문제가 발생하기 쉽다.",
+        "3": "소화 및 흡수 기능은 노화에 따라 감소하므로, 증가한다는 설명은 틀렸다.",
+        "4": "인지기능은 노화에 따라 감소하는 경향이 있으며, 증가한다는 것은 틀린 설명이다.",
+        "5": "칼슘의 섭취 및 흡수는 나이가 들수록 감소하므로, 증가한다는 설명은 틀렸다."
+      },
+      "vi": {
+        "1": "Vận động dạ dày ruột giảm theo tuổi tác, không phải tăng lên.",
+        "2": "★ Người cao tuổi bị suy giảm vị giác và khứu giác, không cảm nhận được mùi vị thức ăn đầy đủ. Điều này làm giảm cảm giác thèm ăn và lượng thức ăn tiêu thụ, dễ dẫn đến vấn đề dinh dưỡng.",
+        "3": "Chức năng tiêu hóa và hấp thụ giảm theo tuổi tác, không phải tăng.",
+        "4": "Chức năng nhận thức có xu hướng giảm theo tuổi, không phải tăng.",
+        "5": "Sự hấp thụ canxi giảm theo tuổi tác, không phải tăng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "미각", "def_vi": "Vị giác — khả năng cảm nhận mùi vị thức ăn qua lưỡi" },
+      { "term_ko": "후각", "def_vi": "Khứu giác — khả năng ngửi mùi, ảnh hưởng đến cảm giác thèm ăn" },
+      { "term_ko": "식욕", "def_vi": "Cảm giác thèm ăn — sự ham muốn ăn uống, bị ảnh hưởng bởi vị giác và khứu giác" }
+    ]
+  },
+  {
+    "id": 1034,
+    "intent_ko": "파킨슨병의 올바른 치료 및 관리 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp điều trị và quản lý đúng đắn cho bệnh Parkinson",
+    "choice_explanations": {
+      "ko": {
+        "1": "근육 스트레칭은 근육 경직을 완화하고 운동 기능을 개선하는 데 도움이 되므로, 삼가는 것은 잘못된 관리법이다.",
+        "2": "관절 운동은 유연성을 유지하는 데 중요하므로, 삼가는 것은 파킨슨병 관리에 맞지 않는다.",
+        "3": "★ 파킨슨병은 도파민 부족으로 인한 신경계 질환으로, 도파민 보충 약물(레보도파 등)을 포함한 약물요법을 지속적으로 유지하는 것이 핵심 치료법이다. 임의로 중단하면 증상이 급격히 악화될 수 있다.",
+        "4": "단백질 섭취를 줄이면 근육 약화와 영양 불균형이 생길 수 있다. 오히려 균형 잡힌 단백질 섭취가 필요하다.",
+        "5": "두뇌 활동은 인지 기능 유지에 도움이 되지만, 파킨슨병의 핵심 관리법은 약물요법이다."
+      },
+      "vi": {
+        "1": "Kéo giãn cơ giúp giảm cứng cơ và cải thiện vận động, nên việc tránh kéo giãn là sai.",
+        "2": "Vận động khớp quan trọng để duy trì độ linh hoạt, không nên tránh trong quản lý bệnh Parkinson.",
+        "3": "★ Bệnh Parkinson là bệnh hệ thần kinh do thiếu dopamine. Duy trì liệu pháp thuốc (bao gồm levodopa) liên tục là phương pháp điều trị cốt lõi. Ngừng thuốc tùy tiện có thể làm bệnh nặng nhanh chóng.",
+        "4": "Giảm protein có thể gây yếu cơ và mất cân bằng dinh dưỡng. Cần duy trì lượng protein cân bằng.",
+        "5": "Hoạt động trí não giúp duy trì chức năng nhận thức, nhưng liệu pháp thuốc mới là phương pháp quản lý cốt lõi."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "약물요법", "def_vi": "Liệu pháp thuốc — phương pháp điều trị bằng cách sử dụng thuốc theo chỉ định" },
+      { "term_ko": "파킨슨병", "def_vi": "Bệnh Parkinson — bệnh thoái hóa thần kinh gây run tay, cứng cơ và chậm chạp vận động do thiếu dopamine" },
+      { "term_ko": "근육경직", "def_vi": "Cứng cơ — triệu chứng cơ bắp trở nên cứng và khó cử động" }
+    ]
+  },
+  {
+    "id": 1033,
+    "intent_ko": "파킨슨병의 전형적인 증상을 구별하는 문제",
+    "intent_vi": "Phân biệt triệu chứng điển hình của bệnh Parkinson",
+    "choice_explanations": {
+      "ko": {
+        "1": "파킨슨병은 허리가 구부러지는 굽은 자세가 특징이며, 곧은 자세는 파킨슨병의 증상이 아니다.",
+        "2": "파킨슨병은 행동이 느려지는 서동증이 특징이다. 행동이 빨라지는 것은 파킨슨병과 반대다.",
+        "3": "인지능력은 파킨슨병이 진행되면서 저하될 수 있으며, 증가는 파킨슨병과 관련이 없다.",
+        "4": "★ 자세 불안정은 파킨슨병의 4대 핵심 증상(안정 시 떨림·근육경직·서동증·자세불안정) 중 하나로, 환자가 균형을 유지하지 못해 쉽게 넘어지는 상태를 말한다.",
+        "5": "무표정한 얼굴(가면 얼굴)은 파킨슨병에서 나타날 수 있으나, 자세 불안정이 더 핵심적이고 전형적인 증상이다."
+      },
+      "vi": {
+        "1": "Bệnh Parkinson đặc trưng bởi tư thế cúi gập về phía trước, không phải tư thế thẳng.",
+        "2": "Bệnh Parkinson gây chậm vận động (bradykinesia), ngược với hành động nhanh hơn.",
+        "3": "Khả năng nhận thức có thể suy giảm khi bệnh tiến triển, không phải tăng.",
+        "4": "★ Tư thế không ổn định là một trong 4 triệu chứng cốt lõi của Parkinson (run khi nghỉ, cứng cơ, chậm vận động, tư thế không ổn định). Bệnh nhân không giữ được thăng bằng và dễ ngã.",
+        "5": "Mặt vô cảm (mặt nạ) có thể xuất hiện trong Parkinson, nhưng tư thế không ổn định là triệu chứng điển hình hơn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "자세 불안정", "def_vi": "Tư thế không ổn định — mất khả năng giữ thăng bằng, dễ ngã, triệu chứng điển hình của Parkinson" },
+      { "term_ko": "서동증", "def_vi": "Bradykinesia (chậm vận động) — triệu chứng vận động chậm chạp trong bệnh Parkinson" }
+    ]
+  },
+  {
+    "id": 1032,
+    "intent_ko": "파킨슨병의 병태생리와 핵심 증상을 정확히 이해하는 문제",
+    "intent_vi": "Hiểu đúng cơ chế bệnh sinh và triệu chứng cốt lõi của bệnh Parkinson",
+    "choice_explanations": {
+      "ko": {
+        "1": "고혈압은 뇌졸중·심혈관 질환의 위험 요인이지 파킨슨병의 주된 원인이 아니다.",
+        "2": "파킨슨병은 도파민이 과잉 분비되는 것이 아니라 도파민 분비 신경세포가 손상되어 도파민이 부족해진다.",
+        "3": "★ 파킨슨병의 대표적 증상은 안정 시 떨림(아무 것도 하지 않을 때 손·발이 떨리는 것)과 근육경직(근육이 뻣뻣해지는 것)이다. 이 두 증상은 도파민 부족으로 기저핵 기능이 저하될 때 나타난다.",
+        "4": "교차 마비(손상된 쪽 뇌의 반대편 신체 마비)는 뇌졸중의 특징이다. 파킨슨병에서는 주로 양측성으로 증상이 나타난다.",
+        "5": "뇌혈관이 좁아져 혈류 장애가 생기는 것은 뇌졸중 또는 혈관성 치매의 기전이다."
+      },
+      "vi": {
+        "1": "Huyết áp cao là yếu tố nguy cơ của đột quỵ và bệnh tim mạch, không phải nguyên nhân chính của Parkinson.",
+        "2": "Trong bệnh Parkinson, các tế bào thần kinh tiết dopamine bị tổn thương, gây thiếu hụt dopamine — không phải dư thừa.",
+        "3": "★ Triệu chứng đặc trưng của Parkinson là run khi nghỉ (tay chân run lúc không làm gì) và cứng cơ (cơ bắp cứng đờ). Hai triệu chứng này xuất hiện khi chức năng hạch nền suy giảm do thiếu dopamine.",
+        "4": "Liệt chéo (liệt bên đối diện với bán cầu não tổn thương) là đặc điểm của đột quỵ, không phải Parkinson.",
+        "5": "Mạch máu não bị hẹp gây rối loạn lưu thông máu là cơ chế của đột quỵ hoặc sa sút trí tuệ mạch máu."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "도파민", "def_vi": "Dopamine — chất dẫn truyền thần kinh quan trọng kiểm soát vận động; bị thiếu hụt trong bệnh Parkinson" },
+      { "term_ko": "안정 시 떨림", "def_vi": "Run khi nghỉ — tay hoặc chân run không kiểm soát khi cơ thể đứng yên, triệu chứng điển hình của Parkinson" },
+      { "term_ko": "근육경직", "def_vi": "Cứng cơ — cơ bắp trở nên cứng và đề kháng khi di chuyển" }
+    ]
+  },
+  {
+    "id": 1031,
+    "intent_ko": "도파민 부족으로 발생하는 질환을 정확히 식별하는 문제",
+    "intent_vi": "Xác định đúng bệnh do thiếu hụt dopamine gây ra",
+    "choice_explanations": {
+      "ko": {
+        "1": "섬망은 급성 혼란 상태로, 감염·약물·대사 이상 등 다양한 원인으로 발생하며 도파민 부족과 직접 관련이 없다.",
+        "2": "고혈압은 혈압 조절 이상으로, 도파민과 직접적인 관련이 없다.",
+        "3": "★ 파킨슨병은 중뇌의 흑질에서 도파민을 분비하는 신경세포가 점진적으로 손상되어 발생한다. 도파민 부족으로 기저핵 운동 조절 기능이 저하되면서 동작 느려짐(서동증)과 안정 시 떨림이 나타난다.",
+        "4": "혈관성 치매는 뇌혈관 질환으로 인한 인지 장애이며, 도파민 부족과 직접 관련이 없다.",
+        "5": "알츠하이머병은 베타-아밀로이드 축적과 신경원 섬유 엉킴이 주된 기전이며, 도파민 부족이 주된 원인이 아니다."
+      },
+      "vi": {
+        "1": "Mê sảng là trạng thái lú lẫn cấp tính do nhiều nguyên nhân như nhiễm trùng, thuốc, rối loạn chuyển hóa — không liên quan trực tiếp đến thiếu dopamine.",
+        "2": "Cao huyết áp là rối loạn điều hòa huyết áp, không liên quan trực tiếp đến dopamine.",
+        "3": "★ Bệnh Parkinson xảy ra do các tế bào thần kinh tiết dopamine ở vùng chất đen của não giữa bị tổn thương dần dần. Thiếu dopamine làm suy yếu chức năng điều phối vận động của hạch nền, gây chậm vận động và run khi nghỉ.",
+        "4": "Sa sút trí tuệ mạch máu là rối loạn nhận thức do bệnh mạch máu não, không liên quan trực tiếp đến thiếu dopamine.",
+        "5": "Bệnh Alzheimer chủ yếu do tích tụ beta-amyloid và rối loạn sợi thần kinh, thiếu dopamine không phải nguyên nhân chính."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "도파민", "def_vi": "Dopamine — chất dẫn truyền thần kinh kiểm soát vận động; thiếu hụt gây bệnh Parkinson" },
+      { "term_ko": "흑질", "def_vi": "Chất đen (substantia nigra) — vùng não giữa chứa tế bào thần kinh tiết dopamine, bị tổn thương trong Parkinson" },
+      { "term_ko": "서동증", "def_vi": "Bradykinesia — chậm vận động, triệu chứng cốt lõi của bệnh Parkinson" }
+    ]
+  },
+  {
+    "id": 1030,
+    "intent_ko": "제시된 전구증상을 보고 뇌졸중을 의심하는 임상 판단 문제",
+    "intent_vi": "Dựa vào các triệu chứng tiền triệu được mô tả để nhận định bệnh đột quỵ",
+    "choice_explanations": {
+      "ko": {
+        "1": "난청은 청각 장애로, 두통·시각장애·마비·언어장애와 관련이 없다.",
+        "2": "빈혈은 주로 피로감이 나타나며, 편측 마비나 언어 장애와는 관련이 없다.",
+        "3": "고혈압은 두통의 원인이 될 수 있지만, 제시된 모든 신경학적 증상(복시·편측 마비·언어장애)을 종합적으로 설명하지 못한다.",
+        "4": "★ 뇌졸중은 뇌혈관이 막히거나(허혈성) 터져(출혈성) 뇌 기능이 손상될 때 발생한다. 두통·구토, 복시 및 시야장애, 한쪽 팔다리 마비 또는 감각이상, 발음 이상·언어장애는 모두 뇌졸중의 전형적 전구증상이다.",
+        "5": "폐렴은 호흡기 감염 질환으로, 신경학적 증상(마비·언어장애)과 직접적인 관련이 없다."
+      },
+      "vi": {
+        "1": "Điếc là rối loạn thính giác, không liên quan đến đau đầu, rối loạn thị giác, liệt hay rối loạn ngôn ngữ.",
+        "2": "Thiếu máu chủ yếu gây mệt mỏi, không liên quan đến liệt nửa người hay rối loạn ngôn ngữ.",
+        "3": "Cao huyết áp có thể gây đau đầu nhưng không giải thích được toàn bộ các triệu chứng thần kinh được mô tả.",
+        "4": "★ Đột quỵ xảy ra khi mạch máu não bị tắc (nhồi máu não) hoặc vỡ (xuất huyết não), gây tổn thương chức năng não. Đau đầu, nôn mửa, nhìn đôi, rối loạn tầm nhìn, liệt hoặc tê nửa người, phát âm không rõ và rối loạn ngôn ngữ đều là triệu chứng tiền triệu điển hình của đột quỵ.",
+        "5": "Viêm phổi là bệnh nhiễm trùng đường hô hấp, không liên quan trực tiếp đến triệu chứng thần kinh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "전구증상", "def_vi": "Triệu chứng tiền triệu — dấu hiệu cảnh báo xuất hiện trước khi bệnh bùng phát hoàn toàn" },
+      { "term_ko": "복시", "def_vi": "Nhìn đôi (song thị) — nhìn thấy một vật thành hai hình ảnh, triệu chứng thần kinh cảnh báo đột quỵ" },
+      { "term_ko": "편측 마비", "def_vi": "Liệt nửa người — liệt một bên cơ thể do tổn thương bán cầu não đối diện" }
+    ]
+  },
+  {
+    "id": 1029,
+    "intent_ko": "현기증·팔다리 저림·통증 등의 전구증상이 나타나는 질환을 파악하는 문제",
+    "intent_vi": "Xác định bệnh có triệu chứng tiền triệu như chóng mặt, tê tay chân, đau",
+    "choice_explanations": {
+      "ko": {
+        "1": "알츠하이머병은 기억력 감소와 인지 기능 저하가 주된 증상으로, 현기증·저림·통증 같은 전구증상과는 다르다.",
+        "2": "★ 뇌졸중은 뇌혈관 이상으로 발생하며, 현기증, 팔다리 저림(감각이상), 뒷목 통증 등이 허혈성 뇌졸중의 전구증상으로 나타날 수 있다. 이런 증상이 일시적으로 나타났다 사라지는 것을 일과성 허혈 발작(TIA)이라고 한다.",
+        "3": "파킨슨병은 운동 장애(서동증·근육경직·안정 시 떨림)가 주된 증상이며, 현기증·저림이 전구증상으로 특징적이지 않다.",
+        "4": "섬망은 급성 혼란 상태로, 특정 전구증상보다는 갑자기 나타나는 의식 변화가 특징이다.",
+        "5": "치매는 인지 기능의 점진적 저하가 특징이며, 현기증·저림 같은 신체적 전구증상과는 다르다."
+      },
+      "vi": {
+        "1": "Alzheimer chủ yếu gây giảm trí nhớ và suy giảm nhận thức, khác với triệu chứng tiền triệu như chóng mặt, tê và đau.",
+        "2": "★ Đột quỵ do bất thường mạch máu não, có thể có triệu chứng tiền triệu như chóng mặt, tê tay chân (rối loạn cảm giác) và đau gáy. Các triệu chứng thoáng qua rồi tự hết gọi là cơn thiếu máu não thoáng qua (TIA).",
+        "3": "Parkinson chủ yếu gây rối loạn vận động (chậm, cứng cơ, run khi nghỉ), chóng mặt và tê không phải triệu chứng tiền triệu đặc trưng.",
+        "4": "Mê sảng là trạng thái lú lẫn cấp tính, đặc trưng bởi thay đổi ý thức đột ngột hơn là triệu chứng tiền triệu.",
+        "5": "Sa sút trí tuệ đặc trưng bởi suy giảm nhận thức dần dần, khác với triệu chứng thể chất như chóng mặt và tê."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "일과성 허혈 발작", "def_vi": "Cơn thiếu máu não thoáng qua (TIA) — triệu chứng đột quỵ tạm thời tự khỏi trong vài phút đến vài giờ, cảnh báo nguy cơ đột quỵ thật sự" },
+      { "term_ko": "현기증", "def_vi": "Chóng mặt — cảm giác mọi thứ quay tròn hoặc mất thăng bằng" },
+      { "term_ko": "저림", "def_vi": "Tê bì — cảm giác kiến bò hoặc mất cảm giác ở tay, chân" }
+    ]
+  },
+  {
+    "id": 1028,
+    "intent_ko": "음식이나 물을 삼키기 힘들어하는 증상의 정확한 명칭을 아는 문제",
+    "intent_vi": "Biết tên chính xác của triệu chứng khó nuốt thức ăn hoặc nước",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 삼킴장애(연하장애)는 음식이나 물을 삼키는 과정에서 어려움을 겪는 증상이다. 뇌졸중·파킨슨병 등 신경계 질환이나 인후두 근육 약화로 발생하며, 흡인성 폐렴 위험이 있어 요양보호사가 주의 깊게 관찰해야 한다.",
+        "2": "오심은 메스껍고 구역질이 나는 증상으로, 삼키는 기능과는 다르다.",
+        "3": "운동 실조증은 몸의 균형과 협응 능력이 저하되어 비틀거리는 상태로, 삼킴 기능과는 다르다.",
+        "4": "다뇨증은 소변 양이 비정상적으로 많은 상태로, 삼킴과는 관련이 없다.",
+        "5": "다갈증은 비정상적으로 심한 갈증을 느끼는 상태로, 삼킴 장애와는 다르다."
+      },
+      "vi": {
+        "1": "★ Rối loạn nuốt (dysphagia) là triệu chứng gặp khó khăn khi nuốt thức ăn hoặc nước. Thường xuất hiện trong đột quỵ, Parkinson và các bệnh thần kinh khác do yếu cơ hầu họng. Có nguy cơ viêm phổi hít, người chăm sóc cần theo dõi cẩn thận.",
+        "2": "Buồn nôn là cảm giác khó chịu muốn nôn, khác với rối loạn chức năng nuốt.",
+        "3": "Rối loạn phối hợp vận động là tình trạng mất thăng bằng và phối hợp, khác với nuốt.",
+        "4": "Tiểu nhiều (đa niệu) là tình trạng lượng nước tiểu bất thường lớn, không liên quan đến nuốt.",
+        "5": "Khát nhiều (đa khát) là cảm giác khát bất thường, khác với rối loạn nuốt."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "삼킴장애", "def_vi": "Rối loạn nuốt (dysphagia) — khó khăn khi nuốt thức ăn hoặc nước, thường gặp trong đột quỵ và Parkinson" },
+      { "term_ko": "다뇨증", "def_vi": "Đa niệu — tình trạng lượng nước tiểu bài tiết quá nhiều" },
+      { "term_ko": "다갈증", "def_vi": "Đa khát — cảm giác khát nước bất thường và kéo dài, thường liên quan đến tiểu đường" }
+    ]
+  },
+  {
+    "id": 1027,
+    "intent_ko": "뇌혈관 이상(막힘 또는 파열) 시 나타나는 증상을 이해하는 문제",
+    "intent_vi": "Hiểu các triệu chứng khi mạch máu não bị tắc hoặc vỡ",
+    "choice_explanations": {
+      "ko": {
+        "1": "허리 통증은 척추·근골격계 문제로, 뇌혈관과는 관련이 없다.",
+        "2": "기침과 객담은 호흡기 감염 또는 폐 질환의 증상으로, 뇌혈관 문제와 직접 관련이 없다.",
+        "3": "★ 뇌에 혈액이 공급되지 않으면 언어를 담당하는 뇌 영역이 손상되어 언어장애가 생기고, 삼킴을 조절하는 신경이 영향을 받아 삼킴장애도 나타날 수 있다. 이 두 증상은 뇌졸중의 대표적 증상이다.",
+        "4": "가려움증은 피부 또는 알레르기 반응으로, 뇌혈관과는 관련이 없다.",
+        "5": "피부 발적은 피부 혈관 확장·감염·알레르기 등으로 발생하며, 뇌혈관 문제와 관련이 없다."
+      },
+      "vi": {
+        "1": "Đau lưng là vấn đề cơ xương khớp, không liên quan đến mạch máu não.",
+        "2": "Ho và đờm là triệu chứng nhiễm trùng hô hấp hoặc bệnh phổi, không liên quan trực tiếp đến mạch máu não.",
+        "3": "★ Khi não không được cung cấp máu, vùng não kiểm soát ngôn ngữ bị tổn thương gây rối loạn ngôn ngữ; thần kinh điều phối nuốt cũng bị ảnh hưởng gây rối loạn nuốt. Hai triệu chứng này là đặc trưng của đột quỵ.",
+        "4": "Ngứa là phản ứng da hoặc dị ứng, không liên quan đến mạch máu não.",
+        "5": "Đỏ da xảy ra do giãn mạch máu da, nhiễm trùng hoặc dị ứng, không liên quan đến mạch máu não."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "언어장애", "def_vi": "Rối loạn ngôn ngữ — mất khả năng nói hoặc hiểu ngôn ngữ do tổn thương não" },
+      { "term_ko": "삼킴장애", "def_vi": "Rối loạn nuốt — khó nuốt thức ăn hoặc nước do tổn thương thần kinh não" },
+      { "term_ko": "객담", "def_vi": "Đờm — chất nhầy tiết ra từ đường hô hấp khi ho, dấu hiệu bệnh phổi" }
+    ]
+  },
+  {
+    "id": 1026,
+    "intent_ko": "뇌졸중의 특징·원인·증상에 관한 올바른 설명을 고르는 문제",
+    "intent_vi": "Chọn mô tả đúng về đặc điểm, nguyên nhân và triệu chứng của đột quỵ",
+    "choice_explanations": {
+      "ko": {
+        "1": "도파민 부족은 파킨슨병의 원인이며, 뇌졸중과는 관련이 없다.",
+        "2": "좌뇌가 손상되면 신체 반대편인 우측(오른쪽) 마비가 발생한다. 좌측 마비는 우뇌 손상 시 나타난다.",
+        "3": "측두엽 손상 시 언어·기억에 영향을 미칠 수 있지만, 비틀거림(운동 실조)은 주로 소뇌 손상 때 나타난다.",
+        "4": "안정 시 떨림과 무표정한 얼굴(가면 얼굴)은 파킨슨병의 특징이지 뇌졸중과는 관련이 없다.",
+        "5": "★ 복시(한 개의 물체가 두 개로 보이는 것)는 뇌졸중에서 나타날 수 있는 전구 증상 중 하나다. 뇌간·소뇌로 가는 혈액 공급이 차단되면 안구 운동을 담당하는 신경이 영향을 받아 복시가 발생한다."
+      },
+      "vi": {
+        "1": "Thiếu dopamine là nguyên nhân của Parkinson, không liên quan đến đột quỵ.",
+        "2": "Tổn thương bán cầu não trái gây liệt bên phải (đối diện). Liệt bên trái xảy ra khi bán cầu não phải bị tổn thương.",
+        "3": "Tổn thương thùy thái dương ảnh hưởng đến ngôn ngữ và trí nhớ; đi lảo đảo chủ yếu xuất hiện khi tiểu não bị tổn thương.",
+        "4": "Run khi nghỉ và mặt vô cảm là đặc trưng của Parkinson, không phải đột quỵ.",
+        "5": "★ Nhìn đôi (song thị) là một trong các triệu chứng tiền triệu có thể xuất hiện trong đột quỵ. Khi lưu lượng máu đến thân não hoặc tiểu não bị gián đoạn, các thần kinh điều khiển mắt bị ảnh hưởng gây nhìn đôi."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "복시", "def_vi": "Song thị (nhìn đôi) — nhìn một vật thấy thành hai, triệu chứng thần kinh cảnh báo đột quỵ" },
+      { "term_ko": "교차 마비", "def_vi": "Liệt chéo — liệt bên cơ thể đối diện với bán cầu não bị tổn thương" },
+      { "term_ko": "측두엽", "def_vi": "Thùy thái dương — vùng não liên quan đến ngôn ngữ, trí nhớ và xử lý âm thanh" }
+    ]
+  },
+  {
+    "id": 1025,
+    "intent_ko": "뇌졸중 증상 중 운동 실조증의 정의와 특징을 정확히 아는 문제",
+    "intent_vi": "Hiểu định nghĩa và đặc điểm của rối loạn phối hợp vận động trong đột quỵ",
+    "choice_explanations": {
+      "ko": {
+        "1": "복시는 시각 신경 관련 증상으로, 운동 실조증의 증상이 아니다.",
+        "2": "운동 실조증에서는 물건을 정확히 잡지 못하는 협응 장애가 나타난다. 정확히 잡을 수 있다는 것은 틀린 설명이다.",
+        "3": "발음이 어눌해지는 구음장애는 운동 실조증이 아닌 언어 관련 신경 손상 증상이다.",
+        "4": "음식이나 물을 삼키기 힘든 것은 삼킴장애(연하장애)이지 운동 실조증이 아니다.",
+        "5": "★ 운동 실조증은 소뇌 또는 뇌간 손상으로 인해 몸의 균형·협응 능력이 저하되는 증상이다. 술 취한 사람처럼 비틀거리고 한쪽으로 자꾸 쓰러지려는 것이 가장 특징적인 표현이다."
+      },
+      "vi": {
+        "1": "Nhìn đôi là triệu chứng liên quan đến thần kinh thị giác, không phải rối loạn phối hợp vận động.",
+        "2": "Trong rối loạn phối hợp vận động, bệnh nhân không nắm đồ vật chính xác được. Nói rằng có thể nắm chính xác là sai.",
+        "3": "Phát âm không rõ (dysarthria) là triệu chứng tổn thương thần kinh ngôn ngữ, không phải rối loạn phối hợp vận động.",
+        "4": "Khó nuốt là rối loạn nuốt, không phải rối loạn phối hợp vận động.",
+        "5": "★ Rối loạn phối hợp vận động (ataxia) là triệu chứng mất thăng bằng và phối hợp do tổn thương tiểu não hoặc thân não. Đặc trưng là đi lảo đảo như người say rượu và liên tục ngả về một phía."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "운동 실조증", "def_vi": "Rối loạn phối hợp vận động (ataxia) — mất khả năng điều phối và giữ thăng bằng, thường do tổn thương tiểu não" },
+      { "term_ko": "구음장애", "def_vi": "Dysarthria — rối loạn phát âm do yếu cơ miệng, lưỡi; khác với rối loạn phối hợp vận động" }
+    ]
+  },
+  {
+    "id": 1024,
+    "intent_ko": "소뇌 손상에 따른 뇌졸중의 특징적 증상을 파악하는 문제",
+    "intent_vi": "Xác định triệu chứng đặc trưng của đột quỵ khi tiểu não bị tổn thương",
+    "choice_explanations": {
+      "ko": {
+        "1": "묽은 혈변은 소화기 출혈이나 감염 문제로, 소뇌와는 관련이 없다.",
+        "2": "전신성 수포는 피부 질환(예: 수포성 피부염)과 관련된 증상으로, 소뇌와 무관하다.",
+        "3": "관절 부위 통증은 근골격계 또는 관절 질환과 관련되며, 소뇌 손상과는 무관하다.",
+        "4": "★ 소뇌는 몸의 균형·자세 조절 및 운동 협응을 담당하는 뇌 부위다. 소뇌가 손상되면 균형감각이 상실되어 비틀거림, 운동 실조증이 나타난다. 뇌졸중으로 소뇌에 혈액 공급이 차단되면 이 증상이 특징적으로 발생한다.",
+        "5": "가슴이 조이는 흉통은 협심증·심근경색 등 심혈관계 질환의 증상으로, 소뇌 손상과는 직접 관련이 없다."
+      },
+      "vi": {
+        "1": "Phân máu lỏng là vấn đề xuất huyết tiêu hóa hoặc nhiễm trùng, không liên quan đến tiểu não.",
+        "2": "Bóng nước toàn thân liên quan đến bệnh da liễu, không liên quan đến tiểu não.",
+        "3": "Đau khớp liên quan đến bệnh cơ xương khớp, không liên quan đến tổn thương tiểu não.",
+        "4": "★ Tiểu não phụ trách duy trì thăng bằng, điều phối tư thế và vận động. Khi tiểu não bị tổn thương, cảm giác cân bằng bị mất, gây đi lảo đảo và rối loạn phối hợp vận động. Đây là triệu chứng đặc trưng khi đột quỵ cắt nguồn máu đến tiểu não.",
+        "5": "Đau tức ngực là triệu chứng bệnh tim mạch như đau thắt ngực hoặc nhồi máu cơ tim, không liên quan trực tiếp đến tiểu não."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "소뇌", "def_vi": "Tiểu não — phần não phụ trách thăng bằng, tư thế và phối hợp vận động" },
+      { "term_ko": "균형감각 상실", "def_vi": "Mất cảm giác thăng bằng — không giữ được thăng bằng cơ thể, đặc trưng khi tiểu não tổn thương" },
+      { "term_ko": "전신성 수포", "def_vi": "Bóng nước toàn thân — tổn thương da lan rộng với các bóng nước, dấu hiệu bệnh da liễu" }
+    ]
+  },
+  {
+    "id": 1023,
+    "intent_ko": "뇌졸중으로 오른쪽 뇌가 손상되었을 때 나타나는 증상을 정확히 이해하는 문제",
+    "intent_vi": "Hiểu đúng triệu chứng xuất hiện khi bán cầu não phải bị tổn thương do đột quỵ",
+    "choice_explanations": {
+      "ko": {
+        "1": "소양증(가려움증)은 피부 문제로, 뇌졸중의 전형적 증상이 아니다.",
+        "2": "★ 뇌는 교차 지배 원리에 따라 오른쪽 뇌가 왼쪽 몸을 지배한다. 따라서 오른쪽 뇌가 손상되면 왼쪽 팔다리에 마비가 나타난다. 이것이 뇌졸중 측면 마비의 핵심 원리다.",
+        "3": "오른쪽 뇌 손상 시 왼쪽 몸에 증상이 나타난다. 오른쪽 팔의 감각 저하는 왼쪽 뇌 손상과 관련된다.",
+        "4": "오른쪽 다리의 이상 감각은 왼쪽 뇌 손상과 관련된다. 오른쪽 뇌 손상과는 맞지 않는다.",
+        "5": "전신마비와 의식 저하는 매우 심각한 뇌 손상에서 나타날 수 있으나, 오른쪽 뇌 손상의 전형적이고 구체적인 증상으로는 적합하지 않다."
+      },
+      "vi": {
+        "1": "Ngứa là vấn đề da, không phải triệu chứng điển hình của đột quỵ.",
+        "2": "★ Não điều phối theo nguyên tắc chéo: bán cầu não phải kiểm soát bên trái cơ thể. Vì vậy khi bán cầu não phải bị tổn thương, liệt sẽ xuất hiện ở tay chân bên trái. Đây là nguyên tắc cốt lõi của liệt một bên trong đột quỵ.",
+        "3": "Khi não phải tổn thương, triệu chứng xuất hiện bên trái cơ thể. Giảm cảm giác tay phải liên quan đến tổn thương não trái.",
+        "4": "Cảm giác bất thường ở chân phải liên quan đến tổn thương não trái, không phải não phải.",
+        "5": "Liệt toàn thân và giảm ý thức có thể xảy ra trong tổn thương não rất nặng, nhưng không phải triệu chứng đặc trưng cụ thể của tổn thương não phải."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "교차 지배", "def_vi": "Điều phối chéo — nguyên tắc bán cầu não phải kiểm soát bên trái cơ thể và ngược lại" },
+      { "term_ko": "편측 마비", "def_vi": "Liệt nửa người — liệt một bên cơ thể do tổn thương bán cầu não đối diện" },
+      { "term_ko": "소양증", "def_vi": "Ngứa — cảm giác ngứa da, không liên quan đến đột quỵ" }
+    ]
+  },
+  {
+    "id": 1022,
+    "intent_ko": "발음·안면 대칭·보행 검사를 통해 의심 가능한 질환을 추론하는 문제",
+    "intent_vi": "Suy luận bệnh có thể nghi ngờ thông qua kiểm tra phát âm, đối xứng mặt và dáng đi",
+    "choice_explanations": {
+      "ko": {
+        "1": "고혈압은 혈압 관련 질환으로, 발음 이상·안면 비대칭·보행 장애를 특징적으로 나타내지 않는다.",
+        "2": "심부전은 호흡곤란·부종이 주된 증상이며, 제시된 검사 항목과 직접 관련이 없다.",
+        "3": "★ 뇌졸중이 발생하면 발음이 어눌해지거나 불분명해지고(구음장애), 얼굴 근육의 한쪽이 마비되어 입이 비뚤어지는 안면 비대칭이 나타나며, 소뇌 손상 시 비틀거리거나 한쪽으로 쓰러지는 보행 장애가 발생한다. 제시된 세 가지 검사 모두 뇌졸중을 감별하기 위한 방법이다.",
+        "4": "동맥경화증은 혈관 벽이 두꺼워지고 굳어지는 상태로, 심혈관계 합병증과 관련되지만 위 검사 항목과 직접 관련이 없다.",
+        "5": "기립성 저혈압은 일어설 때 혈압이 갑자기 떨어져 어지럼증이 생기는 상태로, 발음 이상이나 안면 비대칭과는 관련이 없다."
+      },
+      "vi": {
+        "1": "Cao huyết áp là bệnh liên quan đến huyết áp, không đặc trưng bởi rối loạn phát âm, mặt lệch hay rối loạn dáng đi.",
+        "2": "Suy tim chủ yếu gây khó thở và phù nề, không liên quan trực tiếp đến các hạng mục kiểm tra được nêu.",
+        "3": "★ Khi đột quỵ xảy ra, phát âm trở nên không rõ (dysarthria), cơ mặt một bên bị liệt gây mặt lệch (mất đối xứng), và tổn thương tiểu não gây đi lảo đảo hoặc ngã về một phía. Ba bài kiểm tra được nêu đều là phương pháp phân biệt đột quỵ.",
+        "4": "Xơ vữa động mạch là tình trạng thành mạch dày và cứng, liên quan đến biến chứng tim mạch nhưng không liên quan trực tiếp đến các hạng mục kiểm tra.",
+        "5": "Hạ huyết áp tư thế là tình trạng huyết áp giảm đột ngột khi đứng dậy gây chóng mặt, không liên quan đến rối loạn phát âm hay mặt lệch."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "구음장애", "def_vi": "Dysarthria — rối loạn phát âm do yếu cơ vùng miệng và lưỡi, dấu hiệu tổn thương thần kinh" },
+      { "term_ko": "안면 비대칭", "def_vi": "Mặt lệch (không đối xứng) — một bên mặt bị liệt hoặc yếu, dấu hiệu quan trọng của đột quỵ" },
+      { "term_ko": "기립성 저혈압", "def_vi": "Hạ huyết áp tư thế — huyết áp giảm đột ngột khi đứng dậy, gây chóng mặt" }
+    ]
+  },
+  {
+    "id": 1021,
+    "intent_ko": "치매 대상자에게 발생할 수 있는 주요 합병 상태를 이해하는 문제",
+    "intent_vi": "Hiểu tình trạng biến chứng chủ yếu có thể xảy ra ở người mắc sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "요실금은 노인성 질환이나 방광 기능 저하로 발생할 수 있지만, 치매와의 직접적인 연관은 섬망보다 낮다.",
+        "2": "★ 섬망은 치매 환자에게 매우 흔하게 발생하는 급성 혼란 상태로, 갑자기 의식이 흐려지고 주의력이 떨어지며 환각·초조 등이 나타난다. 감염·약물·탈수 등이 유발 요인이 되며, 치매가 섬망의 주요 위험인자다.",
+        "3": "변실금은 일부 치매 말기 환자에게 나타날 수 있으나, 치매의 대표적 합병 상태는 섬망이다.",
+        "4": "영양실조는 치매 환자에서 식사 거부·잊어버림으로 인해 간접적으로 발생할 수 있으나, 직접적인 합병 질환은 아니다.",
+        "5": "경련은 신경학적 발작으로, 일부 치매 환자에서 나타날 수 있으나 치매의 대표적 합병 상태로 분류되지는 않는다."
+      },
+      "vi": {
+        "1": "Tiểu không kiểm soát có thể xảy ra do lão hóa hoặc suy chức năng bàng quang, nhưng mối liên hệ trực tiếp với sa sút trí tuệ thấp hơn so với mê sảng.",
+        "2": "★ Mê sảng là trạng thái lú lẫn cấp tính rất phổ biến ở bệnh nhân sa sút trí tuệ, đặc trưng bởi ý thức đột ngột giảm, giảm tập trung, ảo giác và kích động. Nhiễm trùng, thuốc, mất nước là các yếu tố kích hoạt; sa sút trí tuệ là yếu tố nguy cơ chính của mê sảng.",
+        "3": "Đại tiện không kiểm soát có thể xuất hiện ở giai đoạn cuối sa sút trí tuệ, nhưng biến chứng điển hình nhất là mê sảng.",
+        "4": "Suy dinh dưỡng có thể xảy ra gián tiếp do bệnh nhân từ chối ăn hoặc quên ăn, nhưng không phải bệnh biến chứng trực tiếp.",
+        "5": "Co giật là cơn động kinh thần kinh, có thể xuất hiện ở một số bệnh nhân sa sút trí tuệ nhưng không được phân loại là biến chứng điển hình."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "섬망", "def_vi": "Mê sảng (delirium) — trạng thái lú lẫn cấp tính với giảm ý thức, ảo giác và kích động; phổ biến ở bệnh nhân sa sút trí tuệ" },
+      { "term_ko": "요실금", "def_vi": "Tiểu không kiểm soát — không kiểm soát được việc đi tiểu" },
+      { "term_ko": "변실금", "def_vi": "Đại tiện không kiểm soát — không kiểm soát được việc đại tiện" }
+    ]
+  },
+  {
+    "id": 1020,
+    "intent_ko": "치매 말기에 나타나는 대표적 증상을 파악하는 문제",
+    "intent_vi": "Xác định triệu chứng điển hình giai đoạn cuối của sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "배회 같은 정신행동증상은 중기 이후에 심해질 수 있지만 말기의 가장 특징적인 증상으로 한정하기는 어렵다.",
+        "2": "시간 외에 공간도 헷갈리는 것은 중기 증상에 해당한다.",
+        "3": "새로운 것을 외우지 못하는 것은 초기부터 나타나는 증상으로, 말기만의 특징은 아니다.",
+        "4": "남의 말을 이해하는 데 어려움이 생기는 것은 중기부터 나타날 수 있는 증상이다.",
+        "5": "★ 치매 말기에는 인지 기능이 극도로 저하되어 가족 등 가까운 사람의 얼굴조차 알아보지 못하게 된다. 또한 언어 기능 소실, 보행 불능, 연하장애 등이 동반된다. 가족을 못 알아보는 것은 말기의 가장 전형적인 증상이다."
+      },
+      "vi": {
+        "1": "Triệu chứng hành vi tâm thần như đi lang thang có thể trầm trọng hơn từ giai đoạn giữa, nhưng khó giới hạn là đặc trưng nhất của giai đoạn cuối.",
+        "2": "Nhầm lẫn không gian ngoài thời gian là triệu chứng giai đoạn giữa.",
+        "3": "Không học được thông tin mới xuất hiện từ giai đoạn đầu, không phải chỉ riêng giai đoạn cuối.",
+        "4": "Khó hiểu lời người khác nói có thể xuất hiện từ giai đoạn giữa.",
+        "5": "★ Giai đoạn cuối sa sút trí tuệ, chức năng nhận thức suy giảm cực độ khiến bệnh nhân không nhận ra khuôn mặt người thân như gia đình. Kèm theo đó là mất ngôn ngữ, không đi lại được và rối loạn nuốt. Không nhận ra người thân là triệu chứng điển hình nhất của giai đoạn cuối."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "배회", "def_vi": "Đi lang thang — hành vi đi không có mục đích, phổ biến ở bệnh nhân sa sút trí tuệ" },
+      { "term_ko": "정신행동증상", "def_vi": "Triệu chứng hành vi tâm thần (BPSD) — các triệu chứng tâm lý và hành vi đi kèm sa sút trí tuệ như ảo giác, kích động, lang thang" }
+    ]
+  },
+  {
+    "id": 1019,
+    "intent_ko": "중기 치매의 특징적 증상을 초기·말기와 구별하여 이해하는 문제",
+    "intent_vi": "Phân biệt triệu chứng đặc trưng giai đoạn giữa của sa sút trí tuệ với giai đoạn đầu và cuối",
+    "choice_explanations": {
+      "ko": {
+        "1": "새로운 것을 외우기 어려운 것은 치매 초기부터 나타나는 증상으로, 중기만의 특징이 아니다.",
+        "2": "★ 환각(없는 것을 보거나 듣는 것)과 망상(사실과 다른 잘못된 믿음)은 치매 중기에 특징적으로 심해지는 정신행동증상이다. 이 시기에 도둑이 들었다는 망상, 가족을 모르는 척한다는 의심 등이 나타나며 일상생활과 요양 관리를 크게 방해한다.",
+        "3": "우울·짜증은 치매 초기부터 나타날 수 있는 증상으로, 중기의 특징으로 한정할 수 없다.",
+        "4": "말할 때 적절한 단어가 떠오르지 않는 것(단어 찾기 어려움)은 중기 이후에 심해지지만 초기부터도 나타날 수 있다.",
+        "5": "간혹 시간이 헷갈리는 것은 치매 초기 또는 정상 노화에서도 나타날 수 있는 증상이다."
+      },
+      "vi": {
+        "1": "Khó học thứ mới là triệu chứng xuất hiện từ giai đoạn đầu sa sút trí tuệ, không phải chỉ giai đoạn giữa.",
+        "2": "★ Ảo giác (nhìn/nghe thấy thứ không có thật) và hoang tưởng (niềm tin sai lầm không phù hợp thực tế) là triệu chứng hành vi tâm thần đặc trưng trở nên nặng nề hơn ở giai đoạn giữa sa sút trí tuệ. Giai đoạn này thường xuất hiện hoang tưởng bị trộm, nghi ngờ gia đình, ảnh hưởng lớn đến sinh hoạt và chăm sóc.",
+        "3": "Trầm cảm và cáu kỉnh có thể xuất hiện từ giai đoạn đầu, không thể giới hạn là đặc trưng giai đoạn giữa.",
+        "4": "Khó tìm từ khi nói có thể trầm trọng hơn từ giai đoạn giữa nhưng cũng có thể xuất hiện từ giai đoạn đầu.",
+        "5": "Đôi khi nhầm lẫn về thời gian có thể xuất hiện ở giai đoạn đầu sa sút trí tuệ hoặc lão hóa bình thường."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "환각", "def_vi": "Ảo giác — nhận thức sai lầm về thực tế, thấy hoặc nghe thứ không tồn tại" },
+      { "term_ko": "망상", "def_vi": "Hoang tưởng — niềm tin sai lầm cố định không thể thay đổi dù có bằng chứng ngược lại" },
+      { "term_ko": "정신행동증상", "def_vi": "Triệu chứng hành vi tâm thần (BPSD) — các biểu hiện tâm lý và hành vi đi kèm sa sút trí tuệ" }
+    ]
+  },
+  {
+    "id": 1018,
+    "intent_ko": "치매 초기에 나타나는 증상을 중기·말기와 구별하는 문제",
+    "intent_vi": "Phân biệt triệu chứng giai đoạn đầu của sa sút trí tuệ với giai đoạn giữa và cuối",
+    "choice_explanations": {
+      "ko": {
+        "1": "시간과 공간이 동시에 헷갈리는 것은 중기 치매의 증상으로, 초기보다 더 진행된 상태다.",
+        "2": "과거 기억을 떠올리기 어려운 것은 치매가 어느 정도 진행된 후에 나타나는 증상이다. 치매 초기에는 오히려 최근 기억부터 잃어버린다.",
+        "3": "남의 말을 이해하는 능력 감소는 중기 이후 언어 기능이 더 저하된 단계에서 주로 나타난다.",
+        "4": "★ 치매 초기에는 간혹 날짜·요일 등 시간이 헷갈리는 경험을 하게 된다. 최근 기억(단기 기억)의 소실이 가장 먼저 나타나며, 일상생활에는 아직 큰 지장이 없는 단계다.",
+        "5": "의사소통이 거의 불가능한 것은 치매 말기 증상으로, 초기와는 거리가 멀다."
+      },
+      "vi": {
+        "1": "Nhầm lẫn cả thời gian và không gian là triệu chứng giai đoạn giữa, tiến triển hơn giai đoạn đầu.",
+        "2": "Khó nhớ lại ký ức xa xuất hiện sau khi bệnh đã tiến triển. Giai đoạn đầu, trí nhớ ngắn hạn mất trước.",
+        "3": "Giảm khả năng hiểu lời người khác chủ yếu xuất hiện ở giai đoạn giữa trở đi khi chức năng ngôn ngữ suy giảm hơn.",
+        "4": "★ Giai đoạn đầu sa sút trí tuệ, bệnh nhân đôi khi nhầm lẫn ngày tháng hoặc thứ trong tuần. Trí nhớ ngắn hạn (ký ức gần đây) là thứ mất đầu tiên, và sinh hoạt hàng ngày chưa bị ảnh hưởng nhiều.",
+        "5": "Giao tiếp gần như không thể là triệu chứng giai đoạn cuối, rất khác với giai đoạn đầu."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "단기 기억 소실", "def_vi": "Mất trí nhớ ngắn hạn — quên các sự kiện gần đây, triệu chứng đầu tiên của sa sút trí tuệ" },
+      { "term_ko": "지남력", "def_vi": "Định hướng lực — khả năng nhận biết thời gian, địa điểm và bản thân; suy giảm sớm trong sa sút trí tuệ" }
+    ]
+  },
+  {
+    "id": 1017,
+    "intent_ko": "치매에 관한 올바른 설명을 잘못된 설명들과 구별하는 문제",
+    "intent_vi": "Phân biệt mô tả đúng về sa sút trí tuệ với các mô tả sai",
+    "choice_explanations": {
+      "ko": {
+        "1": "치매 환자는 시공간 파악 능력이 저하되는 경우가 많다. '정상이다'는 틀린 설명이다.",
+        "2": "치매는 단순한 노화 현상이 아니라 신경퇴행성 뇌 질환이다. '정상적인 노화'라는 설명은 틀렸다.",
+        "3": "치매 중 알츠하이머형이 60-70%로 가장 높은 비율을 차지하며, 혈관성 치매는 두 번째로 많다.",
+        "4": "치매 환자는 최근의 일(단기 기억)을 더 잘 잊어버리고, 오히려 먼 과거의 일은 더 잘 기억하는 경향이 있다. 따라서 '먼 과거의 일을 잘 기억해 내지 못한다'는 반대의 설명이다.",
+        "5": "★ 치매의 핵심 증상 중 하나인 실행능력(apraxia/executive function) 저하는 감각·운동기관이 정상임에도 불구하고 일상적 행위나 도구 사용을 제대로 못 하는 상태를 말한다. 이것이 치매를 정상 노화와 구별하는 중요한 특징이다."
+      },
+      "vi": {
+        "1": "Bệnh nhân sa sút trí tuệ thường bị suy giảm khả năng định hướng thời gian và không gian. 'Bình thường' là mô tả sai.",
+        "2": "Sa sút trí tuệ không phải quá trình lão hóa bình thường mà là bệnh thoái hóa thần kinh. Nói là 'lão hóa bình thường' là sai.",
+        "3": "Sa sút trí tuệ type Alzheimer chiếm 60-70%, cao nhất; sa sút trí tuệ mạch máu đứng thứ hai.",
+        "4": "Bệnh nhân sa sút trí tuệ quên sự kiện gần đây (trí nhớ ngắn hạn) nhưng lại nhớ rõ hơn về quá khứ xa. Nói 'không nhớ được quá khứ xa' là mô tả ngược lại.",
+        "5": "★ Suy giảm chức năng thực hiện (apraxia/executive function) là một trong các triệu chứng cốt lõi của sa sút trí tuệ: dù cơ quan cảm giác và vận động bình thường, bệnh nhân vẫn không thực hiện được các hành động thường ngày hay dùng đồ vật. Đây là đặc điểm quan trọng phân biệt sa sút trí tuệ với lão hóa bình thường."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "실행능력 저하", "def_vi": "Suy giảm chức năng thực hiện — mất khả năng thực hiện hành động có kế hoạch dù cơ quan vận động bình thường" },
+      { "term_ko": "알츠하이머형 치매", "def_vi": "Sa sút trí tuệ type Alzheimer — loại sa sút trí tuệ phổ biến nhất, chiếm 60-70% tổng số ca" },
+      { "term_ko": "혈관성 치매", "def_vi": "Sa sút trí tuệ mạch máu — sa sút trí tuệ do tổn thương mạch máu não, loại phổ biến thứ hai" }
+    ]
+  },
+  {
+    "id": 1016,
+    "intent_ko": "치매 대상자의 지남력 저하로 인한 증상을 정확히 이해하는 문제",
+    "intent_vi": "Hiểu đúng triệu chứng do suy giảm định hướng lực ở người mắc sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "물건을 둔 장소를 기억하지 못하는 것은 기억력(단기 기억) 저하와 관련되지만, 지남력(시간·장소·사람 인지 능력) 저하와는 다른 증상이다.",
+        "2": "전화 통화 내용을 기억하지 못하는 것은 단기 기억 장애의 증상이다.",
+        "3": "★ 지남력이란 시간·장소·사람에 대한 인식 능력이다. 지남력이 저하되면 오늘이 몇 월 며칠인지, 무슨 요일인지, 몇 시인지 등 시간 개념을 착각하게 된다. 날짜·요일·시간의 혼란이 지남력 저하의 가장 대표적인 증상이다.",
+        "4": "대화 중 적절한 단어가 떠오르지 않는 것은 언어 기능(명칭 실어증) 저하와 관련된다.",
+        "5": "시간이 지나 기억이 나는 것은 단기 기억의 지연 회상 문제로, 지남력 저하와는 다른 개념이다."
+      },
+      "vi": {
+        "1": "Quên chỗ để đồ liên quan đến suy giảm trí nhớ ngắn hạn, khác với suy giảm định hướng lực (khả năng nhận biết thời gian, địa điểm, người).",
+        "2": "Quên nội dung cuộc điện thoại là triệu chứng rối loạn trí nhớ ngắn hạn.",
+        "3": "★ Định hướng lực là khả năng nhận biết thời gian, địa điểm và người. Khi định hướng lực suy giảm, bệnh nhân nhầm lẫn về ngày tháng, thứ trong tuần và giờ giấc. Nhầm lẫn ngày, thứ, giờ là triệu chứng điển hình nhất của suy giảm định hướng lực.",
+        "4": "Không tìm được từ thích hợp khi nói liên quan đến suy giảm chức năng ngôn ngữ (nominal aphasia).",
+        "5": "Nhớ lại sau một thời gian là vấn đề hồi phục trí nhớ trì hoãn, khác với suy giảm định hướng lực."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "지남력", "def_vi": "Định hướng lực — khả năng nhận biết chính xác thời gian, địa điểm và bản thân" },
+      { "term_ko": "명칭 실어증", "def_vi": "Nominal aphasia — mất khả năng tìm từ ngữ phù hợp khi nói, dạng rối loạn ngôn ngữ" }
+    ]
+  },
+  {
+    "id": 1015,
+    "intent_ko": "인지기능 장애로 일상생활 수행이 불가능해지는 질환을 식별하는 문제",
+    "intent_vi": "Xác định bệnh gây rối loạn nhận thức khiến không thể thực hiện sinh hoạt hàng ngày",
+    "choice_explanations": {
+      "ko": {
+        "1": "뇌졸증은 뇌혈관 이상으로 발생하며 인지기능 장애가 후유증으로 올 수 있지만, 인지기능 장애 자체가 주된 정의는 아니다.",
+        "2": "★ 치매는 후천적으로 발생하는 인지기능 장애로, 기억력·판단력·언어·실행 능력 등이 전반적으로 저하되어 독립적인 일상생활 수행이 불가능해지는 신경퇴행성 질환이다. '정상적으로 생활하던 사람'이라는 조건이 치매의 후천적 특성을 강조하는 핵심이다.",
+        "3": "고혈압은 혈압 조절 이상이 주된 문제이며, 인지기능 장애가 주된 증상이 아니다.",
+        "4": "당뇨병은 혈당 조절 장애가 주된 문제이며, 인지기능과 직접적으로 관련되지 않는다.",
+        "5": "동맥경화는 혈관 벽의 경화로 심혈관 질환 위험을 높이지만, 인지기능 장애가 주된 특징이 아니다."
+      },
+      "vi": {
+        "1": "Đột quỵ do bất thường mạch máu não và có thể để lại di chứng rối loạn nhận thức, nhưng đây không phải định nghĩa chính của đột quỵ.",
+        "2": "★ Sa sút trí tuệ là rối loạn nhận thức mắc phải, đặc trưng bởi suy giảm toàn diện trí nhớ, phán đoán, ngôn ngữ và chức năng thực hiện, khiến không thể thực hiện sinh hoạt hàng ngày một cách độc lập. Điều kiện 'người sống bình thường trước đây' nhấn mạnh tính chất mắc phải của sa sút trí tuệ.",
+        "3": "Cao huyết áp chủ yếu là rối loạn điều hòa huyết áp, không phải rối loạn nhận thức.",
+        "4": "Tiểu đường chủ yếu là rối loạn điều hòa đường huyết, không liên quan trực tiếp đến nhận thức.",
+        "5": "Xơ vữa động mạch làm tăng nguy cơ bệnh tim mạch do thành mạch cứng lại, nhưng rối loạn nhận thức không phải đặc điểm chính."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "인지기능 장애", "def_vi": "Rối loạn chức năng nhận thức — suy giảm khả năng suy nghĩ, ghi nhớ, phán đoán và thực hiện" },
+      { "term_ko": "신경퇴행성 질환", "def_vi": "Bệnh thoái hóa thần kinh — bệnh do tế bào thần kinh bị phá hủy dần dần, không hồi phục" },
+      { "term_ko": "후천적", "def_vi": "Mắc phải (không bẩm sinh) — tình trạng xuất hiện sau khi đã có cuộc sống bình thường" }
+    ]
+  },
+  {
+    "id": 1014,
+    "intent_ko": "종아리 둘레 측정과 관련된 질환인 근감소증을 식별하는 문제",
+    "intent_vi": "Xác định bệnh liên quan đến đo chu vi bắp chân — chứng giảm cơ",
+    "choice_explanations": {
+      "ko": {
+        "1": "욕창은 지속적인 압력으로 인한 피부 조직 손상으로, 종아리 둘레 측정과는 관련이 없다.",
+        "2": "낙상은 근력 감소와 관련될 수 있지만, 종아리 둘레 측정으로 진단하는 질환이 아니다.",
+        "3": "식욕부진은 식욕 감소 증상으로, 종아리 둘레와 관련이 없다.",
+        "4": "★ 근감소증은 근육량·근력·보행 능력이 감소하는 노인성 질환이다. 간단한 선별 검사로 종아리 둘레를 측정하며(남성 34cm 미만, 여성 33cm 미만 시 의심), 노쇠의 핵심 증상 중 하나다. 요양보호 현장에서 조기 발견이 중요하다.",
+        "5": "수면장애는 수면의 질·양과 관련된 문제로, 종아리 둘레와는 관련이 없다."
+      },
+      "vi": {
+        "1": "Loét tỳ đè là tổn thương da do áp lực kéo dài, không liên quan đến đo chu vi bắp chân.",
+        "2": "Ngã có thể liên quan đến giảm sức cơ nhưng không phải bệnh được chẩn đoán bằng đo bắp chân.",
+        "3": "Chán ăn là triệu chứng giảm cảm giác thèm ăn, không liên quan đến chu vi bắp chân.",
+        "4": "★ Chứng giảm cơ (sarcopenia) là bệnh lý người già với giảm khối lượng cơ, sức mạnh cơ và khả năng đi lại. Xét nghiệm sàng lọc đơn giản là đo chu vi bắp chân (nghi ngờ khi < 34cm ở nam, < 33cm ở nữ); đây là triệu chứng cốt lõi của hội chứng suy yếu (frailty). Phát hiện sớm trong chăm sóc dài hạn rất quan trọng.",
+        "5": "Rối loạn giấc ngủ liên quan đến chất lượng và số lượng giấc ngủ, không liên quan đến chu vi bắp chân."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "근감소증", "def_vi": "Sarcopenia (chứng giảm cơ) — giảm khối lượng và sức mạnh cơ bắp theo tuổi, được sàng lọc bằng đo bắp chân" },
+      { "term_ko": "노쇠", "def_vi": "Hội chứng suy yếu (frailty) — tình trạng sức khỏe dễ bị tổn thương của người cao tuổi, tăng nguy cơ biến chứng" },
+      { "term_ko": "종아리 둘레", "def_vi": "Chu vi bắp chân — chỉ số đơn giản để sàng lọc chứng giảm cơ ở người cao tuổi" }
+    ]
+  },
+  {
+    "id": 1013,
+    "intent_ko": "노인증후군의 특징을 올바르게 이해하는 문제",
+    "intent_vi": "Hiểu đúng đặc điểm của hội chứng người già",
+    "choice_explanations": {
+      "ko": {
+        "1": "노인증후군은 면역력이 약한 노인에게 더 잘 나타나며, 면역력이 강한 노인에게 많이 생긴다는 것은 틀린 설명이다.",
+        "2": "노인증후군은 회복이 빠르지 않으며, 증상이 지속되거나 악화되는 경우가 많다. 노쇠를 거쳐 회복된다는 설명은 틀렸다.",
+        "3": "★ 노인증후군은 하나의 특정 질병보다는 여러 질병이 동시에 다발성으로 발생(다중 이환)하면서 신체 기능이 전반적으로 저하될 때 발생한다. 낙상·섬망·요실금·욕창 등 복합적 증상이 특징이다.",
+        "4": "노인증후군은 기존 질병이 있는 경우 주된 증상을 특정하기 어렵고, 복합적인 원인이 작용하는 것이 특징이다.",
+        "5": "식욕부진·변비는 노인증후군의 주요 증상과 밀접하게 관련되어 있으므로, 관계없다는 설명은 틀렸다."
+      },
+      "vi": {
+        "1": "Hội chứng người già xuất hiện nhiều hơn ở người cao tuổi có hệ miễn dịch yếu, không phải người có miễn dịch mạnh.",
+        "2": "Hội chứng người già thường không hồi phục nhanh và có xu hướng kéo dài hoặc nặng hơn. Nói hồi phục qua suy yếu là sai.",
+        "3": "★ Hội chứng người già xảy ra khi nhiều bệnh lý đồng thời (đa bệnh lý) làm suy giảm chức năng toàn thân, không phải do một bệnh đơn lẻ. Đặc trưng bởi các triệu chứng phức hợp như ngã, mê sảng, tiểu không kiểm soát và loét tỳ đè.",
+        "4": "Hội chứng người già đặc trưng bởi nguyên nhân phức tạp và khó xác định triệu chứng chính ngay cả khi có bệnh nền.",
+        "5": "Chán ăn và táo bón có liên quan chặt chẽ với các triệu chứng chính của hội chứng người già; nói không liên quan là sai."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "노인증후군", "def_vi": "Hội chứng người già — tập hợp các triệu chứng phức hợp xuất hiện ở người cao tuổi do đa bệnh lý và suy giảm chức năng tổng thể" },
+      { "term_ko": "다중 이환", "def_vi": "Đa bệnh lý — tình trạng mắc nhiều bệnh cùng lúc, phổ biến ở người cao tuổi" },
+      { "term_ko": "기능 저하", "def_vi": "Suy giảm chức năng — giảm khả năng hoạt động thể chất và tinh thần do bệnh tật hoặc lão hóa" }
+    ]
+  },
+  {
+    "id": 1012,
+    "intent_ko": "노인증후군의 원인과 특성에 관한 올바른 설명을 고르는 문제",
+    "intent_vi": "Chọn mô tả đúng về nguyên nhân và đặc điểm của hội chứng người già",
+    "choice_explanations": {
+      "ko": {
+        "1": "노인증후군은 의학적 요인 외에 사회적·환경적·심리적 요인 등 다양한 원인이 복합적으로 작용한다.",
+        "2": "노인증후군은 특정 기관에만 국한되지 않고 여러 신체 기관과 시스템에 걸쳐 나타난다.",
+        "3": "노인증후군의 주된 증상은 특정한 단일 병적 상태로 설명되지 않으며, 복합적이고 비특이적이다.",
+        "4": "노인증후군은 건강한 노인보다는 기저 질환과 위험 요인이 있는 노인에게 발생하는 경향이 있다.",
+        "5": "★ 노인은 여러 만성 질환을 동시에 가지고 있어 다약제(polypharmacy) 복용이 흔하다. 여러 약물이 상호 작용하여 부작용이 발생하거나 증상이 악화될 수 있으며, 이것이 노인증후군의 중요한 원인 중 하나이다."
+      },
+      "vi": {
+        "1": "Hội chứng người già có nguyên nhân phức hợp gồm y tế, xã hội, môi trường và tâm lý, không chỉ riêng y tế.",
+        "2": "Hội chứng người già không giới hạn ở một cơ quan cụ thể mà ảnh hưởng đến nhiều cơ quan và hệ thống.",
+        "3": "Triệu chứng chính của hội chứng người già không được giải thích bằng một bệnh đơn lẻ cụ thể — mang tính phức hợp và không đặc hiệu.",
+        "4": "Hội chứng người già có xu hướng xảy ra ở người có bệnh nền và yếu tố nguy cơ, không phải người cao tuổi khỏe mạnh.",
+        "5": "★ Người cao tuổi thường mắc nhiều bệnh mạn tính đồng thời nên phải dùng nhiều loại thuốc (đa dược). Tương tác thuốc-thuốc có thể gây tác dụng phụ hoặc làm nặng thêm các triệu chứng, đây là một trong những nguyên nhân quan trọng của hội chứng người già."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "다약제 복용", "def_vi": "Đa dược (polypharmacy) — dùng nhiều loại thuốc cùng lúc, phổ biến ở người cao tuổi có nhiều bệnh mạn tính" },
+      { "term_ko": "약물-약물 상호작용", "def_vi": "Tương tác thuốc-thuốc — ảnh hưởng qua lại giữa hai hay nhiều loại thuốc dùng cùng lúc, có thể gây tác dụng phụ" },
+      { "term_ko": "비특이적 증상", "def_vi": "Triệu chứng không đặc hiệu — triệu chứng không chỉ rõ một bệnh cụ thể, đặc trưng của hội chứng người già" }
+    ]
+  },
+  {
+    "id": 1011,
+    "intent_ko": "섬망이 있는 치매 대상자가 밤에 난동을 부릴 때 올바른 대응 방법을 아는 문제",
+    "intent_vi": "Biết cách xử lý đúng khi bệnh nhân sa sút trí tuệ có mê sảng gây náo loạn vào ban đêm",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 섬망이 있는 치매 환자가 밤에 흥분하거나 난동을 부릴 때는 방을 밝고 따뜻하게 해주는 것이 효과적이다. 밝은 빛은 야간 혼란(일몰 증후군)을 완화하고 환경적 안정감을 제공하며, 따뜻한 온도는 신체적 안정을 도와 흥분을 가라앉히는 데 도움이 된다.",
+        "2": "흥분이 가라앉을 때까지 방치하면 낙상·자해 등 2차 사고 위험이 있고, 증상이 더 악화될 수 있다.",
+        "3": "섬망 상태에서는 논리적 소통이 어렵기 때문에 이유를 물어보는 것은 환자를 더욱 혼란스럽게 할 수 있다.",
+        "4": "다른 대상자들 앞에서 야단치는 것은 환자의 존엄을 해치고 정서적 불안을 더욱 악화시킨다.",
+        "5": "진정제 투약은 의사의 지시 없이 임의로 할 수 없으며, 요양보호사의 역할 범위를 벗어난다."
+      },
+      "vi": {
+        "1": "★ Khi bệnh nhân sa sút trí tuệ có mê sảng kích động vào ban đêm, làm phòng sáng và ấm áp là biện pháp hiệu quả. Ánh sáng giúp giảm lú lẫn đêm (sundowning syndrome) và tạo cảm giác an toàn về môi trường; nhiệt độ ấm giúp ổn định thể chất và giảm kích động.",
+        "2": "Để mặc bệnh nhân đến khi tự bình tĩnh có nguy cơ ngã, tự làm hại và có thể làm tình trạng nặng hơn.",
+        "3": "Trong trạng thái mê sảng, giao tiếp logic rất khó; hỏi lý do có thể làm bệnh nhân thêm bối rối.",
+        "4": "Mắng bệnh nhân trước mặt người khác xâm phạm nhân phẩm và làm bất ổn cảm xúc trầm trọng hơn.",
+        "5": "Cho thuốc an thần không được phép thực hiện tùy tiện không có chỉ định của bác sĩ; vượt ra ngoài phạm vi vai trò của người chăm sóc."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "섬망", "def_vi": "Mê sảng (delirium) — trạng thái lú lẫn cấp tính với kích động, ảo giác và rối loạn ý thức" },
+      { "term_ko": "일몰 증후군", "def_vi": "Sundowning syndrome — hiện tượng bệnh nhân sa sút trí tuệ trở nên lú lẫn và kích động hơn vào buổi tối và ban đêm" },
+      { "term_ko": "진정제", "def_vi": "Thuốc an thần — thuốc làm giảm lo âu và kích động, chỉ dùng theo chỉ định của bác sĩ" }
+    ]
+  },
+  {
+    "id": 1010,
+    "intent_ko": "섬망 대상자가 초조해할 때 올바른 돕기 방법을 이해하는 문제",
+    "intent_vi": "Hiểu cách hỗ trợ đúng khi người có mê sảng cảm thấy lo lắng bất an",
+    "choice_explanations": {
+      "ko": {
+        "1": "가족사진은 친숙한 환경을 만들어 안정감을 주므로 오히려 그대로 두는 것이 바람직하다. 치우면 불안감이 증가한다.",
+        "2": "가족 방문은 섬망 환자에게 심리적 안정을 주는 중요한 요소다. 방문 횟수를 줄이면 고립감과 불안이 커진다.",
+        "3": "대상자에게 익숙한 물건을 치우면 환경이 낯설어져 혼란과 불안을 가중시킨다.",
+        "4": "★ 섬망으로 초조한 대상자에게는 단호하고(확신 있는 태도로) 부드러운(온화하고 차분한) 목소리로 말하는 것이 효과적이다. 이는 대상자에게 안정감과 신뢰감을 주어 흥분과 불안을 줄이는 데 도움이 된다.",
+        "5": "시선을 마주치지 않으면 대상자는 무시당한다고 느껴 불안이 더 커질 수 있다. 따뜻한 눈 맞춤이 중요하다."
+      },
+      "vi": {
+        "1": "Ảnh gia đình tạo môi trường quen thuộc và cảm giác an toàn, nên để nguyên. Dọn đi sẽ tăng lo lắng.",
+        "2": "Thăm hỏi của gia đình là yếu tố ổn định tâm lý quan trọng với bệnh nhân mê sảng. Giảm tần suất thăm sẽ tăng cảm giác cô đơn và lo âu.",
+        "3": "Dọn đồ vật quen thuộc làm môi trường trở nên lạ lẫm, tăng lú lẫn và lo lắng.",
+        "4": "★ Với người mê sảng đang lo lắng bất an, nói bằng giọng kiên quyết (thái độ chắc chắn) và nhẹ nhàng (bình tĩnh, ôn hòa) là rất hiệu quả. Điều này giúp bệnh nhân cảm thấy an toàn và tin tưởng, giảm kích động và lo âu.",
+        "5": "Tránh nhìn vào mắt bệnh nhân có thể khiến họ cảm thấy bị phớt lờ, tăng lo lắng. Giao tiếp bằng mắt ấm áp là điều quan trọng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "초조", "def_vi": "Lo lắng bất an — trạng thái căng thẳng và không yên, thường gặp trong mê sảng" },
+      { "term_ko": "섬망", "def_vi": "Mê sảng (delirium) — trạng thái lú lẫn cấp tính với rối loạn ý thức và nhận thức" }
+    ]
+  }
+]

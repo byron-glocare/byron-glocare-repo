@@ -1,0 +1,783 @@
+[
+  {
+    "id": 858,
+    "intent_ko": "체중감소·설사·변비·점액성 혈변 증상으로 의심되는 질환 식별",
+    "intent_vi": "Xác định bệnh nghi ngờ dựa trên triệu chứng: giảm cân, tiêu chảy, táo bón, đi phân có máu và chất nhầy",
+    "choice_explanations": {
+      "ko": {
+        "1": "위암은 체중 감소가 나타날 수 있으나, 점액이 섞인 혈변은 위암의 전형적 증상이 아니다.",
+        "2": "췌장암은 소화기계에 영향을 주지만 혈변·점액변은 주된 증상이 아니다.",
+        "3": "★ 대장암의 전형적 증상이다. 대장 점막에서 발생한 종양이 장 내용물과 마찰하면서 출혈과 점액 분비가 생기고, 장 통과 장애로 설사와 변비가 반복되며 체중 감소까지 동반된다.",
+        "4": "위염은 위 점막의 염증으로 속쓰림이 주증상이며 점액성 혈변은 잘 나타나지 않는다.",
+        "5": "신부전은 주로 소변량 감소·부종·전해질 이상이 주증상으로, 점액성 혈변과는 관계가 없다."
+      },
+      "vi": {
+        "1": "Ung thư dạ dày có thể gây giảm cân nhưng đi phân có máu kèm chất nhầy không phải triệu chứng điển hình.",
+        "2": "Ung thư tụy ảnh hưởng đến tiêu hóa nhưng đi phân có máu và chất nhầy không phải triệu chứng chính.",
+        "3": "★ Đây là triệu chứng điển hình của ung thư đại tràng. Khối u ở niêm mạc đại tràng ma sát với phân gây chảy máu và tiết chất nhầy; tắc nghẽn lưu thông ruột dẫn đến tiêu chảy và táo bón xen kẽ, kèm theo giảm cân.",
+        "4": "Viêm dạ dày có triệu chứng chính là đau dạ dày, không thường gây đi phân có máu kèm chất nhầy.",
+        "5": "Suy thận chủ yếu gây giảm lượng nước tiểu, phù nề, rối loạn điện giải — không liên quan đến đi phân có máu."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "혈변", "def_vi": "Phân có máu — dấu hiệu xuất huyết tiêu hóa" },
+      { "term_ko": "점액변", "def_vi": "Phân có chất nhầy — thường gặp trong bệnh lý niêm mạc đại tràng" },
+      { "term_ko": "대장암", "def_vi": "Ung thư đại tràng — khối u ác tính phát sinh trong đại tràng" }
+    ]
+  },
+  {
+    "id": 857,
+    "intent_ko": "위암 환자에게 적합한 음식 선택",
+    "intent_vi": "Chọn thực phẩm phù hợp cho bệnh nhân ung thư dạ dày",
+    "choice_explanations": {
+      "ko": {
+        "1": "육개장은 기름지고 매운 자극적 음식으로 위 점막을 자극하여 위암 환자에게 적합하지 않다.",
+        "2": "★ 녹황색 채소(시금치·당근·브로콜리 등)는 비타민·미네랄·항산화 성분이 풍부하고 소화 부담이 적어 위암 환자의 영양 보충에 가장 적합하다.",
+        "3": "치킨은 조리 방식에 따라 기름기가 많아 소화가 어렵고 위암 환자에게 부적합하다.",
+        "4": "카레에 포함된 강한 향신료(고추·후추 등)는 위 점막을 자극해 위암 환자에게 좋지 않다.",
+        "5": "베이컨은 고지방·가공육으로 소화 부담이 크고, 위암의 위험 인자 중 하나로 피해야 한다."
+      },
+      "vi": {
+        "1": "Yukgaejang (canh thịt bò cay) là món nhiều dầu mỡ và cay, kích thích niêm mạc dạ dày, không phù hợp cho bệnh nhân ung thư dạ dày.",
+        "2": "★ Rau xanh đậm màu (rau bina, cà rốt, bông cải xanh…) giàu vitamin, khoáng chất và chất chống oxy hóa, ít gây gánh nặng tiêu hóa — phù hợp nhất để bổ sung dinh dưỡng cho bệnh nhân ung thư dạ dày.",
+        "3": "Gà rán nhiều dầu mỡ, khó tiêu hóa, không phù hợp cho bệnh nhân ung thư dạ dày.",
+        "4": "Cà ri chứa gia vị mạnh (ớt, tiêu…) kích thích niêm mạc dạ dày, không tốt cho bệnh nhân.",
+        "5": "Thịt xông khói là thực phẩm chế biến nhiều chất béo, khó tiêu và là một trong các yếu tố nguy cơ ung thư dạ dày."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "녹황색 채소", "def_vi": "Rau xanh đậm màu — rau giàu vitamin và khoáng chất như rau bina, cà rốt, bông cải xanh" },
+      { "term_ko": "위암", "def_vi": "Ung thư dạ dày — khối u ác tính phát sinh ở dạ dày" },
+      { "term_ko": "항산화", "def_vi": "Chống oxy hóa — cơ chế bảo vệ tế bào khỏi tổn thương do gốc tự do" }
+    ]
+  },
+  {
+    "id": 856,
+    "intent_ko": "위암에 관한 올바른 설명 식별 — 치료 후 정기검진의 중요성",
+    "intent_vi": "Xác định mô tả đúng về ung thư dạ dày — tầm quan trọng của khám định kỳ sau điều trị",
+    "choice_explanations": {
+      "ko": {
+        "1": "위암 환자는 체중 감소가 일반적이며, 체중 증가는 나타나지 않는다.",
+        "2": "위암은 초기에 증상이 거의 없어 증상만으로 조기 진단이 어렵고, 내시경 검사가 필수다.",
+        "3": "위암은 가족력이 위험 인자 중 하나이므로 '가족력이 없다'는 설명은 틀렸다.",
+        "4": "위암 환자는 영양 상태 유지를 위해 단백질 섭취를 적절히 해야 하며, 무조건 피하는 것은 잘못이다.",
+        "5": "★ 위암 치료 후 5년간 정기검진을 통해 재발 여부를 확인하는 것이 표준 관리 지침이다. 위암은 치료 후에도 재발 위험이 있으므로 정기적인 추적 관찰이 필수적이다."
+      },
+      "vi": {
+        "1": "Bệnh nhân ung thư dạ dày thường bị giảm cân, không phải tăng cân.",
+        "2": "Ung thư dạ dày giai đoạn sớm hầu như không có triệu chứng, nên không thể chẩn đoán sớm chỉ dựa vào triệu chứng — cần nội soi.",
+        "3": "Tiền sử gia đình là một trong các yếu tố nguy cơ của ung thư dạ dày, nên nói 'không có tiền sử gia đình' là sai.",
+        "4": "Bệnh nhân ung thư dạ dày cần duy trì lượng protein phù hợp để đảm bảo dinh dưỡng; tránh hoàn toàn là không đúng.",
+        "5": "★ Khám định kỳ trong 5 năm sau điều trị để theo dõi tái phát là hướng dẫn quản lý tiêu chuẩn cho ung thư dạ dày. Bệnh có thể tái phát sau điều trị nên việc theo dõi liên tục là bắt buộc."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "정기검진", "def_vi": "Khám định kỳ — kiểm tra sức khỏe theo lịch trình để phát hiện tái phát" },
+      { "term_ko": "재발", "def_vi": "Tái phát — bệnh xuất hiện trở lại sau khi điều trị" },
+      { "term_ko": "가족력", "def_vi": "Tiền sử gia đình — lịch sử mắc bệnh của các thành viên trong gia đình, là yếu tố nguy cơ" }
+    ]
+  },
+  {
+    "id": 855,
+    "intent_ko": "서서히 진행되며 오심·구토·복부 종양 덩어리가 나타나는 질환 식별",
+    "intent_vi": "Xác định bệnh tiến triển chậm, biểu hiện buồn nôn, nôn mửa và khối u bụng",
+    "choice_explanations": {
+      "ko": {
+        "1": "식도암은 연하곤란(삼키기 어려움)과 흉통이 주증상으로, 복부 종양 덩어리와는 다르다.",
+        "2": "★ 위암은 서서히 진행되어 초기에 증상이 거의 없고, 진행되면 체중 감소·오심·출혈·구토·복부 종양 덩어리가 나타나는 전형적인 경과를 보인다.",
+        "3": "간암은 황달·우상복부 통증이 특징적이며, 위의 증상 조합과는 다르다.",
+        "4": "대장암은 혈변·변비·설사 등 배변 습관 변화가 주증상으로, 복부 종양이 나타날 수 있으나 오심·구토가 먼저 뚜렷하게 나타나지 않는다.",
+        "5": "폐암은 기침·객혈·호흡곤란이 주증상으로 소화기 증상과는 다르다."
+      },
+      "vi": {
+        "1": "Ung thư thực quản có triệu chứng chính là khó nuốt và đau ngực, khác với khối u ở bụng.",
+        "2": "★ Ung thư dạ dày tiến triển chậm, giai đoạn sớm gần như không có triệu chứng. Khi tiến triển xuất hiện giảm cân, buồn nôn, xuất huyết, nôn mửa và khối u ở bụng — đây là diễn tiến điển hình.",
+        "3": "Ung thư gan đặc trưng bởi vàng da và đau hạ sườn phải, khác với tổ hợp triệu chứng trên.",
+        "4": "Ung thư đại tràng có triệu chứng chính là thay đổi thói quen đại tiện (tiêu chảy, táo bón, phân có máu), không điển hình với buồn nôn và nôn trước tiên.",
+        "5": "Ung thư phổi có triệu chứng chính là ho, ho ra máu, khó thở — khác với các triệu chứng tiêu hóa."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "오심", "def_vi": "Buồn nôn — cảm giác muốn nôn" },
+      { "term_ko": "연하곤란", "def_vi": "Khó nuốt — triệu chứng điển hình của ung thư thực quản" },
+      { "term_ko": "복부 종양", "def_vi": "Khối u bụng — khối u sờ thấy được ở vùng bụng" }
+    ]
+  },
+  {
+    "id": 854,
+    "intent_ko": "위궤양 대상자를 돕는 올바른 방법 선택 — 금연의 중요성",
+    "intent_vi": "Chọn phương pháp đúng để hỗ trợ người bệnh loét dạ dày — tầm quan trọng của việc cai thuốc",
+    "choice_explanations": {
+      "ko": {
+        "1": "훈연 식품(훈제 음식)은 위 점막을 자극하고 발암 가능성도 있어 위궤양 환자에게 적합하지 않다.",
+        "2": "★ 흡연은 위 점막 혈류를 감소시키고 위산 분비를 촉진하여 위궤양을 악화시킨다. 금연은 위궤양 치유의 핵심 조치다.",
+        "3": "취침 전 녹차 섭취는 카페인과 타닌이 위산 분비를 자극하여 위궤양 증상을 악화시킬 수 있다.",
+        "4": "검은색 대변(흑변)은 상부 소화관 출혈의 신호일 수 있으므로 즉시 의료기관에 보고해야 하며, 안심시키는 것은 위험하다.",
+        "5": "비스테로이드성 소염진통제(NSAIDs)는 위 점막 보호 물질인 프로스타글란딘 합성을 억제하여 위궤양을 악화시키므로 복용을 피해야 한다."
+      },
+      "vi": {
+        "1": "Thực phẩm hun khói kích thích niêm mạc dạ dày và có nguy cơ gây ung thư, không phù hợp cho người bệnh loét dạ dày.",
+        "2": "★ Hút thuốc làm giảm lưu lượng máu đến niêm mạc dạ dày và kích thích tiết axit, làm nặng thêm loét dạ dày. Cai thuốc là biện pháp then chốt trong điều trị loét dạ dày.",
+        "3": "Uống trà xanh trước khi ngủ có thể kích thích tiết axit dạ dày do caffeine và tannin, làm nặng thêm triệu chứng.",
+        "4": "Phân đen có thể là dấu hiệu xuất huyết đường tiêu hóa trên — cần báo cáo ngay cho cơ sở y tế, không được trấn an người bệnh.",
+        "5": "Thuốc giảm đau chống viêm không steroid (NSAIDs) ức chế tổng hợp prostaglandin bảo vệ niêm mạc dạ dày, làm nặng thêm loét — cần tránh sử dụng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "위궤양", "def_vi": "Loét dạ dày — vết thương trên niêm mạc dạ dày" },
+      { "term_ko": "흑변", "def_vi": "Phân đen — dấu hiệu xuất huyết đường tiêu hóa trên, cần xử trí khẩn" },
+      { "term_ko": "비스테로이드성 소염진통제", "def_vi": "Thuốc giảm đau chống viêm không steroid (NSAIDs) — gây loét dạ dày khi dùng kéo dài" },
+      { "term_ko": "프로스타글란딘", "def_vi": "Prostaglandin — chất bảo vệ niêm mạc dạ dày, bị NSAIDs ức chế" }
+    ]
+  },
+  {
+    "id": 853,
+    "intent_ko": "헬리코박터균 감염으로 속쓰림과 상복부 불편감이 나타나는 질환 식별",
+    "intent_vi": "Xác định bệnh gây ợ nóng và khó chịu vùng thượng vị do nhiễm vi khuẩn Helicobacter",
+    "choice_explanations": {
+      "ko": {
+        "1": "췌장염은 췌장 효소에 의한 자가 소화로 발생하며, 헬리코박터균 감염과는 무관하다.",
+        "2": "협심증은 심근 허혈로 인한 심장 질환으로 소화기계와 관련이 없다.",
+        "3": "담석증은 담낭 내 결석 형성으로 발생하며, 헬리코박터균 감염과 직접적인 관계가 없다.",
+        "4": "★ 위궤양은 헬리코박터 파일로리(H. pylori) 감염이 주요 원인 중 하나다. 이 균이 위 점막을 손상시켜 위산으로부터 점막을 보호하는 기능을 약화시키고, 그 결과 속쓰림과 상복부 불편감이 나타난다.",
+        "5": "대장암은 대장 점막에서 발생하는 악성 종양으로 헬리코박터균과는 무관하다."
+      },
+      "vi": {
+        "1": "Viêm tụy xảy ra do enzyme tụy tự tiêu hóa, không liên quan đến nhiễm vi khuẩn Helicobacter.",
+        "2": "Đau thắt ngực là bệnh tim do thiếu máu cơ tim, không liên quan đến hệ tiêu hóa.",
+        "3": "Sỏi mật hình thành trong túi mật, không liên quan trực tiếp đến nhiễm Helicobacter.",
+        "4": "★ Loét dạ dày có nguyên nhân chính là nhiễm Helicobacter pylori (H. pylori). Vi khuẩn này phá hủy niêm mạc dạ dày, làm suy yếu khả năng bảo vệ chống axit, dẫn đến ợ nóng và khó chịu vùng thượng vị.",
+        "5": "Ung thư đại tràng phát sinh từ niêm mạc đại tràng, không liên quan đến vi khuẩn Helicobacter."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "헬리코박터균", "def_vi": "Vi khuẩn Helicobacter pylori — vi khuẩn gây viêm dạ dày và loét dạ dày" },
+      { "term_ko": "상복부", "def_vi": "Vùng thượng vị — phần trên của bụng, ngay dưới xương ức" },
+      { "term_ko": "속쓰림", "def_vi": "Ợ nóng / đau rát dạ dày — cảm giác nóng rát ở vùng thượng vị" }
+    ]
+  },
+  {
+    "id": 852,
+    "intent_ko": "새벽 속쓰림·출혈·천공·협착이 나타나는 질환 식별",
+    "intent_vi": "Xác định bệnh gây ợ nóng về đêm và biến chứng xuất huyết, thủng, hẹp dạ dày",
+    "choice_explanations": {
+      "ko": {
+        "1": "위암은 진행된 상태에서 증상이 나타나며, 새벽 속쓰림 패턴과 천공·협착의 전형적인 조합은 위궤양의 특성이다.",
+        "2": "위염은 속쓰림을 유발할 수 있으나, 천공·협착 같은 중증 합병증은 위궤양만큼 흔하지 않다.",
+        "3": "★ 위궤양은 새벽 1~2시 공복 시 위산이 점막 결손부를 자극하여 속쓰림이 심해지는 특징이 있다. 심화 시 위 출혈(토혈·흑변), 위 천공(복막염 유발), 위 협착(음식물 통과 장애)으로 진행될 수 있다.",
+        "4": "식도암은 연하곤란·흉통이 주증상으로 상복부 새벽 속쓰림 패턴과 다르다.",
+        "5": "대장암은 주로 하복부 증상(혈변·변비)이 주이며 상복부 새벽 통증은 전형적이지 않다."
+      },
+      "vi": {
+        "1": "Ung thư dạ dày có triệu chứng khi đã tiến triển; tổ hợp ợ nóng về đêm kèm thủng và hẹp là đặc trưng của loét dạ dày.",
+        "2": "Viêm dạ dày có thể gây ợ nóng nhưng các biến chứng nặng như thủng và hẹp ít gặp hơn so với loét dạ dày.",
+        "3": "★ Loét dạ dày có đặc điểm ợ nóng dữ dội vào lúc 1-2 giờ sáng khi dạ dày trống — axit kích thích vùng niêm mạc bị tổn thương. Khi nặng hơn có thể dẫn đến xuất huyết dạ dày (nôn ra máu, phân đen), thủng dạ dày (gây viêm phúc mạc) và hẹp dạ dày (cản trở tiêu hóa).",
+        "4": "Ung thư thực quản có triệu chứng chính là khó nuốt và đau ngực, khác với cơn đau thượng vị về đêm.",
+        "5": "Ung thư đại tràng chủ yếu gây triệu chứng vùng bụng dưới (phân có máu, táo bón), không điển hình với đau thượng vị về đêm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "위 천공", "def_vi": "Thủng dạ dày — biến chứng nghiêm trọng khi loét ăn thủng thành dạ dày, gây viêm phúc mạc" },
+      { "term_ko": "위 협착", "def_vi": "Hẹp dạ dày — biến chứng làm thu hẹp lòng dạ dày, cản trở thức ăn đi qua" },
+      { "term_ko": "위 출혈", "def_vi": "Xuất huyết dạ dày — chảy máu trong dạ dày, biểu hiện bằng nôn ra máu hoặc phân đen" }
+    ]
+  },
+  {
+    "id": 851,
+    "intent_ko": "위염으로 인한 명치 통증과 구토 증상 완화를 위한 올바른 방법 선택",
+    "intent_vi": "Chọn phương pháp đúng để giảm đau thượng vị và nôn do viêm dạ dày",
+    "choice_explanations": {
+      "ko": {
+        "1": "차가운 음료는 위 점막을 자극하고 위 경련을 유발하여 위염 증상을 악화시킨다.",
+        "2": "양손으로 상복부를 밀어 올리는 것은 하임리히법으로, 위염 증상 완화와 관계없고 오히려 통증을 유발한다.",
+        "3": "처방받은 제산제 복용 중단은 위산 중화 효과를 없애 증상을 악화시키므로 금물이다.",
+        "4": "잦은 소량 식사는 위산 분비를 지속적으로 유발하여 위에 부담을 줄 수 있다.",
+        "5": "★ 하루 정도 금식하면 위가 쉴 수 있어 염증 부위에 자극을 주지 않고 회복을 돕는다. 급성 위염 시 단기 금식 후 미음 등 유동식부터 점진적으로 식사를 재개하는 것이 기본 대처법이다."
+      },
+      "vi": {
+        "1": "Đồ uống lạnh kích thích niêm mạc dạ dày và có thể gây co thắt, làm nặng thêm triệu chứng viêm.",
+        "2": "Dùng hai tay đẩy lên vùng thượng vị là thủ thuật Heimlich cho hóc dị vật, không liên quan đến giảm triệu chứng viêm dạ dày và có thể gây đau.",
+        "3": "Ngừng uống thuốc kháng axit theo toa sẽ mất tác dụng trung hòa axit, làm nặng thêm triệu chứng.",
+        "4": "Ăn nhiều bữa nhỏ liên tục kích thích tiết axit dạ dày liên tục, tạo thêm gánh nặng cho dạ dày.",
+        "5": "★ Nhịn ăn khoảng một ngày giúp dạ dày nghỉ ngơi, không kích thích vùng niêm mạc bị viêm, hỗ trợ phục hồi. Đây là biện pháp cơ bản khi viêm dạ dày cấp — sau đó bắt đầu lại bằng cháo lỏng và tăng dần."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "제산제", "def_vi": "Thuốc kháng axit — thuốc trung hòa axit dạ dày, giảm triệu chứng ợ nóng" },
+      { "term_ko": "금식", "def_vi": "Nhịn ăn — không ăn uống trong một thời gian để dạ dày nghỉ ngơi" },
+      { "term_ko": "명치", "def_vi": "Vùng thượng vị (đám rối thái dương) — vùng giữa ngực và rốn, trên dạ dày" }
+    ]
+  },
+  {
+    "id": 850,
+    "intent_ko": "위염 치료 및 예방을 위한 올바른 방법 선택",
+    "intent_vi": "Chọn phương pháp đúng để điều trị và phòng ngừa viêm dạ dày",
+    "choice_explanations": {
+      "ko": {
+        "1": "금식 중에도 수분 섭취는 반드시 유지해야 탈수를 예방할 수 있다.",
+        "2": "자극적인 음식(매운 음식, 산성 음식)은 위 점막을 자극하여 위염을 악화시킨다.",
+        "3": "금식 후 첫 식사로 뜨거운 음식은 위 점막에 열 자극을 주므로 미음·죽 등 미지근한 음식부터 시작해야 한다.",
+        "4": "★ 제산제는 위산을 중화하여 위 점막 자극을 줄이고, 진정제(항콜린제 등)는 위 경련과 통증을 완화하여 위염 치료에 도움을 준다. 약물 치료는 위염 관리의 핵심 중 하나다.",
+        "5": "과도한 신체 운동은 위장으로 가는 혈류를 감소시키고 위장 운동을 오히려 방해할 수 있다."
+      },
+      "vi": {
+        "1": "Khi nhịn ăn vẫn phải duy trì uống nước đầy đủ để tránh mất nước.",
+        "2": "Thực phẩm kích thích (cay, chua) kích thích niêm mạc dạ dày, làm nặng thêm viêm.",
+        "3": "Sau khi nhịn ăn, không nên ăn ngay thức ăn nóng vì gây kích thích nhiệt cho niêm mạc — nên bắt đầu bằng cháo loãng ở nhiệt độ vừa.",
+        "4": "★ Thuốc kháng axit trung hòa axit dạ dày, giảm kích thích niêm mạc; thuốc an thần (anticholinergic…) giảm co thắt và đau — kết hợp hai loại này là cốt lõi điều trị viêm dạ dày.",
+        "5": "Vận động thể chất quá mức làm giảm lưu lượng máu đến đường tiêu hóa và có thể cản trở nhu động dạ dày."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "제산제", "def_vi": "Thuốc kháng axit — thuốc trung hòa axit dạ dày" },
+      { "term_ko": "진정제", "def_vi": "Thuốc an thần / thuốc giảm co thắt — giảm đau và co thắt dạ dày trong điều trị viêm" },
+      { "term_ko": "위 점막", "def_vi": "Niêm mạc dạ dày — lớp bảo vệ bên trong dạ dày dễ bị tổn thương khi viêm" }
+    ]
+  },
+  {
+    "id": 849,
+    "intent_ko": "공복 시 명치 통증과 식후 위 팽만감을 일으키는 질환 식별",
+    "intent_vi": "Xác định bệnh gây đau thượng vị khi đói và cảm giác nặng bụng sau ăn",
+    "choice_explanations": {
+      "ko": {
+        "1": "위궤양도 공복 통증이 있을 수 있으나, 위궤양은 주로 새벽에 심한 통증이 나타나고 식사 후 통증이 완화되는 경향이 있어 이 증상과 약간 다르다.",
+        "2": "당뇨병은 혈당 조절 이상으로 나타나며 명치 통증이나 식후 팽만감은 전형적 증상이 아니다.",
+        "3": "변비는 배변 곤란과 하복부 불편감이 주증상으로, 명치 통증과는 위치가 다르다.",
+        "4": "★ 위염은 배고플 때 명치 부위의 통증과 식사 후 위가 무겁거나 부푼 느낌(팽만감)이 전형적인 증상이다. 위 점막의 염증으로 인해 위 운동 기능이 저하되고 소화가 늦어지면서 이러한 증상이 발생한다.",
+        "5": "대장암은 주로 하복부 증상(혈변·변비·설사)이 나타나며, 명치 통증과 식후 팽만감은 주증상이 아니다."
+      },
+      "vi": {
+        "1": "Loét dạ dày cũng gây đau khi đói nhưng thường giảm đau sau ăn và cơn đau thường dữ dội vào ban đêm — khác đôi chút với mô tả này.",
+        "2": "Đái tháo đường rối loạn điều tiết đường huyết, không điển hình với đau thượng vị hay đầy bụng sau ăn.",
+        "3": "Táo bón gây khó đại tiện và khó chịu vùng bụng dưới, không phải đau vùng thượng vị.",
+        "4": "★ Viêm dạ dày có triệu chứng điển hình là đau vùng thượng vị khi đói và cảm giác nặng bụng, đầy hơi sau ăn. Viêm niêm mạc dạ dày làm giảm nhu động và chậm tiêu hóa, gây ra các triệu chứng này.",
+        "5": "Ung thư đại tràng chủ yếu gây triệu chứng vùng bụng dưới (phân có máu, táo bón, tiêu chảy), không phải đau thượng vị và đầy bụng sau ăn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "위염", "def_vi": "Viêm dạ dày — tình trạng viêm niêm mạc dạ dày" },
+      { "term_ko": "팽만감", "def_vi": "Cảm giác đầy bụng — cảm giác căng trướng sau ăn do chậm tiêu" },
+      { "term_ko": "위 운동 기능", "def_vi": "Nhu động dạ dày — chức năng co bóp của dạ dày để tiêu hóa thức ăn" }
+    ]
+  },
+  {
+    "id": 848,
+    "intent_ko": "노화에 따른 소화기계 변화 중 옳은 것 선택 — 약물 대사능력 감소",
+    "intent_vi": "Xác định thay đổi đúng của hệ tiêu hóa theo lão hóa — giảm khả năng chuyển hóa thuốc",
+    "choice_explanations": {
+      "ko": {
+        "1": "노화로 타액 분비는 감소하여 구강 건조증이 나타나기 쉽다.",
+        "2": "노화로 위산 분비가 감소하여 위액 산도도 감소한다.",
+        "3": "노화로 지방 흡수력은 감소하여 지용성 비타민 흡수에도 영향을 준다.",
+        "4": "미각은 노화로 전반적으로 감소하며, 쓴맛·신맛만 특별히 감소하는 것이 아니다.",
+        "5": "★ 노화로 인해 간의 대사 효소 활성과 신장의 배설 기능이 모두 저하되어 약물 대사능력이 감소한다. 이로 인해 약물이 체내에 더 오래 머물러 부작용 및 독성 위험이 높아진다."
+      },
+      "vi": {
+        "1": "Lão hóa làm giảm tiết nước bọt, dễ gây khô miệng.",
+        "2": "Lão hóa làm giảm tiết axit dạ dày, tức là độ axit dịch vị cũng giảm.",
+        "3": "Lão hóa làm giảm khả năng hấp thụ chất béo, ảnh hưởng đến hấp thụ vitamin tan trong dầu.",
+        "4": "Vị giác giảm toàn diện theo lão hóa, không riêng vị đắng và chua.",
+        "5": "★ Lão hóa làm giảm hoạt động enzyme gan và chức năng bài tiết thận, dẫn đến giảm khả năng chuyển hóa thuốc. Thuốc tồn tại trong cơ thể lâu hơn, tăng nguy cơ tác dụng phụ và độc tính."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "약물 대사능력", "def_vi": "Khả năng chuyển hóa thuốc — năng lực của gan và thận trong việc phân giải và bài tiết thuốc" },
+      { "term_ko": "타액", "def_vi": "Nước bọt — dịch tiêu hóa trong miệng, giảm theo lão hóa" },
+      { "term_ko": "위액 산도", "def_vi": "Độ axit dịch vị — mức độ axit của dịch dạ dày, giảm khi lão hóa" }
+    ]
+  },
+  {
+    "id": 847,
+    "intent_ko": "노화에 따른 소화기계 변화 중 옳은 것 선택 — 당내성 감소",
+    "intent_vi": "Xác định thay đổi đúng của hệ tiêu hóa theo lão hóa — giảm khả năng dung nạp đường",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 당내성 감소는 노화에 따른 소화기계(및 내분비계) 변화다. 인슐린 분비 및 세포 반응성 저하로 혈당 조절 능력이 떨어져 식후 혈당이 더 높게 오래 지속되는 경향이 있다.",
+        "2": "대장 연동 운동은 노화로 인해 증가가 아닌 감소한다.",
+        "3": "단맛·짠맛 감각은 노화로 감소한다.",
+        "4": "췌장의 소화효소 분비는 노화로 감소한다.",
+        "5": "항문 괄약근 긴장도는 노화로 감소하여 변실금 위험이 높아진다."
+      },
+      "vi": {
+        "1": "★ Giảm khả năng dung nạp đường là thay đổi đúng theo lão hóa. Sự tiết insulin và đáp ứng của tế bào với insulin giảm, làm cho đường huyết sau ăn cao hơn và kéo dài hơn.",
+        "2": "Nhu động đại tràng giảm theo lão hóa, không tăng.",
+        "3": "Khả năng cảm nhận vị ngọt và mặn giảm theo lão hóa.",
+        "4": "Tụy tiết ít enzyme tiêu hóa hơn theo lão hóa.",
+        "5": "Trương lực cơ vòng hậu môn giảm theo lão hóa, tăng nguy cơ són phân."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "당내성", "def_vi": "Khả năng dung nạp đường — khả năng điều tiết đường huyết sau khi ăn, giảm theo lão hóa" },
+      { "term_ko": "연동운동", "def_vi": "Nhu động — chuyển động co bóp của đường tiêu hóa để đẩy thức ăn" },
+      { "term_ko": "항문 괄약근", "def_vi": "Cơ vòng hậu môn — cơ kiểm soát hậu môn, giảm trương lực khi lão hóa" }
+    ]
+  },
+  {
+    "id": 846,
+    "intent_ko": "노화에 따른 소화기계 변화로 옳은 것 선택 — 소화능력 저하로 변비·설사·구토 발생",
+    "intent_vi": "Xác định thay đổi đúng của hệ tiêu hóa theo lão hóa — giảm khả năng tiêu hóa gây táo bón, tiêu chảy, nôn mửa",
+    "choice_explanations": {
+      "ko": {
+        "1": "맛을 느끼는 미뢰(미각세포)는 노화로 수가 감소한다.",
+        "2": "후각 기능도 노화로 함께 둔화되며, 미각만 둔화되는 것이 아니다.",
+        "3": "타액과 위액 분비는 노화로 감소하여 소화가 더 어려워진다.",
+        "4": "의치가 있어도 저작 능력이 완전히 회복되지 않는 경우가 많다.",
+        "5": "★ 노화로 소화기계 전반의 기능이 저하되면서 연동 운동 감소, 소화액 분비 감소 등으로 변비·설사·구토 등의 증상이 나타나기 쉽다."
+      },
+      "vi": {
+        "1": "Số lượng tế bào vị giác (nhú vị) giảm theo lão hóa.",
+        "2": "Khứu giác cũng giảm theo lão hóa, không chỉ riêng vị giác.",
+        "3": "Tiết nước bọt và dịch vị giảm theo lão hóa, làm tiêu hóa khó hơn.",
+        "4": "Dù có răng giả, khả năng nhai vẫn không hồi phục hoàn toàn trong nhiều trường hợp.",
+        "5": "★ Lão hóa làm suy giảm chức năng toàn bộ hệ tiêu hóa — giảm nhu động, giảm tiết dịch tiêu hóa — dẫn đến táo bón, tiêu chảy và nôn mửa dễ xảy ra hơn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "미뢰", "def_vi": "Nhú vị giác — tế bào cảm nhận vị trên lưỡi, giảm theo lão hóa" },
+      { "term_ko": "저작 능력", "def_vi": "Khả năng nhai — năng lực nghiền thức ăn bằng răng, giảm khi mất răng hoặc dùng răng giả" },
+      { "term_ko": "연동 운동", "def_vi": "Nhu động ruột — chuyển động đẩy thức ăn dọc theo đường tiêu hóa" }
+    ]
+  },
+  {
+    "id": 845,
+    "intent_ko": "노화에 따른 소화기계 특성 중 옳은 것 선택 — 미각과 후각 기능 둔감",
+    "intent_vi": "Xác định đặc điểm đúng của hệ tiêu hóa theo lão hóa — giảm vị giác và khứu giác",
+    "choice_explanations": {
+      "ko": {
+        "1": "대장의 활동성(연동운동)은 노화로 감소하여 변비가 잘 생긴다.",
+        "2": "★ 노화로 미각과 후각 기능이 모두 둔감해진다. 미뢰 수 감소와 후각 신경 기능 저하로 음식 맛과 냄새 지각 능력이 저하되어 식욕 감소와 영양 불균형으로 이어질 수 있다.",
+        "3": "타액과 위액 분비는 노화로 감소한다.",
+        "4": "직장벽의 탄력성은 노화로 감소하여 배변 조절 능력이 떨어진다.",
+        "5": "지방의 흡수력은 노화로 감소한다."
+      },
+      "vi": {
+        "1": "Hoạt động đại tràng (nhu động) giảm theo lão hóa, dễ gây táo bón.",
+        "2": "★ Lão hóa làm cả vị giác lẫn khứu giác đều giảm nhạy. Số lượng nhú vị giác giảm và chức năng thần kinh khứu giác suy yếu làm giảm khả năng cảm nhận mùi vị, có thể dẫn đến chán ăn và mất cân bằng dinh dưỡng.",
+        "3": "Tiết nước bọt và dịch vị giảm theo lão hóa.",
+        "4": "Độ đàn hồi thành trực tràng giảm theo lão hóa, làm giảm khả năng kiểm soát đại tiện.",
+        "5": "Khả năng hấp thụ chất béo giảm theo lão hóa."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "미각", "def_vi": "Vị giác — khả năng cảm nhận vị ngọt, mặn, chua, đắng, umami" },
+      { "term_ko": "후각", "def_vi": "Khứu giác — khả năng cảm nhận mùi, giảm đáng kể theo lão hóa" },
+      { "term_ko": "직장벽 탄력성", "def_vi": "Độ đàn hồi thành trực tràng — giảm theo lão hóa, ảnh hưởng kiểm soát đại tiện" }
+    ]
+  },
+  {
+    "id": 844,
+    "intent_ko": "소화된 음식물 수분을 흡수하여 대변 형태를 만드는 소화기관 식별",
+    "intent_vi": "Xác định cơ quan tiêu hóa hấp thụ nước từ thức ăn đã tiêu hóa và tạo thành phân",
+    "choice_explanations": {
+      "ko": {
+        "1": "췌장은 소화효소(아밀라제·리파제·프로테아제)와 인슐린을 분비하는 기관으로, 수분 흡수와 대변 형성 역할은 하지 않는다.",
+        "2": "소장은 영양소(당·아미노산·지방산)를 주로 흡수하는 기관이며, 대변 형태를 만드는 곳은 아니다.",
+        "3": "★ 대장은 소장에서 영양소가 흡수된 후 남은 내용물의 수분을 흡수하여 반고체 형태의 대변을 만든다. 또한 대장 내 장내세균이 일부 영양소를 발효·합성하는 역할도 한다.",
+        "4": "위는 음식물을 저장하고 위산·소화효소로 분해하는 역할을 하며, 대변 형성과는 관련이 없다.",
+        "5": "십이지장은 췌장액·담즙을 섞어 지방과 단백질을 소화하는 소장의 시작 부분으로, 대변 형성과는 관련이 없다."
+      },
+      "vi": {
+        "1": "Tụy tiết enzyme tiêu hóa (amylase, lipase, protease) và insulin, không có vai trò hấp thụ nước hay tạo phân.",
+        "2": "Ruột non chủ yếu hấp thụ chất dinh dưỡng (đường, amino acid, acid béo), không phải nơi tạo thành phân.",
+        "3": "★ Đại tràng hấp thụ nước từ phần còn lại sau khi ruột non đã hấp thụ dưỡng chất, tạo thành phân bán rắn. Vi khuẩn đường ruột trong đại tràng cũng lên men và tổng hợp một số chất dinh dưỡng.",
+        "4": "Dạ dày lưu trữ và phân giải thức ăn bằng axit và enzyme, không liên quan đến tạo phân.",
+        "5": "Tá tràng là phần đầu ruột non, trộn dịch tụy và mật để tiêu hóa chất béo và protein — không liên quan đến tạo phân."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "대장", "def_vi": "Đại tràng — cơ quan hấp thụ nước và tạo phân, phần cuối của đường tiêu hóa" },
+      { "term_ko": "십이지장", "def_vi": "Tá tràng — phần đầu ruột non, tiếp nhận dịch tụy và mật để tiêu hóa" },
+      { "term_ko": "장내세균", "def_vi": "Vi khuẩn đường ruột — vi sinh vật sống trong đại tràng, hỗ trợ tiêu hóa và miễn dịch" }
+    ]
+  },
+  {
+    "id": 843,
+    "intent_ko": "노인성 질환의 특성 중 옳은 것 선택 — 혈액순환 저하로 욕창 발생",
+    "intent_vi": "Xác định đặc điểm đúng của bệnh lý người cao tuổi — giảm tuần hoàn máu gây loét tì đè",
+    "choice_explanations": {
+      "ko": {
+        "1": "노인성 질환은 급성이 아닌 만성적으로 진행되는 경우가 많다.",
+        "2": "만성질환은 치료가 빠른 것이 아니라, 오히려 치료가 느리거나 관리 중심으로 진행된다.",
+        "3": "★ 노인은 혈액순환이 저하되어 말초 조직으로의 산소 및 영양 공급이 감소한다. 이로 인해 압박 부위 피부가 괴사하여 욕창이 발생하기 쉽다.",
+        "4": "노인성 질환은 원인이 복합적이거나 불명확한 경우가 많아 진단과 치료 모두 어렵다.",
+        "5": "노인성 질환은 복수의 질병이 동시에 발생하는 다중이환이 흔하다."
+      },
+      "vi": {
+        "1": "Bệnh lý người cao tuổi thường tiến triển mạn tính, không phải cấp tính.",
+        "2": "Bệnh mạn tính không điều trị nhanh — thường chỉ kiểm soát được, không chữa khỏi nhanh.",
+        "3": "★ Người cao tuổi có tuần hoàn máu giảm, dẫn đến giảm cung cấp oxy và dinh dưỡng cho mô ngoại vi. Điều này làm da vùng bị tì đè dễ hoại tử và gây loét tì đè (bed sore).",
+        "4": "Bệnh lý người cao tuổi thường có nguyên nhân phức tạp hoặc không rõ ràng, khó chẩn đoán và điều trị.",
+        "5": "Bệnh lý người cao tuổi thường có đa bệnh đồng thời (nhiều bệnh cùng lúc), không đơn độc."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "욕창", "def_vi": "Loét tì đè (bed sore) — vết loét da do áp lực kéo dài ở người nằm lâu" },
+      { "term_ko": "다중이환", "def_vi": "Đa bệnh lý — tình trạng mắc nhiều bệnh cùng một lúc, phổ biến ở người cao tuổi" },
+      { "term_ko": "혈액순환 저하", "def_vi": "Giảm tuần hoàn máu — lưu thông máu kém, gây thiếu oxy ở mô ngoại vi" }
+    ]
+  },
+  {
+    "id": 842,
+    "intent_ko": "노인성 질환 특성 중 옳은 것 선택 — 가벼운 질환에도 의식장애 발생 가능",
+    "intent_vi": "Xác định đặc điểm đúng của bệnh lý người cao tuổi — ngay cả bệnh nhẹ cũng có thể gây rối loạn ý thức",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 노인은 뇌 기능과 신경계 예비 능력이 저하되어 있어, 젊은 사람에게는 가벼운 질환(예: 요로감염, 탈수)이어도 섬망이나 의식장애로 나타날 수 있다. 이는 노인성 질환의 중요한 특성이다.",
+        "2": "노인성 질환은 증상이 비특이적이고 복잡하여 초기 진단과 예후 예측이 어렵다.",
+        "3": "노인성 질환은 반드시 만성 퇴행성 질병만은 아니며, 원인도 복합적이거나 불명확한 경우가 많다.",
+        "4": "노인성 질환은 증상이 비전형적·비특이적으로 나타나는 경우가 많아 기존 질병명으로 구분하기 어렵다.",
+        "5": "신장의 배설 능력이 저하되면 약물 배설이 느려져 체내 축적 및 독성 위험이 증가한다."
+      },
+      "vi": {
+        "1": "★ Người cao tuổi có chức năng não và dự trữ thần kinh giảm sút, nên ngay cả bệnh nhẹ (như nhiễm trùng tiết niệu, mất nước) cũng có thể biểu hiện bằng mê sảng hoặc rối loạn ý thức. Đây là đặc điểm quan trọng của bệnh lý người cao tuổi.",
+        "2": "Bệnh lý người cao tuổi có triệu chứng không đặc hiệu và phức tạp, khiến chẩn đoán sớm và tiên lượng rất khó.",
+        "3": "Bệnh lý người cao tuổi không chỉ là bệnh thoái hóa mạn tính — nguyên nhân thường phức tạp hoặc không rõ ràng.",
+        "4": "Triệu chứng thường không điển hình, khó phân loại theo tên bệnh thông thường.",
+        "5": "Giảm chức năng bài tiết thận làm chậm đào thải thuốc, tăng nguy cơ tích lũy và độc tính — không phải bài tiết nhanh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "의식장애", "def_vi": "Rối loạn ý thức — thay đổi trạng thái tỉnh táo, định hướng; bao gồm mê sảng" },
+      { "term_ko": "섬망", "def_vi": "Mê sảng (delirium) — rối loạn ý thức cấp tính, phổ biến ở người cao tuổi khi bị bệnh" },
+      { "term_ko": "비특이적 증상", "def_vi": "Triệu chứng không đặc hiệu — triệu chứng mơ hồ, không chỉ rõ bệnh cụ thể, phổ biến ở người cao tuổi" }
+    ]
+  },
+  {
+    "id": 841,
+    "intent_ko": "노인이 약물에 쉽게 중독되는 이유 — 신장 배설능력 감소",
+    "intent_vi": "Lý do người cao tuổi dễ bị ngộ độc thuốc — giảm chức năng bài tiết của thận",
+    "choice_explanations": {
+      "ko": {
+        "1": "노인은 혈액순환이 증가하는 것이 아니라 일반적으로 감소한다.",
+        "2": "간의 대사능력은 노화로 감소하며, 증가하지 않는다.",
+        "3": "약물 흡수능력도 노화로 변화가 있으나 전반적으로 저하 또는 변동이 있으며, 약물 중독의 주요 원인은 아니다.",
+        "4": "★ 신장의 사구체 여과율(GFR)이 노화로 현저히 감소한다. 이로 인해 약물 및 그 대사산물이 소변으로 배설되지 못하고 혈중에 오래 머물러 혈중 농도가 상승하면서 독성과 중독 위험이 증가한다.",
+        "5": "노인에서 위산 분비는 감소하는 경향이 있어 일부 약물의 흡수가 오히려 줄어들 수 있다."
+      },
+      "vi": {
+        "1": "Tuần hoàn máu ở người cao tuổi thường giảm, không tăng.",
+        "2": "Khả năng chuyển hóa của gan giảm theo lão hóa, không tăng.",
+        "3": "Khả năng hấp thụ thuốc có thể thay đổi theo lão hóa nhưng không phải nguyên nhân chính gây ngộ độc thuốc.",
+        "4": "★ Tốc độ lọc cầu thận (GFR) giảm đáng kể theo lão hóa. Thuốc và các chất chuyển hóa không được bài tiết qua nước tiểu kịp thời, tích lũy trong máu, làm tăng nồng độ thuốc và nguy cơ ngộ độc.",
+        "5": "Tiết axit dạ dày giảm ở người cao tuổi, có thể làm giảm hấp thụ một số thuốc."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "사구체 여과율", "def_vi": "Tốc độ lọc cầu thận (GFR) — chỉ số đánh giá chức năng thận, giảm rõ rệt theo lão hóa" },
+      { "term_ko": "약물 중독", "def_vi": "Ngộ độc thuốc — tình trạng thuốc tích lũy vượt ngưỡng an toàn trong cơ thể" },
+      { "term_ko": "배설능력", "def_vi": "Chức năng bài tiết — khả năng của thận loại bỏ chất thải và thuốc qua nước tiểu" }
+    ]
+  },
+  {
+    "id": 840,
+    "intent_ko": "노인성 질환의 특성 중 옳은 것 선택 — 노화과정과 구분이 어려워 진단이 어렵다",
+    "intent_vi": "Xác định đặc điểm đúng của bệnh lý người cao tuổi — khó phân biệt với quá trình lão hóa bình thường",
+    "choice_explanations": {
+      "ko": {
+        "1": "노인성 질환은 주로 만성적으로 진행되므로, 급성질환이 대부분이라는 설명은 틀렸다.",
+        "2": "노인은 약물에 더 민감하게 반응하는 경우가 많아 '둔감'이라는 표현은 잘못된 일반화이다.",
+        "3": "노인성 질환은 빈번하게 발생하지만 회복이 느린 경향이 있다.",
+        "4": "★ 노인성 질환의 증상이 노화의 자연스러운 변화(근력 감소·피로·기억력 저하 등)와 유사하여 질환과 정상 노화를 구분하기 어렵다. 이로 인해 조기 진단이 늦어지는 경우가 많다.",
+        "5": "노화로 골격근의 수축력이 감소하므로 관절 운동이 용이하지 않다."
+      },
+      "vi": {
+        "1": "Bệnh lý người cao tuổi chủ yếu tiến triển mạn tính — không phải đa số là bệnh cấp tính.",
+        "2": "Người cao tuổi thường nhạy cảm hơn với thuốc — không thể khái quát là 'kém nhạy'.",
+        "3": "Bệnh lý người cao tuổi hay tái phát và hồi phục chậm.",
+        "4": "★ Triệu chứng bệnh lý người cao tuổi dễ lẫn với biến đổi lão hóa bình thường (giảm sức mạnh cơ, mệt mỏi, suy giảm trí nhớ…), khiến việc phân biệt bệnh lý và lão hóa tự nhiên rất khó. Điều này thường làm trì hoãn chẩn đoán sớm.",
+        "5": "Lão hóa làm giảm sức co cơ xương, khiến vận động khớp khó khăn hơn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "노인성 질환", "def_vi": "Bệnh lý người cao tuổi — nhóm bệnh đặc trưng ở người cao tuổi, thường mạn tính và đa bệnh" },
+      { "term_ko": "만성질환", "def_vi": "Bệnh mạn tính — bệnh kéo dài, thường không chữa khỏi hoàn toàn mà chỉ kiểm soát" },
+      { "term_ko": "조기 진단", "def_vi": "Chẩn đoán sớm — phát hiện bệnh ở giai đoạn đầu, khó thực hiện ở người cao tuổi do triệu chứng không điển hình" }
+    ]
+  },
+  {
+    "id": 839,
+    "intent_ko": "노인성 질환 특성 중 옳은 것 선택 — 다른 질병 동반하기 쉽다",
+    "intent_vi": "Xác định đặc điểm đúng của bệnh lý người cao tuổi — dễ kèm theo các bệnh khác",
+    "choice_explanations": {
+      "ko": {
+        "1": "노인성 질환은 경과가 짧은 것이 아니라 보통 만성적으로 오래 지속된다.",
+        "2": "노인성 질환은 합병증이 동반되기 쉬운 특성이 있다.",
+        "3": "질환 치유 후에도 기능 저하로 자립생활이 어려운 경우가 많다.",
+        "4": "전형적인 증상이 항상 나타나는 것이 아니라, 비전형적·비특이적 증상이 흔하다.",
+        "5": "★ 노인성 질환은 다중이환(여러 질환의 동반)이 특징이다. 면역 기능 저하와 장기 기능 저하로 인해 하나의 질환이 다른 질환을 유발하거나 여러 질환이 동시에 진행되는 경우가 많다."
+      },
+      "vi": {
+        "1": "Bệnh lý người cao tuổi không có diễn tiến ngắn — thường kéo dài mạn tính.",
+        "2": "Bệnh lý người cao tuổi dễ kèm theo biến chứng.",
+        "3": "Sau khi điều trị, nhiều người cao tuổi vẫn khó sống tự lập do suy giảm chức năng.",
+        "4": "Triệu chứng điển hình không phải lúc nào cũng xuất hiện — triệu chứng không điển hình và không đặc hiệu là phổ biến.",
+        "5": "★ Bệnh lý người cao tuổi đặc trưng bởi đa bệnh lý (nhiều bệnh cùng tồn tại). Do suy giảm miễn dịch và chức năng các cơ quan, một bệnh có thể kéo theo bệnh khác hoặc nhiều bệnh tiến triển cùng lúc."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "다중이환", "def_vi": "Đa bệnh lý — mắc nhiều bệnh cùng một lúc, đặc trưng của người cao tuổi" },
+      { "term_ko": "합병증", "def_vi": "Biến chứng — bệnh hoặc vấn đề mới phát sinh do bệnh hiện có" },
+      { "term_ko": "자립생활", "def_vi": "Sống tự lập — khả năng tự chăm sóc bản thân mà không cần hỗ trợ" }
+    ]
+  },
+  {
+    "id": 838,
+    "intent_ko": "노인성 질환 특성 중 옳은 것 선택 — 수분과 전해질의 균형이 깨지기 쉽다",
+    "intent_vi": "Xác định đặc điểm đúng của bệnh lý người cao tuổi — dễ mất cân bằng nước và điện giải",
+    "choice_explanations": {
+      "ko": {
+        "1": "노인성 질환은 정상적인 노화과정과 구분이 쉽지 않아 진단이 어려운 경우가 많다.",
+        "2": "노인성 질환은 재발이 드문 것이 아니라 재발이 흔하다.",
+        "3": "노인은 오히려 질환에 대한 민감도가 높아 가벼운 질환에도 심각한 반응이 나타날 수 있다.",
+        "4": "★ 노인은 신장 기능 저하와 체수분 조절 능력 감소로 수분과 전해질(나트륨·칼륨·칼슘 등)의 균형이 깨지기 쉽다. 탈수·저나트륨혈증 등이 쉽게 발생하며 이는 의식 변화, 낙상 등의 위험을 높인다.",
+        "5": "노인에서 약 성분이 체내에 오래 남아 약물 중독 위험이 높아진다. 체외로 빨리 배출되는 것은 오해다."
+      },
+      "vi": {
+        "1": "Bệnh lý người cao tuổi khó phân biệt với lão hóa bình thường — không phải dễ phân biệt.",
+        "2": "Bệnh lý người cao tuổi hay tái phát, không phải hiếm tái phát.",
+        "3": "Người cao tuổi nhạy cảm hơn với bệnh tật, ngay cả bệnh nhẹ cũng có thể gây phản ứng nghiêm trọng.",
+        "4": "★ Người cao tuổi có chức năng thận giảm và khả năng điều tiết nước trong cơ thể kém, dễ mất cân bằng nước và điện giải (natri, kali, canxi…). Mất nước và hạ natri máu dễ xảy ra, làm tăng nguy cơ thay đổi ý thức và té ngã.",
+        "5": "Ở người cao tuổi, thuốc tồn tại lâu hơn trong cơ thể do giảm bài tiết — không phải bài tiết nhanh hơn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "전해질", "def_vi": "Điện giải — các ion (natri, kali, canxi…) duy trì cân bằng nước và chức năng tế bào" },
+      { "term_ko": "저나트륨혈증", "def_vi": "Hạ natri máu — nồng độ natri trong máu thấp, phổ biến ở người cao tuổi" },
+      { "term_ko": "체수분 조절", "def_vi": "Điều tiết nước cơ thể — khả năng duy trì lượng nước cân bằng, giảm theo lão hóa" }
+    ]
+  },
+  {
+    "id": 837,
+    "intent_ko": "꾸지람을 긍정적으로 재해석하는 직무스트레스 해소 방법 식별 — 인지수정",
+    "intent_vi": "Xác định phương pháp giải tỏa stress công việc bằng cách diễn giải tích cực tình huống — điều chỉnh nhận thức",
+    "choice_explanations": {
+      "ko": {
+        "1": "호흡법은 심호흡을 통해 자율신경계를 안정시키는 방법으로, 인지적 재해석과는 다르다.",
+        "2": "인정요법은 자신의 감정·경험을 있는 그대로 수용하는 기법이다.",
+        "3": "심상훈련은 편안한 기억이나 긍정적 이미지를 떠올려 마음을 안정시키는 기법이다.",
+        "4": "★ 인지수정은 부정적 상황에 대한 사고방식을 의식적으로 긍정적으로 전환하는 기법이다. '야단맞는 것'을 '관심과 돌봄'으로 재해석하는 것이 인지수정의 전형적인 예다.",
+        "5": "긴장이완기법은 근육 이완·명상 등으로 신체 긴장을 풀어주는 기법이다."
+      },
+      "vi": {
+        "1": "Kỹ thuật thở kiểm soát hệ thần kinh tự chủ qua hít thở sâu, khác với việc diễn giải lại nhận thức.",
+        "2": "Liệu pháp chấp nhận là kỹ thuật chấp nhận cảm xúc và trải nghiệm như chúng vốn là.",
+        "3": "Huấn luyện hình ảnh (심상훈련) là kỹ thuật gợi nhớ ký ức dễ chịu hoặc hình ảnh tích cực để ổn định tâm lý.",
+        "4": "★ Điều chỉnh nhận thức (인지수정) là kỹ thuật có ý thức chuyển đổi cách suy nghĩ về tình huống tiêu cực sang tích cực. Diễn giải 'bị mắng' thành 'được quan tâm chỉ bảo' là ví dụ điển hình của điều chỉnh nhận thức.",
+        "5": "Kỹ thuật thư giãn cơ bắp dùng giãn cơ và thiền định để giải phóng căng thẳng thể chất."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "인지수정", "def_vi": "Điều chỉnh nhận thức — kỹ thuật chủ động thay đổi cách suy nghĩ tiêu cực thành tích cực" },
+      { "term_ko": "심상훈련", "def_vi": "Huấn luyện hình ảnh — kỹ thuật gợi hình ảnh tích cực trong tâm trí để giảm stress" },
+      { "term_ko": "긴장이완기법", "def_vi": "Kỹ thuật thư giãn — phương pháp giảm căng thẳng cơ thể qua giãn cơ và thiền" }
+    ]
+  },
+  {
+    "id": 836,
+    "intent_ko": "편안한 기억을 떠올리고 긍정적 단어를 반복하는 직무스트레스 대처법 식별 — 심상훈련",
+    "intent_vi": "Xác định phương pháp đối phó stress bằng cách gợi nhớ ký ức dễ chịu và lặp từ tích cực — huấn luyện hình ảnh",
+    "choice_explanations": {
+      "ko": {
+        "1": "호흡법은 복식호흡 등을 통해 생리적 긴장을 완화하는 방법으로, 기억을 떠올리는 기법은 아니다.",
+        "2": "인정요법은 자신의 감정·행동을 수용하는 방법이다.",
+        "3": "★ 심상훈련은 과거의 편안하고 행복한 기억을 생생하게 떠올리면서 긍정적 단어('편해', '쉬어' 등)를 속으로 반복하여 마음을 안정시키는 스트레스 대처법이다. 이는 이완 반응을 유도하고 부정적 감정을 전환하는 데 효과적이다.",
+        "4": "인지수정은 상황을 긍정적으로 재해석하는 방법이며, 기억을 떠올리는 것과는 다르다.",
+        "5": "긴장이완기법은 근육 이완 운동이나 점진적 근이완법으로 신체 긴장을 푸는 방법이다."
+      },
+      "vi": {
+        "1": "Kỹ thuật thở (thở bụng…) giảm căng thẳng sinh lý, không phải kỹ thuật gợi nhớ ký ức.",
+        "2": "Liệu pháp chấp nhận là kỹ thuật chấp nhận cảm xúc và hành vi của bản thân.",
+        "3": "★ Huấn luyện hình ảnh (심상훈련) là phương pháp gợi sống động ký ức dễ chịu và hạnh phúc trong quá khứ, đồng thời lặp nhẩm các từ tích cực ('thoải mái', 'nghỉ ngơi'…) để ổn định tâm lý. Phương pháp này kích hoạt phản ứng thư giãn và chuyển đổi cảm xúc tiêu cực.",
+        "4": "Điều chỉnh nhận thức là diễn giải lại tình huống một cách tích cực, khác với việc gợi nhớ ký ức.",
+        "5": "Kỹ thuật thư giãn cơ bắp dùng bài tập giãn cơ tiến triển để giảm căng thẳng thể chất."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "심상훈련", "def_vi": "Huấn luyện hình ảnh — gợi nhớ ký ức tích cực và hình dung trong tâm trí để giảm stress" },
+      { "term_ko": "복식호흡", "def_vi": "Thở bụng (thở cơ hoành) — kiểu thở sâu dùng cơ hoành, giúp thư giãn" },
+      { "term_ko": "이완 반응", "def_vi": "Phản ứng thư giãn — phản ứng sinh lý ngược với phản ứng stress, làm chậm nhịp tim và giảm căng thẳng" }
+    ]
+  },
+  {
+    "id": 835,
+    "intent_ko": "직무스트레스 예방 활동 중 옳은 것 선택 — 정기회의·면담을 통한 의사소통 체계 확보",
+    "intent_vi": "Chọn hoạt động đúng để phòng ngừa stress nghề nghiệp — đảm bảo hệ thống giao tiếp qua họp định kỳ và phỏng vấn",
+    "choice_explanations": {
+      "ko": {
+        "1": "유연한 근로시간은 스트레스 감소에 도움이 될 수 있으나, 이는 개인적 요소이며 조직 차원의 직접적인 예방 활동으로 보기 어렵다.",
+        "2": "동료 간의 만남을 자제하면 사회적 지지가 줄어들고 고립감이 증가하여 오히려 스트레스가 높아질 수 있다.",
+        "3": "휴게시간 반납은 피로와 탈진을 심화시켜 직무스트레스를 악화시킨다.",
+        "4": "★ 정기회의와 면담을 통해 의사소통 채널을 공식화하면 업무 지시의 명확성이 높아지고, 직원들의 어려움을 조기에 파악·해소할 수 있어 직무스트레스 예방에 매우 효과적이다.",
+        "5": "업무지침을 근로자가 임의로 변경하면 업무 혼란과 역할 모호성이 증가하여 스트레스 요인이 될 수 있다."
+      },
+      "vi": {
+        "1": "Giờ làm việc linh hoạt có thể giảm stress nhưng đây là yếu tố cá nhân, chưa phải hoạt động phòng ngừa trực tiếp ở cấp độ tổ chức.",
+        "2": "Hạn chế gặp gỡ đồng nghiệp làm giảm hỗ trợ xã hội và tăng cảm giác cô lập — thực ra làm tăng stress.",
+        "3": "Bỏ giờ nghỉ làm tăng mệt mỏi và kiệt sức, làm nặng thêm stress nghề nghiệp.",
+        "4": "★ Chính thức hóa kênh giao tiếp qua họp định kỳ và phỏng vấn giúp làm rõ hướng dẫn công việc, phát hiện và giải quyết sớm khó khăn của nhân viên — rất hiệu quả trong phòng ngừa stress nghề nghiệp.",
+        "5": "Để nhân viên tự ý thay đổi hướng dẫn công việc gây nhầm lẫn và tăng sự mơ hồ về vai trò — trở thành nguồn gốc của stress."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "직무스트레스", "def_vi": "Stress nghề nghiệp — áp lực tâm lý phát sinh từ môi trường và yêu cầu công việc" },
+      { "term_ko": "의사소통 체계", "def_vi": "Hệ thống giao tiếp — cơ chế trao đổi thông tin chính thức trong tổ chức" },
+      { "term_ko": "정기회의", "def_vi": "Họp định kỳ — cuộc họp diễn ra theo lịch cố định để trao đổi và giải quyết vấn đề" }
+    ]
+  },
+  {
+    "id": 834,
+    "intent_ko": "치매 대상자로부터 도둑 취급받는 상황에서의 직무스트레스 유발 요인 식별 — 감정노동",
+    "intent_vi": "Xác định yếu tố gây stress nghề nghiệp khi bị người bệnh sa sút trí tuệ buộc tội trộm cắp — lao động cảm xúc",
+    "choice_explanations": {
+      "ko": {
+        "1": "직무요구는 업무의 양이나 복잡성이 과도하게 높아 부담이 생기는 경우로, 이 사례와 다르다.",
+        "2": "조직체계는 조직 구조나 관리 방식에서 비롯되는 스트레스로, 이 사례와 관련이 없다.",
+        "3": "노동강도는 육체적·정신적 노동의 부담 정도를 의미하며, 이 사례의 핵심은 아니다.",
+        "4": "역할모호는 자신이 해야 할 역할의 경계가 불명확한 경우로, 이 사례와 다르다.",
+        "5": "★ 감정노동은 직업상 자신의 감정을 억제하거나 표현을 조절해야 하는 노동이다. 요양보호사가 도둑 취급을 받으며 자존심이 상하고 기분이 나쁨에도 치매 대상자를 위해 감정을 조절해야 하는 이 상황이 감정노동의 전형적인 예다."
+      },
+      "vi": {
+        "1": "Yêu cầu công việc là tình huống khối lượng hoặc độ phức tạp công việc quá cao — khác với tình huống này.",
+        "2": "Hệ thống tổ chức là stress từ cơ cấu hoặc phong cách quản lý của tổ chức — không liên quan đến trường hợp này.",
+        "3": "Cường độ lao động là mức độ gánh nặng thể chất hoặc tinh thần — không phải điểm cốt lõi của tình huống này.",
+        "4": "Mơ hồ về vai trò xảy ra khi ranh giới trách nhiệm không rõ ràng — khác với tình huống này.",
+        "5": "★ Lao động cảm xúc là dạng lao động đòi hỏi phải kiềm chế hoặc điều tiết cảm xúc cá nhân vì nghề nghiệp. Người chăm sóc bị buộc tội trộm cắp, tổn thương lòng tự trọng nhưng vẫn phải kiểm soát cảm xúc để chăm sóc người bệnh sa sút trí tuệ — đây là ví dụ điển hình của lao động cảm xúc."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "감정노동", "def_vi": "Lao động cảm xúc — công việc đòi hỏi kiềm chế hoặc điều tiết cảm xúc cá nhân theo yêu cầu nghề nghiệp" },
+      { "term_ko": "치매", "def_vi": "Sa sút trí tuệ (dementia) — bệnh suy giảm trí nhớ và nhận thức tiến triển" },
+      { "term_ko": "역할모호", "def_vi": "Mơ hồ về vai trò — stress do ranh giới và trách nhiệm công việc không được xác định rõ" }
+    ]
+  },
+  {
+    "id": 833,
+    "intent_ko": "업무 범위 밖의 가사 요구 상황에서 직무스트레스 유발 요인 식별 — 역할모호",
+    "intent_vi": "Xác định yếu tố gây stress khi được yêu cầu làm việc ngoài phạm vi nhiệm vụ — mơ hồ về vai trò",
+    "choice_explanations": {
+      "ko": {
+        "1": "조직체계는 조직의 구조·감독 방식에서 비롯되는 스트레스로, 이 사례와 다르다.",
+        "2": "직무요구는 업무량·난이도의 과부하에 해당하며, 이 사례의 핵심이 아니다.",
+        "3": "★ 역할모호는 요양보호사가 수행해야 할 서비스 범위가 불명확하여 발생하는 스트레스다. 대상자가 딸들 방문을 위해 특별 요리를 만들고 반찬도 넉넉히 준비해달라고 요청하는 것은 요양보호사의 공식 업무 범위를 벗어난 요구로, 어디까지 해야 하는지 경계가 모호한 역할모호의 전형적 예다.",
+        "4": "노동강도는 육체적·정신적 노동 부담의 정도에 관한 것이다.",
+        "5": "성희롱은 성적 괴롭힘으로 이 상황과 무관하다."
+      },
+      "vi": {
+        "1": "Hệ thống tổ chức là stress từ cơ cấu và giám sát của tổ chức — không phải tình huống này.",
+        "2": "Yêu cầu công việc liên quan đến quá tải về khối lượng và độ khó — không phải điểm cốt lõi.",
+        "3": "★ Mơ hồ về vai trò là stress phát sinh khi phạm vi dịch vụ của người chăm sóc không được xác định rõ. Người bệnh yêu cầu nấu bữa đặc biệt và chuẩn bị thức ăn mang về cho các con — vượt ngoài phạm vi công việc chính thức, khiến người chăm sóc không biết nên làm đến đâu. Đây là ví dụ điển hình của mơ hồ về vai trò.",
+        "4": "Cường độ lao động liên quan đến mức độ gánh nặng thể chất và tinh thần.",
+        "5": "Quấy rối tình dục không liên quan đến tình huống này."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "역할모호", "def_vi": "Mơ hồ về vai trò — stress khi ranh giới và trách nhiệm công việc không được xác định rõ ràng" },
+      { "term_ko": "직무요구", "def_vi": "Yêu cầu công việc — mức độ áp lực từ khối lượng và chất lượng công việc được yêu cầu" },
+      { "term_ko": "재가요양보호사", "def_vi": "Người chăm sóc tại nhà — nhân viên chăm sóc người cao tuổi tại gia, phạm vi công việc dễ bị mở rộng không kiểm soát" }
+    ]
+  },
+  {
+    "id": 832,
+    "intent_ko": "재가요양보호사 직무스트레스 유형과 내용의 올바른 연결 식별 — 역할모호는 업무 범위 밖 가사노동 요구",
+    "intent_vi": "Xác định kết nối đúng giữa loại stress và nội dung — mơ hồ vai trò ứng với yêu cầu làm việc nhà ngoài phạm vi",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 역할모호는 요양보호사에게 공식 업무 범위 밖의 가사노동(청소·빨래·요리 등)을 요구하는 상황에서 발생한다. 어디까지가 자신의 역할인지 명확하지 않아 스트레스가 생기는 것이 역할모호의 정확한 설명이다.",
+        "2": "감정노동은 자신의 감정을 숨기거나 조절해야 하는 경우에 해당하며, 보호자 역할 수행은 역할모호나 직무요구에 더 가깝다.",
+        "3": "성희롱은 원치 않는 성적 언행·접촉을 의미하며, 대상자의 '자유로운 의사표현'을 존중하는 것이 성희롱에 해당하지 않는다.",
+        "4": "직무요구는 업무량·강도·복잡성의 과부하를 의미하며, 경제적 지원은 요양보호사의 공식 직무가 아니다.",
+        "5": "체계적인 관리감독에 따른 근로조건의 일관성은 조직체계의 긍정적 측면이며, 스트레스 원인이 아니다."
+      },
+      "vi": {
+        "1": "★ Mơ hồ về vai trò xảy ra khi người chăm sóc bị yêu cầu làm việc nhà (dọn dẹp, giặt giũ, nấu ăn…) ngoài phạm vi chính thức. Không biết nhiệm vụ của mình đến đâu gây stress — đây là mô tả chính xác của mơ hồ về vai trò.",
+        "2": "Lao động cảm xúc là phải che giấu hoặc điều tiết cảm xúc; đảm nhận vai trò người thân gần hơn với mơ hồ vai trò hoặc yêu cầu công việc.",
+        "3": "Quấy rối tình dục là hành vi tình dục không mong muốn; tôn trọng quyền tự do biểu đạt của người bệnh không phải là quấy rối.",
+        "4": "Yêu cầu công việc là quá tải về khối lượng và cường độ; hỗ trợ kinh tế không phải là nhiệm vụ chính thức của người chăm sóc.",
+        "5": "Tính nhất quán của điều kiện làm việc theo giám sát có hệ thống là mặt tích cực của hệ thống tổ chức, không phải nguyên nhân gây stress."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "재가요양보호사", "def_vi": "Người chăm sóc tại nhà — chăm sóc người cao tuổi tại gia đình, thường đối mặt với yêu cầu vượt phạm vi" },
+      { "term_ko": "역할모호", "def_vi": "Mơ hồ về vai trò — không xác định được ranh giới trách nhiệm, gây stress" },
+      { "term_ko": "감정노동", "def_vi": "Lao động cảm xúc — phải kiềm chế cảm xúc cá nhân để đáp ứng yêu cầu nghề nghiệp" }
+    ]
+  },
+  {
+    "id": 831,
+    "intent_ko": "옴 감염 대상자를 안전하게 돌보는 방법 선택 — 내의·침구 고온 세탁",
+    "intent_vi": "Chọn phương pháp an toàn khi chăm sóc người bệnh bị ghẻ — giặt đồ lót và chăn ga bằng nước nóng",
+    "choice_explanations": {
+      "ko": {
+        "1": "공용 체온계를 사용하면 옴 진드기가 다른 사람에게 전파될 수 있어 위험하다.",
+        "2": "맨손으로 피부를 만지면 요양보호사 자신도 옴에 감염될 위험이 있다.",
+        "3": "감염 부위를 맨손으로 만지는 것은 불필요한 직접 접촉으로 감염 위험을 높인다.",
+        "4": "★ 옴 진드기(Sarcoptes scabiei)는 고온에 취약하므로, 내의와 침구를 50°C 이상 뜨거운 물로 10~20분간 세탁하면 진드기와 알을 효과적으로 사멸시킬 수 있다. 이는 옴 관리의 핵심 환경 처리 방법이다.",
+        "5": "증상이 나타난 후 장갑과 가운을 착용하는 것은 사후 대처이므로, 사전 예방(접촉 전부터 착용)이 더 중요하다."
+      },
+      "vi": {
+        "1": "Dùng nhiệt kế chung có thể lây ghẻ sang người khác.",
+        "2": "Dùng tay trần chạm vào da người bệnh làm tăng nguy cơ người chăm sóc bị lây nhiễm ghẻ.",
+        "3": "Chạm tay trần vào vùng nhiễm là tiếp xúc trực tiếp không cần thiết, tăng nguy cơ lây nhiễm.",
+        "4": "★ Ve ghẻ (Sarcoptes scabiei) rất nhạy với nhiệt độ cao. Giặt đồ lót và chăn ga bằng nước nóng trên 50°C trong 10-20 phút tiêu diệt hiệu quả ve và trứng — đây là biện pháp xử lý môi trường then chốt trong kiểm soát ghẻ.",
+        "5": "Đeo găng tay và áo choàng sau khi triệu chứng xuất hiện là xử lý sau thực tế — phòng ngừa trước (đeo trước khi tiếp xúc) quan trọng hơn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "옴", "def_vi": "Ghẻ — bệnh da do ký sinh trùng Sarcoptes scabiei, lây qua tiếp xúc da" },
+      { "term_ko": "옴 진드기", "def_vi": "Ve ghẻ (Sarcoptes scabiei) — ký sinh trùng gây bệnh ghẻ, bị tiêu diệt bởi nhiệt độ cao" },
+      { "term_ko": "고온 세탁", "def_vi": "Giặt nước nóng — giặt ở nhiệt độ cao (≥50°C) để diệt ve và trứng" }
+    ]
+  },
+  {
+    "id": 830,
+    "intent_ko": "옴에 대한 올바른 설명 선택 — 약은 밤에 바르고 다음날 아침에 씻어낸다",
+    "intent_vi": "Chọn mô tả đúng về bệnh ghẻ — bôi thuốc vào buổi tối và rửa sạch sáng hôm sau",
+    "choice_explanations": {
+      "ko": {
+        "1": "옴은 낮이 아닌 밤에 가려움이 심해지는 특성이 있다. 옴 진드기가 밤에 활발하게 활동하기 때문이다.",
+        "2": "옴은 자연적으로 사라지지 않으며, 전문 치료제(퍼메트린 크림, 이버멕틴 등)로 반드시 치료해야 한다.",
+        "3": "옴은 피부 접촉으로 매우 쉽게 전염되어 가족·시설 내 집단 발생이 흔하다.",
+        "4": "옴은 면역이 저하된 노인에게 더 심한 형태(노르웨이옴)로 나타날 수 있으나, 모든 연령대에서 발생 가능하다.",
+        "5": "★ 옴 치료제(퍼메트린 5% 크림 등)는 취침 전 전신에 바르고 8~12시간 후(다음날 아침) 씻어내는 방법이 권고된다. 밤 사이 약물이 피부에 충분히 흡수되어 진드기를 효과적으로 사멸시킨다."
+      },
+      "vi": {
+        "1": "Ghẻ gây ngứa nhiều về đêm chứ không phải ban ngày — vì ve ghẻ hoạt động tích cực hơn vào ban đêm.",
+        "2": "Ghẻ không tự khỏi mà phải điều trị bằng thuốc chuyên dụng (kem permethrin, ivermectin…).",
+        "3": "Ghẻ lây rất dễ qua tiếp xúc da — thường gây lây nhiễm tập thể trong gia đình hoặc cơ sở chăm sóc.",
+        "4": "Ghẻ có thể gặp ở mọi lứa tuổi, nhưng người cao tuổi có miễn dịch kém dễ bị thể nặng hơn (ghẻ Na Uy).",
+        "5": "★ Thuốc trị ghẻ (kem permethrin 5%…) được khuyến cáo bôi toàn thân trước khi ngủ và rửa sạch sau 8-12 giờ (sáng hôm sau). Thuốc được hấp thụ qua da trong đêm, tiêu diệt ve ghẻ hiệu quả."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "퍼메트린", "def_vi": "Permethrin — thuốc điều trị ghẻ thường dùng, dạng kem bôi ngoài da" },
+      { "term_ko": "노르웨이옴", "def_vi": "Ghẻ Na Uy — thể ghẻ nặng ở người suy giảm miễn dịch, có số lượng ve rất lớn" },
+      { "term_ko": "면역 저하", "def_vi": "Suy giảm miễn dịch — giảm khả năng chống lại bệnh tật, phổ biến ở người cao tuổi" }
+    ]
+  },
+  {
+    "id": 829,
+    "intent_ko": "옴에 감염된 편마비 대상자 돌봄 시 요양보호사의 올바른 대처법 — 세탁 어려운 물품 햇볕·다리미 처리",
+    "intent_vi": "Chọn phương pháp đúng cho người chăm sóc khi chăm sóc người bệnh liệt nửa người bị ghẻ — phơi nắng hoặc là đồ khó giặt",
+    "choice_explanations": {
+      "ko": {
+        "1": "옴은 피부 접촉으로 전파되므로 마스크 착용만으로는 예방이 불충분하다. 장갑·가운 착용이 필수다.",
+        "2": "얼굴을 포함한 전신 연고 도포는 치료 행위로, 의사 지시 없이 요양보호사가 단독으로 시행하는 것은 적절하지 않다.",
+        "3": "요양보호 업무를 임의로 중단하는 것은 근거 없이 대상자를 방치하는 것이어서 바람직하지 않다.",
+        "4": "세탁 후 즉시 사용하면 진드기가 남아있을 수 있어 건조·소독 과정이 필요하다.",
+        "5": "★ 세탁이 어려운 물품(쿠션·솜이불 등)은 3일간 햇볕에 쬐거나 다리미로 고열 처리하면 옴 진드기를 사멸시킬 수 있다. 옴 진드기는 숙주 밖에서 72시간 이상 생존하기 어려우므로, 3일 이상 사용하지 않거나 고열 처리하는 것이 효과적이다."
+      },
+      "vi": {
+        "1": "Ghẻ lây qua tiếp xúc da — chỉ đeo khẩu trang không đủ phòng ngừa; phải đeo găng tay và áo choàng.",
+        "2": "Bôi thuốc mỡ toàn thân kể cả mặt là hành vi điều trị — người chăm sóc không được tự thực hiện mà không có chỉ định của bác sĩ.",
+        "3": "Tự ý ngừng cung cấp dịch vụ chăm sóc là bỏ bê người bệnh không có cơ sở — không được phép.",
+        "4": "Dùng ngay sau khi giặt có thể còn sót ve ghẻ — cần thêm bước sấy khô hoặc khử trùng.",
+        "5": "★ Đồ vật khó giặt (gối, chăn bông…) có thể được xử lý bằng cách phơi nắng trong 3 ngày hoặc ủi nóng để tiêu diệt ve ghẻ. Ve ghẻ khó sống sót ngoài vật chủ quá 72 giờ, nên phơi ≥3 ngày hoặc xử lý nhiệt cao là hiệu quả."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "편마비", "def_vi": "Liệt nửa người — liệt một bên cơ thể, thường do đột quỵ" },
+      { "term_ko": "옴 진드기 생존 기간", "def_vi": "Thời gian sống của ve ghẻ ngoài vật chủ — tối đa khoảng 72 giờ (3 ngày)" },
+      { "term_ko": "소독", "def_vi": "Khử trùng — tiêu diệt mầm bệnh trên bề mặt hoặc đồ vật bằng nhiệt, hóa chất hoặc ánh sáng" }
+    ]
+  }
+]

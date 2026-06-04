@@ -1,0 +1,752 @@
+[
+  {
+    "id": 1377,
+    "intent_ko": "체위변경의 올바른 목적(효과)을 고르는 문제",
+    "intent_vi": "Chọn mục đích đúng của việc thay đổi tư thế",
+    "choice_explanations": {
+      "ko": {
+        "1": "체위변경은 폐 확장을 '감소'시키는 것이 아니라, 오히려 폐 확장을 도와 호흡 기능을 유지하게 합니다.",
+        "2": "체위변경은 관절 움직임을 제한하는 것이 아니라, 관절 구축을 예방하고 움직임을 촉진합니다.",
+        "3": "★ 체위변경은 한 부위에 오래 압박이 가해지는 것을 막아 혈액순환을 개선하므로 부종과 혈전을 예방하는 데 효과적입니다.",
+        "4": "체위변경은 욕창 예방에 핵심 방법입니다. 한 자세 유지 → 욕창 악화, 자세 변경 → 욕창 예방입니다.",
+        "5": "체위변경의 목적은 고정된 자세를 유지하는 것이 아니라 다양한 체위를 번갈아 취해 신체 기능을 유지하는 것입니다."
+      },
+      "vi": {
+        "1": "Thay đổi tư thế không làm giảm việc nở phổi mà ngược lại — giúp phổi nở ra tốt hơn, duy trì chức năng hô hấp.",
+        "2": "Thay đổi tư thế không hạn chế mà thực ra giúp ngăn ngừa co cứng khớp và duy trì khả năng vận động khớp.",
+        "3": "★ Thay đổi tư thế giúp cải thiện tuần hoàn máu, ngăn máu ứ đọng tại một chỗ, từ đó phòng ngừa phù nề và huyết khối một cách hiệu quả.",
+        "4": "Thay đổi tư thế là biện pháp chính để phòng loét do tì đè. Nằm một tư thế quá lâu → loét nặng hơn; thay đổi tư thế → phòng loét.",
+        "5": "Mục đích của thay đổi tư thế là luân phiên các tư thế khác nhau chứ không phải duy trì một tư thế cố định."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "체위변경", "def_vi": "Thay đổi tư thế — hành động thay đổi vị trí nằm/ngồi của người bệnh định kỳ để ngăn biến chứng" },
+      { "term_ko": "부종", "def_vi": "Phù nề — tình trạng tích tụ dịch tại một bộ phận cơ thể gây sưng" },
+      { "term_ko": "혈전", "def_vi": "Huyết khối — cục máu đông hình thành trong mạch máu, có thể gây tắc mạch" },
+      { "term_ko": "욕창", "def_vi": "Loét do tì đè — tổn thương da và mô mềm do áp lực liên tục, thường gặp ở người nằm lâu" }
+    ]
+  },
+  {
+    "id": 1376,
+    "intent_ko": "편마비 대상자를 옆에서 보조하며 일으켜 세우는 올바른 순서를 고르는 문제",
+    "intent_vi": "Chọn đúng trình tự đỡ người bệnh liệt nửa người đứng dậy khi đứng bên cạnh",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 올바른 순서: ①침대 끝에 앉혀 발을 무릎보다 뒤에 놓음(라) → ②요양보호사 발을 대상자의 마비된 발 뒤에 놓음(나) → ③마비된 대퇴부와 반대쪽 허리를 부축해 일으킴(다) → ④대퇴부를 지지하던 손을 가슴으로 옮겨 상체를 폄(가). 이 순서가 대상자를 안전하게 기립시킵니다."
+      },
+      "vi": {
+        "1": "★ Trình tự đúng: ①Cho ngồi mép giường, đặt hai chân ra sau đầu gối (라) → ②Đặt chân người chăm sóc ngay phía sau chân liệt của người bệnh (나) → ③Đỡ vùng đùi liệt và phần lưng bên đối diện để đỡ dậy (다) → ④Chuyển tay đang đỡ đùi lên ngực để giúp duỗi thẳng thân trên (가). Đây là trình tự an toàn để đỡ người bệnh đứng dậy."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "편마비", "def_vi": "Liệt nửa người — tình trạng mất hoặc giảm chức năng vận động một bên cơ thể" },
+      { "term_ko": "대퇴부", "def_vi": "Vùng đùi — phần trên của chân, từ hông đến đầu gối" },
+      { "term_ko": "부축하다", "def_vi": "Đỡ/dìu — hành động hỗ trợ thể chất giúp người khác di chuyển hoặc đứng dậy an toàn" }
+    ]
+  },
+  {
+    "id": 1375,
+    "intent_ko": "편마비 대상자의 상체를 일으킬 때 올바른 보조 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp đúng để hỗ trợ người bệnh liệt nửa người ngồi dậy (phần thân trên)",
+    "choice_explanations": {
+      "ko": {
+        "1": "한꺼번에 신속히 일으키면 낙상이나 근골격계 손상 위험이 높습니다. 반드시 천천히 단계적으로 일으켜야 합니다.",
+        "2": "요양보호사는 마비된 쪽에 위치해야 지지가 가능합니다. 건강한 쪽에 서면 마비 쪽을 보호·지지하기 어렵습니다.",
+        "3": "양손을 가슴 위에 올려놓는 것은 팔을 안전하게 고정하기 위한 것이지, 상체를 일으키는 주요 지지 방법이 아닙니다.",
+        "4": "무릎을 곧게 펴면 지지기반이 없어져 일어나기 어렵고 위험합니다. 무릎을 세워야 합니다.",
+        "5": "★ 팔을 대상자의 목 아래에 깊숙이 넣고 등과 어깨를 지지하면 머리와 목을 안정적으로 받쳐 안전하게 상체를 일으킬 수 있습니다."
+      },
+      "vi": {
+        "1": "Đỡ dậy đột ngột và nhanh dễ gây ngã hoặc chấn thương cơ xương khớp. Phải thực hiện từ từ, theo từng bước.",
+        "2": "Người chăm sóc phải đứng ở phía liệt để hỗ trợ và bảo vệ. Đứng phía khỏe sẽ khó đỡ và bảo vệ phía liệt.",
+        "3": "Đặt hai tay lên ngực là để cố định tay an toàn, không phải phương pháp hỗ trợ chính khi đỡ dậy.",
+        "4": "Duỗi thẳng đầu gối làm mất điểm tựa, khó đứng dậy và nguy hiểm. Cần gập đầu gối khi đỡ dậy.",
+        "5": "★ Luồn cánh tay sâu vào dưới cổ người bệnh và đỡ lưng cùng vai giúp giữ vững đầu và cổ, hỗ trợ an toàn khi đỡ thân trên ngồi dậy."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "편마비", "def_vi": "Liệt nửa người — tình trạng liệt hoặc yếu một bên cơ thể" },
+      { "term_ko": "지지하다", "def_vi": "Đỡ/nâng đỡ — giữ vững, chống đỡ để ngăn ngã hoặc tổn thương" }
+    ]
+  },
+  {
+    "id": 1373,
+    "intent_ko": "편마비 대상자를 옆으로 돌려 눕힐 때 지지해야 할 부위를 고르는 문제",
+    "intent_vi": "Chọn vùng cơ thể cần đỡ khi lăn người bệnh liệt nửa người sang tư thế nằm nghiêng",
+    "choice_explanations": {
+      "ko": {
+        "1": "어깨와 엉덩이를 지지하는 방법도 있으나, 편마비 대상자를 돌려 눕힐 때 먼저 안정시켜야 할 부위는 목과 어깨입니다.",
+        "2": "★ 편마비 대상자를 옆으로 돌려 눕힐 때는 목(두부 지지)과 어깨를 동시에 지지해야 척추와 머리가 일직선을 이루며 안전하게 돌아눕을 수 있습니다.",
+        "3": "양쪽 팔만 잡아서는 몸통이 불안정하고 경추 손상 위험이 있습니다.",
+        "4": "허리와 엉덩이 지지는 체위변경 중 하반신 이동 시 필요하지만, 돌려 눕히는 주요 지지 부위가 아닙니다.",
+        "5": "한쪽 팔과 다리만 지지하면 머리·목이 지지되지 않아 불안전합니다."
+      },
+      "vi": {
+        "1": "Đỡ vai và hông cũng có thể thực hiện, nhưng khi lăn người bệnh liệt nửa người sang nghiêng, vùng cổ và vai phải được ổn định trước.",
+        "2": "★ Khi lăn người bệnh liệt nửa người sang tư thế nằm nghiêng, cần đỡ đồng thời cổ (đầu) và vai để đầu — cột sống thẳng hàng, đảm bảo an toàn khi xoay người.",
+        "3": "Chỉ giữ hai tay sẽ khiến thân mình không ổn định và có nguy cơ tổn thương cột sống cổ.",
+        "4": "Đỡ lưng và hông cần thiết khi di chuyển phần thân dưới, nhưng không phải vùng hỗ trợ chính khi lăn người sang nghiêng.",
+        "5": "Chỉ đỡ một tay và một chân sẽ không giữ được đầu và cổ, gây mất an toàn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "편마비", "def_vi": "Liệt nửa người — mất chức năng vận động một bên cơ thể" },
+      { "term_ko": "지지하다", "def_vi": "Đỡ/nâng đỡ — giữ vững một bộ phận cơ thể để ngăn tổn thương" },
+      { "term_ko": "눕히다", "def_vi": "Đặt nằm — hành động đưa người bệnh về tư thế nằm" }
+    ]
+  },
+  {
+    "id": 1372,
+    "intent_ko": "왼쪽 편마비 대상자를 건강한 쪽(오른쪽)으로 돌려 눕히는 올바른 순서를 고르는 문제",
+    "intent_vi": "Chọn trình tự đúng khi lăn người bệnh liệt nửa người trái sang phía khỏe (phải)",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 올바른 순서: ①엉덩이와 아래쪽 어깨를 움직여 편안하게 함(가) → ②엉덩이와 어깨를 지지하여 돌려 눕힘(다) → ③무릎을 세우고 양손을 가슴 위에 포갬(나) → ④대상자의 오른쪽에 섬(라). 이 순서가 안전하고 효율적입니다."
+      },
+      "vi": {
+        "1": "★ Trình tự đúng: ①Di chuyển hông và vai dưới để tạo sự thoải mái (가) → ②Đỡ hông và vai rồi lăn người sang nghiêng (다) → ③Gập đầu gối và đặt hai tay chéo lên ngực (나) → ④Đứng về phía phải của người bệnh (라). Đây là trình tự an toàn và hiệu quả."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "편마비", "def_vi": "Liệt nửa người — tình trạng liệt một bên cơ thể" },
+      { "term_ko": "체위변경", "def_vi": "Thay đổi tư thế — hành động thay đổi tư thế nằm định kỳ để ngăn biến chứng" }
+    ]
+  },
+  {
+    "id": 1371,
+    "intent_ko": "대상자를 옆으로 돌려 눕히는 올바른 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp đúng khi lăn người bệnh sang tư thế nằm nghiêng",
+    "choice_explanations": {
+      "ko": {
+        "1": "요양보호사는 돌려 눕히려는 '같은 쪽'에 서야 합니다. 반대쪽에 서면 힘 조절이 어렵고 낙상 위험이 있습니다.",
+        "2": "돌려 눕힐 때는 엉덩이 → 어깨 → 얼굴 순이 아니라, 어깨와 엉덩이를 동시에 또는 어깨를 먼저 지지해야 합니다.",
+        "3": "눕히려는 방향 쪽의 손을 위로 올리는 것이 올바른 방법입니다. 반대쪽 손을 올리면 팔이 끼거나 손상될 수 있습니다.",
+        "4": "눕는 방향의 발(같은 쪽)을 다른 발 위에 올려야 몸이 자연스럽게 돌아갑니다. 반대쪽 발을 올리면 방향이 반대가 됩니다.",
+        "5": "★ 돌려 눕힌 후 엉덩이를 앞으로 이동시키면 척추가 바로 놓이고 자세가 안정되어 대상자가 편안해집니다."
+      },
+      "vi": {
+        "1": "Người chăm sóc phải đứng 'cùng phía' với hướng muốn lăn người sang. Đứng phía ngược lại khó kiểm soát lực và tăng nguy cơ ngã.",
+        "2": "Khi lăn sang nghiêng, không phải theo thứ tự hông → vai → mặt mà cần đỡ vai và hông đồng thời hoặc đỡ vai trước.",
+        "3": "Đưa tay bên phía muốn lăn lên trên mới đúng. Đưa tay bên kia lên có thể kẹp hoặc gây tổn thương tay.",
+        "4": "Đặt chân bên phía lăn (cùng hướng) lên chân kia để cơ thể tự nhiên xoay sang. Đặt chân ngược lại sẽ khiến hướng bị đảo ngược.",
+        "5": "★ Sau khi lăn sang nghiêng, đẩy hông về phía trước giúp cột sống thẳng hàng, tư thế ổn định và người bệnh thoải mái hơn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "체위변경", "def_vi": "Thay đổi tư thế — hành động xoay/lăn người bệnh sang tư thế khác" },
+      { "term_ko": "둔부", "def_vi": "Vùng mông — phần cơ thể phía sau dưới lưng, vùng hông và mông" }
+    ]
+  },
+  {
+    "id": 1370,
+    "intent_ko": "침대에서 대상자를 조금씩 나누어 이동하는 이유를 고르는 문제",
+    "intent_vi": "Chọn lý do tại sao phải di chuyển người bệnh từng chút một, không kéo hoặc di chuyển nhiều một lần",
+    "choice_explanations": {
+      "ko": {
+        "1": "관절구축 예방은 장기간 비활동 시 관절이 굳는 것을 막는 것으로, 이동 방법과 직접 관련이 없습니다.",
+        "2": "욕창 예방은 같은 자세를 오래 유지할 때 발생하는 피부 손상 예방이므로, 이동 방식과 주된 연관이 없습니다.",
+        "3": "낙상 예방은 중요하지만, 한 번에 많이 이동하는 것 자체보다는 이동 과정의 안정성과 관련됩니다.",
+        "4": "★ 한꺼번에 대상자를 끌어당기거나 크게 이동하면 대상자의 근육에 과도한 힘이 가해져 근육이 수축하거나 손상될 수 있습니다. 조금씩 나누어 이동하면 근육에 무리를 주지 않고 부상을 예방할 수 있습니다.",
+        "5": "호흡곤란 예방은 자세나 흉곽 압박과 관련된 사항으로, 이동 방식과 직접적인 관련이 낮습니다."
+      },
+      "vi": {
+        "1": "Phòng co cứng khớp liên quan đến việc khớp bị cứng do thiếu vận động lâu dài, không liên quan trực tiếp đến cách di chuyển người bệnh.",
+        "2": "Phòng loét do tì đè là ngăn tổn thương da khi nằm một tư thế quá lâu, không phải lý do chính liên quan đến cách di chuyển.",
+        "3": "Phòng ngã quan trọng nhưng liên quan đến sự ổn định trong quá trình di chuyển hơn là việc di chuyển nhiều một lúc.",
+        "4": "★ Kéo mạnh hoặc di chuyển người bệnh quá nhiều một lúc sẽ gây áp lực quá mức lên cơ, dẫn đến co cơ hoặc chấn thương cơ. Di chuyển từng chút giúp bảo vệ cơ và ngăn ngừa chấn thương.",
+        "5": "Phòng khó thở liên quan đến tư thế và áp lực lồng ngực, không liên quan trực tiếp đến cách di chuyển người bệnh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "관절구축", "def_vi": "Co cứng khớp — tình trạng khớp bị cứng, mất khả năng vận động do thiếu hoạt động lâu dài" },
+      { "term_ko": "근육수축", "def_vi": "Co cơ — tình trạng cơ bị siết chặt hoặc co rút bất thường gây đau và hạn chế vận động" },
+      { "term_ko": "욕창", "def_vi": "Loét do tì đè — tổn thương da do áp lực liên tục, thường ở xương cùng, gót chân" }
+    ]
+  },
+  {
+    "id": 1369,
+    "intent_ko": "오른쪽 편마비 대상자를 왼쪽에서 침대 중앙으로 이동시키는 올바른 순서를 고르는 문제",
+    "intent_vi": "Chọn trình tự đúng để di chuyển người bệnh liệt nửa người phải từ phía trái về giữa giường",
+    "choice_explanations": {
+      "ko": {
+        "1": "요양보호사가 먼저 대상자의 오른쪽에 서는 것은 편마비 대상자 이동의 출발 단계로 적절하지 않습니다.",
+        "2": "★ 올바른 순서: ①목에서 겨드랑이·허리 아래에 손을 넣어 상반신 이동(나) → ②요양보호사가 대상자 오른쪽에 섬(가) → ③대상자의 두 팔을 가슴 위에 포갬(다) → ④머리에 베개를 받치고 시트를 바르게 함(마) → ⑤하반신은 허리·엉덩이를 받쳐 이동(라). 상반신을 먼저 안전하게 이동한 후 하반신을 이동하는 것이 안전한 방법입니다.",
+        "3": "이 순서는 비효율적이며 안전하지 않습니다.",
+        "4": "이 순서도 적절하지 않습니다.",
+        "5": "요양보호사가 먼저 오른쪽에 서는 것(가)이 첫 단계가 되면 이동 시 지지력이 부족하여 안전하지 않습니다."
+      },
+      "vi": {
+        "1": "Đứng về phía phải của người bệnh không phải bước đầu tiên phù hợp khi di chuyển người liệt nửa người.",
+        "2": "★ Trình tự đúng: ①Luồn tay từ cổ xuống nách và dưới lưng để di chuyển thân trên (나) → ②Người chăm sóc đứng phía phải người bệnh (가) → ③Gập hai tay người bệnh lên ngực (다) → ④Kê gối dưới đầu và sắp xếp lại ga giường (마) → ⑤Đỡ thắt lưng và hông để di chuyển thân dưới (라). Di chuyển thân trên trước rồi mới di chuyển thân dưới là cách an toàn.",
+        "3": "Trình tự này không hiệu quả và không an toàn.",
+        "4": "Trình tự này cũng không phù hợp.",
+        "5": "Bắt đầu bằng bước đứng phía phải (가) trước khi ổn định thân trên sẽ thiếu lực đỡ và không an toàn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "상반신", "def_vi": "Thân trên — phần cơ thể từ hông trở lên" },
+      { "term_ko": "하반신", "def_vi": "Thân dưới — phần cơ thể từ hông trở xuống" },
+      { "term_ko": "편마비", "def_vi": "Liệt nửa người — tình trạng liệt một bên cơ thể" }
+    ]
+  },
+  {
+    "id": 1368,
+    "intent_ko": "침상 내에서 잔존기능을 유지하며 안전하게 이동하는 올바른 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp đúng để di chuyển người bệnh an toàn trong giường, duy trì chức năng còn lại",
+    "choice_explanations": {
+      "ko": {
+        "1": "이동 동작을 한 번에 신속하게 하면 낙상이나 근골격계 손상 위험이 큽니다. 천천히 단계적으로 해야 합니다.",
+        "2": "대상자의 동의를 구하는 것은 매우 중요하지만, 이것만으로는 올바른 이동 방법 전체를 설명하기 어렵습니다.",
+        "3": "체위 변경은 의료진·보호자와 상의할 수 있지만, 직접 이동을 돕는 방법과는 다릅니다.",
+        "4": "의식이 없는 대상자에게도 설명하는 태도는 인격 존중을 위해 필요합니다. 의식 있는 대상자에게만 설명하는 것은 잘못된 접근입니다.",
+        "5": "★ 편마비 대상자는 마비된 쪽이 스스로 움직일 수 없으므로 요양보호사가 전적으로 지지하고 도와주어야 합니다. 잔존기능을 무시하거나 지나치게 제한하지 않으면서도 안전한 지원이 필요합니다."
+      },
+      "vi": {
+        "1": "Di chuyển đột ngột và nhanh dễ gây ngã hoặc chấn thương cơ xương. Cần thực hiện chậm rãi và từng bước.",
+        "2": "Hỏi ý kiến người bệnh trước là rất quan trọng, nhưng chưa đủ để mô tả toàn bộ phương pháp di chuyển đúng.",
+        "3": "Trao đổi với người giám hộ về thay đổi tư thế có thể cần thiết nhưng khác với phương pháp trực tiếp hỗ trợ di chuyển.",
+        "4": "Cần giải thích cả với người bệnh không có ý thức để thể hiện sự tôn trọng nhân phẩm. Chỉ giải thích khi có ý thức là cách tiếp cận sai.",
+        "5": "★ Người bệnh liệt nửa người không thể tự di chuyển phía liệt nên người chăm sóc phải hỗ trợ hoàn toàn. Cần đỡ an toàn trong khi vẫn tôn trọng và tận dụng chức năng còn lại của người bệnh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "잔존기능", "def_vi": "Chức năng còn lại — khả năng vận động hoặc chức năng cơ thể vẫn còn duy trì được ở người bệnh" },
+      { "term_ko": "편마비", "def_vi": "Liệt nửa người — tình trạng một bên cơ thể bị liệt hoặc yếu" }
+    ]
+  },
+  {
+    "id": 1367,
+    "intent_ko": "대상자 이동 시 요양보호사가 신체 손상을 예방하는 올바른 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp đúng để người chăm sóc phòng tránh chấn thương khi di chuyển người bệnh",
+    "choice_explanations": {
+      "ko": {
+        "1": "무릎을 펴고 허리를 구부리면 허리 디스크에 큰 부담이 가해져 요통·근골격계 손상을 초래합니다.",
+        "2": "★ 이동 시에는 신체의 큰 근육(허벅지·둔부 등)을 사용하는 것이 올바른 원칙입니다. 작은 근육(허리·등 근육)에만 의존하면 부상 위험이 큽니다. 큰 근육을 사용하여 힘을 분산시키는 것이 핵심입니다.",
+        "3": "발을 벌려 지지면을 넓히는 것은 안정성 향상에 도움이 됩니다. 그러나 이것만으로는 충분하지 않고, 큰 근육 사용이 더 근본적인 손상 예방 원칙입니다.",
+        "4": "무릎을 펴고 무게중심을 높이면 균형이 불안정해져 낙상 위험이 커집니다.",
+        "5": "배에 힘을 주고 척추를 구부리는 것은 복근에 의존하는 것 같지만, 척추를 구부리면 허리에 손상을 줄 수 있습니다."
+      },
+      "vi": {
+        "1": "Duỗi thẳng đầu gối và cúi lưng sẽ gây áp lực lớn lên đĩa đệm thắt lưng, dẫn đến đau lưng hoặc chấn thương cơ xương.",
+        "2": "★ Khi di chuyển người bệnh, phải sử dụng cơ lớn (đùi, mông...) chứ không phải cơ nhỏ (lưng, eo). Dùng cơ lớn giúp phân tán lực, giảm nguy cơ chấn thương — đây là nguyên tắc cốt lõi.",
+        "3": "Dang chân rộng để tăng diện tích chống đỡ giúp ổn định hơn, nhưng chưa đủ — nguyên tắc căn bản hơn là sử dụng cơ lớn.",
+        "4": "Duỗi thẳng đầu gối và nâng cao trọng tâm sẽ mất ổn định, tăng nguy cơ té ngã.",
+        "5": "Dùng lực bụng có vẻ hợp lý nhưng cúi cột sống vẫn gây nguy cơ chấn thương lưng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "근육수축", "def_vi": "Co cơ — sự siết chặt của cơ bắp; khi dùng sai cơ nhỏ có thể gây chấn thương" },
+      { "term_ko": "무게중심", "def_vi": "Trọng tâm — điểm phân bố trọng lượng cơ thể; giữ thấp trọng tâm giúp di chuyển an toàn hơn" },
+      { "term_ko": "신체정렬", "def_vi": "Sắp xếp cơ thể — tư thế cơ thể đúng, giữ lưng thẳng để giảm tải cho cột sống" }
+    ]
+  },
+  {
+    "id": 1366,
+    "intent_ko": "대상자 이동 시 요양보호사가 신체정렬을 유지하는 목적을 고르는 문제",
+    "intent_vi": "Chọn mục đích của việc người chăm sóc duy trì sắp xếp cơ thể đúng khi di chuyển người bệnh",
+    "choice_explanations": {
+      "ko": {
+        "1": "신체정렬 유지의 목적은 신속한 이동이 아니라 안전한 이동과 손상 예방입니다.",
+        "2": "신체정렬 유지는 관절의 굳어짐을 '감소'시키는 데 도움이 되지, 증가시키지 않습니다.",
+        "3": "★ 신체정렬(바른 자세)을 유지하면 무게가 골격과 대근육에 균등하게 분산되어 불필요한 근육 긴장이 줄고, 요양보호사와 대상자 모두의 근육 부담을 줄여 손상을 예방합니다.",
+        "4": "올바른 신체정렬은 관절 변형을 '감소'시키는 데 기여합니다. 변형을 증가시킨다는 것은 잘못된 설명입니다.",
+        "5": "편안함 제공과 손상 위험 감소는 신체정렬 유지의 실제 목적이지만, 이 문제에서는 '근육 사용 감소'가 정답으로 제시된 핵심입니다."
+      },
+      "vi": {
+        "1": "Mục đích duy trì tư thế đúng không phải để di chuyển nhanh mà để di chuyển an toàn và phòng chấn thương.",
+        "2": "Duy trì tư thế đúng giúp 'giảm' chứ không phải 'tăng' tình trạng cứng khớp.",
+        "3": "★ Duy trì sắp xếp cơ thể đúng giúp phân tán tải trọng đều lên khung xương và cơ lớn, giảm căng thẳng cơ không cần thiết, từ đó giảm gánh nặng cho cơ của cả người chăm sóc lẫn người bệnh, phòng ngừa chấn thương.",
+        "4": "Tư thế cơ thể đúng giúp 'giảm' biến dạng khớp. Nói tăng biến dạng là sai.",
+        "5": "Tạo sự thoải mái và giảm nguy cơ tổn thương là mục tiêu thực sự, nhưng đáp án được chọn ở câu này là 'giảm sử dụng cơ bắp'."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "신체정렬", "def_vi": "Sắp xếp cơ thể — tư thế đúng khi di chuyển, giữ cột sống và khớp thẳng hàng để tránh chấn thương" },
+      { "term_ko": "관절구축", "def_vi": "Co cứng khớp — tình trạng khớp mất khả năng vận động do bất động lâu ngày" }
+    ]
+  },
+  {
+    "id": 1365,
+    "intent_ko": "오른쪽 편마비 대상자의 하의를 입히는 올바른 순서를 고르는 문제",
+    "intent_vi": "Chọn trình tự đúng khi mặc quần cho người bệnh liệt nửa người phải",
+    "choice_explanations": {
+      "ko": {
+        "1": "왼쪽 발부터 하의에 넣는 것이 먼저가 아닙니다. 먼저 준비 자세(무릎 세우기, 엉덩이 들기)가 필요합니다.",
+        "2": "순서가 잘못됐습니다. 엉덩이를 들어 올리는 준비 없이 다리부터 하의에 넣는 것은 불편하고 위험합니다.",
+        "3": "오른쪽 발(마비된 쪽)부터 시작하는 것과 준비 순서가 맞지 않습니다.",
+        "4": "이 순서도 올바르지 않습니다. 엉덩이 들기가 마지막에 오는 것은 부적절합니다.",
+        "5": "★ 올바른 순서: ①무릎을 세우고 엉덩이를 들어 올리게 함(라) → ②마비된 오른쪽 발을 하의에 넣음(나) → ③왼쪽 발을 하의에 넣음(가) → ④바지의 양쪽 허리선을 잡고 올려 입힘(다). 먼저 엉덩이를 들어야 하의를 무릎까지 올린 뒤 허리선을 맞출 수 있습니다."
+      },
+      "vi": {
+        "1": "Không phải bắt đầu bằng chân trái. Cần chuẩn bị tư thế (gập đầu gối, nhấc hông) trước.",
+        "2": "Trình tự sai. Cho chân vào quần trước khi nhấc hông sẽ bất tiện và nguy hiểm.",
+        "3": "Bắt đầu từ chân phải (liệt) mà không chuẩn bị tư thế trước là không đúng.",
+        "4": "Trình tự này cũng sai. Nhấc hông ở bước cuối là không phù hợp.",
+        "5": "★ Trình tự đúng: ①Gập đầu gối và nhấc hông lên (라) → ②Cho chân phải (liệt) vào quần (나) → ③Cho chân trái vào quần (가) → ④Giữ hai bên cạp quần và kéo lên (다). Phải nhấc hông trước mới có thể kéo quần lên đến eo."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "편마비", "def_vi": "Liệt nửa người — tình trạng liệt một bên cơ thể" },
+      { "term_ko": "하의", "def_vi": "Quần — trang phục phần thân dưới" },
+      { "term_ko": "허리선", "def_vi": "Cạp quần — phần trên của quần ở vùng thắt lưng" }
+    ]
+  },
+  {
+    "id": 1364,
+    "intent_ko": "왼쪽 편마비 대상자의 하의를 벗기는 올바른 순서를 고르는 문제",
+    "intent_vi": "Chọn trình tự đúng khi cởi quần cho người bệnh liệt nửa người trái",
+    "choice_explanations": {
+      "ko": {
+        "1": "오른쪽 다리(건강한 쪽)의 하의를 먼저 벗기는 것은 잘못된 순서입니다.",
+        "2": "이 순서도 적절하지 않습니다.",
+        "3": "★ 올바른 순서: ①왼쪽(마비된) 다리의 하의를 먼저 벗김(나) → ②두 다리를 모아 무릎을 세움(다) → ③무릎으로 마비된 쪽 발을 지지하고 엉덩이를 들어 올리게 함(라) → ④오른쪽 다리의 하의를 벗김(가). 마비된 쪽을 먼저 벗기고, 준비 자세 후 건강한 쪽을 벗깁니다.",
+        "4": "다-라-나-가 순서는 무릎을 세운 후 마비된 쪽을 벗기는 흐름이지만 마비된 쪽을 먼저 벗겨야 합니다.",
+        "5": "다-라-가-나 순서도 마비된 쪽을 마지막에 벗기는 것으로 잘못됐습니다."
+      },
+      "vi": {
+        "1": "Cởi quần chân phải (khỏe) trước là sai trình tự.",
+        "2": "Trình tự này cũng không phù hợp.",
+        "3": "★ Trình tự đúng: ①Cởi quần chân trái (liệt) trước (나) → ②Chập hai chân và gập đầu gối (다) → ③Dùng đầu gối đỡ bàn chân liệt và nhấc hông lên (라) → ④Cởi quần chân phải (가). Cởi phía liệt trước, chuẩn bị tư thế rồi mới cởi phía khỏe.",
+        "4": "Trình tự 다-라-나-가 gập đầu gối rồi mới cởi phía liệt, nhưng phải cởi phía liệt trước.",
+        "5": "Trình tự 다-라-가-나 cũng cởi phía liệt cuối cùng nên sai."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "편마비", "def_vi": "Liệt nửa người — liệt một bên cơ thể" },
+      { "term_ko": "하의", "def_vi": "Quần — trang phục phần thân dưới" }
+    ]
+  },
+  {
+    "id": 1363,
+    "intent_ko": "엉덩이를 들 수 없는 대상자의 하의를 갈아입히는 올바른 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp đúng để thay quần cho người bệnh không thể nhấc hông",
+    "choice_explanations": {
+      "ko": {
+        "1": "침상머리를 높여 앉히려면 엉덩이를 어느 정도 들 수 있어야 하므로, 엉덩이를 들 수 없는 경우에는 적합하지 않습니다.",
+        "2": "다리를 모아 무릎을 세우고 벗기는 방법은 엉덩이를 들 수 있을 때 사용하는 방법으로, 이 경우에는 부적절합니다.",
+        "3": "똑바로 누운 상태에서 한꺼번에 벗기려 하면 무리한 힘이 가해져 피부 손상이나 낙상 위험이 있습니다.",
+        "4": "좌우로 체위를 변경하며 한쪽씩 벗기는 방법도 있으나, 엉덩이를 들 수 없는 대상자에게는 체위변경 자체가 어렵습니다.",
+        "5": "★ 엉덩이를 들 수 없을 때는 한 손으로 대상자의 허리를 지지하여 약간의 공간을 만든 뒤 하의를 입히거나 벗기는 것이 가장 안전하고 효과적인 방법입니다."
+      },
+      "vi": {
+        "1": "Nâng cao đầu giường để ngồi dậy đòi hỏi người bệnh phải có thể nhấc hông phần nào, nên không phù hợp khi không thể nhấc hông.",
+        "2": "Gập đầu gối và chập chân để cởi quần là cách dùng khi có thể nhấc hông, không phù hợp trong trường hợp này.",
+        "3": "Cởi quần một lúc khi đang nằm ngửa tạo áp lực quá lớn, có thể gây tổn thương da hoặc ngã.",
+        "4": "Thay tư thế sang trái phải để cởi từng bên cũng có thể dùng, nhưng khi không nhấc được hông thì việc đổi tư thế cũng rất khó.",
+        "5": "★ Khi không thể nhấc hông, dùng một tay đỡ thắt lưng người bệnh để tạo khoảng trống nhỏ, sau đó mặc hoặc cởi quần là phương pháp an toàn và hiệu quả nhất."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "체위변경", "def_vi": "Thay đổi tư thế — hành động thay đổi vị trí nằm/ngồi của người bệnh" },
+      { "term_ko": "하의", "def_vi": "Quần — trang phục phần thân dưới" }
+    ]
+  },
+  {
+    "id": 1362,
+    "intent_ko": "수액 중인 왼쪽 편마비 대상자의 단추 있는 옷을 벗기는 올바른 순서를 고르는 문제",
+    "intent_vi": "Chọn trình tự đúng khi cởi áo có cúc cho người bệnh liệt nửa người trái đang truyền dịch",
+    "choice_explanations": {
+      "ko": {
+        "1": "오른쪽 팔을 먼저 벗기면 수액 라인이 당겨질 수 있으며, 왼쪽 팔을 마지막에 벗기는 것은 수액 관리에 위험합니다.",
+        "2": "수액주머니를 고려하지 않고 팔만 먼저 벗기는 방법은 수액 라인을 손상시킬 위험이 있습니다.",
+        "3": "왼쪽 팔(마비·수액 삽입 쪽)을 먼저 벗기면 수액 라인에 손상을 줄 위험이 높습니다.",
+        "4": "★ 수액이 연결된 경우, 먼저 수액주머니를 옷소매에 통과시켜 제거한 후 → 건강한 쪽(오른쪽) 팔을 벗기고 → 마지막에 마비된 쪽(왼쪽, 수액 주사 부위) 팔을 벗겨야 수액 라인의 손상 없이 안전하게 옷을 벗길 수 있습니다.",
+        "5": "수액주머니를 먼저 처리하는 것은 맞지만, 이후 왼쪽(마비·수액 주사) 팔부터 벗기는 것은 수액 라인에 무리를 줄 수 있습니다."
+      },
+      "vi": {
+        "1": "Cởi tay phải trước có thể kéo căng dây truyền dịch; để tay trái cuối cùng gây nguy hiểm cho việc quản lý dịch truyền.",
+        "2": "Cởi tay trước mà không tính đến túi dịch truyền có thể làm hỏng dây truyền.",
+        "3": "Cởi tay trái (liệt, đang truyền dịch) trước có nguy cơ cao gây tổn thương dây truyền.",
+        "4": "★ Khi đang truyền dịch: trước tiên luồn túi dịch qua tay áo để tháo ra → cởi tay phải (khỏe) → cuối cùng cởi tay trái (liệt, chỗ kim truyền). Trình tự này bảo vệ dây truyền dịch và an toàn cho người bệnh.",
+        "5": "Xử lý túi dịch truyền trước là đúng, nhưng sau đó cởi tay trái (liệt, đang truyền) trước vẫn có thể gây căng dây truyền."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "수액", "def_vi": "Dịch truyền — dung dịch dinh dưỡng hoặc thuốc đưa vào cơ thể qua tĩnh mạch" },
+      { "term_ko": "편마비", "def_vi": "Liệt nửa người — liệt một bên tay và chân" }
+    ]
+  },
+  {
+    "id": 1361,
+    "intent_ko": "오른쪽 편마비 대상자의 앞이 막힌 상의를 벗기는 올바른 순서를 고르는 문제",
+    "intent_vi": "Chọn trình tự đúng khi cởi áo chui đầu cho người bệnh liệt nửa người phải",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 오른쪽 편마비 대상자에게 앞이 막힌 상의를 벗길 때는 건강한 쪽(왼쪽) 팔을 먼저 빼고 → 머리를 넘기고 → 마지막으로 마비된 쪽(오른쪽) 팔을 빼야 합니다. 마비된 쪽 팔은 스스로 움직이기 어려우므로 마지막에 조심스럽게 처리합니다.",
+        "2": "왼쪽 팔을 먼저 빼고 오른쪽 팔을 그다음에 빼는 방법은 머리를 넘기기 전에 양팔이 모두 빠지는 순서로 위험합니다.",
+        "3": "마비된 오른쪽 팔을 먼저 빼면 통증이나 관절 손상 위험이 있습니다.",
+        "4": "오른쪽 팔 → 왼쪽 팔 → 머리 순서는 마비된 쪽을 먼저 처리하여 위험합니다.",
+        "5": "머리부터 넘기면 양쪽 팔이 옷 안에 있어 머리를 빼기 어렵고 질식 위험도 있습니다."
+      },
+      "vi": {
+        "1": "★ Khi cởi áo chui đầu cho người liệt nửa người phải: rút tay trái (khỏe) ra trước → qua đầu → cuối cùng rút tay phải (liệt) ra. Tay liệt khó tự cử động nên để cuối, xử lý nhẹ nhàng.",
+        "2": "Rút tay trái trước rồi tay phải trước khi qua đầu khiến cả hai tay đều được rút trước — trình tự gây khó khăn và nguy hiểm.",
+        "3": "Rút tay phải (liệt) trước có nguy cơ gây đau hoặc tổn thương khớp.",
+        "4": "Trình tự tay phải → tay trái → đầu xử lý phía liệt trước, gây nguy hiểm.",
+        "5": "Qua đầu trước khi rút tay sẽ khiến cả hai tay mắc trong áo, khó rút đầu ra và có nguy cơ nghẹt thở."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "편마비", "def_vi": "Liệt nửa người — tình trạng liệt một bên cơ thể" },
+      { "term_ko": "상의", "def_vi": "Áo — trang phục phần thân trên" }
+    ]
+  },
+  {
+    "id": 1360,
+    "intent_ko": "왼쪽 편마비 대상자에게 앞이 막힌 상의를 입히는 올바른 순서를 고르는 문제",
+    "intent_vi": "Chọn trình tự đúng khi mặc áo chui đầu cho người bệnh liệt nửa người trái",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 왼쪽 편마비 대상자에게 상의를 입힐 때는 마비된 쪽(왼쪽) 팔을 먼저 소매에 넣고 → 머리를 통과시킨 후 → 건강한 쪽(오른쪽) 팔을 넣습니다. 마비된 쪽을 먼저 처리해야 소매 통과가 용이하며 관절 손상을 예방할 수 있습니다.",
+        "2": "왼쪽 팔, 오른쪽 팔을 차례로 먼저 넣고 머리를 나중에 통과시키는 방법은 머리를 넣기 어렵습니다.",
+        "3": "건강한 오른쪽 팔부터 넣으면 마비된 왼쪽 팔 소매 통과가 어렵습니다.",
+        "4": "오른쪽 → 왼쪽 → 머리 순서도 건강한 쪽부터 시작하는 잘못된 방법입니다.",
+        "5": "머리를 먼저 통과시키면 마비된 팔을 소매에 넣기가 어렵고 통증 유발 위험이 있습니다."
+      },
+      "vi": {
+        "1": "★ Khi mặc áo chui đầu cho người liệt nửa người trái: cho tay trái (liệt) vào tay áo trước → qua đầu → cuối cùng cho tay phải (khỏe) vào. Xử lý phía liệt trước để dễ luồn tay áo và tránh tổn thương khớp.",
+        "2": "Cho tay trái rồi tay phải vào trước khi qua đầu khiến khó luồn đầu vào cổ áo.",
+        "3": "Bắt đầu từ tay phải (khỏe) sẽ khó luồn tay áo cho tay trái (liệt).",
+        "4": "Trình tự phải → trái → đầu cũng bắt đầu từ phía khỏe — sai.",
+        "5": "Qua đầu trước sẽ khó cho tay liệt vào tay áo và có nguy cơ gây đau."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "편마비", "def_vi": "Liệt nửa người — liệt một bên cơ thể" },
+      { "term_ko": "상의", "def_vi": "Áo — trang phục phần thân trên" }
+    ]
+  },
+  {
+    "id": 1359,
+    "intent_ko": "오른쪽 편마비 대상자의 옷 갈아입히는 올바른 방법(순서 원칙)을 고르는 문제",
+    "intent_vi": "Chọn phương pháp đúng (nguyên tắc thứ tự) khi thay quần áo cho người liệt nửa người phải",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 편마비 대상자는 벗길 때 건강한 쪽부터, 입힐 때 마비된 쪽부터가 원칙입니다. 오른쪽 편마비이므로 벗길 때는 왼쪽(건강한 쪽)부터, 입힐 때는 오른쪽(마비된 쪽)부터가 맞습니다. 이 보기 '오른쪽부터 벗고 오른쪽부터 입는다'는 이 원칙과 다르지만 시험 정답으로 제시된 선택지입니다. ※ 실제 올바른 원칙: 벗길 때 건강한 쪽 먼저, 입힐 때 마비된 쪽 먼저.",
+        "2": "오른쪽부터 벗고 왼쪽부터 입는 것은 원칙(벗기는 건강한 쪽 먼저, 입히는 마비된 쪽 먼저)에 모두 어긋납니다.",
+        "3": "왼쪽부터 벗고 왼쪽부터 입는 것은 입힐 때 건강한 쪽부터가 되어 마비된 쪽 처리가 어렵습니다.",
+        "4": "왼쪽부터 벗는 것은 건강한 쪽부터로 맞지만, 오른쪽(마비된 쪽)부터 입히는 것은 올바른 원칙에 해당합니다. 이 조합은 가장 원칙에 가깝습니다.",
+        "5": "대상자가 원하는 쪽부터 하는 것은 안전 원칙에 근거하지 않습니다."
+      },
+      "vi": {
+        "1": "★ Nguyên tắc thay quần áo cho người liệt nửa người: cởi từ phía khỏe trước, mặc từ phía liệt trước. Với người liệt nửa người phải: cởi từ trái (khỏe) trước, mặc từ phải (liệt) trước. Đây là đáp án theo đề thi, dù không hoàn toàn khớp nguyên tắc. ※ Nguyên tắc thực tế: cởi phía khỏe trước, mặc phía liệt trước.",
+        "2": "Cởi từ phải trước và mặc từ trái trước — vi phạm cả hai nguyên tắc.",
+        "3": "Cởi từ trái trước đúng, nhưng mặc từ trái (khỏe) trước sẽ khó xử lý phía liệt.",
+        "4": "Cởi từ trái (khỏe) trước là đúng; mặc từ phải (liệt) trước là đúng — đây là tổ hợp gần với nguyên tắc nhất.",
+        "5": "Làm theo ý muốn của người bệnh không dựa trên nguyên tắc an toàn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "편마비", "def_vi": "Liệt nửa người — liệt một bên cơ thể" },
+      { "term_ko": "착탈의", "def_vi": "Mặc và cởi quần áo — hành động mặc vào và cởi ra quần áo cho người bệnh" }
+    ]
+  },
+  {
+    "id": 1358,
+    "intent_ko": "편마비 대상자의 옷 갈아입히는 올바른 순서 원칙을 고르는 문제",
+    "intent_vi": "Chọn nguyên tắc thứ tự đúng khi thay quần áo cho người bệnh liệt nửa người",
+    "choice_explanations": {
+      "ko": {
+        "1": "벗을 때는 불편한(마비된) 쪽이 아니라 편한(건강한) 쪽부터 벗겨야 합니다.",
+        "2": "★ 입힐 때는 불편한(마비된) 쪽부터 입혀야 합니다. 마비된 관절은 가동 범위가 제한되어 있어 먼저 옷을 통과시켜야 건강한 쪽 착의가 용이합니다. 이것이 편마비 착의의 기본 원칙입니다.",
+        "3": "요양보호사가 편한 쪽부터 입히는 것은 대상자 안전·편의와 무관한 잘못된 기준입니다.",
+        "4": "대상자 의사보다 안전하고 효과적인 방법을 우선해야 합니다. 원하는 쪽부터는 원칙이 아닙니다.",
+        "5": "옷 입히는 순서는 편마비 대상자에게 매우 중요하므로 '어느 쪽이든 상관없다'는 틀린 설명입니다."
+      },
+      "vi": {
+        "1": "Khi cởi phải bắt đầu từ phía khỏe (thoải mái), không phải từ phía bất tiện (liệt).",
+        "2": "★ Khi mặc phải bắt đầu từ phía bất tiện (liệt) trước. Khớp liệt có tầm vận động hạn chế nên phải cho vào áo/quần trước, sau đó phía khỏe sẽ dễ mặc hơn. Đây là nguyên tắc cơ bản khi mặc quần áo cho người liệt nửa người.",
+        "3": "Mặc từ phía thuận tiện cho người chăm sóc không liên quan đến sự an toàn và thoải mái của người bệnh — sai.",
+        "4": "Nên ưu tiên phương pháp an toàn và hiệu quả hơn là theo ý muốn của người bệnh. Làm theo ý muốn không phải nguyên tắc.",
+        "5": "Thứ tự mặc quần áo rất quan trọng với người liệt nửa người, nên 'phía nào cũng được' là sai."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "편마비", "def_vi": "Liệt nửa người — liệt một bên cơ thể" },
+      { "term_ko": "착탈의", "def_vi": "Mặc và cởi quần áo — quy trình thay quần áo cho người bệnh theo nguyên tắc an toàn" }
+    ]
+  },
+  {
+    "id": 1357,
+    "intent_ko": "편마비 대상자에게 적합한 옷의 선택 기준을 고르는 문제",
+    "intent_vi": "Chọn tiêu chí đúng khi chọn quần áo phù hợp cho người bệnh liệt nửa người",
+    "choice_explanations": {
+      "ko": {
+        "1": "상의와 하의가 연결된 원피스나 점프수트는 마비된 팔과 다리를 함께 조작해야 해서 착탈의가 매우 어렵습니다.",
+        "2": "허리와 소매가 조이는 옷은 혈액순환을 방해하고 착탈의가 힘들어 부적합합니다.",
+        "3": "★ 앞여밈이 있거나 단추 있는 옷은 마비된 쪽을 먼저 입힐 때 소매를 쉽게 통과시킬 수 있고, 필요 시 부분적으로 열 수 있어 편마비 대상자에게 가장 적합합니다.",
+        "4": "신축성이 없는 옷은 관절의 제한된 가동 범위 때문에 착탈의가 매우 어렵습니다.",
+        "5": "무겁고 두꺼운 옷은 마비된 팔다리를 움직이기 어렵게 만들고 요양보호사의 착탈의 보조도 어렵게 합니다."
+      },
+      "vi": {
+        "1": "Áo liền quần đòi hỏi thao tác đồng thời cả tay và chân liệt, khiến việc mặc/cởi rất khó khăn.",
+        "2": "Áo chật ở eo và tay áo cản trở tuần hoàn máu và khó mặc/cởi — không phù hợp.",
+        "3": "★ Áo có khuy phía trước hoặc có cúc dễ luồn tay áo cho phía liệt trước và có thể mở từng phần khi cần — phù hợp nhất với người liệt nửa người.",
+        "4": "Áo không có độ co giãn rất khó mặc/cởi do tầm vận động khớp bị hạn chế.",
+        "5": "Áo nặng và dày khiến khó cử động tay chân liệt và khó hỗ trợ mặc/cởi."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "편마비", "def_vi": "Liệt nửa người — liệt một bên cơ thể" },
+      { "term_ko": "신축성", "def_vi": "Độ co giãn — khả năng giãn ra và co lại của vải; vải co giãn giúp dễ mặc/cởi hơn" },
+      { "term_ko": "앞여밈", "def_vi": "Cài phía trước — kiểu áo mở ở phía trước, dễ mặc/cởi cho người bệnh hạn chế vận động" }
+    ]
+  },
+  {
+    "id": 1356,
+    "intent_ko": "침상을 정리하는 올바른 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp đúng khi dọn dẹp giường cho người bệnh",
+    "choice_explanations": {
+      "ko": {
+        "1": "시트를 갈 때는 창문을 열어 환기하는 것이 원칙이며, 더러운 시트를 안쪽으로 말아 바닥에 닿지 않게 벗겨야 합니다.",
+        "2": "이불은 기온과 대상자의 요구(보호자가 아닌)에 따라 조절해야 합니다.",
+        "3": "방수포 위에 반시트를 까는 것이 올바른 방법입니다. 방수포 밑에 반시트를 까는 것은 잘못된 방법입니다.",
+        "4": "★ 시트 교환 시 시트의 중앙선을 침대 중앙에 맞추어 시트가 고르게 펼쳐지도록 하는 것이 가장 기본적이고 올바른 방법입니다.",
+        "5": "침상배설 대상자에게는 방수포와 반시트를 함께 깔아 보호해야 합니다. 방수포만 깔면 피부 보호가 부족합니다."
+      },
+      "vi": {
+        "1": "Khi thay ga phải mở cửa sổ thông thoáng; tháo ga bẩn bằng cách cuộn vào trong để không chạm sàn.",
+        "2": "Chăn nên điều chỉnh theo nhiệt độ và nhu cầu của người bệnh (không phải người giám hộ).",
+        "3": "Đặt nửa ga trên tấm chống thấm là đúng. Đặt nửa ga dưới tấm chống thấm là sai.",
+        "4": "★ Khi thay ga, căn đường giữa của ga trùng với đường giữa của giường để ga trải đều đặn — đây là phương pháp cơ bản và đúng nhất khi dọn giường.",
+        "5": "Với người bệnh đại tiểu tiện tại giường, cần trải cả tấm chống thấm lẫn nửa ga để bảo vệ da. Chỉ trải tấm chống thấm là chưa đủ bảo vệ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "방수포", "def_vi": "Tấm chống thấm — vải không thấm nước lót dưới người bệnh để bảo vệ ga giường" },
+      { "term_ko": "반시트", "def_vi": "Nửa ga — tấm ga nhỏ đặt lên tấm chống thấm để bảo vệ da và dễ thay khi bẩn" },
+      { "term_ko": "침상배설", "def_vi": "Đại tiểu tiện tại giường — tình trạng người bệnh không thể tự đi vệ sinh, phải thực hiện ngay trên giường" }
+    ]
+  },
+  {
+    "id": 1355,
+    "intent_ko": "침상 목욕 시 신체 부위별 올바른 목욕 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp lau đúng theo từng vùng cơ thể khi tắm tại giường",
+    "choice_explanations": {
+      "ko": {
+        "1": "유방은 위아래로 번갈아 닦는 것이 아니라 아래에서 위로 원을 그리듯 닦아야 합니다.",
+        "2": "★ 둔부(엉덩이)를 닦을 때는 엉덩이 사이(항문 주변)와 항문 주위를 꼼꼼히 닦는 것이 올바른 방법입니다. 이 부위는 청결 유지가 중요합니다.",
+        "3": "복부는 배꼽을 중심으로 시계 방향으로 닦아야 합니다(장운동 방향). 시계 반대 방향은 잘못됩니다.",
+        "4": "팔은 손목(말초)에서 어깨(중심) 방향으로, 다리는 발끝(말초)에서 허벅지(중심) 방향으로 닦아야 혈액순환을 촉진합니다.",
+        "5": "피부발적(빨개짐)이 보이는 부위는 추가 압박을 피해야 하므로 마사지를 하면 오히려 손상이 악화될 수 있습니다."
+      },
+      "vi": {
+        "1": "Ngực không lau qua lại trên-dưới mà phải lau từ dưới lên trên theo hình tròn.",
+        "2": "★ Khi lau vùng mông (臀部), phải lau kỹ khe mông và xung quanh hậu môn. Giữ vệ sinh vùng này rất quan trọng để phòng nhiễm khuẩn.",
+        "3": "Bụng phải lau theo chiều kim đồng hồ (thuận chiều ruột) quanh rốn. Ngược chiều kim đồng hồ là sai.",
+        "4": "Tay lau từ cổ tay (ngoại vi) lên vai (trung tâm); chân lau từ đầu ngón chân (ngoại vi) lên đùi (trung tâm) để thúc đẩy tuần hoàn máu.",
+        "5": "Vùng da đỏ (phát ban/sung huyết da) cần tránh thêm áp lực; xoa bóp khi da đỏ có thể làm tổn thương nặng hơn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "둔부", "def_vi": "Vùng mông — phần cơ thể gồm mông và khe mông, cần vệ sinh kỹ để phòng nhiễm khuẩn" },
+      { "term_ko": "피부발적", "def_vi": "Sung huyết da — da đỏ lên do tăng tuần hoàn máu hoặc áp lực; có thể là dấu hiệu sớm của loét do tì đè" },
+      { "term_ko": "말초", "def_vi": "Ngoại vi — phần ngoài cùng của chi thể (đầu ngón tay/chân); lau từ ngoại vi vào trung tâm giúp hỗ trợ tuần hoàn" }
+    ]
+  },
+  {
+    "id": 1354,
+    "intent_ko": "침상 목욕 시 복부를 시계방향으로 닦는 이유를 고르는 문제",
+    "intent_vi": "Chọn lý do tại sao lau bụng theo chiều kim đồng hồ khi tắm tại giường",
+    "choice_explanations": {
+      "ko": {
+        "1": "복부를 시계방향으로 닦는 것은 혈액순환보다는 소화관과 직접 관련이 있습니다.",
+        "2": "욕창 예방은 피부 관리와 체위변경으로 이루어집니다. 복부 닦기 방향과 무관합니다.",
+        "3": "소화기능을 돕는다는 설명도 관련이 있으나, 더 구체적인 이유는 장운동 촉진입니다.",
+        "4": "긴장감 완화는 복부 마사지의 부가적 효과일 수 있으나 주된 이유가 아닙니다.",
+        "5": "★ 대장(결장)은 우측 하복부에서 시작해 위쪽 → 좌측 → 하복부로 이어지는 시계방향 경로를 따릅니다. 시계방향으로 닦으면 대장의 연동운동(장운동)을 자극하여 변비 예방과 소화를 돕습니다."
+      },
+      "vi": {
+        "1": "Lau bụng theo chiều kim đồng hồ liên quan trực tiếp đến đường tiêu hóa hơn là tuần hoàn máu.",
+        "2": "Phòng loét do tì đè liên quan đến chăm sóc da và thay đổi tư thế, không liên quan đến hướng lau bụng.",
+        "3": "Hỗ trợ tiêu hóa có liên quan, nhưng lý do cụ thể hơn là kích thích nhu động ruột.",
+        "4": "Giảm căng thẳng có thể là tác dụng phụ của xoa bóp bụng nhưng không phải lý do chính.",
+        "5": "★ Đại tràng đi từ vùng bụng dưới phải → lên trên → sang trái → xuống dưới theo chiều kim đồng hồ. Lau theo chiều này kích thích nhu động ruột, giúp phòng táo bón và hỗ trợ tiêu hóa."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "장운동", "def_vi": "Nhu động ruột — chuyển động co bóp của ruột để đẩy thức ăn và chất thải; tắm theo chiều kim đồng hồ giúp kích thích" },
+      { "term_ko": "연동운동", "def_vi": "Nhu động — chuyển động nhịp nhàng của cơ ruột đẩy thức ăn qua đường tiêu hóa" },
+      { "term_ko": "복부", "def_vi": "Bụng — vùng cơ thể chứa các cơ quan tiêu hóa như dạ dày, ruột" }
+    ]
+  },
+  {
+    "id": 1353,
+    "intent_ko": "침상 목욕을 돕는 올바른 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp đúng khi hỗ trợ tắm tại giường",
+    "choice_explanations": {
+      "ko": {
+        "1": "눈은 안쪽(코 쪽)에서 바깥쪽(귀 쪽)으로 닦아야 감염원이 눈 안으로 들어가는 것을 막을 수 있습니다.",
+        "2": "몸을 닦을 때는 말초(손발 끝)에서 중심(심장 방향)으로 닦아야 정맥 혈류를 촉진합니다. 중심에서 말초 방향은 틀립니다.",
+        "3": "★ 복부를 배꼽을 중심으로 시계방향으로 닦는 것은 대장의 연동운동을 자극하여 장 기능을 돕는 올바른 방법입니다.",
+        "4": "등 마사지는 목욕 후 시행하면 혈액순환을 촉진하고 욕창을 예방하는 데 도움이 됩니다. 삼가는 것은 잘못된 안내입니다.",
+        "5": "목욕 전후 식사는 주의가 필요합니다. 특히 목욕 직전·직후 식사는 혈액이 소화기로 몰려 피로를 유발할 수 있습니다."
+      },
+      "vi": {
+        "1": "Lau mắt phải từ trong (phía mũi) ra ngoài (phía tai) để ngăn mầm bệnh xâm nhập vào mắt.",
+        "2": "Khi lau cơ thể phải từ ngoại vi (ngón tay/chân) vào trung tâm (hướng tim) để thúc đẩy tuần hoàn tĩnh mạch. Từ trung tâm ra ngoại vi là sai.",
+        "3": "★ Lau bụng theo chiều kim đồng hồ quanh rốn kích thích nhu động đại tràng, hỗ trợ chức năng tiêu hóa — đây là phương pháp đúng.",
+        "4": "Xoa bóp lưng sau khi tắm giúp thúc đẩy tuần hoàn máu và phòng loét tì đè. Tránh xoa bóp là hướng dẫn sai.",
+        "5": "Cần thận trọng với bữa ăn trước và sau khi tắm. Ăn ngay trước hoặc sau tắm có thể gây mệt mỏi do máu dồn vào tiêu hóa."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "연동운동", "def_vi": "Nhu động ruột — chuyển động co bóp của cơ ruột đẩy thức ăn qua đường tiêu hóa" },
+      { "term_ko": "말초", "def_vi": "Ngoại vi — phần ngoài cùng của chi thể; lau từ ngoại vi vào trung tâm giúp hỗ trợ tuần hoàn" }
+    ]
+  },
+  {
+    "id": 1352,
+    "intent_ko": "여성 대상자의 침상 목욕을 돕는 올바른 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp đúng khi hỗ trợ tắm tại giường cho người bệnh nữ",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 유방은 원을 그리듯(아래에서 위로, 바깥에서 안쪽으로 원형으로) 닦는 것이 올바른 방법입니다. 이는 피부 자극을 최소화하고 청결을 유지하는 데 적합합니다.",
+        "2": "팔은 어깨(중심)에서 손목(말초) 방향이 아니라, 손목(말초)에서 어깨(중심) 방향으로 닦아야 혈액순환을 촉진합니다.",
+        "3": "다리는 허벅지(중심)에서 발끝(말초)이 아니라, 발끝(말초)에서 허벅지(중심) 방향으로 닦아야 합니다.",
+        "4": "등은 옆으로 눕게 한 후 목 뒤에서 둔부(엉덩이) 방향으로 닦습니다. 둔부에서 목 뒤까지 닦는 것은 순서가 반대입니다.",
+        "5": "회음부는 반드시 요도에서 항문 방향(앞에서 뒤로)으로 닦아야 합니다. 항문에서 요도 방향으로 닦으면 대장균 등이 요도로 유입되어 요로감염을 일으킬 수 있습니다."
+      },
+      "vi": {
+        "1": "★ Lau ngực theo chuyển động hình tròn (từ dưới lên trên, từ ngoài vào trong) là phương pháp đúng, giảm kích ứng da và đảm bảo vệ sinh.",
+        "2": "Tay phải lau từ cổ tay (ngoại vi) lên vai (trung tâm), không phải từ vai xuống cổ tay — lau từ ngoại vi vào trung tâm giúp thúc đẩy tuần hoàn.",
+        "3": "Chân phải lau từ đầu ngón chân (ngoại vi) lên đùi (trung tâm), không phải từ đùi xuống đầu chân.",
+        "4": "Lau lưng theo chiều từ cổ xuống mông khi nằm nghiêng, không phải từ mông lên cổ.",
+        "5": "Vùng âm hộ phải lau từ niệu đạo về phía hậu môn (từ trước ra sau). Lau từ hậu môn về niệu đạo có thể đưa vi khuẩn đường ruột vào niệu đạo, gây nhiễm trùng tiết niệu."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "회음부", "def_vi": "Vùng tầng sinh môn / âm hộ — vùng giữa cơ quan sinh dục và hậu môn; cần lau từ trước ra sau để phòng nhiễm khuẩn" },
+      { "term_ko": "요도", "def_vi": "Niệu đạo — ống dẫn nước tiểu từ bàng quang ra ngoài" },
+      { "term_ko": "요로감염", "def_vi": "Nhiễm trùng đường tiết niệu — nhiễm khuẩn ở bàng quang, niệu đạo hoặc thận; dễ xảy ra khi vệ sinh không đúng cách" }
+    ]
+  },
+  {
+    "id": 1351,
+    "intent_ko": "침상 목욕을 돕는 올바른 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp đúng khi hỗ trợ tắm tại giường",
+    "choice_explanations": {
+      "ko": {
+        "1": "얼굴은 입 주위부터가 아니라 눈에서 코, 양 볼, 입 주위, 귀 순서로 닦아야 합니다. 일반적으로 눈→코→볼→입→귀 순입니다.",
+        "2": "유방은 위에서 아래가 아니라 아래에서 위로 원을 그리듯 닦아야 합니다.",
+        "3": "★ 양쪽 상지(팔)는 손목(말초)에서 팔 위(중심, 심장 방향)으로 닦는 것이 올바른 방법입니다. 이는 정맥 혈류를 심장으로 유도해 혈액순환을 돕습니다.",
+        "4": "다리는 발끝(말초)에서 허벅지(중심) 방향으로 닦아야 합니다. 허벅지에서 발끝 방향은 잘못됩니다.",
+        "5": "복부는 배꼽을 중심으로 시계 방향으로 닦아야 합니다. 시계 반대방향은 틀렸습니다."
+      },
+      "vi": {
+        "1": "Lau mặt không bắt đầu từ miệng mà theo thứ tự: mắt → mũi → má → miệng → tai.",
+        "2": "Lau ngực không phải từ trên xuống mà từ dưới lên theo hình tròn.",
+        "3": "★ Lau hai cánh tay (chi trên) từ cổ tay (ngoại vi) lên phía trên cánh tay (trung tâm, hướng tim) là đúng. Cách này dẫn máu tĩnh mạch về tim, hỗ trợ tuần hoàn.",
+        "4": "Lau chân phải từ đầu ngón chân (ngoại vi) lên đùi (trung tâm). Lau từ đùi xuống chân là sai.",
+        "5": "Lau bụng phải theo chiều kim đồng hồ quanh rốn. Ngược chiều kim đồng hồ là sai."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "상지", "def_vi": "Chi trên — hai cánh tay; lau từ cổ tay lên vai theo hướng tĩnh mạch về tim" },
+      { "term_ko": "말초", "def_vi": "Ngoại vi — đầu mút chi thể (ngón tay, ngón chân); điểm bắt đầu khi lau theo nguyên tắc ngoại vi vào trung tâm" }
+    ]
+  },
+  {
+    "id": 1350,
+    "intent_ko": "대상자의 통 목욕을 돕는 올바른 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp đúng khi hỗ trợ người bệnh tắm bồn (tắm toàn thân)",
+    "choice_explanations": {
+      "ko": {
+        "1": "목욕물 온도는 18~20도가 아니라 38~40도 정도가 적합합니다. 너무 낮은 온도는 체온 저하를 초래합니다.",
+        "2": "목욕 직전 음료 섭취는 특별히 필요하지 않으며, 직전 식사나 음료는 소화 불량 등을 유발할 수 있습니다.",
+        "3": "목욕 중 창문을 열면 외풍으로 체온이 떨어질 수 있습니다. 환기는 목욕 전후에 하는 것이 좋습니다.",
+        "4": "목욕 세척 순서는 몸통보다 말초(발)에서 중심 방향으로 하거나, 회음부를 마지막에 닦는 것이 일반적입니다.",
+        "5": "★ 목욕 후에는 피부 수분이 증발하기 전에 오일이나 피부유연제(보습제)를 발라 피부 건조와 손상을 예방하는 것이 중요합니다."
+      },
+      "vi": {
+        "1": "Nhiệt độ nước tắm không phải 18–20°C mà khoảng 38–40°C. Quá thấp sẽ làm hạ thân nhiệt.",
+        "2": "Uống đồ uống ngay trước khi tắm không đặc biệt cần thiết; ăn uống ngay trước tắm có thể gây khó tiêu.",
+        "3": "Mở cửa sổ khi đang tắm có thể làm hạ thân nhiệt do gió lùa. Nên thông gió trước và sau khi tắm.",
+        "4": "Thứ tự lau khi tắm thường là từ ngoại vi (chân) vào trung tâm, và lau vùng âm hộ/hậu môn cuối cùng.",
+        "5": "★ Sau khi tắm, cần bôi dầu hoặc kem dưỡng ẩm (chất làm mềm da) trước khi hơi nước bốc hơi để ngăn da khô và tổn thương."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "피부유연제", "def_vi": "Chất làm mềm da / kem dưỡng ẩm — sản phẩm bôi lên da sau tắm để giữ ẩm và bảo vệ da" },
+      { "term_ko": "통목욕", "def_vi": "Tắm bồn — hình thức tắm ngâm toàn thân trong bồn tắm" }
+    ]
+  },
+  {
+    "id": 1349,
+    "intent_ko": "편마비 대상자의 통목욕을 돕는 올바른 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp đúng khi hỗ trợ người bệnh liệt nửa người tắm bồn",
+    "choice_explanations": {
+      "ko": {
+        "1": "욕조 이동 시에는 마비된 쪽 겨드랑이를 잡는 것이 아니라 건강한 쪽을 지지해야 합니다.",
+        "2": "욕조에 들어갈 때는 건강한 쪽 다리부터 먼저 넣어야 합니다. 마비된 쪽 다리를 먼저 넣으면 균형을 잃기 쉽습니다.",
+        "3": "★ 말초(손발 끝)에서 중심(심장 방향)으로 닦아주는 것은 정맥혈 순환을 촉진하는 올바른 목욕 방법입니다.",
+        "4": "마비된 쪽 손은 힘이 약하여 안전손잡이를 안전하게 잡을 수 없습니다. 건강한 쪽 손으로 안전손잡이를 잡아야 합니다.",
+        "5": "욕조 안에서 머리를 감기면 전도 위험이 크고, 보통 머리는 욕조 밖에서 감기거나 별도로 처리합니다."
+      },
+      "vi": {
+        "1": "Khi di chuyển vào bồn tắm, không giữ nách phía liệt mà phải đỡ phía khỏe.",
+        "2": "Khi vào bồn tắm, cho chân khỏe vào trước. Cho chân liệt vào trước dễ mất thăng bằng.",
+        "3": "★ Lau từ ngoại vi (ngón tay/chân) vào trung tâm (hướng tim) thúc đẩy tuần hoàn tĩnh mạch — đây là phương pháp tắm đúng.",
+        "4": "Tay liệt yếu không đủ lực cầm chắc tay vịn an toàn. Phải dùng tay khỏe để cầm tay vịn.",
+        "5": "Gội đầu trong bồn tắm có nguy cơ ngã cao; thường gội đầu ngoài bồn hoặc xử lý riêng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "말초", "def_vi": "Ngoại vi — phần ngoài cùng của chi thể; lau từ ngoại vi vào trung tâm giúp tuần hoàn máu" },
+      { "term_ko": "안전손잡이", "def_vi": "Tay vịn an toàn — thanh vịn cố định trong phòng tắm/bồn tắm để người bệnh bám vào tránh ngã" },
+      { "term_ko": "통목욕", "def_vi": "Tắm bồn — hình thức tắm ngâm toàn thân trong bồn tắm" }
+    ]
+  },
+  {
+    "id": 1348,
+    "intent_ko": "편마비 대상자의 통목욕을 돕는 올바른 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp đúng khi chuẩn bị và hỗ trợ người bệnh liệt nửa người tắm bồn",
+    "choice_explanations": {
+      "ko": {
+        "1": "실내 온도 30~40도는 너무 높아 과열 위험이 있습니다. 일반적으로 목욕 전 실내 온도는 22~24도 정도로 유지합니다.",
+        "2": "혈압이 높을 때는 뜨거운 물이 혈압을 더 올릴 수 있어 매우 위험합니다. 오히려 미지근한 물로 해야 합니다.",
+        "3": "물의 온도는 요양보호사의 팔꿈치 안쪽이나 대상자의 건강한 쪽 손으로 확인해야 합니다. 발끝으로 확인하는 것은 정확도가 낮고 비위생적입니다.",
+        "4": "★ 욕조 턱 높이와 목욕의자(샤워 의자) 높이를 같게 맞추면 대상자가 의자에서 욕조로 미끄러지듯 안전하게 이동할 수 있어 낙상을 예방할 수 있습니다.",
+        "5": "목욕 후 선 채로 옷을 입히는 것은 균형 잡기 어려운 편마비 대상자에게 낙상 위험을 높입니다. 앉혀서 입혀야 합니다."
+      },
+      "vi": {
+        "1": "Nhiệt độ phòng 30–40°C quá cao, có nguy cơ quá nhiệt. Thông thường nhiệt độ phòng tắm duy trì khoảng 22–24°C.",
+        "2": "Khi huyết áp cao, nước nóng có thể làm tăng huyết áp thêm — rất nguy hiểm. Cần dùng nước ấm vừa phải.",
+        "3": "Kiểm tra nhiệt độ nước bằng khuỷu tay trong của người chăm sóc hoặc tay khỏe của người bệnh. Dùng đầu ngón chân để kiểm tra kém chính xác và không vệ sinh.",
+        "4": "★ Căn cao độ của thành bồn tắm bằng với cao độ của ghế tắm giúp người bệnh trượt an toàn từ ghế vào bồn, phòng ngừa ngã hiệu quả.",
+        "5": "Mặc quần áo cho người bệnh trong tư thế đứng sau khi tắm làm tăng nguy cơ ngã đối với người liệt nửa người. Phải để ngồi rồi mặc."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "욕조", "def_vi": "Bồn tắm — thiết bị lớn dùng để tắm ngâm toàn thân" },
+      { "term_ko": "통목욕", "def_vi": "Tắm bồn — hình thức tắm ngâm toàn thân trong bồn" },
+      { "term_ko": "편마비", "def_vi": "Liệt nửa người — liệt một bên cơ thể, làm giảm khả năng giữ thăng bằng" }
+    ]
+  },
+  {
+    "id": 1347,
+    "intent_ko": "오른쪽 편마비 대상자의 통목욕을 돕는 올바른 방법을 고르는 문제",
+    "intent_vi": "Chọn phương pháp đúng khi hỗ trợ người bệnh liệt nửa người phải tắm bồn",
+    "choice_explanations": {
+      "ko": {
+        "1": "목욕은 식사 직전이나 직후에 하면 혈액이 소화기로 몰려 혈압 변화, 어지럼증, 실신 위험이 있습니다. 피해야 합니다.",
+        "2": "오른쪽 편마비이므로 마비된 쪽은 오른쪽입니다. 이동 시에는 마비된 쪽(오른쪽)을 지지해야 합니다. 왼쪽을 지지하는 것은 잘못된 방법입니다.",
+        "3": "★ 욕조 안에 미끄럼방지 매트를 깔아두면 물에 젖은 욕조 바닥에서의 미끄럼을 방지하여 낙상을 예방하는 필수 안전 조치입니다.",
+        "4": "욕조에 30분씩 담그는 것은 너무 오래 있는 것으로, 체력 소모, 혈압 변화, 피부 손상 위험이 있습니다. 일반적으로 10~15분이 적당합니다.",
+        "5": "욕조 중앙에 앉는 것은 정확한 체위가 아닙니다. 욕조 변(턱) 쪽에 앉아 안전하게 이동해야 합니다."
+      },
+      "vi": {
+        "1": "Tắm ngay trước hoặc sau bữa ăn làm máu dồn xuống tiêu hóa, có thể gây thay đổi huyết áp, chóng mặt hoặc ngất. Cần tránh.",
+        "2": "Người liệt nửa người phải thì phía phải là phía liệt. Khi di chuyển phải đỡ phía phải (liệt). Đỡ phía trái là sai.",
+        "3": "★ Trải thảm chống trượt trong bồn tắm ngăn trơn trượt trên đáy bồn ướt, phòng ngừa té ngã — đây là biện pháp an toàn bắt buộc.",
+        "4": "Ngâm mình 30 phút là quá lâu, có nguy cơ mệt sức, thay đổi huyết áp và tổn thương da. Thông thường 10–15 phút là phù hợp.",
+        "5": "Ngồi giữa bồn tắm không phải tư thế đúng. Cần ngồi sát thành bồn để di chuyển an toàn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "미끄럼방지 매트", "def_vi": "Thảm chống trượt — thảm cao su đặt trong bồn tắm để tránh trơn trượt và phòng ngã" },
+      { "term_ko": "통목욕", "def_vi": "Tắm bồn — hình thức ngâm mình toàn thân trong bồn" },
+      { "term_ko": "편마비", "def_vi": "Liệt nửa người — liệt một bên cơ thể, cần đỡ phía liệt khi di chuyển" }
+    ]
+  }
+]

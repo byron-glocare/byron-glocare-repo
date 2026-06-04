@@ -1,0 +1,769 @@
+[
+  {
+    "id": 1196,
+    "intent_ko": "연하(삼킴) 곤란 대상자에게 식사를 안전하게 제공하는 올바른 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về cách cung cấp bữa ăn an toàn cho người có khó khăn khi nuốt",
+    "choice_explanations": {
+      "ko": {
+        "1": "턱을 위로 들면 기도가 열려 오히려 음식물이 기도로 넘어갈 위험이 높아진다.",
+        "2": "대상자가 원하는 양만큼 한꺼번에 입에 넣어주면 구강 내 음식물이 과다해져 질식 위험이 생긴다.",
+        "3": "★ 한 번에 넣어준 음식이 완전히 삼켜졌는지 확인한 뒤 다음 음식을 제공해야 기도 폐쇄 및 흡인을 예방할 수 있다. 연하 곤란 대상자 식사 보조의 핵심 원칙이다.",
+        "4": "식사 도중 자주 말을 걸면 대상자가 말하면서 삼키게 되어 흡인 위험이 오히려 높아진다.",
+        "5": "연하 곤란 대상자는 혼자 식사 중 질식·흡인 위험이 있으므로 자리를 비우면 안 된다."
+      },
+      "vi": {
+        "1": "Ngước cằm lên sẽ mở đường thở, làm tăng nguy cơ thức ăn lọt vào khí quản.",
+        "2": "Cho ăn quá nhiều một lúc theo ý muốn của người bệnh dễ gây tắc nghẽn và ngạt thở.",
+        "3": "★ Phải xác nhận người bệnh đã nuốt hết thức ăn trước rồi mới đưa miếng tiếp theo — đây là nguyên tắc cốt lõi để phòng tắc đường thở và hít sặc cho người khó nuốt.",
+        "4": "Hỏi chuyện thường xuyên khi đang ăn khiến người bệnh vừa nói vừa nuốt, tăng nguy cơ hít sặc.",
+        "5": "Người khó nuốt có nguy cơ ngạt và hít sặc khi ăn một mình, vì vậy không được rời khỏi chỗ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "연하(嚥下)", "def_vi": "Hành động nuốt thức ăn xuống thực quản" },
+      { "term_ko": "흡인(吸引)", "def_vi": "Hít sặc — thức ăn hoặc chất lỏng xâm nhập vào đường hô hấp" },
+      { "term_ko": "기도 폐쇄", "def_vi": "Tắc nghẽn đường thở, có thể gây ngạt thở" }
+    ]
+  },
+  {
+    "id": 1195,
+    "intent_ko": "왼쪽 편마비 대상자가 침상에서 안전하게 식사할 수 있도록 돕는 올바른 자세를 묻는 문제",
+    "intent_vi": "Câu hỏi về tư thế đúng khi giúp người liệt nửa người bên trái ăn trên giường",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 건강한 쪽(오른쪽)을 밑으로 하여 약간 옆으로 눕히면 음식물이 마비된 쪽으로 흘러들지 않고 중력에 의해 건강한 쪽 인두로 모여 안전하게 삼킬 수 있다. 왼쪽 편마비에서 올바른 측위 방향이다.",
+        "2": "얼굴을 마비 쪽(왼쪽)으로 돌리면 음식이 감각·근력이 떨어진 쪽으로 들어가 잔류·흡인 위험이 높아진다.",
+        "3": "마비된 팔을 식탁에 올리고 똑바로 앉히는 자세는 균형 유지가 어려워 안정적 식사를 보장하기 어렵다.",
+        "4": "침대 머리를 올리는 것은 의미 있지만 침상에서 누운 채로 식사할 때는 측위가 더 안전하다.",
+        "5": "식후 잔류 음식 확인이 필요한 쪽은 마비 쪽(왼쪽) 뺨이며, 오른쪽 뺨이 아니다."
+      },
+      "vi": {
+        "1": "★ Nằm nghiêng phía bên lành (bên phải) xuống dưới giúp thức ăn tập trung về phía hầu họng còn cảm giác, tránh thức ăn chảy vào bên liệt và nguy cơ hít sặc. Đây là tư thế đúng cho người liệt nửa người bên trái.",
+        "2": "Quay mặt về phía liệt (bên trái) khiến thức ăn vào vùng mất cảm giác và cơ lực, tăng nguy cơ thức ăn đọng lại và hít sặc.",
+        "3": "Ngồi thẳng với cánh tay liệt đặt lên bàn khó giữ thăng bằng, không đảm bảo an toàn khi ăn.",
+        "4": "Nâng đầu giường có ý nghĩa nhưng khi ăn trên giường ở tư thế nằm, nằm nghiêng an toàn hơn.",
+        "5": "Sau bữa ăn cần kiểm tra thức ăn còn đọng ở má bên liệt (bên trái), không phải bên phải."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "편마비(片麻痺)", "def_vi": "Liệt một nửa cơ thể (bên trái hoặc bên phải)" },
+      { "term_ko": "측위(側臥位)", "def_vi": "Tư thế nằm nghiêng sang một bên" },
+      { "term_ko": "인두(咽頭)", "def_vi": "Hầu họng — phần tiếp nối giữa miệng và thực quản/khí quản" }
+    ]
+  },
+  {
+    "id": 1194,
+    "intent_ko": "오른쪽 편마비 대상자가 누워서 식사할 때 안전한 체위를 묻는 문제",
+    "intent_vi": "Câu hỏi về tư thế an toàn khi cho người liệt nửa người bên phải ăn ở tư thế nằm",
+    "choice_explanations": {
+      "ko": {
+        "1": "앙와위(똑바로 누운 자세)에서는 음식물이 기도로 흡인될 위험이 높고, 편마비 환자에게 특히 위험하다.",
+        "2": "★ 건강한 쪽(왼쪽)을 밑으로 하여 약간 옆으로 눕히면 음식물이 근력과 감각이 살아있는 왼쪽 인두 쪽으로 모여 안전하게 삼킬 수 있다. 오른쪽 편마비 대상자의 표준 식사 체위이다.",
+        "3": "마비 측(오른쪽)을 밑으로 하면 마비된 쪽의 근육이 눌려 더욱 불편하고, 음식이 마비 측으로 고여 위험하다.",
+        "4": "왼쪽(건강 측)을 베개로 지지하는 것은 측위 유지 보조로 유용하나, 그 자체가 식사 체위의 핵심은 아니다.",
+        "5": "마비 측(오른쪽) 입에 빨대를 고정하는 것은 감각·근력 저하로 음식물을 제대로 조절할 수 없어 매우 위험하다."
+      },
+      "vi": {
+        "1": "Nằm ngửa (ngửa hoàn toàn) làm tăng nguy cơ hít sặc, đặc biệt nguy hiểm với người liệt nửa người.",
+        "2": "★ Nằm nghiêng bên lành (bên trái) xuống dưới giúp thức ăn tập trung về phía hầu họng còn cảm giác và cơ lực, nuốt an toàn hơn. Đây là tư thế chuẩn cho người liệt nửa người bên phải.",
+        "3": "Nằm nghiêng bên liệt (bên phải) xuống dưới gây áp lực lên cơ liệt, khó chịu và thức ăn dễ đọng lại ở bên đó.",
+        "4": "Dùng gối đỡ bên lành có ích cho việc duy trì tư thế nghiêng, nhưng không phải yếu tố chính của tư thế ăn.",
+        "5": "Gắn ống hút vào miệng bên liệt rất nguy hiểm vì cảm giác và cơ lực ở bên đó suy giảm, không kiểm soát được thức ăn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "앙와위(仰臥位)", "def_vi": "Tư thế nằm ngửa hoàn toàn" },
+      { "term_ko": "흡인(吸引)", "def_vi": "Hít sặc — thức ăn hoặc dịch lọt vào đường hô hấp" },
+      { "term_ko": "편마비(片麻痺)", "def_vi": "Liệt một nửa cơ thể" }
+    ]
+  },
+  {
+    "id": 1193,
+    "intent_ko": "침상 대상자 식사 제공 시 사레(흡인)를 예방하기 위한 올바른 체위를 묻는 문제",
+    "intent_vi": "Câu hỏi về tư thế đúng để phòng hít sặc khi cho người nằm trên giường ăn",
+    "choice_explanations": {
+      "ko": {
+        "1": "물기가 없는 음식이라도 자세가 잘못되면 흡인이 발생할 수 있으므로, 음식의 형태만으로 안전을 보장할 수 없다.",
+        "2": "상체를 세우면서 턱을 드는 자세는 오히려 기도가 열려 흡인 위험이 높아진다. 식사 시에는 턱을 내려(chin tuck) 기도를 좁히는 것이 원칙이다.",
+        "3": "신맛 나는 음식이 타액 분비를 자극할 수는 있으나 사레 예방과는 직접 관련이 없다.",
+        "4": "음식 섭취 중 말을 시키면 기도가 열린 상태에서 삼키게 되어 흡인 위험이 높아진다.",
+        "5": "★ 침상 머리(헤드 오브 베드)를 30~60도 높이면 중력 작용으로 음식이 식도 방향으로 이동하고, 기도 쪽으로의 역류·흡인을 예방할 수 있다. 와상 대상자 식사 시 가장 안전한 표준 체위이다."
+      },
+      "vi": {
+        "1": "Dù thức ăn khô, tư thế sai vẫn có thể gây hít sặc — hình thức thức ăn không đủ để đảm bảo an toàn.",
+        "2": "Ngước cằm lên khi nâng thân trên sẽ mở rộng đường thở, tăng nguy cơ hít sặc. Nguyên tắc đúng là hạ cằm xuống (chin tuck) để thu hẹp đường thở.",
+        "3": "Thức ăn có vị chua có thể kích thích tiết nước bọt nhưng không liên quan trực tiếp đến phòng hít sặc.",
+        "4": "Bắt chuyện khi đang ăn khiến người bệnh vừa nói vừa nuốt, đường thở mở ra, tăng nguy cơ hít sặc.",
+        "5": "★ Nâng đầu giường 30–60 độ giúp trọng lực đưa thức ăn đi theo chiều thực quản, ngăn trào ngược và hít sặc. Đây là tư thế chuẩn và an toàn nhất khi cho người nằm giường ăn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "사레(흡인)", "def_vi": "Hít sặc — thức ăn hoặc chất lỏng lọt vào khí quản" },
+      { "term_ko": "와상(臥床)", "def_vi": "Trạng thái phải nằm liệt giường, không tự ngồi dậy được" },
+      { "term_ko": "기도(氣道)", "def_vi": "Đường hô hấp — ống dẫn không khí vào phổi" }
+    ]
+  },
+  {
+    "id": 1192,
+    "intent_ko": "대상자가 식탁에서 식사할 때 올바른 앉는 자세를 묻는 문제",
+    "intent_vi": "Câu hỏi về tư thế ngồi đúng khi đối tượng ăn tại bàn ăn",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 의자에 깊숙이 앉아 엉덩이와 등이 등받이에 밀착되고, 팔꿈치를 식탁 위에 올려 팔을 지지하면 몸의 안정성이 높아져 편안하고 안전하게 식사할 수 있다.",
+        "2": "머리를 뒤로 젖히면 기도가 열려 흡인 위험이 높아진다. 식사 시에는 약간 앞으로 숙이거나 중립 자세가 적절하다.",
+        "3": "의자 앞쪽 끝에 걸터 앉으면 균형이 불안정하여 낙상 위험이 있다.",
+        "4": "발바닥 전체가 바닥에 닿도록 조절해야 하며, 발가락 끝만 닿으면 불안정하다.",
+        "5": "등받이에 등을 기대어야 척추를 지지받아 안정적 자세가 유지되며, 등을 띄우면 쉽게 피로해진다."
+      },
+      "vi": {
+        "1": "★ Ngồi sâu vào ghế để hông và lưng tựa sát vào thành ghế, đặt khuỷu tay lên bàn để tựa cánh tay — tư thế này tạo sự ổn định tốt nhất cho cơ thể khi ăn.",
+        "2": "Ngả đầu ra sau mở rộng đường thở, tăng nguy cơ hít sặc. Khi ăn nên giữ đầu ở vị trí trung lập hoặc hơi cúi nhẹ.",
+        "3": "Ngồi ở mép ghế gây mất thăng bằng, có nguy cơ ngã.",
+        "4": "Cần điều chỉnh ghế để cả lòng bàn chân chạm sàn, chỉ chạm đầu ngón chân thì không ổn định.",
+        "5": "Phải tựa lưng vào thành ghế để cột sống được đỡ, không tựa sẽ mỏi lưng nhanh và mất thăng bằng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "팔꿈치", "def_vi": "Khuỷu tay — khớp giữa cánh tay trên và cẳng tay" },
+      { "term_ko": "등받이", "def_vi": "Thành lưng của ghế, phần đỡ lưng người ngồi" }
+    ]
+  },
+  {
+    "id": 1191,
+    "intent_ko": "거동이 불편한 대상자가 안정적으로 식사할 수 있도록 의자 높이를 올바르게 조절하는 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về cách điều chỉnh ghế đúng để người khó vận động ăn uống ổn định",
+    "choice_explanations": {
+      "ko": {
+        "1": "바퀴 달린 의자는 이동에 편리하지만 식사 중 의자가 미끄러질 위험이 있어 식사용으로 부적합하다.",
+        "2": "팔 받침이 있어야 상체를 지지하고 안정된 자세로 식사할 수 있다. 팔 받침 없는 의자는 피로도를 높인다.",
+        "3": "★ 발바닥이 바닥에 완전히 닿도록 의자 높이를 조절하면 하지에 안정적인 지지가 생겨 균형을 잡기 쉽고, 올바른 식사 자세를 유지할 수 있다.",
+        "4": "식탁 높이는 가슴과 배꼽 사이가 적절하며, 가슴 위치까지 높이면 팔꿈치를 들어올려야 해서 불편하다.",
+        "5": "휠체어 식사 시에는 식탁에 너무 붙어도, 너무 멀어도 불편하다. 적절한 간격을 두어 팔을 편하게 올릴 수 있어야 한다."
+      },
+      "vi": {
+        "1": "Ghế có bánh xe tiện di chuyển nhưng dễ trượt trong khi ăn, không an toàn cho bữa ăn.",
+        "2": "Cần có tay vịn ghế để đỡ thân trên và duy trì tư thế ổn định; ghế không có tay vịn dễ gây mỏi.",
+        "3": "★ Điều chỉnh ghế để cả lòng bàn chân chạm hoàn toàn xuống sàn giúp chi dưới được đỡ vững, dễ giữ thăng bằng và duy trì tư thế ăn đúng.",
+        "4": "Chiều cao bàn ăn phù hợp là giữa ngực và rốn; nếu cao đến ngực phải nâng khuỷu tay lên, gây khó chịu.",
+        "5": "Khi ăn trên xe lăn cần khoảng cách vừa phải với bàn — quá gần hay quá xa đều bất tiện khi đặt cánh tay lên."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "거동(擧動)", "def_vi": "Khả năng vận động, đi lại của cơ thể" },
+      { "term_ko": "팔 받침", "def_vi": "Tay vịn ghế — bộ phận đỡ cánh tay khi ngồi" }
+    ]
+  },
+  {
+    "id": 1190,
+    "intent_ko": "대상자가 식탁에서 식사할 때 적절한 식탁 높이를 묻는 문제",
+    "intent_vi": "Câu hỏi về chiều cao bàn ăn phù hợp khi đối tượng ăn tại bàn",
+    "choice_explanations": {
+      "ko": {
+        "1": "턱 밑 높이는 식탁이 너무 높아 시야가 가리고 팔을 들어올려야 해서 매우 불편하다.",
+        "2": "가슴 위 높이도 팔꿈치를 들어야 하므로 빠르게 피로해지고 식사하기 어렵다.",
+        "3": "배 아래는 식탁이 낮아 구부정하게 앞으로 숙여야 하므로 자세가 나빠진다.",
+        "4": "★ 가슴과 배꼽 사이 높이가 팔꿈치를 자연스럽게 굽혔을 때 편안하게 올려놓을 수 있는 이상적인 식탁 높이이다. 이 위치에서 척추가 곧게 유지되고 식사 동작이 가장 편안하다.",
+        "5": "최대한 높게 하면 어깨와 팔을 과도하게 들어야 해 근육에 부담이 크다."
+      },
+      "vi": {
+        "1": "Cao đến dưới cằm: bàn quá cao, che khuất tầm nhìn và phải nâng cánh tay lên liên tục, rất bất tiện.",
+        "2": "Cao trên ngực: phải nhấc khuỷu tay, mỏi mệt nhanh, khó ăn.",
+        "3": "Thấp hơn bụng: bàn quá thấp, phải cúi người ra trước, ảnh hưởng tư thế.",
+        "4": "★ Chiều cao giữa ngực và rốn là lý tưởng — khuỷu tay có thể đặt thoải mái khi gập tự nhiên, cột sống giữ thẳng và động tác ăn thoải mái nhất.",
+        "5": "Bàn quá cao buộc phải nâng vai và cánh tay nhiều, gây áp lực lớn lên cơ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "배꼽", "def_vi": "Rốn — điểm mốc giải phẫu ở giữa bụng" },
+      { "term_ko": "척추(脊椎)", "def_vi": "Cột sống — xương trụ cột ở giữa lưng" }
+    ]
+  },
+  {
+    "id": 1189,
+    "intent_ko": "삼키는 능력이 없고 의식장애가 있는 대상자에게 비위관으로 제공하는 식이 종류를 묻는 문제",
+    "intent_vi": "Câu hỏi về loại chế độ ăn được cung cấp qua ống thông mũi dạ dày cho người mất khả năng nuốt và có rối loạn ý thức",
+    "choice_explanations": {
+      "ko": {
+        "1": "일반식은 저작 및 연하 기능이 정상인 대상자에게 제공하는 식사로, 비위관 대상자에게 부적절하다.",
+        "2": "저작 도움식은 씹기 어려운 대상자에게 제공하는 부드러운 형태의 식사로, 구강 섭취가 가능한 경우에만 해당된다.",
+        "3": "★ 경관 유동식은 비위관(코에서 위까지 삽입한 관)을 통해 액체 형태로 위장에 직접 주입하는 식이이다. 삼키는 능력이 없거나 의식장애가 있어 구강 섭취가 불가능한 대상자에게 제공하는 유일한 적절한 방법이다.",
+        "4": "경구 유동식은 입을 통해 직접 섭취하는 액체 형태의 식사로, 연하 기능이 일부 남아 있는 경우에 해당된다.",
+        "5": "연하 도움식은 삼키기 어려운 대상자를 위해 점도를 조절한 식사로, 구강 섭취가 가능한 경우에 사용한다."
+      },
+      "vi": {
+        "1": "Bữa ăn thông thường dành cho người có chức năng nhai nuốt bình thường, không phù hợp với người cần ống thông.",
+        "2": "Chế độ ăn hỗ trợ nhai là thức ăn mềm cho người khó nhai, chỉ dùng khi còn ăn qua đường miệng.",
+        "3": "★ Thức ăn lỏng qua ống (경관 유동식) được bơm trực tiếp vào dạ dày qua ống thông mũi dạ dày dưới dạng lỏng. Đây là phương pháp duy nhất phù hợp khi người bệnh không còn khả năng nuốt hoặc có rối loạn ý thức.",
+        "4": "Thức ăn lỏng qua miệng (경구 유동식) dùng khi người bệnh vẫn còn khả năng nuốt một phần và ăn qua đường miệng.",
+        "5": "Chế độ ăn hỗ trợ nuốt điều chỉnh độ sệt thức ăn, chỉ dùng khi còn ăn qua đường miệng được."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "비위관(鼻胃管)", "def_vi": "Ống thông mũi dạ dày — ống mềm đưa qua mũi xuống dạ dày để cấp dinh dưỡng" },
+      { "term_ko": "경관 유동식(經管 流動食)", "def_vi": "Thức ăn lỏng qua ống — chế độ ăn dạng lỏng bơm qua ống thông vào dạ dày" },
+      { "term_ko": "의식장애(意識障礙)", "def_vi": "Rối loạn ý thức — trạng thái mất hoặc giảm khả năng nhận thức và phản ứng" }
+    ]
+  },
+  {
+    "id": 1188,
+    "intent_ko": "저작 및 연하 능력이 모두 떨어진 대상자에게 적합한 식이 종류를 묻는 문제",
+    "intent_vi": "Câu hỏi về loại chế độ ăn phù hợp cho người suy giảm cả khả năng nhai lẫn nuốt",
+    "choice_explanations": {
+      "ko": {
+        "1": "경관 유동식은 비위관 등을 통해 제공하는 것으로, 구강 섭취 자체가 불가능한 대상자에게 해당된다.",
+        "2": "경구 유동식은 입으로 섭취 가능하나 저작·연하 문제를 복합적으로 가진 대상자에게 충분한 해결책이 아니다.",
+        "3": "★ 연하 도움식은 저작과 연하 장애가 동시에 있는 대상자를 위해 음식의 질감과 점도를 조절하여 씹고 삼키기 쉽게 만든 식이이다. 두 기능이 모두 저하된 경우의 대표적 처방식이다.",
+        "4": "저작 도움식은 씹기가 어려운 대상자를 위한 것으로, 연하 장애까지 동반된 경우에는 부족하다.",
+        "5": "일반식은 저작 및 연하 기능이 정상인 대상자를 위한 것이다."
+      },
+      "vi": {
+        "1": "Thức ăn lỏng qua ống dành cho người không thể ăn qua đường miệng hoàn toàn.",
+        "2": "Thức ăn lỏng qua miệng chưa đủ giải quyết khi cả nhai lẫn nuốt đều suy giảm.",
+        "3": "★ Chế độ ăn hỗ trợ nuốt (연하 도움식) được thiết kế điều chỉnh kết cấu và độ sệt thức ăn để vừa dễ nhai vừa dễ nuốt cho người suy giảm cả hai chức năng. Đây là loại chỉ định điển hình khi cả nhai lẫn nuốt đều có vấn đề.",
+        "4": "Chế độ ăn hỗ trợ nhai chỉ giải quyết khó khăn khi nhai, không đủ khi còn kèm rối loạn nuốt.",
+        "5": "Bữa ăn thông thường dành cho người có chức năng nhai nuốt bình thường."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "저작(咀嚼)", "def_vi": "Nhai — hành động nghiền thức ăn bằng răng" },
+      { "term_ko": "연하 도움식(嚥下 補助食)", "def_vi": "Chế độ ăn hỗ trợ nuốt — thức ăn được điều chỉnh kết cấu và độ sệt giúp nuốt dễ hơn" },
+      { "term_ko": "점도(粘度)", "def_vi": "Độ sệt — mức độ đặc/lỏng của thức ăn, thường được điều chỉnh cho người khó nuốt" }
+    ]
+  },
+  {
+    "id": 1187,
+    "intent_ko": "저작능력이 저하되어 단단하고 질긴 음식을 먹기 어려운 대상자에게 적합한 식이 종류를 묻는 문제",
+    "intent_vi": "Câu hỏi về loại chế độ ăn phù hợp cho người suy giảm khả năng nhai, khó ăn thức ăn cứng và dai",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 저작 도움식은 단단하거나 질긴 음식을 씹기 어려운 대상자를 위해 음식을 부드럽게 조리하거나 잘게 썰어 준비한 식이이다. 저작능력 저하가 주된 문제일 때 적합한 처방식이다.",
+        "2": "연하 도움식은 삼키기에 어려움을 겪는 대상자를 위한 것으로, 저작능력 문제와는 구별된다.",
+        "3": "경구 유동식은 씹지 않아도 되는 액체 형태이나, 저작능력 문제에 특화된 처방이 아니다.",
+        "4": "일반식은 저작능력이 정상인 대상자에게 제공하는 식사이다.",
+        "5": "경관 유동식은 구강 섭취 자체가 불가능한 대상자를 위한 관(튜브) 급식이다."
+      },
+      "vi": {
+        "1": "★ Chế độ ăn hỗ trợ nhai (저작 도움식) được chuẩn bị bằng cách nấu mềm hoặc cắt nhỏ thức ăn dành cho người khó nhai thức ăn cứng và dai. Đây là loại chỉ định phù hợp khi vấn đề chính là suy giảm khả năng nhai.",
+        "2": "Chế độ ăn hỗ trợ nuốt dành cho người khó nuốt, khác với người chủ yếu khó nhai.",
+        "3": "Thức ăn lỏng qua miệng không cần nhai, nhưng không phải giải pháp chuyên biệt cho vấn đề nhai.",
+        "4": "Bữa ăn thông thường dành cho người có chức năng nhai bình thường.",
+        "5": "Thức ăn lỏng qua ống dành cho người hoàn toàn không thể ăn qua đường miệng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "저작능력(咀嚼能力)", "def_vi": "Khả năng nhai — năng lực nghiền nhỏ thức ăn bằng răng" },
+      { "term_ko": "저작 도움식", "def_vi": "Chế độ ăn hỗ trợ nhai — thức ăn được nấu mềm hoặc cắt nhỏ cho người khó nhai" },
+      { "term_ko": "경관 유동식(經管 流動食)", "def_vi": "Thức ăn lỏng qua ống — cấp dinh dưỡng qua ống thông, không qua đường miệng" }
+    ]
+  },
+  {
+    "id": 1186,
+    "intent_ko": "노인 대상자의 영양부족 상태를 나타내는 지표를 묻는 문제",
+    "intent_vi": "Câu hỏi về chỉ số biểu hiện tình trạng thiếu dinh dưỡng ở người cao tuổi",
+    "choice_explanations": {
+      "ko": {
+        "1": "체중 증가는 영양 과잉 또는 수분 저류를 나타내며, 영양부족의 징후와 반대이다.",
+        "2": "★ 인지 수준 변화는 영양부족의 중요한 지표이다. 단백질·비타민·미네랄 부족은 뇌 기능에 영향을 미쳐 집중력 저하, 혼란, 기억력 감퇴 등 인지 저하 증상을 유발할 수 있다.",
+        "3": "식욕 증가는 영양부족에서 오히려 식욕이 감소하는 경향과 반대 방향이다.",
+        "4": "영양부족 시에는 근육 손실 등으로 신체기능이 저하되므로, 신체기능 증진은 영양부족의 징후가 아니다.",
+        "5": "영양부족은 신경계에 영향을 주어 심리적 불안이나 우울을 초래할 수 있으므로, 안정된 심리상태는 부족의 징후가 아니다."
+      },
+      "vi": {
+        "1": "Tăng cân là dấu hiệu của thừa dinh dưỡng hoặc ứ dịch, ngược lại với thiếu dinh dưỡng.",
+        "2": "★ Thay đổi mức nhận thức là chỉ số quan trọng của thiếu dinh dưỡng. Thiếu protein, vitamin và khoáng chất ảnh hưởng đến chức năng não, gây giảm tập trung, lú lẫn và suy giảm trí nhớ.",
+        "3": "Tăng cảm giác thèm ăn trái ngược với xu hướng giảm cảm giác thèm ăn thường gặp khi thiếu dinh dưỡng.",
+        "4": "Khi thiếu dinh dưỡng, chức năng thể chất giảm do mất cơ — tăng cường chức năng thể chất không phải là dấu hiệu thiếu dinh dưỡng.",
+        "5": "Thiếu dinh dưỡng có thể gây lo âu và trầm cảm, nên tâm lý ổn định không phải dấu hiệu thiếu dinh dưỡng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "영양부족(營養不足)", "def_vi": "Thiếu dinh dưỡng — tình trạng cơ thể không được cung cấp đủ chất dinh dưỡng cần thiết" },
+      { "term_ko": "인지 수준(認知 水準)", "def_vi": "Mức độ nhận thức — năng lực hiểu biết, tập trung và ghi nhớ của não bộ" }
+    ]
+  },
+  {
+    "id": 1185,
+    "intent_ko": "식사 시 영양부족이 발생할 가능성이 가장 높은 대상자를 묻는 문제",
+    "intent_vi": "Câu hỏi về đối tượng có nguy cơ cao nhất bị thiếu dinh dưỡng do khó ăn uống",
+    "choice_explanations": {
+      "ko": {
+        "1": "녹내장은 시야 장애를 일으키지만 음식 섭취 기능 자체와는 직접적 관련이 적다.",
+        "2": "언어장애는 의사소통 문제를 유발하지만 음식을 씹고 삼키는 기능과는 직접적 관련이 낮다.",
+        "3": "★ 연하장애(삼킴 장애)는 음식을 삼키는 것 자체가 어려워 충분한 양의 식사를 섭취할 수 없게 된다. 이로 인해 칼로리·단백질·수분 등의 부족이 직접적으로 발생하므로 영양부족 위험이 가장 높다.",
+        "4": "변비는 배변 문제로 영양소 흡수 기능에 간접적 영향은 있으나, 섭취 자체를 방해하지는 않는다.",
+        "5": "요실금은 배뇨 조절 문제로, 영양 섭취와는 관련이 없다."
+      },
+      "vi": {
+        "1": "Glôcôm gây rối loạn thị giác nhưng không ảnh hưởng trực tiếp đến chức năng ăn uống.",
+        "2": "Rối loạn ngôn ngữ gây khó khăn giao tiếp nhưng ít liên quan trực tiếp đến chức năng nhai nuốt.",
+        "3": "★ Rối loạn nuốt (연하장애) khiến người bệnh không thể nuốt đủ lượng thức ăn cần thiết, dẫn đến thiếu hụt calo, protein và nước trực tiếp — đây là nguy cơ thiếu dinh dưỡng cao nhất.",
+        "4": "Táo bón là vấn đề về bài tiết, có thể ảnh hưởng gián tiếp đến hấp thu nhưng không cản trở việc ăn uống.",
+        "5": "Tiểu không tự chủ là vấn đề kiểm soát đường tiểu, không liên quan đến dinh dưỡng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "연하장애(嚥下障礙)", "def_vi": "Rối loạn nuốt — khó khăn hoặc không thể nuốt thức ăn và chất lỏng" },
+      { "term_ko": "녹내장(綠內障)", "def_vi": "Glôcôm — bệnh mắt gây tổn thương dây thần kinh thị giác do áp lực nội nhãn tăng" },
+      { "term_ko": "요실금(尿失禁)", "def_vi": "Tiểu không tự chủ — mất khả năng kiểm soát bàng quang" }
+    ]
+  },
+  {
+    "id": 1184,
+    "intent_ko": "노인의 영양부족을 초래하는 위험 요인을 묻는 문제",
+    "intent_vi": "Câu hỏi về yếu tố nguy cơ gây thiếu dinh dưỡng ở người cao tuổi",
+    "choice_explanations": {
+      "ko": {
+        "1": "체중 증가는 일반적으로 영양 과잉 또는 부종의 지표이며, 영양부족을 초래하는 요인이 아니다.",
+        "2": "비타민 복용은 영양 보충의 수단으로, 영양부족을 예방하는 데 도움이 된다.",
+        "3": "인지능력 상승은 영양상태와 직접적 연관이 없으며, 오히려 영양부족의 결과가 인지 저하로 나타난다.",
+        "4": "★ 약물사용은 노인의 영양부족을 초래하는 주요 위험 요인이다. 많은 약물이 식욕 감퇴, 미각 변화, 구역감, 흡수 저하를 유발하여 영양 섭취에 부정적 영향을 준다.",
+        "5": "규칙적인 식사는 영양부족을 예방하는 보호 요인이다."
+      },
+      "vi": {
+        "1": "Tăng cân thường là dấu hiệu thừa dinh dưỡng hoặc phù nề, không phải yếu tố gây thiếu dinh dưỡng.",
+        "2": "Bổ sung vitamin là biện pháp cung cấp dinh dưỡng, giúp phòng tránh thiếu dinh dưỡng.",
+        "3": "Tăng nhận thức không liên quan trực tiếp đến dinh dưỡng; thực ra thiếu dinh dưỡng mới gây suy giảm nhận thức.",
+        "4": "★ Sử dụng thuốc là yếu tố nguy cơ chính gây thiếu dinh dưỡng ở người cao tuổi. Nhiều loại thuốc gây chán ăn, thay đổi vị giác, buồn nôn và giảm hấp thu, ảnh hưởng tiêu cực đến tình trạng dinh dưỡng.",
+        "5": "Ăn uống đều đặn là yếu tố bảo vệ giúp phòng tránh thiếu dinh dưỡng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "약물사용(藥物使用)", "def_vi": "Sử dụng thuốc — việc dùng các loại thuốc điều trị, thường ảnh hưởng đến dinh dưỡng ở người cao tuổi" },
+      { "term_ko": "식욕 감퇴(食慾 減退)", "def_vi": "Chán ăn — giảm cảm giác thèm ăn, thường là tác dụng phụ của thuốc" },
+      { "term_ko": "미각(味覺)", "def_vi": "Vị giác — khả năng cảm nhận mùi vị thức ăn" }
+    ]
+  },
+  {
+    "id": 1183,
+    "intent_ko": "노인에게서 영양부족이 의심되는 관찰 징후를 묻는 문제",
+    "intent_vi": "Câu hỏi về dấu hiệu quan sát nghi ngờ thiếu dinh dưỡng ở người cao tuổi",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 상처 회복 지연은 영양부족의 대표적 징후이다. 단백질, 비타민 C, 아연 등이 부족하면 조직 재생과 면역 기능이 저하되어 상처가 잘 낫지 않는다.",
+        "2": "정상적인 배설은 소화기계가 정상 작동하고 있음을 나타내며, 영양부족과 관계없다.",
+        "3": "수분을 충분히 섭취하는 것은 건강 유지에 긍정적인 행동이며, 영양부족의 징후가 아니다.",
+        "4": "종합 비타민 복용은 미량영양소 보충에 도움이 되나, 그 자체로 영양부족의 징후가 아니다.",
+        "5": "흡연은 혈관 건강 및 일부 영양소 대사에 영향을 주지만, 영양부족의 직접적 관찰 징후는 아니다."
+      },
+      "vi": {
+        "1": "★ Lành thương chậm là dấu hiệu điển hình của thiếu dinh dưỡng. Thiếu protein, vitamin C và kẽm làm suy giảm tái tạo mô và miễn dịch, khiến vết thương lâu lành.",
+        "2": "Bài tiết bình thường cho thấy hệ tiêu hóa hoạt động tốt, không liên quan đến thiếu dinh dưỡng.",
+        "3": "Uống đủ nước là hành vi tích cực cho sức khỏe, không phải dấu hiệu thiếu dinh dưỡng.",
+        "4": "Uống vitamin tổng hợp hỗ trợ bổ sung vi chất nhưng không phải bản thân nó là dấu hiệu thiếu dinh dưỡng.",
+        "5": "Hút thuốc ảnh hưởng đến sức khỏe mạch máu và chuyển hóa một số chất, nhưng không phải dấu hiệu quan sát trực tiếp của thiếu dinh dưỡng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "상처 회복 지연", "def_vi": "Lành thương chậm — vết thương không hồi phục bình thường, dấu hiệu thiếu dinh dưỡng" },
+      { "term_ko": "조직 재생(組織 再生)", "def_vi": "Tái tạo mô — quá trình phục hồi tế bào và mô bị tổn thương" },
+      { "term_ko": "미량영양소(微量營養素)", "def_vi": "Vi chất dinh dưỡng — vitamin và khoáng chất cần với lượng nhỏ nhưng thiết yếu" }
+    ]
+  },
+  {
+    "id": 1182,
+    "intent_ko": "연하곤란 대상자 식사 시 가장 주의 깊게 관찰해야 할 증상을 묻는 문제",
+    "intent_vi": "Câu hỏi về triệu chứng cần theo dõi sát nhất khi cho người khó nuốt ăn",
+    "choice_explanations": {
+      "ko": {
+        "1": "탈수는 수분 섭취 부족으로 발생하지만, 식사 중 즉각적으로 나타나는 응급 징후는 아니다.",
+        "2": "부종은 체액 저류로 인한 것으로, 연하곤란 식사와 직접적 관련이 없다.",
+        "3": "★ 청색증은 음식물이나 액체가 기도로 흡인되어 산소 공급이 차단될 때 입술·손끝·피부가 푸르게 변하는 증상이다. 연하곤란 대상자 식사 중 가장 즉각적이고 심각한 위험 신호로, 발견 즉시 대처해야 한다.",
+        "4": "소양증(가려움)은 피부 알레르기나 건조함과 관련된 것으로, 연하곤란과 무관하다.",
+        "5": "피부 발적은 국소 염증 반응으로, 연하곤란 식사와 직접적 관련이 없다."
+      },
+      "vi": {
+        "1": "Mất nước xảy ra do thiếu dịch, nhưng không phải dấu hiệu khẩn cấp xuất hiện ngay khi đang ăn.",
+        "2": "Phù nề do ứ dịch trong cơ thể, không liên quan trực tiếp đến việc ăn của người khó nuốt.",
+        "3": "★ Xanh tím (청색증) là triệu chứng môi, đầu ngón tay và da chuyển màu tím do thiếu oxy khi thức ăn hoặc chất lỏng bị hít vào khí quản. Đây là dấu hiệu nguy hiểm nhất và khẩn cấp nhất cần phát hiện và xử lý ngay khi cho người khó nuốt ăn.",
+        "4": "Ngứa (소양증) liên quan đến dị ứng da hoặc khô da, không liên quan đến khó nuốt.",
+        "5": "Đỏ da (피부 발적) là phản ứng viêm tại chỗ, không liên quan trực tiếp đến việc ăn của người khó nuốt."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "연하곤란(嚥下困難)", "def_vi": "Khó nuốt — khó khăn trong việc đưa thức ăn từ miệng xuống dạ dày" },
+      { "term_ko": "청색증(靑色症)", "def_vi": "Xanh tím — da và niêm mạc chuyển màu tím xanh do thiếu oxy trong máu" },
+      { "term_ko": "소양증(瘙痒症)", "def_vi": "Ngứa da — cảm giác ngứa ngáy khó chịu trên da" },
+      { "term_ko": "흡인(吸引)", "def_vi": "Hít sặc — thức ăn hoặc chất lỏng xâm nhập vào đường hô hấp" }
+    ]
+  },
+  {
+    "id": 1181,
+    "intent_ko": "섭취 요양보호의 일반적 원칙 중 올바른 것을 묻는 문제",
+    "intent_vi": "Câu hỏi về nguyên tắc đúng trong chăm sóc dinh dưỡng (hỗ trợ ăn uống) cho đối tượng",
+    "choice_explanations": {
+      "ko": {
+        "1": "대상자의 식사습관과 소화능력은 반드시 고려해야 하는 핵심 사항으로, 무시하면 안 된다.",
+        "2": "식사 방법과 속도는 요양보호사가 아닌 대상자에게 맞춰야 한다.",
+        "3": "식사 전에 주변 환경을 청결히 정리하는 것이 원칙이며, 식사 도중 정리하면 대상자에게 불편을 줄 수 있다.",
+        "4": "★ 대상자의 요구를 최대한 반영하는 것은 섭취 요양보호의 핵심 원칙이다. 개인의 식사 선호도, 습관, 속도를 존중함으로써 자율성을 보장하고 식사 만족도 및 영양 섭취 효율을 높인다.",
+        "5": "대상자는 식사 중뿐만 아니라 식전·식후에도 주의 깊게 관찰해야 한다."
+      },
+      "vi": {
+        "1": "Thói quen ăn uống và khả năng tiêu hóa của đối tượng là những yếu tố cốt lõi phải được xem xét, không được bỏ qua.",
+        "2": "Phương pháp và tốc độ ăn phải điều chỉnh theo đối tượng, không phải theo nhân viên chăm sóc.",
+        "3": "Nguyên tắc là dọn dẹp môi trường sạch sẽ trước bữa ăn; dọn dẹp trong khi ăn gây bất tiện cho đối tượng.",
+        "4": "★ Phản ánh tối đa nhu cầu của đối tượng là nguyên tắc cốt lõi trong chăm sóc dinh dưỡng. Tôn trọng sở thích, thói quen và tốc độ ăn của từng người giúp bảo đảm tự chủ và nâng cao hiệu quả hấp thu dinh dưỡng.",
+        "5": "Đối tượng cần được theo dõi không chỉ trong bữa ăn mà còn trước và sau bữa ăn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "섭취 요양보호(攝取 療養保護)", "def_vi": "Chăm sóc dinh dưỡng — hỗ trợ và giám sát việc ăn uống cho đối tượng cần chăm sóc" },
+      { "term_ko": "자율성(自律性)", "def_vi": "Tự chủ — quyền và khả năng tự quyết định của bản thân" }
+    ]
+  },
+  {
+    "id": 1180,
+    "intent_ko": "요양보호사 업무 정보 전달 및 기관 운영 의견 수렴을 목적으로 하는 회의 종류를 묻는 문제",
+    "intent_vi": "Câu hỏi về loại cuộc họp nhằm truyền đạt thông tin nghiệp vụ và thu thập ý kiến về vận hành cơ sở",
+    "choice_explanations": {
+      "ko": {
+        "1": "사례회의는 특정 대상자의 서비스 계획 검토와 조정을 위해 개최하며, 업무 정보 전달이나 기관 운영 의견 수렴이 주목적이 아니다.",
+        "2": "점검회의는 특정 업무 진행 상황을 점검하는 회의로, 설명의 내용과 일치하지 않는다.",
+        "3": "검토회의는 특정 안건을 검토하기 위한 비정기 회의로, 설명의 내용과 다르다.",
+        "4": "★ 월례회의는 매월 정기적으로 개최되는 회의로, 요양보호사의 업무 관련 정보·준수사항 전달과 기관 운영·인사·복리후생에 대한 의견 및 애로사항 청취를 주목적으로 한다.",
+        "5": "평가회의는 업무 성과를 평가하는 회의로, 정보 전달 및 의견 수렴이 주목적이 아니다."
+      },
+      "vi": {
+        "1": "Cuộc họp trường hợp (사례회의) nhằm xem xét và điều chỉnh kế hoạch dịch vụ cho từng đối tượng cụ thể, không phải để truyền đạt thông tin nghiệp vụ chung.",
+        "2": "Cuộc họp kiểm tra (점검회의) dùng để kiểm tra tiến độ công việc cụ thể, không khớp với mô tả.",
+        "3": "Cuộc họp xem xét (검토회의) là họp không định kỳ để xem xét đề xuất cụ thể, không phù hợp.",
+        "4": "★ Họp tháng (월례회의) được tổ chức định kỳ hàng tháng với mục đích chính là truyền đạt thông tin nghiệp vụ và quy định tuân thủ, đồng thời lắng nghe ý kiến và khó khăn của nhân viên về vận hành, nhân sự và phúc lợi.",
+        "5": "Cuộc họp đánh giá (평가회의) tập trung vào đánh giá kết quả công việc, không phải truyền đạt thông tin hay thu thập ý kiến."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "월례회의(月例會議)", "def_vi": "Họp tháng — cuộc họp định kỳ hàng tháng để trao đổi thông tin và ý kiến" },
+      { "term_ko": "복리후생(福利厚生)", "def_vi": "Phúc lợi nhân viên — các chế độ đãi ngộ và hỗ trợ ngoài lương" },
+      { "term_ko": "준수사항(遵守事項)", "def_vi": "Quy định cần tuân thủ — các điều khoản và quy tắc bắt buộc phải thực hiện" }
+    ]
+  },
+  {
+    "id": 1179,
+    "intent_ko": "장기요양기관에서 사례회의를 개최하는 주된 목적을 묻는 문제",
+    "intent_vi": "Câu hỏi về mục đích chính của cuộc họp trường hợp tại cơ sở chăm sóc dài hạn",
+    "choice_explanations": {
+      "ko": {
+        "1": "신규 사업 홍보는 마케팅 활동에 해당하며, 사례회의의 목적과 관련이 없다.",
+        "2": "요양보호사 업무 평가는 인사 관리의 일환으로, 사례회의의 주된 목적이 아니다.",
+        "3": "업무 관련 정보 공유는 월례회의 등의 목적에 더 가깝다.",
+        "4": "복리후생 의견 수렴도 월례회의에서 다루는 사항이다.",
+        "5": "★ 사례회의의 주된 목적은 특정 대상자의 욕구와 상태를 다학제 팀이 함께 검토하여 서비스 제공 계획의 타당성을 평가하고, 필요시 계획을 조정·수정하는 것이다."
+      },
+      "vi": {
+        "1": "Quảng bá chương trình mới là hoạt động marketing, không liên quan đến mục đích của cuộc họp trường hợp.",
+        "2": "Đánh giá hiệu quả công việc của nhân viên thuộc quản lý nhân sự, không phải mục đích chính của cuộc họp trường hợp.",
+        "3": "Chia sẻ thông tin nghiệp vụ phù hợp hơn với mục tiêu của họp tháng.",
+        "4": "Thu thập ý kiến về phúc lợi cũng là nội dung của họp tháng.",
+        "5": "★ Mục đích chính của cuộc họp trường hợp là nhóm đa ngành cùng xem xét nhu cầu và tình trạng của từng đối tượng cụ thể, đánh giá tính hợp lý của kế hoạch cung cấp dịch vụ và điều chỉnh kế hoạch khi cần thiết."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "사례회의(事例會議)", "def_vi": "Cuộc họp trường hợp — họp đa ngành để xem xét và điều chỉnh kế hoạch chăm sóc cho từng đối tượng" },
+      { "term_ko": "타당성 검토(妥當性 檢討)", "def_vi": "Đánh giá tính hợp lý — kiểm tra xem kế hoạch có phù hợp và hiệu quả không" },
+      { "term_ko": "장기요양기관(長期療養機關)", "def_vi": "Cơ sở chăm sóc dài hạn — cơ sở cung cấp dịch vụ chăm sóc liên tục cho người cần hỗ trợ lâu dài" }
+    ]
+  },
+  {
+    "id": 1178,
+    "intent_ko": "대상자의 상황을 점검·평가하고 욕구에 맞는 서비스를 제공하기 위해 개최하는 회의 명칭을 묻는 문제",
+    "intent_vi": "Câu hỏi về tên cuộc họp được tổ chức để kiểm tra, đánh giá tình trạng đối tượng và cung cấp dịch vụ phù hợp với nhu cầu",
+    "choice_explanations": {
+      "ko": {
+        "1": "월례회의는 정기적으로 요양보호사 업무 정보 전달과 기관 운영 의견 수렴을 위한 회의로, 대상자별 상황 평가가 주목적이 아니다.",
+        "2": "★ 사례회의는 특정 대상자의 상황과 제공 중인 서비스를 다학제 팀이 함께 점검·평가하고, 욕구에 맞는 서비스 계획을 수립·조정하기 위해 개최하는 회의이다.",
+        "3": "업무보고회의는 업무 현황을 보고하는 자리로, 대상자 서비스 평가와는 다르다.",
+        "4": "동급평가회의는 동료 간 평가를 위한 것으로, 대상자 서비스와 관련이 없다.",
+        "5": "장기요양회의는 실제로 사용되는 공식 명칭이 아니다."
+      },
+      "vi": {
+        "1": "Họp tháng (월례회의) dành để truyền đạt thông tin nghiệp vụ và thu thập ý kiến vận hành cơ sở định kỳ, không phải để đánh giá từng đối tượng.",
+        "2": "★ Cuộc họp trường hợp (사례회의) là cuộc họp đa ngành nhằm kiểm tra, đánh giá tình trạng và dịch vụ đang cung cấp cho từng đối tượng cụ thể, từ đó xây dựng và điều chỉnh kế hoạch dịch vụ phù hợp với nhu cầu.",
+        "3": "Họp báo cáo công việc (업무보고회의) dùng để báo cáo tình hình công việc, khác với đánh giá dịch vụ cho đối tượng.",
+        "4": "Cuộc họp đánh giá ngang hàng (동급평가회의) là đánh giá giữa đồng nghiệp, không liên quan đến dịch vụ cho đối tượng.",
+        "5": "Cuộc họp chăm sóc dài hạn (장기요양회의) không phải tên gọi chính thức được sử dụng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "사례회의(事例會議)", "def_vi": "Cuộc họp trường hợp — họp đa ngành kiểm tra và điều chỉnh kế hoạch dịch vụ cho từng đối tượng" },
+      { "term_ko": "욕구(慾求)", "def_vi": "Nhu cầu — điều mà đối tượng cần hoặc mong muốn được đáp ứng" }
+    ]
+  },
+  {
+    "id": 1177,
+    "intent_ko": "요양보호사가 업무 수행 시 서면보고를 해야 하는 상황을 묻는 문제",
+    "intent_vi": "Câu hỏi về tình huống nhân viên chăm sóc cần nộp báo cáo bằng văn bản",
+    "choice_explanations": {
+      "ko": {
+        "1": "긴급 상황에서는 신속한 구두보고가 우선이며, 서면보고는 사후에 작성한다.",
+        "2": "사안이 가벼울 때는 구두보고로 충분하며, 서면보고까지 요구되지 않는다.",
+        "3": "신속하게 보고해야 할 때는 구두보고가 적합하고, 서면보고는 시간이 걸린다.",
+        "4": "★ 정확히 보고할 필요가 있는 경우(예: 대상자 건강 변화, 사고 기록, 서비스 내용 등)에는 서면보고가 필수적이다. 서면보고는 내용을 명확히 기록하고 추후 확인·참고할 수 있는 공식 문서로 기능한다.",
+        "5": "자료 보존이 필요 없다면 서면보고의 주요 장점인 기록 보존 기능이 무의미해지므로 서면보고의 필요성이 낮다."
+      },
+      "vi": {
+        "1": "Tình huống khẩn cấp cần báo cáo miệng nhanh trước; báo cáo văn bản được làm sau.",
+        "2": "Khi vấn đề nhẹ, báo cáo miệng là đủ, không cần thiết phải làm văn bản.",
+        "3": "Khi cần báo cáo nhanh, báo cáo miệng phù hợp hơn vì viết văn bản mất thời gian.",
+        "4": "★ Khi cần báo cáo chính xác (ví dụ: thay đổi sức khỏe đối tượng, ghi chép sự cố, nội dung dịch vụ...), báo cáo bằng văn bản là bắt buộc. Văn bản ghi rõ nội dung, có thể kiểm tra và tham khảo về sau, đóng vai trò tài liệu chính thức.",
+        "5": "Khi không cần lưu trữ tài liệu, ưu điểm chính của báo cáo văn bản mất đi, nên không cần thiết."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "서면보고(書面報告)", "def_vi": "Báo cáo bằng văn bản — hình thức báo cáo được ghi chép chính thức bằng tài liệu viết" },
+      { "term_ko": "구두보고(口頭報告)", "def_vi": "Báo cáo miệng — hình thức báo cáo bằng lời nói trực tiếp, nhanh nhưng không lưu hồ sơ" }
+    ]
+  },
+  {
+    "id": 1175,
+    "intent_ko": "신속 전달의 장점과 기록 부재의 단점을 함께 가진 업무보고 형식을 묻는 문제",
+    "intent_vi": "Câu hỏi về hình thức báo cáo có ưu điểm truyền đạt nhanh nhưng không lưu lại hồ sơ chính xác",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 구두보고는 말로 직접 전달하므로 즉각적이고 신속하게 정보를 공유할 수 있다. 그러나 문서로 남지 않아 나중에 정확한 내용을 확인하거나 증빙하기 어렵다는 단점이 있다.",
+        "2": "서면보고는 정확한 기록을 남길 수 있으나 작성에 시간이 걸려 신속성이 떨어진다.",
+        "3": "사건보고는 특정 사건에 대해 작성하는 공식 문서로, 신속성보다 정확성이 중시된다.",
+        "4": "전산망 보고는 전자 시스템을 통한 보고로, 기록 보존이 가능하나 즉각적 소통에는 제한이 있을 수 있다.",
+        "5": "정기 업무보고는 일정 주기마다 작성하는 것으로, 긴급 상황에서의 신속성과는 거리가 멀다."
+      },
+      "vi": {
+        "1": "★ Báo cáo miệng (구두보고) truyền đạt thông tin trực tiếp bằng lời, nhanh chóng và tức thì. Tuy nhiên, không để lại hồ sơ văn bản nên khó xác nhận hoặc chứng minh nội dung về sau — đây là nhược điểm chính.",
+        "2": "Báo cáo văn bản lưu lại hồ sơ chính xác nhưng mất thời gian soạn thảo, thiếu tính kịp thời.",
+        "3": "Báo cáo sự kiện là tài liệu chính thức về một sự cố cụ thể, ưu tiên độ chính xác hơn tốc độ.",
+        "4": "Báo cáo qua mạng điện tử lưu được hồ sơ nhưng có thể bị hạn chế trong giao tiếp tức thì.",
+        "5": "Báo cáo công việc định kỳ được làm theo chu kỳ cố định, không phù hợp với yêu cầu nhanh chóng trong tình huống khẩn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "구두보고(口頭報告)", "def_vi": "Báo cáo miệng — báo cáo bằng lời nói, nhanh nhưng không lưu hồ sơ" },
+      { "term_ko": "서면보고(書面報告)", "def_vi": "Báo cáo bằng văn bản — báo cáo qua tài liệu viết, chính xác và có thể lưu trữ" },
+      { "term_ko": "전산망 보고(電算網 報告)", "def_vi": "Báo cáo qua mạng điện tử — hình thức báo cáo sử dụng hệ thống thông tin số hóa" }
+    ]
+  },
+  {
+    "id": 1174,
+    "intent_ko": "요양보호사가 반드시 기관에 보고해야 하는 상황을 묻는 문제",
+    "intent_vi": "Câu hỏi về tình huống nhân viên chăm sóc bắt buộc phải báo cáo lên cơ sở",
+    "choice_explanations": {
+      "ko": {
+        "1": "대상자 상태가 평상시와 같을 때는 특별한 변화가 없으므로 별도 보고가 필요하지 않다.",
+        "2": "서비스에 변화가 없을 때는 현행 계획이 유지되므로 보고 사항이 아니다.",
+        "3": "★ 업무를 잘못 수행했을 때는 즉시 기관에 보고해야 한다. 오류를 은폐하면 대상자에게 추가 피해가 발생할 수 있고, 이후 책임 문제가 생길 수 있다. 투명한 보고와 신속한 시정 조치가 요양보호의 핵심 원칙이다.",
+        "4": "기저귀 교체는 일상적인 돌봄 행위로 보고 사항에 해당하지 않는다.",
+        "5": "가족 방문은 일상적인 사항으로 특별히 보고할 필요가 없다."
+      },
+      "vi": {
+        "1": "Khi tình trạng đối tượng bình thường như mọi ngày, không có thay đổi đặc biệt nên không cần báo cáo riêng.",
+        "2": "Khi dịch vụ không có gì thay đổi, kế hoạch hiện tại được duy trì, không cần báo cáo.",
+        "3": "★ Khi thực hiện sai nhiệm vụ, phải báo cáo ngay cho cơ sở. Che giấu sai sót có thể gây thêm hại cho đối tượng và dẫn đến vấn đề trách nhiệm sau này. Báo cáo minh bạch và khắc phục kịp thời là nguyên tắc cốt lõi trong chăm sóc.",
+        "4": "Thay tã là hoạt động chăm sóc thường ngày, không phải nội dung cần báo cáo.",
+        "5": "Gia đình thăm là việc bình thường, không cần báo cáo đặc biệt."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "업무 오류 보고", "def_vi": "Báo cáo sai sót nghiệp vụ — thông báo kịp thời khi thực hiện sai nhiệm vụ để khắc phục" },
+      { "term_ko": "시설장(施設長)", "def_vi": "Người quản lý cơ sở — người đứng đầu chịu trách nhiệm quản lý cơ sở chăm sóc" }
+    ]
+  },
+  {
+    "id": 1173,
+    "intent_ko": "근무 중 상황이 급하거나 사안이 가벼울 때 적합한 보고 형식을 묻는 문제",
+    "intent_vi": "Câu hỏi về hình thức báo cáo phù hợp khi tình huống khẩn cấp hoặc vấn đề nhẹ trong khi làm việc",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 구두보고는 말로 즉시 전달하는 방식으로, 상황이 급하거나 사안이 경미할 때 신속하게 정보를 전달하는 데 가장 적합하다.",
+        "2": "서면보고는 정확한 기록 보존이 필요한 경우에 적합하며, 긴급 상황에서는 시간 지연이 생긴다.",
+        "3": "전산망보고는 시스템을 통한 보고로 즉각적 소통에 제한이 있어 긴급 상황에 구두보고가 더 적합하다.",
+        "4": "주간보고는 주 단위 정기 보고로 긴급·경미한 사안에 해당하지 않는다.",
+        "5": "월간보고는 월 단위 정기 보고로 즉각적 대응이 필요한 상황에 적합하지 않다."
+      },
+      "vi": {
+        "1": "★ Báo cáo miệng (구두보고) là hình thức truyền đạt thông tin trực tiếp bằng lời, phù hợp nhất khi tình huống khẩn cấp hoặc vấn đề nhẹ cần xử lý nhanh.",
+        "2": "Báo cáo văn bản phù hợp khi cần lưu hồ sơ chính xác; trong tình huống khẩn có thể gây chậm trễ.",
+        "3": "Báo cáo qua mạng điện tử bị hạn chế trong giao tiếp tức thì, nên báo cáo miệng phù hợp hơn cho tình huống khẩn.",
+        "4": "Báo cáo tuần là báo cáo định kỳ hàng tuần, không phù hợp với tình huống khẩn hay vấn đề nhẹ cần xử lý ngay.",
+        "5": "Báo cáo tháng là báo cáo định kỳ hàng tháng, không đáp ứng yêu cầu xử lý kịp thời."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "구두보고(口頭報告)", "def_vi": "Báo cáo miệng — hình thức báo cáo bằng lời nói, nhanh và trực tiếp" },
+      { "term_ko": "전산망보고(電算網報告)", "def_vi": "Báo cáo qua hệ thống điện tử — ghi nhận và truyền thông tin qua phần mềm quản lý" }
+    ]
+  },
+  {
+    "id": 1172,
+    "intent_ko": "요양보호사의 올바른 업무보고 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về phương pháp báo cáo công việc đúng đắn của nhân viên chăm sóc",
+    "choice_explanations": {
+      "ko": {
+        "1": "숫자나 표가 포함된 복잡한 내용은 구두보고로 전달하기 어렵고 오류 발생 가능성이 높아 서면보고가 적합하다.",
+        "2": "대상자 가족의 개인정보는 정보 주체의 동의 없이 임의로 보고하면 개인정보 보호 위반이 된다.",
+        "3": "업무 오류는 해결 후가 아니라 발생 즉시 보고해야 한다. 지연 보고는 추가 피해를 초래할 수 있다.",
+        "4": "업무 보고는 개인적 감상이 아닌 객관적 사실을 중심으로 해야 한다.",
+        "5": "★ 예기치 못한 사고가 발생하면 즉시 시설장에게 보고해야 한다. 사고 발생 시 신속한 보고와 초기 대응이 추가 피해를 방지하는 핵심이다."
+      },
+      "vi": {
+        "1": "Nội dung chứa số liệu và bảng biểu phức tạp khó truyền đạt chính xác bằng miệng, dễ nhầm lẫn — nên dùng báo cáo văn bản.",
+        "2": "Tự ý báo cáo thông tin cá nhân của gia đình đối tượng mà không có sự đồng ý là vi phạm bảo mật thông tin.",
+        "3": "Sai sót nghiệp vụ phải báo cáo ngay khi phát sinh, không phải sau khi đã giải quyết. Báo cáo muộn có thể gây thêm hậu quả.",
+        "4": "Báo cáo công việc phải dựa trên sự thật khách quan, không phải cảm nhận cá nhân.",
+        "5": "★ Khi xảy ra sự cố bất ngờ, phải báo cáo ngay lập tức cho người quản lý cơ sở. Báo cáo nhanh và ứng phó ban đầu kịp thời là chìa khóa để ngăn chặn thiệt hại thêm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "시설장(施設長)", "def_vi": "Người quản lý cơ sở — người đứng đầu chịu trách nhiệm vận hành cơ sở chăm sóc" },
+      { "term_ko": "개인정보 보호(個人情報 保護)", "def_vi": "Bảo vệ thông tin cá nhân — quyền và nghĩa vụ giữ bí mật thông tin riêng tư của người dùng dịch vụ" },
+      { "term_ko": "예기치 못한 사고", "def_vi": "Sự cố bất ngờ — tai nạn hoặc vấn đề không được dự đoán trước" }
+    ]
+  },
+  {
+    "id": 1171,
+    "intent_ko": "업무보고를 할 필요가 없는 상황을 구별하는 문제",
+    "intent_vi": "Câu hỏi về tình huống không cần thiết phải báo cáo công việc",
+    "choice_explanations": {
+      "ko": {
+        "1": "대상자 상태에 변화가 생기면 이는 서비스 계획 조정과 직결되므로 반드시 보고해야 한다.",
+        "2": "★ 서비스에 변화가 없을 때는 현행 계획이 그대로 유지되고 있으므로 별도의 보고가 필요하지 않다.",
+        "3": "사고 발생 시 즉각적인 보고가 의무이다.",
+        "4": "새로운 업무방법을 발견하면 공유 및 검토를 위해 보고해야 한다.",
+        "5": "서비스를 추가하거나 변경할 필요가 생기면 담당자와 협의하기 위해 반드시 보고해야 한다."
+      },
+      "vi": {
+        "1": "Khi tình trạng đối tượng thay đổi, điều này ảnh hưởng trực tiếp đến kế hoạch dịch vụ nên bắt buộc phải báo cáo.",
+        "2": "★ Khi dịch vụ không có gì thay đổi, kế hoạch hiện tại được duy trì nguyên vẹn, không cần thiết phải báo cáo thêm.",
+        "3": "Khi có sự cố xảy ra, báo cáo ngay là bắt buộc.",
+        "4": "Khi tìm ra phương pháp làm việc mới, cần báo cáo để chia sẻ và xem xét.",
+        "5": "Khi cần bổ sung hoặc thay đổi dịch vụ, phải báo cáo để phối hợp với người phụ trách."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "업무보고 시기(業務報告 時期)", "def_vi": "Thời điểm báo cáo công việc — các tình huống và mốc thời gian cần nộp báo cáo" }
+    ]
+  },
+  {
+    "id": 1166,
+    "intent_ko": "대상자 보호자가 외국으로 나가는 상황에서 요양보호사의 올바른 대처 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về cách xử lý đúng khi người giám hộ của đối tượng ra nước ngoài",
+    "choice_explanations": {
+      "ko": {
+        "1": "서비스 지속 여부는 요양보호사가 임의로 결정할 수 없으며, 기관과의 협의가 필요하다.",
+        "2": "다른 시설 소개는 요양보호사의 권한 밖의 일이며, 대상자의 의사와 기관의 결정이 우선이다.",
+        "3": "외국에 함께 데려가라고 요구하는 것은 비현실적이고 요양보호사의 역할 범위를 벗어난다.",
+        "4": "비용 할인은 요양보호사가 임의로 결정할 수 없으며, 계약 사항은 기관이 관리한다.",
+        "5": "★ 대상자 보호자의 상황 변화(외국 출국)는 서비스 제공에 영향을 미칠 수 있으므로 즉시 시설장에게 보고해야 한다. 시설장이 상황을 파악하고 대안적 보호 계획을 수립할 수 있도록 하는 것이 요양보호사의 의무이다."
+      },
+      "vi": {
+        "1": "Nhân viên chăm sóc không thể tự quyết định tiếp tục hay dừng dịch vụ mà cần phối hợp với cơ sở.",
+        "2": "Giới thiệu cơ sở khác vượt quá thẩm quyền của nhân viên chăm sóc; ý kiến của đối tượng và quyết định của cơ sở là ưu tiên.",
+        "3": "Yêu cầu đưa đối tượng ra nước ngoài là không thực tế và vượt ngoài phạm vi vai trò của nhân viên chăm sóc.",
+        "4": "Giảm chi phí là điều nhân viên chăm sóc không có thẩm quyền quyết định; hợp đồng do cơ sở quản lý.",
+        "5": "★ Thay đổi hoàn cảnh của người giám hộ (ra nước ngoài) có thể ảnh hưởng đến việc cung cấp dịch vụ, nên phải báo cáo ngay cho người quản lý cơ sở. Đây là nghĩa vụ của nhân viên để giúp quản lý nắm tình hình và lập kế hoạch chăm sóc thay thế."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "시설장(施設長)", "def_vi": "Người quản lý cơ sở — người đứng đầu cơ sở chăm sóc, chịu trách nhiệm quản lý và điều phối" },
+      { "term_ko": "보호자(保護者)", "def_vi": "Người giám hộ — thành viên gia đình hoặc người được ủy quyền đại diện cho đối tượng" }
+    ]
+  },
+  {
+    "id": 1165,
+    "intent_ko": "방문요양서비스 중 관리책임자에게 보고하지 않아도 되는 상황을 구별하는 문제",
+    "intent_vi": "Câu hỏi về tình huống không cần báo cáo với người quản lý trong khi cung cấp dịch vụ chăm sóc tại nhà",
+    "choice_explanations": {
+      "ko": {
+        "1": "낙상으로 인한 타박상은 사고 발생으로 즉각 보고 대상이다.",
+        "2": "★ 단순히 텔레비전을 시청하는 것은 대상자의 일상적인 생활 행위로, 건강이나 안전 문제와 무관하므로 관리책임자에게 보고할 필요가 없다.",
+        "3": "당뇨병 진단은 건강 상태의 중대한 변화로 서비스 계획 조정이 필요할 수 있어 보고해야 한다.",
+        "4": "베란다에서의 배변은 인지 저하나 위생 문제를 시사할 수 있어 보고가 필요하다.",
+        "5": "유효기간 지난 음식 섭취 후 복통 호소는 식중독 등 건강 위기 가능성이 있어 즉시 보고해야 한다."
+      },
+      "vi": {
+        "1": "Bị ngã và bầm tím là sự cố xảy ra, phải báo cáo ngay.",
+        "2": "★ Chỉ đơn giản là xem truyền hình là hoạt động sinh hoạt hàng ngày bình thường của đối tượng, không liên quan đến sức khỏe hay an toàn, nên không cần báo cáo với người quản lý.",
+        "3": "Được chẩn đoán tiểu đường là thay đổi sức khỏe quan trọng, có thể cần điều chỉnh kế hoạch dịch vụ, nên phải báo cáo.",
+        "4": "Đại tiện ở ban công gợi ý có thể có vấn đề nhận thức hoặc vệ sinh, cần báo cáo.",
+        "5": "Ăn thực phẩm hết hạn rồi đau bụng có nguy cơ ngộ độc thực phẩm, phải báo cáo ngay."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "방문요양서비스(訪問療養 service)", "def_vi": "Dịch vụ chăm sóc tại nhà — nhân viên đến nhà cung cấp dịch vụ chăm sóc cho đối tượng" },
+      { "term_ko": "관리책임자(管理責任者)", "def_vi": "Người quản lý phụ trách — người giám sát và chịu trách nhiệm về hoạt động cung cấp dịch vụ" },
+      { "term_ko": "타박상(打撲傷)", "def_vi": "Bầm tím — tổn thương mô mềm do va đập mạnh, không làm rách da" }
+    ]
+  },
+  {
+    "id": 1164,
+    "intent_ko": "방문요양서비스 제공 중 관리책임자에게 신속히 보고해야 하는 상황을 묻는 문제",
+    "intent_vi": "Câu hỏi về tình huống cần báo cáo khẩn cho người quản lý khi cung cấp dịch vụ chăm sóc tại nhà",
+    "choice_explanations": {
+      "ko": {
+        "1": "체납 고지서는 요양서비스 제공과 직접적 관련이 없으며, 긴급 보고 사항이 아니다.",
+        "2": "쓰레기 분리 배출 미준수는 생활 습관 문제로, 긴급 보고 대상이 아니다.",
+        "3": "방문 삐걱 소리는 유지보수 사항으로 즉각적인 긴급 보고가 필요하지 않다.",
+        "4": "★ 대상자가 현기증과 두통을 동시에 호소하는 것은 뇌졸중, 저혈압, 빈혈, 약물 부작용 등 심각한 의학적 원인의 가능성이 있어 즉각적인 평가와 조치가 필요하다. 관리책임자에게 신속히 보고하여 의료적 지원을 받을 수 있도록 해야 한다.",
+        "5": "친척 방문은 일상적인 사항으로 긴급 보고 대상이 아니다."
+      },
+      "vi": {
+        "1": "Thông báo nợ phí không liên quan trực tiếp đến cung cấp dịch vụ chăm sóc, không phải báo cáo khẩn.",
+        "2": "Không phân loại rác là vấn đề thói quen sinh hoạt, không cần báo cáo khẩn.",
+        "3": "Tiếng kẹt của cửa là vấn đề bảo trì, không cần báo cáo khẩn ngay.",
+        "4": "★ Đối tượng phàn nàn chóng mặt và đau đầu đồng thời có thể là dấu hiệu của các nguyên nhân y tế nghiêm trọng như đột quỵ, hạ huyết áp, thiếu máu hoặc tác dụng phụ của thuốc — cần đánh giá và can thiệp ngay. Phải báo cáo nhanh cho người quản lý để có thể huy động hỗ trợ y tế kịp thời.",
+        "5": "Thân nhân đến thăm là việc bình thường, không cần báo cáo khẩn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "현기증(眩氣症)", "def_vi": "Chóng mặt — cảm giác quay cuồng, mất thăng bằng, có thể là dấu hiệu bệnh lý nghiêm trọng" },
+      { "term_ko": "두통(頭痛)", "def_vi": "Đau đầu — cơn đau ở vùng đầu, khi kèm chóng mặt cần nghi ngờ nguyên nhân thần kinh" },
+      { "term_ko": "관리책임자(管理責任者)", "def_vi": "Người quản lý phụ trách — người giám sát dịch vụ và phối hợp xử lý tình huống khẩn" }
+    ]
+  },
+  {
+    "id": 1163,
+    "intent_ko": "업무보고의 올바른 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về phương pháp báo cáo công việc đúng đắn",
+    "choice_explanations": {
+      "ko": {
+        "1": "모든 보고를 서면으로만 해야 한다는 것은 잘못이다. 긴급하거나 경미한 사안은 구두보고가 적절하다.",
+        "2": "사고 발생 시 요양보호사가 단독으로 판단하여 처리하면 안 되며, 즉시 관리자에게 보고해야 한다.",
+        "3": "★ 보고 내용이 중복되지 않도록 하는 것은 업무 효율성을 높이는 올바른 원칙이다. 같은 내용을 반복 보고하면 혼란과 시간 낭비가 생기므로, 정확하고 간결하게 한 번 보고하는 것이 중요하다.",
+        "4": "건강 상태 변화가 있을 때만 보고하는 것은 보고 시기를 지나치게 제한하는 것으로, 사고, 업무 오류, 서비스 변경 필요 등도 보고 대상이다.",
+        "5": "추가 서비스 요청 시 기관의 담당자(관리자)와 협의해야 하며, 보호자와만 상의하는 것은 적절하지 않다."
+      },
+      "vi": {
+        "1": "Yêu cầu tất cả báo cáo đều bằng văn bản là sai; tình huống khẩn hoặc nhẹ thì báo cáo miệng là phù hợp.",
+        "2": "Khi có sự cố, nhân viên chăm sóc không được tự xử lý một mình mà phải báo cáo ngay cho quản lý.",
+        "3": "★ Đảm bảo nội dung báo cáo không bị trùng lặp là nguyên tắc đúng giúp nâng cao hiệu quả công việc. Báo cáo lặp lại cùng một nội dung gây nhầm lẫn và lãng phí thời gian; báo cáo chính xác và súc tích một lần là điều quan trọng.",
+        "4": "Chỉ báo cáo khi có thay đổi sức khỏe quá hạn chế; sự cố, sai sót nghiệp vụ, cần thay đổi dịch vụ... đều phải báo cáo.",
+        "5": "Khi có yêu cầu bổ sung dịch vụ, cần phối hợp với người phụ trách của cơ sở; chỉ bàn với gia đình là không đủ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "보고 중복 방지", "def_vi": "Tránh trùng lặp trong báo cáo — không báo cáo cùng một nội dung nhiều lần, đảm bảo hiệu quả" },
+      { "term_ko": "업무보고 원칙(業務報告 原則)", "def_vi": "Nguyên tắc báo cáo công việc — các quy tắc cần tuân thủ khi báo cáo trong chăm sóc" }
+    ]
+  },
+  {
+    "id": 1162,
+    "intent_ko": "요양보호사의 일일업무 보고 시 올바른 태도와 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về thái độ và phương pháp đúng khi nhân viên chăm sóc báo cáo công việc hàng ngày",
+    "choice_explanations": {
+      "ko": {
+        "1": "구두보고만으로는 기록이 남지 않아 중요한 내용을 놓칠 수 있으며, 일일업무 보고는 서면으로도 작성되어야 한다.",
+        "2": "중요한 사항만 보고하면 사소해 보이지만 의미 있는 변화를 누락할 수 있어 포괄적인 보고가 필요하다.",
+        "3": "★ 보고 내용은 실제로 관찰하고 제공한 내용을 사실 그대로 정확하게 기록해야 한다. 왜곡되거나 주관적인 내용이 포함되면 잘못된 서비스 결정으로 이어질 수 있다.",
+        "4": "전문 용어를 상황에 맞게 적절히 사용하는 것이 중요하며, 무조건 쉬운 용어만 고집하면 오히려 의미가 불명확해질 수 있다.",
+        "5": "보고는 요양보호사의 주관적 생각이 아닌 대상자의 객관적 상태와 제공된 서비스를 중심으로 해야 한다."
+      },
+      "vi": {
+        "1": "Chỉ báo cáo miệng không để lại hồ sơ, có thể bỏ sót nội dung quan trọng; báo cáo hàng ngày cần có văn bản ghi chép.",
+        "2": "Chỉ báo cáo những gì quan trọng có thể bỏ qua những thay đổi nhỏ nhưng có ý nghĩa; cần báo cáo toàn diện.",
+        "3": "★ Nội dung báo cáo phải ghi lại trung thực và chính xác những gì thực sự được quan sát và cung cấp. Nếu bị bóp méo hoặc chứa nội dung chủ quan, có thể dẫn đến quyết định dịch vụ sai lầm.",
+        "4": "Cần sử dụng thuật ngữ chuyên môn phù hợp với từng tình huống; chỉ dùng từ đơn giản có thể làm mờ nghĩa.",
+        "5": "Báo cáo phải tập trung vào tình trạng khách quan của đối tượng và dịch vụ đã cung cấp, không phải suy nghĩ chủ quan của nhân viên."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "일일업무 보고(日日業務 報告)", "def_vi": "Báo cáo công việc hàng ngày — ghi chép và nộp báo cáo về các hoạt động chăm sóc trong ngày" },
+      { "term_ko": "객관성(客觀性)", "def_vi": "Tính khách quan — trình bày sự việc dựa trên thực tế, không bị ảnh hưởng bởi cảm xúc hay ý kiến cá nhân" }
+    ]
+  }
+]

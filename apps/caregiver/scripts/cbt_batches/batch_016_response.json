@@ -1,0 +1,745 @@
+[
+  {
+    "id": 1286,
+    "intent_ko": "기저귀 교환 시 올바른 절차와 위생 원칙을 묻는 문제",
+    "intent_vi": "Câu hỏi về quy trình và nguyên tắc vệ sinh đúng khi thay tã",
+    "choice_explanations": {
+      "ko": {
+        "1": "기저귀는 정해진 시간이 아니라 오염될 때마다 즉시 교환해야 한다. 정해진 시간만 기다리면 피부 손상이 발생할 수 있다.",
+        "2": "이불을 다리 아래로 내린 후 면덮개를 덮는 것은 순서가 잘못된 방법이다. 면덮개를 먼저 이불 위에 덮고 이불을 내려야 한다.",
+        "3": "교환 중 문을 열어두면 대상자의 사생활이 침해되고 체온이 저하될 수 있으므로 문을 닫아야 한다.",
+        "4": "허리를 들 수 있는 대상자는 허리를 들게 하여 교환하고, 들 수 없는 대상자를 옆으로 돌려 눕혀 교환하는 것이 올바르다.",
+        "5": "★ 오염된 기저귀는 반드시 바깥 면(오염되지 않은 면)이 보이도록 말아서 버려야 한다. 내부 오염면이 외부에 노출되지 않도록 하여 세균 확산과 냄새를 방지하는 위생 원칙이다."
+      },
+      "vi": {
+        "1": "Tã không nên thay theo giờ cố định mà phải thay ngay khi bị bẩn. Chờ đến giờ quy định có thể gây tổn thương da.",
+        "2": "Trình tự phủ chăn sai: cần phủ tấm che lên trên chăn trước, rồi mới hạ chăn xuống dưới chân.",
+        "3": "Mở cửa trong khi thay tã xâm phạm quyền riêng tư và có thể làm giảm thân nhiệt của người được chăm sóc.",
+        "4": "Người nâng được lưng thì cho nâng lưng lên để thay; người không nâng được thì lăn nghiêng sang một bên — đây mới là cách đúng.",
+        "5": "★ Tã bẩn phải được cuộn lại sao cho mặt ngoài (mặt sạch) hướng ra ngoài khi bỏ vào thùng rác. Cách này ngăn vi khuẩn lây lan và giảm mùi — đây là nguyên tắc vệ sinh cơ bản."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "면덮개", "def_vi": "Tấm vải cotton dùng che phủ vùng kín khi thay tã, bảo vệ quyền riêng tư" },
+      { "term_ko": "방수포", "def_vi": "Tấm trải chống thấm nước đặt dưới người bệnh để bảo vệ ga giường" }
+    ]
+  },
+  {
+    "id": 1285,
+    "intent_ko": "기저귀 교환 시 둔부를 마사지하는 목적이 욕창 예방임을 묻는 문제",
+    "intent_vi": "Câu hỏi về mục đích xoa bóp vùng mông khi thay tã — phòng ngừa loét tỳ đè",
+    "choice_explanations": {
+      "ko": {
+        "1": "변의를 자극하려는 목적이 아니다. 마사지는 피부 혈액순환 개선을 위한 것이다.",
+        "2": "근육 이완이 아니라 피부 혈액순환 촉진이 주목적이다.",
+        "3": "★ 둔부를 가볍게 두드려 마사지하면 혈액순환이 개선되어 피부에 산소와 영양이 공급된다. 장시간 누워있는 대상자는 지속적인 압박으로 욕창이 생기기 쉬우므로, 기저귀 교환 시마다 마사지하여 욕창을 예방하는 것이 핵심 목적이다.",
+        "4": "장운동 촉진은 복부 마사지의 효과이며, 둔부 마사지와는 관련이 없다.",
+        "5": "호르몬 분비와 둔부 마사지는 직접적인 연관이 없다."
+      },
+      "vi": {
+        "1": "Không phải để kích thích cảm giác muốn đại tiện. Mục đích chính là cải thiện tuần hoàn máu da.",
+        "2": "Mục đích chính không phải thư giãn cơ mà là cải thiện tuần hoàn máu tại chỗ.",
+        "3": "★ Vỗ nhẹ và xoa bóp vùng mông giúp tăng lưu thông máu, cung cấp oxy và dưỡng chất cho da. Người nằm lâu dễ bị loét tỳ đè do áp lực kéo dài, vì vậy xoa bóp mỗi lần thay tã là biện pháp phòng ngừa loét hiệu quả.",
+        "4": "Thúc đẩy nhu động ruột liên quan đến xoa bóp bụng, không phải xoa bóp mông.",
+        "5": "Kích thích tiết hormone không liên quan đến xoa bóp vùng mông."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "욕창", "def_vi": "Loét tỳ đè (pressure ulcer) — vết loét da do áp lực kéo dài lên một vùng, thường gặp ở người nằm lâu" },
+      { "term_ko": "혈액순환", "def_vi": "Tuần hoàn máu — sự lưu thông máu nuôi dưỡng các mô và cơ quan" },
+      { "term_ko": "둔부", "def_vi": "Vùng mông — phần cơ thể dễ bị loét tỳ đè nhất ở người nằm liệt" }
+    ]
+  },
+  {
+    "id": 1284,
+    "intent_ko": "허리를 들 수 없는 대상자의 기저귀 교환 방법을 묻는 문제",
+    "intent_vi": "Câu hỏi về phương pháp thay tã cho người không thể nâng lưng lên được",
+    "choice_explanations": {
+      "ko": {
+        "1": "알코올 소독은 피부를 건조하게 하여 피부 손상을 악화시킬 수 있으며, 허리를 들 수 없는 대상자의 기저귀 교환 방법과 직접적인 관련이 없다.",
+        "2": "둔부를 들어 방수포를 까는 방법은 허리를 들 수 없는 대상자에게 적용할 수 없다.",
+        "3": "★ 허리를 들 수 없는 대상자는 옆으로 돌려 눕혀서 기저귀를 갈아준다. 이 방법이 대상자에게 부담을 최소화하면서 안전하고 효율적으로 기저귀를 교환할 수 있는 올바른 방법이다.",
+        "4": "무릎을 세우고 똑바로 눕힌 채 기저귀를 교환하는 방법은 허리를 들어야 하는 경우에 해당하며, 허리를 들 수 없는 대상자에게는 적합하지 않다.",
+        "5": "기저귀를 단단히 조이면 혈액순환 장애와 피부 손상이 발생할 수 있어 부적절하다."
+      },
+      "vi": {
+        "1": "Khử trùng bằng cồn làm khô da và có thể gây tổn thương thêm; không liên quan đến phương pháp thay tã cho người không nâng được lưng.",
+        "2": "Nhấc mông lên để trải tấm chống thấm không thể áp dụng cho người không nâng được lưng.",
+        "3": "★ Với người không thể nâng lưng, phải lăn nghiêng người sang một bên rồi thay tã. Đây là phương pháp giảm thiểu gánh nặng cho người bệnh, đảm bảo an toàn và hiệu quả nhất.",
+        "4": "Gập gối và nằm thẳng yêu cầu nâng lưng — không phù hợp với người không nâng được lưng.",
+        "5": "Buộc tã quá chặt gây rối loạn tuần hoàn và tổn thương da — không phù hợp."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "방수포", "def_vi": "Tấm trải chống thấm nước đặt dưới người bệnh khi thay tã" },
+      { "term_ko": "소독", "def_vi": "Khử trùng — tiêu diệt vi khuẩn trên bề mặt da hoặc dụng cụ" }
+    ]
+  },
+  {
+    "id": 1283,
+    "intent_ko": "기저귀 사용 대상자 돌봄 시 올바른 절차를 묻는 문제",
+    "intent_vi": "Câu hỏi về phương pháp chăm sóc đúng cho người dùng tã",
+    "choice_explanations": {
+      "ko": {
+        "1": "발적이 있을 때 연고를 바르는 것 자체는 필요할 수 있으나, 반드시 간호사나 의사의 지시에 따라야 하며 임의로 바르는 것은 적절하지 않다.",
+        "2": "강한 압력으로 마사지하면 이미 예민해진 피부에 추가 손상을 줄 수 있어 위험하다. 가볍게 두드리는 마사지를 해야 한다.",
+        "3": "소변이 묻은 기저귀는 재사용해서는 안 된다. 세균 번식과 피부 발적, 감염을 일으킨다.",
+        "4": "허리를 들 수 없는 대상자를 엎드린 채로 기저귀를 교환하는 것은 호흡 곤란과 낙상 위험이 있어 매우 위험하다.",
+        "5": "★ 교환 전에 면덮개를 이불 위에 먼저 덮은 후 이불만 다리 아래로 내리는 방법은 신체 노출을 최소화하고 대상자의 존엄성을 지키면서 위생적으로 기저귀를 교환할 수 있는 올바른 절차이다."
+      },
+      "vi": {
+        "1": "Bôi thuốc mỡ khi bị đỏ da có thể cần thiết nhưng phải theo chỉ định y tá/bác sĩ, không được tự ý bôi.",
+        "2": "Xoa bóp với lực mạnh gây tổn thương thêm cho da đã nhạy cảm. Chỉ nên vỗ nhẹ nhàng.",
+        "3": "Tã đã dính nước tiểu không được tái sử dụng vì sẽ gây vi khuẩn sinh sôi, đỏ da và nhiễm trùng.",
+        "4": "Thay tã khi người bệnh nằm sấp gây nguy cơ khó thở và ngã — rất nguy hiểm.",
+        "5": "★ Trước khi thay tã, phủ tấm che lên trên chăn, rồi chỉ hạ chăn xuống dưới chân. Cách này giảm thiểu phơi bày cơ thể, bảo vệ nhân phẩm người bệnh và đảm bảo vệ sinh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "발적", "def_vi": "Đỏ da (erythema) — tình trạng da trở nên đỏ do kích ứng, viêm hoặc nhiễm trùng" },
+      { "term_ko": "면덮개", "def_vi": "Tấm che cotton phủ lên người bệnh khi thay tã để bảo vệ quyền riêng tư" }
+    ]
+  },
+  {
+    "id": 1282,
+    "intent_ko": "기저귀 사용 대상자를 돕는 올바른 방법 중 변기 사용 시도를 우선함을 묻는 문제",
+    "intent_vi": "Câu hỏi về phương pháp đúng khi hỗ trợ người dùng tã — ưu tiên thử dùng bồn vệ sinh",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 기저귀를 사용하더라도 가능하면 변기를 사용하도록 시도해야 한다. 이는 대상자의 배설 자립성을 유지하고 자존감을 보호하며, 기저귀 의존도를 높이지 않기 위한 올바른 돌봄 원칙이다.",
+        "2": "회음부는 반드시 앞에서 뒤로 닦아야 한다. 뒤에서 앞으로 닦으면 항문의 세균이 요도와 질로 옮겨져 비뇨기계 감염을 일으킨다.",
+        "3": "물티슈로 닦은 후에는 피부를 충분히 건조시킨 다음 기저귀를 채워야 한다. 습기가 남은 채로 기저귀를 채우면 피부 발적과 감염이 생긴다.",
+        "4": "기저귀 교환 횟수는 피부 상태와 배설 빈도에 따라 유동적으로 결정해야 하며, 하루 세 번으로 고정하는 것은 부적절하다.",
+        "5": "발적 부위를 문지르면 피부 손상이 악화된다. 부드럽게 두드리거나 의사 처방 크림을 사용해야 한다."
+      },
+      "vi": {
+        "1": "★ Dù đang dùng tã, vẫn nên khuyến khích người bệnh thử dùng bồn vệ sinh khi có thể. Điều này giúp duy trì khả năng tự chủ bài tiết, bảo vệ lòng tự trọng và hạn chế phụ thuộc vào tã.",
+        "2": "Vùng âm hộ phải lau từ trước ra sau. Lau từ sau ra trước mang vi khuẩn từ hậu môn vào niệu đạo gây nhiễm trùng đường tiết niệu.",
+        "3": "Sau khi lau bằng khăn ướt, phải để da khô hoàn toàn rồi mới đóng tã. Đóng tã khi da còn ẩm gây đỏ da và nhiễm trùng.",
+        "4": "Số lần thay tã phải linh hoạt theo tình trạng da và tần suất bài tiết, không được cố định 3 lần/ngày.",
+        "5": "Chà xát vùng da đỏ làm tổn thương nặng hơn. Cần vỗ nhẹ nhàng hoặc dùng kem theo chỉ định."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "회음부", "def_vi": "Vùng âm hộ/tầng sinh môn — khu vực cơ quan sinh dục ngoài, cần lau từ trước ra sau để phòng nhiễm trùng" },
+      { "term_ko": "비뇨기계 감염", "def_vi": "Nhiễm trùng đường tiết niệu (UTI) — nhiễm khuẩn ở thận, bàng quang hoặc niệu đạo" }
+    ]
+  },
+  {
+    "id": 1281,
+    "intent_ko": "실금이 있어도 기저귀를 즉시 사용하면 안 되는 이유가 배설 자립 습관 약화임을 묻는 문제",
+    "intent_vi": "Câu hỏi về lý do không nên dùng tã ngay lập tức dù có tiểu không tự chủ — thói quen tự chủ bài tiết suy yếu",
+    "choice_explanations": {
+      "ko": {
+        "1": "욕창은 기저귀 사용보다는 장시간 같은 자세 유지가 주원인이며, 실금 여부와 직접 연결되지 않는다.",
+        "2": "기저귀 자체가 운동 능력을 제한하지는 않는다.",
+        "3": "비용 문제는 의학적·돌봄 판단의 주요 근거가 아니다.",
+        "4": "기저귀 사용이 비뇨기계 감염의 원인이 될 수 있으나, 이것이 즉시 기저귀를 사용하면 안 되는 핵심 이유가 아니다.",
+        "5": "★ 실금이 가끔 발생한다고 해서 즉시 기저귀에 의존하면, 대상자가 스스로 배설하려는 의지와 능력이 점차 약화된다. 배설 자립 능력을 최대한 유지하도록 훈련하고 지원하는 것이 요양보호의 기본 원칙이다."
+      },
+      "vi": {
+        "1": "Loét tỳ đè chủ yếu do nằm lâu một tư thế, không liên quan trực tiếp đến việc có tiểu không tự chủ hay không.",
+        "2": "Bản thân tã không hạn chế khả năng vận động.",
+        "3": "Vấn đề chi phí không phải căn cứ chính cho các quyết định y tế và chăm sóc.",
+        "4": "Dùng tã có thể gây nhiễm trùng đường tiết niệu, nhưng đây không phải lý do cốt lõi để không dùng tã ngay.",
+        "5": "★ Nếu ngay lập tức dùng tã khi thỉnh thoảng tiểu không tự chủ, ý chí và khả năng tự chủ bài tiết của người bệnh sẽ dần suy yếu. Nguyên tắc cơ bản của chăm sóc là duy trì tối đa khả năng tự chủ bài tiết qua luyện tập và hỗ trợ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "실금", "def_vi": "Tiểu không tự chủ (urinary incontinence) — tình trạng không kiểm soát được việc đi tiểu" },
+      { "term_ko": "배설 자립", "def_vi": "Tự chủ bài tiết — khả năng tự kiểm soát việc đi vệ sinh mà không cần phụ trợ" }
+    ]
+  },
+  {
+    "id": 1280,
+    "intent_ko": "실금이 있어도 기저귀를 바로 사용하면 안 되는 핵심 이유를 묻는 문제 (배설 습관 약화)",
+    "intent_vi": "Câu hỏi về lý do cốt lõi không nên dùng tã ngay khi có tiểu không tự chủ",
+    "choice_explanations": {
+      "ko": {
+        "1": "욕창은 기저귀 사용이 직접 원인이 아니며, 장시간 압박이 주원인이다.",
+        "2": "기저귀 착용이 대상자의 움직임을 직접 제한하지는 않는다.",
+        "3": "비용은 임상적·돌봄적 판단의 주된 근거가 되지 않는다.",
+        "4": "기저귀 사용과 비뇨기계 감염이 반드시 직접적으로 연결되지는 않는다.",
+        "5": "★ 기저귀를 습관적으로 사용하면 스스로 배설하려는 신체적·심리적 동기가 줄어들어 배설 자립 능력이 저하된다. 실금이 가끔 있더라도 화장실 이용을 최대한 시도하게 하는 것이 올바른 요양보호 원칙이다."
+      },
+      "vi": {
+        "1": "Loét tỳ đè không phải do tã trực tiếp gây ra mà do áp lực kéo dài lên da.",
+        "2": "Mặc tã không trực tiếp hạn chế khả năng vận động của người bệnh.",
+        "3": "Chi phí không phải căn cứ lâm sàng hay chăm sóc chính.",
+        "4": "Không phải lúc nào dùng tã cũng dẫn đến nhiễm trùng đường tiết niệu.",
+        "5": "★ Dùng tã thường xuyên làm giảm động lực thể chất và tâm lý tự đi vệ sinh, dẫn đến suy giảm khả năng tự chủ bài tiết. Dù thỉnh thoảng tiểu không tự chủ, vẫn nên tạo điều kiện tối đa để người bệnh dùng nhà vệ sinh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "실금", "def_vi": "Tiểu không tự chủ — tình trạng không kiểm soát được việc đi tiểu" },
+      { "term_ko": "비뇨기계", "def_vi": "Hệ tiết niệu — hệ thống cơ quan tạo và bài tiết nước tiểu (thận, bàng quang, niệu đạo)" }
+    ]
+  },
+  {
+    "id": 1279,
+    "intent_ko": "기저귀가 젖었을 때 빨리 갈아주어야 하는 이유가 피부 손상 예방임을 묻는 문제",
+    "intent_vi": "Câu hỏi về lý do phải thay tã ngay khi bị ướt — phòng ngừa tổn thương da",
+    "choice_explanations": {
+      "ko": {
+        "1": "혈액순환 촉진은 마사지와 관련된 효과로, 기저귀 교환과 직접적인 연관이 없다.",
+        "2": "기저귀를 빨리 교환한다고 해서 요실금 횟수가 줄어들지는 않는다.",
+        "3": "★ 젖은 기저귀를 오래 방치하면 소변·대변 속 암모니아와 세균이 피부를 자극하여 발적, 짓무름, 욕창 등의 피부 손상을 일으킨다. 피부 손상 예방이 신속한 기저귀 교환의 가장 핵심적인 이유이다.",
+        "4": "기저귀 의존성 감소는 사용 빈도 관리와 관련된 것이지, 젖은 기저귀 교환의 이유가 아니다.",
+        "5": "체온 유지는 담요나 의복과 관련된 사항이며, 기저귀 교환의 직접적인 목적이 아니다."
+      },
+      "vi": {
+        "1": "Thúc đẩy tuần hoàn máu liên quan đến xoa bóp, không phải lý do thay tã.",
+        "2": "Thay tã nhanh không làm giảm số lần tiểu không tự chủ.",
+        "3": "★ Để tã ướt lâu, amoniac trong nước tiểu và vi khuẩn kích thích da gây đỏ da, lở loét và loét tỳ đè. Phòng ngừa tổn thương da là lý do cốt lõi nhất để thay tã ngay khi bị ướt.",
+        "4": "Giảm phụ thuộc vào tã liên quan đến quản lý tần suất sử dụng, không phải lý do thay tã khi ướt.",
+        "5": "Duy trì thân nhiệt liên quan đến chăn và quần áo, không phải mục đích trực tiếp của việc thay tã."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "요실금", "def_vi": "Tiểu không tự chủ — mất kiểm soát việc đi tiểu" },
+      { "term_ko": "피부발적", "def_vi": "Đỏ da (skin erythema) — da trở nên đỏ do kích ứng, thường gặp vùng mặc tã" }
+    ]
+  },
+  {
+    "id": 1278,
+    "intent_ko": "기저귀를 장시간 교체하지 않을 때 발생할 수 있는 피부 질환이 피부발적임을 묻는 문제",
+    "intent_vi": "Câu hỏi về bệnh da liễu có thể xảy ra khi không thay tã trong thời gian dài — đỏ da",
+    "choice_explanations": {
+      "ko": {
+        "1": "건선은 면역계 이상으로 발생하는 만성 염증성 피부 질환으로, 기저귀 장시간 착용과 무관하다.",
+        "2": "대상포진은 수두-대상포진 바이러스(VZV)의 재활성화로 발생하는 바이러스성 질환으로, 기저귀 사용과 관련이 없다.",
+        "3": "★ 기저귀를 장시간 교체하지 않으면 소변·대변의 화학 성분(암모니아, 세균 등)이 피부에 지속적으로 접촉하여 피부발적(빨게 되는 현상)이 발생한다. 이는 가장 흔한 기저귀 관련 피부 문제이다.",
+        "4": "건조증은 수분 부족이 원인이며, 기저귀 장시간 착용은 오히려 습기를 증가시키는 방향으로 작용한다.",
+        "5": "아토피 피부염은 유전적·환경적 요인에 의한 알레르기 질환으로, 기저귀 사용만으로 직접 발생하지 않는다."
+      },
+      "vi": {
+        "1": "Bệnh vảy nến là bệnh da viêm mãn tính do rối loạn miễn dịch, không liên quan đến việc mặc tã lâu.",
+        "2": "Zona (giời leo) do virus VZV tái hoạt động, không liên quan đến tã.",
+        "3": "★ Không thay tã trong thời gian dài khiến các hóa chất trong nước tiểu và phân (amoniac, vi khuẩn) tiếp xúc liên tục với da, gây đỏ da (phát ban do tã). Đây là vấn đề da phổ biến nhất liên quan đến tã.",
+        "4": "Khô da do thiếu độ ẩm; mặc tã lâu thực ra làm tăng độ ẩm chứ không gây khô.",
+        "5": "Viêm da dị ứng (eczema) do yếu tố di truyền và môi trường, không trực tiếp do tã."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "피부발적", "def_vi": "Đỏ da do tã (diaper rash) — da bị đỏ, kích ứng do tiếp xúc lâu với nước tiểu/phân" },
+      { "term_ko": "건선", "def_vi": "Bệnh vảy nến (psoriasis) — bệnh da viêm mãn tính với mảng da đỏ phủ vảy trắng" },
+      { "term_ko": "대상포진", "def_vi": "Zona thần kinh (herpes zoster) — bệnh do virus VZV tái hoạt động, gây phát ban đau theo dây thần kinh" }
+    ]
+  },
+  {
+    "id": 1277,
+    "intent_ko": "장기 기저귀 사용 대상자 관리 시 피부발적·상처·통증을 관찰하는 것이 핵심임을 묻는 문제",
+    "intent_vi": "Câu hỏi về phương pháp chăm sóc khi dùng tã lâu dài — quan sát đỏ da, vết thương, đau",
+    "choice_explanations": {
+      "ko": {
+        "1": "오염된 둔부는 마른 수건이 아닌 물 또는 적절한 세정제로 닦고 건조시켜야 한다.",
+        "2": "★ 장기적으로 기저귀를 사용하는 대상자는 피부발적, 상처, 통증을 주기적으로 살펴보는 것이 가장 중요한 관리 방법이다. 이상 증상을 조기에 발견하여 욕창·감염 등 합병증을 예방해야 한다.",
+        "3": "창문을 열어 환기하는 것은 기저귀 교환 환경에서 오히려 대상자의 체온 저하와 사생활 침해로 이어질 수 있다.",
+        "4": "기저귀 교환 횟수는 개인의 배설 빈도와 피부 상태에 따라 유동적으로 결정해야 한다.",
+        "5": "피부 상태 확인을 위해 하의를 벗겨두는 것은 불필요한 신체 노출이며 대상자의 존엄성을 침해한다."
+      },
+      "vi": {
+        "1": "Vùng mông bẩn phải lau bằng nước hoặc dung dịch làm sạch phù hợp, không dùng khăn khô.",
+        "2": "★ Với người dùng tã lâu dài, việc quan sát thường xuyên để phát hiện đỏ da, vết thương và đau là biện pháp quản lý quan trọng nhất. Phát hiện sớm giúp phòng ngừa biến chứng như loét và nhiễm trùng.",
+        "3": "Mở cửa sổ thông gió khi thay tã có thể làm giảm thân nhiệt và xâm phạm quyền riêng tư.",
+        "4": "Số lần thay tã cần linh hoạt theo tần suất bài tiết và tình trạng da từng người.",
+        "5": "Để nguyên không mặc quần để kiểm tra da là phơi bày cơ thể không cần thiết và vi phạm nhân phẩm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "피부발적", "def_vi": "Đỏ da — da bị sung đỏ do kích ứng, thường gặp ở người dùng tã lâu dài" },
+      { "term_ko": "합병증", "def_vi": "Biến chứng — tình trạng bệnh thứ phát phát sinh từ bệnh hoặc điều trị ban đầu" }
+    ]
+  },
+  {
+    "id": 1276,
+    "intent_ko": "누워있는 대상자의 기저귀 사용 돕기에서 배뇨·배변 시간에 맞춰 자주 확인하는 것이 올바른 방법임을 묻는 문제",
+    "intent_vi": "Câu hỏi về phương pháp đúng khi hỗ trợ dùng tã cho người nằm — thường xuyên kiểm tra theo giờ bài tiết",
+    "choice_explanations": {
+      "ko": {
+        "1": "실금이 발생했을 때 즉시 기저귀를 채우는 것보다 청결하게 처리하고 피부 건강을 먼저 확인하는 것이 우선이다.",
+        "2": "한 번 사용한 기저귀를 계속 사용하는 것은 피부 발적, 감염, 욕창의 원인이 된다.",
+        "3": "젖은 기저귀 안에 속 기저귀를 덧대면 피부 습기가 더 증가하고 불쾌감이 심해진다.",
+        "4": "★ 대상자의 배뇨·배변 패턴에 맞추어 기저귀를 자주 확인하고 적시에 교환하는 것이 올바른 방법이다. 이를 통해 피부 손상을 예방하고 대상자의 편안함을 유지할 수 있다.",
+        "5": "기저귀 교환 시 신체 노출을 최대화하는 것은 대상자의 사생활과 존엄성을 침해하는 행위이다."
+      },
+      "vi": {
+        "1": "Khi tiểu không tự chủ, ưu tiên làm sạch và kiểm tra tình trạng da trước, không phải lập tức đóng tã mới.",
+        "2": "Tiếp tục dùng tã đã dùng gây đỏ da, nhiễm trùng và loét tỳ đè.",
+        "3": "Lót thêm tã vào trong tã ướt làm tăng độ ẩm và gây khó chịu hơn.",
+        "4": "★ Căn theo lịch bài tiết của người bệnh để thường xuyên kiểm tra và thay tã đúng lúc. Cách này phòng tổn thương da và duy trì sự thoải mái cho người được chăm sóc.",
+        "5": "Phơi bày cơ thể tối đa khi thay tã vi phạm quyền riêng tư và nhân phẩm của người bệnh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "배뇨", "def_vi": "Đi tiểu — hành động bài tiết nước tiểu" },
+      { "term_ko": "배변", "def_vi": "Đại tiện — hành động bài tiết phân" },
+      { "term_ko": "실금", "def_vi": "Tiểu không tự chủ — không kiểm soát được việc đi tiểu" }
+    ]
+  },
+  {
+    "id": 1275,
+    "intent_ko": "기저귀를 채워야 하는 적절한 시점이 배설욕구를 전혀 느끼지 못하는 경우임을 묻는 문제",
+    "intent_vi": "Câu hỏi về thời điểm thích hợp để dùng tã — khi không còn cảm giác muốn đi vệ sinh",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 배설욕구를 전혀 느끼지 못하는 경우에는 스스로 화장실에 가려는 의지나 신호가 없으므로 기저귀 사용이 필수적이다. 이는 기저귀 사용의 핵심 적응증이다.",
+        "2": "화장실에 가기 싫어하는 것은 심리적 요인이며, 기저귀 사용을 정당화하지 않는다. 화장실 이용을 독려해야 한다.",
+        "3": "가끔 실금이 나타나는 경우에는 실금 팬티나 패드 사용을 먼저 고려하고, 화장실 이용 훈련을 계속해야 한다.",
+        "4": "약간의 도움으로 이동이 가능하면 화장실 이용이 가능하므로 기저귀보다 화장실 사용을 우선해야 한다.",
+        "5": "다리부상이 있어도 허리를 들 수 있다면 이동 변기 등을 활용하여 화장실 이용이 가능할 수 있다."
+      },
+      "vi": {
+        "1": "★ Khi không còn cảm giác muốn đi vệ sinh, người bệnh không có tín hiệu hay ý muốn tự đến nhà vệ sinh, vì vậy dùng tã là cần thiết. Đây là chỉ định cốt lõi để sử dụng tã.",
+        "2": "Không muốn đến nhà vệ sinh là yếu tố tâm lý, không đủ lý do dùng tã. Cần khuyến khích dùng nhà vệ sinh.",
+        "3": "Thỉnh thoảng tiểu không tự chủ thì nên cân nhắc quần lót chống thấm hoặc miếng lót trước, tiếp tục luyện tập dùng nhà vệ sinh.",
+        "4": "Nếu có thể di chuyển với một chút hỗ trợ thì có thể dùng nhà vệ sinh — ưu tiên hơn tã.",
+        "5": "Dù bị thương ở chân nhưng nâng được lưng, có thể dùng bô di động thay vì tã."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "배설욕구", "def_vi": "Cảm giác muốn đi vệ sinh — tín hiệu sinh lý thúc đẩy đi tiểu hoặc đại tiện" },
+      { "term_ko": "적응증", "def_vi": "Chỉ định — tình trạng y tế mà theo đó một biện pháp can thiệp là cần thiết" }
+    ]
+  },
+  {
+    "id": 1274,
+    "intent_ko": "편마비 대상자의 이동변기 사용 돕기 순서(나→라→다→가)를 묻는 문제",
+    "intent_vi": "Câu hỏi về trình tự hỗ trợ người liệt nửa người dùng bô di động: che khuất → điều chỉnh chiều cao → đặt bô → che phủ hạ thân",
+    "choice_explanations": {
+      "ko": {
+        "2": "★ 올바른 순서는 나(커튼·스크린으로 가리기) → 라(침대와 이동변기 높이 맞추기) → 다(건강한 쪽에 이동변기 붙이기) → 가(배설 중 하반신 덮기)이다. 먼저 사생활을 보호하고, 높이를 조절하여 안전한 이동 환경을 만든 후, 건강한 쪽에 변기를 배치하고, 마지막으로 배설 중 존엄성을 지키는 순서이다."
+      },
+      "vi": {
+        "2": "★ Trình tự đúng: 나(che bằng rèm/màn chắn) → 라(điều chỉnh chiều cao bô bằng giường) → 다(đặt bô về phía không liệt) → 가(che hạ thân khi đang bài tiết). Bảo vệ quyền riêng tư trước, tạo môi trường an toàn, đặt bô đúng phía, rồi bảo vệ nhân phẩm khi đang bài tiết."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "편마비", "def_vi": "Liệt nửa người (hemiplegia) — liệt một bên cơ thể do tổn thương não hoặc tủy sống" },
+      { "term_ko": "이동변기", "def_vi": "Bô di động (commode chair) — ghế có bô gắn liền, dùng cho người không thể đến nhà vệ sinh" },
+      { "term_ko": "하반신", "def_vi": "Nửa dưới cơ thể — từ thắt lưng trở xuống" }
+    ]
+  },
+  {
+    "id": 1273,
+    "intent_ko": "오른쪽 편마비 대상자가 이동변기 사용 시 두 발이 바닥에 닿아야 안정적임을 묻는 문제",
+    "intent_vi": "Câu hỏi về hỗ trợ người liệt nửa người bên phải dùng bô di động — cần chỉnh sao cho hai chân chạm sàn",
+    "choice_explanations": {
+      "ko": {
+        "1": "오른쪽 편마비 대상자는 건강한 왼쪽 편에 이동변기를 놓아야 스스로 이동하고 손잡이를 잡을 수 있다.",
+        "2": "이동변기 밑에 수건을 까는 것은 오히려 변기 위치가 불안정해질 수 있어 부적절하다.",
+        "3": "오른쪽이 마비되어 있으므로 오른손으로 손잡이를 잡는 것은 불가능하다. 건강한 왼손으로 잡아야 한다.",
+        "4": "★ 이동변기를 높이 조절하여 두 발이 바닥에 완전히 닿도록 해야 한다. 발이 바닥에 닿으면 체중이 분산되어 자세가 안정적이고 배변 시 힘주기도 쉬워진다. 이것이 이동변기 사용의 가장 기본적인 안전 원칙이다.",
+        "5": "배설 중 왼쪽을 지지하기보다는 변기 높이를 정확히 조절하여 발이 바닥에 닿게 하는 것이 더 근본적인 해결책이다."
+      },
+      "vi": {
+        "1": "Người liệt nửa người bên phải cần đặt bô về phía trái (phía không liệt) để tự di chuyển và nắm tay vịn.",
+        "2": "Lót khăn dưới bô làm bô không ổn định — không phù hợp.",
+        "3": "Tay phải bị liệt nên không thể nắm tay vịn bằng tay phải. Phải dùng tay trái (lành).",
+        "4": "★ Chỉnh chiều cao bô di động sao cho hai chân chạm hoàn toàn xuống sàn. Khi chân chạm sàn, trọng lượng cơ thể phân tán đều, tư thế ổn định và dễ rặn hơn. Đây là nguyên tắc an toàn cơ bản nhất khi dùng bô di động.",
+        "5": "Điều chỉnh chiều cao bô cho chân chạm sàn là giải pháp căn bản hơn so với chỉ đỡ phía trái khi đang bài tiết."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "편마비", "def_vi": "Liệt nửa người (hemiplegia) — liệt một bên cơ thể" },
+      { "term_ko": "이동변기", "def_vi": "Bô di động — ghế bô dùng cho người không thể đến nhà vệ sinh" }
+    ]
+  },
+  {
+    "id": 1272,
+    "intent_ko": "이동변기 사용 돕기에서 수치심 방지를 위한 스크린 설치가 핵심임을 묻는 문제",
+    "intent_vi": "Câu hỏi về hỗ trợ dùng bô di động — lắp màn chắn để giảm cảm giác xấu hổ là điều quan trọng nhất",
+    "choice_explanations": {
+      "ko": {
+        "1": "이동변기는 청결 유지를 위해 사용 후마다 세척해야 하며, 하루 한 번만으로는 충분하지 않을 수 있다.",
+        "2": "★ 대상자가 배변 시 수치심을 느끼지 않도록 스크린이나 커튼으로 가려주는 것이 이동변기 사용 지원에서 가장 중요한 배려이다. 심리적 안정이 배변을 원활하게 하는 데 도움이 된다.",
+        "3": "배변 중 창문을 열어두면 체온이 낮아지고 사생활이 침해될 수 있어 적절하지 않다.",
+        "4": "두 발이 바닥에 닿아야 안정적이므로, 발이 바닥에 닿지 않게 하는 것은 잘못된 방법이다.",
+        "5": "조용한 환경은 배변에 도움이 되지만, 이 문제의 핵심적 지원 방법은 수치심 방지이다."
+      },
+      "vi": {
+        "1": "Bô di động phải rửa sau mỗi lần sử dụng; chỉ rửa một lần mỗi ngày có thể không đủ.",
+        "2": "★ Lắp màn chắn hoặc rèm để người bệnh không cảm thấy xấu hổ khi đi vệ sinh là điều quan trọng nhất khi hỗ trợ dùng bô di động. Sự thoải mái tâm lý giúp bài tiết thuận lợi hơn.",
+        "3": "Mở cửa sổ khi đang đi vệ sinh làm giảm thân nhiệt và xâm phạm quyền riêng tư.",
+        "4": "Chân phải chạm sàn để giữ tư thế ổn định; để chân không chạm sàn là sai.",
+        "5": "Môi trường yên tĩnh tốt cho bài tiết nhưng không phải điểm mấu chốt của câu hỏi này."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "수치심", "def_vi": "Cảm giác xấu hổ — cảm xúc tiêu cực khi bị nhìn thấy hoặc phơi bày; cần được bảo vệ trong chăm sóc" },
+      { "term_ko": "이동변기", "def_vi": "Bô di động (commode) — bô có khung ghế dùng cạnh giường cho người hạn chế đi lại" }
+    ]
+  },
+  {
+    "id": 1271,
+    "intent_ko": "편마비 대상자의 이동변기 사용 시 침대와 변기 높이를 동일하게 맞추는 것이 핵심임을 묻는 문제",
+    "intent_vi": "Câu hỏi về hỗ trợ người liệt nửa người dùng bô di động — điều chỉnh chiều cao bô bằng giường là quan trọng nhất",
+    "choice_explanations": {
+      "ko": {
+        "1": "변기를 불편한 쪽(마비된 쪽)으로 45도 각도로 놓으면 대상자가 이동하기 어렵고 낙상 위험이 있다.",
+        "2": "미끄럼방지 매트는 낙상 예방에 도움이 되지만, 편마비 대상자 이동변기 사용 시 가장 핵심 원칙은 아니다.",
+        "3": "★ 침대와 이동변기의 높이를 동일하게 맞추면 편마비 대상자가 옆으로 미끄러지듯 이동할 수 있어 낙상 위험이 줄고 안전하게 변기에 앉을 수 있다. 이것이 편마비 대상자 이동변기 사용의 가장 기본적인 안전 원칙이다.",
+        "4": "차가운 물을 끼얹어 자극하는 방법은 저체온증과 혈압 상승을 유발할 수 있어 매우 위험하며 비윤리적이다.",
+        "5": "배설 후에는 물티슈보다 비누와 물로 손을 씻게 하는 것이 더 위생적이다."
+      },
+      "vi": {
+        "1": "Đặt bô nghiêng 45° về phía liệt khiến người bệnh khó di chuyển và có nguy cơ ngã.",
+        "2": "Thảm chống trượt giúp phòng ngã nhưng không phải nguyên tắc quan trọng nhất cho người liệt nửa người.",
+        "3": "★ Điều chỉnh chiều cao bô bằng chiều cao giường giúp người liệt nửa người trượt sang ngang dễ dàng, giảm nguy cơ ngã và ngồi lên bô an toàn. Đây là nguyên tắc an toàn cơ bản nhất.",
+        "4": "Dội nước lạnh để kích thích có thể gây hạ thân nhiệt và tăng huyết áp — rất nguy hiểm và vô đạo đức.",
+        "5": "Sau khi đi vệ sinh, rửa tay bằng xà phòng và nước vệ sinh hơn dùng khăn ướt."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "편마비", "def_vi": "Liệt nửa người — liệt một bên tay và chân do tổn thương não" },
+      { "term_ko": "미끄럼방지 매트", "def_vi": "Thảm chống trượt — tấm thảm có bề mặt ma sát cao đặt dưới bô hoặc sàn để phòng ngã" }
+    ]
+  },
+  {
+    "id": 1270,
+    "intent_ko": "이동변기 사용 시 변기 밑에 미끄럼방지 매트를 까는 것이 올바른 방법임을 묻는 문제",
+    "intent_vi": "Câu hỏi về phương pháp đúng khi dùng bô di động — trải thảm chống trượt dưới bô",
+    "choice_explanations": {
+      "ko": {
+        "1": "배변 중 말을 걸면 집중을 방해하여 배변을 어렵게 할 수 있다. 조용한 환경을 유지해야 한다.",
+        "2": "★ 이동변기 밑에 미끄럼방지 매트를 깔면 배변 시 변기가 밀리지 않아 안전사고를 예방할 수 있다. 낙상은 노인·장애인 돌봄에서 가장 중요한 안전 사항 중 하나이다.",
+        "3": "이동변기는 침대와 최대한 가깝고 평행하게 놓아야 이동이 용이하며, 90도로 놓으면 위험하다.",
+        "4": "배설 중 하반신을 노출시키는 것은 사생활 침해이며, 수건이나 담요로 덮어주어야 한다.",
+        "5": "배설 후 뚜껑을 닫는 것은 냄새 관리에 도움이 되지만, 이동변기의 적절한 사용 방법의 핵심은 아니다."
+      },
+      "vi": {
+        "1": "Nói chuyện khi người bệnh đang bài tiết làm mất tập trung và khó bài tiết hơn. Cần giữ môi trường yên tĩnh.",
+        "2": "★ Trải thảm chống trượt dưới bô ngăn bô bị trượt khi người bệnh đang dùng, phòng ngừa tai nạn. Ngã là một trong những vấn đề an toàn quan trọng nhất trong chăm sóc người cao tuổi và người khuyết tật.",
+        "3": "Bô phải đặt càng gần và song song với giường càng tốt; đặt vuông góc 90° rất nguy hiểm.",
+        "4": "Phơi bày hạ thân khi đang bài tiết xâm phạm quyền riêng tư; cần che bằng khăn hoặc chăn.",
+        "5": "Đậy nắp sau khi dùng giúp kiểm soát mùi nhưng không phải điểm mấu chốt trong phương pháp dùng bô."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "미끄럼방지 매트", "def_vi": "Thảm chống trượt — đặt dưới bô để ngăn trượt và phòng ngã" },
+      { "term_ko": "낙상", "def_vi": "Té ngã (fall) — tai nạn ngã xuống, nguy hiểm hàng đầu với người cao tuổi và người liệt" }
+    ]
+  },
+  {
+    "id": 1269,
+    "intent_ko": "미지근한 물을 항문·요도에 흘려주는 이유가 괄약근 이완을 통한 변의 자극임을 묻는 문제",
+    "intent_vi": "Câu hỏi về lý do chảy nước ấm vào hậu môn/niệu đạo — giãn cơ vòng để kích thích cảm giác muốn đi vệ sinh",
+    "choice_explanations": {
+      "ko": {
+        "1": "청결을 위한 것이라면 미지근한 물보다 따뜻한 물과 세정제를 사용해야 하며, 이것이 주된 목적이 아니다.",
+        "2": "냄새 제거는 배설 후 처리 목적이지, 배설 전에 물을 흘려주는 이유가 아니다.",
+        "3": "수치심 감소는 스크린 설치나 심리적 지지와 관련된 방법이다.",
+        "4": "배변 후 닦기 쉽게 하는 목적이라면 배변이 끝난 후에 물을 사용하는 것이 맞다.",
+        "5": "★ 미지근한 물의 온기가 항문이나 요도 주위의 괄약근을 이완시키고, 물의 자극이 변의를 촉진하여 배설을 도와준다. 괄약근이 긴장되어 있으면 배설이 어렵기 때문에, 이완을 유도하는 것이 핵심 원리이다."
+      },
+      "vi": {
+        "1": "Nếu để làm sạch thì cần dùng nước ấm và dung dịch làm sạch; đây không phải mục đích chính.",
+        "2": "Khử mùi là việc làm sau khi bài tiết xong, không phải lý do dùng nước trước khi bài tiết.",
+        "3": "Giảm xấu hổ liên quan đến màn chắn và hỗ trợ tâm lý, không phải nước ấm.",
+        "4": "Nếu để lau dễ hơn thì dùng nước sau khi đã bài tiết xong.",
+        "5": "★ Nhiệt độ ấm của nước làm giãn cơ vòng quanh hậu môn hoặc niệu đạo, và kích thích của dòng nước kích hoạt cảm giác muốn đi vệ sinh. Khi cơ vòng căng cứng thì khó bài tiết, nên giãn cơ là nguyên lý cốt lõi."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "괄약근", "def_vi": "Cơ vòng (sphincter) — cơ vòng kiểm soát việc đóng mở hậu môn hoặc niệu đạo" },
+      { "term_ko": "변의", "def_vi": "Cảm giác mắc đại tiện — tín hiệu sinh lý muốn đi đại tiện" },
+      { "term_ko": "요도", "def_vi": "Niệu đạo — ống dẫn nước tiểu từ bàng quang ra ngoài" }
+    ]
+  },
+  {
+    "id": 1268,
+    "intent_ko": "서거나 앉을 수는 있지만 화장실까지 걷기 어려운 대상자에게 이동변기가 최적의 배설 방법임을 묻는 문제",
+    "intent_vi": "Câu hỏi về phương pháp hỗ trợ bài tiết tốt nhất cho người có thể đứng/ngồi nhưng khó đi đến nhà vệ sinh — bô di động",
+    "choice_explanations": {
+      "ko": {
+        "1": "화장실까지 걷기 어려우므로 화장실 사용 돕기는 적합하지 않다.",
+        "2": "서거나 앉을 수 있으므로 기저귀보다 더 존엄성을 유지할 수 있는 방법을 선택해야 한다.",
+        "3": "침상 배설은 누워서 하는 배설 방법으로, 앉거나 설 수 있는 대상자에게는 불필요하다.",
+        "4": "★ 서거나 앉을 수는 있지만 화장실까지 걷기 어려운 대상자에게 이동변기가 가장 적합하다. 침대 옆에 이동변기를 배치하면 화장실까지 이동하지 않아도 앉아서 배설할 수 있어 자립성과 존엄성을 최대한 유지할 수 있다.",
+        "5": "유치도뇨관은 소변만 배출할 수 있으며, 의료적 처치가 필요한 도구로 요양보호사가 임의로 사용할 수 없다."
+      },
+      "vi": {
+        "1": "Người bệnh khó đi đến nhà vệ sinh nên hỗ trợ dùng nhà vệ sinh không phù hợp.",
+        "2": "Người có thể đứng/ngồi nên chọn phương pháp bảo vệ nhân phẩm hơn là tã.",
+        "3": "Bài tiết tại giường dành cho người phải nằm; không cần thiết với người có thể đứng/ngồi.",
+        "4": "★ Bô di động là lựa chọn tốt nhất cho người có thể đứng/ngồi nhưng khó đi đến nhà vệ sinh. Đặt bô cạnh giường giúp người bệnh ngồi bài tiết mà không cần di chuyển xa, duy trì tự chủ và nhân phẩm tối đa.",
+        "5": "Ống thông tiểu lưu chỉ dẫn nước tiểu và cần thủ thuật y tế; nhân viên chăm sóc không được tự ý sử dụng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "이동변기", "def_vi": "Bô di động — ghế bô đặt cạnh giường cho người khó di chuyển đến nhà vệ sinh" },
+      { "term_ko": "유치도뇨관", "def_vi": "Ống thông tiểu lưu (Foley catheter) — ống được đặt vào bàng quang để dẫn nước tiểu liên tục, cần thủ thuật y tế" },
+      { "term_ko": "침상배설", "def_vi": "Bài tiết tại giường — phương pháp đại/tiểu tiện ngay trên giường bằng bô dẹt, dành cho người nằm liệt" }
+    ]
+  },
+  {
+    "id": 1267,
+    "intent_ko": "이동변기 사용 대상자 돕기에서 요의를 호소할 때 즉시 배설할 수 있도록 돕는 것이 핵심임을 묻는 문제",
+    "intent_vi": "Câu hỏi về hỗ trợ người dùng bô di động — giúp bài tiết ngay khi người bệnh có nhu cầu",
+    "choice_explanations": {
+      "ko": {
+        "1": "이동변기를 침대보다 낮게 하면 대상자가 내려앉기 위험하고 자세가 불안정해진다.",
+        "2": "차가운 수건으로 변기를 닦는 것은 위생에 도움이 되지 않으며, 차가운 변기는 대상자를 불편하게 만든다.",
+        "3": "배설물은 즉시 처리해야 한다. 모아서 한꺼번에 버리면 냄새와 세균 번식으로 위생에 문제가 생긴다.",
+        "4": "★ 요의를 호소할 때 즉시 배설할 수 있도록 도와야 한다. 배뇨 욕구를 참게 하면 방광 기능이 저하되고 실금이 악화될 수 있다. 대상자의 욕구에 즉각 반응하는 것이 올바른 돌봄 자세이다.",
+        "5": "배설이 끝날 때까지 옆에서 지켜보는 것은 사생활을 침해하며, 필요시에만 곁에 있어야 한다."
+      },
+      "vi": {
+        "1": "Bô thấp hơn giường khiến người bệnh dễ bị ngã khi chuyển sang bô, tư thế không ổn định.",
+        "2": "Lau bô bằng khăn lạnh không đảm bảo vệ sinh và làm người bệnh khó chịu.",
+        "3": "Chất thải phải xử lý ngay. Để dồn lại gây mùi và vi khuẩn sinh sôi.",
+        "4": "★ Khi người bệnh có nhu cầu đi tiểu/đại tiện, phải giúp họ bài tiết ngay lập tức. Bắt nhịn tiểu làm suy giảm chức năng bàng quang và làm trầm trọng thêm tiểu không tự chủ. Phản ứng ngay với nhu cầu của người bệnh là nguyên tắc chăm sóc đúng đắn.",
+        "5": "Đứng xem cạnh người bệnh đến khi xong xâm phạm quyền riêng tư; chỉ ở cạnh khi thực sự cần thiết."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "요의", "def_vi": "Cảm giác mắc tiểu — tín hiệu sinh lý cần đi tiểu" },
+      { "term_ko": "방광", "def_vi": "Bàng quang — cơ quan chứa nước tiểu trước khi thải ra ngoài" }
+    ]
+  },
+  {
+    "id": 1266,
+    "intent_ko": "소변이 자주 마려워도 하루 세 번만 규칙적으로 보게 하는 것이 비뇨기계 감염 위험임을 묻는 문제",
+    "intent_vi": "Câu hỏi về tình huống có nguy cơ nhiễm trùng đường tiết niệu — bắt đi tiểu theo giờ cố định dù có nhu cầu",
+    "choice_explanations": {
+      "ko": {
+        "1": "수분을 충분히 섭취하면 소변이 희석되어 세균이 씻겨 나가므로 비뇨기계 감염 예방에 도움이 된다.",
+        "2": "소변주머니를 방광보다 낮은 위치에 두면 소변이 역류하지 않아 감염을 예방할 수 있는 올바른 방법이다.",
+        "3": "항문은 앞에서 뒤로 닦아야 항문의 세균이 요도로 이동하지 않아 감염을 예방한다.",
+        "4": "배설물 처리 전후 손 씻기는 가장 기본적인 감염 예방 수칙이다.",
+        "5": "★ 소변이 자주 마려운 것은 방광에 소변이 차 있다는 신호이다. 이를 무시하고 하루 세 번만 규칙적으로 보게 하면 방광 내에 소변이 오래 정체되어 세균이 증식하고 비뇨기계 감염이 발생할 위험이 높아진다. 요의가 있을 때 즉시 배뇨하도록 해야 한다."
+      },
+      "vi": {
+        "1": "Uống đủ nước giúp pha loãng nước tiểu và rửa trôi vi khuẩn — phòng ngừa nhiễm trùng đường tiết niệu.",
+        "2": "Túi nước tiểu thấp hơn bàng quang ngăn nước tiểu trào ngược — đúng phương pháp phòng nhiễm trùng.",
+        "3": "Lau hậu môn từ trước ra sau ngăn vi khuẩn từ hậu môn vào niệu đạo — phòng nhiễm trùng đúng cách.",
+        "4": "Rửa tay trước và sau khi xử lý chất thải là quy tắc vệ sinh phòng nhiễm trùng cơ bản nhất.",
+        "5": "★ Cảm giác mắc tiểu là tín hiệu bàng quang đã đầy. Bắt nhịn và chỉ đi tiểu 3 lần/ngày khiến nước tiểu ứ đọng lâu trong bàng quang, vi khuẩn sinh sôi và tăng nguy cơ nhiễm trùng đường tiết niệu. Phải cho đi tiểu ngay khi có nhu cầu."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "비뇨기계 감염", "def_vi": "Nhiễm trùng đường tiết niệu (UTI) — nhiễm khuẩn bàng quang, niệu đạo hoặc thận" },
+      { "term_ko": "소변주머니", "def_vi": "Túi nước tiểu — túi thu gom nước tiểu từ ống thông tiểu, phải đặt thấp hơn bàng quang" },
+      { "term_ko": "방광", "def_vi": "Bàng quang — túi chứa nước tiểu; ứ đọng lâu làm tăng nguy cơ nhiễm trùng" }
+    ]
+  },
+  {
+    "id": 1265,
+    "intent_ko": "보고해야 할 배설물 이상 소견으로 점액질 대변, 거품 소변, 냄새 심한 소변(가·나·다)을 고르는 문제",
+    "intent_vi": "Câu hỏi về những bất thường của chất thải cần báo cáo — phân có nhầy, nước tiểu có bọt, nước tiểu có mùi nặng (가·나·다)",
+    "choice_explanations": {
+      "ko": {
+        "3": "★ 점액질이 섞인 대변(가)은 장 점막 이상·염증 신호일 수 있고, 거품이 있는 소변(나)은 단백뇨 등 신장 문제를 시사하며, 냄새가 심한 소변(다)은 탈수·감염의 징후일 수 있어 모두 간호사에게 보고해야 한다. 반면 황금색의 굵은 대변(라)은 정상적인 건강한 대변으로 보고 대상이 아니다."
+      },
+      "vi": {
+        "3": "★ Phân có nhầy (가) có thể là dấu hiệu viêm hoặc bất thường niêm mạc ruột; nước tiểu có bọt (나) gợi ý protein niệu và vấn đề thận; nước tiểu mùi nặng (다) là dấu hiệu mất nước hoặc nhiễm trùng — cả ba đều cần báo cáo y tá. Ngược lại, phân vàng sậm to (라) là đặc điểm phân bình thường, không cần báo cáo."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "점액질", "def_vi": "Chất nhầy (mucus) — chất nhờn trong phân, khi nhiều bất thường có thể báo hiệu viêm ruột" },
+      { "term_ko": "단백뇨", "def_vi": "Protein niệu — có protein trong nước tiểu, biểu hiện qua bọt, dấu hiệu tổn thương thận" },
+      { "term_ko": "탈수", "def_vi": "Mất nước (dehydration) — cơ thể thiếu nước, nước tiểu đậm màu và mùi nặng là triệu chứng" }
+    ]
+  },
+  {
+    "id": 1264,
+    "intent_ko": "침상 배설을 돕는 방법으로 배변 후 대상자의 손을 씻게 하는 것이 올바름을 묻는 문제",
+    "intent_vi": "Câu hỏi về phương pháp hỗ trợ bài tiết tại giường — sau khi bài tiết xong phải cho người bệnh rửa tay",
+    "choice_explanations": {
+      "ko": {
+        "1": "잦은 배변의 원인을 파악하고 영양 상태를 개선해야 하며, 무조건 식사량을 줄이는 것은 올바르지 않다.",
+        "2": "찬 수건으로 변기를 닦으면 대상자가 차가운 변기에 앉아야 하므로 불쾌감을 주며, 변기는 따뜻하게 데워서 사용해야 한다.",
+        "3": "배변 중 창문을 열면 체온 저하와 사생활 침해가 발생하므로 적절하지 않다.",
+        "4": "배변이 끝난 후 침대 머리를 높이는 것은 배변 자세(좌위)를 취하게 하는 것으로, 배변 전에 해야 하는 준비 동작이다.",
+        "5": "★ 배변 후 대상자의 손을 씻게 하는 것은 위생 관리의 기본 원칙이다. 손 씻기는 감염 예방의 가장 효과적인 방법이며, 침상 배설 후 반드시 시행해야 한다."
+      },
+      "vi": {
+        "1": "Phải tìm nguyên nhân đại tiện thường xuyên và cải thiện chế độ dinh dưỡng; không được tùy tiện giảm khẩu phần ăn.",
+        "2": "Lau bô bằng khăn lạnh làm người bệnh ngồi lên bô lạnh, gây khó chịu; bô cần được làm ấm trước khi dùng.",
+        "3": "Mở cửa sổ khi đang bài tiết gây giảm thân nhiệt và xâm phạm quyền riêng tư.",
+        "4": "Nâng đầu giường là chuẩn bị tư thế ngồi trước khi bài tiết, không phải sau khi xong.",
+        "5": "★ Cho người bệnh rửa tay sau khi bài tiết là nguyên tắc vệ sinh cơ bản. Rửa tay là biện pháp phòng nhiễm trùng hiệu quả nhất và phải thực hiện sau mỗi lần bài tiết tại giường."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "침상배설", "def_vi": "Bài tiết tại giường — tiểu/đại tiện trên giường bằng dụng cụ hỗ trợ" },
+      { "term_ko": "좌위", "def_vi": "Tư thế ngồi — ngồi thẳng lưng, tư thế sinh lý tốt nhất để bài tiết" }
+    ]
+  },
+  {
+    "id": 1263,
+    "intent_ko": "편마비 대상자의 침상 배설 지원 시 변의가 생길 때 다시 대어주는 것이 올바른 방법임을 묻는 문제",
+    "intent_vi": "Câu hỏi về hỗ trợ bài tiết tại giường cho người liệt nửa người — đặt bô lại khi có cảm giác muốn đi",
+    "choice_explanations": {
+      "ko": {
+        "1": "실금이 있다고 해서 바로 기저귀를 채우는 것은 배설 자립 능력을 약화시키므로 적절하지 않다.",
+        "2": "★ 배설하지 못했을 때 변의가 생길 때까지 기다렸다가 다시 변기를 대어 주는 것이 올바른 방법이다. 대상자의 자연스러운 배설 리듬을 존중하고, 변의가 있을 때 즉시 지원하는 것이 편마비 대상자 침상 배설 지원의 핵심이다.",
+        "3": "찬 수건으로 항문 주위를 자극하는 것은 불쾌감을 주고 혈압 상승 등의 위험이 있어 부적절하다.",
+        "4": "건강한 쪽으로 돌려 눕히는 것은 도움이 될 수 있으나, 변의가 생기기를 기다리는 것이 더 우선이다.",
+        "5": "점액질이 섞인 배설물은 이상 소견으로 간호사에게 보고해야 하며, 대상자에게 확인시키고 버리는 것은 잘못된 방법이다."
+      },
+      "vi": {
+        "1": "Đóng tã ngay khi tiểu không tự chủ làm suy yếu khả năng tự chủ bài tiết — không phù hợp.",
+        "2": "★ Khi chưa bài tiết được, chờ đến khi có cảm giác mắc đại tiện rồi đặt bô lại là phương pháp đúng. Tôn trọng nhịp bài tiết tự nhiên và hỗ trợ ngay khi có nhu cầu là nguyên tắc cốt lõi khi hỗ trợ người liệt nửa người bài tiết tại giường.",
+        "3": "Dùng khăn lạnh kích thích quanh hậu môn gây khó chịu và có nguy cơ tăng huyết áp — không phù hợp.",
+        "4": "Lăn nghiêng sang phía không liệt có thể giúp nhưng ưu tiên hơn là chờ có cảm giác mắc đại tiện.",
+        "5": "Phân có nhầy là dấu hiệu bất thường cần báo y tá; không nên cho người bệnh xem rồi bỏ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "변의", "def_vi": "Cảm giác mắc đại tiện — tín hiệu sinh lý muốn đại tiện" },
+      { "term_ko": "편마비", "def_vi": "Liệt nửa người (hemiplegia) — liệt một bên cơ thể do tổn thương thần kinh trung ương" },
+      { "term_ko": "점액질", "def_vi": "Chất nhầy trong phân — khi xuất hiện bất thường cần báo cáo ngay cho y tá" }
+    ]
+  },
+  {
+    "id": 1262,
+    "intent_ko": "침상 배설 대상자에게 침상머리를 올려 좌위를 취하게 하는 것이 올바른 방법임을 묻는 문제",
+    "intent_vi": "Câu hỏi về hỗ trợ bài tiết tại giường — nâng đầu giường để người bệnh ngồi thẳng",
+    "choice_explanations": {
+      "ko": {
+        "1": "스스로 변기 위에 앉기 어려운 대상자에게 자립을 요구하면 낙상 위험이 있으므로 안전하게 도와야 한다.",
+        "2": "★ 침상머리를 올려 좌위(앉는 자세)를 취하게 하면 중력의 도움으로 배변이 용이해진다. 좌위가 배변의 가장 자연스럽고 효율적인 자세이며, 복부에 힘을 주기도 훨씬 쉽다.",
+        "3": "변기 놓을 자리에 젖은 수건을 깔면 위생에 문제가 있고 변기가 미끄러울 수 있어 위험하다.",
+        "4": "변의가 확실하지 않다고 변기를 오래 대고 있으면 압박으로 인한 욕창 위험이 있고 대상자가 불편하다.",
+        "5": "협조할 수 없는 대상자에게 무릎을 세우고 엉덩이를 들게 하는 것은 낙상 위험이 있어 위험하다."
+      },
+      "vi": {
+        "1": "Yêu cầu người bệnh khó khăn tự ngồi lên bô có nguy cơ ngã; cần hỗ trợ an toàn.",
+        "2": "★ Nâng đầu giường để người bệnh ngồi thẳng (tư thế ngồi) giúp lực trọng lực hỗ trợ bài tiết. Đây là tư thế tự nhiên và hiệu quả nhất để đại tiện, đồng thời dễ dùng lực bụng hơn nhiều.",
+        "3": "Lót khăn ướt dưới bô gây mất vệ sinh và bô có thể trượt — nguy hiểm.",
+        "4": "Đặt bô lâu khi chưa chắc có nhu cầu gây áp lực tăng nguy cơ loét và làm người bệnh khó chịu.",
+        "5": "Bắt người bệnh không hợp tác gập gối và nhấc mông lên có nguy cơ ngã — nguy hiểm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "좌위", "def_vi": "Tư thế ngồi (sitting position) — tư thế thẳng lưng, sinh lý nhất để đại tiện nhờ lực trọng lực" },
+      { "term_ko": "침상배설", "def_vi": "Bài tiết tại giường — tiểu/đại tiện trên giường bằng bô dẹt hoặc bô di động" }
+    ]
+  },
+  {
+    "id": 1261,
+    "intent_ko": "간이변기 사용 침상 배설 시 엉덩이 밑에 방수포를 깔고 간이변기를 대어주는 것이 올바른 방법임을 묻는 문제",
+    "intent_vi": "Câu hỏi về hỗ trợ bài tiết tại giường bằng bô dẹt — trải tấm chống thấm dưới mông rồi đặt bô",
+    "choice_explanations": {
+      "ko": {
+        "1": "간이변기를 세척하는 것은 올바르나, 세척 후 침상 위에 보관하는 것은 위생상 부적절하다.",
+        "2": "간이변기 옆에 미끄럼방지 매트를 까는 것은 이동변기 사용 시 적합한 방법이지, 침상 배설 시 간이변기 사용과는 관련이 없다.",
+        "3": "★ 엉덩이 밑에 방수포를 먼저 깔아 침구 오염을 방지하고, 그 위에 간이변기를 대어주는 것이 침상 배설의 올바른 방법이다. 방수포가 침구를 보호하고 위생을 유지하는 핵심 역할을 한다.",
+        "4": "변기를 침대 난간과 90도로 놓으면 대상자가 옆으로 이동해야 하므로 낙상 위험이 크다.",
+        "5": "협조할 수 없는 대상자가 옆으로 누운 채로 간이변기를 사용하는 것은 배설물이 흘러나올 수 있어 위생상 문제가 된다."
+      },
+      "vi": {
+        "1": "Rửa bô là đúng nhưng để bô đã rửa trên giường là không vệ sinh.",
+        "2": "Trải thảm chống trượt cạnh bô phù hợp với bô di động, không liên quan đến bô dẹt tại giường.",
+        "3": "★ Trải tấm chống thấm dưới mông trước để bảo vệ ga giường, rồi đặt bô dẹt vào — đây là phương pháp đúng khi bài tiết tại giường. Tấm chống thấm đóng vai trò then chốt bảo vệ chăn ga và duy trì vệ sinh.",
+        "4": "Đặt bô vuông góc 90° với thành giường yêu cầu người bệnh di chuyển sang ngang — nguy cơ ngã cao.",
+        "5": "Người không hợp tác nằm nghiêng dùng bô dẹt khiến chất thải chảy ra ngoài — mất vệ sinh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "간이변기", "def_vi": "Bô dẹt (bedpan) — dụng cụ bài tiết dạng phẳng đặt dưới mông người nằm liệt" },
+      { "term_ko": "방수포", "def_vi": "Tấm trải chống thấm — trải dưới người bệnh để bảo vệ ga giường khỏi bị bẩn" }
+    ]
+  },
+  {
+    "id": 1260,
+    "intent_ko": "침상 배설 시 침대를 올려주어 복부에 힘주기 쉬운 자세(좌위)를 취해주는 것이 올바른 방법임을 묻는 문제",
+    "intent_vi": "Câu hỏi về hỗ trợ bài tiết tại giường — nâng giường để người bệnh dễ dùng lực bụng (tư thế ngồi)",
+    "choice_explanations": {
+      "ko": {
+        "1": "협조가 불가능한 대상자라도 기저귀를 채우기 전에 배설 시도를 먼저 해야 하며, 무조건 기저귀를 채우는 것은 자립 능력을 약화시킨다.",
+        "2": "차가운 변기는 대상자에게 불쾌감을 주어 오히려 배변을 어렵게 만든다. 변기를 따뜻하게 하거나 상온의 변기를 사용해야 한다.",
+        "3": "찬물을 항문에 끼얹는 것은 위험하며 비인간적인 방법이다. 미지근한 물을 사용해야 한다.",
+        "4": "★ 침대 머리를 올려주어 좌위에 가까운 자세를 취하게 하면 중력 덕분에 배변이 쉬워지고 복부 근육에 힘을 주기도 편해진다. 좌위는 생리학적으로 배변에 최적화된 자세이다.",
+        "5": "배설이 끝나기 전에 스크린을 치우는 것은 사생활을 침해하며, 스크린은 배설이 완전히 끝난 후에 제거해야 한다."
+      },
+      "vi": {
+        "1": "Dù người bệnh không hợp tác, vẫn phải thử bài tiết trước khi đóng tã; đóng tã ngay làm suy yếu tự chủ.",
+        "2": "Bô lạnh gây khó chịu và làm khó bài tiết hơn. Cần dùng bô ấm hoặc nhiệt độ phòng.",
+        "3": "Dội nước lạnh vào hậu môn nguy hiểm và vô nhân đạo. Phải dùng nước ấm.",
+        "4": "★ Nâng đầu giường để người bệnh ở tư thế gần ngồi giúp lực trọng lực hỗ trợ bài tiết và dễ dùng cơ bụng hơn. Tư thế ngồi là tư thế tối ưu về mặt sinh lý cho việc đại tiện.",
+        "5": "Thu màn chắn khi người bệnh chưa bài tiết xong xâm phạm quyền riêng tư; chỉ thu sau khi hoàn toàn xong."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "좌위", "def_vi": "Tư thế ngồi — tư thế sinh lý tối ưu cho bài tiết, giúp lực trọng lực và cơ bụng hoạt động hiệu quả" },
+      { "term_ko": "복압", "def_vi": "Áp lực ổ bụng — lực do cơ bụng tạo ra khi rặn, quan trọng trong quá trình đại tiện" }
+    ]
+  },
+  {
+    "id": 1259,
+    "intent_ko": "침상 배설 시 회음부에 화장지를 대어 소변이 튀지 않도록 하는 것이 올바른 방법임을 묻는 문제",
+    "intent_vi": "Câu hỏi về phương pháp hỗ trợ bài tiết tại giường — đặt giấy vệ sinh ở vùng âm hộ để tránh bắn nước tiểu",
+    "choice_explanations": {
+      "ko": {
+        "1": "배변 시 힘을 주기 쉽게 하려면 침대 머리를 올려야(높이는) 한다. 낮추면 오히려 힘주기 어렵다.",
+        "2": "비언어적 표현(표정, 몸짓 등)은 대상자의 불편함이나 욕구를 나타낼 수 있으므로 반드시 대응해야 한다.",
+        "3": "★ 여성 대상자가 침상에서 소변을 볼 때 회음부에 화장지를 대어주면 소변이 사방으로 튀는 것을 막아 침구 오염을 줄이고 대상자의 불쾌감도 방지할 수 있다.",
+        "4": "항문부위를 물수건으로만 닦는 것은 충분하지 않으며, 항상 앞에서 뒤로 닦고 바지를 입히기 전에 충분히 건조시켜야 한다.",
+        "5": "편안한 배설을 위해 최대한 노출을 하는 것은 오히려 대상자에게 불쾌감과 수치심을 줄 수 있다."
+      },
+      "vi": {
+        "1": "Để dễ rặn cần nâng đầu giường lên; hạ xuống thấp làm khó rặn hơn.",
+        "2": "Biểu hiện phi ngôn ngữ (nét mặt, cử chỉ) cho thấy nhu cầu hoặc khó chịu của người bệnh — phải phản ứng.",
+        "3": "★ Khi người bệnh nữ đi tiểu tại giường, đặt giấy vệ sinh ở vùng âm hộ ngăn nước tiểu bắn tứ tung, giảm ô nhiễm chăn ga và tránh khó chịu cho người bệnh.",
+        "4": "Chỉ lau vùng hậu môn bằng khăn ướt là chưa đủ; phải lau từ trước ra sau và để da khô hoàn toàn trước khi mặc quần.",
+        "5": "Phơi bày tối đa khi bài tiết gây khó chịu và xấu hổ cho người bệnh — không phù hợp."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "회음부", "def_vi": "Vùng âm hộ/tầng sinh môn — vùng cơ quan sinh dục ngoài ở phụ nữ" },
+      { "term_ko": "비언어적 표현", "def_vi": "Biểu hiện phi ngôn ngữ — giao tiếp qua nét mặt, cử chỉ, tư thế thay vì lời nói" }
+    ]
+  },
+  {
+    "id": 1258,
+    "intent_ko": "침상 배설 시 변기 중앙에 항문이 오도록 변기를 밀어 넣는 것이 올바른 방법임을 묻는 문제",
+    "intent_vi": "Câu hỏi về hỗ trợ bài tiết tại giường — đẩy bô sao cho hậu môn nằm chính giữa bô",
+    "choice_explanations": {
+      "ko": {
+        "1": "방수포는 대상자의 무릎 아래가 아니라 엉덩이 밑에 깔아야 배설물 오염을 효과적으로 막을 수 있다.",
+        "2": "변기에 물을 채우면 배설물이 희석되어 처리가 어려워지고 위생상 문제가 생긴다.",
+        "3": "협조할 수 없는 대상자라도 방수포는 반드시 깔아야 침구 오염을 방지할 수 있다.",
+        "4": "바지를 내린 후 허리 아래가 아니라 무릎 위에 무릎덮개를 덮어 노출을 최소화해야 한다.",
+        "5": "★ 변기 중앙에 항문이 오도록 정확히 위치를 맞추어 변기를 밀어 넣어야 한다. 항문이 변기 중앙에 오지 않으면 배설물이 변기 밖으로 나와 침구를 오염시키고 대상자에게 불쾌감을 준다."
+      },
+      "vi": {
+        "1": "Tấm chống thấm phải trải dưới mông, không phải dưới đầu gối, để ngăn chất thải làm bẩn chăn ga.",
+        "2": "Đổ nước vào bô làm chất thải loãng, khó xử lý và mất vệ sinh.",
+        "3": "Dù người bệnh không hợp tác vẫn phải trải tấm chống thấm để bảo vệ chăn ga.",
+        "4": "Sau khi kéo quần xuống cần phủ tấm che lên đầu gối (không phải dưới thắt lưng) để giảm phơi bày.",
+        "5": "★ Phải đẩy bô chính xác sao cho hậu môn nằm ở trung tâm bô. Nếu không căn đúng, chất thải sẽ rơi ra ngoài bô làm bẩn chăn ga và gây khó chịu cho người bệnh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "방수포", "def_vi": "Tấm trải chống thấm — trải dưới mông để bảo vệ chăn ga khi bài tiết tại giường" },
+      { "term_ko": "항문", "def_vi": "Hậu môn — lỗ bài xuất phân, phải căn chính giữa bô khi đặt bô" }
+    ]
+  },
+  {
+    "id": 1257,
+    "intent_ko": "여성 대상자의 침상 배뇨 시 소리로 인한 수치심을 줄이는 방법이 음악 틀어주기임을 묻는 문제",
+    "intent_vi": "Câu hỏi về cách giảm cảm giác xấu hổ do tiếng động khi phụ nữ đi tiểu tại giường — bật nhạc",
+    "choice_explanations": {
+      "ko": {
+        "1": "변기에 물을 채우면 소변 소리는 줄일 수 있지만, 소리로 인한 수치심을 줄이는 효과적인 방법이 아니다. 오히려 청결 유지가 어려워진다.",
+        "2": "★ 음악을 틀어주면 소변 소리가 음악 소리에 묻혀 주변에 들리지 않게 되므로, 소리로 인한 수치심을 효과적으로 줄여줄 수 있다. 심리적 안정감도 함께 제공하여 배뇨를 원활하게 한다.",
+        "3": "무릎에 담요를 덮어주는 것은 체온 유지와 신체 노출 감소에 도움이 되지만, 소리로 인한 수치심과는 직접적인 관련이 없다.",
+        "4": "변기 아래에 방수포를 까는 것은 침구 보호를 위한 것으로, 소리나 수치심과 무관하다.",
+        "5": "수건을 허리 밑에 대주는 것은 자세 지지를 위한 것으로, 수치심 해소와 관련이 없다."
+      },
+      "vi": {
+        "1": "Đổ nước vào bô có thể giảm tiếng động nhưng không phải cách hiệu quả giảm xấu hổ do tiếng ồn; còn khó giữ vệ sinh hơn.",
+        "2": "★ Bật nhạc giúp tiếng đi tiểu bị che lấp bởi âm nhạc, người xung quanh không nghe thấy, nhờ đó giảm hiệu quả cảm giác xấu hổ do tiếng động. Âm nhạc còn tạo cảm giác thư giãn tâm lý, giúp đi tiểu dễ hơn.",
+        "3": "Đắp chăn lên đầu gối giúp giữ ấm và giảm phơi bày thân thể nhưng không liên quan đến xấu hổ do tiếng ồn.",
+        "4": "Trải tấm chống thấm dưới bô là để bảo vệ chăn ga, không liên quan đến tiếng động hay xấu hổ.",
+        "5": "Đặt khăn cuộn dưới lưng để hỗ trợ tư thế, không giúp giảm xấu hổ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "수치심", "def_vi": "Cảm giác xấu hổ — cảm xúc tiêu cực khi bị nghe thấy hoặc nhìn thấy trong hoàn cảnh nhạy cảm" },
+      { "term_ko": "침상배뇨", "def_vi": "Tiểu tiện tại giường — đi tiểu ngay trên giường bằng bô hoặc bình tiểu" }
+    ]
+  }
+]

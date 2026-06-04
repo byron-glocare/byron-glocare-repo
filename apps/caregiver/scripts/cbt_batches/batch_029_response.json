@@ -1,0 +1,781 @@
+[
+  {
+    "id": 889,
+    "intent_ko": "폐결핵의 특성과 치료 시 부작용에 대한 올바른 이해를 평가한다.",
+    "intent_vi": "Đánh giá hiểu biết đúng đắn về đặc điểm và tác dụng phụ trong điều trị lao phổi.",
+    "choice_explanations": {
+      "ko": {
+        "1": "폐결핵은 결핵균(Mycobacterium tuberculosis)에 의한 세균성 감염 질환이다. 바이러스성 질환이 아니다.",
+        "2": "격리치료는 균이 배출되는 초기 감염기(보통 2~4주)에 실시하며, 약물 복용 전 기간 내내 필요한 것은 아니다.",
+        "3": "★ 항결핵제 복용 시 위장장애(오심, 구토), 피부 발진, 간 독성 등 다양한 부작용이 나타날 수 있다. 이를 관찰하고 이상 시 의료진에게 보고해야 한다.",
+        "4": "폐결핵의 발열 패턴은 반대로 오후에 열이 오르고 밤에 식은땀과 함께 내려가는 것이 특징이다.",
+        "5": "증상이 호전되더라도 임의로 약 복용을 중단하면 내성균이 생길 수 있어 반드시 의사 지시에 따라 완전히 복용해야 한다."
+      },
+      "vi": {
+        "1": "Lao phổi là bệnh nhiễm trùng do vi khuẩn (Mycobacterium tuberculosis), không phải bệnh do virus.",
+        "2": "Cách ly điều trị chỉ cần thiết trong giai đoạn lây nhiễm ban đầu (thường 2~4 tuần), không cần suốt toàn bộ thời gian uống thuốc.",
+        "3": "★ Khi dùng thuốc kháng lao có thể xuất hiện các tác dụng phụ như rối loạn tiêu hóa (buồn nôn, nôn), phát ban da, độc tính gan. Cần theo dõi và báo cáo cho nhân viên y tế khi có bất thường.",
+        "4": "Đặc điểm sốt của lao phổi là ngược lại: sốt tăng vào buổi chiều và giảm kèm mồ hôi lạnh vào ban đêm.",
+        "5": "Dù triệu chứng cải thiện, tự ý ngừng thuốc có thể tạo ra vi khuẩn kháng thuốc, vì vậy phải uống đủ liều theo chỉ định của bác sĩ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "항결핵제", "def_vi": "Thuốc kháng lao — thuốc dùng để điều trị bệnh lao phổi, thường phối hợp nhiều loại" },
+      { "term_ko": "위장장애", "def_vi": "Rối loạn tiêu hóa — các triệu chứng như buồn nôn, đau dạ dày khi dùng thuốc" },
+      { "term_ko": "내성균", "def_vi": "Vi khuẩn kháng thuốc — vi khuẩn không còn bị tiêu diệt bởi thuốc do dùng thuốc không đủ liều" }
+    ]
+  },
+  {
+    "id": 888,
+    "intent_ko": "폐결핵의 올바른 치료 및 모니터링 방법을 평가한다.",
+    "intent_vi": "Đánh giá phương pháp điều trị và theo dõi đúng đắn đối với bệnh lao phổi.",
+    "choice_explanations": {
+      "ko": {
+        "1": "항결핵제는 반드시 여러 약물을 병용해야 한다. 한 가지만 복용하면 내성이 쉽게 생긴다.",
+        "2": "★ 폐결핵 치료 중에는 간 독성 여부를 확인하기 위한 간 기능 검사와, 치료 효과 확인을 위한 객담 검사를 주기적으로 실시해야 한다.",
+        "3": "폐결핵의 표준 치료기간은 최소 6개월이며, 다제내성 결핵의 경우 더 길어질 수 있다.",
+        "4": "증상이 좋아져도 약을 임의로 줄이면 내성균이 생기므로 처방대로 전량 복용해야 한다.",
+        "5": "결핵은 비말 감염으로 전파되는 전염성이 높은 질환이다."
+      },
+      "vi": {
+        "1": "Thuốc kháng lao phải được dùng phối hợp nhiều loại. Chỉ dùng một loại sẽ dễ tạo ra kháng thuốc.",
+        "2": "★ Trong quá trình điều trị lao phổi, cần định kỳ xét nghiệm chức năng gan (để phát hiện độc tính gan) và xét nghiệm đờm (để đánh giá hiệu quả điều trị).",
+        "3": "Thời gian điều trị lao phổi tiêu chuẩn là tối thiểu 6 tháng, đối với lao đa kháng thuốc có thể kéo dài hơn.",
+        "4": "Dù triệu chứng cải thiện, tự ý giảm liều thuốc có thể tạo vi khuẩn kháng thuốc, vì vậy phải uống đủ liều theo đơn.",
+        "5": "Lao là bệnh có khả năng lây nhiễm cao, lây qua giọt bắn đường hô hấp."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "객담 검사", "def_vi": "Xét nghiệm đờm — kiểm tra mẫu đờm để xác định vi khuẩn lao và đánh giá hiệu quả điều trị" },
+      { "term_ko": "간 기능 검사", "def_vi": "Xét nghiệm chức năng gan — kiểm tra mức độ hoạt động của gan, đặc biệt khi dùng thuốc có thể gây độc tính gan" },
+      { "term_ko": "다제내성 결핵", "def_vi": "Lao đa kháng thuốc — lao không đáp ứng với ít nhất hai loại thuốc kháng lao chính" }
+    ]
+  },
+  {
+    "id": 887,
+    "intent_ko": "제시된 증상(오후 고열, 식은땀, 체중 감소, 흉막염)을 통해 폐결핵을 감별 진단한다.",
+    "intent_vi": "Nhận diện bệnh lao phổi qua các triệu chứng điển hình: sốt cao buổi chiều, mồ hôi lạnh, sụt cân, viêm màng phổi.",
+    "choice_explanations": {
+      "ko": {
+        "1": "폐렴은 급성 고열과 기침이 주 증상이지만, 오후에 고열 후 식은땀과 체중 감소가 지속되는 패턴은 특징적이지 않다.",
+        "2": "천식은 호흡곤란과 쌕쌕거림이 주요 증상이며, 고열·식은땀·체중 감소는 일반적으로 나타나지 않는다.",
+        "3": "★ 오후 고열 후 늦은 밤 식은땀과 함께 해열, 피로감·식욕부진·체중 감소, 호흡곤란 및 흉막염은 폐결핵의 전형적인 증상이다.",
+        "4": "간염은 식욕부진과 피로는 있으나, 오후 고열·식은땀·흉막염은 주 증상이 아니다.",
+        "5": "만성기관지염은 호흡곤란과 가래 기침이 특징이며, 오후 고열·식은땀·흉막염을 동반하지 않는다."
+      },
+      "vi": {
+        "1": "Viêm phổi có triệu chứng chính là sốt cao cấp tính và ho, nhưng kiểu sốt chiều kèm mồ hôi lạnh và sụt cân kéo dài không đặc trưng.",
+        "2": "Hen suyễn biểu hiện chủ yếu là khó thở và thở khò khè, thường không có sốt cao, mồ hôi lạnh hay sụt cân.",
+        "3": "★ Sốt cao buổi chiều, sau đó về khuya hạ sốt kèm mồ hôi lạnh; mệt mỏi, chán ăn, sụt cân; khó thở và viêm màng phổi là các triệu chứng điển hình của lao phổi.",
+        "4": "Viêm gan có thể gây chán ăn và mệt mỏi, nhưng sốt cao buổi chiều, mồ hôi lạnh và viêm màng phổi không phải triệu chứng chính.",
+        "5": "Viêm phế quản mãn tính đặc trưng bởi ho có đờm và khó thở, không kèm sốt cao buổi chiều, mồ hôi lạnh hay viêm màng phổi."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "흉막염", "def_vi": "Viêm màng phổi — tình trạng viêm lớp màng bao quanh phổi, thường gây đau ngực khi thở" },
+      { "term_ko": "식은땀", "def_vi": "Mồ hôi lạnh — mồ hôi xuất hiện vào ban đêm, thường kèm theo hạ sốt, đặc trưng của lao phổi" },
+      { "term_ko": "식욕부진", "def_vi": "Chán ăn — giảm hoặc mất cảm giác thèm ăn, triệu chứng phổ biến trong nhiều bệnh mãn tính" }
+    ]
+  },
+  {
+    "id": 886,
+    "intent_ko": "폐결핵의 주요 발병 원인(결핵균의 호흡기 감염)을 파악한다.",
+    "intent_vi": "Xác định nguyên nhân chính gây bệnh lao phổi — lây nhiễm qua đường hô hấp bởi vi khuẩn lao.",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 폐결핵은 결핵균(Mycobacterium tuberculosis)이 호흡기를 통해 흡입되어 폐에 감염되는 질환이다. 감염된 사람의 기침·재채기 등으로 공기 중에 퍼진 비말이 주요 전파 경로이다.",
+        "2": "영양상태가 양호하면 면역력이 높아 결핵에 걸릴 위험이 낮아진다. 발병 원인이 아니라 예방 요인이다.",
+        "3": "면역력 증가는 결핵 발병을 오히려 억제하는 요인이며 원인이 아니다.",
+        "4": "폐결핵은 혈액이 아닌 호흡기 비말을 통해 전파된다.",
+        "5": "피부 감염은 폐결핵의 발병 경로와 무관하다."
+      },
+      "vi": {
+        "1": "★ Lao phổi là bệnh do vi khuẩn lao (Mycobacterium tuberculosis) xâm nhập vào phổi qua đường hô hấp. Giọt bắn trong không khí từ người bệnh ho hoặc hắt hơi là đường lây chính.",
+        "2": "Tình trạng dinh dưỡng tốt giúp tăng sức đề kháng, làm giảm nguy cơ mắc lao — đây là yếu tố bảo vệ, không phải nguyên nhân gây bệnh.",
+        "3": "Tăng sức đề kháng là yếu tố ức chế bệnh lao, không phải nguyên nhân gây bệnh.",
+        "4": "Lao phổi lây qua giọt bắn đường hô hấp, không qua máu.",
+        "5": "Nhiễm trùng da không liên quan đến con đường gây bệnh lao phổi."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "결핵균", "def_vi": "Vi khuẩn lao (Mycobacterium tuberculosis) — vi khuẩn gây bệnh lao, lây qua đường hô hấp" },
+      { "term_ko": "비말 감염", "def_vi": "Lây qua giọt bắn — phương thức lây bệnh qua các giọt nhỏ trong không khí khi người bệnh ho hoặc hắt hơi" },
+      { "term_ko": "면역력", "def_vi": "Sức đề kháng — khả năng của cơ thể chống lại vi khuẩn và virus gây bệnh" }
+    ]
+  },
+  {
+    "id": 884,
+    "intent_ko": "쌕쌕거리는 호흡음, 기도의 만성 염증, 알레르겐에 의한 과민반응이라는 증상을 통해 천식을 감별한다.",
+    "intent_vi": "Nhận diện bệnh hen suyễn qua các triệu chứng: thở khò khè, viêm mãn tính đường thở, phản ứng quá mẫn với dị nguyên.",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 천식은 기도의 만성 염증성 질환으로, 숨을 내쉴 때 쌕쌕거리는 호흡음, 기관지 벽 부종과 기도 협착, 꽃가루·집먼지진드기·찬 공기 등 자극에 의한 기도 과민반응이 특징이다.",
+        "2": "결핵은 기침과 가래, 오후 발열, 식은땀이 주 증상이며, 쌕쌕거리는 호흡음이나 알레르겐 과민반응은 특징이 아니다.",
+        "3": "후두염은 후두 부위의 염증으로 인한 쉰 목소리·인후통이 주 증상이며, 기도 과민반응과는 다르다.",
+        "4": "폐수종은 폐 내에 액체가 고이는 상태로 호흡곤란을 유발하지만, 알레르겐 과민반응이나 쌕쌕거림이 주 증상이 아니다.",
+        "5": "흉막염은 흉막의 염증으로 호흡 시 흉통이 주 증상이며, 기도의 만성 염증과는 다른 질환이다."
+      },
+      "vi": {
+        "1": "★ Hen suyễn là bệnh viêm mãn tính đường thở, đặc trưng bởi tiếng thở khò khè khi thở ra, phù nề thành phế quản và co hẹp đường thở, đồng thời phản ứng quá mẫn khi tiếp xúc với phấn hoa, mạt bụi nhà hay không khí lạnh.",
+        "2": "Lao chủ yếu biểu hiện ho có đờm, sốt chiều và mồ hôi lạnh ban đêm — không có thở khò khè hay phản ứng dị ứng.",
+        "3": "Viêm thanh quản gây khàn giọng và đau họng là chủ yếu, khác với phản ứng quá mẫn đường thở.",
+        "4": "Phù phổi là tình trạng ứ dịch trong phổi gây khó thở, nhưng không có đặc trưng phản ứng dị ứng hay thở khò khè.",
+        "5": "Viêm màng phổi gây đau ngực khi thở là triệu chứng chính, khác hoàn toàn với bệnh viêm mãn tính đường thở."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "기도 협착", "def_vi": "Co hẹp đường thở — đường dẫn khí bị thu hẹp, gây khó thở và thở khò khè" },
+      { "term_ko": "과민반응", "def_vi": "Phản ứng quá mẫn — phản ứng miễn dịch quá mức với các chất kích thích như phấn hoa, bụi, không khí lạnh" },
+      { "term_ko": "집먼지진드기", "def_vi": "Mạt bụi nhà — loài ký sinh nhỏ trong chăn nệm, là dị nguyên phổ biến gây hen suyễn và dị ứng" }
+    ]
+  },
+  {
+    "id": 883,
+    "intent_ko": "천식 대상자의 기도 경련을 유발하거나 악화시키는 요인을 파악한다.",
+    "intent_vi": "Xác định yếu tố gây ra hoặc làm nặng thêm co thắt phế quản ở người bệnh hen suyễn.",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 찬 공기는 기도를 수축시키는 강력한 자극으로, 천식 환자에게 기도 경련과 호흡곤란을 유발하거나 악화시킨다.",
+        "2": "복식 호흡은 횡격막을 활용한 호흡법으로 기도를 이완시키고 호흡을 편안하게 하여 천식 증상 완화에 도움이 된다.",
+        "3": "독감 예방접종은 인플루엔자로 인한 천식 악화를 예방하는 효과가 있어 권장되는 조치이다.",
+        "4": "가벼운 실내운동은 폐 기능 강화에 도움이 되며, 과격하지 않은 운동은 천식 환자에게도 권장된다.",
+        "5": "뜨거운 물로 침구류를 세탁하면 집먼지진드기를 제거하여 천식 발작 예방에 오히려 도움이 된다."
+      },
+      "vi": {
+        "1": "★ Không khí lạnh là tác nhân kích thích mạnh làm co thắt phế quản, có thể gây ra hoặc làm nặng thêm triệu chứng khó thở ở người hen suyễn.",
+        "2": "Thở bằng bụng (thở cơ hoành) giúp giãn nở đường thở và giảm nhẹ triệu chứng hen suyễn.",
+        "3": "Tiêm phòng cúm được khuyến nghị cho người hen suyễn vì cúm có thể làm nặng thêm bệnh.",
+        "4": "Vận động nhẹ trong nhà có lợi cho chức năng phổi và được khuyến nghị cho người hen suyễn khi không quá gắng sức.",
+        "5": "Giặt chăn gối bằng nước nóng giúp tiêu diệt mạt bụi nhà — thực ra có lợi trong phòng ngừa cơn hen."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "기도 경련", "def_vi": "Co thắt phế quản — sự co cơ đột ngột của thành phế quản, gây hẹp đường thở và khó thở" },
+      { "term_ko": "복식 호흡", "def_vi": "Thở bằng bụng — kỹ thuật thở dùng cơ hoành, giúp tăng dung tích phổi và thư giãn đường thở" },
+      { "term_ko": "기도 수축", "def_vi": "Co hẹp đường thở — đường dẫn khí bị thu hẹp do cơ trơn co lại hoặc phù nề" }
+    ]
+  },
+  {
+    "id": 882,
+    "intent_ko": "기도의 만성 염증성 질환으로 호기 시 쌕쌕거리는 호흡음이 특징인 천식을 식별한다.",
+    "intent_vi": "Xác định bệnh hen suyễn — bệnh viêm mãn tính đường thở với đặc trưng thở khò khè khi thở ra.",
+    "choice_explanations": {
+      "ko": {
+        "1": "폐렴은 폐 실질에 염증이 생기는 질환으로, 쌕쌕거리는 호흡음보다 기침·발열·가래가 주 증상이다.",
+        "2": "★ 천식은 기도의 만성 염증성 질환으로, 기관지 과민반응으로 인해 숨을 내쉴 때 특징적인 쌕쌕거리는 호흡음(호기성 천명음)이 발생한다.",
+        "3": "폐결핵은 결핵균에 의한 감염으로 기침·객혈·오후 발열이 특징이며, 쌕쌕거리는 호흡음은 주 증상이 아니다.",
+        "4": "만성기관지염은 기도의 만성 염증이나 주요 증상은 가래를 동반한 만성기침이며, 쌕쌕거림은 이차적으로 나타날 수 있다.",
+        "5": "협심증은 심장 혈관 질환으로 호흡기 질환이 아니며, 흉통이 주 증상이다."
+      },
+      "vi": {
+        "1": "Viêm phổi là bệnh viêm nhu mô phổi, triệu chứng chính là ho, sốt và khạc đờm, không phải thở khò khè.",
+        "2": "★ Hen suyễn là bệnh viêm mãn tính đường thở, do phế quản tăng phản ứng nên khi thở ra xuất hiện tiếng thở khò khè (tiếng rít thở ra) đặc trưng.",
+        "3": "Lao phổi do vi khuẩn lao gây ra, đặc trưng bởi ho, khạc ra máu và sốt chiều — không phải thở khò khè.",
+        "4": "Viêm phế quản mãn tính cũng là viêm mãn tính đường thở nhưng triệu chứng chính là ho mãn tính có đờm, tiếng khò khè có thể xuất hiện thứ phát.",
+        "5": "Đau thắt ngực là bệnh mạch vành tim, không phải bệnh hô hấp — triệu chứng chính là đau ngực."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "천명음", "def_vi": "Tiếng rít (thở khò khè) — âm thanh bất thường khi thở, đặc biệt khi thở ra, do đường thở bị hẹp" },
+      { "term_ko": "기관지 과민반응", "def_vi": "Tăng phản ứng phế quản — phế quản phản ứng quá mức với các tác nhân kích thích, gây co thắt dễ dàng" },
+      { "term_ko": "호기", "def_vi": "Thở ra — giai đoạn đẩy không khí ra khỏi phổi trong chu kỳ hô hấp" }
+    ]
+  },
+  {
+    "id": 881,
+    "intent_ko": "폐렴 치료 시 혈중 산소 농도 유지의 중요성을 포함한 올바른 치료 방법을 평가한다.",
+    "intent_vi": "Đánh giá phương pháp điều trị viêm phổi đúng đắn, bao gồm việc duy trì nồng độ oxy trong máu.",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 폐렴은 폐의 산소 교환 능력을 저하시키므로 혈중 산소 농도(산소포화도)를 적절하게 유지하는 것이 핵심 치료 요소이다. 필요 시 산소 요법을 시행한다.",
+        "2": "수분 섭취는 오히려 충분히 해야 한다. 수분이 기도 내 분비물을 묽게 하여 배출을 돕는다.",
+        "3": "실내 습도 유지는 호흡을 편안하게 하는 데 도움이 되지만, 지나치게 높으면 곰팡이 번식 등의 문제가 생길 수 있다.",
+        "4": "세균성 폐렴 치료에는 항생제가 필수적이다. 항생제를 금하면 균이 증식하여 증상이 악화된다.",
+        "5": "객담 검사는 원인균 확인에 사용되는 진단 방법이며 치료 방법이 아니다."
+      },
+      "vi": {
+        "1": "★ Viêm phổi làm giảm khả năng trao đổi oxy của phổi, vì vậy duy trì nồng độ oxy trong máu (độ bão hòa oxy) ở mức phù hợp là yếu tố điều trị cốt lõi. Có thể cần liệu pháp oxy khi cần thiết.",
+        "2": "Cần uống đủ nước, không nên hạn chế. Nước giúp làm loãng dịch tiết đường thở và dễ tống ra ngoài.",
+        "3": "Duy trì độ ẩm trong phòng giúp thở dễ hơn, nhưng nếu quá cao có thể gây nấm mốc.",
+        "4": "Kháng sinh là thiết yếu trong điều trị viêm phổi do vi khuẩn. Không dùng kháng sinh sẽ khiến vi khuẩn nhân lên và bệnh nặng hơn.",
+        "5": "Xét nghiệm đờm là phương pháp chẩn đoán để xác định vi khuẩn gây bệnh, không phải phương pháp điều trị."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "산소포화도", "def_vi": "Độ bão hòa oxy (SpO₂) — tỷ lệ phần trăm hemoglobin gắn oxy trong máu, chỉ số quan trọng theo dõi chức năng hô hấp" },
+      { "term_ko": "산소 요법", "def_vi": "Liệu pháp oxy — cung cấp oxy bổ sung qua mặt nạ hoặc ống thông mũi cho bệnh nhân thiếu oxy" },
+      { "term_ko": "항생제", "def_vi": "Kháng sinh — thuốc tiêu diệt hoặc ức chế vi khuẩn, thiết yếu trong điều trị viêm phổi do vi khuẩn" }
+    ]
+  },
+  {
+    "id": 880,
+    "intent_ko": "음식물이나 이물질이 기도로 넘어가 기관지나 폐에 염증을 일으키는 흡인성 폐렴을 포함한 폐렴의 원인을 이해한다.",
+    "intent_vi": "Hiểu nguyên nhân gây viêm phổi khi thức ăn hoặc dị vật xâm nhập vào đường thở gây viêm phế quản hoặc phổi.",
+    "choice_explanations": {
+      "ko": {
+        "1": "식도염은 식도의 염증으로 기도와는 별개의 구조에 발생하며, 기도 내 이물질 흡인과는 관계없다.",
+        "2": "★ 음식물이나 이물질이 기도를 통해 기관지나 폐로 들어가면 흡인성 폐렴이 발생할 수 있다. 특히 연하 기능이 저하된 노인에게 흔히 나타난다.",
+        "3": "위경련은 위 근육의 수축으로 인한 복통이며, 기도 내 이물질 흡인과 무관하다.",
+        "4": "폐기종은 폐포가 파괴되어 공기가 갇히는 질환으로, 흡인으로 인한 염증과 다른 기전이다.",
+        "5": "천식은 알레르겐 등에 의한 기도 과민반응으로, 이물질 흡인에 의한 감염성 염증이 아니다."
+      },
+      "vi": {
+        "1": "Viêm thực quản xảy ra ở thực quản, khác với đường thở — không liên quan đến hít sặc dị vật vào khí quản.",
+        "2": "★ Khi thức ăn hoặc dị vật xâm nhập vào đường thở, đi vào phế quản hoặc phổi có thể gây viêm phổi do hít sặc (viêm phổi hít). Đặc biệt phổ biến ở người cao tuổi có chức năng nuốt suy giảm.",
+        "3": "Co thắt dạ dày là đau do co cơ dạ dày, không liên quan đến hít sặc dị vật vào đường thở.",
+        "4": "Khí thũng phổi là bệnh phá hủy phế nang khiến không khí bị giữ lại — cơ chế khác với viêm do hít sặc.",
+        "5": "Hen suyễn là phản ứng quá mẫn đường thở với dị nguyên, không phải viêm nhiễm do hít sặc dị vật."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "흡인성 폐렴", "def_vi": "Viêm phổi hít — viêm phổi xảy ra khi thức ăn, nước bọt hoặc dị vật hít vào phổi, thường gặp ở người cao tuổi" },
+      { "term_ko": "연하 기능", "def_vi": "Chức năng nuốt — khả năng nuốt thức ăn và chất lỏng an toàn, thường suy giảm ở người cao tuổi hoặc người bị đột quỵ" },
+      { "term_ko": "폐기종", "def_vi": "Khí thũng phổi — bệnh phá hủy vách phế nang, không khí bị giữ lại trong phổi, thường do hút thuốc lá" }
+    ]
+  },
+  {
+    "id": 879,
+    "intent_ko": "세균·바이러스에 의한 폐 조직의 염증으로 호흡곤란·가래·기침이 나타나는 질환이 폐렴임을 확인한다.",
+    "intent_vi": "Xác định viêm phổi là bệnh viêm mô phổi do vi khuẩn hoặc virus gây ra, với các triệu chứng khó thở, đờm và ho.",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 폐렴은 세균이나 바이러스 등 미생물에 의해 폐 조직에 염증이 발생하는 질환으로, 호흡곤란·가래·기침이 주 증상이다. 고열과 흉통이 동반되기도 한다.",
+        "2": "폐암은 폐에 생기는 악성 종양으로 세균·바이러스 감염에 의한 것이 아니며, 주 증상은 만성 기침·객혈·체중 감소이다.",
+        "3": "천식은 알레르겐 등으로 인한 기도 과민반응이 원인이며, 세균이나 바이러스 감염이 주원인은 아니다.",
+        "4": "폐결핵은 결핵균에 의한 감염이지만, 경과가 만성적이며 오후 발열·식은땀·체중 감소가 두드러진다.",
+        "5": "만성기관지염은 주로 흡연 등 장기적인 자극에 의한 기도의 만성 염증으로, 세균이나 바이러스 감염이 직접 원인은 아니다."
+      },
+      "vi": {
+        "1": "★ Viêm phổi là bệnh viêm mô phổi do vi sinh vật như vi khuẩn hoặc virus gây ra, triệu chứng chính là khó thở, đờm và ho. Có thể kèm sốt cao và đau ngực.",
+        "2": "Ung thư phổi là khối u ác tính ở phổi, không do nhiễm khuẩn/virus — triệu chứng chính là ho mãn tính, khạc ra máu và sụt cân.",
+        "3": "Hen suyễn do phản ứng quá mẫn với dị nguyên, không phải do vi khuẩn hay virus là nguyên nhân chính.",
+        "4": "Lao phổi do vi khuẩn lao gây ra nhưng tiến triển mãn tính, nổi bật với sốt chiều, mồ hôi lạnh và sụt cân.",
+        "5": "Viêm phế quản mãn tính chủ yếu do kích thích kéo dài như hút thuốc lá, không phải do vi khuẩn hay virus là nguyên nhân trực tiếp."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "폐 조직", "def_vi": "Mô phổi — tế bào và cấu trúc cấu thành phổi, nơi diễn ra quá trình trao đổi khí" },
+      { "term_ko": "미생물", "def_vi": "Vi sinh vật — các sinh vật nhỏ bé như vi khuẩn, virus, nấm có thể gây bệnh nhiễm trùng" },
+      { "term_ko": "객혈", "def_vi": "Khạc ra máu — triệu chứng ho ra máu, có thể gặp trong ung thư phổi hoặc lao phổi nặng" }
+    ]
+  },
+  {
+    "id": 878,
+    "intent_ko": "만성기관지염으로 기도가 좁아진 대상자를 돕는 올바른 방법(갑작스러운 온도 변화 피하기)을 파악한다.",
+    "intent_vi": "Xác định cách chăm sóc đúng đắn cho người bị hẹp đường thở do viêm phế quản mãn tính — tránh thay đổi nhiệt độ đột ngột.",
+    "choice_explanations": {
+      "ko": {
+        "1": "자극적인 음식은 기도를 더 자극하여 기침·가래를 악화시킬 수 있어 피해야 한다.",
+        "2": "차가운 물은 기도를 수축시켜 호흡을 어렵게 할 수 있으므로 권장되지 않는다.",
+        "3": "탈취제는 화학 성분이 포함된 분무형 제품으로, 기도에 자극을 줄 수 있어 사용하지 않는 것이 좋다.",
+        "4": "만성기관지염은 감염성 질환이 아니므로 전염성이 강하다고 볼 수 없다.",
+        "5": "★ 갑작스러운 온도 변화(특히 차가운 공기)는 기관지를 수축시키고 기도 경련을 유발할 수 있다. 온도 변화에 노출되지 않도록 보호하는 것이 기도를 안정시키는 중요한 관리 방법이다."
+      },
+      "vi": {
+        "1": "Thức ăn kích thích có thể làm nặng thêm ho và đờm, cần tránh.",
+        "2": "Nước lạnh có thể làm co thắt đường thở khiến thở khó hơn, không được khuyến nghị.",
+        "3": "Chất khử mùi dạng xịt chứa hóa chất có thể kích thích đường thở, nên tránh sử dụng.",
+        "4": "Viêm phế quản mãn tính không phải bệnh lây nhiễm, không thể nói là có khả năng lây cao.",
+        "5": "★ Thay đổi nhiệt độ đột ngột (đặc biệt là không khí lạnh) có thể gây co thắt phế quản và khó thở. Bảo vệ người bệnh khỏi thay đổi nhiệt độ đột ngột là biện pháp chăm sóc quan trọng giúp ổn định đường thở."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "만성기관지염", "def_vi": "Viêm phế quản mãn tính — bệnh viêm kéo dài ở phế quản, thường do hút thuốc lá, đặc trưng bởi ho có đờm mãn tính" },
+      { "term_ko": "기도 수축", "def_vi": "Co thắt đường thở — đường dẫn khí bị hẹp lại do kích thích lạnh hoặc dị nguyên, gây khó thở" },
+      { "term_ko": "온도 변화", "def_vi": "Thay đổi nhiệt độ — sự thay đổi đột ngột về nhiệt độ môi trường, có thể kích thích co thắt phế quản" }
+    ]
+  },
+  {
+    "id": 877,
+    "intent_ko": "만성기관지염의 치료 및 예방에서 금연이 핵심임을 이해한다.",
+    "intent_vi": "Hiểu rằng bỏ thuốc lá là biện pháp điều trị và phòng ngừa cốt lõi cho viêm phế quản mãn tính.",
+    "choice_explanations": {
+      "ko": {
+        "1": "찬 공기는 기도를 수축시켜 기도를 더욱 좁아지게 하므로 피해야 한다.",
+        "2": "뜨거운 음식은 기도에 열 자극을 줄 수 있어 적절하지 않다.",
+        "3": "★ 흡연은 기관지 점막을 지속적으로 손상·자극하여 만성기관지염의 주요 원인이다. 금연은 질환의 진행을 막고 증상을 완화하는 가장 중요한 치료 및 예방법이다.",
+        "4": "차가운 음식도 기도에 자극을 줄 수 있어 권장되지 않는다.",
+        "5": "기침은 기도 내 가래와 이물질을 배출하는 중요한 보호 반사이므로 자제해서는 안 된다."
+      },
+      "vi": {
+        "1": "Không khí lạnh làm co thắt đường thở khiến phế quản hẹp hơn, cần tránh.",
+        "2": "Thức ăn quá nóng có thể kích thích nhiệt cho đường thở, không phù hợp.",
+        "3": "★ Hút thuốc là nguyên nhân chính gây tổn thương và kích thích liên tục niêm mạc phế quản, dẫn đến viêm phế quản mãn tính. Bỏ thuốc lá là biện pháp điều trị và phòng ngừa quan trọng nhất để ngăn bệnh tiến triển và giảm triệu chứng.",
+        "4": "Thức ăn lạnh cũng có thể kích thích đường thở, không được khuyến nghị.",
+        "5": "Ho là phản xạ bảo vệ quan trọng giúp tống đờm và dị vật ra khỏi đường thở, không nên kìm hãm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "기관지 점막", "def_vi": "Niêm mạc phế quản — lớp màng lót bên trong phế quản, dễ bị tổn thương bởi khói thuốc lá" },
+      { "term_ko": "금연", "def_vi": "Bỏ thuốc lá — ngừng hút thuốc hoàn toàn, biện pháp thiết yếu nhất trong điều trị viêm phế quản mãn tính" },
+      { "term_ko": "보호 반사", "def_vi": "Phản xạ bảo vệ — phản xạ tự động của cơ thể để bảo vệ đường thở, ví dụ như ho và hắt hơi" }
+    ]
+  },
+  {
+    "id": 876,
+    "intent_ko": "만성기관지염 대상자의 증상 완화를 위해 심호흡과 기침으로 가래를 배출하는 방법이 올바름을 확인한다.",
+    "intent_vi": "Xác định phương pháp thở sâu và ho có kiểm soát để tống đờm ra ngoài là cách giảm triệu chứng đúng đắn cho người viêm phế quản mãn tính.",
+    "choice_explanations": {
+      "ko": {
+        "1": "해열진통제는 통증이나 발열 완화에 사용되며, 기관지 내 가래 배출과는 직접적인 관련이 없다.",
+        "2": "차고 매운 음식은 기관지를 자극하여 기침과 가래를 악화시킬 수 있어 피해야 한다.",
+        "3": "방향제는 향기 성분이 기도를 자극할 수 있어 공기 정화와는 달리 오히려 증상을 악화시킬 수 있다.",
+        "4": "뜨거운 차는 호흡곤란 개선에 직접적인 효과가 없으며, 지나치게 뜨거운 음료는 자극이 될 수 있다.",
+        "5": "★ 심호흡은 폐를 충분히 확장시키고 기관지 내 가래를 이동시키며, 이후 기침을 통해 효과적으로 배출할 수 있다. 이는 만성기관지염 환자에서 가래 제거를 위한 가장 기본적인 방법이다."
+      },
+      "vi": {
+        "1": "Thuốc hạ sốt giảm đau dùng cho đau và sốt, không liên quan trực tiếp đến việc tống đờm ra khỏi phế quản.",
+        "2": "Thức ăn lạnh và cay có thể kích thích phế quản làm nặng thêm ho và đờm, cần tránh.",
+        "3": "Chất tạo mùi thơm có thể kích thích đường thở và thực ra làm nặng thêm triệu chứng thay vì làm sạch không khí.",
+        "4": "Trà nóng không có tác dụng trực tiếp cải thiện khó thở, đồ uống quá nóng có thể gây kích thích.",
+        "5": "★ Thở sâu giúp mở rộng phổi và di chuyển đờm trong phế quản, sau đó ho có kiểm soát giúp tống đờm ra hiệu quả. Đây là phương pháp cơ bản nhất để loại bỏ đờm ở người viêm phế quản mãn tính."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "심호흡", "def_vi": "Thở sâu — hít thở sâu và chậm để mở rộng phổi tối đa, giúp di chuyển đờm và cải thiện thông khí" },
+      { "term_ko": "가래 배출", "def_vi": "Tống đờm — quá trình loại bỏ chất nhầy tích tụ trong đường thở qua ho hoặc kỹ thuật vỗ lưng" },
+      { "term_ko": "해열진통제", "def_vi": "Thuốc hạ sốt giảm đau — thuốc dùng để giảm sốt và đau, ví dụ acetaminophen, không có tác dụng trên đờm" }
+    ]
+  },
+  {
+    "id": 875,
+    "intent_ko": "체중 감소·잦은 호흡기 감염·점진적 호흡곤란·이른 아침 가래 기침을 통해 만성기관지염을 감별한다.",
+    "intent_vi": "Nhận diện viêm phế quản mãn tính qua các triệu chứng: sụt cân, nhiễm trùng hô hấp tái phát, khó thở tăng dần, ho có đờm vào buổi sáng sớm.",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 만성기관지염은 장기적인 기관지 염증으로 지속적인 기침과 가래(특히 이른 아침에 심함), 점진적 호흡곤란 악화, 체중 감소, 잦은 호흡기 감염이 나타난다.",
+        "2": "폐렴은 급성 경과로 갑작스러운 고열·기침·흉통이 특징이며, 이른 아침 가래 기침이나 점진적 호흡곤란은 특징적이지 않다.",
+        "3": "폐결핵은 체중 감소와 기침이 있지만, 오후 발열·밤의 식은땀이 두드러지고 이른 아침의 가래 기침 패턴이 특징은 아니다.",
+        "4": "천식은 발작성 호흡곤란이 특징이며, 가래를 동반한 만성 기침보다 쌕쌕거림과 간헐적 호흡곤란이 주 증상이다.",
+        "5": "심부전은 호흡곤란을 유발하지만, 주로 체액 과부하로 인한 체중 증가와 하지 부종이 동반된다."
+      },
+      "vi": {
+        "1": "★ Viêm phế quản mãn tính do viêm kéo dài ở phế quản, đặc trưng bởi ho có đờm liên tục (đặc biệt nặng vào sáng sớm), khó thở tăng dần theo thời gian, sụt cân và nhiễm trùng hô hấp tái phát.",
+        "2": "Viêm phổi diễn tiến cấp tính với sốt cao đột ngột, ho và đau ngực — không có kiểu ho đờm sáng sớm hay khó thở tăng dần mãn tính.",
+        "3": "Lao phổi cũng gây sụt cân và ho, nhưng nổi bật hơn là sốt chiều và mồ hôi lạnh ban đêm, không đặc trưng bởi ho đờm vào sáng sớm.",
+        "4": "Hen suyễn đặc trưng bởi khó thở từng cơn, tiếng thở khò khè, khác với ho có đờm mãn tính vào sáng sớm.",
+        "5": "Suy tim gây khó thở nhưng thường kèm tăng cân và phù chi dưới do ứ dịch."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "호흡기 감염", "def_vi": "Nhiễm trùng hô hấp — bệnh nhiễm khuẩn hoặc virus ở đường hô hấp, dễ tái phát ở người viêm phế quản mãn tính" },
+      { "term_ko": "점진적 호흡곤란", "def_vi": "Khó thở tăng dần — tình trạng khó thở ngày càng nặng hơn theo thời gian, đặc trưng của bệnh phổi mãn tính" },
+      { "term_ko": "심부전", "def_vi": "Suy tim — tim không bơm đủ máu, gây khó thở, phù nề và mệt mỏi" }
+    ]
+  },
+  {
+    "id": 874,
+    "intent_ko": "인플루엔자의 치료제로 항바이러스제를 사용하는 것이 옳음을 확인한다.",
+    "intent_vi": "Xác định thuốc kháng virus là thuốc điều trị đúng đắn cho bệnh cúm (influenza).",
+    "choice_explanations": {
+      "ko": {
+        "1": "인플루엔자는 비말을 통한 호흡기 감염으로 전파되며, 혈액으로 전파되지 않는다.",
+        "2": "★ 인플루엔자는 바이러스 감염 질환이므로 치료제로 항바이러스제(오셀타미비르 등)가 사용된다. 발병 초기(48시간 이내) 복용 시 효과가 높다.",
+        "3": "증상 발현 이후에도 바이러스 배출이 지속되어 타인에게 전파될 수 있으므로 격리가 필요하다.",
+        "4": "접촉자는 증상이 없어도 예방 목적으로 항바이러스제를 복용할 수 있으나, 증상 유무에 관계없이 '치료'한다는 표현은 정확하지 않다.",
+        "5": "회복 중 발열과 누런 가래는 2차 세균 감염의 가능성을 시사하며, 정상적인 경과가 아니므로 의료진에게 알려야 한다."
+      },
+      "vi": {
+        "1": "Cúm lây qua giọt bắn đường hô hấp, không lây qua máu.",
+        "2": "★ Cúm là bệnh nhiễm virus, vì vậy thuốc kháng virus (như oseltamivir) được dùng để điều trị. Hiệu quả cao nhất khi uống trong 48 giờ đầu kể từ khi khởi phát triệu chứng.",
+        "3": "Sau khi có triệu chứng, virus vẫn tiếp tục được thải ra và có thể lây cho người khác, vì vậy cần cách ly.",
+        "4": "Người tiếp xúc có thể được dùng thuốc kháng virus để dự phòng dù chưa có triệu chứng, nhưng cách nói 'điều trị bất kể có triệu chứng hay không' không hoàn toàn chính xác.",
+        "5": "Sốt và đờm vàng khi hồi phục có thể báo hiệu nhiễm khuẩn thứ phát — không phải diễn tiến bình thường, cần thông báo cho nhân viên y tế."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "항바이러스제", "def_vi": "Thuốc kháng virus — thuốc ức chế sự nhân lên của virus, dùng điều trị cúm (ví dụ: oseltamivir/Tamiflu)" },
+      { "term_ko": "인플루엔자", "def_vi": "Cúm (Influenza) — bệnh nhiễm virus cúm gây sốt cao, ho, đau người, lây qua đường hô hấp" },
+      { "term_ko": "2차 세균 감염", "def_vi": "Nhiễm khuẩn thứ phát — nhiễm trùng vi khuẩn xảy ra sau bệnh virus, có thể gây viêm phổi biến chứng" }
+    ]
+  },
+  {
+    "id": 873,
+    "intent_ko": "노화에 따라 호흡근육의 근력이 감소한다는 호흡기계 변화를 파악한다.",
+    "intent_vi": "Xác định sự thay đổi hệ hô hấp theo lão hóa — sức mạnh cơ hô hấp giảm dần.",
+    "choice_explanations": {
+      "ko": {
+        "1": "노화에 따라 면역 기능이 저하되고 기도 방어 능력이 감소하여 호흡기계 감염이 오히려 증가한다.",
+        "2": "폐활량은 노화와 함께 감소하는 경향이 있다.",
+        "3": "★ 노화가 진행될수록 호흡에 관여하는 근육(횡격막, 늑간근 등)의 근력이 감소하여 호흡 효율이 떨어지고 호흡곤란이 생기기 쉽다.",
+        "4": "노화로 인해 기관지 내 분비물이 오히려 증가하거나 섬모 운동이 감소하여 배출이 어려워진다.",
+        "5": "신체조직 내 수분 함유량은 노화에 따라 감소하는 것이 일반적이다."
+      },
+      "vi": {
+        "1": "Lão hóa làm giảm chức năng miễn dịch và khả năng phòng vệ đường thở, khiến nhiễm trùng hô hấp thực ra tăng lên.",
+        "2": "Dung tích phổi có xu hướng giảm theo lão hóa.",
+        "3": "★ Khi lão hóa tiến triển, sức mạnh của các cơ hô hấp (cơ hoành, cơ gian sườn...) giảm dần, làm giảm hiệu quả hô hấp và dễ gây khó thở.",
+        "4": "Lão hóa có thể làm tăng dịch tiết trong phế quản hoặc giảm vận động lông mao, khiến đờm khó tống ra ngoài.",
+        "5": "Lượng nước trong mô cơ thể thường giảm theo lão hóa."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "폐활량", "def_vi": "Dung tích phổi — tổng lượng không khí phổi có thể hít vào và thở ra tối đa trong một lần, giảm dần theo tuổi" },
+      { "term_ko": "횡격막", "def_vi": "Cơ hoành — cơ chính của hô hấp, ngăn cách lồng ngực và bụng, suy yếu dần theo lão hóa" },
+      { "term_ko": "섬모 운동", "def_vi": "Vận động lông mao — chuyển động của lông mao trên niêm mạc đường thở để tống chất nhầy ra ngoài, giảm khi lão hóa" }
+    ]
+  },
+  {
+    "id": 872,
+    "intent_ko": "노화에 따른 호흡기계 특성으로 폐순환량 감소가 옳음을 확인한다.",
+    "intent_vi": "Xác định giảm lưu lượng tuần hoàn phổi là đặc điểm đúng của hệ hô hấp khi lão hóa.",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 노화로 인해 심장 기능 저하와 혈관 탄력성 감소로 폐순환량(폐로 공급되는 혈액량)이 감소한다. 이로 인해 산소 교환 효율도 저하된다.",
+        "2": "폐포의 탄력성은 노화와 함께 감소한다. 탄력성이 떨어지면 호기 시 폐가 잘 수축되지 않아 잔기량이 늘어난다.",
+        "3": "노화에 따라 호흡근육(횡격막, 늑간근)의 근력은 약화된다.",
+        "4": "기침 반사는 노화로 인해 감소하여 기도 방어 능력이 저하되고 흡인 위험이 높아진다.",
+        "5": "섬모 운동은 노화에 따라 감소하여 기도 내 이물질과 분비물 배출 능력이 줄어든다."
+      },
+      "vi": {
+        "1": "★ Do lão hóa làm giảm chức năng tim và mất tính đàn hồi mạch máu, lưu lượng tuần hoàn phổi (lượng máu cung cấp cho phổi) giảm xuống. Điều này cũng làm giảm hiệu quả trao đổi oxy.",
+        "2": "Tính đàn hồi của phế nang giảm theo lão hóa. Khi đàn hồi kém, phổi khó co lại khi thở ra, làm tăng thể tích khí cặn.",
+        "3": "Sức mạnh cơ hô hấp (cơ hoành, cơ gian sườn) suy yếu theo lão hóa.",
+        "4": "Phản xạ ho giảm theo lão hóa, làm giảm khả năng bảo vệ đường thở và tăng nguy cơ hít sặc.",
+        "5": "Vận động lông mao giảm theo lão hóa, làm giảm khả năng tống dị vật và chất tiết ra khỏi đường thở."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "폐순환량", "def_vi": "Lưu lượng tuần hoàn phổi — lượng máu được tim bơm qua phổi để trao đổi khí, giảm dần theo lão hóa" },
+      { "term_ko": "폐포", "def_vi": "Phế nang — túi khí nhỏ trong phổi, nơi xảy ra trao đổi oxy và CO₂ giữa không khí và máu" },
+      { "term_ko": "잔기량", "def_vi": "Thể tích khí cặn — lượng khí còn lại trong phổi sau khi thở ra hết, tăng lên khi phế nang mất đàn hồi" }
+    ]
+  },
+  {
+    "id": 871,
+    "intent_ko": "변비 완화를 위해 복부 마사지가 올바른 방법임을 확인한다.",
+    "intent_vi": "Xác định xoa bóp vùng bụng là phương pháp đúng đắn để giảm nhẹ táo bón.",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 복부 마사지는 대장을 따라 시계 방향으로 실시하면 장의 연동 운동을 촉진하여 변비 완화에 효과적이다. 비침습적이고 안전한 방법이다.",
+        "2": "변비약은 의사의 처방에 따라 사용해야 하며, 요양보호사가 임의로 주기적으로 권하는 것은 적절하지 않다.",
+        "3": "하제는 단기적으로 도움이 되지만 장기간 남용 시 장 기능 의존성을 유발하여 오히려 변비를 악화시킬 수 있다.",
+        "4": "수분은 대변을 부드럽게 하여 배출을 돕기 때문에 충분히 섭취해야 하며, 줄이는 것은 변비를 악화시킨다.",
+        "5": "음식 섭취량을 줄이면 장 내용물이 줄어 연동 운동이 감소하여 변비가 악화될 수 있다."
+      },
+      "vi": {
+        "1": "★ Xoa bóp bụng theo chiều kim đồng hồ dọc theo đại tràng kích thích nhu động ruột, có hiệu quả giảm táo bón. Đây là phương pháp an toàn và không xâm lấn.",
+        "2": "Thuốc nhuận tràng phải dùng theo chỉ định của bác sĩ — nhân viên chăm sóc tự ý định kỳ đề nghị là không phù hợp.",
+        "3": "Thuốc nhuận tràng có thể giúp ngắn hạn, nhưng lạm dụng kéo dài gây phụ thuộc chức năng ruột và làm táo bón nặng hơn.",
+        "4": "Cần uống đủ nước để làm mềm phân giúp đại tiện dễ — giảm uống nước sẽ làm táo bón nặng thêm.",
+        "5": "Giảm lượng ăn làm giảm nội dung ruột, nhu động ruột giảm, có thể làm táo bón nặng hơn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "복부 마사지", "def_vi": "Xoa bóp bụng — kỹ thuật xoa theo chiều kim đồng hồ dọc đại tràng để kích thích nhu động ruột" },
+      { "term_ko": "연동 운동", "def_vi": "Nhu động ruột — chuyển động co bóp có nhịp điệu của thành ruột để đẩy thức ăn di chuyển" },
+      { "term_ko": "하제", "def_vi": "Thuốc nhuận tràng — thuốc kích thích đại tiện, có thể gây phụ thuộc nếu dùng lâu dài" }
+    ]
+  },
+  {
+    "id": 870,
+    "intent_ko": "변비의 원인으로 마약성 진통제 복용이 장 기능을 억제하여 변비를 유발함을 이해한다.",
+    "intent_vi": "Hiểu rằng sử dụng thuốc giảm đau có tính chất opioid ức chế chức năng ruột và gây táo bón.",
+    "choice_explanations": {
+      "ko": {
+        "1": "신체활동 증가는 장 연동 운동을 활성화하여 변비를 예방하는 요인이다.",
+        "2": "충분한 수분 섭취는 대변을 부드럽게 하여 변비를 예방한다.",
+        "3": "★ 마약성 진통제(오피오이드)는 장의 신경 수용체에 작용하여 연동 운동을 억제하고 장 내용물의 이동을 느리게 하여 변비를 유발한다. 이는 오피오이드 유발 변비(OIC)로 알려진 흔한 부작용이다.",
+        "4": "복부 근육의 힘이 강할수록 배변 시 복압을 잘 높일 수 있어 변비 예방에 도움이 된다.",
+        "5": "규칙적인 배변 습관은 장이 일정한 시간에 규칙적으로 활동하도록 하여 변비 예방에 중요하다."
+      },
+      "vi": {
+        "1": "Tăng hoạt động thể chất kích hoạt nhu động ruột, là yếu tố phòng ngừa táo bón.",
+        "2": "Uống đủ nước làm mềm phân, giúp phòng ngừa táo bón.",
+        "3": "★ Thuốc giảm đau opioid (ma túy) tác động lên thụ thể thần kinh ruột, ức chế nhu động và làm chậm di chuyển nội dung ruột, gây táo bón. Đây là tác dụng phụ phổ biến được gọi là táo bón do opioid (OIC).",
+        "4": "Cơ bụng khỏe giúp tăng áp lực khoang bụng khi đại tiện, hỗ trợ phòng ngừa táo bón.",
+        "5": "Thói quen đại tiện đều đặn giúp ruột hoạt động nhịp nhàng, quan trọng trong phòng ngừa táo bón."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "마약성 진통제", "def_vi": "Thuốc giảm đau opioid — thuốc giảm đau mạnh có tính chất ma túy, gây ức chế nhu động ruột và táo bón" },
+      { "term_ko": "오피오이드 유발 변비", "def_vi": "Táo bón do opioid (OIC) — tác dụng phụ thường gặp của thuốc giảm đau opioid, do ức chế nhu động ruột" },
+      { "term_ko": "배변 습관", "def_vi": "Thói quen đại tiện — đại tiện đúng giờ mỗi ngày giúp duy trì chức năng ruột bình thường" }
+    ]
+  },
+  {
+    "id": 869,
+    "intent_ko": "저잔여식이(섬유소가 적은 식사)가 변비를 유발한다는 사실을 이해한다.",
+    "intent_vi": "Hiểu rằng chế độ ăn ít cặn bã (ít chất xơ) có thể gây táo bón.",
+    "choice_explanations": {
+      "ko": {
+        "1": "우유는 일부 사람에게 소화 부담을 줄 수 있으나, 변비 유발 식품으로 보기는 어렵다.",
+        "2": "★ 저잔여식이는 섬유소 함량이 낮은 식사로, 장 내 대변 부피가 줄어 연동 운동이 충분히 자극되지 않아 변비를 유발한다.",
+        "3": "수분이 많은 음식은 대변을 부드럽게 하여 변비 예방에 도움이 된다.",
+        "4": "섬유질이 많은 음식은 대변 부피를 늘리고 연동 운동을 촉진하여 변비 해결에 효과적이다.",
+        "5": "유산균이 많은 음식은 장내 환경을 개선하여 변비 완화에 긍정적인 영향을 준다."
+      },
+      "vi": {
+        "1": "Sữa có thể gây khó tiêu cho một số người nhưng không phải là thực phẩm gây táo bón điển hình.",
+        "2": "★ Chế độ ăn ít cặn bã (ít chất xơ) làm giảm khối lượng phân trong ruột, không đủ kích thích nhu động, dẫn đến táo bón.",
+        "3": "Thức ăn nhiều nước giúp làm mềm phân, hỗ trợ phòng ngừa táo bón.",
+        "4": "Thức ăn giàu chất xơ tăng thể tích phân và thúc đẩy nhu động ruột, có hiệu quả giải quyết táo bón.",
+        "5": "Thực phẩm giàu probiotic cải thiện môi trường ruột, có tác dụng tích cực trong giảm táo bón."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "저잔여식이", "def_vi": "Chế độ ăn ít cặn bã — chế độ ăn ít chất xơ, dùng trước phẫu thuật đường ruột hoặc khi có bệnh ruột, nhưng có thể gây táo bón nếu dùng dài hạn" },
+      { "term_ko": "섬유소", "def_vi": "Chất xơ — thành phần thực vật không tiêu hóa được, tăng thể tích phân và kích thích nhu động ruột" },
+      { "term_ko": "유산균", "def_vi": "Probiotic (vi khuẩn có lợi) — vi khuẩn sống có lợi cho hệ tiêu hóa, giúp cân bằng hệ vi sinh đường ruột" }
+    ]
+  },
+  {
+    "id": 868,
+    "intent_ko": "노인에게 변비가 많은 원인 중 과도한 하제 남용이 오히려 변비를 유발할 수 있음을 이해한다.",
+    "intent_vi": "Hiểu rằng lạm dụng thuốc nhuận tràng quá mức là một trong các nguyên nhân gây táo bón phổ biến ở người cao tuổi.",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 노인들은 변비 해소를 위해 하제를 자주 사용하는데, 장기간 남용하면 장이 하제에 의존하게 되어 스스로 연동 운동을 하지 못하게 되어 오히려 변비가 심해진다.",
+        "2": "충분한 수분 섭취는 변비를 예방하는 요인이며, 노인은 오히려 수분 섭취가 부족하기 쉬워 변비가 생긴다.",
+        "3": "저작능력 감소는 노인에게 흔하며, 이로 인해 섬유질 섭취가 감소하여 변비가 생길 수 있다. 저작능력 '증가'는 오히려 반대 상황이다.",
+        "4": "음식물 섭취량 감소가 변비의 원인이 될 수 있으나, '증가'가 변비를 유발하는 것은 아니다.",
+        "5": "노화에 따라 장근육의 긴장도는 오히려 감소하며, 이것이 변비의 원인이 된다."
+      },
+      "vi": {
+        "1": "★ Người cao tuổi thường dùng thuốc nhuận tràng để giải quyết táo bón, nhưng lạm dụng lâu dài khiến ruột phụ thuộc vào thuốc, mất khả năng nhu động tự nhiên, làm táo bón nặng hơn.",
+        "2": "Uống đủ nước là yếu tố phòng ngừa táo bón — người cao tuổi dễ thiếu nước, đây mới là nguyên nhân gây táo bón.",
+        "3": "Giảm khả năng nhai (nhai kém) phổ biến ở người cao tuổi, dẫn đến giảm ăn chất xơ và gây táo bón. 'Tăng' khả năng nhai là tình huống ngược lại.",
+        "4": "Giảm lượng ăn có thể gây táo bón, nhưng 'tăng' lượng ăn thì không phải nguyên nhân gây táo bón.",
+        "5": "Theo lão hóa, trương lực cơ ruột thực ra giảm xuống — đây mới là nguyên nhân gây táo bón."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "하제 남용", "def_vi": "Lạm dụng thuốc nhuận tràng — dùng thuốc nhuận tràng quá nhiều và kéo dài, gây phụ thuộc và suy yếu chức năng ruột" },
+      { "term_ko": "저작능력", "def_vi": "Khả năng nhai — chức năng nghiền nhỏ thức ăn bằng răng, giảm dần ở người cao tuổi mất răng" },
+      { "term_ko": "장근육 긴장도", "def_vi": "Trương lực cơ ruột — mức độ căng tự nhiên của cơ ruột, giảm theo lão hóa dẫn đến nhu động kém" }
+    ]
+  },
+  {
+    "id": 867,
+    "intent_ko": "수분섭취 부족이 변비의 주요 발생 원인임을 이해한다.",
+    "intent_vi": "Hiểu rằng uống không đủ nước là một trong những nguyên nhân chính gây táo bón.",
+    "choice_explanations": {
+      "ko": {
+        "1": "규칙적인 운동은 장 연동 운동을 활성화하여 변비를 예방하는 요인이다.",
+        "2": "섬유질이 많은 음식은 대변 부피를 늘려 연동 운동을 자극하므로 변비 예방에 도움이 된다.",
+        "3": "★ 수분이 부족하면 장에서 수분이 과도하게 재흡수되어 대변이 단단해지고 배출이 어려워진다. 수분섭취 부족은 변비의 가장 흔한 원인 중 하나이다.",
+        "4": "장운동 증가는 변비를 완화하는 요인이며, 원인이 아니다.",
+        "5": "복부 근육의 힘이 강하면 배변 시 복압을 높여 변비 예방에 도움이 된다."
+      },
+      "vi": {
+        "1": "Tập thể dục đều đặn kích hoạt nhu động ruột, là yếu tố phòng ngừa táo bón.",
+        "2": "Thức ăn giàu chất xơ tăng thể tích phân và kích thích nhu động, giúp phòng ngừa táo bón.",
+        "3": "★ Thiếu nước khiến ruột tái hấp thu nước quá mức từ phân, làm phân trở nên cứng và khó tống ra ngoài. Uống không đủ nước là một trong những nguyên nhân táo bón phổ biến nhất.",
+        "4": "Tăng nhu động ruột là yếu tố giảm táo bón, không phải nguyên nhân gây táo bón.",
+        "5": "Cơ bụng khỏe giúp tăng áp lực khoang bụng khi đại tiện, hỗ trợ phòng ngừa táo bón."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "수분 재흡수", "def_vi": "Tái hấp thu nước — quá trình ruột hấp thu lại nước từ phân; khi thiếu nước, tái hấp thu tăng làm phân cứng" },
+      { "term_ko": "장운동", "def_vi": "Nhu động ruột — chuyển động co bóp của thành ruột để đẩy phân di chuyển đến hậu môn" },
+      { "term_ko": "복압", "def_vi": "Áp lực khoang bụng — áp lực bên trong bụng tăng lên khi rặn, giúp tống phân ra ngoài" }
+    ]
+  },
+  {
+    "id": 866,
+    "intent_ko": "잦은 설사로 탈수가 예상될 때 우선적으로 물을 충분히 마시게 하여 수분을 보충해야 함을 이해한다.",
+    "intent_vi": "Hiểu rằng khi dự đoán mất nước do tiêu chảy nhiều lần, ưu tiên hàng đầu là cho uống đủ nước để bù dịch.",
+    "choice_explanations": {
+      "ko": {
+        "1": "설사 중 우유(유제품)는 유당 불내증을 유발하거나 장 운동을 자극할 수 있어 권장되지 않는다.",
+        "2": "식사도 중요하지만, 탈수 예방을 위한 수분 보충이 우선이다.",
+        "3": "★ 설사로 인한 탈수를 예방하기 위해 가장 우선적으로 해야 할 것은 물 또는 전해질 음료를 충분히 섭취하게 하는 것이다. 수분 보충이 탈수 예방의 기본이다.",
+        "4": "지사제는 설사의 원인을 해결하지 못하며, 임의로 수시로 복용시키는 것은 적절하지 않다.",
+        "5": "장운동을 증가시키는 음식(고섬유식 등)은 설사를 더 악화시킬 수 있어 피해야 한다."
+      },
+      "vi": {
+        "1": "Trong tiêu chảy, sữa (sản phẩm từ sữa) có thể gây không dung nạp lactose hoặc kích thích ruột thêm, không được khuyến nghị.",
+        "2": "Ăn uống cũng quan trọng, nhưng bù dịch để phòng mất nước phải được ưu tiên trước.",
+        "3": "★ Để phòng ngừa mất nước do tiêu chảy, điều cần làm đầu tiên là cho uống đủ nước sạch hoặc dung dịch điện giải. Bù nước là biện pháp cơ bản nhất trong xử trí mất nước.",
+        "4": "Thuốc cầm tiêu chảy không giải quyết nguyên nhân, và cho uống tùy tiện nhiều lần là không phù hợp.",
+        "5": "Thức ăn tăng nhu động ruột (nhiều chất xơ...) có thể làm tiêu chảy nặng hơn, cần tránh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "탈수", "def_vi": "Mất nước (mất dịch) — tình trạng cơ thể mất nhiều nước hơn lượng hấp thụ, gây khô da, mệt mỏi, nguy hiểm nếu nặng" },
+      { "term_ko": "지사제", "def_vi": "Thuốc cầm tiêu chảy — thuốc làm chậm nhu động ruột để giảm tiêu chảy, cần thận trọng khi dùng" },
+      { "term_ko": "전해질 음료", "def_vi": "Dung dịch điện giải — nước có pha thêm muối và đường (như ORS), giúp bù dịch và điện giải hiệu quả hơn nước lọc thông thường" }
+    ]
+  },
+  {
+    "id": 865,
+    "intent_ko": "설사 후 건조한 피부와 무기력 증상에 대해 몸을 따뜻하게 하고 수분을 섭취하게 하는 것이 올바른 처치임을 확인한다.",
+    "intent_vi": "Xác định giữ ấm cơ thể và bổ sung nước là biện pháp xử trí đúng đắn khi người bệnh bị khô da và mệt mỏi sau tiêu chảy nhiều lần.",
+    "choice_explanations": {
+      "ko": {
+        "1": "지사제를 즉시 투여하는 것은 적절하지 않다. 장의 자연 회복을 방해할 수 있고, 원인 확인 없이 임의 투여는 위험하다.",
+        "2": "녹차와 커피는 이뇨 작용이 있어 탈수 상태를 더 악화시킬 수 있으므로 피해야 한다.",
+        "3": "설사 직후 음식량을 늘리면 소화기계에 부담을 주어 증상이 악화될 수 있다.",
+        "4": "고지방식은 소화가 어렵고 설사 중인 장에 부담을 줄 수 있어 피해야 한다.",
+        "5": "★ 설사 후 피부 건조와 무기력은 탈수 증상이다. 몸을 따뜻하게 하여 체온을 유지하고 수분(물, 전해질 음료)을 충분히 섭취하게 하는 것이 가장 적절한 처치이다."
+      },
+      "vi": {
+        "1": "Cấp thuốc cầm tiêu chảy ngay lập tức là không phù hợp — có thể cản trở quá trình hồi phục tự nhiên của ruột và nguy hiểm khi dùng không rõ nguyên nhân.",
+        "2": "Trà xanh và cà phê có tác dụng lợi tiểu, có thể làm mất nước nặng hơn, cần tránh.",
+        "3": "Tăng lượng ăn ngay sau tiêu chảy gây áp lực lên hệ tiêu hóa và có thể làm nặng triệu chứng.",
+        "4": "Thức ăn nhiều chất béo khó tiêu hóa và gây áp lực cho ruột đang bị tiêu chảy, cần tránh.",
+        "5": "★ Khô da và mệt mỏi sau tiêu chảy là dấu hiệu mất nước. Giữ ấm cơ thể để duy trì thân nhiệt và cho uống đủ nước (nước lọc, dung dịch điện giải) là biện pháp xử trí phù hợp nhất."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "이뇨 작용", "def_vi": "Tác dụng lợi tiểu — kích thích thận thải nhiều nước qua nước tiểu, có thể làm nặng thêm tình trạng mất nước" },
+      { "term_ko": "체온 유지", "def_vi": "Duy trì thân nhiệt — giữ nhiệt độ cơ thể ở mức bình thường, quan trọng trong hồi phục sau tiêu chảy" },
+      { "term_ko": "고지방식", "def_vi": "Chế độ ăn nhiều chất béo — thực phẩm giàu chất béo, khó tiêu hóa, không phù hợp khi đang bị tiêu chảy" }
+    ]
+  },
+  {
+    "id": 864,
+    "intent_ko": "설사 시 흰죽과 보리차가 소화가 잘 되고 수분 보충에 적합한 음식임을 이해한다.",
+    "intent_vi": "Hiểu rằng cháo trắng và trà lúa mạch dễ tiêu hóa và phù hợp để bổ sung nước khi bị tiêu chảy.",
+    "choice_explanations": {
+      "ko": {
+        "1": "우유는 유당을 포함하여 설사 중 장에서 소화가 어려워 증상을 악화시킬 수 있다.",
+        "2": "비빔밥은 채소와 양념이 섞인 자극적인 음식이고, 콜라는 당분과 탄산이 장을 자극하여 설사를 악화시킬 수 있다.",
+        "3": "★ 흰죽은 소화가 잘되고 위장에 부담이 적으며, 보리차는 카페인이 없고 수분 보충에 적합하다. 설사 시 소화 부담이 없는 음식과 충분한 수분 섭취가 중요하다.",
+        "4": "사과와 복숭아는 식이섬유와 과당이 많아 설사 중에는 장을 자극하거나 설사를 악화시킬 수 있다.",
+        "5": "제육볶음은 기름지고 맵고 짠 음식으로 소화에 부담이 크며, 현미밥도 섬유질이 많아 설사 시에는 적합하지 않다."
+      },
+      "vi": {
+        "1": "Sữa chứa lactose khó tiêu khi tiêu chảy, có thể làm nặng triệu chứng.",
+        "2": "Bibimbap có nhiều gia vị kích thích, và nước ngọt có ga chứa đường và axit cacbonic kích thích ruột, làm tiêu chảy nặng hơn.",
+        "3": "★ Cháo trắng dễ tiêu hóa và ít gây áp lực cho dạ dày; trà lúa mạch không có caffeine và phù hợp để bù nước. Khi bị tiêu chảy, cần ăn thức ăn nhẹ dễ tiêu và bổ sung đủ nước.",
+        "4": "Táo và đào nhiều chất xơ và fructose, có thể kích thích ruột hoặc làm tiêu chảy nặng hơn.",
+        "5": "Thịt xào cay mặn nhiều dầu mỡ gây khó tiêu; cơm gạo lứt nhiều chất xơ cũng không phù hợp khi đang tiêu chảy."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "흰죽", "def_vi": "Cháo trắng — cháo nấu từ gạo trắng với nhiều nước, dễ tiêu hóa, thích hợp khi bệnh đường ruột" },
+      { "term_ko": "보리차", "def_vi": "Trà lúa mạch — nước pha từ lúa mạch rang, không chứa caffeine, giúp bổ sung nước và có tính kiềm nhẹ" },
+      { "term_ko": "유당 불내증", "def_vi": "Không dung nạp lactose — tình trạng cơ thể không tiêu hóa được đường sữa (lactose), gây đầy bụng và tiêu chảy" }
+    ]
+  },
+  {
+    "id": 863,
+    "intent_ko": "설사의 원인으로 하제 등 약물의 남용이 옳음을 이해한다.",
+    "intent_vi": "Hiểu rằng lạm dụng thuốc nhuận tràng và các loại thuốc tương tự là nguyên nhân gây tiêu chảy.",
+    "choice_explanations": {
+      "ko": {
+        "1": "뜨거운 음식물 섭취는 설사의 일반적인 원인이 아니다.",
+        "2": "균형 잡힌 식사는 설사를 예방하는 데 도움이 된다.",
+        "3": "식물성 식이섬유는 장 건강을 돕지만, 과도하게 섭취하지 않으면 설사를 유발하지 않는다.",
+        "4": "★ 하제를 과도하게 복용하거나 남용하면 장의 연동 운동이 과도하게 자극되어 설사가 유발된다. 또한 항생제, 제산제 등 일부 약물도 설사를 유발할 수 있다.",
+        "5": "소화기능의 증가는 설사와 직접적인 관련이 없다."
+      },
+      "vi": {
+        "1": "Ăn thức ăn nóng không phải nguyên nhân phổ biến gây tiêu chảy.",
+        "2": "Ăn uống cân bằng giúp phòng ngừa tiêu chảy.",
+        "3": "Chất xơ thực vật tốt cho đường ruột và không gây tiêu chảy nếu không dùng quá nhiều.",
+        "4": "★ Lạm dụng thuốc nhuận tràng hoặc dùng quá liều kích thích nhu động ruột quá mức, gây tiêu chảy. Ngoài ra, một số thuốc như kháng sinh và antacid cũng có thể gây tiêu chảy.",
+        "5": "Tăng chức năng tiêu hóa không liên quan trực tiếp đến tiêu chảy."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "하제 남용", "def_vi": "Lạm dụng thuốc nhuận tràng — dùng quá liều hoặc quá thường xuyên, kích thích nhu động quá mức gây tiêu chảy" },
+      { "term_ko": "항생제 유발 설사", "def_vi": "Tiêu chảy do kháng sinh — tiêu chảy xảy ra khi kháng sinh phá vỡ hệ vi sinh đường ruột bình thường" }
+    ]
+  },
+  {
+    "id": 862,
+    "intent_ko": "대장암 환자에게 식이섬유가 풍부한 통곡물 섭취가 적합한 식이요법임을 이해한다.",
+    "intent_vi": "Hiểu rằng thực phẩm từ ngũ cốc nguyên hạt giàu chất xơ là chế độ ăn phù hợp cho bệnh nhân ung thư đại tràng.",
+    "choice_explanations": {
+      "ko": {
+        "1": "간식을 수시로 섭취하는 것은 특정 열량 과다 섭취로 이어져 건강에 좋지 않다.",
+        "2": "★ 통곡물은 정제하지 않은 곡물로 식이섬유가 풍부하다. 식이섬유는 대장의 통과 시간을 단축하고, 변의 부피를 늘리며, 발암물질의 노출 시간을 줄여 대장 건강에 도움이 된다.",
+        "3": "동물성 식품, 특히 붉은 고기와 가공육은 포화지방과 발암물질을 포함하여 대장암 환자에게 권장되지 않는다.",
+        "4": "염장식품은 아질산염 등 발암물질을 포함할 수 있어 대장암 환자는 피해야 한다.",
+        "5": "생채소와 생과일은 식이섬유와 항산화물질이 풍부하여 대장 건강에 유익하므로 섭취를 제한해서는 안 된다."
+      },
+      "vi": {
+        "1": "Ăn vặt thường xuyên có thể dẫn đến nạp quá nhiều calo, không tốt cho sức khỏe.",
+        "2": "★ Ngũ cốc nguyên hạt là ngũ cốc chưa qua tinh chế, giàu chất xơ. Chất xơ giúp rút ngắn thời gian thức ăn đi qua đại tràng, tăng thể tích phân và giảm thời gian tiếp xúc với chất gây ung thư, có lợi cho sức khỏe đại tràng.",
+        "3": "Thực phẩm động vật, đặc biệt là thịt đỏ và thịt chế biến sẵn, chứa chất béo bão hòa và chất gây ung thư, không được khuyến nghị cho bệnh nhân ung thư đại tràng.",
+        "4": "Thực phẩm muối mặn có thể chứa nitrit và các chất gây ung thư, bệnh nhân ung thư đại tràng cần tránh.",
+        "5": "Rau sống và trái cây tươi giàu chất xơ và chất chống oxy hóa, có lợi cho đại tràng, không nên hạn chế."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "통곡물", "def_vi": "Ngũ cốc nguyên hạt — ngũ cốc giữ nguyên vỏ cám và mầm, giàu chất xơ và vi chất dinh dưỡng" },
+      { "term_ko": "발암물질", "def_vi": "Chất gây ung thư — chất có khả năng gây biến đổi tế bào thành tế bào ung thư, ví dụ nitrosamine trong thực phẩm muối hun khói" },
+      { "term_ko": "식이요법", "def_vi": "Chế độ ăn trị liệu — kế hoạch ăn uống được thiết kế để hỗ trợ điều trị bệnh hoặc duy trì sức khỏe" }
+    ]
+  },
+  {
+    "id": 861,
+    "intent_ko": "대장암 환자에게 하루 6~8잔의 생수 섭취가 올바른 식이요법임을 이해한다.",
+    "intent_vi": "Hiểu rằng uống 6~8 ly nước lọc mỗi ngày là chế độ ăn uống đúng đắn cho bệnh nhân ung thư đại tràng.",
+    "choice_explanations": {
+      "ko": {
+        "1": "정제된 곡물은 식이섬유가 제거된 상태로, 대장암 환자에게는 통곡물이 더 적합하다.",
+        "2": "훈연된 동물성 식품은 다환방향족탄화수소 등 발암물질이 생성될 수 있어 대장암 환자에게 피해야 한다.",
+        "3": "고칼로리 음식은 비만 위험을 높이고, 비만은 대장암 재발 위험을 높이므로 권장되지 않는다.",
+        "4": "★ 하루에 6~8잔의 생수 섭취는 장 기능을 원활하게 하고, 독소 배출을 돕고, 대변을 부드럽게 유지하여 대장 건강에 도움이 된다. 충분한 수분 섭취는 대장암 환자에게 중요한 식이 지침이다.",
+        "5": "자극적인 음식은 대장 점막을 자극하고 염증을 악화시킬 수 있어 대장암 환자는 피해야 한다."
+      },
+      "vi": {
+        "1": "Ngũ cốc tinh chế đã loại bỏ chất xơ, bệnh nhân ung thư đại tràng nên dùng ngũ cốc nguyên hạt thay thế.",
+        "2": "Thực phẩm động vật hun khói có thể tạo ra hydrocarbon thơm đa vòng (PAH) gây ung thư, bệnh nhân ung thư đại tràng phải tránh.",
+        "3": "Thức ăn nhiều calo làm tăng nguy cơ béo phì, béo phì làm tăng nguy cơ tái phát ung thư đại tràng, không được khuyến nghị.",
+        "4": "★ Uống 6~8 ly nước lọc mỗi ngày giúp duy trì chức năng ruột, hỗ trợ thải độc, giữ phân mềm và tốt cho sức khỏe đại tràng. Uống đủ nước là hướng dẫn dinh dưỡng quan trọng cho bệnh nhân ung thư đại tràng.",
+        "5": "Thức ăn kích thích gây kích thích niêm mạc đại tràng và có thể làm nặng thêm tình trạng viêm, bệnh nhân ung thư đại tràng cần tránh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "훈연 식품", "def_vi": "Thực phẩm hun khói — thực phẩm được chế biến bằng khói, có thể chứa chất gây ung thư như PAH (hydrocarbon thơm đa vòng)" },
+      { "term_ko": "대장 점막", "def_vi": "Niêm mạc đại tràng — lớp màng lót bên trong đại tràng, dễ bị tổn thương bởi thức ăn kích thích hoặc chất gây ung thư" },
+      { "term_ko": "정제 곡물", "def_vi": "Ngũ cốc tinh chế — ngũ cốc đã qua xay xát loại bỏ vỏ cám, mất phần lớn chất xơ và vi chất" }
+    ]
+  },
+  {
+    "id": 860,
+    "intent_ko": "대장암 환자의 식이요법으로 식이섬유가 풍부한 생채소와 생과일 섭취가 올바름을 이해한다.",
+    "intent_vi": "Hiểu rằng ăn rau sống và trái cây tươi giàu chất xơ là chế độ ăn đúng đắn cho bệnh nhân ung thư đại tràng.",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 생채소와 생과일은 식이섬유, 항산화물질, 비타민이 풍부하여 대장 건강을 돕고 발암물질의 장 통과 시간을 단축시킨다. 대장암 환자에게 권장되는 식품이다.",
+        "2": "훈연된 육류는 발암물질(다환방향족탄화수소 등)이 생성되어 대장암 환자에게 해롭다.",
+        "3": "튀김류는 포화지방이 많고 고열량으로 대장암 환자에게 좋지 않다.",
+        "4": "차가운 아이스크림은 당분이 높고 영양가가 낮아 대장 건강에 도움이 되지 않는다.",
+        "5": "흰죽은 소화에 좋지만 식이섬유가 부족하고 야식으로 섭취하는 것은 적절하지 않다."
+      },
+      "vi": {
+        "1": "★ Rau sống và trái cây tươi giàu chất xơ, chất chống oxy hóa và vitamin, giúp bảo vệ đại tràng và rút ngắn thời gian chất gây ung thư tiếp xúc với niêm mạc ruột. Đây là thực phẩm được khuyến nghị cho bệnh nhân ung thư đại tràng.",
+        "2": "Thịt hun khói tạo ra chất gây ung thư (PAH...) và có hại cho bệnh nhân ung thư đại tràng.",
+        "3": "Thực phẩm chiên rán nhiều chất béo bão hòa và nhiều calo, không tốt cho bệnh nhân ung thư đại tràng.",
+        "4": "Kem lạnh chứa nhiều đường và ít dinh dưỡng, không có lợi cho sức khỏe đại tràng.",
+        "5": "Cháo trắng dễ tiêu hóa nhưng thiếu chất xơ, ăn vào buổi tối muộn cũng không phù hợp."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "항산화물질", "def_vi": "Chất chống oxy hóa — chất bảo vệ tế bào khỏi tổn thương do gốc tự do, giúp giảm nguy cơ ung thư" },
+      { "term_ko": "식이섬유", "def_vi": "Chất xơ thực phẩm — thành phần thực vật không tiêu hóa được, giúp tăng thể tích phân và rút ngắn thời gian phân đi qua đại tràng" },
+      { "term_ko": "포화지방", "def_vi": "Chất béo bão hòa — chất béo có nhiều trong thịt đỏ và thực phẩm chiên, liên quan đến tăng nguy cơ ung thư đại tràng" }
+    ]
+  },
+  {
+    "id": 859,
+    "intent_ko": "대장암 환자에게 적합한 음식으로 식이섬유가 풍부한 현미밥을 선택한다.",
+    "intent_vi": "Xác định cơm gạo lứt giàu chất xơ là thực phẩm phù hợp cho bệnh nhân ung thư đại tràng.",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 현미밥은 식이섬유가 풍부하여 장의 연동 운동을 촉진하고 대변의 부피를 늘리며 유해물질의 배출을 도와 대장 건강에 유익하다. 대장암 환자에게 적합하다.",
+        "2": "라면은 나트륨, 포화지방, 식품첨가물이 많아 대장암 환자에게 좋지 않다.",
+        "3": "육개장은 기름지고 염분이 높으며 자극적인 음식으로 대장에 부담을 준다.",
+        "4": "명란젓은 염분이 매우 높고 가공·염장 식품으로 발암물질을 포함할 수 있어 피해야 한다.",
+        "5": "피자는 정제 밀가루·포화지방·고열량 식품으로 대장암 환자에게 적합하지 않다."
+      },
+      "vi": {
+        "1": "★ Cơm gạo lứt giàu chất xơ, kích thích nhu động ruột, tăng thể tích phân và giúp đào thải chất có hại, có lợi cho đại tràng. Đây là thực phẩm phù hợp cho bệnh nhân ung thư đại tràng.",
+        "2": "Mì gói nhiều natri, chất béo bão hòa và phụ gia thực phẩm, không tốt cho bệnh nhân ung thư đại tràng.",
+        "3": "Canh thịt bò cay nhiều dầu mỡ và muối, kích thích gây áp lực cho đại tràng.",
+        "4": "Trứng cá muối natri rất cao và là thực phẩm muối chế biến có thể chứa chất gây ung thư, cần tránh.",
+        "5": "Pizza làm từ bột mì tinh chế, nhiều chất béo bão hòa và nhiều calo, không phù hợp cho bệnh nhân ung thư đại tràng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "현미밥", "def_vi": "Cơm gạo lứt — cơm nấu từ gạo lứt (gạo còn nguyên lớp cám), giàu chất xơ và vi chất dinh dưỡng" },
+      { "term_ko": "나트륨", "def_vi": "Natri (muối) — khoáng chất trong muối ăn, khi tiêu thụ quá nhiều có thể tăng nguy cơ ung thư đường tiêu hóa" },
+      { "term_ko": "가공 식품", "def_vi": "Thực phẩm chế biến — thực phẩm đã qua chế biến công nghiệp (ướp muối, hun khói...), thường chứa nhiều phụ gia và chất bảo quản không tốt cho sức khỏe" }
+    ]
+  }
+]

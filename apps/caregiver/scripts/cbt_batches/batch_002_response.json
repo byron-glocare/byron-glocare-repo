@@ -1,0 +1,777 @@
+[
+  {
+    "id": 1710,
+    "intent_ko": "심폐소생술 중 가슴압박을 시행하는 핵심 목적을 묻는 문제",
+    "intent_vi": "Câu hỏi về mục đích cốt lõi của việc ép ngực trong hồi sức tim phổi",
+    "choice_explanations": {
+      "ko": {
+        "1": "의식 회복은 심폐소생술의 간접적 결과일 수 있으나, 가슴압박의 직접적 목적이 아닙니다.",
+        "2": "통증 감소는 심폐소생술의 목적과 무관합니다.",
+        "3": "합병증 예방은 소생 이후 고려할 사항으로, 가슴압박의 즉각적 이유가 아닙니다.",
+        "4": "폐에 산소를 공급하는 것은 인공호흡의 역할이며, 가슴압박의 목적이 아닙니다.",
+        "5": "★ 가슴압박은 심장의 펌프 기능을 대신하여 심장과 뇌에 혈액을 순환시키는 것이 핵심 목적입니다. 뇌는 산소 공급이 4~6분만 중단돼도 비가역적 손상이 발생하므로, 가슴압박으로 혈류를 유지하는 것이 가장 중요합니다."
+      },
+      "vi": {
+        "1": "Phục hồi ý thức có thể là kết quả gián tiếp nhưng không phải mục đích trực tiếp của ép ngực.",
+        "2": "Giảm đau không liên quan đến mục đích của hồi sức tim phổi.",
+        "3": "Phòng biến chứng là điều cần xem xét sau khi hồi sức, không phải lý do trực tiếp của ép ngực.",
+        "4": "Cung cấp oxy cho phổi là vai trò của hô hấp nhân tạo, không phải mục đích của ép ngực.",
+        "5": "★ Mục đích cốt lõi của ép ngực là thay thế chức năng bơm của tim để duy trì tuần hoàn máu đến tim và não. Não có thể bị tổn thương không hồi phục chỉ sau 4–6 phút thiếu oxy, vì vậy duy trì lưu thông máu bằng ép ngực là cực kỳ quan trọng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "심폐소생술", "def_vi": "Hồi sức tim phổi — phương pháp cấp cứu khẩn cấp gồm ép ngực và hô hấp nhân tạo để duy trì sự sống" },
+      { "term_ko": "가슴압박", "def_vi": "Ép ngực — kỹ thuật nén lồng ngực để thay thế chức năng bơm của tim" },
+      { "term_ko": "혈액공급", "def_vi": "Cung cấp máu — việc đưa máu đến các cơ quan quan trọng như não và tim" }
+    ]
+  },
+  {
+    "id": 1709,
+    "intent_ko": "심정지 시 심폐소생술의 일차적 목적이 뇌 손상 최소화임을 확인하는 문제",
+    "intent_vi": "Câu hỏi xác nhận mục đích hàng đầu của hồi sức tim phổi khi ngừng tim là giảm thiểu tổn thương não",
+    "choice_explanations": {
+      "ko": {
+        "1": "심폐소생술은 폐 기능을 직접 회복시키지 않습니다. 폐 기능 회복은 별도의 의료 조치가 필요합니다.",
+        "2": "★ 심정지 후 뇌는 수분 내 산소 공급이 끊겨 비가역적 손상을 입습니다. 심폐소생술은 인공적으로 혈류를 유지하여 뇌 손상을 최소화하는 것이 일차적 목적입니다.",
+        "3": "면역 기능 강화는 심폐소생술과 전혀 관련이 없습니다.",
+        "4": "신장 기능 향상은 심폐소생술의 목표가 아닙니다.",
+        "5": "근골격 손상 회복은 심폐소생술과 무관합니다."
+      },
+      "vi": {
+        "1": "Hồi sức tim phổi không trực tiếp phục hồi chức năng phổi — cần can thiệp y tế riêng biệt cho điều đó.",
+        "2": "★ Sau khi tim ngừng đập, não bị thiếu oxy trong vài phút sẽ gây tổn thương không hồi phục. Hồi sức tim phổi nhằm duy trì lưu thông máu nhân tạo để giảm thiểu tổn thương não — đây là mục đích hàng đầu.",
+        "3": "Tăng cường miễn dịch không liên quan gì đến hồi sức tim phổi.",
+        "4": "Cải thiện chức năng thận không phải mục tiêu của hồi sức tim phổi.",
+        "5": "Phục hồi tổn thương cơ xương khớp không liên quan đến hồi sức tim phổi."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "심정지", "def_vi": "Ngừng tim — tình trạng tim đột ngột ngừng hoạt động" },
+      { "term_ko": "뇌 손상", "def_vi": "Tổn thương não — tổn hại cho tế bào thần kinh, thường do thiếu oxy" },
+      { "term_ko": "비가역적", "def_vi": "Không hồi phục — không thể trở lại trạng thái ban đầu" }
+    ]
+  },
+  {
+    "id": 1708,
+    "intent_ko": "손목 골절 의심 시 반지·시계 제거가 올바른 초기 대처임을 묻는 문제",
+    "intent_vi": "Câu hỏi về việc tháo nhẫn và đồng hồ là biện pháp xử lý ban đầu đúng khi nghi gãy xương cổ tay",
+    "choice_explanations": {
+      "ko": {
+        "1": "지압은 골절 부위에 추가 손상을 줄 수 있어 절대 금지입니다.",
+        "2": "튀어나온 뼈를 압박하면 더 큰 손상을 유발하므로 절대 해서는 안 됩니다.",
+        "3": "★ 골절로 인한 부종이 빠르게 진행되면 반지·시계가 혈액순환을 차단할 수 있습니다. 부종이 생기기 전에 반지와 시계를 제거하는 것이 올바른 초기 처치입니다.",
+        "4": "손을 심장보다 낮게 내리면 정맥 귀환이 감소하여 부종이 악화됩니다. 손을 심장보다 높게 올려야 합니다.",
+        "5": "손목을 반복적으로 털면 골절 부위에 추가 자극을 주어 통증과 손상이 악화됩니다."
+      },
+      "vi": {
+        "1": "Bấm huyệt vào vùng gãy có thể gây thêm tổn thương — tuyệt đối không làm.",
+        "2": "Ép vào xương lồi ra có thể gây tổn thương nghiêm trọng hơn — tuyệt đối không làm.",
+        "3": "★ Khi gãy xương, vùng cổ tay sẽ sưng nhanh. Nếu nhẫn và đồng hồ không được tháo ra sớm, chúng có thể chặn lưu thông máu. Tháo nhẫn và đồng hồ trước khi sưng là biện pháp xử lý ban đầu đúng đắn.",
+        "4": "Để tay thấp hơn tim làm giảm lưu lượng tĩnh mạch, khiến sưng nặng hơn. Cần nâng tay lên cao hơn tim.",
+        "5": "Lắc cổ tay nhiều lần sẽ gây thêm kích thích vào vùng gãy, làm đau và tổn thương nặng hơn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "골절", "def_vi": "Gãy xương — tình trạng xương bị vỡ hoặc nứt" },
+      { "term_ko": "부종", "def_vi": "Phù nề (sưng) — tình trạng tích tụ dịch gây sưng mô mềm" },
+      { "term_ko": "혈액순환", "def_vi": "Tuần hoàn máu — sự lưu thông của máu qua mạch máu" }
+    ]
+  },
+  {
+    "id": 1707,
+    "intent_ko": "발가락 골절 의심 시 외형 변형 관찰이 올바른 초기 조치임을 묻는 문제",
+    "intent_vi": "Câu hỏi về việc quan sát biến dạng bên ngoài là biện pháp ban đầu đúng khi nghi ngờ gãy ngón chân",
+    "choice_explanations": {
+      "ko": {
+        "1": "골절 의심 부위를 붕대로 압박하면 추가 손상을 유발할 수 있습니다.",
+        "2": "파스는 부종 예방 효과가 없으며, 손상 직후 적용은 부적절합니다.",
+        "3": "온찜질은 초기 손상 시 혈관을 확장시켜 부종을 악화시키므로 금기입니다. 초기에는 냉찜질이 적합합니다.",
+        "4": "★ 골절이 의심될 때는 외형상 변형(비틀림, 부종, 멍, 기형 등)을 관찰하는 것이 핵심 초기 조치입니다. 변형 여부 확인은 골절을 판단하는 중요한 단서가 됩니다.",
+        "5": "걷기를 시도하면 골절 부위에 체중이 실려 손상이 악화됩니다. 신발 크기와 무관하게 걷게 해서는 안 됩니다."
+      },
+      "vi": {
+        "1": "Băng ép vào vùng nghi gãy xương có thể gây thêm tổn thương.",
+        "2": "Cao dán không có tác dụng phòng sưng và không phù hợp để dùng ngay sau chấn thương.",
+        "3": "Chườm nóng ngay sau chấn thương làm giãn mạch máu, khiến sưng nặng hơn — cần chườm lạnh trong giai đoạn đầu.",
+        "4": "★ Khi nghi ngờ gãy xương, quan sát biến dạng bên ngoài (vặn vẹo, sưng, bầm tím, biến dạng) là biện pháp ban đầu then chốt. Kiểm tra biến dạng là manh mối quan trọng để nhận biết gãy xương.",
+        "5": "Để người bệnh đi bộ sẽ dồn trọng lượng lên vùng gãy, gây tổn thương nặng hơn — không nên đi lại bất kể cỡ giày."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "외형상 변형", "def_vi": "Biến dạng bên ngoài — thay đổi hình dạng có thể quan sát được như vặn vẹo hoặc lệch trục" },
+      { "term_ko": "온찜질", "def_vi": "Chườm nóng — đắp nhiệt lên vùng đau để giảm đau mãn tính (không dùng cho chấn thương cấp tính)" },
+      { "term_ko": "냉찜질", "def_vi": "Chườm lạnh — đắp lạnh lên vùng chấn thương cấp tính để giảm sưng và đau" }
+    ]
+  },
+  {
+    "id": 1706,
+    "intent_ko": "응급처치 우선순위에서 호흡 곤란을 동반한 화상 대상자를 가장 먼저 처치해야 함을 묻는 문제",
+    "intent_vi": "Câu hỏi về thứ tự ưu tiên cấp cứu — người bị bỏng kèm khó thở phải được xử lý trước nhất",
+    "choice_explanations": {
+      "ko": {
+        "1": "설사·복통은 불편하지만 즉각적 생명 위협은 낮습니다.",
+        "2": "운동 직후 혈압 상승은 일반적인 생리 반응으로 즉각적 응급처치 대상이 아닙니다.",
+        "3": "손가락 출혈은 지혈이 필요하나 호흡 기능과 무관해 우선순위가 낮습니다.",
+        "4": "발목 염좌는 통증이 있어도 생명을 위협하지 않습니다.",
+        "5": "★ 얼굴 화상은 상기도(코, 입, 기도)의 부종을 유발해 수분 내 기도가 완전히 막힐 수 있습니다. 호흡 곤란은 즉각적 사망 위험이 가장 높아 가장 먼저 응급처치해야 합니다."
+      },
+      "vi": {
+        "1": "Tiêu chảy và đau bụng gây khó chịu nhưng nguy cơ đe dọa tính mạng ngay lập tức thấp.",
+        "2": "Huyết áp tăng ngay sau vận động là phản ứng sinh lý bình thường, không cần cấp cứu ngay.",
+        "3": "Chảy máu ngón tay cần cầm máu nhưng không ảnh hưởng hô hấp nên ưu tiên thấp hơn.",
+        "4": "Bong gân mắt cá gây đau nhưng không đe dọa tính mạng.",
+        "5": "★ Bỏng ở mặt có thể gây phù nề đường hô hấp trên (mũi, miệng, khí quản) và bịt kín đường thở chỉ trong vài phút. Khó thở có nguy cơ tử vong cao nhất nên phải được xử lý đầu tiên."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "응급처치 우선순위", "def_vi": "Thứ tự ưu tiên cấp cứu — phân loại mức độ khẩn cấp để xử lý bệnh nhân nguy hiểm nhất trước" },
+      { "term_ko": "상기도 부종", "def_vi": "Phù nề đường hô hấp trên — sưng vùng mũi, họng, thanh quản có thể gây bịt đường thở" },
+      { "term_ko": "염좌", "def_vi": "Bong gân — chấn thương dây chằng do kéo căng hoặc rách một phần" }
+    ]
+  },
+  {
+    "id": 1705,
+    "intent_ko": "뜨거운 물에 손을 데었을 때 부종 전 반지 제거가 올바른 첫 번째 대처임을 확인하는 문제",
+    "intent_vi": "Câu hỏi xác nhận tháo nhẫn trước khi sưng là biện pháp đúng đắn đầu tiên khi bỏng tay do nước nóng",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 화상으로 인해 부종이 빠르게 진행됩니다. 반지가 있으면 부종 후 혈액순환을 차단해 조직 괴사로 이어질 수 있으므로, 붓기 전에 즉시 반지를 제거해야 합니다.",
+        "2": "핸드크림이나 기름 성분은 열을 가두어 화상을 악화시킬 수 있으므로 절대 바르면 안 됩니다.",
+        "3": "얼음을 직접 화상 부위에 대면 동상과 추가 조직 손상이 발생할 수 있습니다. 흐르는 찬물로 15분 이상 식혀야 합니다.",
+        "4": "압박붕대는 부종을 악화시킬 수 있어 화상 초기 처치로 적절하지 않습니다.",
+        "5": "손으로 화상 부위를 만지면 감염 위험이 높아지고 추가 자극을 줄 수 있어 금지입니다."
+      },
+      "vi": {
+        "1": "★ Bỏng khiến vùng tổn thương sưng nhanh. Nếu còn đeo nhẫn, nhẫn sẽ chặn lưu thông máu khi sưng, dẫn đến hoại tử mô. Vì vậy phải tháo nhẫn ngay trước khi sưng.",
+        "2": "Kem dưỡng da hoặc dầu mỡ giữ nhiệt lại, làm bỏng nặng hơn — tuyệt đối không bôi.",
+        "3": "Đắp đá trực tiếp lên vùng bỏng có thể gây tê cóng và tổn thương mô thêm. Cần làm mát bằng nước lạnh chảy trong ít nhất 15 phút.",
+        "4": "Băng ép có thể làm sưng nặng hơn, không phù hợp cho xử lý bỏng ban đầu.",
+        "5": "Chạm tay vào vùng bỏng làm tăng nguy cơ nhiễm trùng và gây kích thích thêm — không được làm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "화상", "def_vi": "Bỏng — tổn thương da do tiếp xúc với nhiệt độ cao, hóa chất hoặc điện" },
+      { "term_ko": "부종", "def_vi": "Phù nề — tích tụ dịch gây sưng mô mềm" },
+      { "term_ko": "조직 괴사", "def_vi": "Hoại tử mô — cái chết của các tế bào mô do thiếu máu cung cấp" }
+    ]
+  },
+  {
+    "id": 1704,
+    "intent_ko": "화상 시 15분 이상 찬물에 담그는 것이 올바른 응급처치임을 확인하는 문제",
+    "intent_vi": "Câu hỏi xác nhận ngâm vùng bỏng vào nước lạnh ít nhất 15 phút là cách sơ cứu đúng",
+    "choice_explanations": {
+      "ko": {
+        "1": "화상 물집을 터뜨리면 감염 경로가 열려 세균 감염 위험이 크게 높아집니다. 절대 터뜨리지 않아야 합니다.",
+        "2": "기름은 피부의 열 방출을 막아 화상을 더 심하게 만들므로 절대 바르면 안 됩니다.",
+        "3": "수돗물을 세게 틀면 화상 부위에 물리적 압력을 가해 추가 손상을 줄 수 있습니다. 약한 흐르는 물로 식혀야 합니다.",
+        "4": "★ 화상 초기 처치의 핵심은 흐르는 찬물(15~20°C)에 15분 이상 담가 열을 충분히 식히는 것입니다. 통증이 없어질 때까지 지속하는 것이 원칙이며, 이를 통해 화상 깊이 진행을 억제합니다.",
+        "5": "화상 정도에 상관없이 즉각적인 냉각 처치가 먼저이며, 상태를 지켜보는 것은 위험합니다."
+      },
+      "vi": {
+        "1": "Làm vỡ bọng nước mở đường cho vi khuẩn xâm nhập, tăng nguy cơ nhiễm trùng nghiêm trọng — tuyệt đối không làm.",
+        "2": "Dầu mỡ cản trở thoát nhiệt qua da, làm bỏng nặng hơn — tuyệt đối không bôi.",
+        "3": "Xả nước mạnh trực tiếp vào vùng bỏng tạo áp lực cơ học gây thêm tổn thương. Cần dùng nước chảy nhẹ.",
+        "4": "★ Biện pháp sơ cứu bỏng cơ bản là ngâm vùng bỏng trong nước lạnh chảy (15–20°C) ít nhất 15 phút cho đến khi hết đau. Điều này giúp làm mát và ngăn bỏng lan sâu hơn.",
+        "5": "Dù bỏng nhẹ hay nặng, cần làm mát ngay lập tức — chờ đợi quan sát là rất nguy hiểm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "물집", "def_vi": "Bọng nước — túi dịch hình thành trên da do bỏng hoặc ma sát" },
+      { "term_ko": "냉각 처치", "def_vi": "Làm mát vết thương — ngâm hoặc rửa nước lạnh để giảm nhiệt độ mô bị bỏng" }
+    ]
+  },
+  {
+    "id": 1703,
+    "intent_ko": "약물 과다복용 후 의식 없는 대상자에게 남은 약과 용기를 119 대원에게 전달하는 것이 올바른 대처임을 묻는 문제",
+    "intent_vi": "Câu hỏi về việc chuyển giao thuốc còn lại và vỏ đựng cho nhân viên 119 là cách xử lý đúng khi người dùng quá liều thuốc mất ý thức",
+    "choice_explanations": {
+      "ko": {
+        "1": "하임리히법은 기도 이물질 제거 기법으로, 약물 과다복용에는 적용하지 않습니다.",
+        "2": "의식이 없는 대상자에게 음식이나 음료를 섭취시키면 기도 흡인(흡인성 폐렴) 위험이 있어 금지입니다.",
+        "3": "엎드린 자세에서 고개를 옆으로 돌리면 구토물이 기도로 흡입되는 것을 어느 정도 방지할 수 있으나, 완전한 응급처치가 아닙니다.",
+        "4": "★ 약물 과다복용 시 어떤 약을, 얼마나 먹었는지 정보가 해독 처치에 필수적입니다. 남은 약과 용기를 119 대원에게 전달하면 병원에서 신속하고 정확한 치료가 가능합니다.",
+        "5": "구토물 정리는 위생상 필요하나, 의식 없는 대상자의 응급처치가 최우선입니다. 구토물은 중요한 의료 정보를 담고 있을 수 있어 함부로 치우지 않아야 합니다."
+      },
+      "vi": {
+        "1": "Phương pháp Heimlich dùng để lấy dị vật trong đường thở, không áp dụng cho quá liều thuốc.",
+        "2": "Cho người mất ý thức uống bất kỳ thứ gì có nguy cơ hít sặc (viêm phổi hít) — tuyệt đối không làm.",
+        "3": "Nằm sấp đầu nghiêng sang một bên có thể phần nào ngăn hít sặc chất nôn, nhưng không đủ là biện pháp cấp cứu hoàn chỉnh.",
+        "4": "★ Khi quá liều thuốc, thông tin về loại thuốc và liều lượng rất cần thiết cho điều trị giải độc. Chuyển giao thuốc còn lại và vỏ đựng cho nhân viên 119 giúp bệnh viện điều trị nhanh và chính xác hơn.",
+        "5": "Dọn chất nôn cần thiết về vệ sinh, nhưng ưu tiên hàng đầu là sơ cứu người mất ý thức. Chất nôn có thể chứa thông tin y tế quan trọng, không nên dọn đi tùy tiện."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "약물 과다복용", "def_vi": "Quá liều thuốc — uống lượng thuốc vượt quá liều an toàn, có thể gây ngộ độc" },
+      { "term_ko": "흡인성 폐렴", "def_vi": "Viêm phổi hít — viêm phổi do hít sặc thức ăn, chất nôn hoặc chất lỏng vào đường thở" },
+      { "term_ko": "하임리히법", "def_vi": "Phương pháp Heimlich — kỹ thuật ấn bụng cấp cứu để lấy dị vật gây tắc đường thở" }
+    ]
+  },
+  {
+    "id": 1702,
+    "intent_ko": "약물중독으로 의식이 없는 대상자를 천장 바라보는 자세(앙와위)로 눕히는 것이 올바른 대처임을 묻는 문제",
+    "intent_vi": "Câu hỏi về việc đặt người ngộ độc thuốc mất ý thức nằm ngửa (tư thế ngửa mặt lên trần) là cách xử lý đúng",
+    "choice_explanations": {
+      "ko": {
+        "1": "구토 억제제는 의사의 지시 없이 임의로 제공해서는 안 되며, 응급 상황에서 즉각적 대처가 아닙니다.",
+        "2": "의식 없는 대상자의 입 안에 손가락을 넣으면 손가락을 깨물릴 위험이 있고 이물질 흡인 위험도 높아집니다.",
+        "3": "의식이 없는 대상자에게 따뜻한 우유 등 액체를 먹이는 것은 기도 흡인 위험이 매우 높아 금기입니다.",
+        "4": "남은 약과 용기를 치우면 구급대원이 약물 정보를 파악할 수 없어 오히려 치료를 방해합니다.",
+        "5": "★ 의식이 없는 대상자는 천장을 바라보는 앙와위(바로 눕기)로 눕혀 기도를 유지합니다. 단, 구토가 있을 경우 옆으로 돌려 흡인을 방지해야 합니다. 이 문제의 맥락에서는 안전한 기본 자세로 앙와위가 정답입니다."
+      },
+      "vi": {
+        "1": "Thuốc chống nôn không nên tự ý dùng mà không có chỉ định của bác sĩ và không phải là biện pháp xử lý ngay lập tức trong cấp cứu.",
+        "2": "Đưa ngón tay vào miệng người mất ý thức có nguy cơ bị cắn và tăng nguy cơ hít sặc dị vật.",
+        "3": "Cho uống sữa ấm hay chất lỏng khi mất ý thức rất nguy hiểm do nguy cơ hít sặc cao.",
+        "4": "Dọn thuốc còn lại và vỏ đựng sẽ cản trở nhân viên cấp cứu xác định thông tin về thuốc, gây khó khăn cho điều trị.",
+        "5": "★ Người mất ý thức được đặt nằm ngửa (tư thế ngửa mặt lên trần) để duy trì đường thở. Nếu có nôn, cần nghiêng đầu sang một bên để phòng hít sặc. Trong bối cảnh câu hỏi này, nằm ngửa là tư thế cơ bản an toàn và là đáp án đúng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "약물중독", "def_vi": "Ngộ độc thuốc — tình trạng độc hại do dùng quá liều hoặc dùng sai thuốc" },
+      { "term_ko": "앙와위", "def_vi": "Tư thế nằm ngửa — tư thế nằm thẳng, mặt ngửa lên trên" },
+      { "term_ko": "기도 흡인", "def_vi": "Hít sặc — tình trạng hít chất lỏng hoặc chất rắn vào đường thở, gây nguy hiểm" }
+    ]
+  },
+  {
+    "id": 1701,
+    "intent_ko": "경련(뻣뻣해지고 침 흘리며 쓰러짐) 발생 시 얼굴을 옆으로 돌려 눕히고 위험 물건을 치우는 것이 올바른 대처임을 묻는 문제",
+    "intent_vi": "Câu hỏi về việc xoay mặt nạn nhân sang một bên và dọn dẹp vật nguy hiểm khi lên cơn co giật (cứng người, chảy nước miếng, ngã)",
+    "choice_explanations": {
+      "ko": {
+        "1": "머리를 뒤로 젖히면 경련 중 구토물이 기도로 흡인될 위험이 있어 위험합니다.",
+        "2": "★ 경련 시 얼굴을 옆으로 돌려 눕히면 타액과 구토물이 자연스럽게 흘러나와 기도 흡인을 방지합니다. 동시에 장구채 등 주변 위험 물건을 치워 추가 부상을 예방하는 것이 올바른 대처입니다.",
+        "3": "경련 중 대상자를 움직이거나 부축하면 근육 경직으로 인해 오히려 부상 위험이 높아집니다.",
+        "4": "입에 이물질을 물리면 치아 손상이나 기도 폐쇄 위험이 있어 절대 금지입니다.",
+        "5": "똑바로 눕히고 목 아래에 베개를 받치면 기도가 구부러져 호흡이 방해될 수 있습니다."
+      },
+      "vi": {
+        "1": "Ngửa đầu ra sau khi đang co giật có thể khiến chất nôn hít vào đường thở — rất nguy hiểm.",
+        "2": "★ Khi co giật, xoay mặt nạn nhân nghiêng sang một bên giúp nước bọt và chất nôn chảy ra tự nhiên, phòng hít sặc. Đồng thời dọn vật nguy hiểm xung quanh (như dùi trống) để tránh thương tích thêm — đây là cách xử lý đúng.",
+        "3": "Di chuyển hoặc đỡ người đang co giật làm tăng nguy cơ chấn thương do cơ bắp đang cứng đờ.",
+        "4": "Nhét vật gì đó vào miệng có thể gây gãy răng hoặc tắc đường thở — tuyệt đối không làm.",
+        "5": "Đặt gối dưới cổ khi nằm thẳng có thể làm cong đường thở, cản trở hô hấp."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "경련", "def_vi": "Co giật — cơn co cơ không kiểm soát được, thường kèm mất ý thức" },
+      { "term_ko": "타액", "def_vi": "Nước bọt (nước miếng) — dịch tiết từ tuyến nước bọt trong miệng" },
+      { "term_ko": "기도 폐쇄", "def_vi": "Tắc đường thở — tình trạng đường thở bị chặn không cho không khí qua" }
+    ]
+  },
+  {
+    "id": 1700,
+    "intent_ko": "경련 중인 대상자에게 상의 단추를 풀고 조용히 관찰하는 것이 올바른 응급처치임을 묻는 문제",
+    "intent_vi": "Câu hỏi về việc cởi nút áo và quan sát yên lặng là cách sơ cứu đúng cho người đang co giật",
+    "choice_explanations": {
+      "ko": {
+        "1": "경련 중 물을 마시게 하면 기도 흡인 위험이 있어 절대 금지입니다.",
+        "2": "경련 중에는 가슴압박이 적절하지 않습니다. 맥박이 있는 경우 불필요하고, 경련을 더 악화시킬 수 있습니다.",
+        "3": "경련 중 머리를 뒤로 젖히는 것은 구토물 흡인 위험을 높이므로 적절하지 않습니다.",
+        "4": "경련 중에는 강제로 자세를 바꾸기보다 안정된 상태를 유지하는 것이 중요합니다. 상체를 높이는 것은 필요하지 않습니다.",
+        "5": "★ 경련 발작 시 옷을 느슨하게 하여 호흡을 돕고, 경련을 강제로 멈추려 하지 않으며 조용히 관찰하는 것이 올바른 대처입니다. 경련이 2분 이상 지속되거나 반복되면 119에 신고해야 합니다."
+      },
+      "vi": {
+        "1": "Cho uống nước khi đang co giật có nguy cơ hít sặc — tuyệt đối không làm.",
+        "2": "Ép ngực khi đang co giật không phù hợp; nếu còn mạch, ép ngực là không cần thiết và có thể làm tình trạng xấu hơn.",
+        "3": "Ngửa đầu khi co giật làm tăng nguy cơ hít sặc chất nôn — không phù hợp.",
+        "4": "Thay đổi tư thế cưỡng bức khi đang co giật không cần thiết; duy trì ổn định quan trọng hơn. Nâng thân trên không cần thiết.",
+        "5": "★ Khi co giật, cởi nới quần áo để hỗ trợ thở, không cố ngăn cơn co giật và quan sát yên lặng là cách xử lý đúng. Nếu cơn kéo dài hơn 2 phút hoặc tái phát, cần gọi 119."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "경련 발작", "def_vi": "Cơn co giật — giai đoạn co giật cơ không tự chủ, thường kèm mất ý thức tạm thời" },
+      { "term_ko": "기도 흡인", "def_vi": "Hít sặc — dịch hoặc dị vật vào đường thở do mất phản xạ nuốt" }
+    ]
+  },
+  {
+    "id": 1699,
+    "intent_ko": "경련 발생 시 119 신고와 발생 시각 기록이 가장 올바른 대처임을 묻는 문제",
+    "intent_vi": "Câu hỏi về việc gọi 119 và ghi lại thời điểm co giật là biện pháp xử lý đúng nhất",
+    "choice_explanations": {
+      "ko": {
+        "1": "인공호흡은 호흡이 없는 심정지 상황에 시행하며, 경련 중에는 일반적으로 필요하지 않습니다.",
+        "2": "팔다리를 꽉 잡으면 경련을 멈출 수 없을 뿐 아니라 골절 등 부상 위험이 높아집니다.",
+        "3": "머리가 바닥에 직접 닿게 하면 두부 외상 위험이 있습니다. 머리 아래 부드러운 것을 받쳐야 합니다.",
+        "4": "입에 손수건을 넣으면 기도 막힘, 치아 손상, 손 부상이 발생할 수 있어 절대 금지입니다.",
+        "5": "★ 경련 발생 즉시 119에 신고하고, 경련이 시작된 시각·지속 시간·양상을 기록하는 것이 가장 중요합니다. 이 정보는 의료진이 원인을 판단하고 치료를 결정하는 데 필수적입니다."
+      },
+      "vi": {
+        "1": "Hô hấp nhân tạo dùng cho ngừng tim khi không có nhịp thở, thường không cần thiết khi đang co giật.",
+        "2": "Giữ chặt tay chân không thể ngăn co giật mà còn có thể gây gãy xương hoặc chấn thương khác.",
+        "3": "Để đầu chạm trực tiếp xuống sàn có nguy cơ chấn thương đầu — cần lót vật mềm dưới đầu.",
+        "4": "Nhét khăn tay vào miệng có thể gây tắc đường thở, gãy răng và thương tích cho tay — tuyệt đối không làm.",
+        "5": "★ Ngay khi co giật xảy ra, gọi 119 và ghi lại thời điểm bắt đầu, thời gian kéo dài và biểu hiện của cơn co giật là điều quan trọng nhất. Thông tin này giúp bác sĩ xác định nguyên nhân và quyết định điều trị."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "인공호흡", "def_vi": "Hô hấp nhân tạo — phương pháp hỗ trợ thở bằng cách thổi khí vào phổi người bệnh" },
+      { "term_ko": "발작 시각 기록", "def_vi": "Ghi lại thời điểm co giật — ghi chép giờ bắt đầu và thời gian kéo dài của cơn co giật để cung cấp cho y tế" }
+    ]
+  },
+  {
+    "id": 1698,
+    "intent_ko": "찰과상으로 출혈이 심할 때 깨끗한 수건으로 상처를 압박하는 것이 올바른 응급처치임을 묻는 문제",
+    "intent_vi": "Câu hỏi về việc dùng khăn sạch ép lên vết thương là cách sơ cứu đúng khi chảy máu nhiều do trầy xước",
+    "choice_explanations": {
+      "ko": {
+        "1": "지혈제는 일반 가정에 구비되어 있지 않으며 일반적인 응급처치 방법이 아닙니다.",
+        "2": "★ 출혈이 심할 때는 깨끗한 수건이나 천으로 상처를 직접 압박하는 것이 가장 효과적인 지혈 방법입니다. 압박은 혈관을 조여 출혈 속도를 줄이고 혈액을 응고시킵니다.",
+        "3": "흐르는 물로 씻는 것은 상처 청소에 유용하나, 심한 출혈 시 압박이 우선입니다.",
+        "4": "맨손으로 압박하면 감염 위험이 있어 장갑이나 깨끗한 천을 사용하는 것이 더 안전합니다.",
+        "5": "패드를 교체하면 형성 중인 혈전을 제거해 지혈이 어려워집니다. 기존 패드 위에 덧대는 것이 올바릅니다."
+      },
+      "vi": {
+        "1": "Thuốc cầm máu không phổ biến trong hộ gia đình và không phải phương pháp sơ cứu thông thường.",
+        "2": "★ Khi chảy máu nhiều, dùng khăn sạch hoặc vải sạch ép trực tiếp lên vết thương là cách cầm máu hiệu quả nhất. Áp lực giúp co mạch máu, làm chậm chảy máu và thúc đẩy đông máu.",
+        "3": "Rửa bằng nước chảy hữu ích để làm sạch vết thương nhưng khi chảy máu nhiều, việc ép vết thương phải được ưu tiên.",
+        "4": "Ép bằng tay trần có nguy cơ nhiễm trùng — dùng găng tay hoặc vải sạch an toàn hơn.",
+        "5": "Thay miếng gạc làm mất cục máu đông đang hình thành, khó cầm máu hơn. Đúng là phải đắp thêm lên trên miếng cũ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "찰과상", "def_vi": "Trầy xước — vết thương hở do ma sát làm tổn thương bề mặt da" },
+      { "term_ko": "지혈", "def_vi": "Cầm máu — biện pháp ngăn chặn hoặc giảm chảy máu" },
+      { "term_ko": "혈전", "def_vi": "Cục máu đông — khối máu đông lại tại vết thương để bịt kín và cầm máu" }
+    ]
+  },
+  {
+    "id": 1697,
+    "intent_ko": "날카로운 물건에 베인 상처에 장갑 착용 후 멸균거즈로 압박하는 것이 올바른 응급처치임을 묻는 문제",
+    "intent_vi": "Câu hỏi về việc đeo găng tay rồi dùng gạc vô trùng ép lên vết thương do vật sắc nhọn là cách sơ cứu đúng",
+    "choice_explanations": {
+      "ko": {
+        "1": "따뜻한 물에 담그면 혈관이 확장되어 출혈이 증가할 수 있어 적절하지 않습니다.",
+        "2": "알코올은 상처에 자극을 주고 조직을 손상시킬 수 있어 출혈 상처에 직접 사용하면 안 됩니다.",
+        "3": "★ 장갑을 착용하면 요양보호사 자신의 감염을 예방하고, 멸균거즈로 상처를 압박하면 청결하게 지혈할 수 있습니다. 이 두 가지를 동시에 수행하는 것이 가장 올바른 초기 대처입니다.",
+        "4": "압박붕대는 지혈 후 고정을 위해 사용하는 것으로, 멸균거즈를 이용한 직접 압박이 먼저 이루어져야 합니다.",
+        "5": "패드 교체는 추가 처치 단계이며 초기 지혈 단계로 적절하지 않습니다."
+      },
+      "vi": {
+        "1": "Ngâm trong nước ấm giãn mạch máu, có thể làm tăng chảy máu — không phù hợp.",
+        "2": "Cồn gây kích ứng và có thể làm tổn thương mô — không dùng trực tiếp lên vết thương đang chảy máu.",
+        "3": "★ Đeo găng tay bảo vệ người chăm sóc khỏi lây nhiễm, dùng gạc vô trùng ép lên vết thương giúp cầm máu sạch sẽ. Thực hiện cả hai cùng lúc là cách xử lý ban đầu đúng nhất.",
+        "4": "Băng ép dùng để cố định sau khi đã cầm máu — bước ép trực tiếp bằng gạc vô trùng phải thực hiện trước.",
+        "5": "Thay miếng đệm là bước xử lý tiếp theo, không phải bước sơ cứu ban đầu."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "멸균거즈", "def_vi": "Gạc vô trùng — gạc y tế đã được khử trùng hoàn toàn, dùng để băng bó vết thương" },
+      { "term_ko": "압박붕대", "def_vi": "Băng ép — loại băng dùng để ép chặt và cố định vết thương sau khi cầm máu" },
+      { "term_ko": "감염 예방", "def_vi": "Phòng ngừa lây nhiễm — các biện pháp ngăn vi khuẩn lây từ người sang người" }
+    ]
+  },
+  {
+    "id": 1696,
+    "intent_ko": "급성 저혈압(쇼크) 시 심부전 환자는 앉아서 호흡하게 하는 것이 올바른 대처임을 묻는 문제",
+    "intent_vi": "Câu hỏi về việc cho bệnh nhân suy tim ngồi để thở là biện pháp đúng khi xảy ra hạ huyết áp cấp tính (sốc)",
+    "choice_explanations": {
+      "ko": {
+        "1": "혈액순환에 필요한 혈액량이 부족해서 발생하는 것이지, 과도해서 발생하는 것이 아닙니다.",
+        "2": "팔다리로 혈액을 보내는 조치는 저혈압에서 필요한 방법이 아닙니다. 오히려 중심 혈액량 유지가 필요합니다.",
+        "3": "★ 심부전 환자에서 쇼크가 발생했을 때 눕히면 폐에 혈액이 몰려 호흡 곤란이 악화될 수 있습니다. 따라서 심부전 환자는 앉은 자세(반좌위)로 호흡하게 하는 것이 올바릅니다.",
+        "4": "반복적으로 숨을 몰아쉬게 하면(과호흡) 혈중 이산화탄소가 감소하여 오히려 증상이 악화될 수 있습니다.",
+        "5": "저혈압 환자를 선 자세로 활동하게 하면 기립성 저혈압이 악화될 위험이 있습니다."
+      },
+      "vi": {
+        "1": "Sốc xảy ra do lượng máu lưu thông không đủ — không phải do quá nhiều.",
+        "2": "Tăng lưu lượng máu đến tay chân không phải biện pháp cần thiết trong hạ huyết áp; cần duy trì lượng máu trung tâm.",
+        "3": "★ Khi bệnh nhân suy tim bị sốc, nằm xuống có thể khiến máu dồn vào phổi, làm khó thở nặng hơn. Vì vậy bệnh nhân suy tim cần được ngồi (tư thế nửa ngồi) để thở — đây là cách xử lý đúng.",
+        "4": "Thở dồn liên tục (tăng thông khí) làm giảm CO₂ trong máu, có thể làm triệu chứng nặng hơn.",
+        "5": "Để bệnh nhân hạ huyết áp đứng hoạt động có nguy cơ làm hạ huyết áp tư thế đứng nặng hơn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "급성 저혈압", "def_vi": "Hạ huyết áp cấp tính — huyết áp giảm đột ngột đến mức nguy hiểm" },
+      { "term_ko": "쇼크", "def_vi": "Sốc — tình trạng cơ quan không nhận đủ máu và oxy, đe dọa tính mạng" },
+      { "term_ko": "심부전", "def_vi": "Suy tim — tình trạng tim không bơm đủ máu để đáp ứng nhu cầu cơ thể" },
+      { "term_ko": "반좌위", "def_vi": "Tư thế nửa ngồi — tư thế ngả lưng khoảng 45° giúp giảm áp lực lên phổi" }
+    ]
+  },
+  {
+    "id": 1695,
+    "intent_ko": "심장 질환 대상자의 쇼크 시 다리를 30cm 올려주는 것이 올바른 응급처치임을 묻는 문제",
+    "intent_vi": "Câu hỏi về việc nâng chân lên khoảng 30cm là biện pháp sơ cứu đúng khi bệnh nhân tim mạch bị sốc",
+    "choice_explanations": {
+      "ko": {
+        "1": "측위는 의식 없는 대상자에게 기도 확보를 위해 사용하지만, 저혈압 쇼크의 일차 처치는 다리 거상입니다.",
+        "2": "★ 쇼크 시 다리를 30cm 정도 올려주면(트렌델렌버그 변형 자세) 중력에 의해 다리에 있던 혈액이 심장과 뇌 방향으로 이동하여 혈압을 일시적으로 높일 수 있습니다. 이는 저혈압성 쇼크의 표준 응급처치입니다.",
+        "3": "쇼크 중 의식이 있는 대상자에게 물을 마시게 하면 기도 흡인 위험이 있습니다.",
+        "4": "쇼크는 즉각적인 처치가 필요한 응급 상황으로, 안정될 때까지 기다리는 것은 위험합니다. 즉시 119에 신고해야 합니다.",
+        "5": "토사물이 있을 때 고개를 뒤로 젖히면 흡인 위험이 높아집니다. 고개를 옆으로 돌려야 합니다."
+      },
+      "vi": {
+        "1": "Tư thế nằm nghiêng dùng để đảm bảo đường thở cho người mất ý thức, nhưng biện pháp hàng đầu cho sốc hạ huyết áp là nâng chân.",
+        "2": "★ Khi sốc, nâng chân lên khoảng 30cm (tư thế Trendelenburg cải tiến) giúp máu từ chân chảy về tim và não nhờ trọng lực, tạm thời nâng huyết áp. Đây là sơ cứu tiêu chuẩn cho sốc hạ huyết áp.",
+        "3": "Cho uống nước khi đang sốc có nguy cơ hít sặc nếu ý thức bị ảnh hưởng.",
+        "4": "Sốc là tình huống khẩn cấp cần xử lý ngay — chờ huyết áp ổn định mới gọi 119 là rất nguy hiểm.",
+        "5": "Khi có chất nôn, ngửa đầu ra sau làm tăng nguy cơ hít sặc — phải nghiêng đầu sang một bên."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "쇼크 체위", "def_vi": "Tư thế chống sốc — tư thế nâng chân cao để tăng lưu lượng máu về tim trong sốc hạ huyết áp" },
+      { "term_ko": "토사물", "def_vi": "Chất nôn — thức ăn hoặc dịch dạ dày bị nôn ra" },
+      { "term_ko": "측위", "def_vi": "Tư thế nằm nghiêng — tư thế nằm nghiêng sang một bên để bảo vệ đường thở" }
+    ]
+  },
+  {
+    "id": 1694,
+    "intent_ko": "급성 저혈압의 증상으로 맥박 수 100회 이상이 올바름을 확인하는 문제",
+    "intent_vi": "Câu hỏi xác nhận nhịp tim trên 100 lần/phút là triệu chứng đúng của hạ huyết áp cấp tính",
+    "choice_explanations": {
+      "ko": {
+        "1": "저혈압 시 산소 공급이 부족해지면 호흡수는 오히려 증가합니다.",
+        "2": "저혈압 시 말초 혈관이 수축하여 손발이 차갑고 창백해집니다. 열감은 저혈압 증상이 아닙니다.",
+        "3": "피부가 붉게 변하는 것은 고혈압 또는 발열 시 나타나는 증상입니다. 저혈압에서는 피부가 창백하거나 청색으로 변합니다.",
+        "4": "혈압이 80/50 이하로 낮아지는 것은 저혈압의 정의적 특징이나, 시험에서 묻는 증상 중에는 보상 반응으로 나타나는 맥박 변화가 더 중요합니다.",
+        "5": "★ 급성 저혈압 시 심장은 부족한 혈압을 보상하려 더 빠르게 뛰어 맥박 수가 100회/분 이상(빈맥)으로 증가합니다. 이는 저혈압의 대표적인 보상 반응 증상입니다."
+      },
+      "vi": {
+        "1": "Khi hạ huyết áp, thiếu oxy khiến nhịp thở tăng lên, không giảm.",
+        "2": "Khi hạ huyết áp, mạch máu ngoại vi co lại khiến tay chân lạnh và tái — không có cảm giác nóng.",
+        "3": "Da đỏ là triệu chứng của cao huyết áp hoặc sốt. Trong hạ huyết áp, da trở nên nhợt nhạt hoặc xanh tím.",
+        "4": "Huyết áp dưới 80/50 là đặc điểm định nghĩa hạ huyết áp, nhưng trong bối cảnh triệu chứng, thay đổi nhịp tim (phản ứng bù trừ) quan trọng hơn.",
+        "5": "★ Khi hạ huyết áp cấp tính, tim đập nhanh hơn để bù đắp cho áp lực máu thiếu hụt, làm nhịp tim tăng trên 100 lần/phút (nhịp tim nhanh). Đây là triệu chứng phản ứng bù trừ điển hình của hạ huyết áp."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "빈맥", "def_vi": "Nhịp tim nhanh — nhịp tim vượt quá 100 lần/phút, thường là phản ứng bù trừ" },
+      { "term_ko": "보상 반응", "def_vi": "Phản ứng bù trừ — cơ chế tự điều chỉnh của cơ thể để duy trì cân bằng khi có rối loạn" },
+      { "term_ko": "말초 혈관 수축", "def_vi": "Co mạch ngoại vi — mạch máu ở tay chân co lại để giữ máu cho các cơ quan trung tâm" }
+    ]
+  },
+  {
+    "id": 1693,
+    "intent_ko": "식사 중 의식을 잃고 쓰러진 대상자에게 119 신고 후 심폐소생술을 실시하는 것이 올바른 대처임을 묻는 문제",
+    "intent_vi": "Câu hỏi về việc gọi 119 rồi thực hiện hồi sức tim phổi là biện pháp xử lý đúng khi người dùng bữa đột ngột mất ý thức ngã xuống",
+    "choice_explanations": {
+      "ko": {
+        "1": "가슴압박과 인공호흡은 심정지가 확인된 경우에 시행합니다. 의식만 잃고 쓰러진 경우 바로 시행하는 것은 적절하지 않으며, 먼저 반응을 확인해야 합니다.",
+        "2": "의식이 없는 대상자의 입에 손가락을 넣어 구토시키면 기도 흡인과 손 부상 위험이 있어 금지입니다.",
+        "3": "편평한 바닥에 눕히고 머리를 뒤로 젖히는 것은 기도 확보에 도움이 되나, 즉각적인 119 신고가 우선입니다.",
+        "4": "단추를 풀어주고 심호흡을 시키는 것은 의식이 없는 대상자에게 효과가 없으며 응급처치로 부적절합니다.",
+        "5": "★ 대상자가 의식을 잃고 쓰러지면 즉시 119에 신고하고, 심정지가 확인되면 심폐소생술을 실시합니다. 신속한 신고와 전문 구조대의 도움이 생존율을 높이는 가장 중요한 조치입니다."
+      },
+      "vi": {
+        "1": "Ép ngực và hô hấp nhân tạo thực hiện khi xác nhận ngừng tim. Khi chỉ mất ý thức, cần kiểm tra phản ứng trước — không ép ngực ngay.",
+        "2": "Đưa ngón tay vào miệng người mất ý thức để gây nôn có nguy cơ hít sặc và thương tích tay — tuyệt đối không làm.",
+        "3": "Đặt nằm trên mặt phẳng và ngửa đầu giúp mở đường thở, nhưng gọi 119 ngay là ưu tiên hàng đầu.",
+        "4": "Cởi nút áo và bảo hít thở sâu không có tác dụng với người mất ý thức — không phải sơ cứu phù hợp.",
+        "5": "★ Khi người bệnh mất ý thức và ngã, gọi ngay 119, xác nhận ngừng tim và thực hiện hồi sức tim phổi. Gọi cấp cứu nhanh và nhận hỗ trợ từ đội chuyên nghiệp là biện pháp quan trọng nhất để tăng tỷ lệ sống sót."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "심폐소생술", "def_vi": "Hồi sức tim phổi (CPR) — kỹ thuật ép ngực và hô hấp nhân tạo khi ngừng tim ngừng thở" },
+      { "term_ko": "심정지 확인", "def_vi": "Xác nhận ngừng tim — kiểm tra phản ứng, nhịp thở và mạch để xác định tim đã ngừng đập" }
+    ]
+  },
+  {
+    "id": 1692,
+    "intent_ko": "하임리히법이 이물질로 인한 기도 질식에 적용됨을 묻는 문제",
+    "intent_vi": "Câu hỏi về việc phương pháp Heimlich được áp dụng khi tắc nghẽn đường thở do dị vật",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 하임리히법(복부 밀어내기)은 이물질이 기도를 막아 질식이 발생한 경우에 적용하는 응급처치입니다. 복부에 갑작스러운 압력을 가해 이물질을 기도 밖으로 밀어냅니다.",
+        "2": "식중독은 소화기관 문제로, 기도 이물질과 무관하여 하임리히법을 적용하지 않습니다.",
+        "3": "심정지는 심폐소생술(가슴압박·인공호흡)이 필요하며, 하임리히법과는 다릅니다.",
+        "4": "경련은 별도의 응급처치(안전 확보·관찰)가 필요하며 하임리히법과 무관합니다.",
+        "5": "골절은 고정 처치가 필요하며 하임리히법과 전혀 관계가 없습니다."
+      },
+      "vi": {
+        "1": "★ Phương pháp Heimlich (ấn bụng) áp dụng khi dị vật bít kín đường thở gây ngạt. Tạo áp lực đột ngột vào bụng để đẩy dị vật ra khỏi đường thở.",
+        "2": "Ngộ độc thực phẩm là vấn đề tiêu hóa, không liên quan đến tắc nghẽn đường thở nên không áp dụng Heimlich.",
+        "3": "Ngừng tim cần hồi sức tim phổi (ép ngực + hô hấp nhân tạo) — khác với phương pháp Heimlich.",
+        "4": "Co giật cần biện pháp xử lý riêng (đảm bảo an toàn, quan sát) — không liên quan đến Heimlich.",
+        "5": "Gãy xương cần cố định — hoàn toàn không liên quan đến phương pháp Heimlich."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "하임리히법", "def_vi": "Phương pháp Heimlich — kỹ thuật ấn bụng cấp cứu để đẩy dị vật ra khỏi đường thở bị tắc" },
+      { "term_ko": "이물질", "def_vi": "Dị vật — vật lạ không thuộc về cơ thể, gây vấn đề khi vào đường thở hoặc cơ thể" },
+      { "term_ko": "기도 질식", "def_vi": "Ngạt do tắc đường thở — tình trạng đường thở bị bịt kín hoàn toàn bởi dị vật" }
+    ]
+  },
+  {
+    "id": 1691,
+    "intent_ko": "기도 막힘 시 뒤에서 배꼽과 명치 중간을 후상방으로 밀어올리는 하임리히법이 올바른 응급처치임을 묻는 문제",
+    "intent_vi": "Câu hỏi về việc ôm từ phía sau và đẩy lên trên-ra sau ở vùng giữa rốn và mũi ức là cách sơ cứu đúng khi tắc đường thở",
+    "choice_explanations": {
+      "ko": {
+        "1": "팔다리를 주무르는 것은 기도 이물질 제거와 전혀 관련이 없습니다.",
+        "2": "가슴 압박은 심폐소생술의 방법으로, 기도 이물질 제거에는 적용하지 않습니다.",
+        "3": "손가락을 입에 넣어 구를 유발하는 방법은 이물질을 더 깊이 밀어 넣을 수 있어 위험합니다.",
+        "4": "★ 성인의 기도가 막혔을 때 표준 하임리히법은 뒤에서 팔로 허리를 감싸고, 주먹을 쥔 손을 배꼽과 명치 중간(검상돌기 아래)에 대고 반대 손으로 감싼 뒤 후상방(뒤쪽 위 방향)으로 강하게 밀어올리는 것입니다.",
+        "5": "등 두드리기와 복부 밀어내기 교대 방법은 영아나 어린이에게 주로 사용하며, 성인의 경우 복부 밀어올리기(하임리히법)가 우선입니다."
+      },
+      "vi": {
+        "1": "Xoa bóp tay chân không liên quan gì đến việc lấy dị vật trong đường thở.",
+        "2": "Ép ngực là phương pháp CPR, không áp dụng để lấy dị vật đường thở.",
+        "3": "Đưa ngón tay vào gây nôn có thể đẩy dị vật vào sâu hơn — rất nguy hiểm.",
+        "4": "★ Khi đường thở người lớn bị tắc, phương pháp Heimlich chuẩn là: đứng phía sau ôm quanh eo, đặt tay nắm đấm vào vùng giữa rốn và mũi ức, tay kia ôm bên ngoài, rồi đẩy mạnh lên trên và ra sau (hướng sau-trên).",
+        "5": "Vỗ lưng kết hợp ấn bụng thường dùng cho trẻ nhỏ; đối với người lớn, phương pháp Heimlich (ấn bụng) được ưu tiên."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "명치", "def_vi": "Mũi ức — vùng trên bụng, ngay dưới xương ức" },
+      { "term_ko": "후상방", "def_vi": "Hướng sau-trên — hướng đẩy trong phương pháp Heimlich: vừa ra sau vừa lên trên" },
+      { "term_ko": "검상돌기", "def_vi": "Mỏm kiếm — phần cuối nhọn của xương ức, vùng tham chiếu khi thực hiện Heimlich" }
+    ]
+  },
+  {
+    "id": 1690,
+    "intent_ko": "육안으로 보이는 목 이물질은 큰 기침으로 뱉어내게 하는 것이 올바른 대처임을 묻는 문제",
+    "intent_vi": "Câu hỏi về việc khuyến khích ho mạnh để tống dị vật ra khi nhìn thấy dị vật trong cổ họng bằng mắt thường",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 이물질이 목에 걸려 있지만 육안으로 보이고, 대상자가 기침을 할 수 있다면 큰 기침으로 이물질을 자연스럽게 뱉어내게 하는 것이 가장 먼저 시도해야 할 방법입니다.",
+        "2": "손가락을 입에 넣으면 이물질을 더 깊이 밀어 넣거나 깨물릴 위험이 있어 금지입니다.",
+        "3": "심호흡은 이물질을 더 깊이 흡입할 수 있어 적절하지 않습니다.",
+        "4": "기도가 이물질로 막혀 있는 상태에서 인공호흡을 하면 이물질이 더 깊이 들어갈 수 있습니다.",
+        "5": "물과 함께 삼키게 하면 이물질이 기도 깊숙이 밀려들어갈 수 있어 위험합니다."
+      },
+      "vi": {
+        "1": "★ Khi dị vật còn nhìn thấy trong cổ họng và người bệnh có thể ho, khuyến khích ho mạnh là phương pháp đầu tiên nên thử để tự nhiên tống dị vật ra.",
+        "2": "Đưa ngón tay vào miệng có thể đẩy dị vật vào sâu hơn hoặc bị cắn — tuyệt đối không làm.",
+        "3": "Hít thở sâu có thể hút dị vật vào sâu hơn — không phù hợp.",
+        "4": "Hô hấp nhân tạo khi đường thở đang bị tắc có thể đẩy dị vật vào sâu hơn.",
+        "5": "Nuốt cùng nước có thể đẩy dị vật sâu vào đường thở — rất nguy hiểm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "이물질", "def_vi": "Dị vật — vật thể lạ trong đường thở hoặc cơ thể gây cản trở" },
+      { "term_ko": "기침 반사", "def_vi": "Phản xạ ho — cơ chế bảo vệ tự nhiên của cơ thể để đẩy dị vật ra khỏi đường thở" }
+    ]
+  },
+  {
+    "id": 1689,
+    "intent_ko": "기침·호흡 곤란·목 조르는 듯한 자세 시 질식을 의심해야 함을 묻는 문제",
+    "intent_vi": "Câu hỏi về việc cần nghi ngờ ngạt thở khi có biểu hiện ho, khó thở và tư thế giống như bóp cổ",
+    "choice_explanations": {
+      "ko": {
+        "1": "경련은 근육 수축이 특징으로, 목을 조르는 듯한 자세와는 관련이 없습니다.",
+        "2": "저산소증은 산소 부족 상태로, 기침·목 조르는 자세보다는 청색증 등 다른 증상이 동반됩니다.",
+        "3": "열사병은 고온 환경 노출로 발생하며, 기침과는 관련이 없습니다.",
+        "4": "심부전은 부종, 호흡 곤란이 동반될 수 있으나 목을 조르는 자세는 나타나지 않습니다.",
+        "5": "★ 기침, 호흡 곤란, 목을 조르는 듯한 자세(자신의 목을 손으로 감싸는 동작)는 기도가 이물질로 막힌 질식의 전형적인 증상입니다. 즉시 하임리히법 적용을 준비해야 합니다."
+      },
+      "vi": {
+        "1": "Co giật đặc trưng bởi co cơ không kiểm soát — không liên quan đến tư thế giống bóp cổ.",
+        "2": "Thiếu oxy biểu hiện qua tím tái và các triệu chứng khác — không phải ho và tư thế bóp cổ.",
+        "3": "Say nắng xảy ra do tiếp xúc môi trường nóng — không liên quan đến ho.",
+        "4": "Suy tim có thể gây phù và khó thở nhưng không gây tư thế giống bóp cổ.",
+        "5": "★ Ho, khó thở và tư thế giống bóp cổ (dùng tay ôm quanh cổ mình) là triệu chứng điển hình của ngạt thở do dị vật bít đường thở. Cần chuẩn bị áp dụng phương pháp Heimlich ngay lập tức."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "질식", "def_vi": "Ngạt thở — tình trạng đường thở bị tắc hoàn toàn hoặc một phần do dị vật" },
+      { "term_ko": "저산소증", "def_vi": "Thiếu oxy máu — tình trạng oxy trong máu thấp hơn mức bình thường" },
+      { "term_ko": "청색증", "def_vi": "Tím tái — da và môi chuyển màu xanh tím do thiếu oxy" }
+    ]
+  },
+  {
+    "id": 1688,
+    "intent_ko": "코로나19에서 만성폐쇄성 폐질환이 있는 후기고령자의 사망 위험이 높다는 것이 옳은 설명임을 확인하는 문제",
+    "intent_vi": "Câu hỏi xác nhận người cao tuổi cao령 mắc bệnh phổi tắc nghẽn mãn tính có nguy cơ tử vong cao khi nhiễm COVID-19",
+    "choice_explanations": {
+      "ko": {
+        "1": "코로나19는 일반적으로 2~14일의 잠복기가 존재합니다.",
+        "2": "코로나19는 중증 폐렴을 유발할 수 있으며, 격리가 반드시 필요한 법정 감염병입니다.",
+        "3": "코로나19 바이러스는 감염자가 사용한 물건 표면에도 일정 시간 생존할 수 있어 물건 공유는 위험합니다.",
+        "4": "★ 만성폐쇄성 폐질환(COPD)이 있는 후기고령자(75세 이상)는 기저 폐 기능이 저하되어 있어 코로나19 감염 시 중증으로 진행될 확률이 높고 사망 위험이 크게 증가합니다.",
+        "5": "실내 환기를 차단하면 바이러스 농도가 높아져 전파가 더 빨라집니다. 충분한 환기가 감염 예방에 필수적입니다."
+      },
+      "vi": {
+        "1": "COVID-19 thường có thời gian ủ bệnh 2–14 ngày.",
+        "2": "COVID-19 có thể gây viêm phổi nặng và là bệnh truyền nhiễm bắt buộc phải cách ly.",
+        "3": "Virus COVID-19 có thể tồn tại một thời gian trên bề mặt đồ vật của người nhiễm — dùng chung đồ vật là nguy hiểm.",
+        "4": "★ Người cao tuổi trên 75 tuổi mắc bệnh phổi tắc nghẽn mãn tính (COPD) có chức năng phổi đã suy giảm sẵn, nên khi nhiễm COVID-19 dễ tiến triển nặng và nguy cơ tử vong tăng đáng kể.",
+        "5": "Chặn thông gió trong nhà làm tăng nồng độ virus, đẩy nhanh lây truyền. Thông gió đầy đủ là thiết yếu để phòng ngừa lây nhiễm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "만성폐쇄성 폐질환", "def_vi": "Bệnh phổi tắc nghẽn mãn tính (COPD) — bệnh hô hấp mãn tính làm thu hẹp đường thở và giảm chức năng phổi" },
+      { "term_ko": "잠복기", "def_vi": "Thời gian ủ bệnh — khoảng thời gian từ khi nhiễm virus đến khi xuất hiện triệu chứng" },
+      { "term_ko": "후기고령자", "def_vi": "Người cao tuổi cao령— thường chỉ người từ 75 tuổi trở lên, nhóm có nguy cơ cao nhất" }
+    ]
+  },
+  {
+    "id": 1687,
+    "intent_ko": "결핵은 퇴원 후 자택에서 전담 간호사의 관리를 받는 것이 올바른 감염 관리 방법임을 묻는 문제",
+    "intent_vi": "Câu hỏi về việc bệnh lao cần được quản lý bởi y tá chuyên trách tại nhà sau khi xuất viện là cách quản lý nhiễm trùng đúng",
+    "choice_explanations": {
+      "ko": {
+        "1": "옴은 접촉 전파 감염병으로, 감염 대상자의 수건·체온계·혈압계를 절대 함께 사용하면 안 됩니다.",
+        "2": "독감 회복 중 발열과 누런 가래는 세균 이차감염의 징후일 수 있어 정상이 아니며 의료진에게 알려야 합니다.",
+        "3": "★ 결핵은 완치 판정이 될 때까지 규칙적으로 항결핵제를 복용해야 합니다. 퇴원 후 자택에서 결핵 관리 전담 간호사의 관리하에 투약 지속 여부를 모니터링하는 것이 올바른 감염 관리입니다.",
+        "4": "사면발이는 사타구니 주변에 기생하며 머릿니와 달리 두피에 서식하지 않습니다.",
+        "5": "노로바이러스 장염에 걸린 요양보호사는 경미한 증상이라도 마스크 착용만으로는 부족하며, 근무를 중단하고 격리해야 합니다."
+      },
+      "vi": {
+        "1": "Ghẻ (옴) lây qua tiếp xúc — tuyệt đối không dùng chung khăn, nhiệt kế, máy đo huyết áp với người bệnh.",
+        "2": "Sốt và đờm vàng khi hồi phục cúm có thể là dấu hiệu bội nhiễm vi khuẩn — không phải bình thường, cần thông báo y tế.",
+        "3": "★ Bệnh lao cần uống thuốc kháng lao đều đặn cho đến khi khỏi hoàn toàn. Sau xuất viện, theo dõi tại nhà dưới sự quản lý của y tá chuyên trách bệnh lao để đảm bảo tuân thủ điều trị là cách quản lý đúng.",
+        "4": "Chấy mu (사면발이) ký sinh ở vùng bẹn, khác với chấy đầu (머릿니) — không sống trên da đầu.",
+        "5": "Nhân viên chăm sóc mắc viêm ruột do Norovirus dù triệu chứng nhẹ cũng không đủ khi chỉ đeo khẩu trang — cần nghỉ làm và cách ly."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "결핵", "def_vi": "Bệnh lao — bệnh nhiễm khuẩn do Mycobacterium tuberculosis gây ra, chủ yếu ảnh hưởng đến phổi" },
+      { "term_ko": "전담간호사", "def_vi": "Y tá chuyên trách — y tá được phân công chuyên quản lý một nhóm bệnh nhân hoặc loại bệnh cụ thể" },
+      { "term_ko": "옴", "def_vi": "Ghẻ — bệnh da do ký sinh trùng Sarcoptes scabiei gây ra, lây qua tiếp xúc trực tiếp" },
+      { "term_ko": "노로바이러스", "def_vi": "Norovirus — virus gây viêm dạ dày ruột cấp tính, lây rất nhanh qua tiếp xúc và thức ăn" }
+    ]
+  },
+  {
+    "id": 1686,
+    "intent_ko": "결핵 대상자의 가래가 묻은 휴지를 반드시 따로 처리해야 함을 묻는 문제",
+    "intent_vi": "Câu hỏi về việc giấy dính đờm của bệnh nhân lao bắt buộc phải xử lý riêng để phòng lây nhiễm",
+    "choice_explanations": {
+      "ko": {
+        "1": "천식은 알레르기성·비감염성 호흡기 질환으로 식기를 통한 감염 위험이 없습니다.",
+        "2": "대상포진은 접촉 전파가 가능하지만, 세면도구를 통한 전파 위험은 상대적으로 낮습니다.",
+        "3": "요실금으로 인한 얼룩진 침구는 위생 처리가 필요하나, 결핵에 비해 감염 위험이 낮습니다.",
+        "4": "★ 결핵균(Mycobacterium tuberculosis)은 기침·가래를 통해 공기 중으로 전파됩니다. 가래가 묻은 휴지는 결핵균을 포함할 수 있어 반드시 의료 폐기물로 분리하여 처리해야 합니다.",
+        "5": "접촉성 피부염은 사람 간 전파가 없으며, 오염 의복은 일반 세탁으로 처리 가능합니다."
+      },
+      "vi": {
+        "1": "Hen suyễn là bệnh hô hấp dị ứng, không lây qua dụng cụ ăn uống.",
+        "2": "Zona (대상포진) có thể lây qua tiếp xúc nhưng nguy cơ lây qua dụng cụ vệ sinh tương đối thấp.",
+        "3": "Chăn gối bẩn do tiểu không tự chủ cần xử lý vệ sinh nhưng nguy cơ lây nhiễm thấp hơn so với lao.",
+        "4": "★ Vi khuẩn lao (Mycobacterium tuberculosis) lây qua không khí qua ho và đờm. Giấy có dính đờm của người lao có thể chứa vi khuẩn — bắt buộc phải xử lý riêng như chất thải y tế.",
+        "5": "Viêm da tiếp xúc không lây từ người sang người; quần áo ô nhiễm có thể giặt thông thường."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "결핵균", "def_vi": "Vi khuẩn lao (Mycobacterium tuberculosis) — vi khuẩn gây bệnh lao, lây qua không khí" },
+      { "term_ko": "의료 폐기물", "def_vi": "Chất thải y tế — rác thải có nguy cơ lây nhiễm từ môi trường y tế, phải xử lý riêng biệt" },
+      { "term_ko": "대상포진", "def_vi": "Zona — bệnh do virus varicella-zoster tái hoạt, gây phát ban đau theo dây thần kinh" }
+    ]
+  },
+  {
+    "id": 1685,
+    "intent_ko": "바닥에 쏟아진 혈액은 표백제와 물을 1:9 비율로 혼합하여 처리하는 것이 올바름을 묻는 문제",
+    "intent_vi": "Câu hỏi về việc pha thuốc tẩy và nước tỉ lệ 1:9 để lau máu đổ trên sàn là phương pháp xử lý đúng",
+    "choice_explanations": {
+      "ko": {
+        "1": "심각하게 오염된 침구류는 분리 세탁 또는 폐기해야 하지만, 단순 폐기 방법으로는 불충분할 수 있습니다.",
+        "2": "체액이 묻은 유리 조각은 날카로운 위험 의료 폐기물로, 일반 쓰레기가 아닌 전용 용기(날카로운 폐기물 용기)에 처리해야 합니다.",
+        "3": "침구 체액은 표백제 처리 전에 흡수제로 먼저 제거 후 소독해야 하며, 방법 순서가 잘못되었습니다.",
+        "4": "오염된 일회용 장갑은 세척 후 재사용이 불가능하며 즉시 폐기해야 합니다.",
+        "5": "★ 혈액 등 체액이 바닥에 쏟아진 경우 표백제(차아염소산나트륨)와 물을 1:9 비율로 혼합한 소독액으로 닦아야 합니다. 이 농도는 혈액 매개 병원체를 효과적으로 사멸하는 표준 처리 방법입니다."
+      },
+      "vi": {
+        "1": "Ga trải giường ô nhiễm nặng cần giặt riêng hoặc tiêu hủy, nhưng chỉ tiêu hủy đơn giản có thể chưa đủ.",
+        "2": "Mảnh thủy tinh dính dịch cơ thể là chất thải y tế sắc nhọn — phải bỏ vào hộp đựng vật sắc nhọn chuyên dụng, không phải rác thông thường.",
+        "3": "Dịch cơ thể trên chăn gối cần được thấm hút trước bằng chất hấp thụ rồi mới khử trùng — thứ tự các bước bị sai.",
+        "4": "Găng tay dùng một lần đã bị nhiễm bẩn không thể tái sử dụng sau khi rửa — phải bỏ đi ngay.",
+        "5": "★ Khi máu hoặc dịch cơ thể đổ trên sàn, cần lau bằng dung dịch khử trùng pha thuốc tẩy (natri hypoclorit) và nước tỉ lệ 1:9. Nồng độ này đủ để tiêu diệt hiệu quả các mầm bệnh lây qua đường máu."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "표백제", "def_vi": "Thuốc tẩy (natri hypoclorit) — chất khử trùng mạnh dùng để tiêu diệt vi khuẩn và virus" },
+      { "term_ko": "체액", "def_vi": "Dịch cơ thể — các chất lỏng từ cơ thể như máu, mủ, nước bọt có thể mang mầm bệnh" },
+      { "term_ko": "혈액 매개 병원체", "def_vi": "Mầm bệnh lây qua đường máu — vi sinh vật lây truyền qua tiếp xúc với máu hoặc dịch cơ thể bị nhiễm" }
+    ]
+  },
+  {
+    "id": 1684,
+    "intent_ko": "호흡기 감염병 예방에 가장 경제적이며 효과적인 방법이 6단계 손 씻기임을 묻는 문제",
+    "intent_vi": "Câu hỏi về việc rửa tay 6 bước là biện pháp phòng bệnh hô hấp truyền nhiễm hiệu quả nhất và kinh tế nhất",
+    "choice_explanations": {
+      "ko": {
+        "1": "보습제는 손 피부 보호에 도움이 되지만 호흡기 감염 예방과 직접적 관련이 없습니다.",
+        "2": "예방접종은 특정 감염병에 매우 효과적이지만 비용이 들고 모든 호흡기 감염병에 적용 가능하지 않습니다.",
+        "3": "★ 올바른 6단계 손 씻기는 손에 있는 대부분의 병원체를 제거할 수 있는 가장 경제적이고 효과적인 감염 예방법입니다. 비용이 거의 들지 않으며 언제 어디서나 실천 가능합니다.",
+        "4": "채소를 익혀 먹는 것은 식중독 예방에 효과적이나, 호흡기 감염병 예방과는 무관합니다.",
+        "5": "고용량 비타민제는 면역 보조에 도움이 될 수 있으나 비용이 높고 효과가 과학적으로 충분히 입증되지 않았습니다."
+      },
+      "vi": {
+        "1": "Kem dưỡng ẩm giúp bảo vệ da tay nhưng không liên quan trực tiếp đến phòng bệnh hô hấp.",
+        "2": "Tiêm vaccine rất hiệu quả cho một số bệnh cụ thể nhưng có chi phí và không áp dụng được cho mọi bệnh hô hấp.",
+        "3": "★ Rửa tay đúng 6 bước loại bỏ hầu hết mầm bệnh trên tay — đây là biện pháp phòng nhiễm trùng kinh tế và hiệu quả nhất. Gần như không tốn chi phí và có thể thực hiện ở bất kỳ đâu, bất kỳ lúc nào.",
+        "4": "Nấu chín rau củ hiệu quả để phòng ngộ độc thực phẩm nhưng không liên quan đến bệnh hô hấp.",
+        "5": "Uống vitamin liều cao có thể hỗ trợ miễn dịch nhưng chi phí cao và hiệu quả chưa được khoa học chứng minh đầy đủ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "6단계 손 씻기", "def_vi": "Rửa tay 6 bước — quy trình rửa tay chuẩn của WHO gồm 6 động tác để làm sạch toàn bộ bề mặt tay" },
+      { "term_ko": "호흡기 감염병", "def_vi": "Bệnh hô hấp truyền nhiễm — bệnh lây qua đường hô hấp như cúm, COVID-19, lao" },
+      { "term_ko": "예방접종", "def_vi": "Tiêm phòng (vaccine) — biện pháp tạo miễn dịch chủ động chống lại bệnh truyền nhiễm cụ thể" }
+    ]
+  },
+  {
+    "id": 1683,
+    "intent_ko": "손 위생에서 손가락 끝을 반대편 손바닥에 문질러 손톱 밑까지 씻는 것이 올바른 방법임을 묻는 문제",
+    "intent_vi": "Câu hỏi về việc chà đầu ngón tay vào lòng bàn tay đối diện để làm sạch cả dưới móng tay là kỹ thuật rửa tay đúng",
+    "choice_explanations": {
+      "ko": {
+        "1": "흐르는 물이 아닌 받아놓은 물에서 씻으면 씻어낸 세균이 다시 손에 묻을 수 있어 적절하지 않습니다.",
+        "2": "반지나 팔찌는 손 씻기 전에 제거해야 합니다. 착용 후 씻으면 장신구 아래에 세균이 남습니다.",
+        "3": "엄지손가락은 반대편 손으로 감싸 회전하며 문질러야 하며, 엄지끼리 문지르는 것은 올바른 방법이 아닙니다.",
+        "4": "★ 손가락 끝(손톱 부분)을 반대편 손바닥에 모아 문질러 씻는 것은 손톱 밑의 세균을 제거하는 6단계 손 씻기의 핵심 단계입니다. 손톱 밑은 세균이 가장 많이 집중되는 부위입니다.",
+        "5": "젖은 수건을 말려서 재사용하면 수분이 남아 세균이 번식하기 좋은 환경이 됩니다. 일회용 수건이나 완전히 건조된 수건을 사용해야 합니다."
+      },
+      "vi": {
+        "1": "Rửa trong nước đọng (không chảy) khiến vi khuẩn vừa rửa ra lại bám lại tay — không phù hợp.",
+        "2": "Nhẫn và vòng tay phải được tháo ra TRƯỚC khi rửa tay. Rửa tay khi đang đeo thì vi khuẩn vẫn còn dưới trang sức.",
+        "3": "Ngón cái phải được chà bằng cách dùng tay đối diện nắm xoay quanh — không phải chà hai ngón cái vào nhau.",
+        "4": "★ Chà đầu ngón tay (phần móng tay) vào lòng bàn tay đối diện là bước then chốt trong rửa tay 6 bước để làm sạch vi khuẩn dưới móng tay — vùng tập trung vi khuẩn nhiều nhất.",
+        "5": "Khăn ẩm phơi lại để tái sử dụng tạo môi trường thuận lợi cho vi khuẩn sinh sôi. Cần dùng khăn dùng một lần hoặc khăn đã khô hoàn toàn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "손톱 밑", "def_vi": "Dưới móng tay — vùng tích tụ vi khuẩn nhiều nhất trên tay, cần chà kỹ khi rửa tay" },
+      { "term_ko": "손 위생", "def_vi": "Vệ sinh tay — tổng hợp các biện pháp làm sạch tay để ngăn lây truyền mầm bệnh" }
+    ]
+  },
+  {
+    "id": 1682,
+    "intent_ko": "멸균제품 개봉 전 반드시 손을 씻어야 하는 것이 올바른 손 씻기 방법임을 묻는 문제",
+    "intent_vi": "Câu hỏi về việc rửa tay bắt buộc trước khi mở sản phẩm vô trùng là cách rửa tay đúng để phòng nhiễm trùng",
+    "choice_explanations": {
+      "ko": {
+        "1": "손을 씻은 후 물기를 털어서 말리면 물방울이 주변으로 튀어 오히려 오염될 수 있습니다. 깨끗한 종이 수건이나 건조기를 사용해야 합니다.",
+        "2": "손이 건조해도 손 씻기 횟수를 줄여서는 안 됩니다. 건조함은 보습제로 관리하고 손 씻기는 유지해야 합니다.",
+        "3": "배설물을 처리한 손은 반드시 비누와 흐르는 물로 30초 이상 씻어야 합니다. 마른 휴지는 세균을 제거하지 못합니다.",
+        "4": "★ 멸균제품을 개봉하기 전에 손을 씻는 것은 멸균 상태를 유지하고 제품 오염을 방지하기 위한 필수 절차입니다. 멸균 물품은 한 번이라도 오염되면 의료 목적으로 사용할 수 없게 됩니다.",
+        "5": "기침 후에는 비누와 흐르는 물로 최소 20~30초 이상 씻어야 합니다. 10초는 충분하지 않습니다."
+      },
+      "vi": {
+        "1": "Vẩy tay để khô sau khi rửa làm bắn giọt nước ra môi trường, có thể tái ô nhiễm. Cần dùng khăn giấy sạch hoặc máy sấy tay.",
+        "2": "Da tay khô không phải lý do để giảm tần suất rửa tay — cần dưỡng ẩm và duy trì rửa tay đúng lịch.",
+        "3": "Tay sau khi xử lý bài tiết phải rửa bằng xà phòng và nước chảy ít nhất 30 giây. Khăn giấy khô không loại bỏ được vi khuẩn.",
+        "4": "★ Rửa tay trước khi mở sản phẩm vô trùng là thủ tục bắt buộc để duy trì tình trạng vô trùng và ngăn ô nhiễm sản phẩm. Đồ vô trùng một khi bị ô nhiễm sẽ không thể dùng cho mục đích y tế.",
+        "5": "Sau khi ho cần rửa tay bằng xà phòng và nước chảy ít nhất 20–30 giây. 10 giây là không đủ."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "멸균제품", "def_vi": "Sản phẩm vô trùng — vật tư y tế đã được khử hoàn toàn mọi vi sinh vật, phải giữ nguyên điều kiện vô trùng" },
+      { "term_ko": "배설물", "def_vi": "Chất bài tiết — phân, nước tiểu và các chất thải cơ thể khác có thể chứa mầm bệnh" }
+    ]
+  },
+  {
+    "id": 1681,
+    "intent_ko": "결핵 대상자를 돌볼 때 일회용 마스크와 장갑 착용이 올바른 개인 보호구 사용임을 묻는 문제",
+    "intent_vi": "Câu hỏi về việc đeo khẩu trang và găng tay dùng một lần khi chăm sóc bệnh nhân lao là cách sử dụng thiết bị bảo vệ cá nhân đúng",
+    "choice_explanations": {
+      "ko": {
+        "1": "옷을 갈아입히는 행위는 체액 노출 위험이 낮아 일반적으로 일회용 장갑이 필수는 아닙니다.",
+        "2": "산책 시에는 감염 전파 위험이 낮아 안면보호구 착용이 필수적이지 않습니다.",
+        "3": "목욕 보조 시 보안경이 권장될 수 있으나(체액 비말 차단), 일반적 상황에서 의무 착용은 아닙니다.",
+        "4": "기저귀 교체 시 일회용 장갑 착용이 필요하며, 방수성 가운은 대변·소변 오염이 심한 경우에 추가적으로 착용합니다. 기저귀 교체만을 위한 방수 가운은 과잉 조치일 수 있습니다.",
+        "5": "★ 결핵은 비말·공기 전파 감염병으로, 결핵 대상자를 돌볼 때는 N95 마스크(또는 일회용 마스크)와 장갑을 반드시 착용하여 결핵균 흡입과 접촉 감염을 차단해야 합니다."
+      },
+      "vi": {
+        "1": "Thay quần áo có nguy cơ tiếp xúc dịch cơ thể thấp — thường không bắt buộc phải đeo găng tay dùng một lần.",
+        "2": "Khi đi dạo, nguy cơ lây truyền thấp — không bắt buộc phải đeo thiết bị bảo vệ mặt.",
+        "3": "Kính bảo vệ mắt có thể được khuyến nghị khi tắm cho người bệnh (để chắn giọt bắn), nhưng không bắt buộc trong tình huống thông thường.",
+        "4": "Khi thay tã cần đeo găng tay; áo choàng chống thấm mặc thêm khi chất bài tiết nhiều. Áo choàng chỉ cho thay tã đơn giản có thể là quá mức cần thiết.",
+        "5": "★ Bệnh lao lây qua giọt bắn và không khí. Khi chăm sóc bệnh nhân lao bắt buộc đeo khẩu trang N95 (hoặc khẩu trang dùng một lần) và găng tay để ngăn hít vi khuẩn lao và lây qua tiếp xúc."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "개인 보호구", "def_vi": "Thiết bị bảo vệ cá nhân (PPE) — trang bị bảo vệ cơ thể khỏi tiếp xúc với mầm bệnh gồm khẩu trang, găng tay, kính, áo choàng" },
+      { "term_ko": "비말 전파", "def_vi": "Lây qua giọt bắn — lây truyền mầm bệnh qua các giọt nhỏ phát tán khi ho, hắt hơi hoặc nói chuyện" },
+      { "term_ko": "N95 마스크", "def_vi": "Khẩu trang N95 — khẩu trang lọc không khí tiêu chuẩn, lọc được ít nhất 95% hạt nhỏ trong không khí" }
+    ]
+  }
+]

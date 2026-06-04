@@ -1,0 +1,757 @@
+[
+  {
+    "id": 1131,
+    "intent_ko": "노인 여가활동 유형 중 사교오락 활동에 해당하는 것을 고르는 문제",
+    "intent_vi": "Nhận biết hoạt động giải trí xã hội trong số các hoạt động giải trí của người cao tuổi",
+    "choice_explanations": {
+      "ko": {
+        "1": "TV 보기는 혼자서 즐기는 개인 활동으로, 타인과의 교류가 없어 사교오락에 해당하지 않습니다.",
+        "2": "책 읽기는 개인적인 취미 활동으로 사교오락이 아닙니다.",
+        "3": "★ 음악회는 공연장에서 타인과 함께 즐기는 활동으로, 사회적 교류가 이루어지는 대표적인 사교오락 활동입니다.",
+        "4": "텃밭 가꾸기는 개인적인 취미 활동으로 사교오락에 해당하지 않습니다.",
+        "5": "악기연주는 혼자 할 경우 개인 활동이며, 사교오락으로 보기 어렵습니다."
+      },
+      "vi": {
+        "1": "Xem TV là hoạt động cá nhân, không có sự giao lưu với người khác, không thuộc giải trí xã hội.",
+        "2": "Đọc sách là sở thích cá nhân, không phải giải trí xã hội.",
+        "3": "★ Buổi hòa nhạc là hoạt động thưởng thức cùng người khác tại nơi công cộng, có sự giao lưu xã hội — đây là ví dụ điển hình của giải trí xã hội.",
+        "4": "Làm vườn là sở thích cá nhân, không phải giải trí xã hội.",
+        "5": "Chơi nhạc cụ thường là hoạt động cá nhân, khó xếp vào giải trí xã hội."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "사교오락 활동", "def_vi": "Hoạt động giải trí có tính giao lưu xã hội với người khác (ví dụ: hòa nhạc, tiệc, câu lạc bộ)" },
+      { "term_ko": "여가활동", "def_vi": "Các hoạt động sử dụng thời gian rảnh ngoài giờ làm việc hoặc chăm sóc bản thân" }
+    ]
+  },
+  {
+    "id": 1130,
+    "intent_ko": "치매 대상자의 수집증 상황에서 적용해야 할 의사소통 방법을 파악하는 문제",
+    "intent_vi": "Nhận biết tình huống hội chứng tích lũy ở người bệnh sa sút trí tuệ qua phương pháp giao tiếp phù hợp",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 수집증은 물건을 모으는 행동을 특징으로 하는 증상입니다. 제시된 지침(본인이 하고 싶은 대로 두기, 다시 이야기하지 않기, 주의 전환하기)은 수집증 대상자에게 적합한 의사소통 방법입니다.",
+        "2": "무감동은 감정 표현이 결여된 상태이며, 물건을 모으는 행동과 관련이 없습니다.",
+        "3": "불안은 불안감을 느끼는 상태로, 제시된 지침과 연관성이 낮습니다.",
+        "4": "섭식장애는 식습관 문제이므로 물건 수집 상황과 맞지 않습니다.",
+        "5": "초조행동은 안절부절못하는 행동으로, 물건 수집 행동과 직접적인 관련이 없습니다."
+      },
+      "vi": {
+        "1": "★ Hội chứng tích lũy là triệu chứng đặc trưng bởi hành vi thu thập, cất giữ đồ vật. Các hướng dẫn được đưa ra (để mặc họ làm theo ý muốn, không nhắc lại về đồ vật, chuyển hướng chú ý) chính xác là phương pháp giao tiếp phù hợp với người bị hội chứng này.",
+        "2": "Vô cảm (mất biểu hiện cảm xúc) không liên quan đến hành vi thu thập đồ vật.",
+        "3": "Lo âu là tình trạng bất an, không khớp với các hướng dẫn giao tiếp được mô tả.",
+        "4": "Rối loạn ăn uống tập trung vào vấn đề thực phẩm, không liên quan đến việc thu thập đồ vật.",
+        "5": "Hành vi kích động là hành vi bồn chồn, không liên quan trực tiếp đến hành vi thu thập."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "수집증", "def_vi": "Hội chứng tích lũy — rối loạn tâm thần đặc trưng bởi hành vi thu thập và cất giữ đồ vật một cách không kiểm soát" },
+      { "term_ko": "무감동", "def_vi": "Vô cảm — trạng thái thiếu biểu hiện cảm xúc, thờ ơ với mọi thứ xung quanh" },
+      { "term_ko": "초조행동", "def_vi": "Hành vi kích động — hành động thể hiện sự bồn chồn, không yên, thường gặp ở người sa sút trí tuệ" },
+      { "term_ko": "섭식장애", "def_vi": "Rối loạn ăn uống — vấn đề bất thường về thói quen hoặc hành vi ăn uống" }
+    ]
+  },
+  {
+    "id": 1129,
+    "intent_ko": "치매 대상자가 우울할 때 적절한 의사소통 방법을 선택하는 문제",
+    "intent_vi": "Chọn phương pháp giao tiếp phù hợp khi người bệnh sa sút trí tuệ đang trầm cảm",
+    "choice_explanations": {
+      "ko": {
+        "1": "활동에 참여하도록 강요하면 대상자의 우울감이 더 심해질 수 있습니다.",
+        "2": "잘못을 직접 지적하면 부정적 피드백이 되어 우울감을 증가시킵니다.",
+        "3": "우울한 생각을 외면하는 것은 대상자의 감정을 무시하는 행동입니다.",
+        "4": "★ 대상자가 좋아하고 즐거워하는 활동을 유도하면 자연스럽게 긍정적 감정을 이끌어 낼 수 있어 우울 상황에서 가장 적절한 접근입니다.",
+        "5": "지나치게 어려운 일은 오히려 실패감과 부담을 주어 우울을 악화시킬 수 있습니다."
+      },
+      "vi": {
+        "1": "Ép buộc tham gia hoạt động có thể khiến người bệnh càng thêm trầm cảm.",
+        "2": "Chỉ thẳng lỗi lầm là phản hồi tiêu cực, làm tăng cảm giác trầm cảm.",
+        "3": "Phớt lờ suy nghĩ buồn là hành động bỏ qua cảm xúc của người bệnh.",
+        "4": "★ Khuyến khích người bệnh làm những hoạt động họ yêu thích sẽ tự nhiên khơi dậy cảm xúc tích cực — đây là cách tiếp cận phù hợp nhất trong tình huống trầm cảm.",
+        "5": "Giao việc quá khó có thể gây cảm giác thất bại và áp lực, làm trầm cảm nặng hơn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "우울증", "def_vi": "Trầm cảm — trạng thái tâm lý suy giảm mạnh, cảm giác buồn bã kéo dài và mất hứng thú" },
+      { "term_ko": "성취감", "def_vi": "Cảm giác thành tựu — niềm vui, sự thỏa mãn khi hoàn thành được một việc gì đó" }
+    ]
+  },
+  {
+    "id": 1128,
+    "intent_ko": "인지능력 저하·우울증·무관심이 원인인 치매 증상이 무감동임을 파악하고, 해당 의사소통 방법을 연결하는 문제",
+    "intent_vi": "Nhận biết triệu chứng vô cảm ở người sa sút trí tuệ (do suy giảm nhận thức, trầm cảm, thờ ơ) và phương pháp giao tiếp tương ứng",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 무감동은 인지능력 저하·우울증·무관심 등이 원인이 되어 나타나는 증상으로, 감정 표현이 결여된 상태입니다. 제시된 방법(이름을 불러도 화내지 않기, 좋아하는 활동 확인하기, 사소한 말과 행동에 관심 기울이기)은 무감동 대상자에게 적합한 의사소통 방법입니다.",
+        "2": "불안은 다른 원인과 다른 증상이므로 제시된 의사소통 방법과 맞지 않습니다.",
+        "3": "배회는 장소를 목적 없이 돌아다니는 행동으로 이 상황과 관련이 없습니다.",
+        "4": "공격성은 행동적 문제로, 제시된 조용한 접근 방법과 어울리지 않습니다.",
+        "5": "초조행동은 안절부절못하는 행동이며 무감동과는 다른 증상입니다."
+      },
+      "vi": {
+        "1": "★ Vô cảm là triệu chứng do suy giảm nhận thức, trầm cảm và thờ ơ gây ra, đặc trưng bởi sự thiếu biểu hiện cảm xúc. Các phương pháp được mô tả (không tức giận dù không được trả lời, tìm hiểu hoạt động yêu thích, chú ý đến từng lời nói và hành động nhỏ) phù hợp chính xác với giao tiếp cho người bị vô cảm.",
+        "2": "Lo âu có nguyên nhân và biểu hiện khác, không phù hợp với phương pháp giao tiếp được mô tả.",
+        "3": "Đi lang thang (배회) là hành vi di chuyển vô mục đích, không liên quan đến tình huống này.",
+        "4": "Hung hăng là vấn đề hành vi, không phù hợp với cách tiếp cận nhẹ nhàng được mô tả.",
+        "5": "Hành vi kích động là triệu chứng khác với vô cảm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "무감동", "def_vi": "Vô cảm (apathy) — trạng thái thiếu động lực, thiếu biểu hiện cảm xúc và phản ứng, thường do suy giảm nhận thức hoặc trầm cảm" },
+      { "term_ko": "인지능력", "def_vi": "Năng lực nhận thức — khả năng hiểu, phán đoán và xử lý thông tin của não bộ" },
+      { "term_ko": "배회", "def_vi": "Đi lang thang — hành vi di chuyển vô mục đích, thường gặp ở người sa sút trí tuệ" }
+    ]
+  },
+  {
+    "id": 1127,
+    "intent_ko": "치매 대상자의 지남력을 증진시키기 위해 계절·시간 정보를 제공하는 적절한 반응을 고르는 문제",
+    "intent_vi": "Chọn phản ứng phù hợp của nhân viên chăm sóc nhằm tăng cường định hướng thực tế cho người bệnh sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "대상자의 외출 욕구를 반영할 뿐, 지남력 증진에는 도움이 되지 않습니다.",
+        "2": "위험을 경고하는 부정적 반응으로 지남력 증진과 거리가 있습니다.",
+        "3": "배고픔으로 해석하는 것은 대상자의 표현과 무관하여 지남력 증진에 기여하지 않습니다.",
+        "4": "안심시키는 말이지만 현재 계절·시간 정보를 제공하지 않아 지남력 증진에 도움이 되지 않습니다.",
+        "5": "★ '지금은 한겨울이에요. 도토리는 가을에 줍잖아요.'처럼 현재 계절을 명확히 알려주는 것은 대상자가 시간·계절을 인식하게 도와 지남력 증진에 직접적으로 기여합니다."
+      },
+      "vi": {
+        "1": "Chỉ phản chiếu mong muốn ra ngoài của người bệnh, không giúp tăng cường định hướng thực tế.",
+        "2": "Cảnh báo nguy hiểm là phản ứng tiêu cực, không liên quan đến tăng cường định hướng.",
+        "3": "Hiểu nhầm là đói bụng không liên quan đến lời nói của người bệnh, không giúp định hướng.",
+        "4": "Trấn an người bệnh nhưng không cung cấp thông tin về thời gian hay mùa hiện tại.",
+        "5": "★ Nói rõ 'Bây giờ là mùa đông rồi, quả sồi được nhặt vào mùa thu cơ' cung cấp thông tin về mùa và thời gian cụ thể, trực tiếp giúp người bệnh nhận thức được thực tại — đây là cách tăng cường định hướng hiệu quả nhất."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "지남력", "def_vi": "Định hướng thực tế — khả năng nhận biết chính xác thời gian, địa điểm và người xung quanh; thường bị suy giảm ở người sa sút trí tuệ" },
+      { "term_ko": "지남력 증진", "def_vi": "Tăng cường định hướng — can thiệp nhằm giúp người bệnh nhận thức lại thực tại (thời gian, nơi chốn, con người)" }
+    ]
+  },
+  {
+    "id": 1126,
+    "intent_ko": "치매 대상자와 효과적으로 의사소통하는 방법 중 옳은 것을 고르는 문제",
+    "intent_vi": "Chọn phương pháp giao tiếp hiệu quả với người bệnh sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "치매 사실을 비밀로 해도 대상자의 의사소통 능력에는 도움이 되지 않습니다.",
+        "2": "상식에 어긋나는 말을 지적하면 대상자의 자존감을 해칩니다.",
+        "3": "★ 시간, 장소, 사람 등을 인식시키는 것(현실 지남력 훈련)은 치매 대상자가 현재 상황을 이해하도록 돕는 효과적인 의사소통 방법입니다.",
+        "4": "한 번에 많은 내용을 말하면 치매 대상자에게 혼란을 줄 수 있습니다.",
+        "5": "요양보호사의 속도에 맞추면 대상자의 이해 능력을 고려하지 않게 됩니다."
+      },
+      "vi": {
+        "1": "Giữ bí mật về bệnh sa sút trí tuệ không giúp cải thiện khả năng giao tiếp của người bệnh.",
+        "2": "Chỉ ra những lời nói không hợp lý sẽ tổn thương lòng tự trọng của người bệnh.",
+        "3": "★ Giúp người bệnh nhận biết thời gian, địa điểm và con người (luyện tập định hướng thực tế) là phương pháp giao tiếp hiệu quả, giúp họ hiểu được tình huống hiện tại.",
+        "4": "Nói quá nhiều nội dung cùng một lúc gây nhầm lẫn cho người bệnh sa sút trí tuệ.",
+        "5": "Điều chỉnh theo tốc độ của nhân viên chăm sóc nghĩa là không quan tâm đến khả năng tiếp thu của người bệnh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "현실 지남력 훈련", "def_vi": "Luyện tập định hướng thực tế — phương pháp can thiệp giúp người sa sút trí tuệ nhận biết lại thời gian, địa điểm và danh tính" },
+      { "term_ko": "자존감", "def_vi": "Lòng tự trọng — cảm giác về giá trị và phẩm giá của bản thân" }
+    ]
+  },
+  {
+    "id": 1125,
+    "intent_ko": "치매 대상자와의 의사소통에서 심적 안정을 우선시하는 것이 올바른 방법임을 확인하는 문제",
+    "intent_vi": "Xác nhận rằng ưu tiên sự ổn định tâm lý của người bệnh sa sút trí tuệ là phương pháp giao tiếp đúng đắn",
+    "choice_explanations": {
+      "ko": {
+        "1": "환경 변화를 자주 주면 치매 대상자에게 혼란과 불안을 야기합니다.",
+        "2": "대상자의 뒤에서 다가가면 놀라게 하거나 불안감을 줄 수 있습니다.",
+        "3": "매번 새로운 정보를 제공하면 기억력이 저하된 대상자에게 혼란이 가중됩니다.",
+        "4": "★ 치매 대상자와의 의사소통에서는 언어적 표현의 정확성보다 대상자의 심적 안정을 우선시하는 것이 중요합니다. 감정을 편안하게 하는 것이 의사소통의 핵심입니다.",
+        "5": "대상자의 사소한 말과 행동을 무시하면 자존감이 상하고 소통이 단절됩니다."
+      },
+      "vi": {
+        "1": "Thay đổi môi trường thường xuyên gây nhầm lẫn và lo lắng cho người bệnh sa sút trí tuệ.",
+        "2": "Tiếp cận từ phía sau có thể khiến người bệnh giật mình hoặc bất an.",
+        "3": "Cung cấp thông tin mới liên tục làm tăng sự nhầm lẫn cho người có trí nhớ suy giảm.",
+        "4": "★ Trong giao tiếp với người sa sút trí tuệ, ưu tiên sự ổn định tâm lý quan trọng hơn độ chính xác của ngôn ngữ. Giúp người bệnh cảm thấy an tâm là cốt lõi của giao tiếp hiệu quả.",
+        "5": "Bỏ qua những lời nói và hành động nhỏ của người bệnh làm tổn thương lòng tự trọng và cắt đứt giao tiếp."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "심적 안정", "def_vi": "Ổn định tâm lý — trạng thái cảm xúc bình tĩnh, an tâm; được ưu tiên trong giao tiếp với người sa sút trí tuệ" },
+      { "term_ko": "언어적 표현", "def_vi": "Biểu đạt ngôn ngữ — sử dụng lời nói để truyền đạt ý nghĩa, phân biệt với giao tiếp phi ngôn ngữ" }
+    ]
+  },
+  {
+    "id": 1124,
+    "intent_ko": "치매 대상자와의 의사소통에서 뒤에서 천천히 다가가 말을 거는 방법이 옳은지 판단하는 문제",
+    "intent_vi": "Đánh giá xem việc tiếp cận từ phía sau và nói chuyện có phải là phương pháp giao tiếp đúng không với người sa sút trí tuệ",
+    "choice_explanations": {
+      "ko": {
+        "1": "'할 수 없는 것'을 찾아주는 것은 부정적 언어 사용으로 자존감을 떨어뜨립니다.",
+        "2": "★ 대상자의 뒤에서 천천히 다가가 조용히 말을 건네면, 갑작스러운 접촉 없이 안전하고 편안한 느낌을 주어 의사소통을 원활하게 합니다. (단, 시각장애 대상자에게는 적합하지 않으나, 치매 대상자의 경우 흥분을 줄이는 접근으로 인정됩니다.)",
+        "3": "매번 새로운 정보를 주면 혼란이 가중됩니다.",
+        "4": "심적 안정 우선은 중요한 원칙이나, 대상자의 언어적 표현도 함께 존중해야 합니다.",
+        "5": "사소한 말과 행동을 무시하면 대상자의 감정을 무시하는 것입니다."
+      },
+      "vi": {
+        "1": "Tập trung vào những việc 'không thể làm' là dùng ngôn ngữ tiêu cực, làm giảm lòng tự trọng.",
+        "2": "★ Tiếp cận từ phía sau một cách chậm rãi và nói chuyện nhẹ nhàng giúp tạo cảm giác an toàn, không gây sốc đột ngột, tạo điều kiện giao tiếp thuận lợi hơn với người sa sút trí tuệ.",
+        "3": "Cung cấp thông tin mới liên tục làm tăng sự nhầm lẫn.",
+        "4": "Ưu tiên ổn định tâm lý là quan trọng, nhưng cũng cần tôn trọng biểu đạt ngôn ngữ của người bệnh.",
+        "5": "Bỏ qua lời nói và hành động nhỏ là hành động phớt lờ cảm xúc của người bệnh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "자존감", "def_vi": "Lòng tự trọng — cảm giác về giá trị bản thân; dễ bị tổn thương khi dùng ngôn ngữ tiêu cực" },
+      { "term_ko": "의사소통 방법", "def_vi": "Phương pháp giao tiếp — các cách thức tiếp cận và trao đổi phù hợp với từng đối tượng đặc thù" }
+    ]
+  },
+  {
+    "id": 1123,
+    "intent_ko": "뇌졸중으로 말이 어눌한 대상자와 의사소통할 때 긍정적 공감 표현이 올바른 방법임을 파악하는 문제",
+    "intent_vi": "Xác định phương pháp giao tiếp phù hợp với người bị đột quỵ có khó khăn về ngôn ngữ",
+    "choice_explanations": {
+      "ko": {
+        "1": "대상자 옆에 앉아 대화하는 것은 좋은 환경 조성이나, 그 자체로 최선의 방법은 아닙니다.",
+        "2": "사람이 많은 곳에서의 대화는 집중을 방해하므로 부적절합니다.",
+        "3": "말을 짐작하여 대답하면 오해가 생기거나 대상자의 실제 의사를 무시하게 됩니다.",
+        "4": "답변이 끝나기 전에 다음 질문을 하면 대상자의 말을 경청하지 않는 것입니다.",
+        "5": "★ 말이 어눌하더라도 의사 표현을 잘 했을 때 긍정적 공감(칭찬, 격려)을 표현하면 대상자의 자존감을 높이고, 더 적극적으로 소통하려는 동기를 부여합니다."
+      },
+      "vi": {
+        "1": "Ngồi cạnh người bệnh để nói chuyện tạo môi trường tốt nhưng chưa phải cách tốt nhất.",
+        "2": "Nói chuyện ở nơi đông người làm mất tập trung, không phù hợp.",
+        "3": "Đoán và trả lời thay có thể gây hiểu lầm hoặc bỏ qua ý định thực sự của người bệnh.",
+        "4": "Đặt câu hỏi tiếp theo trước khi người bệnh trả lời xong là thái độ không lắng nghe.",
+        "5": "★ Khi người bệnh dù nói chậm nhưng cố gắng biểu đạt, việc thể hiện sự đồng cảm tích cực (khen ngợi, khích lệ) giúp nâng cao lòng tự trọng và tạo động lực giao tiếp."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "뇌졸중", "def_vi": "Đột quỵ — bệnh xảy ra khi máu không lưu thông đến não, gây tổn thương tế bào thần kinh, thường để lại di chứng ngôn ngữ và vận động" },
+      { "term_ko": "긍정적 공감", "def_vi": "Đồng cảm tích cực — phản ứng khích lệ, tán dương nỗ lực của người bệnh nhằm tăng động lực giao tiếp" }
+    ]
+  },
+  {
+    "id": 1122,
+    "intent_ko": "말로 표현이 어려운 대상자에게 그림판·문자판 등 보조 도구를 사용하는 것이 올바른 의사소통 방법임을 파악하는 문제",
+    "intent_vi": "Xác định sử dụng bảng tranh/bảng chữ là phương pháp giao tiếp phù hợp cho người khó biểu đạt bằng lời nói",
+    "choice_explanations": {
+      "ko": {
+        "1": "음악을 트는 것은 분위기 조성에 도움이 되지만 의사소통을 직접적으로 향상시키지는 않습니다.",
+        "2": "귀에 대고 말하는 것은 듣기 어려운 대상자에게 유용하지만, 말하기가 어려운 경우에는 효과적이지 않습니다.",
+        "3": "★ 그림판·문자판 등 보조 의사소통 도구(AAC)를 사용하면, 말로 표현하기 어려운 대상자가 자신의 생각과 감정을 전달하는 데 효과적입니다. 비언어적 의사소통의 핵심 방법입니다.",
+        "4": "날짜·달력·시계를 인식시키는 것은 지남력 훈련이며, 표현 의사소통과는 다릅니다.",
+        "5": "몸짓과 얼굴표정은 요양보호사가 대상자에게 전달하는 방법이지, 대상자 스스로 표현하게 하는 방법이 아닙니다."
+      },
+      "vi": {
+        "1": "Bật nhạc giúp tạo không khí nhưng không trực tiếp cải thiện khả năng biểu đạt.",
+        "2": "Nói vào tai hữu ích cho người khó nghe, không phải cho người khó nói.",
+        "3": "★ Sử dụng bảng tranh, bảng chữ (công cụ giao tiếp tăng cường và thay thế — AAC) giúp người khó biểu đạt bằng lời nói truyền đạt suy nghĩ và cảm xúc hiệu quả. Đây là phương pháp giao tiếp phi ngôn ngữ cốt lõi.",
+        "4": "Nhắc nhở về ngày tháng, lịch, đồng hồ là luyện tập định hướng, không phải hỗ trợ biểu đạt.",
+        "5": "Cử chỉ và biểu cảm là cách nhân viên truyền đạt đến người bệnh, không phải để người bệnh tự biểu đạt."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "그림판", "def_vi": "Bảng tranh — công cụ giao tiếp tăng cường có hình ảnh, giúp người khó nói biểu đạt ý muốn" },
+      { "term_ko": "문자판", "def_vi": "Bảng chữ — bảng ký tự dùng để chỉ chữ cái hoặc từ ngữ khi không thể nói được" },
+      { "term_ko": "보조 의사소통 도구", "def_vi": "Công cụ giao tiếp tăng cường và thay thế (AAC) — thiết bị hoặc phương tiện hỗ trợ giao tiếp cho người có khó khăn ngôn ngữ" }
+    ]
+  },
+  {
+    "id": 1121,
+    "intent_ko": "시각장애 대상자와 이야기할 때 형태나 사물을 만져보게 하는 것이 올바른 방법임을 파악하는 문제",
+    "intent_vi": "Xác định việc để người khiếm thị sờ/chạm vào vật thể là phương pháp giao tiếp phù hợp",
+    "choice_explanations": {
+      "ko": {
+        "1": "반걸음 떨어진 뒤에서 이야기하면 방향 파악이 어렵고 소통이 어렵습니다.",
+        "2": "★ 시각을 대신하는 촉각을 활용하여 전달하기 어려운 형태나 사물을 직접 만져보게 하는 것은 시각장애 대상자와 소통하는 가장 효과적인 방법입니다.",
+        "3": "'여기', '저기' 등의 지시대명사는 시각장애인에게 위치를 전달할 수 없어 혼동을 줍니다.",
+        "4": "몸짓과 얼굴표정은 시각장애인이 볼 수 없으므로 효과적이지 않습니다.",
+        "5": "보행 시 대상자 바로 뒤에 서는 것은 안전하지 않으며, 일반적으로 대상자 옆이나 반보 앞에서 돕습니다."
+      },
+      "vi": {
+        "1": "Đứng sau và cách nửa bước khiến người bệnh khó xác định hướng và khó giao tiếp.",
+        "2": "★ Thay cho thị giác bằng xúc giác — để người khiếm thị sờ trực tiếp vào vật thể khó diễn đạt là phương pháp giao tiếp hiệu quả nhất với người khiếm thị.",
+        "3": "Đại từ chỉ định như 'ở đây', 'chỗ kia' không truyền đạt được vị trí cho người khiếm thị, gây nhầm lẫn.",
+        "4": "Cử chỉ và biểu cảm khuôn mặt vô dụng vì người khiếm thị không nhìn thấy.",
+        "5": "Đứng ngay phía sau khi di chuyển không an toàn; thông thường nên đứng bên cạnh hoặc nửa bước trước người bệnh."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "시각장애", "def_vi": "Khiếm thị — tình trạng mất hoàn toàn hoặc giảm đáng kể khả năng nhìn" },
+      { "term_ko": "지시대명사", "def_vi": "Đại từ chỉ định — các từ như 'đây', 'kia', 'này' dùng để chỉ vị trí cụ thể, không phù hợp khi giao tiếp với người khiếm thị" },
+      { "term_ko": "촉각", "def_vi": "Xúc giác — khả năng cảm nhận qua tiếp xúc vật lý, là giác quan thay thế quan trọng cho người khiếm thị" }
+    ]
+  },
+  {
+    "id": 1120,
+    "intent_ko": "시각장애 대상자에게 사물의 위치를 시계방향으로 설명하는 것이 올바른 방법임을 파악하는 문제",
+    "intent_vi": "Xác định việc giải thích vị trí đồ vật theo chiều kim đồng hồ là phương pháp phù hợp cho người khiếm thị",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ 사물의 위치를 시계방향으로 설명하는 방법(예: '12시 방향에 컵이 있어요')은 시각장애인이 공간을 직관적으로 이해할 수 있도록 돕는 표준적인 방법입니다.",
+        "2": "요양보호사 기준으로 오른쪽·왼쪽을 말하면 대상자와 방향이 반대가 되어 혼동을 줍니다.",
+        "3": "시각장애인에게는 눈맞춤이 불가능하므로 부적절한 방법입니다.",
+        "4": "'여기', '이쪽' 등은 불명확한 지시어로 시각장애인에게 전혀 방향 정보를 주지 못합니다.",
+        "5": "말을 건네기 전에 먼저 신체 접촉을 하는 것은 대상자를 놀라게 하고 불안감을 줄 수 있습니다."
+      },
+      "vi": {
+        "1": "★ Giải thích vị trí đồ vật theo chiều kim đồng hồ (ví dụ: 'Ly nước ở hướng 12 giờ') là phương pháp chuẩn, giúp người khiếm thị hình dung không gian một cách trực quan.",
+        "2": "Nói 'bên phải/trái của tôi' sẽ ngược chiều với người bệnh, gây nhầm lẫn.",
+        "3": "Người khiếm thị không thể giao tiếp bằng mắt, nên không phù hợp.",
+        "4": "'Ở đây', 'hướng này' là những từ mơ hồ, không cung cấp thông tin hướng cho người khiếm thị.",
+        "5": "Tiếp xúc cơ thể trước khi lên tiếng có thể khiến người bệnh giật mình và lo lắng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "시계방향 설명법", "def_vi": "Phương pháp giải thích theo chiều kim đồng hồ — cách mô tả vị trí đồ vật dùng các giờ trên đồng hồ làm tham chiếu, phù hợp cho người khiếm thị" },
+      { "term_ko": "신체 접촉", "def_vi": "Tiếp xúc cơ thể — hành động chạm vào người khác; phải được thực hiện sau khi thông báo bằng lời để tránh gây sợ hãi" }
+    ]
+  },
+  {
+    "id": 1119,
+    "intent_ko": "노인성 난청 대상자와의 의사소통에서 보청기 작동 확인이 필수 조치임을 파악하는 문제",
+    "intent_vi": "Xác định việc kiểm tra nguồn điện máy trợ thính là biện pháp cần thiết khi giao tiếp với người nghe kém tuổi già",
+    "choice_explanations": {
+      "ko": {
+        "1": "신체 접촉을 하지 않는 것은 의사소통 방법과 직접적인 관련이 없습니다.",
+        "2": "조명이 어두운 곳은 입술 움직임을 읽기 어렵게 하여 부적절합니다.",
+        "3": "대상자의 등 뒤에서 말하면 소리가 잘 전달되지 않고 입모양도 볼 수 없습니다.",
+        "4": "★ 보청기가 제대로 작동하지 않으면 아무리 크게 말해도 들리지 않으므로, 대화 전 보청기의 전원 스위치가 켜져 있는지 반드시 확인해야 합니다.",
+        "5": "정보 제공 시간을 짧게 하면 대상자가 내용을 충분히 이해하지 못할 수 있습니다."
+      },
+      "vi": {
+        "1": "Không tiếp xúc cơ thể không liên quan trực tiếp đến phương pháp giao tiếp với người nghe kém.",
+        "2": "Ánh sáng tối khiến người bệnh không đọc được khẩu hình miệng, không phù hợp.",
+        "3": "Nói từ phía sau lưng khiến âm thanh không truyền tốt và người bệnh không thấy khẩu hình.",
+        "4": "★ Nếu máy trợ thính không hoạt động, dù nói to đến mấy cũng không nghe được; vì vậy trước khi nói chuyện phải kiểm tra xem công tắc nguồn máy trợ thính có bật không.",
+        "5": "Rút ngắn thời gian cung cấp thông tin khiến người bệnh không hiểu đầy đủ nội dung."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "노인성 난청", "def_vi": "Nghe kém tuổi già (presbycusis) — tình trạng suy giảm thính lực tiến triển theo tuổi tác, thường ảnh hưởng đến tần số cao" },
+      { "term_ko": "보청기", "def_vi": "Máy trợ thính — thiết bị điện tử khuếch đại âm thanh, hỗ trợ người suy giảm thính lực" }
+    ]
+  },
+  {
+    "id": 1118,
+    "intent_ko": "노인성 난청 대상자와 대화 시 이해할 때까지 반복 설명하는 것이 올바른 방법임을 파악하는 문제",
+    "intent_vi": "Xác định việc lặp lại giải thích cho đến khi người bệnh hiểu là phương pháp giao tiếp đúng với người nghe kém tuổi già",
+    "choice_explanations": {
+      "ko": {
+        "1": "굳은 표정은 비언어적 소통을 방해하며 대화 분위기를 경직시킵니다.",
+        "2": "보청기 입력과 출력 조절은 전문가가 해야 하며, 일반적인 의사소통 방법이 아닙니다.",
+        "3": "정보 제공 시간을 짧게 하면 대상자가 내용을 충분히 이해하지 못합니다.",
+        "4": "★ 노인성 난청 대상자는 한 번에 내용을 이해하기 어려우므로, 말의 의미를 이해할 때까지 차분하게 반복하여 설명하는 것이 가장 효과적인 의사소통 방법입니다.",
+        "5": "옆에서 큰 소리로 말하면 오히려 소음이 되어 불편함을 줄 수 있습니다."
+      },
+      "vi": {
+        "1": "Nét mặt cứng đờ cản trở giao tiếp phi ngôn ngữ và tạo không khí căng thẳng.",
+        "2": "Điều chỉnh máy trợ thính là việc của chuyên gia, không phải phương pháp giao tiếp thông thường.",
+        "3": "Rút ngắn thời gian thông tin khiến người bệnh không hiểu đủ nội dung.",
+        "4": "★ Người nghe kém tuổi già khó hiểu ngay từ lần đầu; vì vậy kiên nhẫn lặp lại giải thích cho đến khi người bệnh hiểu là phương pháp giao tiếp hiệu quả nhất.",
+        "5": "Nói to bên cạnh tai người bệnh có thể tạo tiếng ồn khó chịu."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "노인성 난청", "def_vi": "Nghe kém tuổi già — suy giảm thính lực do lão hóa, đặc biệt ảnh hưởng đến khả năng nghe tần số cao" },
+      { "term_ko": "보청기", "def_vi": "Máy trợ thính — thiết bị hỗ trợ nghe, cần được chuyên gia điều chỉnh" }
+    ]
+  },
+  {
+    "id": 1117,
+    "intent_ko": "노인성 난청 대상자와의 의사소통에서 얼굴표정과 몸짓(비언어적 의사소통)을 활용하는 것이 효과적임을 파악하는 문제",
+    "intent_vi": "Xác định việc sử dụng biểu cảm khuôn mặt và cử chỉ (giao tiếp phi ngôn ngữ) là hiệu quả với người nghe kém tuổi già",
+    "choice_explanations": {
+      "ko": {
+        "1": "뒤에서 크게 말하면 입모양을 볼 수 없고 불필요한 소음이 됩니다.",
+        "2": "빠른 속도로 말하면 이해하기 어려워 혼란이 생깁니다.",
+        "3": "고음으로 말하면 노인성 난청에서 손상된 고주파 청력을 더욱 자극하여 오히려 듣기 어렵게 만듭니다.",
+        "4": "★ 얼굴표정과 몸짓 같은 비언어적 의사소통을 함께 활용하면, 청각 정보가 부족한 노인성 난청 대상자도 시각 정보를 통해 의미를 파악할 수 있어 의사소통 효과가 높아집니다.",
+        "5": "입을 작게 벌리면 입술 모양을 읽기 어려워 의사소통이 더욱 힘들어집니다."
+      },
+      "vi": {
+        "1": "Nói to từ phía sau không cho người bệnh nhìn khẩu hình và tạo tiếng ồn không cần thiết.",
+        "2": "Nói nhanh gây khó hiểu và nhầm lẫn.",
+        "3": "Nói giọng cao kích thích tần số cao vốn đã bị tổn thương trong nghe kém tuổi già, khiến càng khó nghe hơn.",
+        "4": "★ Kết hợp biểu cảm khuôn mặt và cử chỉ (giao tiếp phi ngôn ngữ) giúp người nghe kém bù đắp thông tin thính giác bằng thông tin thị giác, nâng cao hiệu quả giao tiếp.",
+        "5": "Mở miệng nhỏ khiến khó đọc khẩu hình, làm giao tiếp khó khăn hơn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "비언어적 의사소통", "def_vi": "Giao tiếp phi ngôn ngữ — truyền đạt thông tin qua biểu cảm, cử chỉ, ánh mắt thay vì lời nói" },
+      { "term_ko": "노인성 난청", "def_vi": "Nghe kém tuổi già — mất thính lực tiến triển theo tuổi, đặc biệt ở tần số cao (고주파)" },
+      { "term_ko": "고주파", "def_vi": "Tần số cao — dải âm thanh có tần số lớn; người cao tuổi thường mất khả năng nghe tần số này trước tiên" }
+    ]
+  },
+  {
+    "id": 1116,
+    "intent_ko": "노인성 난청 대상자와의 의사소통에서 눈짓으로 신호를 주며 말하는 것이 효과적임을 파악하는 문제",
+    "intent_vi": "Xác định việc ra hiệu bằng mắt kết hợp với lời nói là phương pháp giao tiếp hiệu quả với người nghe kém tuổi già",
+    "choice_explanations": {
+      "ko": {
+        "1": "지나치게 큰 목소리는 오히려 불쾌감을 주고 소음이 됩니다.",
+        "2": "말을 되풀이하지 않으면 대상자가 내용을 이해하지 못할 수 있습니다.",
+        "3": "보청기 조절 방법은 전문가가 설정하는 사항이며, 일반적으로 입력과 출력 모두 적정 수준을 유지해야 합니다.",
+        "4": "말할 때 어깨를 두드려 주의를 환기하는 것은 오히려 도움이 되는 방법입니다.",
+        "5": "★ 눈짓으로 신호를 주면서 말하면 시각·청각 정보를 동시에 제공하여 노인성 난청 대상자가 내용을 더 잘 이해할 수 있습니다."
+      },
+      "vi": {
+        "1": "Nói quá to gây khó chịu và tạo tiếng ồn không cần thiết.",
+        "2": "Không lặp lại có thể khiến người bệnh không hiểu được nội dung.",
+        "3": "Cách điều chỉnh máy trợ thính do chuyên gia thiết lập; nói chung cả đầu vào lẫn đầu ra đều cần duy trì ở mức phù hợp.",
+        "4": "Vỗ vai khi bắt đầu nói để thu hút sự chú ý thực ra là biện pháp hữu ích.",
+        "5": "★ Ra hiệu bằng mắt khi nói cung cấp đồng thời thông tin thị giác và thính giác, giúp người nghe kém hiểu nội dung tốt hơn."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "노인성 난청", "def_vi": "Nghe kém tuổi già — suy giảm thính lực do lão hóa" },
+      { "term_ko": "보청기", "def_vi": "Máy trợ thính — thiết bị khuếch đại âm thanh cho người suy giảm thính lực" }
+    ]
+  },
+  {
+    "id": 1115,
+    "intent_ko": "대상자 가족과의 의사소통에서 정보를 수시로 주고받는 것이 올바른 방법임을 파악하는 문제",
+    "intent_vi": "Xác định việc thường xuyên trao đổi thông tin với gia đình người bệnh là phương pháp giao tiếp đúng đắn",
+    "choice_explanations": {
+      "ko": {
+        "1": "요양보호사의 개인적 느낌을 솔직하게 전달하는 것은 모든 상황에서 적절하지 않으며, 전문적 경계를 지켜야 합니다.",
+        "2": "대상자의 이상 상태를 가족에게 알리지 않는 것은 가족의 알 권리를 침해합니다.",
+        "3": "부정적 행동을 직설적으로 말하면 가족에게 불필요한 불안을 줄 수 있습니다.",
+        "4": "의료진으로부터 받은 정보를 가족에게 전달하지 않으면 가족이 대상자 상황을 이해하고 지원하기 어렵습니다.",
+        "5": "★ 대상자에 관한 정보를 가족과 수시로 주고받으면 가족이 상황을 정확히 파악하고, 필요한 결정과 지원을 적시에 할 수 있어 효과적인 협력 관계가 형성됩니다."
+      },
+      "vi": {
+        "1": "Truyền đạt cảm nhận cá nhân của nhân viên không phải lúc nào cũng phù hợp; cần giữ ranh giới chuyên nghiệp.",
+        "2": "Không thông báo tình trạng bất thường của người bệnh cho gia đình vi phạm quyền được biết thông tin của họ.",
+        "3": "Nói thẳng về hành vi tiêu cực có thể gây lo lắng không cần thiết cho gia đình.",
+        "4": "Không chuyển thông tin từ đội ngũ y tế đến gia đình khiến họ không hiểu được tình trạng người bệnh.",
+        "5": "★ Thường xuyên trao đổi thông tin về người bệnh với gia đình giúp họ nắm rõ tình hình, đưa ra quyết định và hỗ trợ kịp thời, tạo quan hệ hợp tác hiệu quả."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "알 권리", "def_vi": "Quyền được biết thông tin — quyền của gia đình và người bệnh được nhận thông tin liên quan đến tình trạng sức khỏe" },
+      { "term_ko": "이상 상태", "def_vi": "Tình trạng bất thường — trạng thái sức khỏe hay hành vi khác với bình thường, cần được báo cáo" }
+    ]
+  },
+  {
+    "id": 1114,
+    "intent_ko": "말벗하기 대화에서 요양보호사가 마사지를 제공하겠다고 한 행동이 '증상완화 보조'에 해당함을 파악하는 문제",
+    "intent_vi": "Xác định hành động đề nghị mát-xa để giảm đau của nhân viên chăm sóc thuộc loại 'hỗ trợ giảm triệu chứng'",
+    "choice_explanations": {
+      "ko": {
+        "1": "적극적 청취는 상대방의 말을 경청하고 반응하는 것이지만, 이 상황의 요양보호사는 마사지 제공이라는 구체적 행동으로 이어졌습니다.",
+        "2": "★ 대상자가 팔 다리가 쑤신다고 할 때 따뜻한 물로 마사지를 해주겠다고 하는 행동은, 신체적 증상을 완화하기 위한 보조 행위이므로 '증상완화 보조'에 해당합니다.",
+        "3": "요양보호사가 특별한 정보나 지식을 제공한 것이 아니므로 정보의 제공에 해당하지 않습니다.",
+        "4": "감정에 대한 언급이나 공감 표현이 없으므로 감정의 제공에 해당하지 않습니다.",
+        "5": "존중과 관심도 포함되어 있지만, 밑줄 친 핵심 행동은 마사지 제공이므로 증상완화 보조가 가장 적절합니다."
+      },
+      "vi": {
+        "1": "Lắng nghe tích cực là chú ý và phản hồi lời người bệnh, nhưng hành động trong tình huống này đã đi đến việc cung cấp mát-xa cụ thể.",
+        "2": "★ Khi người bệnh nói tay chân đau nhức, đề nghị mát-xa bằng nước ấm là hành động hỗ trợ giảm triệu chứng thể chất — thuộc loại 'hỗ trợ giảm triệu chứng'.",
+        "3": "Nhân viên không cung cấp thông tin hoặc kiến thức đặc biệt, nên không phải 'cung cấp thông tin'.",
+        "4": "Không có đề cập đến cảm xúc hay đồng cảm, nên không thuộc 'cung cấp cảm xúc'.",
+        "5": "Có yếu tố tôn trọng và quan tâm, nhưng hành động cốt lõi được gạch chân là mát-xa, nên 'hỗ trợ giảm triệu chứng' phù hợp nhất."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "증상완화 보조", "def_vi": "Hỗ trợ giảm triệu chứng — hoạt động giúp làm giảm bớt các triệu chứng thể chất hoặc tinh thần của người bệnh (ví dụ: mát-xa, chườm ấm)" },
+      { "term_ko": "말벗하기", "def_vi": "Trò chuyện đồng hành — hoạt động nói chuyện, lắng nghe để hỗ trợ tinh thần cho người cao tuổi hoặc người bệnh" }
+    ]
+  },
+  {
+    "id": 1113,
+    "intent_ko": "대화에서 요양보호사가 대상자의 이야기에 귀 기울이며 더 알고 싶어 하는 반응이 '적극적 청취'에 해당함을 파악하는 문제",
+    "intent_vi": "Xác định phản ứng của nhân viên chăm sóc muốn lắng nghe thêm câu chuyện của người bệnh thuộc loại 'lắng nghe tích cực'",
+    "choice_explanations": {
+      "ko": {
+        "1": "요양보호사가 특정 정보나 지식을 제공한 것이 아닙니다.",
+        "2": "존중과 관심도 포함되어 있지만, 핵심은 대상자의 이야기를 더 듣고자 하는 태도입니다.",
+        "3": "★ 요양보호사가 '할아버지를 한번 뵙고 싶어요. 사진을 좀 보여주세요.'라고 말한 것은 대상자의 이야기에 진심으로 귀 기울이고, 더 알고자 하는 적극적 청취의 태도입니다.",
+        "4": "신체적 증상 완화와는 관련이 없습니다.",
+        "5": "감정을 공감하는 부분도 있으나, 대화 흐름상 핵심은 대상자 이야기를 더 듣고자 하는 적극적 청취입니다."
+      },
+      "vi": {
+        "1": "Nhân viên không cung cấp thông tin hay kiến thức cụ thể.",
+        "2": "Có yếu tố tôn trọng và quan tâm, nhưng điểm cốt lõi là thái độ muốn lắng nghe thêm.",
+        "3": "★ Câu 'Tôi muốn được gặp ông một lần. Bạn cho tôi xem ảnh được không?' thể hiện sự chú tâm thực sự vào câu chuyện của người bệnh và muốn tìm hiểu thêm — đây là biểu hiện của lắng nghe tích cực.",
+        "4": "Không liên quan đến giảm triệu chứng thể chất.",
+        "5": "Có yếu tố đồng cảm cảm xúc nhưng trong mạch hội thoại, điểm cốt lõi là lắng nghe tích cực."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "적극적 청취", "def_vi": "Lắng nghe tích cực — chú tâm, quan tâm và phản hồi một cách chủ động vào lời người bệnh, thể hiện sự thực sự muốn hiểu" },
+      { "term_ko": "감정 공감", "def_vi": "Đồng cảm cảm xúc — thể hiện sự hiểu và chia sẻ cảm xúc của người bệnh" }
+    ]
+  },
+  {
+    "id": 1112,
+    "intent_ko": "대화에서 요양보호사가 대상자의 감정에 공감한 반응이 '감정 공감'에 해당함을 파악하는 문제",
+    "intent_vi": "Xác định phản ứng đồng cảm với cảm xúc của người bệnh thuộc loại 'đồng cảm cảm xúc'",
+    "choice_explanations": {
+      "ko": {
+        "1": "★ '할아버지가 자상한 분이셨네요.'는 대상자가 남편을 그리워하고 무서움을 느끼는 감정을 이해하고 공감하는 반응으로, '감정 공감'에 해당합니다.",
+        "2": "적극적 청취는 경청하며 반응하는 것으로, 이 대화에서는 감정 공감이 더 핵심입니다.",
+        "3": "필요한 정보를 제공하는 행동이 아닙니다.",
+        "4": "신체적 증상을 완화하는 행동이 아닙니다.",
+        "5": "존중과 관심도 포함되어 있으나, 이 반응의 핵심은 감정적 공감입니다."
+      },
+      "vi": {
+        "1": "★ 'Ông cụ thật là người chu đáo nhỉ' là phản ứng hiểu và đồng cảm với cảm xúc nhớ chồng và nỗi sợ của người bệnh — thuộc loại 'đồng cảm cảm xúc'.",
+        "2": "Lắng nghe tích cực là chú ý và phản hồi; trong hội thoại này, đồng cảm cảm xúc là điểm cốt lõi hơn.",
+        "3": "Không phải hành động cung cấp thông tin.",
+        "4": "Không phải hành động giảm triệu chứng thể chất.",
+        "5": "Có yếu tố tôn trọng nhưng điểm cốt lõi là đồng cảm cảm xúc."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "감정 공감", "def_vi": "Đồng cảm cảm xúc — hiểu và chia sẻ cảm xúc của người bệnh, phản hồi theo cách thể hiện sự đồng cảm" },
+      { "term_ko": "적극적 청취", "def_vi": "Lắng nghe tích cực — chủ động lắng nghe, tập trung vào lời người bệnh và phản hồi phù hợp" }
+    ]
+  },
+  {
+    "id": 1111,
+    "intent_ko": "요양보호사가 '손자가 아주 좋아하겠어요'라고 한 반응이 '감정 공감'에 해당함을 파악하는 문제",
+    "intent_vi": "Xác định phản ứng 'Cháu chắc sẽ rất vui' của nhân viên chăm sóc thuộc loại 'đồng cảm cảm xúc'",
+    "choice_explanations": {
+      "ko": {
+        "1": "적극적 청취는 대상자의 말을 경청하고 이해하는 것이지만, 이 경우는 대상자의 감정에 공감하는 것이 핵심입니다.",
+        "2": "★ '손자가 아주 좋아하겠어요.'는 대상자가 손자의 생일을 기뻐하는 감정에 함께 공감하며 반응한 것으로, '감정 공감'에 해당합니다.",
+        "3": "수용은 상대방의 생각이나 감정을 있는 그대로 받아들이는 것으로, 이 대화와는 다릅니다.",
+        "4": "결정은 특정 행동을 선택하는 것으로 이 상황과 관련이 없습니다.",
+        "5": "존중과 관심은 포함되어 있으나, 이 반응의 핵심은 감정 공감입니다."
+      },
+      "vi": {
+        "1": "Lắng nghe tích cực là chú ý và hiểu lời người bệnh, nhưng điểm cốt lõi ở đây là đồng cảm với cảm xúc.",
+        "2": "★ 'Cháu chắc sẽ rất vui' là phản ứng cùng chia sẻ niềm vui của người bệnh về sinh nhật cháu — thuộc loại 'đồng cảm cảm xúc'.",
+        "3": "Chấp nhận là tiếp nhận suy nghĩ/cảm xúc đúng như nó là, khác với tình huống này.",
+        "4": "Quyết định là chọn hành động cụ thể, không liên quan đến tình huống này.",
+        "5": "Có yếu tố tôn trọng nhưng điểm cốt lõi là đồng cảm cảm xúc."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "감정 공감", "def_vi": "Đồng cảm cảm xúc — phản hồi thể hiện sự hiểu và chia sẻ cảm xúc của người bệnh" },
+      { "term_ko": "수용", "def_vi": "Chấp nhận — tiếp nhận suy nghĩ và cảm xúc của người bệnh đúng như bản thân chúng, không phán xét" }
+    ]
+  },
+  {
+    "id": 1110,
+    "intent_ko": "열이 있는 대상자에게 존중과 관심을 표현하는 적절한 대답을 고르는 문제",
+    "intent_vi": "Chọn câu trả lời thể hiện sự tôn trọng và quan tâm với người bệnh đang bị sốt nhưng muốn ra ngoài",
+    "choice_explanations": {
+      "ko": {
+        "1": "해열제를 먼저 드세요.는 대상자의 의지를 무시하고 일방적으로 지시하는 표현입니다.",
+        "2": "열이 있으니 외출하시면 안돼요.는 대상자의 욕구를 부정하는 비판적 태도입니다.",
+        "3": "아들에게 사오라고 하는 것은 대상자의 선물을 직접 사주고 싶은 욕구를 무시합니다.",
+        "4": "선물 대신 용돈으로 주라는 것은 대상자의 선택권을 제한하는 표현입니다.",
+        "5": "★ '열이 좀 있으시네요. 제가 대신 다녀올까요?'는 대상자의 건강 상태를 인식하면서도 그 의도(손자 선물)를 존중하고, 대안을 제안하는 존중과 관심의 표현입니다."
+      },
+      "vi": {
+        "1": "Bảo uống thuốc hạ sốt trước là mệnh lệnh một chiều, không tôn trọng ý muốn của người bệnh.",
+        "2": "Nói 'không được ra ngoài vì sốt' phủ nhận nhu cầu của người bệnh, thái độ phê phán.",
+        "3": "Bảo con mua thay thể hiện sự phớt lờ mong muốn tự mình mua quà của người bệnh.",
+        "4": "Gợi ý cho tiền thay quà hạn chế quyền lựa chọn của người bệnh.",
+        "5": "★ 'Ông/bà có vẻ hơi sốt đấy. Để tôi đi thay cho được không?' — câu trả lời này nhận ra tình trạng sức khỏe nhưng vẫn tôn trọng ý định của người bệnh (mua quà cho cháu) và đề xuất giải pháp thay thế, thể hiện sự tôn trọng và quan tâm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "존중과 관심", "def_vi": "Tôn trọng và quan tâm — thể hiện sự ghi nhận giá trị, ý muốn của người bệnh trong khi vẫn chú ý đến sức khỏe của họ" },
+      { "term_ko": "해열제", "def_vi": "Thuốc hạ sốt — thuốc dùng để giảm thân nhiệt khi bị sốt" }
+    ]
+  },
+  {
+    "id": 1109,
+    "intent_ko": "대상자의 외로움과 서운함에 공감적으로 반응하는 올바른 방법을 고르는 문제",
+    "intent_vi": "Chọn phản ứng đồng cảm phù hợp khi người bệnh bày tỏ cảm giác cô đơn và buồn tủi",
+    "choice_explanations": {
+      "ko": {
+        "1": "자녀를 비난하는 표현은 가족 갈등을 유발할 수 있으며 공감적 반응이 아닙니다.",
+        "2": "나이와 서운함을 연결 짓는 것은 대상자의 감정을 경시하는 비공감적 반응입니다.",
+        "3": "갑자기 이유를 묻는 것은 대상자의 감정을 이해하지 못하는 듯한 반응입니다.",
+        "4": "★ '자녀분들이 많이 보고 싶으신가봐요.'는 대상자의 감정(그리움, 외로움)을 직접 반영하여 공감하는 반응으로, 대상자가 이해받았다는 느낌을 줍니다.",
+        "5": "다른 상황을 제시하여 대상자의 감정을 축소하는 비공감적 반응입니다."
+      },
+      "vi": {
+        "1": "Chỉ trích con cái có thể gây mâu thuẫn gia đình và không phải phản ứng đồng cảm.",
+        "2": "Kết nối tuổi tác với cảm giác buồn tủi là xem nhẹ cảm xúc của người bệnh — không đồng cảm.",
+        "3": "Đột ngột hỏi lý do thể hiện sự không hiểu cảm xúc của người bệnh.",
+        "4": "★ 'Có vẻ ông/bà nhớ các con lắm nhỉ' phản chiếu trực tiếp cảm xúc (nhớ nhung, cô đơn) của người bệnh, cho họ cảm giác được lắng nghe và thấu hiểu — đây là phản ứng đồng cảm phù hợp nhất.",
+        "5": "Đưa ra tình huống của người khác để so sánh thu nhỏ cảm xúc của người bệnh — không đồng cảm."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "공감적 반응", "def_vi": "Phản ứng đồng cảm — cách phản hồi thể hiện sự hiểu và chia sẻ cảm xúc của người bệnh, giúp họ cảm thấy được lắng nghe" },
+      { "term_ko": "서운하다", "def_vi": "Cảm giác buồn tủi, hụt hẫng — cảm xúc khi không nhận được sự quan tâm mong đợi từ người thân" }
+    ]
+  },
+  {
+    "id": 1108,
+    "intent_ko": "치매 대상자가 점을 벌레로 착각하는 상황에서 감정을 인정하고 안심시키는 반응이 올바름을 파악하는 문제",
+    "intent_vi": "Xác định phản ứng công nhận cảm xúc và trấn an người bệnh sa sút trí tuệ khi họ nhầm lẫn nốt ruồi với con côn trùng",
+    "choice_explanations": {
+      "ko": {
+        "1": "어디 벌레가 있냐고 묻는 것은 대상자의 불안감을 더욱 강화합니다.",
+        "2": "'잘 보세요, 점이잖아요!'는 대상자의 인지를 부정하는 반응으로 치매 대상자에게 적절하지 않습니다.",
+        "3": "대상자의 걱정을 무시하고 소란을 피우지 말라고 하는 것은 부적절합니다.",
+        "4": "★ '점이 벌레처럼 보여서 무서우셨군요.'는 대상자의 감정(두려움)을 인정하고 안심시키는 반응으로, 치매 대상자와의 의사소통에서 가장 적절한 방법입니다. 현실을 강요하지 않고 감정에 공감합니다.",
+        "5": "스스로 잡아보라는 것은 대상자의 혼란을 더욱 악화시킬 수 있습니다."
+      },
+      "vi": {
+        "1": "Hỏi 'Con côn trùng đâu?' làm tăng thêm lo lắng cho người bệnh.",
+        "2": "'Nhìn kỹ đi, đó là nốt ruồi!' phủ nhận nhận thức của người bệnh — không phù hợp với người sa sút trí tuệ.",
+        "3": "Phớt lờ nỗi lo của người bệnh và bảo đừng ồn ào là không phù hợp.",
+        "4": "★ 'Chắc là trông như con côn trùng nên ông/bà sợ nhỉ' — công nhận cảm xúc (nỗi sợ) của người bệnh và trấn an họ mà không bác bỏ thực tế của họ. Đây là phương pháp giao tiếp phù hợp nhất với người sa sút trí tuệ.",
+        "5": "Bảo người bệnh tự bắt sẽ làm tăng thêm sự nhầm lẫn và lo lắng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "감정 인정", "def_vi": "Công nhận cảm xúc — thừa nhận cảm xúc của người bệnh mà không phán xét, ngay cả khi nhận thức của họ không chính xác" },
+      { "term_ko": "안심", "def_vi": "Trấn an — giúp giảm bớt lo lắng, sợ hãi và tạo cảm giác an toàn cho người bệnh" },
+      { "term_ko": "착각", "def_vi": "Nhầm lẫn nhận thức — hiểu sai về thực tế do suy giảm chức năng nhận thức" }
+    ]
+  },
+  {
+    "id": 1107,
+    "intent_ko": "좋은 '말벗'이 되기 위해 대상자의 기분과 감정에 주의를 기울이는 것이 올바른 태도임을 파악하는 문제",
+    "intent_vi": "Xác định việc chú ý đến tâm trạng và cảm xúc của người bệnh là thái độ đúng đắn để trở thành 'người bạn đồng hành' tốt",
+    "choice_explanations": {
+      "ko": {
+        "1": "의존관계를 형성하면 대상자의 자립성을 해치고 전문적 경계를 넘게 됩니다.",
+        "2": "친해지더라도 반말을 쓰는 것은 예의와 존중을 잃는 것입니다.",
+        "3": "★ 대상자의 기분이나 감정에 주의를 기울이는 것은 말벗의 핵심 태도로, 대상자의 심리적 상태를 이해하고 적절히 반응할 수 있게 해줍니다.",
+        "4": "대상자의 삶을 옳고 그름으로 판단하는 것은 비윤리적이며 신뢰 관계를 해칩니다.",
+        "5": "좋고 싫은 감정을 솔직하게 표현하는 것은 전문적 경계를 침범하고 관계를 불편하게 만듭니다."
+      },
+      "vi": {
+        "1": "Hình thành quan hệ phụ thuộc làm hại sự tự lập của người bệnh và vượt qua ranh giới chuyên nghiệp.",
+        "2": "Dù thân thiết đến đâu, nói trống không là mất đi sự lễ phép và tôn trọng.",
+        "3": "★ Chú ý đến tâm trạng và cảm xúc của người bệnh là thái độ cốt lõi của người bạn đồng hành, giúp hiểu được trạng thái tâm lý và phản ứng phù hợp.",
+        "4": "Phán xét cuộc sống của người bệnh theo đúng-sai là phi đạo đức và phá vỡ mối quan hệ tin tưởng.",
+        "5": "Biểu đạt thẳng thắn cảm xúc yêu-ghét của bản thân vượt qua ranh giới chuyên nghiệp và gây khó xử."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "말벗", "def_vi": "Người bạn đồng hành trò chuyện — người chủ động lắng nghe và nói chuyện để hỗ trợ tinh thần cho người cao tuổi hoặc người bệnh" },
+      { "term_ko": "의존관계", "def_vi": "Quan hệ phụ thuộc — tình trạng một bên phụ thuộc quá mức vào bên kia; không nên hình thành giữa nhân viên chăm sóc và người bệnh" }
+    ]
+  },
+  {
+    "id": 1106,
+    "intent_ko": "효과적인 말벗하기를 위해 대상자의 심리적 상태를 충분히 이해하는 것이 중요함을 파악하는 문제",
+    "intent_vi": "Xác định việc hiểu đầy đủ trạng thái tâm lý của người bệnh là nền tảng cho trò chuyện đồng hành hiệu quả",
+    "choice_explanations": {
+      "ko": {
+        "1": "의존관계를 형성하면 대상자의 자립성을 해치고 전문적 역할을 벗어납니다.",
+        "2": "사적인 대화를 많이 하면 개인적 경계를 침범할 수 있습니다.",
+        "3": "'옳고 그름'으로 판단하는 것은 비판적 태도로 대상자와의 신뢰 관계를 해칩니다.",
+        "4": "주관적으로 판단하는 것도 대상자를 있는 그대로 받아들이지 않는 태도입니다.",
+        "5": "★ 대상자의 심리적 상태를 충분히 이해하는 것이 말벗하기의 기본입니다. 대상자의 감정과 생각을 파악해야 적절한 반응과 지원이 가능합니다."
+      },
+      "vi": {
+        "1": "Hình thành quan hệ phụ thuộc làm hại sự tự lập và vượt ranh giới chuyên nghiệp.",
+        "2": "Nói chuyện riêng tư quá nhiều có thể xâm phạm ranh giới cá nhân.",
+        "3": "Phán xét theo đúng-sai là thái độ phê phán, phá vỡ mối quan hệ tin tưởng.",
+        "4": "Đánh giá chủ quan cũng là không chấp nhận người bệnh đúng như họ là.",
+        "5": "★ Hiểu đầy đủ trạng thái tâm lý của người bệnh là nền tảng của trò chuyện đồng hành hiệu quả. Chỉ khi hiểu được cảm xúc và suy nghĩ của họ mới có thể phản ứng và hỗ trợ phù hợp."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "심리적 상태", "def_vi": "Trạng thái tâm lý — tình trạng cảm xúc và tinh thần hiện tại của người bệnh, cần được hiểu rõ trước khi giao tiếp" },
+      { "term_ko": "주관적 판단", "def_vi": "Đánh giá chủ quan — phán xét dựa trên quan điểm cá nhân thay vì quan sát khách quan" }
+    ]
+  },
+  {
+    "id": 1105,
+    "intent_ko": "의사소통에서 침묵이 요양보호사와 대상자 모두에게 생각을 정리할 시간을 준다는 긍정적 효과를 파악하는 문제",
+    "intent_vi": "Xác định tác dụng tích cực của im lặng trong giao tiếp là tạo thời gian suy nghĩ cho cả hai bên",
+    "choice_explanations": {
+      "ko": {
+        "1": "호감과 상호신뢰는 침묵이 아닌 지속적인 상호작용을 통해 형성됩니다.",
+        "2": "상대방 입장에서 이해하려는 노력은 능동적 공감 행동으로, 침묵의 효과라고 보기 어렵습니다.",
+        "3": "자신의 느낌과 생각을 효과적으로 표현하는 것은 말이 필요한 적극적 행동입니다.",
+        "4": "★ 침묵은 요양보호사와 대상자 모두에게 생각을 정리하고 다음 말을 준비할 시간을 줍니다. 이는 의사소통에서 침묵의 대표적인 긍정적 효과입니다.",
+        "5": "상대방의 표현을 있는 그대로 받아들이는 것은 수용적 경청이며, 침묵 자체의 효과가 아닙니다."
+      },
+      "vi": {
+        "1": "Thiện cảm và tin tưởng lẫn nhau được hình thành qua tương tác liên tục, không phải từ im lặng.",
+        "2": "Cố gắng hiểu từ góc độ người khác là hành động đồng cảm chủ động, khó coi là tác dụng của im lặng.",
+        "3": "Biểu đạt cảm xúc và suy nghĩ hiệu quả đòi hỏi lời nói — không phải tác dụng của im lặng.",
+        "4": "★ Im lặng cho cả nhân viên chăm sóc lẫn người bệnh thời gian để sắp xếp suy nghĩ và chuẩn bị lời tiếp theo. Đây là tác dụng tích cực điển hình của im lặng trong giao tiếp.",
+        "5": "Tiếp nhận biểu đạt của người khác đúng như nó là thuộc về lắng nghe chấp nhận, không phải tác dụng của im lặng."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "침묵", "def_vi": "Im lặng — khoảng lặng trong cuộc trò chuyện; có tác dụng tích cực là cho cả hai bên thời gian suy nghĩ và thu thập cảm xúc" },
+      { "term_ko": "수용적 경청", "def_vi": "Lắng nghe chấp nhận — tiếp nhận lời nói của người bệnh đúng như nó là, không phán xét hay sửa đổi" }
+    ]
+  },
+  {
+    "id": 1104,
+    "intent_ko": "대상자가 옷 입기를 거부할 때 나-전달법을 올바르게 사용한 표현을 고르는 문제",
+    "intent_vi": "Chọn câu sử dụng đúng phương pháp Tôi-thông điệp (I-message) khi người bệnh từ chối mặc quần áo",
+    "choice_explanations": {
+      "ko": {
+        "1": "대상자에 대한 판단을 내리는 표현으로, 나-전달법이 아닙니다.",
+        "2": "이유를 묻는 표현으로, 나-전달법이 아닙니다.",
+        "3": "★ '어르신이 옷을 갈아입지 않으려고 하니 제가 힘드네요.'는 나-전달법의 핵심 구조(상대방의 행동 + 나의 감정)를 따르며, 비난 없이 자신의 감정을 전달합니다.",
+        "4": "위협적 조건을 제시하는 표현으로, 나-전달법이 아닙니다.",
+        "5": "대상자에게 의사 표현을 요청하는 것으로, 나-전달법이 아닙니다."
+      },
+      "vi": {
+        "1": "Phán xét về người bệnh — không phải I-message.",
+        "2": "Hỏi lý do — không phải I-message.",
+        "3": "★ 'Ông/bà không chịu thay quần áo nên tôi thấy khó xử quá' — câu này theo đúng cấu trúc I-message (hành động của người kia + cảm xúc của tôi), truyền đạt cảm xúc mà không chỉ trích.",
+        "4": "Đưa ra điều kiện đe dọa — không phải I-message.",
+        "5": "Yêu cầu người bệnh nói ra ý kiến — không phải I-message."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "나-전달법", "def_vi": "Tôi-thông điệp (I-message) — phương pháp giao tiếp truyền đạt cảm xúc của bản thân theo cấu trúc: hành động của đối phương + cảm xúc của tôi, không phán xét hay buộc tội" }
+    ]
+  },
+  {
+    "id": 1103,
+    "intent_ko": "대상자가 식사를 거부할 때 나-전달법으로 걱정을 표현하는 것이 올바른 방법임을 파악하는 문제",
+    "intent_vi": "Xác định cách biểu đạt lo lắng bằng I-message khi người bệnh từ chối ăn là phương pháp đúng",
+    "choice_explanations": {
+      "ko": {
+        "1": "대상자의 감정을 직접 물어보는 것은 나-전달법이 아닙니다.",
+        "2": "★ '어르신이 식사를 안 하려고 하니 걱정이 되네요.'는 대상자의 행동(식사 거부)에 대한 나의 감정(걱정)을 전달하는 나-전달법의 전형적인 예입니다.",
+        "3": "반찬에 대한 직접적 질문으로, 나-전달법이 아닙니다.",
+        "4": "행동을 기다리라는 표현으로, 상대방을 강요하는 측면이 있습니다.",
+        "5": "조건부 경고 표현으로 나-전달법이 아닙니다."
+      },
+      "vi": {
+        "1": "Hỏi thẳng về cảm xúc không phải I-message.",
+        "2": "★ 'Ông/bà không muốn ăn thì tôi lo lắng quá' — truyền đạt hành động (từ chối ăn) và cảm xúc (lo lắng) của bản thân, là ví dụ điển hình của I-message.",
+        "3": "Hỏi thẳng về thức ăn không phải I-message.",
+        "4": "Bảo chờ đến khi đói có tính chất ép buộc.",
+        "5": "Đưa ra điều kiện cảnh báo không phải I-message."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "나-전달법", "def_vi": "I-message — phương pháp giao tiếp không phán xét, truyền đạt cảm xúc của bản thân theo cấu trúc: hành động của đối phương + cảm xúc của tôi" },
+      { "term_ko": "식사 거부", "def_vi": "Từ chối ăn — hành vi không chịu ăn uống, phổ biến ở người cao tuổi có vấn đề sức khỏe hoặc tâm lý" }
+    ]
+  },
+  {
+    "id": 1102,
+    "intent_ko": "여러 대화 중 진정한 나-전달법에 해당하는 표현을 고르는 문제",
+    "intent_vi": "Chọn câu thực sự thuộc I-message trong số các lựa chọn đối thoại về việc từ chối ăn",
+    "choice_explanations": {
+      "ko": {
+        "1": "'어르신만 손해예요.'는 대상자에게 결과를 통보하는 표현으로 나-전달법이 아닙니다.",
+        "2": "'억지로라도 드셔야죠.'는 상대방의 행동을 강요하는 표현입니다.",
+        "3": "'참으셔야겠네요.'는 상대방에게 행동을 강요하는 측면이 있습니다.",
+        "4": "'제가 더 힘들어요.'는 나의 기분을 표현하지만 상대방 행동이나 상황에 대한 연결이 없어 나-전달법의 완전한 형태가 아닙니다.",
+        "5": "★ '소고기무국 좋아하시는데 식사를 안 하시니 걱정이 돼요.'는 대상자를 배려하는 맥락(좋아하는 음식 언급)과 나의 감정(걱정)을 함께 전달하는 나-전달법의 완성형입니다."
+      },
+      "vi": {
+        "1": "'Chỉ thiệt cho ông/bà thôi' là thông báo hậu quả — không phải I-message.",
+        "2": "'Dù không muốn cũng phải ăn' là ép buộc hành động của người bệnh.",
+        "3": "'Phải nhịn thôi' có tính chất ép buộc.",
+        "4": "'Tôi càng mệt hơn' biểu đạt cảm xúc nhưng không kết nối với hành động cụ thể của người bệnh, chưa đủ dạng I-message hoàn chỉnh.",
+        "5": "★ 'Ông/bà thích canh thịt bò củ cải mà không chịu ăn, tôi lo quá' — kết hợp sự quan tâm (nhắc đến món ăn yêu thích) và cảm xúc của bản thân (lo lắng) là dạng I-message hoàn chỉnh nhất."
+      }
+    },
+    "key_terms": [
+      { "term_ko": "나-전달법", "def_vi": "I-message — phương pháp giao tiếp biểu đạt cảm xúc bản thân theo cấu trúc: bối cảnh hành vi của đối phương + cảm xúc của tôi, không buộc tội hay ép buộc" }
+    ]
+  }
+]
