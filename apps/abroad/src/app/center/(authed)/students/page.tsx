@@ -8,6 +8,10 @@ import Link from "next/link";
 
 import { verifyCenterSession } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
+import type {
+  ManagedStudentVisa,
+  ManagedStudentLocation,
+} from "@/types/study";
 
 import { StudentsFilterBar } from "./students-filter-bar";
 
@@ -60,8 +64,9 @@ export default async function StudentsListPage({
   } else if (topik) {
     query = query.eq("topik_level", topik);
   }
-  if (visa) query = query.eq("current_visa", visa);
-  if (location) query = query.eq("location", location);
+  if (visa) query = query.eq("current_visa", visa as ManagedStudentVisa);
+  if (location)
+    query = query.eq("location", location as ManagedStudentLocation);
 
   const { data: students, error } = await query;
   const hasFilter = !!(q || topik || visa || location);

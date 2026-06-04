@@ -65,7 +65,11 @@ export async function updateApplicationStatusAction(
 
   await supabase
     .from("study_applications")
-    .update(patch)
+    // TODO(phase2): study_applications 의 상태 타임스탬프 컬럼
+    //   (submitted_to_university_at / accepted_at / enrolled_at / cancelled_at)
+    //   이 database.ts 에 누락(stale 타입). 스펙 정의: docs/specs/B1_schema.sql L259-263.
+    //   types/database.ts 재생성 후 이 `as never` 캐스트 제거할 것.
+    .update(patch as never)
     .eq("id", applicationId);
 
   revalidatePath(`/center/students/${studentId}`);

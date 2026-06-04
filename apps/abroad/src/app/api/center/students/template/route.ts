@@ -31,7 +31,6 @@ export async function GET() {
   wb.keywords = "glocare student import vietnamese";
   wb.category = "Template";
   wb.description = "Mẫu nhập sinh viên hàng loạt cho trung tâm du học";
-  wb.language = "vi-VN";
 
   const ws = wb.addWorksheet("Sinh viên");
 
