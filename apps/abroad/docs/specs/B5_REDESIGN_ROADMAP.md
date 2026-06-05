@@ -37,6 +37,11 @@
   - 예: `guardian_name` → selector=`guardian_choice`, map=`{father: father_name, mother: mother_name}`.
   - ⚠ 사전조건: 기준이 될 `guardian_choice`(select, options=father/mother) 항목을 **먼저 등록**해야
     매핑 UI에 선택지가 뜸. (운영자가 어드민에서 직접 생성 — SQL 시드 X.)
+- ✅ **택1/파생 실제 작동 — 학생 상세정보 화면** (커밋 `e2042bd`): 파생 항목은 입력칸 대신
+  **읽기전용**으로, `selector`+원본에서 **계산(resolve)** 한 값 표시. 값은 저장 안 함(항상 원본 기준).
+  상태별 안내(미선택/원본빈값/매핑없음), 필수·완료 카운트도 계산값 반영.
+  - abroad `types/study.ts`에도 B5 컬럼 + signature 추가됨.
+  - ⏳ **남은 소비자**: 서류 채우기(docx/HWPX) 쪽도 같은 resolve 로직 필요 → 공용 헬퍼로 추출 권장.
 
 ## 3. 다음 할 일 (우선순위)
 1. **직접제출 서류 화면** — `study_required_submissions` CRUD + 샘플이미지 업로드(비공개 버킷).
