@@ -13,6 +13,14 @@ const koDict = {
     "lang.vi": "Tiếng Việt",
     "lang.ko": "한국어",
 
+    // 외부 어드민(유학센터) chrome
+    "center.brand": "GLOCARE 센터",
+    "center.nav.overview": "대시보드",
+    "center.nav.students": "학생",
+    "center.nav.admissions": "모집요강",
+    "center.nav.invoices": "청구서",
+    "center.logout": "로그아웃",
+
     "nav.cases": "취업 사례",
     "nav.universities": "제휴 대학",
     "nav.recruiting": "리크루팅 혜택",
@@ -96,6 +104,14 @@ type DictShape = { readonly [K in keyof typeof koDict]: string };
 const viDict: DictShape = {
     "lang.vi": "Tiếng Việt",
     "lang.ko": "한국어",
+
+    // 외부 어드민(유학센터) chrome
+    "center.brand": "GLOCARE Center",
+    "center.nav.overview": "Tổng quan",
+    "center.nav.students": "Sinh viên",
+    "center.nav.admissions": "Tuyển sinh",
+    "center.nav.invoices": "Hóa đơn",
+    "center.logout": "Đăng xuất",
 
     "nav.cases": "Câu chuyện thành công",
     "nav.universities": "Trường ĐH liên kết",
