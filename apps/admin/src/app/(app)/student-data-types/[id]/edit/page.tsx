@@ -36,6 +36,8 @@ export default async function EditDataTypePage({
     is_default_required: t.is_default_required,
     sort_order: t.sort_order,
     is_active: t.is_active,
+    scope: t.scope,
+    aliases: t.aliases ?? [],
   };
 
   return (

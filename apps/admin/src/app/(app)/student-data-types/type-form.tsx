@@ -33,6 +33,12 @@ const INPUT_TYPE_OPTIONS = [
   { value: "multi_select", label: "복수 선택 (multi_select)" },
   { value: "file", label: "파일 (file)" },
   { value: "boolean", label: "예/아니오 (boolean)" },
+  { value: "signature", label: "서명 (signature)" },
+] as const;
+
+const SCOPE_OPTIONS = [
+  { value: "document_fill", label: "서류작성 정보 (학생·센터 편집)" },
+  { value: "university_info", label: "대학/학과 정보 (글로케어 편집·공개)" },
 ] as const;
 
 export type DataTypeOption = {
@@ -55,6 +61,8 @@ export type EditableDataType = {
   is_default_required: boolean;
   sort_order: number;
   is_active: boolean;
+  scope: string;
+  aliases: string[];
 };
 
 export function DataTypeForm({ dataType }: { dataType?: EditableDataType }) {
@@ -73,6 +81,14 @@ export function DataTypeForm({ dataType }: { dataType?: EditableDataType }) {
   const [options, setOptions] = useState<DataTypeOption[]>(
     dataType?.options ?? []
   );
+  const [aliases, setAliases] = useState<string[]>(dataType?.aliases ?? []);
+  const [aliasDraft, setAliasDraft] = useState("");
+
+  function addAlias() {
+    const v = aliasDraft.trim();
+    if (v && !aliases.includes(v)) setAliases([...aliases, v]);
+    setAliasDraft("");
+  }
 
   const fieldErr = (k: string) => state?.fieldErrors?.[k];
   const showOptions = inputType === "select" || inputType === "multi_select";
@@ -146,6 +162,20 @@ export function DataTypeForm({ dataType }: { dataType?: EditableDataType }) {
               className="rounded-md border border-input bg-background px-3 py-2 text-sm"
             >
               {INPUT_TYPE_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+          </Field>
+
+          <Field label="분류 (scope)">
+            <select
+              name="scope"
+              defaultValue={dataType?.scope ?? "document_fill"}
+              className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+            >
+              {SCOPE_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value}>
                   {o.label}
                 </option>
@@ -271,6 +301,55 @@ export function DataTypeForm({ dataType }: { dataType?: EditableDataType }) {
             />
           </div>
         ) : null}
+
+        {/* 별칭 (AI 매칭용 동의어) */}
+        <div className="rounded-md border border-dashed bg-muted/30 p-4 space-y-2">
+          <div className="text-sm font-medium">
+            별칭 (AI 매칭용 동의어)
+            <span className="ml-2 text-xs font-normal text-muted-foreground">
+              서류마다 다른 이름(예: 보호자 성명 · Guardian name)으로 적혀 있어도 이 항목으로 매칭됩니다.
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <input
+              type="text"
+              value={aliasDraft}
+              onChange={(e) => setAliasDraft(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  addAlias();
+                }
+              }}
+              placeholder="동의어 입력 후 Enter 또는 [추가]"
+              className="flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm"
+            />
+            <Button type="button" variant="outline" size="sm" onClick={addAlias}>
+              <Plus className="size-4" />
+              추가
+            </Button>
+          </div>
+          {aliases.length > 0 ? (
+            <div className="flex flex-wrap gap-1.5">
+              {aliases.map((a) => (
+                <span
+                  key={a}
+                  className="inline-flex items-center gap-1 rounded-full bg-secondary px-2.5 py-1 text-xs"
+                >
+                  {a}
+                  <button
+                    type="button"
+                    onClick={() => setAliases(aliases.filter((x) => x !== a))}
+                    className="text-muted-foreground hover:text-destructive"
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+            </div>
+          ) : null}
+          <input type="hidden" name="aliases" value={JSON.stringify(aliases)} />
+        </div>
 
         <div className="flex flex-wrap items-center gap-4">
           <label className="flex items-center gap-2 text-sm">

@@ -32,7 +32,10 @@ const INPUT_TYPES = [
   "multi_select",
   "file",
   "boolean",
+  "signature",
 ] as const;
+
+const SCOPES = ["university_info", "document_fill"] as const;
 
 const optionSchema = z.object({
   value: z.string().min(1),
@@ -50,6 +53,7 @@ const schema = z.object({
   label_vi: z.string().min(1).max(200),
   category: z.enum(CATEGORIES),
   input_type: z.enum(INPUT_TYPES),
+  scope: z.enum(SCOPES),
   hint_ko: z.string().max(2000).nullable(),
   hint_vi: z.string().max(2000).nullable(),
   is_essay_basis: z.boolean(),
@@ -88,6 +92,7 @@ export async function saveDataTypeAction(
     label_vi: formData.get("label_vi"),
     category: formData.get("category"),
     input_type: formData.get("input_type"),
+    scope: formData.get("scope") || "document_fill",
     hint_ko: emptyToNull(formData.get("hint_ko")),
     hint_vi: emptyToNull(formData.get("hint_vi")),
     is_essay_basis: formData.get("is_essay_basis") === "on",
@@ -129,6 +134,20 @@ export async function saveDataTypeAction(
     }
   }
 
+  // aliases 파싱 (JSON 문자열 배열 — AI 매칭용 동의어)
+  let aliases: string[] = [];
+  const aliasesRaw = formData.get("aliases");
+  if (typeof aliasesRaw === "string" && aliasesRaw.trim() !== "") {
+    try {
+      const a = JSON.parse(aliasesRaw);
+      if (Array.isArray(a)) {
+        aliases = a.map((x) => String(x).trim()).filter(Boolean);
+      }
+    } catch {
+      // 파싱 실패 시 빈 배열
+    }
+  }
+
   if (id) {
     // UPDATE
     const patch: StudyStudentDataTypeUpdate = {
@@ -143,6 +162,8 @@ export async function saveDataTypeAction(
       is_default_required: data.is_default_required,
       is_active: data.is_active,
       sort_order: data.sort_order,
+      scope: data.scope,
+      aliases,
     };
     const { error } = await supabase
       .from("study_student_data_types")
@@ -164,6 +185,8 @@ export async function saveDataTypeAction(
       is_default_required: data.is_default_required,
       is_active: data.is_active,
       sort_order: data.sort_order,
+      scope: data.scope,
+      aliases,
     };
     const { error } = await supabase
       .from("study_student_data_types")

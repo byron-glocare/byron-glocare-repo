@@ -1151,7 +1151,8 @@ export type Database = {
             | "select"
             | "multi_select"
             | "file"
-            | "boolean";
+            | "boolean"
+            | "signature";
           options: Array<{ value: string; label_ko: string; label_vi: string }> | null;
           hint_ko: string | null;
           hint_vi: string | null;
@@ -1159,6 +1160,11 @@ export type Database = {
           is_default_required: boolean;
           sort_order: number;
           is_active: boolean;
+          scope: "university_info" | "document_fill";
+          aliases: string[];
+          is_derived: boolean;
+          derived_role: string | null;
+          derived_from: { selector: string; map: Record<string, string> } | null;
           created_at: string;
           updated_at: string;
         };
@@ -1186,7 +1192,8 @@ export type Database = {
             | "select"
             | "multi_select"
             | "file"
-            | "boolean";
+            | "boolean"
+            | "signature";
           options?: Array<{ value: string; label_ko: string; label_vi: string }> | null;
           hint_ko?: string | null;
           hint_vi?: string | null;
@@ -1194,6 +1201,11 @@ export type Database = {
           is_default_required?: boolean;
           sort_order?: number;
           is_active?: boolean;
+          scope?: "university_info" | "document_fill";
+          aliases?: string[];
+          is_derived?: boolean;
+          derived_role?: string | null;
+          derived_from?: { selector: string; map: Record<string, string> } | null;
           created_at?: string;
           updated_at?: string;
         };
