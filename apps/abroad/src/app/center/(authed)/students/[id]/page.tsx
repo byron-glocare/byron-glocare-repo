@@ -122,7 +122,7 @@ export default async function StudentDetailPage({
               href={`/center/students/${id}/data`}
               className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
             >
-              {tr(locale, "표준 데이터", "Dữ liệu chuẩn")}
+              {tr(locale, "상세 정보", "Thông tin chi tiết")}
             </Link>
             <Link
               href={`/center/students/${id}/essays`}

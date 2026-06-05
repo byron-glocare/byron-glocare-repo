@@ -278,8 +278,8 @@ function QuestionRow({
         <p className="mt-2 text-xs text-slate-400">
           {tr(
             locale,
-            '"AI 작성"을 눌러 표준 데이터 기반 초안을 생성하세요.',
-            'Nhấn "AI tạo bài" để sinh bản nháp dựa trên dữ liệu chuẩn.'
+            '"AI 작성"을 눌러 상세 정보 기반 초안을 생성하세요.',
+            'Nhấn "AI tạo bài" để sinh bản nháp dựa trên thông tin chi tiết.'
           )}
         </p>
       )}

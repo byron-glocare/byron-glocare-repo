@@ -148,8 +148,8 @@ export default async function StudentEssaysPage({
         <p className="mt-1 text-sm text-slate-600">
           {tr(
             locale,
-            "학생의 표준 데이터를 바탕으로 대학 지원 양식의 서술형 문항 답변을 작성합니다.",
-            "Soạn câu trả lời cho các câu hỏi viết của mẫu hồ sơ trường, dựa trên dữ liệu chuẩn của sinh viên."
+            "학생의 상세 정보를 바탕으로 대학 지원 양식의 서술형 문항 답변을 작성합니다.",
+            "Soạn câu trả lời cho các câu hỏi viết của mẫu hồ sơ trường, dựa trên thông tin chi tiết của sinh viên."
           )}
         </p>
       </header>

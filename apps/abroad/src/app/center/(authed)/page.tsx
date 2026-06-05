@@ -74,7 +74,7 @@ export default async function CenterDashboardPage() {
     {
       href: "/center/students",
       title: tr(locale, "학생", "Sinh viên"),
-      desc: tr(locale, "등록 · 서류 · 표준 데이터", "Đăng ký, hồ sơ, dữ liệu chuẩn"),
+      desc: tr(locale, "등록 · 서류 · 상세 정보", "Đăng ký, hồ sơ, thông tin chi tiết"),
     },
     {
       href: "/center/admissions",

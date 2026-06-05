@@ -128,7 +128,7 @@ export default async function StudentDataPage({
           ← {student.name}
         </Link>
         <h1 className="mt-2 text-2xl font-bold text-slate-900">
-          {tr(locale, "학생 표준 데이터", "Dữ liệu chuẩn của sinh viên")}
+          {tr(locale, "학생 상세 정보", "Thông tin chi tiết sinh viên")}
         </h1>
         <p className="mt-1 text-sm text-slate-600">
           {tr(
