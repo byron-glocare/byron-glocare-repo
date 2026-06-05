@@ -3,9 +3,11 @@
 import Link from "next/link";
 import { useActionState, useState } from "react";
 
+import { tr, type Locale } from "@/lib/i18n";
+
 import { uploadStudentsAction, type ImportState } from "./actions";
 
-export function ImportForm() {
+export function ImportForm({ locale }: { locale: Locale }) {
   const [state, action, pending] = useActionState<ImportState, FormData>(
     uploadStudentsAction,
     undefined
@@ -28,7 +30,9 @@ export function ImportForm() {
             className="text-sm file:mr-3 file:rounded-md file:border file:border-slate-300 file:bg-slate-50 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-slate-700 hover:file:bg-slate-100"
           />
           {fileName ? (
-            <span className="text-xs text-slate-500">Đã chọn: {fileName}</span>
+            <span className="text-xs text-slate-500">
+              {tr(locale, "선택됨", "Đã chọn")}: {fileName}
+            </span>
           ) : null}
         </label>
 
@@ -38,7 +42,9 @@ export function ImportForm() {
             disabled={pending}
             className="rounded-md bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {pending ? "Đang xử lý..." : "Tải lên và kiểm tra"}
+            {pending
+              ? tr(locale, "처리 중...", "Đang xử lý...")
+              : tr(locale, "업로드 및 검증", "Tải lên và kiểm tra")}
           </button>
         </div>
 
@@ -49,12 +55,18 @@ export function ImportForm() {
         ) : null}
       </form>
 
-      {state && state.rows ? <ImportResult state={state} /> : null}
+      {state && state.rows ? <ImportResult locale={locale} state={state} /> : null}
     </>
   );
 }
 
-function ImportResult({ state }: { state: NonNullable<ImportState> }) {
+function ImportResult({
+  locale,
+  state,
+}: {
+  locale: Locale;
+  state: NonNullable<ImportState>;
+}) {
   const ok = state.okCount ?? 0;
   const skipped = state.skippedCount ?? 0;
   const errors = state.errorCount ?? 0;
@@ -64,42 +76,52 @@ function ImportResult({ state }: { state: NonNullable<ImportState> }) {
   return (
     <div className="mt-6 rounded-lg border border-slate-200 bg-white p-5">
       <h3 className="mb-3 text-base font-semibold text-slate-900">
-        Kết quả tải lên
+        {tr(locale, "업로드 결과", "Kết quả tải lên")}
       </h3>
 
       <div className="mb-4 grid grid-cols-4 gap-3 text-center text-sm">
-        <Stat label="Tổng dòng" value={total} tone="neutral" />
-        <Stat label="Thành công" value={ok} tone="ok" />
-        <Stat label="Bỏ qua" value={skipped} tone="neutral" />
-        <Stat label="Lỗi" value={errors} tone="error" />
+        <Stat label={tr(locale, "전체 행", "Tổng dòng")} value={total} tone="neutral" />
+        <Stat label={tr(locale, "성공", "Thành công")} value={ok} tone="ok" />
+        <Stat label={tr(locale, "건너뜀", "Bỏ qua")} value={skipped} tone="neutral" />
+        <Stat label={tr(locale, "오류", "Lỗi")} value={errors} tone="error" />
       </div>
 
       {ok > 0 ? (
         <p className="mb-3 text-sm text-slate-700">
-          ✅ Đã đăng ký <strong>{ok}</strong> sinh viên.{" "}
+          {tr(
+            locale,
+            `✅ 학생 ${ok}명을 등록했습니다. `,
+            `✅ Đã đăng ký ${ok} sinh viên. `
+          )}
           <Link
             href="/center/students"
             className="text-blue-600 hover:underline"
           >
-            Xem danh sách →
+            {tr(locale, "목록 보기 →", "Xem danh sách →")}
           </Link>
         </p>
       ) : null}
 
       <details open={errors > 0} className="text-sm">
         <summary className="cursor-pointer font-medium text-slate-700 hover:text-slate-900">
-          Chi tiết từng dòng ({rows.length})
+          {tr(locale, `행별 상세 (${rows.length})`, `Chi tiết từng dòng (${rows.length})`)}
         </summary>
         <div className="mt-3 overflow-hidden rounded-md border border-slate-200">
           <table className="w-full text-sm">
             <thead className="bg-slate-50 text-xs">
               <tr className="text-left">
-                <th className="px-3 py-2 font-medium text-slate-700">Dòng</th>
-                <th className="px-3 py-2 font-medium text-slate-700">Tên</th>
                 <th className="px-3 py-2 font-medium text-slate-700">
-                  Trạng thái
+                  {tr(locale, "행", "Dòng")}
                 </th>
-                <th className="px-3 py-2 font-medium text-slate-700">Ghi chú</th>
+                <th className="px-3 py-2 font-medium text-slate-700">
+                  {tr(locale, "이름", "Tên")}
+                </th>
+                <th className="px-3 py-2 font-medium text-slate-700">
+                  {tr(locale, "상태", "Trạng thái")}
+                </th>
+                <th className="px-3 py-2 font-medium text-slate-700">
+                  {tr(locale, "비고", "Ghi chú")}
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -121,7 +143,7 @@ function ImportResult({ state }: { state: NonNullable<ImportState> }) {
                     {r.name ?? "—"}
                   </td>
                   <td className="px-3 py-2">
-                    <StatusBadge status={r.status} />
+                    <StatusBadge locale={locale} status={r.status} />
                   </td>
                   <td className="px-3 py-2 text-xs text-slate-600">
                     {r.message ?? ""}
@@ -159,18 +181,24 @@ function Stat({
   );
 }
 
-function StatusBadge({ status }: { status: "ok" | "skipped" | "error" }) {
+function StatusBadge({
+  locale,
+  status,
+}: {
+  locale: Locale;
+  status: "ok" | "skipped" | "error";
+}) {
   const map = {
     ok: {
-      label: "Thành công",
+      label: tr(locale, "성공", "Thành công"),
       cls: "bg-emerald-100 text-emerald-800",
     },
     skipped: {
-      label: "Bỏ qua",
+      label: tr(locale, "건너뜀", "Bỏ qua"),
       cls: "bg-slate-200 text-slate-700",
     },
     error: {
-      label: "Lỗi",
+      label: tr(locale, "오류", "Lỗi"),
       cls: "bg-red-100 text-red-800",
     },
   } as const;

@@ -662,7 +662,7 @@ export function EssayQuestionsEditor({
             )}
           </Button>
           <a
-            href={`/universities/${universityId}/forms`}
+            href={`/admissions/${universityId}`}
             className={buttonVariants({ variant: "outline" })}
           >
             양식 목록으로

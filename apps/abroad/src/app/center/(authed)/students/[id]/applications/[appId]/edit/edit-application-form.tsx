@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useActionState } from "react";
 
+import { tr, type Locale } from "@/lib/i18n";
+
 import {
   updateApplicationAction,
   type UpdateApplicationState,
@@ -23,9 +25,11 @@ export type EditableApplication = {
 };
 
 export function EditApplicationForm({
+  locale,
   application,
   studentId,
 }: {
+  locale: Locale;
   application: EditableApplication;
   studentId: string;
 }) {
@@ -45,7 +49,7 @@ export function EditApplicationForm({
     <form action={action} className="flex flex-col gap-5">
       <label className={labelClass}>
         <span className={labelTextClass}>
-          Ngành học <span className="text-red-500">*</span>
+          {tr(locale, "지원 학과", "Ngành học")} <span className="text-red-500">*</span>
         </span>
         <input
           type="text"
@@ -61,35 +65,38 @@ export function EditApplicationForm({
           </span>
         ) : (
           <span className={helpTextClass}>
-            Tự do chỉnh sửa tên ngành (ví dụ: chuyển từ &quot;Yêu dưỡng&quot;
-            sang &quot;Bio dược&quot;)
+            {tr(
+              locale,
+              '학과명을 자유롭게 수정할 수 있습니다 (예: "요양"에서 "바이오제약"으로 변경)',
+              'Tự do chỉnh sửa tên ngành (ví dụ: chuyển từ "Yêu dưỡng" sang "Bio dược")'
+            )}
           </span>
         )}
       </label>
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <label className={labelClass}>
-          <span className={labelTextClass}>Việc tiếp theo</span>
+          <span className={labelTextClass}>{tr(locale, "다음 할 일", "Việc tiếp theo")}</span>
           <input
             type="text"
             name="next_action"
             maxLength={200}
             defaultValue={application.next_action ?? ""}
             className={inputClass}
-            placeholder="VD: Chờ thư giới thiệu"
+            placeholder={tr(locale, "예: 추천서 대기", "VD: Chờ thư giới thiệu")}
           />
-          <span className={helpTextClass}>Tùy chọn</span>
+          <span className={helpTextClass}>{tr(locale, "선택", "Tùy chọn")}</span>
         </label>
 
         <label className={labelClass}>
-          <span className={labelTextClass}>Hạn chót</span>
+          <span className={labelTextClass}>{tr(locale, "마감일", "Hạn chót")}</span>
           <input
             type="date"
             name="next_deadline"
             defaultValue={application.next_deadline ?? ""}
             className={inputClass}
           />
-          <span className={helpTextClass}>Tùy chọn</span>
+          <span className={helpTextClass}>{tr(locale, "선택", "Tùy chọn")}</span>
         </label>
       </div>
 
@@ -105,13 +112,15 @@ export function EditApplicationForm({
           disabled={pending}
           className="rounded-md bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {pending ? "Đang lưu..." : "Lưu thay đổi"}
+          {pending
+            ? tr(locale, "저장 중...", "Đang lưu...")
+            : tr(locale, "변경사항 저장", "Lưu thay đổi")}
         </button>
         <Link
           href={`/center/students/${studentId}`}
           className="rounded-md border border-slate-300 px-5 py-2.5 text-sm text-slate-700 hover:bg-slate-50"
         >
-          Hủy
+          {tr(locale, "취소", "Hủy")}
         </Link>
       </div>
     </form>

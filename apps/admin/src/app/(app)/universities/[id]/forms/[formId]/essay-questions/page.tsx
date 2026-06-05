@@ -58,9 +58,8 @@ export default async function FormEssayQuestionsPage({
         title={`${form.name_ko} — 서술형 질문 정의`}
         description="이 양식이 학생에게 묻는 서술형 질문 + AI 작문 시 참조할 기초 데이터 매핑"
         breadcrumbs={[
-          { label: "대학교", href: "/universities" },
-          { label: uni.name_ko, href: `/universities/${numericId}` },
-          { label: "양식 파일", href: `/universities/${numericId}/forms` },
+          { label: "입학서류", href: "/admissions" },
+          { label: uni.name_ko, href: `/admissions/${numericId}` },
           { label: form.name_ko },
         ]}
       />

@@ -7,13 +7,22 @@ import Link from "next/link";
 
 import { verifyCenterSession } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
+import { getLocale, tr, type Locale } from "@/lib/i18n";
 
-const STATUS_LABEL: Record<string, string> = {
-  draft: "Bản nháp",
-  sent: "Đã gửi",
-  paid: "Đã thanh toán",
-  cancelled: "Đã hủy",
-};
+function statusLabel(locale: Locale, status: string): string {
+  switch (status) {
+    case "draft":
+      return tr(locale, "임시저장", "Bản nháp");
+    case "sent":
+      return tr(locale, "발송됨", "Đã gửi");
+    case "paid":
+      return tr(locale, "결제 완료", "Đã thanh toán");
+    case "cancelled":
+      return tr(locale, "취소됨", "Đã hủy");
+    default:
+      return status;
+  }
+}
 
 const STATUS_BG: Record<string, string> = {
   draft: "bg-slate-100 text-slate-700",
@@ -24,7 +33,10 @@ const STATUS_BG: Record<string, string> = {
 
 export default async function CenterInvoicesPage() {
   const session = await verifyCenterSession();
+  const locale = await getLocale();
   const supabase = await createCenterClient();
+  const dateLocale = locale === "ko" ? "ko-KR" : "vi-VN";
+  const numberLocale = locale === "ko" ? "ko-KR" : "vi-VN";
 
   // draft 는 운영자만 보는 상태이므로 유학센터는 sent/paid/cancelled 만
   const { data: invoices, error } = await supabase
@@ -54,23 +66,33 @@ export default async function CenterInvoicesPage() {
   return (
     <div>
       <header className="mb-6">
-        <h1 className="text-2xl font-bold text-slate-900">Hóa đơn</h1>
+        <h1 className="text-2xl font-bold text-slate-900">
+          {tr(locale, "청구서", "Hóa đơn")}
+        </h1>
         <p className="mt-1 text-sm text-slate-600">
-          Hóa đơn và lịch sử thanh toán cho {session.org.name_vi}
+          {tr(
+            locale,
+            `${(locale === "ko" ? session.org.name_ko : session.org.name_vi) ?? session.org.name_vi} 청구서 및 결제 내역`,
+            `Hóa đơn và lịch sử thanh toán cho ${session.org.name_vi}`
+          )}
         </p>
       </header>
 
       {error ? (
         <div className="rounded-md bg-red-50 p-4 text-sm text-red-700">
-          Lỗi tải dữ liệu: {error.message}
+          {tr(locale, "데이터 로드 오류", "Lỗi tải dữ liệu")}: {error.message}
         </div>
       ) : !invoices || invoices.length === 0 ? (
         <div className="rounded-lg border border-dashed border-slate-300 bg-white p-12 text-center">
           <p className="text-base text-slate-600">
-            Chưa có hóa đơn nào.
+            {tr(locale, "청구서가 없습니다.", "Chưa có hóa đơn nào.")}
           </p>
           <p className="mt-2 text-sm text-slate-500">
-            Khi GLOCARE phát hành hóa đơn, sẽ xuất hiện ở đây.
+            {tr(
+              locale,
+              "GLOCARE가 청구서를 발행하면 이곳에 표시됩니다.",
+              "Khi GLOCARE phát hành hóa đơn, sẽ xuất hiện ở đây."
+            )}
           </p>
         </div>
       ) : (
@@ -78,18 +100,24 @@ export default async function CenterInvoicesPage() {
           <table className="w-full text-sm">
             <thead className="bg-slate-50">
               <tr className="text-left">
-                <th className="px-4 py-3 font-medium text-slate-700">Kỳ</th>
-                <th className="px-4 py-3 text-right font-medium text-slate-700">
-                  Tổng tiền
+                <th className="px-4 py-3 font-medium text-slate-700">
+                  {tr(locale, "기간", "Kỳ")}
                 </th>
                 <th className="px-4 py-3 text-right font-medium text-slate-700">
-                  Đã thanh toán
+                  {tr(locale, "총액", "Tổng tiền")}
                 </th>
                 <th className="px-4 py-3 text-right font-medium text-slate-700">
-                  Còn lại
+                  {tr(locale, "결제액", "Đã thanh toán")}
                 </th>
-                <th className="px-4 py-3 font-medium text-slate-700">Trạng thái</th>
-                <th className="px-4 py-3 font-medium text-slate-700">Phát hành</th>
+                <th className="px-4 py-3 text-right font-medium text-slate-700">
+                  {tr(locale, "잔액", "Còn lại")}
+                </th>
+                <th className="px-4 py-3 font-medium text-slate-700">
+                  {tr(locale, "상태", "Trạng thái")}
+                </th>
+                <th className="px-4 py-3 font-medium text-slate-700">
+                  {tr(locale, "발행일", "Phát hành")}
+                </th>
                 <th className="w-20 px-4 py-3"></th>
               </tr>
             </thead>
@@ -112,7 +140,7 @@ export default async function CenterInvoicesPage() {
                       </Link>
                     </td>
                     <td className="px-4 py-3 text-right font-medium">
-                      {total.toLocaleString("vi-VN")} {inv.currency}
+                      {total.toLocaleString(numberLocale)} {inv.currency}
                     </td>
                     <td className="px-4 py-3 text-right">
                       {paid > 0 ? (
@@ -123,7 +151,7 @@ export default async function CenterInvoicesPage() {
                               : "text-amber-700"
                           }
                         >
-                          {paid.toLocaleString("vi-VN")} {inv.currency}
+                          {paid.toLocaleString(numberLocale)} {inv.currency}
                         </span>
                       ) : (
                         <span className="text-slate-400">—</span>
@@ -132,13 +160,17 @@ export default async function CenterInvoicesPage() {
                     <td className="px-4 py-3 text-right">
                       {balance > 0 ? (
                         <span className="font-medium text-rose-700">
-                          {balance.toLocaleString("vi-VN")} {inv.currency}
+                          {balance.toLocaleString(numberLocale)} {inv.currency}
                         </span>
                       ) : balance === 0 ? (
                         <span className="text-emerald-700">—</span>
                       ) : (
                         <span className="text-slate-500">
-                          (dư {Math.abs(balance).toLocaleString("vi-VN")})
+                          {tr(
+                            locale,
+                            `(초과 ${Math.abs(balance).toLocaleString(numberLocale)})`,
+                            `(dư ${Math.abs(balance).toLocaleString(numberLocale)})`
+                          )}
                         </span>
                       )}
                     </td>
@@ -148,12 +180,12 @@ export default async function CenterInvoicesPage() {
                           STATUS_BG[inv.status] ?? "bg-slate-100 text-slate-700"
                         }`}
                       >
-                        {STATUS_LABEL[inv.status] ?? inv.status}
+                        {statusLabel(locale, inv.status)}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-xs text-slate-500">
                       {inv.sent_at
-                        ? new Date(inv.sent_at).toLocaleDateString("vi-VN")
+                        ? new Date(inv.sent_at).toLocaleDateString(dateLocale)
                         : "—"}
                     </td>
                     <td className="px-4 py-3 text-right">
@@ -161,7 +193,7 @@ export default async function CenterInvoicesPage() {
                         href={`/center/invoices/${inv.id}`}
                         className="text-xs text-emerald-700 hover:underline"
                       >
-                        Chi tiết →
+                        {tr(locale, "상세 →", "Chi tiết →")}
                       </Link>
                     </td>
                   </tr>

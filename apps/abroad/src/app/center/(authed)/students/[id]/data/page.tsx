@@ -9,6 +9,7 @@ import { notFound } from "next/navigation";
 
 import { verifyCenterSession } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
+import { getLocale, tr } from "@/lib/i18n";
 import { StudentDataEditor } from "./student-data-editor";
 import type { Json } from "@/types/database";
 
@@ -19,6 +20,7 @@ export default async function StudentDataPage({
 }) {
   const { id } = await params;
   await verifyCenterSession();
+  const locale = await getLocale();
   const supabase = await createCenterClient();
 
   // 학생 (RLS 가 본인 org 만 허용)
@@ -126,14 +128,19 @@ export default async function StudentDataPage({
           ← {student.name}
         </Link>
         <h1 className="mt-2 text-2xl font-bold text-slate-900">
-          Dữ liệu chuẩn của sinh viên
+          {tr(locale, "학생 표준 데이터", "Dữ liệu chuẩn của sinh viên")}
         </h1>
         <p className="mt-1 text-sm text-slate-600">
-          Thông tin cần thiết để điền vào mẫu hồ sơ tuyển sinh. Nhập một lần — dùng cho nhiều trường.
+          {tr(
+            locale,
+            "지원 양식 작성에 필요한 정보입니다. 한 번 입력하면 여러 대학에 재사용됩니다.",
+            "Thông tin cần thiết để điền vào mẫu hồ sơ tuyển sinh. Nhập một lần — dùng cho nhiều trường."
+          )}
         </p>
       </header>
 
       <StudentDataEditor
+        locale={locale}
         studentId={id}
         dataTypes={(dataTypes ?? []).map((d) => ({
           key: d.key,

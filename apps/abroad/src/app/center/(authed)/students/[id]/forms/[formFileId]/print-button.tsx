@@ -1,6 +1,8 @@
 "use client";
 
-export function PrintButton() {
+import { tr, type Locale } from "@/lib/i18n";
+
+export function PrintButton({ locale }: { locale: Locale }) {
   return (
     <button
       type="button"
@@ -9,7 +11,7 @@ export function PrintButton() {
       }}
       className="rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-emerald-700"
     >
-      🖨 In / Lưu PDF
+      {tr(locale, "🖨 인쇄 / PDF 저장", "🖨 In / Lưu PDF")}
     </button>
   );
 }

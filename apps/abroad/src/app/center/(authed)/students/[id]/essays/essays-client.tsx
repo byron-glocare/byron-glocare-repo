@@ -2,6 +2,8 @@
 
 import { useState, useTransition } from "react";
 
+import { tr, type Locale } from "@/lib/i18n";
+
 import { generateEssayAction, saveEssayEditAction } from "./actions";
 import type { EssayQuestion } from "@/types/study";
 
@@ -26,10 +28,12 @@ export type DraftSnapshot = {
 };
 
 export function EssaysClient({
+  locale,
   studentId,
   forms,
   drafts: initialDrafts,
 }: {
+  locale: Locale;
   studentId: string;
   forms: FormWithQuestions[];
   drafts: DraftSnapshot[];
@@ -66,6 +70,7 @@ export function EssaysClient({
               return (
                 <QuestionRow
                   key={idx}
+                  locale={locale}
                   studentId={studentId}
                   formFileId={form.form_file_id}
                   questionIndex={idx}
@@ -89,6 +94,7 @@ export function EssaysClient({
 }
 
 function QuestionRow({
+  locale,
   studentId,
   formFileId,
   questionIndex,
@@ -96,6 +102,7 @@ function QuestionRow({
   draft,
   onUpdate,
 }: {
+  locale: Locale;
   studentId: string;
   formFileId: string;
   questionIndex: number;
@@ -138,7 +145,9 @@ function QuestionRow({
 
   const onSaveEdit = () => {
     if (!draft?.id) {
-      setError("먼저 AI 생성을 실행해야 합니다");
+      setError(
+        tr(locale, "먼저 AI 생성을 실행해야 합니다", "Vui lòng tạo bài bằng AI trước")
+      );
       return;
     }
     setError(null);
@@ -168,24 +177,36 @@ function QuestionRow({
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1">
             <div className="text-sm font-medium text-slate-900">
-              {question.question_ko}
+              {locale === "ko"
+                ? question.question_ko
+                : (question.question_vi ?? question.question_ko)}
             </div>
-            {question.question_vi ? (
+            {(locale === "ko" ? question.question_vi : question.question_ko) ? (
               <div className="mt-0.5 text-xs text-slate-500">
-                {question.question_vi}
+                {locale === "ko" ? question.question_vi : question.question_ko}
               </div>
             ) : null}
             <div className="mt-1 flex items-center gap-2 text-xs text-slate-500">
               {question.max_chars ? (
-                <span>≤ {question.max_chars}자</span>
+                <span>
+                  ≤ {tr(locale, `${question.max_chars}자`, `${question.max_chars} ký tự`)}
+                </span>
               ) : null}
               {question.basis_data_type_keys.length > 0 ? (
                 <span>
-                  AI 참조 데이터: {question.basis_data_type_keys.length}개
+                  {tr(
+                    locale,
+                    `AI 참조 데이터: ${question.basis_data_type_keys.length}개`,
+                    `Dữ liệu AI tham chiếu: ${question.basis_data_type_keys.length} mục`
+                  )}
                 </span>
               ) : (
                 <span className="text-amber-600">
-                  ⚠ 참조 데이터 키 미지정 — 작문 품질 낮음
+                  {tr(
+                    locale,
+                    "⚠ 참조 데이터 키 미지정 — 작문 품질 낮음",
+                    "⚠ Chưa chỉ định khóa dữ liệu tham chiếu — chất lượng bài viết thấp"
+                  )}
                 </span>
               )}
             </div>
@@ -197,10 +218,10 @@ function QuestionRow({
             className="shrink-0 rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
           >
             {pending && !draft?.generated_text
-              ? "Đang tạo..."
+              ? tr(locale, "생성 중...", "Đang tạo...")
               : draft?.generated_text
-                ? "Tạo lại"
-                : "AI tạo bài"}
+                ? tr(locale, "다시 생성", "Tạo lại")
+                : tr(locale, "AI 작성", "AI tạo bài")}
           </button>
         </div>
       </div>
@@ -209,9 +230,11 @@ function QuestionRow({
         <div className="mt-2 space-y-2">
           <details className="text-xs">
             <summary className="cursor-pointer text-slate-500 hover:text-slate-700">
-              Bản gốc AI (
+              {tr(locale, "AI 원본", "Bản gốc AI")} (
               {draft.generated_at
-                ? new Date(draft.generated_at).toLocaleString("vi-VN")
+                ? new Date(draft.generated_at).toLocaleString(
+                    locale === "ko" ? "ko-KR" : "vi-VN"
+                  )
                 : "—"}
               )
             </summary>
@@ -222,20 +245,22 @@ function QuestionRow({
 
           <div>
             <label className="text-xs font-medium text-slate-700">
-              Bản hiệu đính (sẽ dùng để nộp)
+              {tr(locale, "수정본 (제출에 사용)", "Bản hiệu đính (sẽ dùng để nộp)")}
             </label>
             <textarea
               value={editedText}
               onChange={(e) => setEditedText(e.target.value)}
               rows={8}
               className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-              placeholder="Chỉnh sửa nội dung..."
+              placeholder={tr(locale, "내용 수정...", "Chỉnh sửa nội dung...")}
             />
             <div className="mt-1 flex items-center justify-between text-xs text-slate-500">
-              <span>{editedText.length} ký tự</span>
+              <span>{tr(locale, `${editedText.length}자`, `${editedText.length} ký tự`)}</span>
               <div className="flex items-center gap-2">
                 {saved ? (
-                  <span className="text-emerald-600">✓ đã lưu</span>
+                  <span className="text-emerald-600">
+                    {tr(locale, "✓ 저장됨", "✓ đã lưu")}
+                  </span>
                 ) : null}
                 <button
                   type="button"
@@ -243,7 +268,7 @@ function QuestionRow({
                   disabled={pending || editedText === (draft.edited_text ?? draft.generated_text)}
                   className="rounded-md border border-slate-300 px-2 py-1 text-xs hover:bg-slate-50 disabled:opacity-50"
                 >
-                  Lưu hiệu đính
+                  {tr(locale, "수정본 저장", "Lưu hiệu đính")}
                 </button>
               </div>
             </div>
@@ -251,7 +276,11 @@ function QuestionRow({
         </div>
       ) : (
         <p className="mt-2 text-xs text-slate-400">
-          Nhấn &quot;AI tạo bài&quot; để sinh bản nháp dựa trên dữ liệu chuẩn.
+          {tr(
+            locale,
+            '"AI 작성"을 눌러 표준 데이터 기반 초안을 생성하세요.',
+            'Nhấn "AI tạo bài" để sinh bản nháp dựa trên dữ liệu chuẩn.'
+          )}
         </p>
       )}
 

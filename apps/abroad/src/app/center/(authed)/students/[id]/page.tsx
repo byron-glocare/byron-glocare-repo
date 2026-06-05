@@ -9,36 +9,65 @@ import { notFound } from "next/navigation";
 
 import { verifyCenterSession } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
+import { getLocale, tr, type Locale } from "@/lib/i18n";
 
 import { updateApplicationStatusAction } from "./applications/actions";
 import { APP_STATUS_VALUES } from "./applications/status";
 import { DeleteApplicationButton } from "./applications/delete-application-button";
 import { DeleteStudentButton } from "./delete-student-button";
 
-const VISA_LABELS: Record<string, string> = {
-  "D-4": "D-4 (Khóa tiếng)",
-  "D-2": "D-2 (Du học)",
-  none: "Không có",
-  other: "Khác",
-};
+function visaLabel(locale: Locale, visa: string): string {
+  switch (visa) {
+    case "D-4":
+      return tr(locale, "D-4 (어학연수)", "D-4 (Khóa tiếng)");
+    case "D-2":
+      return tr(locale, "D-2 (정규유학)", "D-2 (Du học)");
+    case "none":
+      return tr(locale, "없음", "Không có");
+    case "other":
+      return tr(locale, "기타", "Khác");
+    default:
+      return visa;
+  }
+}
 
-const LOCATION_LABELS: Record<string, string> = {
-  VN: "Việt Nam",
-  KR: "Hàn Quốc",
-  other: "Khác",
-};
+function locationLabel(locale: Locale, loc: string): string {
+  switch (loc) {
+    case "VN":
+      return tr(locale, "베트남", "Việt Nam");
+    case "KR":
+      return tr(locale, "한국", "Hàn Quốc");
+    case "other":
+      return tr(locale, "기타", "Khác");
+    default:
+      return loc;
+  }
+}
 
-const APP_STATUS_LABELS: Record<string, string> = {
-  preparing: "Đang chuẩn bị",
-  ready_for_review: "Sẵn sàng kiểm tra",
-  reviewing: "Đang kiểm tra",
-  revisions_required: "Cần chỉnh sửa",
-  submitted: "Đã nộp trường",
-  accepted: "Đã trúng tuyển",
-  rejected: "Bị từ chối",
-  enrolled: "Đã nhập học",
-  cancelled: "Đã hủy",
-};
+function appStatusLabel(locale: Locale, status: string): string {
+  switch (status) {
+    case "preparing":
+      return tr(locale, "준비 중", "Đang chuẩn bị");
+    case "ready_for_review":
+      return tr(locale, "검토 대기", "Sẵn sàng kiểm tra");
+    case "reviewing":
+      return tr(locale, "검토 중", "Đang kiểm tra");
+    case "revisions_required":
+      return tr(locale, "수정 필요", "Cần chỉnh sửa");
+    case "submitted":
+      return tr(locale, "대학 제출 완료", "Đã nộp trường");
+    case "accepted":
+      return tr(locale, "합격", "Đã trúng tuyển");
+    case "rejected":
+      return tr(locale, "불합격", "Bị từ chối");
+    case "enrolled":
+      return tr(locale, "입학 완료", "Đã nhập học");
+    case "cancelled":
+      return tr(locale, "취소됨", "Đã hủy");
+    default:
+      return status;
+  }
+}
 
 export default async function StudentDetailPage({
   params,
@@ -47,7 +76,9 @@ export default async function StudentDetailPage({
 }) {
   const { id } = await params;
   await verifyCenterSession();
+  const locale = await getLocale();
   const supabase = await createCenterClient();
+  const dateLocale = locale === "ko" ? "ko-KR" : "vi-VN";
 
   // RLS 가 본인 org 학생만 허용 → 다른 org 학생 id 라도 not found
   const { data: student, error: stErr } = await supabase
@@ -74,7 +105,7 @@ export default async function StudentDetailPage({
           href="/center/students"
           className="text-sm text-slate-500 hover:underline"
         >
-          ← Quay lại danh sách
+          {tr(locale, "← 목록으로 돌아가기", "← Quay lại danh sách")}
         </Link>
         <div className="mt-2 flex items-start justify-between gap-4">
           <div>
@@ -82,8 +113,8 @@ export default async function StudentDetailPage({
               {student.name}
             </h1>
             <p className="mt-1 text-sm text-slate-600">
-              Đăng ký:{" "}
-              {new Date(student.created_at).toLocaleDateString("vi-VN")}
+              {tr(locale, "등록일", "Đăng ký")}:{" "}
+              {new Date(student.created_at).toLocaleDateString(dateLocale)}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -91,27 +122,28 @@ export default async function StudentDetailPage({
               href={`/center/students/${id}/data`}
               className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
             >
-              Dữ liệu chuẩn
+              {tr(locale, "표준 데이터", "Dữ liệu chuẩn")}
             </Link>
             <Link
               href={`/center/students/${id}/essays`}
               className="rounded-md bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700"
             >
-              Bài luận AI
+              {tr(locale, "AI 자기소개서", "Bài luận AI")}
             </Link>
             <Link
               href={`/center/students/${id}/forms`}
               className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
             >
-              Phiếu điền mẫu
+              {tr(locale, "양식 작성", "Phiếu điền mẫu")}
             </Link>
             <Link
               href={`/center/students/${id}/edit`}
               className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
             >
-              Chỉnh sửa
+              {tr(locale, "수정", "Chỉnh sửa")}
             </Link>
             <DeleteStudentButton
+              locale={locale}
               studentId={id}
               studentName={student.name}
               applicationCount={applications?.length ?? 0}
@@ -123,30 +155,40 @@ export default async function StudentDetailPage({
       {/* 학생 기본 정보 */}
       <section className="mb-6 rounded-lg border border-slate-200 bg-white p-6">
         <h2 className="mb-4 text-lg font-semibold text-slate-900">
-          Thông tin cơ bản
+          {tr(locale, "기본 정보", "Thông tin cơ bản")}
         </h2>
         <dl className="grid grid-cols-1 gap-x-6 gap-y-4 text-sm sm:grid-cols-2">
-          <Field label="Ngày sinh" value={student.dob} />
-          <Field label="Số hộ chiếu" value={student.passport_no_encrypted} />
-          <Field label="Số điện thoại" value={student.phone} />
+          <Field label={tr(locale, "생년월일", "Ngày sinh")} value={student.dob} />
+          <Field
+            label={tr(locale, "여권번호", "Số hộ chiếu")}
+            value={student.passport_no_encrypted}
+          />
+          <Field
+            label={tr(locale, "전화번호", "Số điện thoại")}
+            value={student.phone}
+          />
           <Field label="Email" value={student.email} />
           <Field
             label="TOPIK"
-            value={student.topik_level ? `Cấp ${student.topik_level}` : null}
-          />
-          <Field
-            label="Visa hiện tại"
             value={
-              student.current_visa
-                ? (VISA_LABELS[student.current_visa] ?? student.current_visa)
+              student.topik_level
+                ? tr(locale, `${student.topik_level}급`, `Cấp ${student.topik_level}`)
                 : null
             }
           />
           <Field
-            label="Vị trí"
+            label={tr(locale, "현재 비자", "Visa hiện tại")}
+            value={
+              student.current_visa
+                ? visaLabel(locale, student.current_visa)
+                : null
+            }
+          />
+          <Field
+            label={tr(locale, "위치", "Vị trí")}
             value={
               student.location
-                ? (LOCATION_LABELS[student.location] ?? student.location)
+                ? locationLabel(locale, student.location)
                 : null
             }
           />
@@ -154,7 +196,7 @@ export default async function StudentDetailPage({
         {student.notes ? (
           <div className="mt-4 border-t border-slate-200 pt-4">
             <dt className="text-xs uppercase tracking-wide text-slate-500">
-              Ghi chú
+              {tr(locale, "메모", "Ghi chú")}
             </dt>
             <dd className="mt-1 whitespace-pre-wrap text-sm text-slate-800">
               {student.notes}
@@ -167,22 +209,29 @@ export default async function StudentDetailPage({
       <section className="rounded-lg border border-slate-200 bg-white p-6">
         <header className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-slate-900">
-            Đơn tuyển sinh
+            {tr(locale, "지원 현황", "Đơn tuyển sinh")}
           </h2>
           <Link
             href={`/center/students/${id}/applications/new`}
             className="rounded-md bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-800"
           >
-            + Thêm đơn
+            {tr(locale, "+ 지원 추가", "+ Thêm đơn")}
           </Link>
         </header>
 
         {!applications || applications.length === 0 ? (
           <div className="rounded-md border border-dashed border-slate-300 px-4 py-8 text-center text-sm text-slate-500">
-            Chưa có đơn tuyển sinh nào.
+            {tr(
+              locale,
+              "등록된 지원 내역이 없습니다.",
+              "Chưa có đơn tuyển sinh nào."
+            )}
             <br />
-            Nhấn &quot;+ Thêm đơn&quot; để liên kết sinh viên với hồ sơ tuyển
-            sinh đã được duyệt.
+            {tr(
+              locale,
+              '"+ 지원 추가"를 눌러 승인된 모집요강과 학생을 연결하세요.',
+              'Nhấn "+ Thêm đơn" để liên kết sinh viên với hồ sơ tuyển sinh đã được duyệt.'
+            )}
           </div>
         ) : (
           <ul className="divide-y divide-slate-200">
@@ -197,11 +246,19 @@ export default async function StudentDetailPage({
                       {app.next_action ? `${app.next_action}` : null}
                       {app.next_action && app.next_deadline ? " · " : null}
                       {app.next_deadline
-                        ? `Hạn ${new Date(app.next_deadline).toLocaleDateString("vi-VN")}`
+                        ? tr(
+                            locale,
+                            `마감 ${new Date(app.next_deadline).toLocaleDateString(dateLocale)}`,
+                            `Hạn ${new Date(app.next_deadline).toLocaleDateString(dateLocale)}`
+                          )
                         : null}
                       {!app.next_action && !app.next_deadline ? (
                         <span className="text-slate-400">
-                          Chưa có ghi chú tiến độ
+                          {tr(
+                            locale,
+                            "진행 메모 없음",
+                            "Chưa có ghi chú tiến độ"
+                          )}
                         </span>
                       ) : null}
                     </div>
@@ -224,26 +281,27 @@ export default async function StudentDetailPage({
                       >
                         {APP_STATUS_VALUES.map((s) => (
                           <option key={s} value={s}>
-                            {APP_STATUS_LABELS[s] ?? s}
+                            {appStatusLabel(locale, s)}
                           </option>
                         ))}
                       </select>
                       <button
                         type="submit"
                         className="rounded-md border border-slate-300 px-2 py-1 text-xs text-slate-700 hover:bg-slate-100"
-                        title="Lưu thay đổi"
+                        title={tr(locale, "변경사항 저장", "Lưu thay đổi")}
                       >
-                        Lưu
+                        {tr(locale, "저장", "Lưu")}
                       </button>
                     </form>
                     <Link
                       href={`/center/students/${id}/applications/${app.id}/edit`}
                       className="rounded-md border border-slate-300 px-2 py-1 text-xs text-slate-700 hover:bg-slate-100"
-                      title="Chỉnh sửa ngành / tiến độ"
+                      title={tr(locale, "학과 / 진행 수정", "Chỉnh sửa ngành / tiến độ")}
                     >
-                      Sửa
+                      {tr(locale, "수정", "Sửa")}
                     </Link>
                     <DeleteApplicationButton
+                      locale={locale}
                       applicationId={app.id}
                       studentId={id}
                       departmentLabel={app.target_department_label}

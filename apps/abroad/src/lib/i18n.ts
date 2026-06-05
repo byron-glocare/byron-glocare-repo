@@ -215,3 +215,12 @@ export function getDictByLocale(locale: Locale): Dict {
 export function t(locale: Locale, key: DictKey): string {
   return dict[locale][key];
 }
+
+/**
+ * 인라인 한/베 번역 — 사전 키를 만들 만큼 재사용되지 않는 일회성 UI 문구용.
+ *   tr(locale, "학생 목록", "Danh sách sinh viên")
+ * 외부 어드민(유학센터) 화면처럼 베트남어가 기본이고 한국어 토글만 필요한 곳에서 사용.
+ */
+export function tr(locale: Locale, ko: string, vi: string): string {
+  return locale === "ko" ? ko : vi;
+}

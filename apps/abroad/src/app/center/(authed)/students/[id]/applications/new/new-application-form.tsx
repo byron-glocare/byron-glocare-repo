@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useActionState, useMemo, useState } from "react";
 
+import { tr, type Locale } from "@/lib/i18n";
+
 import {
   createApplicationAction,
   type CreateApplicationState,
@@ -21,12 +23,20 @@ export type SpecOption = {
   }>;
 };
 
-const PROGRAM_TYPE_LABEL: Record<string, string> = {
-  language_program: "Khóa tiếng (D-4)",
-  associate_2yr: "Cao đẳng 2 năm",
-  bachelor_3yr_extension: "Liên thông 2+2",
-  bachelor_4yr: "Cử nhân 4 năm",
-};
+function programTypeLabel(locale: Locale, programType: string): string {
+  switch (programType) {
+    case "language_program":
+      return tr(locale, "어학연수 (D-4)", "Khóa tiếng (D-4)");
+    case "associate_2yr":
+      return tr(locale, "전문학사 2년", "Cao đẳng 2 năm");
+    case "bachelor_3yr_extension":
+      return tr(locale, "학사 편입 2+2", "Liên thông 2+2");
+    case "bachelor_4yr":
+      return tr(locale, "학사 4년", "Cử nhân 4 năm");
+    default:
+      return programType;
+  }
+}
 
 const inputClass =
   "rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200";
@@ -45,10 +55,12 @@ function departmentLabel(d: SpecOption["departments"][number]): string {
 }
 
 export function NewApplicationForm({
+  locale,
   studentId,
   studentName,
   specs,
 }: {
+  locale: Locale;
   studentId: string;
   studentName: string;
   specs: SpecOption[];
@@ -84,16 +96,24 @@ export function NewApplicationForm({
     return (
       <div className="rounded-md border border-dashed border-slate-300 p-8 text-center">
         <p className="text-sm text-slate-600">
-          Chưa có hồ sơ tuyển sinh nào được duyệt.
+          {tr(
+            locale,
+            "승인된 모집요강이 없습니다.",
+            "Chưa có hồ sơ tuyển sinh nào được duyệt."
+          )}
         </p>
         <p className="mt-2 text-xs text-slate-500">
-          GLOCARE đang chuẩn bị dữ liệu. Vui lòng thử lại sau.
+          {tr(
+            locale,
+            "GLOCARE에서 데이터를 준비 중입니다. 잠시 후 다시 시도해 주세요.",
+            "GLOCARE đang chuẩn bị dữ liệu. Vui lòng thử lại sau."
+          )}
         </p>
         <Link
           href={`/center/students/${studentId}`}
           className="mt-4 inline-block text-sm text-slate-700 underline"
         >
-          ← Quay lại
+          {tr(locale, "← 돌아가기", "← Quay lại")}
         </Link>
       </div>
     );
@@ -110,7 +130,7 @@ export function NewApplicationForm({
 
       <label className={labelClass}>
         <span className={labelTextClass}>
-          Hồ sơ tuyển sinh
+          {tr(locale, "모집요강", "Hồ sơ tuyển sinh")}
           <span className={requiredMarkClass}>*</span>
         </span>
         <select
@@ -119,10 +139,12 @@ export function NewApplicationForm({
           value={specId}
           onChange={onSpecChange}
         >
-          <option value="">— Chọn trường · chương trình —</option>
+          <option value="">
+            {tr(locale, "— 대학 · 과정 선택 —", "— Chọn trường · chương trình —")}
+          </option>
           {specs.map((s) => (
             <option key={s.id} value={s.id}>
-              {s.universityNameKo ?? "?"} · {PROGRAM_TYPE_LABEL[s.programType] ?? s.programType} · {s.term}
+              {s.universityNameKo ?? "?"} · {programTypeLabel(locale, s.programType)} · {s.term}
             </option>
           ))}
         </select>
@@ -136,7 +158,7 @@ export function NewApplicationForm({
       {selectedSpec ? (
         <label className={labelClass}>
           <span className={labelTextClass}>
-            Ngành · chuyên ngành
+            {tr(locale, "학과 · 전공", "Ngành · chuyên ngành")}
             <span className={requiredMarkClass}>*</span>
           </span>
           {selectedSpec.departments.length > 1 ? (
@@ -146,7 +168,7 @@ export function NewApplicationForm({
               value={deptLabel}
               onChange={(e) => setDeptLabel(e.target.value)}
             >
-              <option value="">— Chọn ngành —</option>
+              <option value="">{tr(locale, "— 학과 선택 —", "— Chọn ngành —")}</option>
               {selectedSpec.departments.map((d) => {
                 const label = departmentLabel(d);
                 return (
@@ -174,31 +196,36 @@ export function NewApplicationForm({
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <label className={labelClass}>
-          <span className={labelTextClass}>Việc tiếp theo</span>
+          <span className={labelTextClass}>{tr(locale, "다음 할 일", "Việc tiếp theo")}</span>
           <input
             type="text"
             name="next_action"
             maxLength={200}
             className={inputClass}
-            placeholder="VD: Nhận thư giới thiệu"
+            placeholder={tr(locale, "예: 추천서 받기", "VD: Nhận thư giới thiệu")}
           />
-          <span className={helpTextClass}>Tùy chọn</span>
+          <span className={helpTextClass}>{tr(locale, "선택", "Tùy chọn")}</span>
         </label>
 
         <label className={labelClass}>
-          <span className={labelTextClass}>Hạn chót</span>
+          <span className={labelTextClass}>{tr(locale, "마감일", "Hạn chót")}</span>
           <input
             type="date"
             name="next_deadline"
             className={inputClass}
           />
-          <span className={helpTextClass}>Tùy chọn</span>
+          <span className={helpTextClass}>{tr(locale, "선택", "Tùy chọn")}</span>
         </label>
       </div>
 
       <div className="rounded-md bg-slate-50 px-3 py-2 text-xs text-slate-600">
-        Trạng thái ban đầu: <strong>Đang chuẩn bị</strong> (sẽ cập nhật khi
-        kiểm tra hồ sơ)
+        {tr(locale, "초기 상태", "Trạng thái ban đầu")}:{" "}
+        <strong>{tr(locale, "준비 중", "Đang chuẩn bị")}</strong>{" "}
+        {tr(
+          locale,
+          "(서류 검토 시 업데이트됩니다)",
+          "(sẽ cập nhật khi kiểm tra hồ sơ)"
+        )}
       </div>
 
       {state?.error ? (
@@ -213,13 +240,19 @@ export function NewApplicationForm({
           disabled={pending || !specId || !deptLabel}
           className="rounded-md bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {pending ? "Đang lưu..." : `Đăng ký nguyện vọng cho ${studentName}`}
+          {pending
+            ? tr(locale, "저장 중...", "Đang lưu...")
+            : tr(
+                locale,
+                `${studentName} 지원 등록`,
+                `Đăng ký nguyện vọng cho ${studentName}`
+              )}
         </button>
         <Link
           href={`/center/students/${studentId}`}
           className="rounded-md border border-slate-300 px-5 py-2.5 text-sm text-slate-700 hover:bg-slate-50"
         >
-          Hủy
+          {tr(locale, "취소", "Hủy")}
         </Link>
       </div>
     </form>

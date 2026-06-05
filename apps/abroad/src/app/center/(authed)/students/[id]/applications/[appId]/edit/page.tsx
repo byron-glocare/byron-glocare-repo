@@ -9,6 +9,7 @@ import { notFound } from "next/navigation";
 
 import { verifyCenterSession } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
+import { getLocale, tr } from "@/lib/i18n";
 
 import { EditApplicationForm } from "./edit-application-form";
 
@@ -19,6 +20,7 @@ export default async function EditApplicationPage({
 }) {
   const { id, appId } = await params;
   await verifyCenterSession();
+  const locale = await getLocale();
   const supabase = await createCenterClient();
 
   // 학생 + 지원 동시 조회 (RLS 가 본인 org 만 허용)
@@ -51,18 +53,22 @@ export default async function EditApplicationPage({
           href={`/center/students/${id}`}
           className="text-sm text-slate-500 hover:underline"
         >
-          ← Quay lại chi tiết
+          {tr(locale, "← 상세로 돌아가기", "← Quay lại chi tiết")}
         </Link>
         <h1 className="mt-2 text-2xl font-bold text-slate-900">
-          Chỉnh sửa đơn tuyển sinh
+          {tr(locale, "지원 내역 수정", "Chỉnh sửa đơn tuyển sinh")}
         </h1>
         <p className="mt-1 text-sm text-slate-600">
-          Sinh viên: <strong>{student.name}</strong>
+          {tr(locale, "학생", "Sinh viên")}: <strong>{student.name}</strong>
         </p>
       </header>
 
       <div className="rounded-lg border border-slate-200 bg-white p-6">
-        <EditApplicationForm application={application} studentId={id} />
+        <EditApplicationForm
+          locale={locale}
+          application={application}
+          studentId={id}
+        />
       </div>
     </div>
   );

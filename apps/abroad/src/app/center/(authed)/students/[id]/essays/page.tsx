@@ -10,6 +10,7 @@ import { notFound } from "next/navigation";
 
 import { verifyCenterSession } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
+import { getLocale, tr } from "@/lib/i18n";
 import { EssaysClient } from "./essays-client";
 import type { EssayQuestion } from "@/types/study";
 
@@ -20,6 +21,7 @@ export default async function StudentEssaysPage({
 }) {
   const { id } = await params;
   await verifyCenterSession();
+  const locale = await getLocale();
   const supabase = await createCenterClient();
 
   const { data: student } = await supabase
@@ -141,26 +143,37 @@ export default async function StudentEssaysPage({
           ← {student.name}
         </Link>
         <h1 className="mt-2 text-2xl font-bold text-slate-900">
-          Bài luận tự động (AI)
+          {tr(locale, "AI 자기소개서", "Bài luận tự động (AI)")}
         </h1>
         <p className="mt-1 text-sm text-slate-600">
-          Soạn câu trả lời cho các câu hỏi viết của mẫu hồ sơ trường, dựa trên
-          dữ liệu chuẩn của sinh viên.
+          {tr(
+            locale,
+            "학생의 표준 데이터를 바탕으로 대학 지원 양식의 서술형 문항 답변을 작성합니다.",
+            "Soạn câu trả lời cho các câu hỏi viết của mẫu hồ sơ trường, dựa trên dữ liệu chuẩn của sinh viên."
+          )}
         </p>
       </header>
 
       {forms.length === 0 ? (
         <div className="rounded-lg border border-dashed border-slate-300 bg-white p-12 text-center">
           <p className="text-base text-slate-600">
-            Chưa có câu hỏi viết nào áp dụng cho sinh viên này.
+            {tr(
+              locale,
+              "이 학생에게 적용되는 서술형 문항이 없습니다.",
+              "Chưa có câu hỏi viết nào áp dụng cho sinh viên này."
+            )}
           </p>
           <p className="mt-2 text-sm text-slate-500">
-            Sinh viên cần có đơn tuyển sinh, và trường cần định nghĩa câu hỏi
-            viết trong mẫu hồ sơ.
+            {tr(
+              locale,
+              "학생에게 지원 내역이 있어야 하고, 대학 지원 양식에 서술형 문항이 정의되어 있어야 합니다.",
+              "Sinh viên cần có đơn tuyển sinh, và trường cần định nghĩa câu hỏi viết trong mẫu hồ sơ."
+            )}
           </p>
         </div>
       ) : (
         <EssaysClient
+          locale={locale}
           studentId={id}
           forms={forms}
           drafts={(drafts ?? []).map((d) => ({

@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useActionState } from "react";
 
+import { tr, type Locale } from "@/lib/i18n";
+
 import {
   updateStudentAction,
   type UpdateStudentState,
@@ -29,7 +31,13 @@ export type EditableStudent = {
   notes: string | null;
 };
 
-export function EditStudentForm({ student }: { student: EditableStudent }) {
+export function EditStudentForm({
+  locale,
+  student,
+}: {
+  locale: Locale;
+  student: EditableStudent;
+}) {
   const boundAction = updateStudentAction.bind(null, student.id);
   const [state, action, pending] = useActionState<UpdateStudentState, FormData>(
     boundAction,
@@ -42,7 +50,7 @@ export function EditStudentForm({ student }: { student: EditableStudent }) {
     <form action={action} className="flex flex-col gap-5">
       <label className={labelClass}>
         <span className={labelTextClass}>
-          Họ và tên
+          {tr(locale, "이름", "Họ và tên")}
           <span className={requiredMarkClass}>*</span>
         </span>
         <input
@@ -60,7 +68,7 @@ export function EditStudentForm({ student }: { student: EditableStudent }) {
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <label className={labelClass}>
-          <span className={labelTextClass}>Ngày sinh</span>
+          <span className={labelTextClass}>{tr(locale, "생년월일", "Ngày sinh")}</span>
           <input
             type="date"
             name="dob"
@@ -73,7 +81,7 @@ export function EditStudentForm({ student }: { student: EditableStudent }) {
         </label>
 
         <label className={labelClass}>
-          <span className={labelTextClass}>Số hộ chiếu</span>
+          <span className={labelTextClass}>{tr(locale, "여권번호", "Số hộ chiếu")}</span>
           <input
             type="text"
             name="passport_no"
@@ -83,12 +91,14 @@ export function EditStudentForm({ student }: { student: EditableStudent }) {
           {fieldError("passport_no") ? (
             <span className={errorTextClass}>{fieldError("passport_no")}</span>
           ) : (
-            <span className={helpTextClass}>4–20 ký tự, chữ và số</span>
+            <span className={helpTextClass}>
+              {tr(locale, "4–20자, 영문·숫자", "4–20 ký tự, chữ và số")}
+            </span>
           )}
         </label>
 
         <label className={labelClass}>
-          <span className={labelTextClass}>Số điện thoại</span>
+          <span className={labelTextClass}>{tr(locale, "전화번호", "Số điện thoại")}</span>
           <input
             type="tel"
             name="phone"
@@ -101,7 +111,9 @@ export function EditStudentForm({ student }: { student: EditableStudent }) {
         </label>
 
         <label className={labelClass}>
-          <span className={labelTextClass}>Email (sinh viên)</span>
+          <span className={labelTextClass}>
+            {tr(locale, "이메일 (학생)", "Email (sinh viên)")}
+          </span>
           <input
             type="email"
             name="email"
@@ -114,54 +126,54 @@ export function EditStudentForm({ student }: { student: EditableStudent }) {
         </label>
 
         <label className={labelClass}>
-          <span className={labelTextClass}>TOPIK (cấp độ)</span>
+          <span className={labelTextClass}>{tr(locale, "TOPIK (급수)", "TOPIK (cấp độ)")}</span>
           <select
             name="topik_level"
             className={inputClass}
             defaultValue={student.topik_level ?? ""}
           >
-            <option value="">Chưa có</option>
-            <option value="1">Cấp 1</option>
-            <option value="2">Cấp 2</option>
-            <option value="3">Cấp 3</option>
-            <option value="4">Cấp 4</option>
-            <option value="5">Cấp 5</option>
-            <option value="6">Cấp 6</option>
+            <option value="">{tr(locale, "없음", "Chưa có")}</option>
+            <option value="1">{tr(locale, "1급", "Cấp 1")}</option>
+            <option value="2">{tr(locale, "2급", "Cấp 2")}</option>
+            <option value="3">{tr(locale, "3급", "Cấp 3")}</option>
+            <option value="4">{tr(locale, "4급", "Cấp 4")}</option>
+            <option value="5">{tr(locale, "5급", "Cấp 5")}</option>
+            <option value="6">{tr(locale, "6급", "Cấp 6")}</option>
           </select>
         </label>
 
         <label className={labelClass}>
-          <span className={labelTextClass}>Visa hiện tại</span>
+          <span className={labelTextClass}>{tr(locale, "현재 비자", "Visa hiện tại")}</span>
           <select
             name="current_visa"
             className={inputClass}
             defaultValue={student.current_visa ?? ""}
           >
-            <option value="">Chưa có</option>
-            <option value="D-4">D-4 (Khóa tiếng)</option>
-            <option value="D-2">D-2 (Du học)</option>
-            <option value="none">Không có</option>
-            <option value="other">Khác</option>
+            <option value="">{tr(locale, "없음", "Chưa có")}</option>
+            <option value="D-4">{tr(locale, "D-4 (어학연수)", "D-4 (Khóa tiếng)")}</option>
+            <option value="D-2">{tr(locale, "D-2 (정규유학)", "D-2 (Du học)")}</option>
+            <option value="none">{tr(locale, "비자 없음", "Không có")}</option>
+            <option value="other">{tr(locale, "기타", "Khác")}</option>
           </select>
         </label>
 
         <label className={labelClass}>
-          <span className={labelTextClass}>Vị trí hiện tại</span>
+          <span className={labelTextClass}>{tr(locale, "현재 위치", "Vị trí hiện tại")}</span>
           <select
             name="location"
             className={inputClass}
             defaultValue={student.location ?? ""}
           >
-            <option value="">Chưa có</option>
-            <option value="VN">Việt Nam</option>
-            <option value="KR">Hàn Quốc</option>
-            <option value="other">Khác</option>
+            <option value="">{tr(locale, "없음", "Chưa có")}</option>
+            <option value="VN">{tr(locale, "베트남", "Việt Nam")}</option>
+            <option value="KR">{tr(locale, "한국", "Hàn Quốc")}</option>
+            <option value="other">{tr(locale, "기타", "Khác")}</option>
           </select>
         </label>
       </div>
 
       <label className={labelClass}>
-        <span className={labelTextClass}>Ghi chú</span>
+        <span className={labelTextClass}>{tr(locale, "메모", "Ghi chú")}</span>
         <textarea
           name="notes"
           maxLength={500}
@@ -172,7 +184,7 @@ export function EditStudentForm({ student }: { student: EditableStudent }) {
         {fieldError("notes") ? (
           <span className={errorTextClass}>{fieldError("notes")}</span>
         ) : (
-          <span className={helpTextClass}>Tối đa 500 ký tự</span>
+          <span className={helpTextClass}>{tr(locale, "최대 500자", "Tối đa 500 ký tự")}</span>
         )}
       </label>
 
@@ -188,13 +200,15 @@ export function EditStudentForm({ student }: { student: EditableStudent }) {
           disabled={pending}
           className="rounded-md bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {pending ? "Đang lưu..." : "Lưu thay đổi"}
+          {pending
+            ? tr(locale, "저장 중...", "Đang lưu...")
+            : tr(locale, "변경사항 저장", "Lưu thay đổi")}
         </button>
         <Link
           href={`/center/students/${student.id}`}
           className="rounded-md border border-slate-300 px-5 py-2.5 text-sm text-slate-700 hover:bg-slate-50"
         >
-          Hủy
+          {tr(locale, "취소", "Hủy")}
         </Link>
       </div>
     </form>

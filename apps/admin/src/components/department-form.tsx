@@ -12,6 +12,7 @@ import {
   type DepartmentInput,
   type DepartmentOutput,
 } from "@/lib/validators";
+import type { DepartmentSpecFill } from "@/lib/admission/spec-fill";
 import {
   createDepartment,
   updateDepartment,
@@ -52,6 +53,8 @@ type Props = {
   universityOptions: { id: number; name_ko: string; emoji: string | null }[];
   /** edit 시 어디로 돌아갈지 (기본: /departments) */
   backHref?: string;
+  /** 이 대학 승인 모집요강에서 매칭된 학과의 채울 값 (있으면 "가져오기" 노출) */
+  specFill?: DepartmentSpecFill | null;
 };
 
 const EMPTY_BASE: Omit<DepartmentInput, "university_id"> = {
@@ -78,10 +81,12 @@ export function DepartmentForm({
   defaultValues,
   universityOptions,
   backHref = "/departments",
+  specFill = null,
 }: Props) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [deleting, setDeleting] = useState(false);
+  const [specApplied, setSpecApplied] = useState(false);
 
   const initial: DepartmentInput = {
     ...EMPTY_BASE,
@@ -94,6 +99,22 @@ export function DepartmentForm({
     resolver: zodResolver(departmentSchema),
     defaultValues: initial,
   });
+
+  function applySpecFill() {
+    if (!specFill) return;
+    if (specFill.degree_years !== null) {
+      form.setValue("degree_years", specFill.degree_years, {
+        shouldDirty: true,
+      });
+    }
+    if (specFill.tuition_ko !== null) {
+      form.setValue("tuition_ko", specFill.tuition_ko, { shouldDirty: true });
+    }
+    setSpecApplied(true);
+    toast.success("모집요강에서 값을 가져왔습니다.", {
+      description: "수업연한·등록금을 채웠습니다. 확인 후 저장하세요.",
+    });
+  }
 
   function onSubmit(values: DepartmentOutput) {
     startTransition(async () => {
@@ -134,6 +155,25 @@ export function DepartmentForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        {specFill ? (
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3">
+            <div className="text-sm text-amber-900">
+              <span className="font-semibold">모집요강 연동</span> — 승인된
+              모집요강
+              {specFill.sourceLabel ? ` (${specFill.sourceLabel})` : ""}에서
+              수업연한·등록금을 가져올 수 있습니다.
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={applySpecFill}
+              disabled={specApplied}
+            >
+              {specApplied ? "가져옴 ✓" : "모집요강에서 가져오기"}
+            </Button>
+          </div>
+        ) : null}
         <Card>
           <CardHeader>
             <CardTitle className="text-base">학과 기본 정보</CardTitle>

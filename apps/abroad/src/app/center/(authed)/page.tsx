@@ -1,12 +1,13 @@
 /**
  * /center — 유학센터 대시보드.
- *   본인 org(RLS)의 학생/지원 요약 통계 카드 + 빠른 이동.
+ *   본인 org(RLS)의 학생/지원 요약 통계 카드 + 빠른 이동. (VI 기본 / KO 토글)
  */
 
 import Link from "next/link";
 
 import { verifyCenterSession, isCenterAdmin } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
+import { getLocale, tr } from "@/lib/i18n";
 
 const ACTIVE_APP_STATUSES = [
   "preparing",
@@ -18,6 +19,7 @@ const ACTIVE_APP_STATUSES = [
 
 export default async function CenterDashboardPage() {
   const session = await verifyCenterSession();
+  const locale = await getLocale();
   const supabase = await createCenterClient();
 
   const [{ count: studentCount }, { data: appsRaw }] = await Promise.all([
@@ -42,24 +44,26 @@ export default async function CenterDashboardPage() {
     return d >= today && d <= in7;
   }).length;
 
+  const orgName =
+    locale === "ko" && session.org.name_ko
+      ? session.org.name_ko
+      : session.org.name_vi;
+
   const stats = [
     {
-      label: "Sinh viên",
-      sub: "학생",
+      label: tr(locale, "학생", "Sinh viên"),
       value: studentCount ?? 0,
       href: "/center/students",
       accent: "text-emerald-600",
     },
     {
-      label: "Đơn đang xử lý",
-      sub: "진행 중 지원",
+      label: tr(locale, "진행 중 지원", "Đơn đang xử lý"),
       value: inProgress,
       href: "/center/students",
       accent: "text-indigo-600",
     },
     {
-      label: "Sắp đến hạn (7 ngày)",
-      sub: "마감 임박 · 7일 내",
+      label: tr(locale, "마감 임박 (7일 내)", "Sắp đến hạn (7 ngày)"),
       value: dueSoon,
       href: "/center/students",
       accent: dueSoon > 0 ? "text-amber-600" : "text-slate-400",
@@ -69,18 +73,22 @@ export default async function CenterDashboardPage() {
   const quickLinks = [
     {
       href: "/center/students",
-      title: "Sinh viên",
-      desc: "Đăng ký, hồ sơ, dữ liệu chuẩn",
+      title: tr(locale, "학생", "Sinh viên"),
+      desc: tr(locale, "등록 · 서류 · 표준 데이터", "Đăng ký, hồ sơ, dữ liệu chuẩn"),
     },
     {
       href: "/center/admissions",
-      title: "Tuyển sinh",
-      desc: "Tra cứu hồ sơ tuyển sinh các trường",
+      title: tr(locale, "모집요강", "Tuyển sinh"),
+      desc: tr(
+        locale,
+        "대학별 입학서류 조회",
+        "Tra cứu hồ sơ tuyển sinh các trường"
+      ),
     },
     {
       href: "/center/invoices",
-      title: "Hóa đơn",
-      desc: "Thanh toán & đối soát",
+      title: tr(locale, "청구서", "Hóa đơn"),
+      desc: tr(locale, "결제 · 정산", "Thanh toán & đối soát"),
     },
   ];
 
@@ -88,11 +96,17 @@ export default async function CenterDashboardPage() {
     <div className="flex flex-col gap-8">
       <header>
         <h1 className="text-2xl font-bold text-slate-900">
-          Chào mừng, {session.member.name}
+          {tr(
+            locale,
+            `${session.member.name}님, 환영합니다`,
+            `Chào mừng, ${session.member.name}`
+          )}
         </h1>
         <p className="mt-1 text-sm text-slate-600">
-          {session.org.name_vi} · Vai trò:{" "}
-          {isCenterAdmin(session) ? "Quản trị viên" : "Người dùng"}
+          {orgName} · {tr(locale, "역할", "Vai trò")}:{" "}
+          {isCenterAdmin(session)
+            ? tr(locale, "관리자", "Quản trị viên")
+            : tr(locale, "사용자", "Người dùng")}
         </p>
       </header>
 
@@ -105,7 +119,6 @@ export default async function CenterDashboardPage() {
             className="rounded-xl border border-slate-200 bg-white p-6 transition-shadow hover:shadow-sm"
           >
             <div className="text-sm font-medium text-slate-600">{s.label}</div>
-            <div className="mt-0.5 text-xs text-slate-400">{s.sub}</div>
             <div className={`mt-3 text-3xl font-bold ${s.accent}`}>
               {s.value}
             </div>
@@ -116,7 +129,7 @@ export default async function CenterDashboardPage() {
       {/* 빠른 이동 */}
       <section>
         <h2 className="mb-3 text-sm font-semibold text-slate-700">
-          Truy cập nhanh
+          {tr(locale, "빠른 이동", "Truy cập nhanh")}
         </h2>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           {quickLinks.map((q) => (

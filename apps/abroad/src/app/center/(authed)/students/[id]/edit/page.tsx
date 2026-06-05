@@ -7,6 +7,7 @@ import { notFound } from "next/navigation";
 
 import { verifyCenterSession } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
+import { getLocale, tr } from "@/lib/i18n";
 
 import { EditStudentForm } from "./edit-student-form";
 
@@ -17,6 +18,7 @@ export default async function EditStudentPage({
 }) {
   const { id } = await params;
   await verifyCenterSession();
+  const locale = await getLocale();
   const supabase = await createCenterClient();
 
   const { data: student, error } = await supabase
@@ -38,16 +40,16 @@ export default async function EditStudentPage({
           href={`/center/students/${id}`}
           className="text-sm text-slate-500 hover:underline"
         >
-          ← Quay lại chi tiết
+          {tr(locale, "← 상세로 돌아가기", "← Quay lại chi tiết")}
         </Link>
         <h1 className="mt-2 text-2xl font-bold text-slate-900">
-          Chỉnh sửa thông tin sinh viên
+          {tr(locale, "학생 정보 수정", "Chỉnh sửa thông tin sinh viên")}
         </h1>
         <p className="mt-1 text-sm text-slate-600">{student.name}</p>
       </header>
 
       <div className="rounded-lg border border-slate-200 bg-white p-6">
-        <EditStudentForm student={student} />
+        <EditStudentForm locale={locale} student={student} />
       </div>
     </div>
   );

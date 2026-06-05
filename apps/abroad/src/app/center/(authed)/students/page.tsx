@@ -1,13 +1,13 @@
 /**
- * /center/students — 학생 목록.
+ * /center/students — 학생 목록. (VI 기본 / KO 토글)
  *   RLS 가 본인 org 의 학생만 자동 필터.
- *   향후: 검색 / 단계·대학·마감일 필터 / 페이지네이션 (B1 후반)
  */
 
 import Link from "next/link";
 
 import { verifyCenterSession } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
+import { getLocale, tr, type Locale } from "@/lib/i18n";
 import type {
   ManagedStudentVisa,
   ManagedStudentLocation,
@@ -15,18 +15,33 @@ import type {
 
 import { StudentsFilterBar } from "./students-filter-bar";
 
-const VISA_LABELS: Record<string, string> = {
-  "D-4": "D-4 (어학)",
-  "D-2": "D-2 (유학)",
-  none: "Chưa có",
-  other: "Khác",
-};
+function visaLabel(locale: Locale, visa: string): string {
+  switch (visa) {
+    case "D-4":
+      return "D-4";
+    case "D-2":
+      return "D-2";
+    case "none":
+      return tr(locale, "없음", "Chưa có");
+    case "other":
+      return tr(locale, "기타", "Khác");
+    default:
+      return visa;
+  }
+}
 
-const LOCATION_LABELS: Record<string, string> = {
-  VN: "Việt Nam",
-  KR: "Hàn Quốc",
-  other: "Khác",
-};
+function locationLabel(locale: Locale, loc: string): string {
+  switch (loc) {
+    case "VN":
+      return tr(locale, "베트남", "Việt Nam");
+    case "KR":
+      return tr(locale, "한국", "Hàn Quốc");
+    case "other":
+      return tr(locale, "기타", "Khác");
+    default:
+      return loc;
+  }
+}
 
 type SearchParams = {
   q?: string;
@@ -42,7 +57,8 @@ export default async function StudentsListPage({
 }) {
   const { q, topik, visa, location } = await searchParams;
 
-  await verifyCenterSession(); // 인증 + org 검증
+  await verifyCenterSession();
+  const locale = await getLocale();
   const supabase = await createCenterClient();
 
   let query = supabase
@@ -53,7 +69,6 @@ export default async function StudentsListPage({
     .order("created_at", { ascending: false });
 
   if (q && q.trim()) {
-    // PostgREST or 검색 — name·email·passport(암호화전 평문)
     const term = q.trim().replace(/[%_,()]/g, " ");
     query = query.or(
       `name.ilike.%${term}%,email.ilike.%${term}%,passport_no_encrypted.ilike.%${term}%`
@@ -70,20 +85,33 @@ export default async function StudentsListPage({
 
   const { data: students, error } = await query;
   const hasFilter = !!(q || topik || visa || location);
+  const dateLocale = locale === "ko" ? "ko-KR" : "vi-VN";
 
   return (
     <div>
       <header className="mb-4 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">
-            Danh sách sinh viên
+            {tr(locale, "학생 목록", "Danh sách sinh viên")}
           </h1>
           <p className="mt-1 text-sm text-slate-600">
             {students && students.length > 0
               ? hasFilter
-                ? `Tìm thấy ${students.length} sinh viên`
-                : `${students.length} sinh viên · Quản lý hồ sơ du học Hàn Quốc`
-              : "Quản lý hồ sơ sinh viên đăng ký du học Hàn Quốc"}
+                ? tr(
+                    locale,
+                    `${students.length}명 검색됨`,
+                    `Tìm thấy ${students.length} sinh viên`
+                  )
+                : tr(
+                    locale,
+                    `학생 ${students.length}명 · 한국 유학 지원 관리`,
+                    `${students.length} sinh viên · Quản lý hồ sơ du học Hàn Quốc`
+                  )
+              : tr(
+                  locale,
+                  "한국 유학 지원 학생 관리",
+                  "Quản lý hồ sơ sinh viên đăng ký du học Hàn Quốc"
+                )}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -91,50 +119,70 @@ export default async function StudentsListPage({
             href="/center/students/import"
             className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
           >
-            Tải lên Excel
+            {tr(locale, "엑셀 업로드", "Tải lên Excel")}
           </Link>
           <Link
             href="/center/students/new"
             className="rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800"
           >
-            + Đăng ký sinh viên
+            {tr(locale, "+ 학생 등록", "+ Đăng ký sinh viên")}
           </Link>
         </div>
       </header>
 
-      <StudentsFilterBar />
+      <StudentsFilterBar locale={locale} />
 
       {error ? (
         <div className="rounded-md bg-red-50 p-4 text-sm text-red-700">
-          Lỗi tải dữ liệu: {error.message}
+          {tr(locale, "데이터 로드 오류", "Lỗi tải dữ liệu")}: {error.message}
         </div>
       ) : !students || students.length === 0 ? (
         <div className="rounded-lg border border-dashed border-slate-300 bg-white p-12 text-center">
           {hasFilter ? (
             <>
               <p className="text-base text-slate-600">
-                Không tìm thấy sinh viên nào khớp với bộ lọc.
+                {tr(
+                  locale,
+                  "필터에 맞는 학생이 없습니다.",
+                  "Không tìm thấy sinh viên nào khớp với bộ lọc."
+                )}
               </p>
               <Link
                 href="/center/students"
                 className="mt-4 inline-block text-sm font-semibold text-blue-600 hover:underline"
               >
-                Xóa bộ lọc và xem tất cả →
+                {tr(
+                  locale,
+                  "필터 지우고 전체 보기 →",
+                  "Xóa bộ lọc và xem tất cả →"
+                )}
               </Link>
             </>
           ) : (
             <>
               <p className="text-base text-slate-600">
-                Chưa có sinh viên nào được đăng ký.
+                {tr(
+                  locale,
+                  "아직 등록된 학생이 없습니다.",
+                  "Chưa có sinh viên nào được đăng ký."
+                )}
               </p>
               <p className="mt-1 text-sm text-slate-500">
-                Bắt đầu bằng cách đăng ký sinh viên đầu tiên.
+                {tr(
+                  locale,
+                  "첫 학생을 등록해 시작하세요.",
+                  "Bắt đầu bằng cách đăng ký sinh viên đầu tiên."
+                )}
               </p>
               <Link
                 href="/center/students/new"
                 className="mt-4 inline-block rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800"
               >
-                + Đăng ký sinh viên đầu tiên
+                {tr(
+                  locale,
+                  "+ 첫 학생 등록",
+                  "+ Đăng ký sinh viên đầu tiên"
+                )}
               </Link>
             </>
           )}
@@ -145,21 +193,21 @@ export default async function StudentsListPage({
             <thead className="bg-slate-50">
               <tr className="text-left">
                 <th className="px-4 py-3 font-medium text-slate-700">
-                  Họ tên
+                  {tr(locale, "이름", "Họ tên")}
                 </th>
                 <th className="px-4 py-3 font-medium text-slate-700">
-                  Ngày sinh
+                  {tr(locale, "생년월일", "Ngày sinh")}
                 </th>
                 <th className="px-4 py-3 font-medium text-slate-700">
-                  Liên hệ
+                  {tr(locale, "연락처", "Liên hệ")}
                 </th>
                 <th className="px-4 py-3 font-medium text-slate-700">TOPIK</th>
                 <th className="px-4 py-3 font-medium text-slate-700">Visa</th>
                 <th className="px-4 py-3 font-medium text-slate-700">
-                  Vị trí
+                  {tr(locale, "위치", "Vị trí")}
                 </th>
                 <th className="px-4 py-3 font-medium text-slate-700">
-                  Đăng ký
+                  {tr(locale, "등록일", "Đăng ký")}
                 </th>
               </tr>
             </thead>
@@ -177,27 +225,23 @@ export default async function StudentsListPage({
                       {s.name}
                     </Link>
                   </td>
-                  <td className="px-4 py-3 text-slate-700">
-                    {s.dob ?? "—"}
-                  </td>
+                  <td className="px-4 py-3 text-slate-700">{s.dob ?? "—"}</td>
                   <td className="px-4 py-3 text-slate-700">
                     {s.phone ?? s.email ?? "—"}
                   </td>
                   <td className="px-4 py-3 text-slate-700">
-                    {s.topik_level ? `Cấp ${s.topik_level}` : "—"}
-                  </td>
-                  <td className="px-4 py-3 text-slate-700">
-                    {s.current_visa
-                      ? (VISA_LABELS[s.current_visa] ?? s.current_visa)
+                    {s.topik_level
+                      ? tr(locale, `${s.topik_level}급`, `Cấp ${s.topik_level}`)
                       : "—"}
                   </td>
                   <td className="px-4 py-3 text-slate-700">
-                    {s.location
-                      ? (LOCATION_LABELS[s.location] ?? s.location)
-                      : "—"}
+                    {s.current_visa ? visaLabel(locale, s.current_visa) : "—"}
+                  </td>
+                  <td className="px-4 py-3 text-slate-700">
+                    {s.location ? locationLabel(locale, s.location) : "—"}
                   </td>
                   <td className="px-4 py-3 text-xs text-slate-500">
-                    {new Date(s.created_at).toLocaleDateString("vi-VN")}
+                    {new Date(s.created_at).toLocaleDateString(dateLocale)}
                   </td>
                 </tr>
               ))}

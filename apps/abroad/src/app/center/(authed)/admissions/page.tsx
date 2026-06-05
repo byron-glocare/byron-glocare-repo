@@ -10,17 +10,28 @@ import Link from "next/link";
 
 import { verifyCenterSession } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
+import { getLocale, tr, type Locale } from "@/lib/i18n";
 
-const PROGRAM_TYPE_LABELS: Record<string, string> = {
-  language_program: "Khóa tiếng (D-4)",
-  associate_2yr: "Cao đẳng 2 năm",
-  bachelor_3yr_extension: "Liên thông 2+2 (Cử nhân)",
-  bachelor_4yr: "Cử nhân 4 năm",
-};
+function programTypeLabel(locale: Locale, programType: string): string {
+  switch (programType) {
+    case "language_program":
+      return tr(locale, "어학연수 (D-4)", "Khóa tiếng (D-4)");
+    case "associate_2yr":
+      return tr(locale, "전문학사 2년", "Cao đẳng 2 năm");
+    case "bachelor_3yr_extension":
+      return tr(locale, "학사 편입 2+2", "Liên thông 2+2 (Cử nhân)");
+    case "bachelor_4yr":
+      return tr(locale, "학사 4년", "Cử nhân 4 năm");
+    default:
+      return programType;
+  }
+}
 
 export default async function AdmissionsPage() {
   await verifyCenterSession();
+  const locale = await getLocale();
   const supabase = await createCenterClient();
+  const dateLocale = locale === "ko" ? "ko-KR" : "vi-VN";
 
   const { data: specs, error } = await supabase
     .from("study_admission_specs")
@@ -49,31 +60,51 @@ export default async function AdmissionsPage() {
     <div>
       <header className="mb-6">
         <h1 className="text-2xl font-bold text-slate-900">
-          Hồ sơ tuyển sinh
+          {tr(locale, "모집요강", "Hồ sơ tuyển sinh")}
         </h1>
         <p className="mt-1 text-sm text-slate-600">
-          Tra cứu thông tin tuyển sinh các trường đại học Hàn Quốc đã được
-          GLOCARE chuẩn hóa
+          {tr(
+            locale,
+            "GLOCARE가 표준화한 한국 대학 모집요강 정보를 조회하세요",
+            "Tra cứu thông tin tuyển sinh các trường đại học Hàn Quốc đã được GLOCARE chuẩn hóa"
+          )}
         </p>
       </header>
 
       {error ? (
         <div className="rounded-md bg-red-50 p-4 text-sm text-red-700">
-          Lỗi tải dữ liệu: {error.message}
+          {tr(locale, "데이터 로드 오류", "Lỗi tải dữ liệu")}: {error.message}
         </div>
       ) : !specs || specs.length === 0 ? (
         <div className="rounded-lg border border-dashed border-slate-300 bg-white p-12 text-center">
           <p className="text-base text-slate-600">
-            Chưa có hồ sơ tuyển sinh nào được công bố.
+            {tr(
+              locale,
+              "공개된 모집요강이 없습니다.",
+              "Chưa có hồ sơ tuyển sinh nào được công bố."
+            )}
           </p>
           <p className="mt-2 text-sm text-slate-500">
-            GLOCARE đang trong quá trình số hóa các hồ sơ tuyển sinh từ các
-            trường đối tác.
+            {tr(
+              locale,
+              "GLOCARE가 파트너 대학의 모집요강을 디지털화하는 중입니다.",
+              "GLOCARE đang trong quá trình số hóa các hồ sơ tuyển sinh từ các trường đối tác."
+            )}
             <br />
-            Hồ sơ sẽ xuất hiện ở đây sau khi được duyệt.
+            {tr(
+              locale,
+              "승인되면 이곳에 표시됩니다.",
+              "Hồ sơ sẽ xuất hiện ở đây sau khi được duyệt."
+            )}
           </p>
           <p className="mt-3 text-xs text-slate-400">
-            (Đối với GLOCARE: hồ sơ chỉ hiển thị khi <code>status = 'approved'</code>)
+            {tr(
+              locale,
+              "(GLOCARE 안내: 모집요강은 ",
+              "(Đối với GLOCARE: hồ sơ chỉ hiển thị khi "
+            )}
+            <code>status = 'approved'</code>
+            {tr(locale, " 일 때만 표시됩니다)", ")")}
           </p>
         </div>
       ) : (
@@ -82,19 +113,19 @@ export default async function AdmissionsPage() {
             <thead className="bg-slate-50">
               <tr className="text-left">
                 <th className="px-4 py-3 font-medium text-slate-700">
-                  Trường đại học
+                  {tr(locale, "대학교", "Trường đại học")}
                 </th>
                 <th className="px-4 py-3 font-medium text-slate-700">
-                  Ngành
+                  {tr(locale, "학과", "Ngành")}
                 </th>
                 <th className="px-4 py-3 font-medium text-slate-700">
-                  Chương trình
+                  {tr(locale, "과정", "Chương trình")}
                 </th>
                 <th className="px-4 py-3 font-medium text-slate-700">
-                  Học kỳ
+                  {tr(locale, "학기", "Học kỳ")}
                 </th>
                 <th className="px-4 py-3 font-medium text-slate-700">
-                  Cập nhật
+                  {tr(locale, "수정일", "Cập nhật")}
                 </th>
               </tr>
             </thead>
@@ -119,10 +150,12 @@ export default async function AdmissionsPage() {
                         href={`/center/admissions/${spec.id}`}
                         className="block hover:text-emerald-700 hover:underline"
                       >
-                        {uni?.name_ko ?? "—"}
-                        {uni?.name_vi ? (
+                        {(locale === "ko" ? uni?.name_ko : uni?.name_vi) ??
+                          uni?.name_ko ??
+                          "—"}
+                        {(locale === "ko" ? uni?.name_vi : uni?.name_ko) ? (
                           <div className="mt-0.5 text-xs font-normal text-slate-500">
-                            {uni.name_vi}
+                            {locale === "ko" ? uni?.name_vi : uni?.name_ko}
                           </div>
                         ) : null}
                       </Link>
@@ -154,8 +187,7 @@ export default async function AdmissionsPage() {
                         href={`/center/admissions/${spec.id}`}
                         className="block"
                       >
-                        {PROGRAM_TYPE_LABELS[spec.program_type] ??
-                          spec.program_type}
+                        {programTypeLabel(locale, spec.program_type)}
                       </Link>
                     </td>
                     <td className="px-4 py-3 text-slate-700">
@@ -167,7 +199,7 @@ export default async function AdmissionsPage() {
                       </Link>
                     </td>
                     <td className="px-4 py-3 text-xs text-slate-500">
-                      {new Date(spec.updated_at).toLocaleDateString("vi-VN")}
+                      {new Date(spec.updated_at).toLocaleDateString(dateLocale)}
                     </td>
                   </tr>
                 );

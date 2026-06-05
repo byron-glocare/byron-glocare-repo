@@ -2,6 +2,7 @@
 
 import { useRef, useState, useTransition } from "react";
 import type { Json } from "@/types/database";
+import { tr, type Locale } from "@/lib/i18n";
 import {
   saveStudentDataValueAction,
   uploadStudentFileAction,
@@ -34,25 +35,41 @@ const CATEGORY_ORDER = [
   "other",
 ];
 
-const CATEGORY_LABEL: Record<string, string> = {
-  identity: "Thông tin cá nhân",
-  education: "Học vấn",
-  family: "Gia đình",
-  financial: "Tài chính",
-  language: "Ngoại ngữ",
-  contact: "Liên hệ",
-  career: "Kinh nghiệm",
-  essay: "Văn viết (cơ sở AI)",
-  document: "Tệp đính kèm",
-  other: "Khác",
-};
+function categoryLabel(locale: Locale, category: string): string {
+  switch (category) {
+    case "identity":
+      return tr(locale, "개인 정보", "Thông tin cá nhân");
+    case "education":
+      return tr(locale, "학력", "Học vấn");
+    case "family":
+      return tr(locale, "가족", "Gia đình");
+    case "financial":
+      return tr(locale, "재정", "Tài chính");
+    case "language":
+      return tr(locale, "어학", "Ngoại ngữ");
+    case "contact":
+      return tr(locale, "연락처", "Liên hệ");
+    case "career":
+      return tr(locale, "경력", "Kinh nghiệm");
+    case "essay":
+      return tr(locale, "작문 (AI 기초자료)", "Văn viết (cơ sở AI)");
+    case "document":
+      return tr(locale, "첨부 파일", "Tệp đính kèm");
+    case "other":
+      return tr(locale, "기타", "Khác");
+    default:
+      return category;
+  }
+}
 
 export function StudentDataEditor({
+  locale,
   studentId,
   dataTypes,
   existingValues,
   requiredBySource,
 }: {
+  locale: Locale;
   studentId: string;
   dataTypes: DataTypeMeta[];
   existingValues: Record<string, Json>;
@@ -90,22 +107,39 @@ export function StudentDataEditor({
         >
           <h2 className="text-sm font-semibold">
             {missingRequired.length === 0
-              ? `✓ Tất cả ${requiredKeys.length} mục cần thiết đã đầy đủ`
-              : `⚠ Còn thiếu ${missingRequired.length} / ${requiredKeys.length} mục cần thiết`}
+              ? tr(
+                  locale,
+                  `✓ 필수 항목 ${requiredKeys.length}개를 모두 입력했습니다`,
+                  `✓ Tất cả ${requiredKeys.length} mục cần thiết đã đầy đủ`
+                )
+              : tr(
+                  locale,
+                  `⚠ 필수 항목 ${missingRequired.length} / ${requiredKeys.length}개가 미입력 상태입니다`,
+                  `⚠ Còn thiếu ${missingRequired.length} / ${requiredKeys.length} mục cần thiết`
+                )}
           </h2>
           {missingRequired.length > 0 ? (
             <p className="mt-1 text-xs">
-              Các mục có dấu{" "}
-              <span className="rounded bg-amber-200 px-1 font-semibold">cần</span>{" "}
-              bên dưới là do mẫu hồ sơ của trường yêu cầu.
+              {tr(locale, "아래에서 ", "Các mục có dấu ")}
+              <span className="rounded bg-amber-200 px-1 font-semibold">
+                {tr(locale, "필수", "cần")}
+              </span>{" "}
+              {tr(
+                locale,
+                "표시가 된 항목은 대학 지원 양식에서 요구하는 항목입니다.",
+                "bên dưới là do mẫu hồ sơ của trường yêu cầu."
+              )}
             </p>
           ) : null}
         </section>
       ) : (
         <section className="rounded-lg border border-slate-200 bg-slate-50 p-4">
           <p className="text-xs text-slate-600">
-            Chưa có đơn tuyển sinh nào — chưa thể xác định mục bắt buộc tự động.
-            Vui lòng nhập đầy đủ thông tin có thể có.
+            {tr(
+              locale,
+              "등록된 지원 내역이 없어 필수 항목을 자동으로 판별할 수 없습니다. 입력 가능한 정보를 최대한 채워주세요.",
+              "Chưa có đơn tuyển sinh nào — chưa thể xác định mục bắt buộc tự động. Vui lòng nhập đầy đủ thông tin có thể có."
+            )}
           </p>
         </section>
       )}
@@ -114,6 +148,7 @@ export function StudentDataEditor({
       {CATEGORY_ORDER.filter((c) => byCategory.has(c)).map((cat) => (
         <CategorySection
           key={cat}
+          locale={locale}
           category={cat}
           dataTypes={byCategory.get(cat)!}
           values={values}
@@ -127,6 +162,7 @@ export function StudentDataEditor({
 }
 
 function CategorySection({
+  locale,
   category,
   dataTypes,
   values,
@@ -134,6 +170,7 @@ function CategorySection({
   studentId,
   requiredBySource,
 }: {
+  locale: Locale;
   category: string;
   dataTypes: DataTypeMeta[];
   values: Record<string, Json | null>;
@@ -150,7 +187,7 @@ function CategorySection({
     <section className="rounded-lg border border-slate-200 bg-white">
       <header className="border-b border-slate-200 px-4 py-3">
         <h2 className="text-sm font-semibold text-slate-900">
-          {CATEGORY_LABEL[category] ?? category}{" "}
+          {categoryLabel(locale, category)}{" "}
           <span className="font-normal text-slate-500">
             ({filled}/{dataTypes.length})
           </span>
@@ -160,6 +197,7 @@ function CategorySection({
         {dataTypes.map((dt) => (
           <FieldRow
             key={dt.key}
+            locale={locale}
             dataType={dt}
             value={values[dt.key] ?? null}
             onChange={(v) => setValues((cur) => ({ ...cur, [dt.key]: v }))}
@@ -173,12 +211,14 @@ function CategorySection({
 }
 
 function FieldRow({
+  locale,
   dataType,
   value,
   onChange,
   studentId,
   requiredSources,
 }: {
+  locale: Locale;
   dataType: DataTypeMeta;
   value: Json | null;
   onChange: (v: Json | null) => void;
@@ -217,36 +257,40 @@ function FieldRow({
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1">
           <label className="text-sm font-medium text-slate-900">
-            {dataType.label_vi}
+            {locale === "ko" ? dataType.label_ko : dataType.label_vi}
             {isRequired ? (
               <span
                 className="ml-2 rounded bg-amber-200 px-1 text-[10px] font-semibold text-amber-900"
                 title={requiredSources.join(", ")}
               >
-                cần
+                {tr(locale, "필수", "cần")}
               </span>
             ) : null}
             {dataType.is_essay_basis ? (
               <span className="ml-2 rounded bg-purple-100 px-1 text-[10px] text-purple-700">
-                AI cơ sở
+                {tr(locale, "AI 기초자료", "AI cơ sở")}
               </span>
             ) : null}
           </label>
           <div className="mt-0.5 text-xs text-slate-500">
-            {dataType.label_ko}{" "}
+            {locale === "ko" ? dataType.label_vi : dataType.label_ko}{" "}
             <span className="text-slate-400">· {dataType.key}</span>
           </div>
-          {dataType.hint_vi ? (
+          {(locale === "ko" ? dataType.hint_ko : dataType.hint_vi) ? (
             <div className="mt-1 text-xs text-slate-600">
-              💡 {dataType.hint_vi}
+              💡 {locale === "ko" ? dataType.hint_ko : dataType.hint_vi}
             </div>
           ) : null}
         </div>
         <div className="shrink-0">
           {pending ? (
-            <span className="text-xs text-slate-400">đang lưu...</span>
+            <span className="text-xs text-slate-400">
+              {tr(locale, "저장 중...", "đang lưu...")}
+            </span>
           ) : saved ? (
-            <span className="text-xs text-emerald-600">✓ đã lưu</span>
+            <span className="text-xs text-emerald-600">
+              {tr(locale, "✓ 저장됨", "✓ đã lưu")}
+            </span>
           ) : isFilled ? (
             <span className="text-xs text-emerald-600">✓</span>
           ) : (
@@ -257,6 +301,7 @@ function FieldRow({
 
       <div className="mt-2">
         <ValueInput
+          locale={locale}
           dataType={dataType}
           value={value}
           studentId={studentId}
@@ -268,18 +313,22 @@ function FieldRow({
       </div>
 
       {error ? (
-        <div className="mt-1 text-xs text-rose-700">Lỗi: {error}</div>
+        <div className="mt-1 text-xs text-rose-700">
+          {tr(locale, "오류", "Lỗi")}: {error}
+        </div>
       ) : null}
     </div>
   );
 }
 
 function ValueInput({
+  locale,
   dataType,
   value,
   studentId,
   onCommit,
 }: {
+  locale: Locale;
   dataType: DataTypeMeta;
   value: Json | null;
   studentId: string;
@@ -329,10 +378,12 @@ function ValueInput({
           onChange={(e) => onCommit(e.target.value || null)}
           className={baseClass}
         >
-          <option value="">— chưa chọn —</option>
+          <option value="">{tr(locale, "— 선택 안 함 —", "— chưa chọn —")}</option>
           {(dataType.options ?? []).map((o) => (
             <option key={o.value} value={o.value}>
-              {o.label_vi} · {o.label_ko}
+              {locale === "ko"
+                ? `${o.label_ko} · ${o.label_vi}`
+                : `${o.label_vi} · ${o.label_ko}`}
             </option>
           ))}
         </select>
@@ -341,6 +392,7 @@ function ValueInput({
     case "multi_select":
       return (
         <MultiSelectInput
+          locale={locale}
           value={Array.isArray(value) ? (value as string[]) : []}
           options={dataType.options ?? []}
           onCommit={(arr) => onCommit(arr.length > 0 ? arr : null)}
@@ -355,13 +407,14 @@ function ValueInput({
             checked={value === true}
             onChange={(e) => onCommit(e.target.checked)}
           />
-          <span>Có</span>
+          <span>{tr(locale, "예", "Có")}</span>
         </label>
       );
 
     case "file":
       return (
         <FileInput
+          locale={locale}
           studentId={studentId}
           dataTypeKey={dataType.key}
           value={value}
@@ -383,11 +436,13 @@ function ValueInput({
 }
 
 function FileInput({
+  locale,
   studentId,
   dataTypeKey,
   value,
   onCommit,
 }: {
+  locale: Locale;
   studentId: string;
   dataTypeKey: string;
   value: Json | null;
@@ -473,7 +528,7 @@ function FileInput({
               disabled={opening}
               className="shrink-0 font-medium text-emerald-700 hover:underline disabled:opacity-50"
             >
-              {opening ? "..." : "Mở"}
+              {opening ? "..." : tr(locale, "열기", "Mở")}
             </button>
           ) : legacyUrl ? (
             <a
@@ -482,7 +537,7 @@ function FileInput({
               rel="noopener noreferrer"
               className="shrink-0 font-medium text-emerald-700 hover:underline"
             >
-              Mở
+              {tr(locale, "열기", "Mở")}
             </a>
           ) : null}
           <button
@@ -491,10 +546,14 @@ function FileInput({
             disabled={busy}
             className="shrink-0 text-rose-600 hover:underline disabled:opacity-50"
           >
-            {busy ? "..." : "Xóa"}
+            {busy ? "..." : tr(locale, "삭제", "Xóa")}
           </button>
         </div>
-        {error ? <p className="mt-1 text-xs text-rose-700">Lỗi: {error}</p> : null}
+        {error ? (
+          <p className="mt-1 text-xs text-rose-700">
+            {tr(locale, "오류", "Lỗi")}: {error}
+          </p>
+        ) : null}
       </div>
     );
   }
@@ -509,9 +568,15 @@ function FileInput({
         className="block w-full text-sm text-slate-600 file:mr-3 file:rounded-md file:border-0 file:bg-emerald-600 file:px-3 file:py-1.5 file:font-medium file:text-white hover:file:bg-emerald-700 disabled:opacity-50"
       />
       {busy ? (
-        <p className="mt-1 text-xs text-slate-400">Đang tải lên...</p>
+        <p className="mt-1 text-xs text-slate-400">
+          {tr(locale, "업로드 중...", "Đang tải lên...")}
+        </p>
       ) : null}
-      {error ? <p className="mt-1 text-xs text-rose-700">Lỗi: {error}</p> : null}
+      {error ? (
+        <p className="mt-1 text-xs text-rose-700">
+          {tr(locale, "오류", "Lỗi")}: {error}
+        </p>
+      ) : null}
     </div>
   );
 }
@@ -540,10 +605,12 @@ function TextAreaInput({
 }
 
 function MultiSelectInput({
+  locale,
   value,
   options,
   onCommit,
 }: {
+  locale: Locale;
   value: string[];
   options: Array<{ value: string; label_ko: string; label_vi: string }>;
   onCommit: (v: string[]) => void;
@@ -569,7 +636,7 @@ function MultiSelectInput({
                 : "border-slate-300 hover:bg-slate-50"
             }`}
           >
-            {o.label_vi}
+            {locale === "ko" ? o.label_ko : o.label_vi}
           </button>
         );
       })}

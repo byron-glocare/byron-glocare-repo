@@ -3,23 +3,41 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState, useTransition } from "react";
 
+import { tr, type Locale } from "@/lib/i18n";
+
 const TOPIK_OPTS = ["1", "2", "3", "4", "5", "6"] as const;
 const VISA_OPTS = ["D-4", "D-2", "none", "other"] as const;
 const LOC_OPTS = ["VN", "KR", "other"] as const;
 
-const VISA_LABELS: Record<string, string> = {
-  "D-4": "D-4",
-  "D-2": "D-2",
-  none: "Không có",
-  other: "Khác",
-};
-const LOC_LABELS: Record<string, string> = {
-  VN: "Việt Nam",
-  KR: "Hàn Quốc",
-  other: "Khác",
-};
+function visaLabel(locale: Locale, visa: string): string {
+  switch (visa) {
+    case "D-4":
+      return "D-4";
+    case "D-2":
+      return "D-2";
+    case "none":
+      return tr(locale, "없음", "Không có");
+    case "other":
+      return tr(locale, "기타", "Khác");
+    default:
+      return visa;
+  }
+}
 
-export function StudentsFilterBar() {
+function locLabel(locale: Locale, loc: string): string {
+  switch (loc) {
+    case "VN":
+      return tr(locale, "베트남", "Việt Nam");
+    case "KR":
+      return tr(locale, "한국", "Hàn Quốc");
+    case "other":
+      return tr(locale, "기타", "Khác");
+    default:
+      return loc;
+  }
+}
+
+export function StudentsFilterBar({ locale }: { locale: Locale }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -54,7 +72,11 @@ export function StudentsFilterBar() {
       >
         <input
           type="search"
-          placeholder="Tìm theo tên · email · hộ chiếu..."
+          placeholder={tr(
+            locale,
+            "이름 · 이메일 · 여권번호 검색...",
+            "Tìm theo tên · email · hộ chiếu..."
+          )}
           value={q}
           onChange={(e) => setQ(e.target.value)}
           className="min-w-[220px] flex-1 rounded-md border border-slate-300 px-3 py-1.5 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-300"
@@ -65,13 +87,13 @@ export function StudentsFilterBar() {
           onChange={(e) => updateParam("topik", e.target.value)}
           className="rounded-md border border-slate-300 px-2 py-1.5 text-sm"
         >
-          <option value="">TOPIK · tất cả</option>
+          <option value="">{tr(locale, "TOPIK · 전체", "TOPIK · tất cả")}</option>
           {TOPIK_OPTS.map((t) => (
             <option key={t} value={t}>
-              Cấp {t}
+              {tr(locale, `${t}급`, `Cấp ${t}`)}
             </option>
           ))}
-          <option value="__none__">Chưa có</option>
+          <option value="__none__">{tr(locale, "없음", "Chưa có")}</option>
         </select>
 
         <select
@@ -79,10 +101,10 @@ export function StudentsFilterBar() {
           onChange={(e) => updateParam("visa", e.target.value)}
           className="rounded-md border border-slate-300 px-2 py-1.5 text-sm"
         >
-          <option value="">Visa · tất cả</option>
+          <option value="">{tr(locale, "Visa · 전체", "Visa · tất cả")}</option>
           {VISA_OPTS.map((v) => (
             <option key={v} value={v}>
-              {VISA_LABELS[v]}
+              {visaLabel(locale, v)}
             </option>
           ))}
         </select>
@@ -92,10 +114,10 @@ export function StudentsFilterBar() {
           onChange={(e) => updateParam("location", e.target.value)}
           className="rounded-md border border-slate-300 px-2 py-1.5 text-sm"
         >
-          <option value="">Vị trí · tất cả</option>
+          <option value="">{tr(locale, "위치 · 전체", "Vị trí · tất cả")}</option>
           {LOC_OPTS.map((l) => (
             <option key={l} value={l}>
-              {LOC_LABELS[l]}
+              {locLabel(locale, l)}
             </option>
           ))}
         </select>
@@ -105,7 +127,7 @@ export function StudentsFilterBar() {
           disabled={isPending}
           className="rounded-md bg-slate-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-60"
         >
-          {isPending ? "..." : "Tìm"}
+          {isPending ? "..." : tr(locale, "검색", "Tìm")}
         </button>
 
         {hasFilter ? (
@@ -117,7 +139,7 @@ export function StudentsFilterBar() {
             }}
             className="rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50"
           >
-            Xóa bộ lọc
+            {tr(locale, "필터 지우기", "Xóa bộ lọc")}
           </button>
         ) : null}
       </form>

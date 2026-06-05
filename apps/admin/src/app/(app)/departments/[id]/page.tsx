@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/page-header";
 import { DepartmentForm } from "@/components/department-form";
+import { getDepartmentSpecFill } from "@/lib/admission/spec-fill";
 import type { DepartmentInput } from "@/lib/validators";
 
 export const dynamic = "force-dynamic";
@@ -23,6 +24,9 @@ export default async function DepartmentEditPage({
   ]);
 
   if (error || !row || !universities) notFound();
+
+  // 이 학과의 대학에 승인된 모집요강이 있으면, 폼에 채울 값을 미리 계산
+  const specFill = await getDepartmentSpecFill(row.university_id, row.name_ko);
 
   const defaultValues: Partial<DepartmentInput> = {
     university_id: row.university_id,
@@ -60,6 +64,7 @@ export default async function DepartmentEditPage({
           defaultValues={defaultValues}
           universityOptions={universities}
           backHref={`/universities/${row.university_id}`}
+          specFill={specFill}
         />
       </div>
     </>
