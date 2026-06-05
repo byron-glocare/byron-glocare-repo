@@ -20,7 +20,33 @@ export type DataTypeMeta = {
   hint_ko: string | null;
   hint_vi: string | null;
   is_essay_basis: boolean;
+  is_derived: boolean;
+  derived_from: { selector: string; map: Record<string, string> } | null;
 };
+
+/**
+ * 파생(택1) 값 해석 — 저장하지 않고 항상 원본에서 계산.
+ *   selector 항목의 선택값(예: "father") → map["father"] = "father_name" → 그 값.
+ */
+type DerivedResolution =
+  | { state: "ok"; value: Json | null; sourceKey: string; choice: string }
+  | { state: "no-selector" }
+  | { state: "no-choice"; selectorKey: string }
+  | { state: "unmapped"; selectorKey: string; choice: string };
+
+function resolveDerived(
+  dt: DataTypeMeta,
+  valueOf: (key: string) => Json | null
+): DerivedResolution {
+  const df = dt.derived_from;
+  if (!df || !df.selector) return { state: "no-selector" };
+  const raw = valueOf(df.selector);
+  const choice = raw == null ? "" : String(raw);
+  if (!choice) return { state: "no-choice", selectorKey: df.selector };
+  const sourceKey = df.map?.[choice];
+  if (!sourceKey) return { state: "unmapped", selectorKey: df.selector, choice };
+  return { state: "ok", value: valueOf(sourceKey), sourceKey, choice };
+}
 
 const CATEGORY_ORDER = [
   "identity",
@@ -80,6 +106,18 @@ export function StudentDataEditor({
     existingValues as Record<string, Json | null>
   );
 
+  // key → 메타 (파생 해석·라벨 조회용)
+  const byKey = new Map<string, DataTypeMeta>();
+  for (const dt of dataTypes) byKey.set(dt.key, dt);
+
+  const valueOf = (key: string): Json | null => values[key] ?? null;
+  // 파생 항목은 원본에서 계산한 값을, 일반 항목은 입력값을 반환
+  const effectiveValue = (dt: DataTypeMeta): Json | null => {
+    if (!dt.is_derived) return valueOf(dt.key);
+    const r = resolveDerived(dt, valueOf);
+    return r.state === "ok" ? r.value : null;
+  };
+
   // 카테고리별 그룹화
   const byCategory = new Map<string, DataTypeMeta[]>();
   for (const dt of dataTypes) {
@@ -87,10 +125,11 @@ export function StudentDataEditor({
     byCategory.get(dt.category)!.push(dt);
   }
 
-  // 부족 항목 카운트 — 지원 의향에서 필요한데 입력 안 된 것
+  // 부족 항목 카운트 — 지원 의향에서 필요한데 입력 안 된 것 (파생은 계산값 기준)
   const requiredKeys = Object.keys(requiredBySource);
   const missingRequired = requiredKeys.filter((k) => {
-    const v = values[k];
+    const dt = byKey.get(k);
+    const v = dt ? effectiveValue(dt) : values[k];
     return v === null || v === undefined || v === "";
   });
 
@@ -155,6 +194,7 @@ export function StudentDataEditor({
           setValues={setValues}
           studentId={studentId}
           requiredBySource={requiredBySource}
+          byKey={byKey}
         />
       ))}
     </div>
@@ -169,6 +209,7 @@ function CategorySection({
   setValues,
   studentId,
   requiredBySource,
+  byKey,
 }: {
   locale: Locale;
   category: string;
@@ -177,9 +218,16 @@ function CategorySection({
   setValues: React.Dispatch<React.SetStateAction<Record<string, Json | null>>>;
   studentId: string;
   requiredBySource: Record<string, string[]>;
+  byKey: Map<string, DataTypeMeta>;
 }) {
+  const valueOf = (key: string): Json | null => values[key] ?? null;
+  const effectiveValue = (dt: DataTypeMeta): Json | null => {
+    if (!dt.is_derived) return valueOf(dt.key);
+    const r = resolveDerived(dt, valueOf);
+    return r.state === "ok" ? r.value : null;
+  };
   const filled = dataTypes.filter((dt) => {
-    const v = values[dt.key];
+    const v = effectiveValue(dt);
     return v !== null && v !== undefined && v !== "";
   }).length;
 
@@ -194,17 +242,28 @@ function CategorySection({
         </h2>
       </header>
       <div className="divide-y divide-slate-100">
-        {dataTypes.map((dt) => (
-          <FieldRow
-            key={dt.key}
-            locale={locale}
-            dataType={dt}
-            value={values[dt.key] ?? null}
-            onChange={(v) => setValues((cur) => ({ ...cur, [dt.key]: v }))}
-            studentId={studentId}
-            requiredSources={requiredBySource[dt.key] ?? []}
-          />
-        ))}
+        {dataTypes.map((dt) =>
+          dt.is_derived ? (
+            <DerivedFieldRow
+              key={dt.key}
+              locale={locale}
+              dataType={dt}
+              resolution={resolveDerived(dt, valueOf)}
+              byKey={byKey}
+              requiredSources={requiredBySource[dt.key] ?? []}
+            />
+          ) : (
+            <FieldRow
+              key={dt.key}
+              locale={locale}
+              dataType={dt}
+              value={values[dt.key] ?? null}
+              onChange={(v) => setValues((cur) => ({ ...cur, [dt.key]: v }))}
+              studentId={studentId}
+              requiredSources={requiredBySource[dt.key] ?? []}
+            />
+          )
+        )}
       </div>
     </section>
   );
@@ -317,6 +376,144 @@ function FieldRow({
           {tr(locale, "오류", "Lỗi")}: {error}
         </div>
       ) : null}
+    </div>
+  );
+}
+
+/**
+ * 파생(택1) 항목 — 입력칸 대신 계산된 값을 읽기전용으로 표시.
+ *   값은 저장하지 않는다. 선택 기준 항목이 바뀌면 자동으로 따라간다.
+ */
+function DerivedFieldRow({
+  locale,
+  dataType,
+  resolution,
+  byKey,
+  requiredSources,
+}: {
+  locale: Locale;
+  dataType: DataTypeMeta;
+  resolution: DerivedResolution;
+  byKey: Map<string, DataTypeMeta>;
+  requiredSources: string[];
+}) {
+  const isRequired = requiredSources.length > 0;
+  const labelOf = (key: string): string => {
+    const dt = byKey.get(key);
+    if (!dt) return key;
+    return locale === "ko" ? dt.label_ko : dt.label_vi;
+  };
+  // 선택값(choice)의 사람이 읽는 라벨
+  const choiceLabel = (selectorKey: string, choice: string): string => {
+    const sel = byKey.get(selectorKey);
+    const opt = sel?.options?.find((o) => o.value === choice);
+    if (!opt) return choice;
+    return locale === "ko" ? opt.label_ko : opt.label_vi;
+  };
+
+  let displayValue: string | null = null;
+  let note: string;
+  let toneEmpty = false;
+
+  switch (resolution.state) {
+    case "ok": {
+      const v = resolution.value;
+      displayValue =
+        v === null || v === undefined || v === "" ? null : String(v);
+      const selectorKey = dataType.derived_from?.selector ?? "";
+      const choiceTxt = choiceLabel(selectorKey, resolution.choice);
+      note = tr(
+        locale,
+        `${choiceTxt} 선택 → "${labelOf(resolution.sourceKey)}"에서 자동`,
+        `Chọn ${choiceTxt} → tự động lấy từ "${labelOf(resolution.sourceKey)}"`
+      );
+      if (displayValue === null) {
+        toneEmpty = true;
+        note = tr(
+          locale,
+          `"${labelOf(resolution.sourceKey)}" 값이 비어 있습니다 — 해당 항목을 입력하세요`,
+          `"${labelOf(resolution.sourceKey)}" đang trống — vui lòng nhập mục đó`
+        );
+      }
+      break;
+    }
+    case "no-choice":
+      toneEmpty = true;
+      note = tr(
+        locale,
+        `먼저 "${labelOf(resolution.selectorKey)}"를 선택하세요`,
+        `Vui lòng chọn "${labelOf(resolution.selectorKey)}" trước`
+      );
+      break;
+    case "unmapped":
+      toneEmpty = true;
+      note = tr(
+        locale,
+        `"${choiceLabel(resolution.selectorKey, resolution.choice)}" 선택에 연결된 원본 항목이 없습니다 (관리자 설정 필요)`,
+        `Lựa chọn "${choiceLabel(resolution.selectorKey, resolution.choice)}" chưa được liên kết nguồn (cần cấu hình)`
+      );
+      break;
+    case "no-selector":
+    default:
+      toneEmpty = true;
+      note = tr(
+        locale,
+        "파생 설정이 올바르지 않습니다 (선택 기준 미지정)",
+        "Cấu hình phái sinh chưa hợp lệ (thiếu mục tiêu chuẩn)"
+      );
+      break;
+  }
+
+  return (
+    <div className="px-4 py-3">
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex-1">
+          <label className="text-sm font-medium text-slate-900">
+            {locale === "ko" ? dataType.label_ko : dataType.label_vi}
+            <span className="ml-2 rounded bg-sky-100 px-1 text-[10px] font-semibold text-sky-700">
+              {tr(locale, "택1·자동", "Tự động")}
+            </span>
+            {isRequired ? (
+              <span
+                className="ml-2 rounded bg-amber-200 px-1 text-[10px] font-semibold text-amber-900"
+                title={requiredSources.join(", ")}
+              >
+                {tr(locale, "필수", "cần")}
+              </span>
+            ) : null}
+          </label>
+          <div className="mt-0.5 text-xs text-slate-500">
+            {locale === "ko" ? dataType.label_vi : dataType.label_ko}{" "}
+            <span className="text-slate-400">· {dataType.key}</span>
+          </div>
+        </div>
+        <div className="shrink-0">
+          {displayValue !== null ? (
+            <span className="text-xs text-emerald-600">✓</span>
+          ) : (
+            <span className="text-xs text-slate-300">—</span>
+          )}
+        </div>
+      </div>
+
+      <div className="mt-2">
+        <div
+          className={`w-full rounded-md border px-3 py-2 text-sm ${
+            displayValue !== null
+              ? "border-slate-200 bg-slate-50 text-slate-800"
+              : "border-dashed border-slate-300 bg-slate-50 text-slate-400"
+          }`}
+        >
+          {displayValue ?? tr(locale, "(자동 계산 — 값 없음)", "(tự động — chưa có giá trị)")}
+        </div>
+        <p
+          className={`mt-1 text-xs ${
+            toneEmpty ? "text-amber-700" : "text-slate-500"
+          }`}
+        >
+          ↪ {note}
+        </p>
+      </div>
     </div>
   );
 }

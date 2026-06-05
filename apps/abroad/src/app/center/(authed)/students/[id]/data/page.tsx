@@ -152,6 +152,8 @@ export default async function StudentDataPage({
           hint_ko: d.hint_ko,
           hint_vi: d.hint_vi,
           is_essay_basis: d.is_essay_basis,
+          is_derived: d.is_derived ?? false,
+          derived_from: d.derived_from,
         }))}
         existingValues={Object.fromEntries(valueMap)}
         requiredBySource={Object.fromEntries(requiredMap)}

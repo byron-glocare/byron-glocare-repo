@@ -229,7 +229,17 @@ export type StudentDataInputType =
   | "select"
   | "multi_select"
   | "file"
-  | "boolean";
+  | "boolean"
+  | "signature";
+
+/** 표준데이터 분류 (B5): 대학/학과 정보 vs 서류작성 정보 */
+export type StudentDataScope = "university_info" | "document_fill";
+
+/** 파생(택1) 정의 (B5): selector 항목의 선택값 → 원본 항목 key 매핑 */
+export type StudentDataDerivedFrom = {
+  selector: string;
+  map: Record<string, string>;
+};
 
 export type StudyStudentDataType = {
   id: string;
@@ -245,6 +255,12 @@ export type StudyStudentDataType = {
   is_default_required: boolean;
   sort_order: number;
   is_active: boolean;
+  // B5 — 표준데이터 재설계 컬럼
+  scope: StudentDataScope;
+  aliases: string[] | null;
+  is_derived: boolean;
+  derived_role: string | null;
+  derived_from: StudentDataDerivedFrom | null;
   created_at: string;
   updated_at: string;
 };
