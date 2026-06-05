@@ -1,8 +1,13 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import type { Json } from "@/types/database";
-import { saveStudentDataValueAction } from "./actions";
+import {
+  saveStudentDataValueAction,
+  uploadStudentFileAction,
+  getStudentFileSignedUrlAction,
+  removeStudentFileAction,
+} from "./actions";
 
 export type DataTypeMeta = {
   key: string;
@@ -254,6 +259,7 @@ function FieldRow({
         <ValueInput
           dataType={dataType}
           value={value}
+          studentId={studentId}
           onCommit={(v) => {
             onChange(v);
             save(v);
@@ -271,10 +277,12 @@ function FieldRow({
 function ValueInput({
   dataType,
   value,
+  studentId,
   onCommit,
 }: {
   dataType: DataTypeMeta;
   value: Json | null;
+  studentId: string;
   onCommit: (v: Json | null) => void;
 }) {
   const baseClass =
@@ -352,21 +360,12 @@ function ValueInput({
       );
 
     case "file":
-      // 파일 업로드는 후속 라운드. 지금은 URL 만 받기.
       return (
-        <input
-          type="url"
-          placeholder="URL tệp (sẽ thêm tải lên sau)"
-          defaultValue={
-            value && typeof value === "object" && !Array.isArray(value)
-              ? ((value as { url?: string }).url ?? "")
-              : ""
-          }
-          onBlur={(e) => {
-            const url = e.target.value.trim();
-            onCommit(url ? { url, file_name: url.split("/").pop() ?? "" } : null);
-          }}
-          className={baseClass}
+        <FileInput
+          studentId={studentId}
+          dataTypeKey={dataType.key}
+          value={value}
+          onCommit={onCommit}
         />
       );
 
@@ -381,6 +380,140 @@ function ValueInput({
         />
       );
   }
+}
+
+function FileInput({
+  studentId,
+  dataTypeKey,
+  value,
+  onCommit,
+}: {
+  studentId: string;
+  dataTypeKey: string;
+  value: Json | null;
+  onCommit: (v: Json | null) => void;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [busy, setBusy] = useState(false);
+  const [opening, setOpening] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const fileObj =
+    value && typeof value === "object" && !Array.isArray(value)
+      ? (value as { path?: string; url?: string; file_name?: string })
+      : null;
+  const fileName = fileObj?.file_name ?? null;
+  const hasUpload = !!fileObj?.path;
+  const legacyUrl = fileObj?.url ?? null; // 예전 'URL 직접 입력' 데이터 호환
+
+  async function handlePick(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (inputRef.current) inputRef.current.value = ""; // 같은 파일 재선택 허용
+    if (!file) return;
+
+    setBusy(true);
+    setError(null);
+    const fd = new FormData();
+    fd.set("studentId", studentId);
+    fd.set("dataTypeKey", dataTypeKey);
+    fd.set("file", file);
+    const res = await uploadStudentFileAction(fd);
+    setBusy(false);
+    if (!res.ok) {
+      setError(res.error);
+      return;
+    }
+    onCommit(res.value); // { path, file_name } → 기존 save 흐름으로 저장
+  }
+
+  async function handleOpen() {
+    if (!fileObj?.path) return;
+    setOpening(true);
+    setError(null);
+    const res = await getStudentFileSignedUrlAction(fileObj.path);
+    setOpening(false);
+    if (!res.ok) {
+      setError(res.error);
+      return;
+    }
+    window.open(res.url, "_blank", "noopener,noreferrer");
+  }
+
+  async function handleRemove() {
+    if (busy) return;
+    setBusy(true);
+    setError(null);
+    if (fileObj?.path) {
+      const res = await removeStudentFileAction({
+        studentId,
+        dataTypeKey,
+        path: fileObj.path,
+      });
+      if (!res.ok) {
+        setBusy(false);
+        setError(res.error);
+        return;
+      }
+    }
+    setBusy(false);
+    onCommit(null); // UI 갱신 (+ 값 삭제 재확인, 멱등)
+  }
+
+  if (hasUpload || legacyUrl) {
+    return (
+      <div>
+        <div className="flex items-center gap-3 rounded-md border border-slate-300 bg-slate-50 px-3 py-2 text-sm">
+          <span className="flex-1 truncate" title={fileName ?? legacyUrl ?? ""}>
+            📎 {fileName ?? legacyUrl}
+          </span>
+          {hasUpload ? (
+            <button
+              type="button"
+              onClick={handleOpen}
+              disabled={opening}
+              className="shrink-0 font-medium text-emerald-700 hover:underline disabled:opacity-50"
+            >
+              {opening ? "..." : "Mở"}
+            </button>
+          ) : legacyUrl ? (
+            <a
+              href={legacyUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="shrink-0 font-medium text-emerald-700 hover:underline"
+            >
+              Mở
+            </a>
+          ) : null}
+          <button
+            type="button"
+            onClick={handleRemove}
+            disabled={busy}
+            className="shrink-0 text-rose-600 hover:underline disabled:opacity-50"
+          >
+            {busy ? "..." : "Xóa"}
+          </button>
+        </div>
+        {error ? <p className="mt-1 text-xs text-rose-700">Lỗi: {error}</p> : null}
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <input
+        ref={inputRef}
+        type="file"
+        onChange={handlePick}
+        disabled={busy}
+        className="block w-full text-sm text-slate-600 file:mr-3 file:rounded-md file:border-0 file:bg-emerald-600 file:px-3 file:py-1.5 file:font-medium file:text-white hover:file:bg-emerald-700 disabled:opacity-50"
+      />
+      {busy ? (
+        <p className="mt-1 text-xs text-slate-400">Đang tải lên...</p>
+      ) : null}
+      {error ? <p className="mt-1 text-xs text-rose-700">Lỗi: {error}</p> : null}
+    </div>
+  );
 }
 
 function TextAreaInput({
