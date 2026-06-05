@@ -3,8 +3,6 @@
  * cookie 'locale' 또는 ?lang=vi 쿼리로 결정. 기본은 vi (베트남어).
  */
 
-import { cookies } from "next/headers";
-
 export type Locale = "ko" | "vi";
 export const DEFAULT_LOCALE: Locale = "vi";
 export const LOCALES: Locale[] = ["ko", "vi"];
@@ -197,6 +195,10 @@ export type Dict = DictShape;
 export type DictKey = keyof Dict;
 
 export async function getLocale(): Promise<Locale> {
+  // 동적 import — next/headers(서버 전용)를 정적 import 하면 이 모듈을 import 하는
+  // 클라이언트 컴포넌트 빌드가 깨진다(tr/Locale 만 쓰는 client 도 같이 import 하므로).
+  // getLocale 은 서버에서만 호출되므로 런타임 동적 import 로 격리한다.
+  const { cookies } = await import("next/headers");
   const c = await cookies();
   const v = c.get("locale")?.value;
   if (v === "ko" || v === "vi") return v;
