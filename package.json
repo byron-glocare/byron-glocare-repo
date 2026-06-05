@@ -8,9 +8,9 @@
     "packages/*"
   ],
   "scripts": {
-    "dev:admin": "npm run dev -w admin",
-    "dev:abroad": "npm run dev -w abroad",
-    "dev:caregiver": "npm run dev -w caregiver",
+    "dev:abroad": "npm run dev -w abroad -- -p 3000",
+    "dev:admin": "npm run dev -w admin -- -p 3001",
+    "dev:caregiver": "npm run dev -w caregiver -- -p 3002",
     "build:admin": "npm run build -w admin",
     "build:abroad": "npm run build -w abroad",
     "build:caregiver": "npm run build -w caregiver"
