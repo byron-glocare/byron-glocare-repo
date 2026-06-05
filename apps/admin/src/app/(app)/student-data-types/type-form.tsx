@@ -47,6 +47,11 @@ export type DataTypeOption = {
   label_vi: string;
 };
 
+export type DerivedFrom = {
+  selector: string;
+  map: Record<string, string>;
+};
+
 export type EditableDataType = {
   id: string;
   key: string;
@@ -63,9 +68,27 @@ export type EditableDataType = {
   is_active: boolean;
   scope: string;
   aliases: string[];
+  is_derived: boolean;
+  derived_role: string | null;
+  derived_from: DerivedFrom | null;
 };
 
-export function DataTypeForm({ dataType }: { dataType?: EditableDataType }) {
+/** 선택자·원본 후보를 고르기 위한 다른 데이터타입 요약 */
+export type DataTypeRef = {
+  id: string;
+  key: string;
+  label_ko: string;
+  input_type: string;
+  options: DataTypeOption[] | null;
+};
+
+export function DataTypeForm({
+  dataType,
+  allTypes = [],
+}: {
+  dataType?: EditableDataType;
+  allTypes?: DataTypeRef[];
+}) {
   const isEdit = !!dataType;
   const boundAction = isEdit
     ? saveDataTypeAction.bind(null, dataType!.id)
@@ -89,6 +112,36 @@ export function DataTypeForm({ dataType }: { dataType?: EditableDataType }) {
     if (v && !aliases.includes(v)) setAliases([...aliases, v]);
     setAliasDraft("");
   }
+
+  // 택1/파생 설정
+  const [isDerived, setIsDerived] = useState<boolean>(
+    dataType?.is_derived ?? false
+  );
+  const [derivedRole, setDerivedRole] = useState<string>(
+    dataType?.derived_role ?? ""
+  );
+  const [derivedSelector, setDerivedSelector] = useState<string>(
+    dataType?.derived_from?.selector ?? ""
+  );
+  const [derivedMap, setDerivedMap] = useState<Record<string, string>>(
+    dataType?.derived_from?.map ?? {}
+  );
+
+  // 선택자 후보 = select 타입이면서 자기 자신이 아닌 항목
+  const selectorCandidates = allTypes.filter(
+    (t) => t.input_type === "select" && t.key !== dataType?.key
+  );
+  const selectorType = allTypes.find((t) => t.key === derivedSelector);
+  const selectorOptions = selectorType?.options ?? [];
+  // 원본 후보 = 자기 자신·선택자를 제외한 모든 항목
+  const sourceCandidates = allTypes.filter(
+    (t) => t.key !== dataType?.key && t.key !== derivedSelector
+  );
+
+  const derivedFromValue =
+    isDerived && derivedSelector
+      ? JSON.stringify({ selector: derivedSelector, map: derivedMap })
+      : "";
 
   const fieldErr = (k: string) => state?.fieldErrors?.[k];
   const showOptions = inputType === "select" || inputType === "multi_select";
@@ -349,6 +402,127 @@ export function DataTypeForm({ dataType }: { dataType?: EditableDataType }) {
             </div>
           ) : null}
           <input type="hidden" name="aliases" value={JSON.stringify(aliases)} />
+        </div>
+
+        {/* 택1/파생 (예: 보호자 = 아버지/어머니 중 택1) */}
+        <div className="rounded-md border border-dashed bg-muted/30 p-4 space-y-3">
+          <label className="flex items-start gap-2 text-sm">
+            <input
+              type="checkbox"
+              className="mt-0.5"
+              checked={isDerived}
+              onChange={(e) => setIsDerived(e.target.checked)}
+            />
+            <span>
+              <strong>택1·파생 항목</strong> — 다른 “선택 기준” 항목의 값에 따라
+              이 항목 값이 자동으로 결정됩니다.
+              <span className="ml-1 text-xs text-muted-foreground">
+                (예: 보호자 = 아버지/어머니 중 택1 → 보호자 성명은 선택에 맞춰
+                아버지/어머니 성명에서 가져옴)
+              </span>
+            </span>
+          </label>
+
+          {isDerived ? (
+            <div className="space-y-3 border-l-2 border-primary/30 pl-4">
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                <Field label="선택 기준 항목 (selector)">
+                  <select
+                    value={derivedSelector}
+                    onChange={(e) => {
+                      setDerivedSelector(e.target.value);
+                      setDerivedMap({});
+                    }}
+                    className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  >
+                    <option value="">— 선택하세요 —</option>
+                    {selectorCandidates.map((t) => (
+                      <option key={t.id} value={t.key}>
+                        {t.label_ko} ({t.key})
+                      </option>
+                    ))}
+                  </select>
+                  <span className="text-xs text-muted-foreground">
+                    단일 선택(select) 타입 항목만 기준이 될 수 있습니다.
+                  </span>
+                </Field>
+
+                <Field label="역할 라벨 (선택)">
+                  <input
+                    type="text"
+                    value={derivedRole}
+                    onChange={(e) => setDerivedRole(e.target.value)}
+                    placeholder="예: guardian"
+                    className="rounded-md border border-input bg-background px-3 py-2 font-mono text-sm"
+                  />
+                  <span className="text-xs text-muted-foreground">
+                    같은 선택을 공유하는 파생 항목들을 묶는 이름.
+                  </span>
+                </Field>
+              </div>
+
+              {derivedSelector ? (
+                selectorCandidates.length === 0 ? null : selectorOptions.length ===
+                  0 ? (
+                  <p className="text-xs text-amber-600">
+                    선택한 기준 항목에 선택지가 없습니다. 먼저 해당 항목에
+                    선택지를 등록하세요.
+                  </p>
+                ) : (
+                  <div className="space-y-2">
+                    <div className="text-sm font-medium">
+                      선택별 원본 매핑
+                      <span className="ml-2 text-xs font-normal text-muted-foreground">
+                        기준 항목의 각 선택지마다, 값을 가져올 원본 항목을
+                        지정합니다.
+                      </span>
+                    </div>
+                    <div className="space-y-1.5">
+                      {selectorOptions.map((opt) => (
+                        <div
+                          key={opt.value}
+                          className="flex items-center gap-2"
+                        >
+                          <span className="w-40 shrink-0 text-sm">
+                            {opt.label_ko}
+                            <span className="ml-1 font-mono text-xs text-muted-foreground">
+                              {opt.value}
+                            </span>
+                          </span>
+                          <span className="text-muted-foreground">→</span>
+                          <select
+                            value={derivedMap[opt.value] ?? ""}
+                            onChange={(e) =>
+                              setDerivedMap({
+                                ...derivedMap,
+                                [opt.value]: e.target.value,
+                              })
+                            }
+                            className="flex-1 rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+                          >
+                            <option value="">— 원본 항목 선택 —</option>
+                            {sourceCandidates.map((t) => (
+                              <option key={t.id} value={t.key}>
+                                {t.label_ko} ({t.key})
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )
+              ) : null}
+            </div>
+          ) : null}
+
+          <input type="hidden" name="is_derived" value={isDerived ? "on" : ""} />
+          <input
+            type="hidden"
+            name="derived_role"
+            value={isDerived ? derivedRole : ""}
+          />
+          <input type="hidden" name="derived_from" value={derivedFromValue} />
         </div>
 
         <div className="flex flex-wrap items-center gap-4">

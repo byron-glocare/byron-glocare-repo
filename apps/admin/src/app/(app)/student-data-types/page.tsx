@@ -58,6 +58,7 @@ const INPUT_TYPE_LABEL: Record<string, string> = {
   multi_select: "복수선택",
   file: "파일",
   boolean: "예/아니오",
+  signature: "서명",
 };
 
 export default async function StudentDataTypesPage() {
@@ -132,7 +133,19 @@ export default async function StudentDataTypesPage() {
                           {t.key}
                         </TableCell>
                         <TableCell>
-                          <div className="font-medium">{t.label_ko}</div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-medium">{t.label_ko}</span>
+                            {t.is_derived ? (
+                              <Badge variant="secondary" className="text-[10px]">
+                                택1·파생
+                              </Badge>
+                            ) : null}
+                            {t.aliases && t.aliases.length > 0 ? (
+                              <Badge variant="outline" className="text-[10px]">
+                                별칭 {t.aliases.length}
+                              </Badge>
+                            ) : null}
+                          </div>
                           <div className="text-xs text-muted-foreground">
                             {t.label_vi}
                           </div>

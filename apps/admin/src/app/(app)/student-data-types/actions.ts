@@ -148,6 +148,43 @@ export async function saveDataTypeAction(
     }
   }
 
+  // 택1/파생 파싱
+  const isDerived = formData.get("is_derived") === "on";
+  const derivedRole = isDerived ? emptyToNull(formData.get("derived_role")) : null;
+  let derivedFrom: { selector: string; map: Record<string, string> } | null =
+    null;
+  if (isDerived) {
+    const dfRaw = formData.get("derived_from");
+    if (typeof dfRaw === "string" && dfRaw.trim() !== "") {
+      try {
+        const parsedDf = JSON.parse(dfRaw);
+        const selector =
+          parsedDf && typeof parsedDf.selector === "string"
+            ? parsedDf.selector.trim()
+            : "";
+        const mapObj =
+          parsedDf && parsedDf.map && typeof parsedDf.map === "object"
+            ? (parsedDf.map as Record<string, unknown>)
+            : {};
+        const map: Record<string, string> = {};
+        for (const [k, v] of Object.entries(mapObj)) {
+          const vs = String(v ?? "").trim();
+          if (vs) map[k] = vs;
+        }
+        if (selector) derivedFrom = { selector, map };
+      } catch {
+        return {
+          fieldErrors: { derived_from: "파생 매핑 파싱에 실패했습니다." },
+        };
+      }
+    }
+    if (!derivedFrom) {
+      return {
+        fieldErrors: { derived_from: "파생 항목은 선택 기준 항목이 필요합니다." },
+      };
+    }
+  }
+
   if (id) {
     // UPDATE
     const patch: StudyStudentDataTypeUpdate = {
@@ -164,6 +201,9 @@ export async function saveDataTypeAction(
       sort_order: data.sort_order,
       scope: data.scope,
       aliases,
+      is_derived: isDerived,
+      derived_role: derivedRole,
+      derived_from: derivedFrom,
     };
     const { error } = await supabase
       .from("study_student_data_types")
@@ -187,6 +227,9 @@ export async function saveDataTypeAction(
       sort_order: data.sort_order,
       scope: data.scope,
       aliases,
+      is_derived: isDerived,
+      derived_role: derivedRole,
+      derived_from: derivedFrom,
     };
     const { error } = await supabase
       .from("study_student_data_types")
