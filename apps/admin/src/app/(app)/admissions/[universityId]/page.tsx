@@ -27,6 +27,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { FormFilesManager } from "@/app/(app)/universities/[id]/forms/forms-manager";
+import {
+  RequiredSubmissionsManager,
+  type SubmissionRow,
+} from "@/components/admission/required-submissions-manager";
 
 export const dynamic = "force-dynamic";
 
@@ -120,6 +124,7 @@ export default async function UniversityAdmissionPage({
     { data: cur },
     { data: arch },
     { data: dt },
+    { data: subRows },
   ] = await Promise.all([
     supabase
       .from("study_admission_specs")
@@ -154,6 +159,12 @@ export default async function UniversityAdmissionPage({
       .eq("is_active", true)
       .order("category")
       .order("sort_order"),
+    supabase
+      .from("study_required_submissions")
+      .select("*")
+      .eq("university_id", uid)
+      .order("sort_order")
+      .order("created_at", { ascending: false }),
   ]);
 
   const specs = specRows ?? [];
@@ -188,6 +199,19 @@ export default async function UniversityAdmissionPage({
     category: string;
     is_essay_basis: boolean;
   }>;
+  const submissions = (subRows ?? []).map((r) => ({
+    id: r.id,
+    department_id: r.department_id,
+    name_ko: r.name_ko,
+    name_vi: r.name_vi,
+    sample_image_url: r.sample_image_url,
+    issuance_requirements: r.issuance_requirements ?? {},
+    required_data_type_keys: r.required_data_type_keys ?? [],
+    aliases: r.aliases ?? [],
+    sort_order: r.sort_order,
+    is_active: r.is_active,
+    status: r.status,
+  })) satisfies SubmissionRow[];
 
   // 대표 spec 선택: 승인 우선, 없으면 최신 갱신
   const repSpec =
@@ -416,6 +440,19 @@ export default async function UniversityAdmissionPage({
               file_name: f.file_name,
               uploaded_at: f.uploaded_at,
             }))}
+          />
+        </section>
+
+        {/* 4) 직접제출 서류 */}
+        <section className="space-y-2">
+          <h2 className="text-sm font-semibold text-foreground">
+            직접제출 서류
+          </h2>
+          <RequiredSubmissionsManager
+            universityId={uid}
+            departments={depts}
+            dataTypes={dataTypes}
+            submissions={submissions}
           />
         </section>
       </div>

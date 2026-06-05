@@ -1370,6 +1370,79 @@ export type Database = {
       };
 
       // ---------------------------------------------------------------------
+      // 직접제출 서류 (B5) — 글로케어가 샘플이미지+발급요건 관리
+      // ---------------------------------------------------------------------
+      study_required_submissions: {
+        Row: {
+          id: string;
+          university_id: number;
+          department_id: number | null;
+          name_ko: string;
+          name_vi: string | null;
+          sample_image_url: string | null;
+          issuance_requirements: {
+            issuer?: string;
+            validity_days?: number;
+            lead_time_days?: number;
+            needs_notarization?: boolean;
+            needs_translation?: boolean;
+            notes?: string;
+          };
+          required_data_type_keys: string[];
+          aliases: string[];
+          sort_order: number;
+          is_active: boolean;
+          status: "draft" | "approved" | "archived";
+          source_spec_id: string | null;
+          created_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          university_id: number;
+          department_id?: number | null;
+          name_ko: string;
+          name_vi?: string | null;
+          sample_image_url?: string | null;
+          issuance_requirements?: {
+            issuer?: string;
+            validity_days?: number;
+            lead_time_days?: number;
+            needs_notarization?: boolean;
+            needs_translation?: boolean;
+            notes?: string;
+          };
+          required_data_type_keys?: string[];
+          aliases?: string[];
+          sort_order?: number;
+          is_active?: boolean;
+          status?: "draft" | "approved" | "archived";
+          source_spec_id?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["study_required_submissions"]["Insert"]
+        >;
+        Relationships: [
+          {
+            foreignKeyName: "study_required_submissions_university_id_fkey";
+            columns: ["university_id"];
+            referencedRelation: "universities";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "study_required_submissions_department_id_fkey";
+            columns: ["department_id"];
+            referencedRelation: "departments";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+
+      // ---------------------------------------------------------------------
       // 모집요강 (B1/B2)
       // ---------------------------------------------------------------------
       study_admission_specs: {
