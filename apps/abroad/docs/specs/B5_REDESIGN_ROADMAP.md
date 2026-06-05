@@ -30,14 +30,20 @@
 - ✅ **어드민 표준데이터 UI**: 별칭 태그 편집 + scope 선택 + signature 타입. 저장 동작.
   - 파일: `apps/admin/src/app/(app)/student-data-types/{type-form.tsx, actions.ts, [id]/edit/page.tsx}`
   - 타입: `apps/admin/src/types/database.ts` 의 `study_student_data_types` 에 새 컬럼 수동 추가됨.
+- ✅ **택1/파생(보호자) 설정 UI** (커밋 `9588469`): 표준데이터 편집 폼에 `is_derived` 체크박스 +
+  선택 기준(selector, select 타입 항목) 드롭다운 + 선택지별 원본 매핑 + 역할 라벨(`derived_role`).
+  edit/new 페이지가 전체 타입 목록(`allTypes`)을 폼에 주입. 목록에 택1·파생/별칭 배지.
+  - 저장 형식: `derived_from = {selector, map:{<선택지값>: <원본 key>}}`.
+  - 예: `guardian_name` → selector=`guardian_choice`, map=`{father: father_name, mother: mother_name}`.
+  - ⚠ 사전조건: 기준이 될 `guardian_choice`(select, options=father/mother) 항목을 **먼저 등록**해야
+    매핑 UI에 선택지가 뜸. (운영자가 어드민에서 직접 생성 — SQL 시드 X.)
 
 ## 3. 다음 할 일 (우선순위)
-1. **택1/파생(보호자) 설정 UI** — 표준데이터 편집에 derived_role/derived_from(선택자+매핑) 구성.
-2. **직접제출 서류 화면** — `study_required_submissions` CRUD + 샘플이미지 업로드(비공개 버킷).
-3. **서명 패드 컴포넌트** — signature 입력타입 렌더(캡처→버킷), 센터 상세정보/입력링크에서 사용.
-4. **별칭·파생을 AI 추출에 연결** — 모집요강/양식 추출 시 기존 항목 매칭, 중복 제안 방지.
-5. **통합 목록 UI** — `study_documents` 뷰 기반 입학서류 모아보기 + IA(대학교=관리/입학서류=뷰).
-6. (유저플로우 PRD의 후속) 입력링크·docx AI채움·일정/리드타임 관리·표준입학허가서·수수료 정산.
+1. **직접제출 서류 화면** — `study_required_submissions` CRUD + 샘플이미지 업로드(비공개 버킷).
+2. **서명 패드 컴포넌트** — signature 입력타입 렌더(캡처→버킷), 센터 상세정보/입력링크에서 사용.
+3. **별칭·파생을 AI 추출에 연결** — 모집요강/양식 추출 시 기존 항목 매칭, 중복 제안 방지.
+4. **통합 목록 UI** — `study_documents` 뷰 기반 입학서류 모아보기 + IA(대학교=관리/입학서류=뷰).
+5. (유저플로우 PRD의 후속) 입력링크·docx AI채움·일정/리드타임 관리·표준입학허가서·수수료 정산.
 
 ## 4. 환경/워크플로 메모
 - 모노레포 `C:\dev\glocare` (npm workspaces). dev 포트 고정: **abroad 3000 / admin 3001 / caregiver 3002**.
