@@ -10,10 +10,8 @@ import { notFound } from "next/navigation";
 import { verifyCenterSession } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
 
-import {
-  APP_STATUS_VALUES,
-  updateApplicationStatusAction,
-} from "./applications/actions";
+import { updateApplicationStatusAction } from "./applications/actions";
+import { APP_STATUS_VALUES } from "./applications/status";
 import { DeleteApplicationButton } from "./applications/delete-application-button";
 import { DeleteStudentButton } from "./delete-student-button";
 

@@ -6,19 +6,7 @@ import { z } from "zod";
 import { verifyCenterSession } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
 
-const APP_STATUS_VALUES = [
-  "preparing",
-  "ready_for_review",
-  "reviewing",
-  "revisions_required",
-  "submitted",
-  "accepted",
-  "rejected",
-  "enrolled",
-  "cancelled",
-] as const;
-
-export type ApplicationStatus = (typeof APP_STATUS_VALUES)[number];
+import { APP_STATUS_VALUES } from "./status";
 
 const updateStatusSchema = z.object({
   status: z.enum(APP_STATUS_VALUES),
@@ -74,8 +62,6 @@ export async function updateApplicationStatusAction(
 
   revalidatePath(`/center/students/${studentId}`);
 }
-
-export { APP_STATUS_VALUES };
 
 /**
  * 지원 의향 삭제.
