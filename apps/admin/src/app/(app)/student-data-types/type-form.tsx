@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useState, useTransition } from "react";
 import { Check, Loader2, Plus, Trash2 } from "lucide-react";
 
 import { Card } from "@/components/ui/card";
@@ -590,28 +590,31 @@ export function DataTypeForm({
 }
 
 function DeleteButton({ id, keyName }: { id: string; keyName: string }) {
+  const [pending, startTransition] = useTransition();
   return (
-    <form
-      action={deleteDataTypeAction.bind(null, id)}
-      onSubmit={(e) => {
+    <Button
+      type="button"
+      variant="outline"
+      disabled={pending}
+      className="text-destructive hover:bg-destructive/10"
+      onClick={() => {
         if (
           !confirm(
             `정말 "${keyName}" 데이터 타입을 삭제하시겠습니까? 이 타입을 사용하는 양식과의 매핑도 해제됩니다.`
           )
         ) {
-          e.preventDefault();
+          return;
         }
+        startTransition(() => deleteDataTypeAction(id));
       }}
     >
-      <Button
-        type="submit"
-        variant="outline"
-        className="text-destructive hover:bg-destructive/10"
-      >
+      {pending ? (
+        <Loader2 className="size-4 animate-spin" />
+      ) : (
         <Trash2 className="size-4" />
-        삭제
-      </Button>
-    </form>
+      )}
+      삭제
+    </Button>
   );
 }
 
