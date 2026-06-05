@@ -42,12 +42,20 @@
   상태별 안내(미선택/원본빈값/매핑없음), 필수·완료 카운트도 계산값 반영.
   - abroad `types/study.ts`에도 B5 컬럼 + signature 추가됨.
   - ⏳ **남은 소비자**: 서류 채우기(docx/HWPX) 쪽도 같은 resolve 로직 필요 → 공용 헬퍼로 추출 권장.
+- ✅ **직접제출 서류 관리 UI** (커밋 `c7dcd3c`): admin `/admissions/[universityId]` 에
+  "직접제출 서류" 섹션. 샘플이미지 + 발급요건(발급처/리드타임/유효기간/공증·번역/메모) +
+  별칭 + 표준데이터키 + 적용범위(대학전체/학과) + 상태(draft/approved/archived) CRUD.
+  - 파일: `components/admission/required-submissions-manager.tsx`,
+    `app/(app)/admissions/[universityId]/submissions-actions.ts`, 같은 폴더 `page.tsx` 4번 섹션.
+  - types/database.ts 에 `study_required_submissions` 테이블 타입 추가.
+  - ⚠ 샘플이미지 = **공개** `admission-form-files` 버킷의 `required-submissions/` 경로 사용
+    (로드맵 원안 "비공개"와 다름 — 빈 예시 문서라 양식 템플릿과 동급. 필요시 비공개+서명URL 전환).
 
 ## 3. 다음 할 일 (우선순위)
-1. **직접제출 서류 화면** — `study_required_submissions` CRUD + 샘플이미지 업로드(비공개 버킷).
-2. **서명 패드 컴포넌트** — signature 입력타입 렌더(캡처→버킷), 센터 상세정보/입력링크에서 사용.
-3. **별칭·파생을 AI 추출에 연결** — 모집요강/양식 추출 시 기존 항목 매칭, 중복 제안 방지.
-4. **통합 목록 UI** — `study_documents` 뷰 기반 입학서류 모아보기 + IA(대학교=관리/입학서류=뷰).
+1. **서명 패드 컴포넌트** — signature 입력타입 렌더(캡처→버킷), 센터 상세정보/입력링크에서 사용.
+2. **별칭·파생을 AI 추출에 연결** — 모집요강/양식 추출 시 기존 항목 매칭, 중복 제안 방지.
+3. **통합 목록 UI** — `study_documents` 뷰 기반 입학서류 모아보기 + IA(대학교=관리/입학서류=뷰).
+4. **삭제 안전장치** — 표준데이터/서류 삭제 시 연결된 값·양식 경고 또는 비활성 권장.
 5. (유저플로우 PRD의 후속) 입력링크·docx AI채움·일정/리드타임 관리·표준입학허가서·수수료 정산.
 
 ## 4. 환경/워크플로 메모
