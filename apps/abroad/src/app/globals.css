@@ -56,7 +56,12 @@
   --font-serif: var(--font-noto-serif-kr), serif;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+/* 전역 리셋을 base 레이어로 — 이렇게 안 하면 unlayered `*{padding:0}` 이
+   Tailwind utilities 레이어(p-6, px-6, mb-4 …)를 덮어써서 무력화한다.
+   (공개사이트의 커스텀 클래스는 unlayered 라 그대로 우선 적용됨.) */
+@layer base {
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+}
 html { scroll-behavior: smooth; }
 body {
   font-family: var(--font-be-vietnam), var(--font-noto-kr), sans-serif;
