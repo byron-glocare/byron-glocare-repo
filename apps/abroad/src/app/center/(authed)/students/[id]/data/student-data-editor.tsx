@@ -4,6 +4,10 @@ import { useRef, useState, useTransition } from "react";
 import type { Json } from "@/types/database";
 import { tr, type Locale } from "@/lib/i18n";
 import {
+  SignaturePad,
+  type SignaturePadHandle,
+} from "@/components/signature-pad";
+import {
   saveStudentDataValueAction,
   uploadStudentFileAction,
   getStudentFileSignedUrlAction,
@@ -619,6 +623,17 @@ function ValueInput({
         />
       );
 
+    case "signature":
+      return (
+        <SignatureInput
+          locale={locale}
+          studentId={studentId}
+          dataTypeKey={dataType.key}
+          value={value}
+          onCommit={onCommit}
+        />
+      );
+
     case "text":
     default:
       return (
@@ -771,6 +786,177 @@ function FileInput({
       ) : null}
       {error ? (
         <p className="mt-1 text-xs text-rose-700">
+          {tr(locale, "오류", "Lỗi")}: {error}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+/** dataURL(base64) → File 변환 (업로드 액션이 File 을 받음) */
+function dataUrlToFile(dataUrl: string, fileName: string): File {
+  const comma = dataUrl.indexOf(",");
+  const meta = dataUrl.slice(0, comma);
+  const b64 = dataUrl.slice(comma + 1);
+  const mime = meta.match(/:(.*?);/)?.[1] ?? "image/png";
+  const bin = atob(b64);
+  const arr = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+  return new File([arr], fileName, { type: mime });
+}
+
+/**
+ * 서명 입력 — 캔버스로 서명 → PNG 업로드(비공개 버킷). 파일 값과 동일한
+ *   { path, file_name } 형태로 저장해 기존 열기/삭제 흐름을 재사용.
+ */
+function SignatureInput({
+  locale,
+  studentId,
+  dataTypeKey,
+  value,
+  onCommit,
+}: {
+  locale: Locale;
+  studentId: string;
+  dataTypeKey: string;
+  value: Json | null;
+  onCommit: (v: Json | null) => void;
+}) {
+  const padRef = useRef<SignaturePadHandle>(null);
+  const [busy, setBusy] = useState(false);
+  const [opening, setOpening] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [empty, setEmpty] = useState(true);
+
+  const fileObj =
+    value && typeof value === "object" && !Array.isArray(value)
+      ? (value as { path?: string; file_name?: string })
+      : null;
+  const hasSignature = !!fileObj?.path;
+
+  async function handleSave() {
+    const dataUrl = padRef.current?.toDataURL();
+    if (!dataUrl) {
+      setError(tr(locale, "서명을 입력해주세요.", "Vui lòng ký tên."));
+      return;
+    }
+    setBusy(true);
+    setError(null);
+    try {
+      const file = dataUrlToFile(dataUrl, `signature-${dataTypeKey}.png`);
+      const fd = new FormData();
+      fd.set("studentId", studentId);
+      fd.set("dataTypeKey", dataTypeKey);
+      fd.set("file", file);
+      const res = await uploadStudentFileAction(fd);
+      if (!res.ok) {
+        setError(res.error);
+        return;
+      }
+      onCommit(res.value); // { path, file_name }
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleOpen() {
+    if (!fileObj?.path) return;
+    setOpening(true);
+    setError(null);
+    const res = await getStudentFileSignedUrlAction(fileObj.path);
+    setOpening(false);
+    if (!res.ok) {
+      setError(res.error);
+      return;
+    }
+    window.open(res.url, "_blank", "noopener,noreferrer");
+  }
+
+  async function handleReset() {
+    if (busy) return;
+    setBusy(true);
+    setError(null);
+    if (fileObj?.path) {
+      const res = await removeStudentFileAction({
+        studentId,
+        dataTypeKey,
+        path: fileObj.path,
+      });
+      if (!res.ok) {
+        setBusy(false);
+        setError(res.error);
+        return;
+      }
+    }
+    setBusy(false);
+    onCommit(null); // 패드 다시 표시
+  }
+
+  // 이미 서명된 경우 — 미리보기/열기/다시 서명
+  if (hasSignature) {
+    return (
+      <div>
+        <div className="flex items-center gap-3 rounded-md border border-slate-300 bg-slate-50 px-3 py-2 text-sm">
+          <span className="flex-1">
+            ✍️ {tr(locale, "서명 완료", "Đã ký")}
+          </span>
+          <button
+            type="button"
+            onClick={handleOpen}
+            disabled={opening}
+            className="shrink-0 font-medium text-emerald-700 hover:underline disabled:opacity-50"
+          >
+            {opening ? "..." : tr(locale, "보기", "Xem")}
+          </button>
+          <button
+            type="button"
+            onClick={handleReset}
+            disabled={busy}
+            className="shrink-0 text-rose-600 hover:underline disabled:opacity-50"
+          >
+            {busy ? "..." : tr(locale, "다시 서명", "Ký lại")}
+          </button>
+        </div>
+        {error ? (
+          <p className="mt-1 text-xs text-rose-700">
+            {tr(locale, "오류", "Lỗi")}: {error}
+          </p>
+        ) : null}
+      </div>
+    );
+  }
+
+  // 미서명 — 캔버스 패드
+  return (
+    <div className="space-y-2">
+      <SignaturePad ref={padRef} disabled={busy} onChange={setEmpty} />
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={handleSave}
+          disabled={busy || empty}
+          className="rounded-md bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+        >
+          {busy ? tr(locale, "저장 중...", "Đang lưu...") : tr(locale, "서명 저장", "Lưu chữ ký")}
+        </button>
+        <button
+          type="button"
+          onClick={() => padRef.current?.clear()}
+          disabled={busy || empty}
+          className="rounded-md border border-slate-300 px-3 py-1.5 text-sm hover:bg-slate-50 disabled:opacity-50"
+        >
+          {tr(locale, "지우기", "Xóa")}
+        </button>
+        <span className="text-xs text-slate-500">
+          {tr(
+            locale,
+            "마우스·손가락·펜으로 서명하세요.",
+            "Ký bằng chuột, ngón tay hoặc bút."
+          )}
+        </span>
+      </div>
+      {error ? (
+        <p className="text-xs text-rose-700">
           {tr(locale, "오류", "Lỗi")}: {error}
         </p>
       ) : null}
