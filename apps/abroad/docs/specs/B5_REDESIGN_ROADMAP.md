@@ -51,12 +51,17 @@
   - ⚠ 샘플이미지 = **공개** `admission-form-files` 버킷의 `required-submissions/` 경로 사용
     (로드맵 원안 "비공개"와 다름 — 빈 예시 문서라 양식 템플릿과 동급. 필요시 비공개+서명URL 전환).
 
+- ✅ **서명 패드** (커밋 `f41ef5f`): 캔버스(마우스/터치/펜) 서명 → PNG → 비공개 버킷
+  `student-files` 업로드. 상세정보 화면 `signature` 입력타입에 연결. 값은 파일과 동일한
+  `{path, file_name}` 형태로 저장 → 기존 보기(서명URL)/다시서명/삭제 흐름 재사용.
+  - 파일: `components/signature-pad.tsx`(범용, ref로 toDataURL/clear/isEmpty),
+    `student-data-editor.tsx` 의 `SignatureInput` + ValueInput `case "signature"`.
+
 ## 3. 다음 할 일 (우선순위)
-1. **서명 패드 컴포넌트** — signature 입력타입 렌더(캡처→버킷), 센터 상세정보/입력링크에서 사용.
-2. **별칭·파생을 AI 추출에 연결** — 모집요강/양식 추출 시 기존 항목 매칭, 중복 제안 방지.
-3. **통합 목록 UI** — `study_documents` 뷰 기반 입학서류 모아보기 + IA(대학교=관리/입학서류=뷰).
-4. **삭제 안전장치** — 표준데이터/서류 삭제 시 연결된 값·양식 경고 또는 비활성 권장.
-5. (유저플로우 PRD의 후속) 입력링크·docx AI채움·일정/리드타임 관리·표준입학허가서·수수료 정산.
+1. **별칭·파생을 AI 추출에 연결** — 모집요강/양식 추출 시 기존 항목 매칭, 중복 제안 방지.
+2. **통합 목록 UI** — `study_documents` 뷰 기반 입학서류 모아보기 + IA(대학교=관리/입학서류=뷰).
+3. **삭제 안전장치** — 표준데이터/서류 삭제 시 연결된 값·양식 경고 또는 비활성 권장.
+4. (유저플로우 PRD의 후속) 입력링크·docx AI채움·일정/리드타임 관리·표준입학허가서·수수료 정산.
 
 ## 4. 환경/워크플로 메모
 - 모노레포 `C:\dev\glocare` (npm workspaces). dev 포트 고정: **abroad 3000 / admin 3001 / caregiver 3002**.
