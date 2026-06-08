@@ -13,6 +13,7 @@ import { PageHeader } from "@/components/page-header";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
+import { DeleteSpecButton } from "./delete-spec-button";
 
 export const dynamic = "force-dynamic";
 
@@ -256,6 +257,7 @@ export default async function AdmissionDetailPage({
               <Pencil className="size-4" />
               편집
             </Link>
+            <DeleteSpecButton specId={id} universityId={spec.university_id} />
           </div>
         }
       />
