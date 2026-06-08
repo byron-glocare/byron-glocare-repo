@@ -27,6 +27,11 @@ import {
 } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
 import { DocumentsExplorer, type DocItem } from "./documents-explorer";
+import {
+  RequiredSubmissionsManager,
+  type SubmissionRow,
+  type DataTypeOption,
+} from "@/components/admission/required-submissions-manager";
 
 export const dynamic = "force-dynamic";
 
@@ -56,7 +61,26 @@ export default async function AdmissionsPage() {
     .from("study_documents")
     .select("id, doc_type, university_id, department_label, name, status, updated_at");
 
-  const docRows = docs ?? [];
+  // 공용(university_id NULL) 직접제출 문서는 별도 '공용 제출서류' 섹션에서 다룸 →
+  //   대학별 요약·모아보기에서는 제외.
+  const docRows = (docs ?? []).filter((d) => d.university_id != null);
+
+  // 공용 제출서류 + 표준데이터 카탈로그 (공용 섹션 관리용)
+  const [{ data: globalSubRows }, { data: catalogRows }] = await Promise.all([
+    supabase
+      .from("study_required_submissions")
+      .select("*")
+      .is("university_id", null)
+      .is("base_submission_id", null)
+      .order("sort_order")
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("study_student_data_types")
+      .select("key, label_ko, category, is_essay_basis")
+      .eq("is_active", true)
+      .order("category")
+      .order("sort_order"),
+  ]);
 
   // 대학별 집계
   const agg = new Map<
@@ -190,6 +214,30 @@ export default async function AdmissionsPage() {
   ).length;
   const totalSubs = docRows.filter((d) => d.doc_type === "submission").length;
 
+  // 공용 제출서류 (전체 대학 공통)
+  const globalSubmissions: SubmissionRow[] = (globalSubRows ?? []).map((r) => ({
+    id: r.id,
+    department_id: r.department_id,
+    base_submission_id: r.base_submission_id,
+    name_ko: r.name_ko,
+    name_vi: r.name_vi,
+    target_person: r.target_person,
+    target_person_note: r.target_person_note,
+    sample_image_url: r.sample_image_url,
+    issuance_requirements: r.issuance_requirements ?? {},
+    required_data_type_keys: r.required_data_type_keys ?? [],
+    aliases: r.aliases ?? [],
+    sort_order: r.sort_order,
+    is_active: r.is_active,
+    status: r.status,
+  }));
+  const catalog: DataTypeOption[] = (catalogRows ?? []).map((d) => ({
+    key: d.key,
+    label_ko: d.label_ko,
+    category: d.category,
+    is_essay_basis: d.is_essay_basis,
+  }));
+
   return (
     <>
       <PageHeader
@@ -308,6 +356,20 @@ export default async function AdmissionsPage() {
             </section>
           </>
         )}
+
+        {/* 공용 제출서류 (전체 대학 공통) — 출입국 등 공통 요구 서류 */}
+        <section className="space-y-2 border-t pt-6">
+          <h2 className="text-sm font-semibold text-foreground">
+            공용 제출서류
+          </h2>
+          <RequiredSubmissionsManager
+            universityId={null}
+            mode="global"
+            departments={[]}
+            dataTypes={catalog}
+            submissions={globalSubmissions}
+          />
+        </section>
       </div>
     </>
   );

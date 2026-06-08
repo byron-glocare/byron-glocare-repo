@@ -24,11 +24,25 @@ const STATUS_LABEL: Record<string, string> = {
   archived: "보관",
 };
 
+const TARGET_PERSON_OPTIONS = [
+  { value: "self", label: "학생 본인" },
+  { value: "father", label: "아버지" },
+  { value: "mother", label: "어머니" },
+  { value: "other", label: "기타" },
+] as const;
+
+const TARGET_PERSON_LABEL: Record<string, string> = Object.fromEntries(
+  TARGET_PERSON_OPTIONS.map((o) => [o.value, o.label])
+);
+
 export type SubmissionRow = {
   id: string;
   department_id: number | null;
+  base_submission_id: string | null;
   name_ko: string;
   name_vi: string | null;
+  target_person: string | null;
+  target_person_note: string | null;
   sample_image_url: string | null;
   issuance_requirements: {
     issuer?: string;
@@ -62,12 +76,16 @@ export function RequiredSubmissionsManager({
   departments,
   dataTypes,
   submissions,
+  mode = "university",
 }: {
-  universityId: number;
+  /** 공용이면 null, 대학별이면 대학 id */
+  universityId: number | null;
   departments: DepartmentOption[];
   dataTypes: DataTypeOption[];
   submissions: SubmissionRow[];
+  mode?: "global" | "university";
 }) {
+  const isGlobal = mode === "global";
   const [adding, setAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
 
@@ -81,10 +99,13 @@ export function RequiredSubmissionsManager({
       <Card className="p-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-semibold">직접제출 서류</h3>
+            <h3 className="text-sm font-semibold">
+              {isGlobal ? "공용 제출서류 (전체 대학 공통)" : "대학 전용 제출서류"}
+            </h3>
             <p className="mt-0.5 text-xs text-muted-foreground">
-              학생이 발급·복사해서 제출하는 서류. 글로케어가 샘플 이미지와 발급
-              요건(발급처·유효기간·리드타임·공증/번역)을 등록합니다.
+              {isGlobal
+                ? "출입국·공통 요구 서류. 모든 대학에 기본 적용되며, 대학별 세부요건은 각 대학 입학서류에서 덮어씁니다."
+                : "이 대학에만 해당하는 서류. 샘플 이미지·발급요건·대상자를 등록합니다."}
             </p>
           </div>
           <Button
@@ -113,6 +134,7 @@ export function RequiredSubmissionsManager({
               universityId={universityId}
               departments={departments}
               dataTypes={dataTypes}
+              mode={mode}
               onDone={() => setAdding(false)}
             />
           </div>
@@ -161,9 +183,20 @@ export function RequiredSubmissionsManager({
                             {s.name_vi}
                           </span>
                         ) : null}
-                        <Badge variant="outline" className="text-[10px]">
-                          {deptName(s.department_id)}
-                        </Badge>
+                        {s.target_person ? (
+                          <Badge variant="secondary" className="text-[10px]">
+                            대상:{" "}
+                            {s.target_person === "other"
+                              ? s.target_person_note || "기타"
+                              : TARGET_PERSON_LABEL[s.target_person] ??
+                                s.target_person}
+                          </Badge>
+                        ) : null}
+                        {!isGlobal ? (
+                          <Badge variant="outline" className="text-[10px]">
+                            {deptName(s.department_id)}
+                          </Badge>
+                        ) : null}
                         {s.status === "approved" ? (
                           <Badge className="bg-success/10 text-success border-success/20 text-[10px]">
                             {STATUS_LABEL[s.status]}
@@ -251,6 +284,7 @@ export function RequiredSubmissionsManager({
                         universityId={universityId}
                         departments={departments}
                         dataTypes={dataTypes}
+                        mode={mode}
                         submission={s}
                         onDone={() => setEditingId(null)}
                       />
@@ -266,21 +300,27 @@ export function RequiredSubmissionsManager({
   );
 }
 
-function SubmissionForm({
+export function SubmissionForm({
   universityId,
   departments,
   dataTypes,
   submission,
+  mode = "university",
+  baseSubmissionId = null,
   onDone,
 }: {
-  universityId: number;
+  universityId: number | null;
   departments: DepartmentOption[];
   dataTypes: DataTypeOption[];
   submission?: SubmissionRow;
+  mode?: "global" | "university";
+  /** 대학별 오버라이드면 공용 마스터 id */
+  baseSubmissionId?: string | null;
   onDone: () => void;
 }) {
-  const isEdit = !!submission;
-  const bound = saveRequiredSubmissionAction.bind(null, submission?.id ?? null);
+  const isGlobal = mode === "global";
+  const isEdit = !!submission?.id;
+  const bound = saveRequiredSubmissionAction.bind(null, submission?.id || null);
   const [state, action, pending] = useActionState<
     SaveRequiredSubmissionState,
     FormData
@@ -291,6 +331,12 @@ function SubmissionForm({
   const [nameVi, setNameVi] = useState(submission?.name_vi ?? "");
   const [departmentId, setDepartmentId] = useState<string>(
     submission?.department_id != null ? String(submission.department_id) : ""
+  );
+  const [targetPerson, setTargetPerson] = useState<string>(
+    submission?.target_person ?? ""
+  );
+  const [targetPersonNote, setTargetPersonNote] = useState<string>(
+    submission?.target_person_note ?? ""
   );
   const [status, setStatus] = useState(submission?.status ?? "draft");
   const [isActive, setIsActive] = useState(submission?.is_active ?? true);
@@ -361,7 +407,13 @@ function SubmissionForm({
   return (
     <form
       action={(fd: FormData) => {
-        fd.set("university_id", String(universityId));
+        fd.set("university_id", universityId != null ? String(universityId) : "");
+        fd.set("base_submission_id", baseSubmissionId ?? "");
+        fd.set("target_person", targetPerson);
+        fd.set(
+          "target_person_note",
+          targetPerson === "other" ? targetPersonNote : ""
+        );
         fd.set("required_data_type_keys", JSON.stringify(Array.from(selectedKeys)));
         fd.set("aliases", JSON.stringify(aliases));
         if (sample) {
@@ -402,21 +454,48 @@ function SubmissionForm({
           />
         </Field>
 
-        <Field label="적용 범위">
+        <Field label="서류 대상자">
           <select
-            name="department_id"
-            value={departmentId}
-            onChange={(e) => setDepartmentId(e.target.value)}
+            value={targetPerson}
+            onChange={(e) => setTargetPerson(e.target.value)}
             className="rounded-md border border-input bg-background px-3 py-2 text-sm"
           >
-            <option value="">대학 전체 공통</option>
-            {departments.map((d) => (
-              <option key={d.id} value={String(d.id)}>
-                {d.name_ko} (학과 한정)
+            <option value="">— 미지정 —</option>
+            {TARGET_PERSON_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
               </option>
             ))}
           </select>
+          {targetPerson === "other" ? (
+            <input
+              type="text"
+              value={targetPersonNote}
+              onChange={(e) => setTargetPersonNote(e.target.value)}
+              maxLength={500}
+              placeholder="대상자 설명 (예: 재정보증인)"
+              className="mt-1.5 rounded-md border border-input bg-background px-3 py-2 text-sm"
+            />
+          ) : null}
         </Field>
+
+        {!isGlobal ? (
+          <Field label="적용 범위">
+            <select
+              name="department_id"
+              value={departmentId}
+              onChange={(e) => setDepartmentId(e.target.value)}
+              className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+            >
+              <option value="">대학 전체 공통</option>
+              {departments.map((d) => (
+                <option key={d.id} value={String(d.id)}>
+                  {d.name_ko} (학과 한정)
+                </option>
+              ))}
+            </select>
+          </Field>
+        ) : null}
 
         <Field label="상태">
           <select

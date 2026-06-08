@@ -20,12 +20,17 @@ const SAMPLE_PREFIX = "required-submissions";
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
 
 const STATUSES = ["draft", "approved", "archived"] as const;
+const TARGET_PERSONS = ["self", "father", "mother", "other"] as const;
 
 const saveSchema = z.object({
-  university_id: z.coerce.number().int().positive(),
-  department_id: z.coerce.number().int().positive().nullable(),
+  // 공용(전체 공통)이면 null, 대학별이면 대학 id
+  university_id: z.number().int().positive().nullable(),
+  department_id: z.number().int().positive().nullable(),
   name_ko: z.string().min(1).max(300),
   name_vi: z.string().max(300).nullable(),
+  // 서류 대상자
+  target_person: z.enum(TARGET_PERSONS).nullable(),
+  target_person_note: z.string().max(500).nullable(),
   status: z.enum(STATUSES),
   is_active: z.boolean(),
   sort_order: z.coerce.number().int().min(0).max(9999),
@@ -104,10 +109,12 @@ export async function saveRequiredSubmissionAction(
   const supabase = createAdminClient();
 
   const raw = {
-    university_id: formData.get("university_id"),
+    university_id: numOrNull(formData.get("university_id")),
     department_id: numOrNull(formData.get("department_id")),
     name_ko: formData.get("name_ko"),
     name_vi: emptyToNull(formData.get("name_vi")),
+    target_person: emptyToNull(formData.get("target_person")),
+    target_person_note: emptyToNull(formData.get("target_person_note")),
     status: formData.get("status") || "draft",
     is_active: formData.get("is_active") === "on",
     sort_order: formData.get("sort_order") || "0",
@@ -134,6 +141,8 @@ export async function saveRequiredSubmissionAction(
     formData.get("required_data_type_keys")
   );
   const aliases = parseJsonStringArray(formData.get("aliases"));
+  // 대학별 오버라이드면 공용 마스터 id 참조 (공용/대학전용이면 null)
+  const baseSubmissionId = emptyToNull(formData.get("base_submission_id"));
 
   // 발급요건 jsonb 구성 (빈값은 생략)
   const issuance: IssuanceRequirements = {};
@@ -158,7 +167,7 @@ export async function saveRequiredSubmissionAction(
       return { error: "샘플 이미지가 너무 큽니다 (최대 10MB)" };
     }
     const safe = sanitizeFileName(sampleName);
-    const path = `${SAMPLE_PREFIX}/${data.university_id}/${Date.now()}_${safe}`;
+    const path = `${SAMPLE_PREFIX}/${data.university_id ?? "global"}/${Date.now()}_${safe}`;
     const { error: upErr } = await supabase.storage
       .from(BUCKET)
       .upload(path, buffer, {
@@ -184,6 +193,8 @@ export async function saveRequiredSubmissionAction(
       department_id: data.department_id,
       name_ko: data.name_ko,
       name_vi: data.name_vi,
+      target_person: data.target_person,
+      target_person_note: data.target_person_note,
       status: data.status,
       is_active: data.is_active,
       sort_order: data.sort_order,
@@ -213,9 +224,12 @@ export async function saveRequiredSubmissionAction(
     // INSERT
     const ins: RequiredSubmissionInsert = {
       university_id: data.university_id,
+      base_submission_id: baseSubmissionId,
       department_id: data.department_id,
       name_ko: data.name_ko,
       name_vi: data.name_vi,
+      target_person: data.target_person,
+      target_person_note: data.target_person_note,
       status: data.status,
       is_active: data.is_active,
       sort_order: data.sort_order,
@@ -234,7 +248,9 @@ export async function saveRequiredSubmissionAction(
     }
   }
 
-  revalidatePath(`/admissions/${data.university_id}`);
+  // 공용(university_id=null)·대학별 양쪽 화면 갱신
+  revalidatePath("/admissions");
+  if (data.university_id) revalidatePath(`/admissions/${data.university_id}`);
   return { success: true };
 }
 
@@ -243,7 +259,7 @@ export async function saveRequiredSubmissionAction(
  */
 export async function deleteRequiredSubmissionAction(
   id: string,
-  universityId: number
+  universityId: number | null
 ): Promise<void> {
   const supabaseUser = await createClient();
   const {
@@ -267,5 +283,6 @@ export async function deleteRequiredSubmissionAction(
 
   await supabase.from("study_required_submissions").delete().eq("id", id);
 
-  revalidatePath(`/admissions/${universityId}`);
+  revalidatePath("/admissions");
+  if (universityId) revalidatePath(`/admissions/${universityId}`);
 }
