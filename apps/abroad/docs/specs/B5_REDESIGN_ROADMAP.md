@@ -70,11 +70,18 @@
   - 파일: `admissions/page.tsx`, `admissions/documents-explorer.tsx`.
   - IA 확립: **입학서류=뷰(모아보기)**, 편집은 **대학별 관리 허브**(`/admissions/[id]`).
 
-## 3. 다음 할 일 (우선순위)
-1. **삭제 안전장치** — 표준데이터/서류 삭제 시 연결된 값·양식 경고 또는 비활성 권장.
-2. (유저플로우 PRD의 후속) 입력링크·docx AI채움·일정/리드타임 관리·표준입학허가서·수수료 정산.
+- ✅ **삭제 안전장치** (커밋 `f5a3c6f`): 표준데이터 삭제 시 연결 데이터(학생값/양식/직접제출/
+  파생참조) 집계 → 연결 있으면 경고 모달(비활성화 권장 / 그래도 삭제 / 취소). 기본은 차단,
+  force 일 때만 강제 삭제. `deactivateDataTypeAction`(is_active=false 소프트삭제) 추가.
+  - 파일: `student-data-types/actions.ts`, `type-form.tsx`. admin db.ts에 study_student_data_values 추가.
 
-> B5 핵심(택1/파생 · 직접제출 · 서명 · AI 별칭연결 · 통합뷰) 모두 완료. 이후는 후속 PRD 단계.
+## 3. 다음 할 일 (후속 PRD 단계 — 각각 큰 작업)
+1. **입력링크** — 학생/센터가 상세정보·서명을 채우는 외부 공유 링크.
+2. **docx/HWPX AI 채움** — 표준데이터로 양식 자동 채우기 (파생 resolve 공용 헬퍼 필요).
+3. **일정/리드타임 관리** — 직접제출 발급요건(lead_time_days) 기반 준비 일정.
+4. **표준입학허가서 · 수수료 정산** — 유저플로우 PRD 후반.
+
+> ✅ B5 핵심 전부 완료: 택1/파생(설정+자동해석) · 직접제출 · 서명패드 · AI 별칭연결 · 통합뷰 · 삭제안전장치.
 
 ## 4. 환경/워크플로 메모
 - 모노레포 `C:\dev\glocare` (npm workspaces). dev 포트 고정: **abroad 3000 / admin 3001 / caregiver 3002**.
