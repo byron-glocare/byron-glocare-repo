@@ -134,6 +134,19 @@ export async function approveSpecAction(
   }
   const universityId = ensured.result.universityId;
 
+  // 4-1. 중복 승인 방지 — 같은 (대학, 학기, 과정)의 기존 approved 요강은 archived 로.
+  //   재승인 = 교체 의미. (DB 유니크 제약이 없어 앱단에서 멱등 보장.)
+  const { error: archiveErr } = await supabase
+    .from("study_admission_specs")
+    .update({ status: "archived" })
+    .eq("university_id", universityId)
+    .eq("term", meta.term)
+    .eq("program_type", meta.program_type)
+    .eq("status", "approved");
+  if (archiveErr) {
+    return { error: `기존 승인본 정리 실패: ${archiveErr.message}` };
+  }
+
   // 5. INSERT
   const nowIso = new Date().toISOString();
   const { data: inserted, error: insertErr } = await supabase

@@ -369,12 +369,14 @@ function stripCodeFence(s: string): string {
  */
 function estimateConfidence(spec: AdmissionSpec): number {
   let score = 1.0;
-  // 핵심 필드 누락 = 큰 감점
-  if (!spec.identity.university_name_ko) score -= 0.3;
-  if (!spec.identity.term) score -= 0.2;
-  if (spec.departments.length === 0) score -= 0.2;
-  if (spec.required_documents.length === 0) score -= 0.1;
-  if (!spec.schedule.semester_start) score -= 0.05;
-  if (spec.scholarships.length === 0) score -= 0.05;
+  // 핵심 필드 누락 = 큰 감점.
+  //   zod 검증 실패 시 spec 구조가 보장되지 않으므로(옵셔널 체이닝 필수) —
+  //   identity/departments 등이 통째로 없어도 크래시 없이 점수만 깎는다.
+  if (!spec.identity?.university_name_ko) score -= 0.3;
+  if (!spec.identity?.term) score -= 0.2;
+  if (!spec.departments?.length) score -= 0.2;
+  if (!spec.required_documents?.length) score -= 0.1;
+  if (!spec.schedule?.semester_start) score -= 0.05;
+  if (!spec.scholarships?.length) score -= 0.05;
   return Math.max(0, Math.min(1, score));
 }

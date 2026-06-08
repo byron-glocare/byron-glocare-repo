@@ -154,25 +154,9 @@ export async function uploadFormFileAction(
     data: { publicUrl },
   } = supabase.storage.from(BUCKET).getPublicUrl(path);
 
-  // 4. 기존 row archive
-  let archiveQuery = supabase
-    .from("study_admission_form_files")
-    .update({ is_current: false })
-    .eq("university_id", data.university_id)
-    .eq("key", data.key)
-    .eq("is_current", true);
-  if (data.department_name === null) {
-    archiveQuery = archiveQuery.is("department_name", null);
-  } else {
-    archiveQuery = archiveQuery.eq("department_name", data.department_name);
-  }
-  const { error: archErr } = await archiveQuery;
-  if (archErr) {
-    await supabase.storage.from(BUCKET).remove([path]);
-    return { error: `기존 양식 archive 실패: ${archErr.message}` };
-  }
-
-  // 5. AI 자동 분석 (옵션) — 업로드와 한 흐름으로
+  // 4. AI 자동 분석 (옵션) — 업로드와 한 흐름으로.
+  //    ⚠ DB 변경(archive/insert)은 분석 *후* 한 번에 — 분석에 30~60초 걸리는데
+  //    그 사이 "현행 양식 0개" 구간이 생기지 않도록(archive→insert 를 연속 실행).
   let analyzeNotes: string | undefined;
   let analyzedKeys = 0;
   let analyzedQuestions = 0;
@@ -232,6 +216,25 @@ export async function uploadFormFileAction(
     }
   }
 
+  // 5. 기존 현행 양식 archive (분석 완료 후 — insert 직전에 실행해 공백 최소화)
+  let archiveQuery = supabase
+    .from("study_admission_form_files")
+    .update({ is_current: false })
+    .eq("university_id", data.university_id)
+    .eq("key", data.key)
+    .eq("is_current", true);
+  if (data.department_name === null) {
+    archiveQuery = archiveQuery.is("department_name", null);
+  } else {
+    archiveQuery = archiveQuery.eq("department_name", data.department_name);
+  }
+  const { data: archivedRows, error: archErr } = await archiveQuery.select("id");
+  if (archErr) {
+    await supabase.storage.from(BUCKET).remove([path]);
+    return { error: `기존 양식 archive 실패: ${archErr.message}` };
+  }
+  const archivedIds = (archivedRows ?? []).map((r) => r.id);
+
   // 6. 새 row INSERT (AI 결과 포함)
   const ins: StudyAdmissionFormFileInsert = {
     university_id: data.university_id,
@@ -252,6 +255,13 @@ export async function uploadFormFileAction(
     .from("study_admission_form_files")
     .insert(ins);
   if (insErr) {
+    // 롤백: 방금 archive 한 기존 현행본을 되돌려 "현행 0개" 상태를 막는다.
+    if (archivedIds.length > 0) {
+      await supabase
+        .from("study_admission_form_files")
+        .update({ is_current: true })
+        .in("id", archivedIds);
+    }
     await supabase.storage.from(BUCKET).remove([path]);
     return { error: `DB 저장 실패: ${insErr.message}` };
   }
