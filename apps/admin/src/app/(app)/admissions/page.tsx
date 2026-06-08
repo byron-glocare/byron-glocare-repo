@@ -1,17 +1,17 @@
 /**
- * /admissions — 입학서류 홈 (대학 기준 통합).
+ * /admissions — 입학서류 "모아보기" (B5, study_documents 뷰 기반).
  *
- *   모집요강(study_admission_specs) 또는 양식파일(study_admission_form_files)이
- *   하나라도 있는 대학을 목록으로 보여준다. 대학을 클릭하면
- *   /admissions/[universityId] 에서 [모집요강 + 필수서류 + 양식파일] 을 한 화면에.
+ *   모집요강(guideline) + 양식(form) + 직접제출(submission) 을 한 뷰로 통합.
+ *   - 상단: 대학별 집계 요약 (3종 문서 카운트)
+ *   - 하단: 전체 문서 통합 목록 (종류 필터 + 검색) — 각 문서는 관리 허브로 링크
  *
- *   "대학교" 메뉴(마스터 데이터 추가/편집)와 역할을 분리 —
- *   여기는 등록된 대학의 입학 관련 서류를 운영하는 곳.
+ *   IA: "대학교" 메뉴 = 마스터 관리 / "입학서류" 메뉴 = 통합 뷰.
+ *   실제 추가·편집은 /admissions/[universityId] 관리 허브에서.
  */
 
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Plus, FileText, ClipboardList } from "lucide-react";
+import { Plus, FileText, ClipboardList, ImageIcon } from "lucide-react";
 
 import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/page-header";
@@ -26,6 +26,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
+import { DocumentsExplorer, type DocItem } from "./documents-explorer";
 
 export const dynamic = "force-dynamic";
 
@@ -36,6 +37,7 @@ type UniRow = {
   specTotal: number;
   specApproved: number;
   formCount: number;
+  submissionCount: number;
   lastActivity: string | null;
 };
 
@@ -49,15 +51,12 @@ export default async function AdmissionsPage() {
 
   const supabase = createAdminClient();
 
-  const [{ data: specs }, { data: forms }] = await Promise.all([
-    supabase
-      .from("study_admission_specs")
-      .select("id, university_id, status, updated_at"),
-    supabase
-      .from("study_admission_form_files")
-      .select("university_id, uploaded_at")
-      .eq("is_current", true),
-  ]);
+  // 통합 뷰 — 모든 입학서류 문서 (guideline/form/submission)
+  const { data: docs } = await supabase
+    .from("study_documents")
+    .select("id, doc_type, university_id, department_label, name, status, updated_at");
+
+  const docRows = docs ?? [];
 
   // 대학별 집계
   const agg = new Map<
@@ -66,6 +65,7 @@ export default async function AdmissionsPage() {
       specTotal: number;
       specApproved: number;
       formCount: number;
+      submissionCount: number;
       lastActivity: string | null;
     }
   >();
@@ -75,26 +75,25 @@ export default async function AdmissionsPage() {
         specTotal: 0,
         specApproved: 0,
         formCount: 0,
+        submissionCount: 0,
         lastActivity: null,
       });
     return agg.get(uid)!;
   }
-  function touch(
-    a: { lastActivity: string | null },
-    ts: string | null | undefined
-  ) {
-    if (ts && (!a.lastActivity || ts > a.lastActivity)) a.lastActivity = ts;
-  }
-  for (const s of specs ?? []) {
-    const a = bump(s.university_id);
-    a.specTotal += 1;
-    if (s.status === "approved") a.specApproved += 1;
-    touch(a, s.updated_at);
-  }
-  for (const f of forms ?? []) {
-    const a = bump(f.university_id);
-    a.formCount += 1;
-    touch(a, f.uploaded_at);
+  for (const d of docRows) {
+    const a = bump(d.university_id);
+    if (d.doc_type === "guideline") {
+      a.specTotal += 1;
+      if (d.status === "approved") a.specApproved += 1;
+    } else if (d.doc_type === "form") {
+      // 현행 양식만 카운트 (이력 제외)
+      if (d.status === "current") a.formCount += 1;
+    } else if (d.doc_type === "submission") {
+      a.submissionCount += 1;
+    }
+    if (d.updated_at && (!a.lastActivity || d.updated_at > a.lastActivity)) {
+      a.lastActivity = d.updated_at;
+    }
   }
 
   const universityIds = Array.from(agg.keys());
@@ -106,6 +105,10 @@ export default async function AdmissionsPage() {
           .in("id", universityIds)
       : { data: [] as Array<{ id: number; name_ko: string; active: boolean }> };
 
+  const uniName = new Map<number, string>(
+    (universities ?? []).map((u) => [u.id, u.name_ko])
+  );
+
   const rows: UniRow[] = (universities ?? [])
     .map((u) => {
       const a = agg.get(u.id)!;
@@ -116,19 +119,37 @@ export default async function AdmissionsPage() {
         specTotal: a.specTotal,
         specApproved: a.specApproved,
         formCount: a.formCount,
+        submissionCount: a.submissionCount,
         lastActivity: a.lastActivity,
       };
     })
     .sort((x, y) => (y.lastActivity ?? "").localeCompare(x.lastActivity ?? ""));
 
-  const totalSpecs = specs?.length ?? 0;
-  const totalForms = forms?.length ?? 0;
+  // 통합 탐색용 — 대학명 결합 (이력 양식은 모아보기에서 제외)
+  const documents: DocItem[] = docRows
+    .filter((d) => !(d.doc_type === "form" && d.status === "archived"))
+    .map((d) => ({
+      id: d.id,
+      doc_type: d.doc_type as DocItem["doc_type"],
+      university_id: d.university_id,
+      university_name: uniName.get(d.university_id) ?? `대학 #${d.university_id}`,
+      department_label: d.department_label,
+      name: d.name,
+      status: d.status,
+      updated_at: d.updated_at,
+    }));
+
+  const totalSpecs = docRows.filter((d) => d.doc_type === "guideline").length;
+  const totalForms = docRows.filter(
+    (d) => d.doc_type === "form" && d.status === "current"
+  ).length;
+  const totalSubs = docRows.filter((d) => d.doc_type === "submission").length;
 
   return (
     <>
       <PageHeader
         title="입학서류"
-        description={`등록된 대학의 모집요강 + 양식파일 관리 (대학 ${rows.length}곳 · 모집요강 ${totalSpecs}건 · 양식 ${totalForms}개)`}
+        description={`대학 ${rows.length}곳 · 모집요강 ${totalSpecs}건 · 양식 ${totalForms}개 · 직접제출 ${totalSubs}건`}
         breadcrumbs={[{ label: "입학서류" }]}
         actions={
           <Link href="/admissions/new" className={buttonVariants()}>
@@ -137,84 +158,110 @@ export default async function AdmissionsPage() {
           </Link>
         }
       />
-      <div className="p-6 space-y-4">
+      <div className="p-6 space-y-6">
         {rows.length === 0 ? (
           <Card className="p-12 text-center text-sm text-muted-foreground">
-            등록된 모집요강·양식이 없습니다.{" "}
+            등록된 입학서류가 없습니다.{" "}
             <Link href="/admissions/new" className="text-primary hover:underline">
               PDF 업로드 후 AI 추출 시작 →
             </Link>
           </Card>
         ) : (
-          <Card className="overflow-hidden p-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>대학교</TableHead>
-                  <TableHead className="w-40 text-center">모집요강</TableHead>
-                  <TableHead className="w-28 text-center">양식</TableHead>
-                  <TableHead className="w-28">최근 갱신</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {rows.map((r) => {
-                  const href = `/admissions/${r.id}`;
-                  return (
-                    <TableRow key={r.id} className="cursor-pointer">
-                      <TableCell className="font-medium">
-                        <Link
-                          href={href}
-                          className="flex items-center gap-2 hover:text-primary"
-                        >
-                          {r.name_ko}
-                          {!r.active ? (
-                            <Badge
-                              variant="outline"
-                              className="text-muted-foreground"
-                            >
-                              비노출
-                            </Badge>
-                          ) : null}
-                        </Link>
-                      </TableCell>
-                      <TableCell className="text-center text-sm">
-                        <Link
-                          href={href}
-                          className="inline-flex items-center justify-center gap-1.5"
-                        >
-                          <ClipboardList className="size-3.5 text-muted-foreground" />
-                          {r.specTotal}건
-                          {r.specApproved > 0 ? (
-                            <span className="text-success">
-                              (승인 {r.specApproved})
-                            </span>
-                          ) : null}
-                        </Link>
-                      </TableCell>
-                      <TableCell className="text-center text-sm">
-                        <Link
-                          href={href}
-                          className="inline-flex items-center justify-center gap-1.5"
-                        >
-                          <FileText className="size-3.5 text-muted-foreground" />
-                          {r.formCount}개
-                        </Link>
-                      </TableCell>
-                      <TableCell className="text-xs text-muted-foreground">
-                        <Link href={href} className="block">
-                          {r.lastActivity
-                            ? new Date(r.lastActivity).toLocaleDateString(
-                                "ko-KR"
-                              )
-                            : "—"}
-                        </Link>
-                      </TableCell>
+          <>
+            {/* 대학별 요약 */}
+            <section className="space-y-2">
+              <h2 className="text-sm font-semibold text-foreground">
+                대학별 요약
+              </h2>
+              <Card className="overflow-hidden p-0">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>대학교</TableHead>
+                      <TableHead className="w-40 text-center">모집요강</TableHead>
+                      <TableHead className="w-24 text-center">양식</TableHead>
+                      <TableHead className="w-24 text-center">직접제출</TableHead>
+                      <TableHead className="w-28">최근 갱신</TableHead>
                     </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </Card>
+                  </TableHeader>
+                  <TableBody>
+                    {rows.map((r) => {
+                      const href = `/admissions/${r.id}`;
+                      return (
+                        <TableRow key={r.id} className="cursor-pointer">
+                          <TableCell className="font-medium">
+                            <Link
+                              href={href}
+                              className="flex items-center gap-2 hover:text-primary"
+                            >
+                              {r.name_ko}
+                              {!r.active ? (
+                                <Badge
+                                  variant="outline"
+                                  className="text-muted-foreground"
+                                >
+                                  비노출
+                                </Badge>
+                              ) : null}
+                            </Link>
+                          </TableCell>
+                          <TableCell className="text-center text-sm">
+                            <Link
+                              href={href}
+                              className="inline-flex items-center justify-center gap-1.5"
+                            >
+                              <ClipboardList className="size-3.5 text-muted-foreground" />
+                              {r.specTotal}건
+                              {r.specApproved > 0 ? (
+                                <span className="text-success">
+                                  (승인 {r.specApproved})
+                                </span>
+                              ) : null}
+                            </Link>
+                          </TableCell>
+                          <TableCell className="text-center text-sm">
+                            <Link
+                              href={href}
+                              className="inline-flex items-center justify-center gap-1.5"
+                            >
+                              <FileText className="size-3.5 text-muted-foreground" />
+                              {r.formCount}개
+                            </Link>
+                          </TableCell>
+                          <TableCell className="text-center text-sm">
+                            <Link
+                              href={href}
+                              className="inline-flex items-center justify-center gap-1.5"
+                            >
+                              <ImageIcon className="size-3.5 text-muted-foreground" />
+                              {r.submissionCount}건
+                            </Link>
+                          </TableCell>
+                          <TableCell className="text-xs text-muted-foreground">
+                            <Link href={href} className="block">
+                              {r.lastActivity
+                                ? new Date(r.lastActivity).toLocaleDateString(
+                                    "ko-KR"
+                                  )
+                                : "—"}
+                            </Link>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </Card>
+            </section>
+
+            {/* 전체 문서 통합 목록 */}
+            <section className="space-y-2">
+              <h2 className="text-sm font-semibold text-foreground">
+                전체 문서 모아보기
+              </h2>
+              <DocumentsExplorer documents={documents} />
+            </section>
+          </>
         )}
       </div>
     </>

@@ -1516,7 +1516,21 @@ export type Database = {
         ];
       };
     };
-    Views: { [_ in never]: never };
+    Views: {
+      // 입학서류 통합 뷰 (B5) — specs + form_files + required_submissions UNION
+      study_documents: {
+        Row: {
+          id: string;
+          doc_type: "guideline" | "form" | "submission";
+          university_id: number;
+          department_label: string | null;
+          name: string;
+          status: string;
+          updated_at: string;
+        };
+        Relationships: [];
+      };
+    };
     Functions: { [_ in never]: never };
     Enums: { [_ in never]: never };
     CompositeTypes: { [_ in never]: never };
