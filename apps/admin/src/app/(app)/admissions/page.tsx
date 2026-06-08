@@ -109,21 +109,48 @@ export default async function AdmissionsPage() {
     (universities ?? []).map((u) => [u.id, u.name_ko])
   );
 
-  const rows: UniRow[] = (universities ?? [])
-    .map((u) => {
-      const a = agg.get(u.id)!;
-      return {
-        id: u.id,
-        name_ko: u.name_ko,
-        active: u.active,
-        specTotal: a.specTotal,
-        specApproved: a.specApproved,
-        formCount: a.formCount,
-        submissionCount: a.submissionCount,
-        lastActivity: a.lastActivity,
-      };
-    })
-    .sort((x, y) => (y.lastActivity ?? "").localeCompare(x.lastActivity ?? ""));
+  const rawRows: UniRow[] = (universities ?? []).map((u) => {
+    const a = agg.get(u.id)!;
+    return {
+      id: u.id,
+      name_ko: u.name_ko,
+      active: u.active,
+      specTotal: a.specTotal,
+      specApproved: a.specApproved,
+      formCount: a.formCount,
+      submissionCount: a.submissionCount,
+      lastActivity: a.lastActivity,
+    };
+  });
+
+  // 같은 이름의 대학이 2개(이름 변형으로 자동 생성된 비노출 사본 등)면 한 줄로 합침.
+  //   카운트는 합산, 링크는 노출(active) 레코드를 우선 canonical 로.
+  const normName = (s: string) => s.trim().replace(/\s+/g, " ").toLowerCase();
+  const mergedByName = new Map<string, UniRow>();
+  for (const r of rawRows) {
+    const k = normName(r.name_ko);
+    const ex = mergedByName.get(k);
+    if (!ex) {
+      mergedByName.set(k, { ...r });
+      continue;
+    }
+    ex.specTotal += r.specTotal;
+    ex.specApproved += r.specApproved;
+    ex.formCount += r.formCount;
+    ex.submissionCount += r.submissionCount;
+    if ((r.lastActivity ?? "") > (ex.lastActivity ?? "")) {
+      ex.lastActivity = r.lastActivity;
+    }
+    // canonical 선택: 노출(active) 레코드를 대표로
+    if (r.active && !ex.active) {
+      ex.id = r.id;
+      ex.active = true;
+      ex.name_ko = r.name_ko;
+    }
+  }
+  const rows: UniRow[] = Array.from(mergedByName.values()).sort((x, y) =>
+    (y.lastActivity ?? "").localeCompare(x.lastActivity ?? "")
+  );
 
   // 양식 문서명은 업로드한 실제 파일명으로 표시 (뷰의 name=name_ko 대신 file_name)
   const formIds = docRows
