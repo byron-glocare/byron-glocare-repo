@@ -57,11 +57,17 @@
   - 파일: `components/signature-pad.tsx`(범용, ref로 toDataURL/clear/isEmpty),
     `student-data-editor.tsx` 의 `SignatureInput` + ValueInput `case "signature"`.
 
+- ✅ **별칭·파생을 양식 AI 추출에 연결** (커밋 `0aae4e4`): 양식 분석(analyze-form)이
+  카탈로그를 받을 때 별칭·파생 표기까지 포함. 프롬프트에 별칭 매칭 규칙 + missing 중복 방어 필터.
+  - 파일: abroad `lib/admission/analyze-form.ts`, admin `lib/admission/call-analyze-form.ts`,
+    `forms/actions.ts`, `forms/[formId]/essay-questions/actions.ts`.
+  - ⚠ **모집요강 추출(`/api/admission/extract`)은 available_data_types 미사용** — 별칭 매칭 대상 아님.
+    양식(form_files) 분석 경로에만 적용됨. 모집요강에도 필요하면 별도 작업.
+
 ## 3. 다음 할 일 (우선순위)
-1. **별칭·파생을 AI 추출에 연결** — 모집요강/양식 추출 시 기존 항목 매칭, 중복 제안 방지.
-2. **통합 목록 UI** — `study_documents` 뷰 기반 입학서류 모아보기 + IA(대학교=관리/입학서류=뷰).
-3. **삭제 안전장치** — 표준데이터/서류 삭제 시 연결된 값·양식 경고 또는 비활성 권장.
-4. (유저플로우 PRD의 후속) 입력링크·docx AI채움·일정/리드타임 관리·표준입학허가서·수수료 정산.
+1. **통합 목록 UI** — `study_documents` 뷰 기반 입학서류 모아보기 + IA(대학교=관리/입학서류=뷰).
+2. **삭제 안전장치** — 표준데이터/서류 삭제 시 연결된 값·양식 경고 또는 비활성 권장.
+3. (유저플로우 PRD의 후속) 입력링크·docx AI채움·일정/리드타임 관리·표준입학허가서·수수료 정산.
 
 ## 4. 환경/워크플로 메모
 - 모노레포 `C:\dev\glocare` (npm workspaces). dev 포트 고정: **abroad 3000 / admin 3001 / caregiver 3002**.
