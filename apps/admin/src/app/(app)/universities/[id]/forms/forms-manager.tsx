@@ -532,8 +532,10 @@ function FileTable({
                         variant="outline"
                         size="sm"
                         className="text-destructive hover:bg-destructive/10"
+                        title="양식 삭제 (이전 버전 포함)"
                       >
                         <Trash2 className="size-3" />
+                        삭제
                       </Button>
                     </form>
                   </div>
