@@ -1403,10 +1403,13 @@ export type Database = {
       study_required_submissions: {
         Row: {
           id: string;
-          university_id: number;
+          university_id: number | null; // NULL = 공용(전체 대학 공통)
+          base_submission_id: string | null; // 대학별 세부 = 공용 마스터 참조
           department_id: number | null;
           name_ko: string;
           name_vi: string | null;
+          target_person: "self" | "father" | "mother" | "other" | null;
+          target_person_note: string | null;
           sample_image_url: string | null;
           issuance_requirements: {
             issuer?: string;
@@ -1428,10 +1431,13 @@ export type Database = {
         };
         Insert: {
           id?: string;
-          university_id: number;
+          university_id?: number | null;
+          base_submission_id?: string | null;
           department_id?: number | null;
           name_ko: string;
           name_vi?: string | null;
+          target_person?: "self" | "father" | "mother" | "other" | null;
+          target_person_note?: string | null;
           sample_image_url?: string | null;
           issuance_requirements?: {
             issuer?: string;
