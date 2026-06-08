@@ -4,6 +4,7 @@
  *   후속: 학생 정보 편집 / 지원 의향 등록·관리 (모집요강 페이지 본격 후).
  */
 
+import { Fragment } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -119,28 +120,10 @@ export default async function StudentDetailPage({
           </div>
           <div className="flex items-center gap-2">
             <Link
-              href={`/center/students/${id}/data`}
-              className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
-            >
-              {tr(locale, "상세 정보", "Thông tin chi tiết")}
-            </Link>
-            <Link
-              href={`/center/students/${id}/essays`}
-              className="rounded-md bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700"
-            >
-              {tr(locale, "AI 자기소개서", "Bài luận AI")}
-            </Link>
-            <Link
-              href={`/center/students/${id}/forms`}
-              className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
-            >
-              {tr(locale, "양식 작성", "Phiếu điền mẫu")}
-            </Link>
-            <Link
               href={`/center/students/${id}/edit`}
-              className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+              className="rounded-md border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
             >
-              {tr(locale, "수정", "Chỉnh sửa")}
+              {tr(locale, "기본정보 수정", "Sửa thông tin")}
             </Link>
             <DeleteStudentButton
               locale={locale}
@@ -150,6 +133,13 @@ export default async function StudentDetailPage({
             />
           </div>
         </div>
+
+        {/* 진행 플로우 — 학생 처리는 1방향 단계로 */}
+        <ProcessFlow
+          locale={locale}
+          studentId={id}
+          hasApplications={(applications?.length ?? 0) > 0}
+        />
       </header>
 
       {/* 학생 기본 정보 */}
@@ -324,6 +314,106 @@ function Field({ label, value }: { label: string; value: string | null }) {
         {label}
       </dt>
       <dd className="mt-0.5 text-sm text-slate-800">{value ?? "—"}</dd>
+    </div>
+  );
+}
+
+/**
+ * 학생 처리 1방향 플로우:
+ *   기본 등록 → 대학 선택 → 상세 정보 → 서류 작성 → 검토·컨펌 → 다운로드
+ *   (자기소개서·입학원서는 '서류 작성' 한 단계로 통합)
+ */
+function ProcessFlow({
+  locale,
+  studentId,
+  hasApplications,
+}: {
+  locale: Locale;
+  studentId: string;
+  hasApplications: boolean;
+}) {
+  const base = `/center/students/${studentId}`;
+  const steps: Array<{
+    n: number;
+    label: string;
+    href: string;
+    done: boolean;
+  }> = [
+    {
+      n: 1,
+      label: tr(locale, "기본 등록", "Đăng ký"),
+      href: `${base}/edit`,
+      done: true, // 이 학생이 존재 = 등록 완료
+    },
+    {
+      n: 2,
+      label: tr(locale, "대학 선택", "Chọn trường"),
+      href: `${base}/applications/new`,
+      done: hasApplications,
+    },
+    {
+      n: 3,
+      label: tr(locale, "상세 정보", "Thông tin chi tiết"),
+      href: `${base}/data`,
+      done: false,
+    },
+    {
+      n: 4,
+      label: tr(locale, "서류 작성", "Soạn hồ sơ"),
+      href: `${base}/forms`,
+      done: false,
+    },
+    {
+      n: 5,
+      label: tr(locale, "검토·컨펌", "Kiểm tra & xác nhận"),
+      href: `${base}/forms`,
+      done: false,
+    },
+    {
+      n: 6,
+      label: tr(locale, "다운로드", "Tải hồ sơ"),
+      href: `${base}/forms`,
+      done: false,
+    },
+  ];
+
+  return (
+    <div className="mt-5">
+      <nav className="flex flex-wrap items-center gap-y-2">
+        {steps.map((s, i) => (
+          <Fragment key={s.n}>
+            <Link
+              href={s.href}
+              className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
+                s.done
+                  ? "border-emerald-200 bg-emerald-50 text-emerald-800 hover:bg-emerald-100"
+                  : "border-slate-200 bg-white text-slate-700 hover:border-emerald-300 hover:bg-emerald-50"
+              }`}
+            >
+              <span
+                className={`flex size-5 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
+                  s.done
+                    ? "bg-emerald-600 text-white"
+                    : "bg-slate-200 text-slate-600"
+                }`}
+              >
+                {s.done ? "✓" : s.n}
+              </span>
+              {s.label}
+            </Link>
+            {i < steps.length - 1 ? (
+              <span className="px-1 text-slate-300">→</span>
+            ) : null}
+          </Fragment>
+        ))}
+      </nav>
+      <p className="mt-2 text-xs text-slate-500">
+        {tr(
+          locale,
+          "입학원서·자기소개서는 '서류 작성' 단계에서 함께 작성하고, 검토·수정 후 완성본을 내려받습니다.",
+          "Đơn nhập học và bài luận được soạn cùng nhau ở bước 'Soạn hồ sơ', sau khi kiểm tra & chỉnh sửa thì tải bản hoàn chỉnh."
+        )}
+      </p>
     </div>
   );
 }

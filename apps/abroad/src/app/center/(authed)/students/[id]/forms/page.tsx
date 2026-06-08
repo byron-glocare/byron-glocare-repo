@@ -154,13 +154,13 @@ export default async function StudentFormsListPage({
           ← {student.name}
         </Link>
         <h1 className="mt-2 text-2xl font-bold text-slate-900">
-          {tr(locale, "지원 양식 작성", "Phiếu điền mẫu hồ sơ")}
+          {tr(locale, "서류 작성", "Soạn hồ sơ")}
         </h1>
         <p className="mt-1 text-sm text-slate-600">
           {tr(
             locale,
-            "각 지원 양식에 필요한 학생 데이터를 한곳에 모읍니다 — 담당자가 실제 양식에 옮겨 입력합니다.",
-            "Tập hợp tất cả dữ liệu của sinh viên cho từng mẫu hồ sơ — cán bộ nhập vào mẫu thật."
+            "입학원서·자기소개서 등 모든 서류를 한곳에서 작성합니다. 각 서류를 눌러 작성하세요.",
+            "Soạn tất cả hồ sơ (đơn nhập học, bài luận…) ở cùng một nơi. Nhấn vào từng hồ sơ để soạn."
           )}
         </p>
       </header>
