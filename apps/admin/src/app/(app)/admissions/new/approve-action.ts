@@ -51,6 +51,8 @@ export type ApproveSpecState =
   | {
       error?: string;
       fieldErrors?: Record<string, string>;
+      /** 같은 대학+학기 승인본이 이미 있어 갱신 확인이 필요 */
+      duplicate?: { count: number; term: string };
     }
   | undefined;
 
@@ -134,17 +136,37 @@ export async function approveSpecAction(
   }
   const universityId = ensured.result.universityId;
 
-  // 4-1. 중복 승인 방지 — 같은 (대학, 학기, 과정)의 기존 approved 요강은 archived 로.
-  //   재승인 = 교체 의미. (DB 유니크 제약이 없어 앱단에서 멱등 보장.)
-  const { error: archiveErr } = await supabase
+  // 4-1. 중복 승인 보호 — 같은 (대학, 학기) 승인본이 이미 있으면
+  //   바로 덮어쓰지 않고 운영자에게 "갱신할까요?" 확인을 받는다.
+  //   confirm_replace=true 로 다시 제출해야만 기존을 보관(archived) 처리.
+  const confirmReplace = formData.get("confirm_replace") === "true";
+  const { data: existingApproved, error: dupErr } = await supabase
     .from("study_admission_specs")
-    .update({ status: "archived" })
+    .select("id")
     .eq("university_id", universityId)
     .eq("term", meta.term)
-    .eq("program_type", meta.program_type)
     .eq("status", "approved");
-  if (archiveErr) {
-    return { error: `기존 승인본 정리 실패: ${archiveErr.message}` };
+  if (dupErr) {
+    return { error: `중복 확인 실패: ${dupErr.message}` };
+  }
+  const dupCount = existingApproved?.length ?? 0;
+
+  if (dupCount > 0 && !confirmReplace) {
+    // 아직 확인 전 — 저장하지 않고 확인 요청 반환
+    return { duplicate: { count: dupCount, term: meta.term } };
+  }
+
+  if (dupCount > 0 && confirmReplace) {
+    // 갱신 확정 — 기존 승인본 보관 처리 후 새로 저장
+    const { error: archiveErr } = await supabase
+      .from("study_admission_specs")
+      .update({ status: "archived" })
+      .eq("university_id", universityId)
+      .eq("term", meta.term)
+      .eq("status", "approved");
+    if (archiveErr) {
+      return { error: `기존 승인본 보관 처리 실패: ${archiveErr.message}` };
+    }
   }
 
   // 5. INSERT
