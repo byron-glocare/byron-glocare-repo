@@ -20,6 +20,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
+import { reactivateDataTypeAction } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -174,15 +175,32 @@ export default async function StudentDataTypesPage() {
                           )}
                         </TableCell>
                         <TableCell className="text-right">
-                          <Link
-                            href={`/student-data-types/${t.id}/edit`}
-                            className={buttonVariants({
-                              variant: "outline",
-                              size: "sm",
-                            })}
-                          >
-                            편집
-                          </Link>
+                          <div className="flex items-center justify-end gap-1.5">
+                            {!t.is_active ? (
+                              <form
+                                action={reactivateDataTypeAction.bind(null, t.id)}
+                              >
+                                <button
+                                  type="submit"
+                                  className={buttonVariants({
+                                    variant: "outline",
+                                    size: "sm",
+                                  })}
+                                >
+                                  활성화
+                                </button>
+                              </form>
+                            ) : null}
+                            <Link
+                              href={`/student-data-types/${t.id}/edit`}
+                              className={buttonVariants({
+                                variant: "outline",
+                                size: "sm",
+                              })}
+                            >
+                              편집
+                            </Link>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}

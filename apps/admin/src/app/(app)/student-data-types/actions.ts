@@ -346,6 +346,23 @@ export type DataTypeMutationResult =
   | { ok: true }
   | { ok: false; error: string };
 
+/** 재활성화 — is_active=true. 비활성 항목을 목록·입력에 다시 노출. */
+export async function reactivateDataTypeAction(id: string): Promise<void> {
+  const supabaseUser = await createClient();
+  const {
+    data: { user },
+  } = await supabaseUser.auth.getUser();
+  if (!user) return;
+
+  const admin = createAdminClient();
+  await admin
+    .from("study_student_data_types")
+    .update({ is_active: true })
+    .eq("id", id);
+
+  revalidatePath("/student-data-types");
+}
+
 /** 비활성화 (소프트 삭제) — is_active=false. 데이터 보존. */
 export async function deactivateDataTypeAction(
   id: string
