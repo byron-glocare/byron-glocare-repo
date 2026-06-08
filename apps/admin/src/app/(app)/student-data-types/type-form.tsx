@@ -1,14 +1,18 @@
 "use client";
 
-import { useActionState, useState, useTransition } from "react";
-import { Check, Loader2, Plus, Trash2 } from "lucide-react";
+import { useActionState, useState } from "react";
+import { useRouter } from "next/navigation";
+import { AlertTriangle, Check, Loader2, Plus, Power, Trash2 } from "lucide-react";
 
 import { Card } from "@/components/ui/card";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
   saveDataTypeAction,
   deleteDataTypeAction,
+  deactivateDataTypeAction,
+  getDataTypeUsageAction,
   type SaveDataTypeState,
+  type DataTypeUsage,
 } from "./actions";
 
 const CATEGORY_OPTIONS = [
@@ -590,31 +594,182 @@ export function DataTypeForm({
 }
 
 function DeleteButton({ id, keyName }: { id: string; keyName: string }) {
-  const [pending, startTransition] = useTransition();
+  const router = useRouter();
+  const [loading, setLoading] = useState(false); // 사용처 조회 중
+  const [busy, setBusy] = useState(false); // 삭제/비활성 실행 중
+  const [usage, setUsage] = useState<DataTypeUsage | null>(null); // 경고 모달
+  const [err, setErr] = useState<string | null>(null);
+
+  async function onDeleteClick() {
+    setErr(null);
+    setLoading(true);
+    const u = await getDataTypeUsageAction(id);
+    setLoading(false);
+    if (!u.ok) {
+      setErr(u.error ?? "사용처 확인 실패");
+      return;
+    }
+    if (u.total === 0) {
+      if (confirm(`정말 "${keyName}" 데이터 타입을 삭제하시겠습니까?`)) {
+        await runDelete(false);
+      }
+      return;
+    }
+    setUsage(u); // 연결 있음 → 경고 모달
+  }
+
+  async function runDelete(force: boolean) {
+    setBusy(true);
+    setErr(null);
+    const res = await deleteDataTypeAction(id, force);
+    setBusy(false);
+    if (!res.ok) {
+      setErr(res.error);
+      return;
+    }
+    setUsage(null);
+    router.push("/student-data-types");
+    router.refresh();
+  }
+
+  async function runDeactivate() {
+    setBusy(true);
+    setErr(null);
+    const res = await deactivateDataTypeAction(id);
+    setBusy(false);
+    if (!res.ok) {
+      setErr(res.error);
+      return;
+    }
+    setUsage(null);
+    router.push("/student-data-types");
+    router.refresh();
+  }
+
   return (
-    <Button
-      type="button"
-      variant="outline"
-      disabled={pending}
-      className="text-destructive hover:bg-destructive/10"
-      onClick={() => {
-        if (
-          !confirm(
-            `정말 "${keyName}" 데이터 타입을 삭제하시겠습니까? 이 타입을 사용하는 양식과의 매핑도 해제됩니다.`
-          )
-        ) {
-          return;
-        }
-        startTransition(() => deleteDataTypeAction(id));
-      }}
-    >
-      {pending ? (
-        <Loader2 className="size-4 animate-spin" />
-      ) : (
-        <Trash2 className="size-4" />
-      )}
-      삭제
-    </Button>
+    <>
+      <div className="flex flex-col items-end gap-1">
+        <Button
+          type="button"
+          variant="outline"
+          disabled={loading || busy}
+          className="text-destructive hover:bg-destructive/10"
+          onClick={onDeleteClick}
+        >
+          {loading ? (
+            <Loader2 className="size-4 animate-spin" />
+          ) : (
+            <Trash2 className="size-4" />
+          )}
+          삭제
+        </Button>
+        {err ? <span className="text-xs text-destructive">{err}</span> : null}
+      </div>
+
+      {usage ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <Card className="w-full max-w-md p-5 space-y-4">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="mt-0.5 size-5 shrink-0 text-amber-500" />
+              <div>
+                <h3 className="text-base font-semibold">
+                  연결된 데이터가 있습니다
+                </h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  <code className="rounded bg-muted px-1">{keyName}</code> 에
+                  연결된 항목이 있어 삭제 시 데이터가 깨질 수 있습니다.
+                  <strong className="text-foreground"> 비활성화를 권장</strong>
+                  합니다 (목록·입력에서 숨겨지지만 기존 값은 보존).
+                </p>
+              </div>
+            </div>
+
+            <ul className="space-y-1 rounded-md border bg-muted/30 p-3 text-sm">
+              {usage.valueCount > 0 ? (
+                <li className="flex justify-between">
+                  <span>학생이 입력한 값</span>
+                  <span className="font-medium">{usage.valueCount}건</span>
+                </li>
+              ) : null}
+              {usage.formCount > 0 ? (
+                <li className="flex justify-between">
+                  <span>이 항목을 쓰는 양식</span>
+                  <span className="font-medium">{usage.formCount}개</span>
+                </li>
+              ) : null}
+              {usage.submissionCount > 0 ? (
+                <li className="flex justify-between">
+                  <span>이 항목을 쓰는 직접제출 서류</span>
+                  <span className="font-medium">{usage.submissionCount}건</span>
+                </li>
+              ) : null}
+              {usage.derivedRefs.length > 0 ? (
+                <li>
+                  <div className="flex justify-between">
+                    <span>이 항목을 참조하는 파생 항목</span>
+                    <span className="font-medium">
+                      {usage.derivedRefs.length}개
+                    </span>
+                  </div>
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    {usage.derivedRefs.join(", ")}
+                  </div>
+                </li>
+              ) : null}
+            </ul>
+
+            {err ? (
+              <div className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
+                {err}
+              </div>
+            ) : null}
+
+            <div className="flex flex-wrap items-center justify-end gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={busy}
+                onClick={() => {
+                  setUsage(null);
+                  setErr(null);
+                }}
+              >
+                취소
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={busy}
+                className="text-destructive hover:bg-destructive/10"
+                onClick={() => {
+                  if (
+                    confirm(
+                      `경고: "${keyName}" 를 강제 삭제하면 연결된 데이터 참조가 깨질 수 있습니다. 계속하시겠습니까?`
+                    )
+                  ) {
+                    runDelete(true);
+                  }
+                }}
+              >
+                {busy ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
+                그래도 삭제
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                disabled={busy}
+                onClick={runDeactivate}
+              >
+                {busy ? <Loader2 className="size-4 animate-spin" /> : <Power className="size-4" />}
+                비활성화 (권장)
+              </Button>
+            </div>
+          </Card>
+        </div>
+      ) : null}
+    </>
   );
 }
 

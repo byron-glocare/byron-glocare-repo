@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createAdminClient } from "@/lib/supabase/server";
 import type {
   StudyStudentDataTypeInsert,
   StudyStudentDataTypeUpdate,
@@ -246,17 +246,159 @@ export async function saveDataTypeAction(
   redirect("/student-data-types");
 }
 
-export async function deleteDataTypeAction(id: string): Promise<void> {
-  const supabase = await createClient();
+export type DataTypeUsage = {
+  ok: boolean;
+  key: string;
+  /** 학생이 입력한 값 행 수 (모든 org) */
+  valueCount: number;
+  /** required_data_type_keys 에 이 키를 포함하는 양식 수 */
+  formCount: number;
+  /** required_data_type_keys 에 이 키를 포함하는 직접제출 서류 수 */
+  submissionCount: number;
+  /** 이 키를 selector/원본으로 참조하는 파생 항목 라벨들 */
+  derivedRefs: string[];
+  total: number;
+  error?: string;
+};
+
+/**
+ * 표준데이터 삭제 전 사용처 집계 — 연결된 값·양식·직접제출·파생참조.
+ *   service-role 로 전체(모든 org) 카운트.
+ */
+export async function getDataTypeUsageAction(
+  id: string
+): Promise<DataTypeUsage> {
+  const empty: DataTypeUsage = {
+    ok: false,
+    key: "",
+    valueCount: 0,
+    formCount: 0,
+    submissionCount: 0,
+    derivedRefs: [],
+    total: 0,
+  };
+
+  const supabaseUser = await createClient();
   const {
     data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return;
+  } = await supabaseUser.auth.getUser();
+  if (!user) return { ...empty, error: "로그인이 필요합니다" };
 
-  // 해당 key 가 사용되는 양식의 required_data_type_keys 에서 제거
-  // (PostgreSQL array 함수로 클라이언트에서 일괄 처리는 어려움 — 시드 데이터 보호 차원에서 우선 단순 삭제)
-  await supabase.from("study_student_data_types").delete().eq("id", id);
+  const admin = createAdminClient();
+
+  const { data: row } = await admin
+    .from("study_student_data_types")
+    .select("key")
+    .eq("id", id)
+    .maybeSingle();
+  if (!row) return { ...empty, error: "항목을 찾을 수 없습니다" };
+  const key = row.key;
+
+  const [valuesRes, formsRes, subsRes, derivedRes] = await Promise.all([
+    admin
+      .from("study_student_data_values")
+      .select("id", { count: "exact", head: true })
+      .eq("data_type_key", key),
+    admin
+      .from("study_admission_form_files")
+      .select("id", { count: "exact", head: true })
+      .contains("required_data_type_keys", [key]),
+    admin
+      .from("study_required_submissions")
+      .select("id", { count: "exact", head: true })
+      .contains("required_data_type_keys", [key]),
+    admin
+      .from("study_student_data_types")
+      .select("key, label_ko, derived_from")
+      .eq("is_derived", true),
+  ]);
+
+  // 파생 참조 — selector 또는 map 값에 key 포함
+  const derivedRefs: string[] = [];
+  for (const t of derivedRes.data ?? []) {
+    const df = t.derived_from as
+      | { selector?: string; map?: Record<string, string> }
+      | null;
+    if (!df) continue;
+    const inSelector = df.selector === key;
+    const inMap = df.map ? Object.values(df.map).includes(key) : false;
+    if (inSelector || inMap) derivedRefs.push(`${t.label_ko} (${t.key})`);
+  }
+
+  const valueCount = valuesRes.count ?? 0;
+  const formCount = formsRes.count ?? 0;
+  const submissionCount = subsRes.count ?? 0;
+  const total =
+    valueCount + formCount + submissionCount + derivedRefs.length;
+
+  return {
+    ok: true,
+    key,
+    valueCount,
+    formCount,
+    submissionCount,
+    derivedRefs,
+    total,
+  };
+}
+
+export type DataTypeMutationResult =
+  | { ok: true }
+  | { ok: false; error: string };
+
+/** 비활성화 (소프트 삭제) — is_active=false. 데이터 보존. */
+export async function deactivateDataTypeAction(
+  id: string
+): Promise<DataTypeMutationResult> {
+  const supabaseUser = await createClient();
+  const {
+    data: { user },
+  } = await supabaseUser.auth.getUser();
+  if (!user) return { ok: false, error: "로그인이 필요합니다" };
+
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("study_student_data_types")
+    .update({ is_active: false })
+    .eq("id", id);
+  if (error) return { ok: false, error: error.message };
 
   revalidatePath("/student-data-types");
-  redirect("/student-data-types");
+  return { ok: true };
+}
+
+/**
+ * 표준데이터 삭제. 기본은 사용처가 있으면 거부(가드).
+ *   force=true 일 때만 사용처가 있어도 강제 삭제.
+ */
+export async function deleteDataTypeAction(
+  id: string,
+  force = false
+): Promise<DataTypeMutationResult> {
+  const supabaseUser = await createClient();
+  const {
+    data: { user },
+  } = await supabaseUser.auth.getUser();
+  if (!user) return { ok: false, error: "로그인이 필요합니다" };
+
+  if (!force) {
+    const usage = await getDataTypeUsageAction(id);
+    if (usage.ok && usage.total > 0) {
+      return {
+        ok: false,
+        error:
+          "연결된 데이터가 있어 삭제가 차단되었습니다. 비활성화하거나 강제 삭제를 선택하세요.",
+      };
+    }
+  }
+
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("study_student_data_types")
+    .delete()
+    .eq("id", id);
+  if (error) return { ok: false, error: error.message };
+
+  revalidatePath("/student-data-types");
+  return { ok: true };
 }

@@ -1216,6 +1216,34 @@ export type Database = {
       };
 
       // ---------------------------------------------------------------------
+      // 학생별 표준데이터 값 (B4-4) — 삭제 안전장치 집계용
+      // ---------------------------------------------------------------------
+      study_student_data_values: {
+        Row: {
+          id: string;
+          student_id: string;
+          data_type_key: string;
+          value: unknown;
+          filled_by: string | null;
+          filled_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          student_id: string;
+          data_type_key: string;
+          value: unknown;
+          filled_by?: string | null;
+          filled_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["study_student_data_values"]["Insert"]
+        >;
+        Relationships: [];
+      };
+
+      // ---------------------------------------------------------------------
       // 학생 작문 결과 (B4-5)
       // ---------------------------------------------------------------------
       study_student_essay_drafts: {
