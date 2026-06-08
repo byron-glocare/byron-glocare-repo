@@ -87,11 +87,22 @@ export const identitySchema = z.object({
   campus_location_ko: z.string().nullable().optional(),
 });
 
+/** 과정(학위) — 학과 레벨. 어학연수는 program_kind=language 로 구분(학위 아님). */
+export const degreeEnum = z.enum([
+  "associate", // 전문학사
+  "bachelor",  // 학사
+  "master",    // 석사
+  "doctoral",  // 박사
+]);
+
 export const departmentItemSchema = z.object({
   faculty: z.string().nullable().optional(),
   name: z.string().min(1),
   track: z.string().nullable().optional(),
-  years: z.number().int().min(1).max(6).nullable().optional(),
+  // 대학 다음 단계: 어학연수(language) 또는 학위과정(degree). 기본 degree.
+  program_kind: z.enum(["language", "degree"]).nullable().optional(),
+  degree: degreeEnum.nullable().optional(),            // 학위과정일 때 (전문학사/학사/석사/박사)
+  years: z.number().int().min(1).max(6).nullable().optional(),  // 년제 (2/3/4년제 등)
   extension_eligible: z.boolean().optional(),
   capacity: z.union([z.number().int(), z.literal("unlimited"), z.string()]).nullable().optional(),
   korean_min_topik: z.number().int().min(1).max(6).nullable().optional(),  // 학과별 분기
@@ -105,11 +116,22 @@ export const departmentItemSchema = z.object({
 // 3. required_documents JSONB
 // ============================================================
 
+/** 서류 대상자 — 이 서류가 누구 것인지 (본인/아버지/어머니/기타) */
+export const documentSubjectEnum = z.enum([
+  "self",   // 학생 본인
+  "father", // 아버지
+  "mother", // 어머니
+  "other",  // 기타 (보호자·재정보증인 등 — target_person_note 로 표기)
+]);
+
 export const requiredDocumentSchema = z.object({
   key: studentDocumentTypeEnum,
   name_ko: z.string().min(1),
   name_vi: z.string().nullable().optional(),
   required: z.boolean().default(true),
+  // 서류 대상자 (예: 가족관계증명서=본인, 부모 재직증명=아버지/어머니)
+  target_person: documentSubjectEnum.nullable().optional(),
+  target_person_note: z.string().nullable().optional(),  // target_person='other' 일 때 설명
   issuer: z.string().nullable().optional(),
   language: documentLanguageEnum.nullable().optional(),
   notarization: notarizationEnum.nullable().optional(),
@@ -169,6 +191,13 @@ export const koreanAlternativePathSchema = z.discriminatedUnion("type", [
     description: z.string().optional(),
     notes: altNotes,
   }),
+  z.object({
+    type: z.literal("other"),   // 기타 대체 경로 (위 유형에 없는 것)
+    level: z.string().optional(),
+    name: z.string().optional(),
+    description: z.string().optional(),
+    notes: altNotes,
+  }),
 ]);
 
 export const eligibilitySchema = z.object({
@@ -201,7 +230,11 @@ export const eligibilitySchema = z.object({
   financial_minimum: z.object({
     amount: z.number().int().nullable().optional(),
     currency: z.string().default("KRW"),
-    holder_relations: z.array(z.enum(["self", "parent", "guardian", "financial_sponsor"])).default([]),
+    // 예금주: 본인(self)/부모(parent)/기타(other). guardian·financial_sponsor 는 구버전 호환용으로만 허용.
+    holder_relations: z
+      .array(z.enum(["self", "parent", "other", "guardian", "financial_sponsor"]))
+      .default([]),
+    holder_other_note: z.string().nullable().optional(),  // holder='other' 일 때 설명(보호자/재정보증인 등)
     freshness_days: z.number().int().nullable().optional(),
     notes: z.string().nullable().optional(),
   }).nullable().optional(),
