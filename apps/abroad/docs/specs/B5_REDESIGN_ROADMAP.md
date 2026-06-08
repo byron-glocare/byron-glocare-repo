@@ -64,10 +64,17 @@
   - ⚠ **모집요강 추출(`/api/admission/extract`)은 available_data_types 미사용** — 별칭 매칭 대상 아님.
     양식(form_files) 분석 경로에만 적용됨. 모집요강에도 필요하면 별도 작업.
 
+- ✅ **통합 목록 UI** (커밋 `4b05168`): 입학서류 홈(`/admissions`)을 `study_documents` 뷰 기반
+  모아보기로 개편. 대학별 요약(모집요강/양식/직접제출 카운트) + 전체 문서 통합 목록
+  (종류 필터칩 + 검색, 관리 허브 링크). admin database.ts Views에 study_documents 등록.
+  - 파일: `admissions/page.tsx`, `admissions/documents-explorer.tsx`.
+  - IA 확립: **입학서류=뷰(모아보기)**, 편집은 **대학별 관리 허브**(`/admissions/[id]`).
+
 ## 3. 다음 할 일 (우선순위)
-1. **통합 목록 UI** — `study_documents` 뷰 기반 입학서류 모아보기 + IA(대학교=관리/입학서류=뷰).
-2. **삭제 안전장치** — 표준데이터/서류 삭제 시 연결된 값·양식 경고 또는 비활성 권장.
-3. (유저플로우 PRD의 후속) 입력링크·docx AI채움·일정/리드타임 관리·표준입학허가서·수수료 정산.
+1. **삭제 안전장치** — 표준데이터/서류 삭제 시 연결된 값·양식 경고 또는 비활성 권장.
+2. (유저플로우 PRD의 후속) 입력링크·docx AI채움·일정/리드타임 관리·표준입학허가서·수수료 정산.
+
+> B5 핵심(택1/파생 · 직접제출 · 서명 · AI 별칭연결 · 통합뷰) 모두 완료. 이후는 후속 PRD 단계.
 
 ## 4. 환경/워크플로 메모
 - 모노레포 `C:\dev\glocare` (npm workspaces). dev 포트 고정: **abroad 3000 / admin 3001 / caregiver 3002**.
