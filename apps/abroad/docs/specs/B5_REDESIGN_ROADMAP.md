@@ -75,6 +75,18 @@
   force 일 때만 강제 삭제. `deactivateDataTypeAction`(is_active=false 소프트삭제) 추가.
   - 파일: `student-data-types/actions.ts`, `type-form.tsx`. admin db.ts에 study_student_data_values 추가.
 
+## 2-1. 테스트 피드백 반영 (이후 추가)
+- ✅ 모집요강 스키마/추출: 과정(degree)·년제(학과레벨)·어학연수 구분, 서류 대상자(self/father/mother/other),
+  토픽 대체경로 '기타', 예금주 self/parent/other+note, 무제한 정원, 전형카테고리 화면 제거 예정.
+- ✅ 중복 승인: 자동 덮어쓰기 → **대학+학기 갱신 확인 배너**(approve-action confirm_replace).
+- ✅ 표준데이터 **활성화 버튼**(비활성 항목 재활성화).
+- ✅ 센터 네비 전체폭(로고 좌측, VI 2줄 방지). 모아보기 양식명=파일명. 대학별 요약 동명 대학 합치기.
+- ✅ **학생 1방향 플로우**(기본등록→대학선택→상세정보→서류작성→검토·컨펌→다운로드),
+  자기소개서·입학원서를 '서류 작성' 한 단계로 통합.
+- ✅ **공용 직접제출 서류 + 대학별 오버라이드**(SQL: university_id nullable, base_submission_id,
+  target_person). 입학서류 홈 '공용 제출서류' 섹션 + 대학 허브 오버라이드(HubGlobalOverrides).
+  - ⏳ 남은 모집요강 편집 UI: 학과 degree/년제 드롭다운, 서류 대상자, 토픽/예금주 '기타', 전형카테고리 칸 제거.
+
 ## 3. 다음 할 일 (후속 PRD 단계 — 각각 큰 작업)
 1. **입력링크** — 학생/센터가 상세정보·서명을 채우는 외부 공유 링크.
 2. **docx/HWPX AI 채움** — 표준데이터로 양식 자동 채우기 (파생 resolve 공용 헬퍼 필요).
