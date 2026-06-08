@@ -125,6 +125,21 @@ export default async function AdmissionsPage() {
     })
     .sort((x, y) => (y.lastActivity ?? "").localeCompare(x.lastActivity ?? ""));
 
+  // 양식 문서명은 업로드한 실제 파일명으로 표시 (뷰의 name=name_ko 대신 file_name)
+  const formIds = docRows
+    .filter((d) => d.doc_type === "form")
+    .map((d) => d.id);
+  const { data: formFiles } =
+    formIds.length > 0
+      ? await supabase
+          .from("study_admission_form_files")
+          .select("id, file_name")
+          .in("id", formIds)
+      : { data: [] as Array<{ id: string; file_name: string }> };
+  const fileNameById = new Map(
+    (formFiles ?? []).map((f) => [f.id, f.file_name])
+  );
+
   // 통합 탐색용 — 대학명 결합 (이력 양식은 모아보기에서 제외)
   const documents: DocItem[] = docRows
     .filter((d) => !(d.doc_type === "form" && d.status === "archived"))
@@ -134,7 +149,10 @@ export default async function AdmissionsPage() {
       university_id: d.university_id,
       university_name: uniName.get(d.university_id) ?? `대학 #${d.university_id}`,
       department_label: d.department_label,
-      name: d.name,
+      name:
+        d.doc_type === "form"
+          ? fileNameById.get(d.id) ?? d.name
+          : d.name,
       status: d.status,
       updated_at: d.updated_at,
     }));
