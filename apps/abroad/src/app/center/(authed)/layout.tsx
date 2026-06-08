@@ -30,11 +30,11 @@ export default async function CenterAuthedLayout({
   return (
     <div className="flex min-h-screen flex-col bg-slate-50">
       <header className="sticky top-0 z-10 border-b border-slate-200 bg-white/95 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-8 gap-y-3 px-6 py-3.5 lg:px-8">
-          <div className="flex items-center gap-10">
+        <div className="flex w-full flex-nowrap items-center justify-between gap-x-8 px-6 py-3.5 lg:px-10">
+          <div className="flex min-w-0 items-center gap-10">
             <Link
               href="/center"
-              className="text-lg font-bold tracking-tight text-slate-900"
+              className="shrink-0 text-lg font-bold tracking-tight text-slate-900"
             >
               {t(locale, "center.brand")}
             </Link>
@@ -43,16 +43,16 @@ export default async function CenterAuthedLayout({
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="px-1 py-1 transition-colors hover:text-slate-900"
+                  className="whitespace-nowrap px-1 py-1 transition-colors hover:text-slate-900"
                 >
                   {item.label}
                 </Link>
               ))}
             </nav>
           </div>
-          <div className="flex items-center gap-4 text-sm">
+          <div className="flex shrink-0 items-center gap-4 text-sm">
             <LocaleToggle current={locale} />
-            <span className="hidden text-slate-600 sm:inline">
+            <span className="hidden max-w-[18rem] truncate text-slate-600 lg:inline">
               {session.org.name_vi}
               {session.org.name_ko ? ` · ${session.org.name_ko}` : ""}
             </span>
