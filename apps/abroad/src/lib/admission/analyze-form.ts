@@ -23,7 +23,19 @@ export type AvailableDataType = {
   label_ko: string;
   category: string;
   is_essay_basis: boolean;
+  /** 같은 의미의 다른 이름 — 양식에 별칭으로 적혀 있어도 이 키로 매칭 */
+  aliases?: string[];
+  /** 다른 선택값에 따라 자동 계산되는 파생 항목 (예: 보호자 = 부/모 택1) */
+  is_derived?: boolean;
 };
+
+/** 별칭 매칭·중복 방지를 위한 문자열 정규화 (공백·구두점 제거, 소문자) */
+function normalizeLabel(s: string): string {
+  return s
+    .toLowerCase()
+    .replace(/[\s ]+/g, "")
+    .replace(/[·.,/()\-_~]/g, "");
+}
 
 export type AnalyzeFormInput = {
   fileBuffer: Buffer;
@@ -190,6 +202,10 @@ const SYSTEM_PROMPT = `당신은 한국 대학의 외국인 학생 입학 양식
 
    ⭐ 핵심 원칙: 양식의 큰 질문이 여러 sub-topic 을 묶어 묻는 경우 **카탈로그의 잘게 쪼개진 키 여러 개** 를 매핑하라. 학생이 각 키별로 친근하게 답하면 AI 가 양식 격식 답변으로 조합한다.
 
+1-A. **별칭(alias) 매칭** ⭐: 카탈로그 항목 뒤의 \`(별칭: …)\` 는 같은 의미의 다른 이름이다. 양식에 그 별칭 표현으로 적혀 있어도 **반드시 해당 키로 매칭**하라. 예: 카탈로그에 \`father_name — 아버지 이름 (별칭: 보호자 성명, Guardian name)\` 이 있으면, 양식의 "보호자 성명" 은 \`father_name\` 으로 매칭. **별칭에 걸리는 항목은 절대 missing_data_types 로 빼지 말 것.**
+
+1-B. **파생 항목(\`[파생-자동계산]\`)**: 다른 선택값에 따라 자동으로 채워지는 항목이다. 양식이 그 정보를 요구하면 이 키로 매칭할 수 있고, 같은 개념을 missing 으로 새로 제안하지 말 것.
+
 2. **suggested_required_data_keys** — 의미 매칭 우선: 양식이 요구하는 정보가 카탈로그의 키와 **의미상 같거나 포함되면** 그 키 사용. 정확히 같은 단어가 아니어도 의미만 통하면 매칭. 예:
    - 양식: "보호자 연락처" → father_contact, mother_contact (양쪽 다, 양식이 부/모 구분 안 했으면)
    - 양식: "주소" / "현주소" / "거주지" → residence_addr_vn
@@ -200,7 +216,7 @@ const SYSTEM_PROMPT = `당신은 한국 대학의 외국인 학생 입학 양식
    - 양식: "은행 잔고" / "재정증명" → bank_balance_amount + bank_name + financial_proof_issued
    - 모호하면 가장 포괄적인 키 1개 또는 관련 2-3개 매칭.
 
-3. **missing_data_types** ⭐: 양식이 요구하는 정보 중 **카탈로그 키 중 어떤 것에도 의미적으로 매칭 안 되는 것**만 여기에. 단순히 단어가 다르다고 missing 으로 빼지 말 것 (그건 #2 에서 의미 매칭). 진짜 카탈로그에 개념 자체가 없는 항목만 (예: "외국인등록번호", "비자 만기일", "한국어 교육 이수 이력" 등 한국 거주 외국인 특화 항목).
+3. **missing_data_types** ⭐: 양식이 요구하는 정보 중 **카탈로그 키 중 어떤 것에도 (별칭 포함) 의미적으로 매칭 안 되는 것**만 여기에. 단순히 단어가 다르다고 missing 으로 빼지 말 것 (그건 #2 에서 의미 매칭, 별칭은 #1-A). 진짜 카탈로그에 개념 자체가 없는 항목만 (예: "외국인등록번호", "비자 만기일", "한국어 교육 이수 이력" 등 한국 거주 외국인 특화 항목).
    - \`key\`: snake_case 영문 (예: "foreign_registration_no", "current_visa_expiry", "korean_education_history"). 카탈로그 기존 key 와 중복 금지.
    - \`label_ko\`: 한국어 정식 명칭
    - \`label_vi\`: 베트남어 번역 (최선)
@@ -249,7 +265,12 @@ function formatCatalog(types: AvailableDataType[]): string {
     lines.push(`## ${cat}`);
     for (const t of items) {
       const tag = t.is_essay_basis ? " [essay_basis]" : "";
-      lines.push(`- \`${t.key}\` — ${t.label_ko}${tag}`);
+      const derived = t.is_derived ? " [파생-자동계산]" : "";
+      const aliasPart =
+        t.aliases && t.aliases.length > 0
+          ? ` (별칭: ${t.aliases.join(", ")})`
+          : "";
+      lines.push(`- \`${t.key}\` — ${t.label_ko}${tag}${derived}${aliasPart}`);
     }
   }
   return lines.join("\n");
@@ -397,6 +418,12 @@ export async function analyzeFormFile(
   const essayBasisKeys = new Set(
     input.availableDataTypes.filter((t) => t.is_essay_basis).map((t) => t.key)
   );
+  // 기존 라벨·별칭의 정규화 집합 — 별칭에 걸리는 missing 제안을 방어적으로 제거
+  const existingLabelSet = new Set<string>();
+  for (const t of input.availableDataTypes) {
+    existingLabelSet.add(normalizeLabel(t.label_ko));
+    for (const a of t.aliases ?? []) existingLabelSet.add(normalizeLabel(a));
+  }
 
   const VALID_CATEGORIES = new Set([
     "identity",
@@ -496,6 +523,8 @@ export async function analyzeFormFile(
         !validKeys.has(m.key) &&
         typeof m.label_ko === "string" &&
         m.label_ko.trim() !== "" &&
+        // 기존 라벨·별칭과 같은 개념이면 중복 → 제외
+        !existingLabelSet.has(normalizeLabel(m.label_ko)) &&
         typeof m.label_vi === "string" &&
         m.label_vi.trim() !== "" &&
         typeof m.category === "string" &&

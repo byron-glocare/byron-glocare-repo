@@ -29,6 +29,10 @@ export type AvailableDataType = {
   label_ko: string;
   category: string;
   is_essay_basis: boolean;
+  /** 같은 의미의 다른 이름 — AI 가 양식의 별칭 표현을 이 키로 매칭 */
+  aliases?: string[];
+  /** 파생(택1) 항목 여부 */
+  is_derived?: boolean;
 };
 
 export type SuggestedMissingDataType = {

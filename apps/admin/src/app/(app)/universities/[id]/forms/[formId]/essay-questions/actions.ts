@@ -149,7 +149,7 @@ export async function analyzeFormAction(
   // 활성 카탈로그
   const { data: types } = await supabase
     .from("study_student_data_types")
-    .select("key, label_ko, category, is_essay_basis")
+    .select("key, label_ko, category, is_essay_basis, aliases, is_derived")
     .eq("is_active", true)
     .order("sort_order");
 
@@ -161,6 +161,8 @@ export async function analyzeFormAction(
       label_ko: t.label_ko,
       category: t.category,
       is_essay_basis: t.is_essay_basis,
+      aliases: t.aliases ?? [],
+      is_derived: t.is_derived ?? false,
     })),
   });
 
