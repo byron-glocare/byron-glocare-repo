@@ -1507,6 +1507,10 @@ export type Database = {
           scholarships: unknown;
           /** JSONB — Metadata */
           metadata: unknown;
+          // 온라인 접수 (양식 작성 대신 가이드+제출서류)
+          is_online_submission: boolean;
+          online_guide_url: string | null;
+          online_form_url: string | null;
           approved_by: string | null;
           approved_at: string | null;
           created_at: string;
@@ -1517,6 +1521,9 @@ export type Database = {
           university_id: number;
           term: string;
           admission_category?: string | null;
+          is_online_submission?: boolean;
+          online_guide_url?: string | null;
+          online_form_url?: string | null;
           program_type:
             | "language_program"
             | "associate_2yr"

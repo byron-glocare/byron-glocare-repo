@@ -169,6 +169,30 @@ export async function approveSpecAction(
     }
   }
 
+  // 4-2. 온라인 접수 + 가이드 문서 업로드 (선택)
+  const isOnline = formData.get("is_online_submission") === "on";
+  const onlineFormUrlRaw = formData.get("online_form_url");
+  const onlineFormUrl =
+    isOnline && typeof onlineFormUrlRaw === "string" && onlineFormUrlRaw.trim()
+      ? onlineFormUrlRaw.trim()
+      : null;
+  let onlineGuideUrl: string | null = null;
+  const guideB64 = formData.get("guide_base64");
+  if (isOnline && typeof guideB64 === "string" && guideB64.trim() !== "") {
+    const guideName = String(formData.get("guide_name") ?? "guide");
+    const guideType = String(formData.get("guide_type") ?? "application/octet-stream");
+    const safe = guideName.replace(/[^a-zA-Z0-9._-]+/g, "_").slice(-100);
+    const path = `admission-guides/${universityId}/${Date.now()}_${safe}`;
+    const buffer = Buffer.from(guideB64, "base64");
+    const { error: upErr } = await supabase.storage
+      .from("admission-form-files")
+      .upload(path, buffer, { contentType: guideType, upsert: false });
+    if (upErr) return { error: `가이드 업로드 실패: ${upErr.message}` };
+    onlineGuideUrl = supabase.storage
+      .from("admission-form-files")
+      .getPublicUrl(path).data.publicUrl;
+  }
+
   // 5. INSERT
   const nowIso = new Date().toISOString();
   const { data: inserted, error: insertErr } = await supabase
@@ -187,6 +211,9 @@ export async function approveSpecAction(
       metadata: jsonAreas.metadata,
       source_file_url: meta.source_file_url,
       ai_extraction_log: aiLog,
+      is_online_submission: isOnline,
+      online_form_url: onlineFormUrl,
+      online_guide_url: onlineGuideUrl,
       status: "approved",
       approved_by: user.id,
       approved_at: nowIso,

@@ -149,6 +149,31 @@ export function ReviewForm({
   );
   const isNewUni = uniValue === "__new__";
 
+  // 온라인 접수 (양식 작성 대신 가이드 문서 + 제출서류만)
+  const [isOnline, setIsOnline] = useState(false);
+  const [onlineFormUrl, setOnlineFormUrl] = useState("");
+  const [guide, setGuide] = useState<{
+    base64: string;
+    name: string;
+    type: string;
+  } | null>(null);
+  const [guideReading, setGuideReading] = useState(false);
+
+  async function onPickGuide(file: File) {
+    setGuideReading(true);
+    try {
+      const dataUrl = await fileToDataUrl(file);
+      const comma = dataUrl.indexOf(",");
+      setGuide({
+        base64: comma >= 0 ? dataUrl.slice(comma + 1) : dataUrl,
+        name: file.name,
+        type: file.type || "application/octet-stream",
+      });
+    } finally {
+      setGuideReading(false);
+    }
+  }
+
   return (
     <Card className="p-6 space-y-5">
       <header>
@@ -163,6 +188,13 @@ export function ReviewForm({
         ref={formRef}
         action={(fd: FormData) => {
           fd.set("confirm_replace", confirmReplaceRef.current ? "true" : "");
+          fd.set("is_online_submission", isOnline ? "on" : "");
+          fd.set("online_form_url", isOnline ? onlineFormUrl : "");
+          if (isOnline && guide) {
+            fd.set("guide_base64", guide.base64);
+            fd.set("guide_name", guide.name);
+            fd.set("guide_type", guide.type);
+          }
           action(fd);
         }}
         className="space-y-5"
@@ -266,6 +298,59 @@ export function ReviewForm({
               className="rounded-md border border-input bg-background px-3 py-2 text-sm"
             />
           </Field>
+        </div>
+
+        {/* 온라인 접수 */}
+        <div className="rounded-md border border-sky-200 bg-sky-50/60 p-4">
+          <label className="flex items-start gap-2">
+            <input
+              type="checkbox"
+              className="mt-0.5"
+              checked={isOnline}
+              onChange={(e) => setIsOnline(e.target.checked)}
+            />
+            <span className="text-sm">
+              <strong>온라인 접수 대학</strong> — 학생이 대학 온라인 폼에 직접
+              입력합니다. 체크하면 학생 화면에 <strong>양식 작성 대신</strong>{" "}
+              가이드 문서 + 제출서류 목록만 안내됩니다.
+            </span>
+          </label>
+
+          {isOnline ? (
+            <div className="mt-3 grid grid-cols-1 gap-3 border-t border-sky-200 pt-3 md:grid-cols-2">
+              <label className="flex flex-col gap-1.5">
+                <span className="text-sm font-medium">온라인 접수 폼 주소</span>
+                <input
+                  type="url"
+                  value={onlineFormUrl}
+                  onChange={(e) => setOnlineFormUrl(e.target.value)}
+                  placeholder="https://..."
+                  className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+                />
+              </label>
+              <label className="flex flex-col gap-1.5">
+                <span className="text-sm font-medium">
+                  원서접수 가이드 문서 (선택)
+                </span>
+                <input
+                  type="file"
+                  accept=".pdf,.hwp,.hwpx,.docx,image/*"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) onPickGuide(f);
+                  }}
+                  className="text-sm file:mr-3 file:rounded-md file:border file:border-input file:bg-secondary file:px-3 file:py-1.5 file:text-sm"
+                />
+                <span className="text-xs text-muted-foreground">
+                  {guideReading
+                    ? "파일 읽는 중..."
+                    : guide
+                      ? `선택됨: ${guide.name}`
+                      : "PDF/HWP/이미지. 학생에게 그대로 보여줍니다."}
+                </span>
+              </label>
+            </div>
+          ) : null}
         </div>
 
         {/* 학과 */}
@@ -454,6 +539,15 @@ function Section({
       </div>
     </details>
   );
+}
+
+function fileToDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
 }
 
 function Field({
