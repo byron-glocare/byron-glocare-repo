@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createAdminClient } from "@/lib/supabase/server";
 import type { StudyAdmissionSpecUpdate } from "@/types/database";
 
 const PROGRAM_TYPES = [
@@ -95,6 +95,33 @@ export async function updateSpecAction(
     }
   }
 
+  // 온라인 접수 + 가이드(새 파일 업로드 시에만 교체)
+  const isOnline = formData.get("is_online_submission") === "on";
+  const onlineFormUrlRaw = formData.get("online_form_url");
+  const onlineFormUrl =
+    isOnline && typeof onlineFormUrlRaw === "string" && onlineFormUrlRaw.trim()
+      ? onlineFormUrlRaw.trim()
+      : null;
+  let newGuideUrl: string | null = null;
+  const guideB64 = formData.get("guide_base64");
+  if (isOnline && typeof guideB64 === "string" && guideB64.trim() !== "") {
+    const guideName = String(formData.get("guide_name") ?? "guide");
+    const guideType = String(formData.get("guide_type") ?? "application/octet-stream");
+    const safe = guideName.replace(/[^a-zA-Z0-9._-]+/g, "_").slice(-100);
+    const path = `admission-guides/${meta.university_id}/${Date.now()}_${safe}`;
+    const admin = createAdminClient();
+    const { error: upErr } = await admin.storage
+      .from("admission-form-files")
+      .upload(path, Buffer.from(guideB64, "base64"), {
+        contentType: guideType,
+        upsert: false,
+      });
+    if (upErr) return { error: `가이드 업로드 실패: ${upErr.message}` };
+    newGuideUrl = admin.storage
+      .from("admission-form-files")
+      .getPublicUrl(path).data.publicUrl;
+  }
+
   // 승인 상태로 변경 시 approved_by/at stamping
   const patch: StudyAdmissionSpecUpdate = {
     university_id: meta.university_id,
@@ -110,7 +137,11 @@ export async function updateSpecAction(
     scholarships: jsonAreas.scholarships,
     metadata: jsonAreas.metadata,
     source_file_url: meta.source_file_url,
+    is_online_submission: isOnline,
+    online_form_url: onlineFormUrl,
   };
+  // 새 가이드 업로드 시에만 URL 교체 (없으면 기존 유지)
+  if (newGuideUrl) patch.online_guide_url = newGuideUrl;
 
   // 승인 status 로 변경 시 approved_by/at 갱신
   if (meta.status === "approved") {

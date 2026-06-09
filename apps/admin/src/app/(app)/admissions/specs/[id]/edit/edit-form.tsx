@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useMemo } from "react";
+import { useActionState, useMemo, useState } from "react";
 import { Check, Loader2 } from "lucide-react";
 
 import { updateSpecAction, type UpdateSpecState } from "./update-action";
@@ -69,6 +69,9 @@ export type EditableSpec = {
   program_type: string;
   status: string;
   source_file_url: string | null;
+  is_online_submission: boolean;
+  online_form_url: string | null;
+  online_guide_url: string | null;
   departments: unknown;
   required_documents: unknown;
   eligibility: unknown;
@@ -90,6 +93,35 @@ export function EditSpecForm({
     bound,
     undefined
   );
+
+  // 온라인 접수
+  const [isOnline, setIsOnline] = useState(spec.is_online_submission);
+  const [guide, setGuide] = useState<{
+    base64: string;
+    name: string;
+    type: string;
+  } | null>(null);
+  const [guideReading, setGuideReading] = useState(false);
+
+  async function onPickGuide(file: File) {
+    setGuideReading(true);
+    try {
+      const dataUrl: string = await new Promise((res, rej) => {
+        const r = new FileReader();
+        r.onload = () => res(r.result as string);
+        r.onerror = () => rej(r.error);
+        r.readAsDataURL(file);
+      });
+      const comma = dataUrl.indexOf(",");
+      setGuide({
+        base64: comma >= 0 ? dataUrl.slice(comma + 1) : dataUrl,
+        name: file.name,
+        type: file.type || "application/octet-stream",
+      });
+    } finally {
+      setGuideReading(false);
+    }
+  }
 
   const initialDepartments: Department[] = useMemo(
     () => (Array.isArray(spec.departments) ? (spec.departments as Department[]) : []),
@@ -142,7 +174,17 @@ export function EditSpecForm({
 
   return (
     <Card className="p-6 space-y-5">
-      <form action={action} className="space-y-5">
+      <form
+        action={(fd: FormData) => {
+          if (isOnline && guide) {
+            fd.set("guide_base64", guide.base64);
+            fd.set("guide_name", guide.name);
+            fd.set("guide_type", guide.type);
+          }
+          action(fd);
+        }}
+        className="space-y-5"
+      >
         {/* 메타 */}
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <Field label="대학교" name="university_id" error={fieldErr("university_id")}>
@@ -234,6 +276,69 @@ export function EditSpecForm({
               className="rounded-md border border-input bg-background px-3 py-2 text-sm"
             />
           </Field>
+        </div>
+
+        {/* 온라인 접수 */}
+        <div className="rounded-md border border-sky-200 bg-sky-50/60 p-4">
+          <label className="flex items-start gap-2">
+            <input
+              type="checkbox"
+              name="is_online_submission"
+              className="mt-0.5"
+              checked={isOnline}
+              onChange={(e) => setIsOnline(e.target.checked)}
+            />
+            <span className="text-sm">
+              <strong>온라인 접수 대학</strong> — 학생 화면에서 양식 작성 대신
+              가이드 문서 + 제출서류만 안내됩니다.
+            </span>
+          </label>
+
+          {isOnline ? (
+            <div className="mt-3 grid grid-cols-1 gap-3 border-t border-sky-200 pt-3 md:grid-cols-2">
+              <label className="flex flex-col gap-1.5">
+                <span className="text-sm font-medium">온라인 접수 폼 주소</span>
+                <input
+                  type="url"
+                  name="online_form_url"
+                  defaultValue={spec.online_form_url ?? ""}
+                  placeholder="https://..."
+                  className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+                />
+              </label>
+              <label className="flex flex-col gap-1.5">
+                <span className="text-sm font-medium">
+                  원서접수 가이드 문서
+                </span>
+                {spec.online_guide_url ? (
+                  <a
+                    href={spec.online_guide_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-xs text-sky-700 underline"
+                  >
+                    현재 가이드 열기 ↗
+                  </a>
+                ) : null}
+                <input
+                  type="file"
+                  accept=".pdf,.hwp,.hwpx,.docx,image/*"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) onPickGuide(f);
+                  }}
+                  className="text-sm file:mr-3 file:rounded-md file:border file:border-input file:bg-secondary file:px-3 file:py-1.5 file:text-sm"
+                />
+                <span className="text-xs text-muted-foreground">
+                  {guideReading
+                    ? "파일 읽는 중..."
+                    : guide
+                      ? `새 파일: ${guide.name} (저장 시 교체)`
+                      : "새 파일을 올리면 교체됩니다. 비워두면 기존 유지."}
+                </span>
+              </label>
+            </div>
+          ) : null}
         </div>
 
         {/* 학과 */}
