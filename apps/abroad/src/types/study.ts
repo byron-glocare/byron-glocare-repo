@@ -153,9 +153,45 @@ export type StudyAdmissionSpec = {
   metadata: Json;
   source_file_url: string | null;
   ai_extraction_log: Json | null;
+  // 온라인 접수 (양식 작성 대신 가이드+제출서류)
+  is_online_submission: boolean;
+  online_guide_url: string | null;
+  online_form_url: string | null;
   approved_by: string | null;
   approved_at: string | null;
   status: AdmissionSpecStatus;
+  created_at: string;
+  updated_at: string;
+};
+
+// =============================================================================
+// 5b-2. study_required_submissions (B5) — 직접제출 서류 (공용 + 대학별)
+// =============================================================================
+export type StudyRequiredSubmission = {
+  id: string;
+  university_id: number | null; // NULL = 공용
+  base_submission_id: string | null;
+  department_id: number | null;
+  name_ko: string;
+  name_vi: string | null;
+  target_person: "self" | "father" | "mother" | "other" | null;
+  target_person_note: string | null;
+  sample_image_url: string | null;
+  issuance_requirements: {
+    issuer?: string;
+    validity_days?: number;
+    lead_time_days?: number;
+    needs_notarization?: boolean;
+    needs_translation?: boolean;
+    notes?: string;
+  };
+  required_data_type_keys: string[];
+  aliases: string[];
+  sort_order: number;
+  is_active: boolean;
+  status: "draft" | "approved" | "archived";
+  source_spec_id: string | null;
+  created_by: string | null;
   created_at: string;
   updated_at: string;
 };

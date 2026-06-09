@@ -973,6 +973,13 @@ export type Database = {
         ];
       };
 
+      study_required_submissions: {
+        Row: import("./study").StudyRequiredSubmission;
+        Insert: Partial<import("./study").StudyRequiredSubmission>;
+        Update: Partial<import("./study").StudyRequiredSubmission>;
+        Relationships: [];
+      };
+
       study_student_data_types: {
         Row: import("./study").StudyStudentDataType;
         Insert: Partial<import("./study").StudyStudentDataType>;
