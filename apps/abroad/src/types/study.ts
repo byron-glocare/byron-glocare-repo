@@ -56,6 +56,10 @@ export type DocumentStatus =
   | "human_review"
   | "approved"
   | "rejected";
+// C1 — 모집(offering)
+export type LanguageTrack = "korean" | "english" | "chinese";
+export type StudentLocationScope = "VN" | "KR" | "any";
+export type OfferingStatus = "draft" | "published" | "closed" | "archived";
 export type ReviewerType = "ai" | "human";
 export type ReviewSeverity = "info" | "warning" | "error";
 export type InvoiceStatus = "draft" | "sent" | "paid" | "cancelled";
@@ -343,12 +347,33 @@ export type StudyStudentEssayDraft = {
 };
 
 // =============================================================================
+// 5f. study_offerings (C1) — 모집(큐레이션) 단위. 대학 × 학과 × 학기 + 모집수
+// =============================================================================
+export type StudyOffering = {
+  id: string;
+  university_id: number; // universities.id = bigint → number
+  department_id: number; // departments.id = bigint → number
+  term: string;
+  intake_quota: number | null; // 학기별 모집수. published 시 필수
+  language_track: LanguageTrack;
+  student_location_scope: StudentLocationScope;
+  status: OfferingStatus;
+  source_spec_id: string | null; // study_admission_specs.id (nullable)
+  sort_order: number;
+  notes: string | null;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+// =============================================================================
 // 6. study_applications
 // =============================================================================
 export type StudyApplication = {
   id: string;
   student_id: string;
   admission_spec_id: string;
+  offering_id: string | null; // C1 — 희망 offering(대학/학과/학기)
   target_department_id: number | null;
   target_department_label: string | null;
   status: ApplicationStatus;

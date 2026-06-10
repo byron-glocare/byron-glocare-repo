@@ -1400,6 +1400,67 @@ export type Database = {
       // ---------------------------------------------------------------------
       // 직접제출 서류 (B5) — 글로케어가 샘플이미지+발급요건 관리
       // ---------------------------------------------------------------------
+      // ---------------------------------------------------------------------
+      // 모집 (C1) — 큐레이션 단위: 대학 × 학과 × 학기 + 학기별 모집수
+      // ---------------------------------------------------------------------
+      study_offerings: {
+        Row: {
+          id: string;
+          university_id: number;
+          department_id: number;
+          term: string;
+          intake_quota: number | null; // published 시 필수
+          language_track: "korean" | "english" | "chinese";
+          student_location_scope: "VN" | "KR" | "any";
+          status: "draft" | "published" | "closed" | "archived";
+          source_spec_id: string | null;
+          sort_order: number;
+          notes: string | null;
+          created_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          university_id: number;
+          department_id: number;
+          term: string;
+          intake_quota?: number | null;
+          language_track?: "korean" | "english" | "chinese";
+          student_location_scope?: "VN" | "KR" | "any";
+          status?: "draft" | "published" | "closed" | "archived";
+          source_spec_id?: string | null;
+          sort_order?: number;
+          notes?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["study_offerings"]["Insert"]
+        >;
+        Relationships: [
+          {
+            foreignKeyName: "study_offerings_university_id_fkey";
+            columns: ["university_id"];
+            referencedRelation: "universities";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "study_offerings_department_id_fkey";
+            columns: ["department_id"];
+            referencedRelation: "departments";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "study_offerings_source_spec_id_fkey";
+            columns: ["source_spec_id"];
+            referencedRelation: "study_admission_specs";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+
       study_required_submissions: {
         Row: {
           id: string;
