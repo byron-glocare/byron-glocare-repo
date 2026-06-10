@@ -1,7 +1,18 @@
 # C. 핵심 워크플로 재정의 — 핸드오프 (2026-06)
 
 > 새 세션은 **이 문서부터** 읽고 시작. 직전 단계: B5(직접제출·온라인접수·서명·파생 등) 완료.
-> 관련: `B5_REDESIGN_ROADMAP.md`(이전 단계), `spec-schema.ts`(추출 스키마).
+> 관련: `B5_REDESIGN_ROADMAP.md`(이전 단계), `spec-schema.ts`(추출 스키마), `C1_offerings.sql`(모집 테이블).
+
+## 0. 진행 상황 (2026-06-10)
+- ✅ **우선순위 §5-1 모집(offering) 엔티티 완료** (커밋 `ad0d8ae`, `fe29c9a`):
+  - `study_offerings` 테이블 라이브 적용(`C1_offerings.sql`): 대학×학과×학기 + intake_quota(모집수,
+    published 시 필수 CHECK) + language_track + student_location_scope + status + source_spec_id(nullable FK).
+    `study_applications.offering_id` nullable 추가.
+  - 어드민 **/offerings** 큐레이션 UI(대학별 그룹, 모집수·트랙·위치·상태·모집요강연결, 노출/숨김 토글). nav "모집".
+  - 센터 **/center/admissions** 상단 "모집 중"(published offering) 섹션.
+  - 학생 희망선택(**applications/new**) offering-우선(모집요강 직접선택 폴백). offering 선택 시
+    admission_spec_id=source_spec_id, offering_id, **target_department_id 실제 FK** 채움.
+- ⏭ **다음**: §5-2 리드타임 역산 얼럿 → §5-3 언어트랙/위치 서류 분기 → §5-4 새 제출서류 키.
 
 ## 1. 확정된 핵심 비전 (6단계)
 플랫폼의 진짜 가치는 "모집요강 입력"이 아니라 **글로케어가 무엇을 얼마나 모집할지 관리 + 학생 서류 준비 자동화**.
@@ -43,10 +54,11 @@
 > ⚠️ offering 도입 시 기존 지원/양식/직접제출 연결을 spec→offering로 잇는 마이그레이션 설계 필요(라이브 데이터 보호).
 
 ## 5. 우선순위 (다음 세션)
-1. **모집(offering) + 학기별 모집수** (2번·1단계) — 핵심 엔티티. SQL + 어드민 관리 UI + 유학센터 조회.
-2. **6단계 리드타임 역산 얼럿** — 센터 대시보드/학생 접수준비.
-3. 언어트랙 + 학생위치(VN/KR) 서류 분기.
-4. 새 제출서류 키.
+1. ~~**모집(offering) + 학기별 모집수**~~ ✅ 완료 (§0 참조).
+2. **6단계 리드타임 역산 얼럿** — 센터 대시보드/학생 접수준비. ← **다음**
+   (직접제출 `issuance_requirements.lead_time_days` + 제출/모집 마감 → 역산 → 얼럿. 아직 미구현.)
+3. 언어트랙 + 학생위치(VN/KR) 서류 분기. (offering 에 차원은 들어감 — 실제 서류 분기 로직은 미구현.)
+4. 새 제출서류 키 (parents_income_proof, tb_certificate 등).
 
 ## 6-B. 보류·미해결 백로그 (과거 세션에서 답 못 받고 넘어간 것들)
 > 우선순위는 위 §5(현재 비전)이 먼저. 아래는 그 다음 또는 틈틈이.
