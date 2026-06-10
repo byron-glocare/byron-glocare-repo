@@ -7,6 +7,7 @@ import Link from "next/link";
 
 import { verifyCenterSession, isCenterAdmin } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
+import { computeLeadTimeFlags } from "@/lib/center/lead-time";
 import { getLocale, tr } from "@/lib/i18n";
 
 const ACTIVE_APP_STATUSES = [
@@ -22,14 +23,17 @@ export default async function CenterDashboardPage() {
   const locale = await getLocale();
   const supabase = await createCenterClient();
 
-  const [{ count: studentCount }, { data: appsRaw }] = await Promise.all([
-    supabase
-      .from("study_managed_students")
-      .select("id", { count: "exact", head: true }),
-    supabase.from("study_applications").select("id, status, next_deadline"),
-  ]);
+  const [{ count: studentCount }, { data: appsRaw }, leadTimeFlags] =
+    await Promise.all([
+      supabase
+        .from("study_managed_students")
+        .select("id", { count: "exact", head: true }),
+      supabase.from("study_applications").select("id, status, next_deadline"),
+      computeLeadTimeFlags(supabase),
+    ]);
 
   const apps = appsRaw ?? [];
+  const leadTimeCount = leadTimeFlags.length;
   const inProgress = apps.filter((a) =>
     ACTIVE_APP_STATUSES.includes(a.status)
   ).length;
@@ -67,6 +71,12 @@ export default async function CenterDashboardPage() {
       value: dueSoon,
       href: "/center/students",
       accent: dueSoon > 0 ? "text-amber-600" : "text-slate-400",
+    },
+    {
+      label: tr(locale, "서류 준비 착수 필요", "Cần bắt đầu chuẩn bị hồ sơ"),
+      value: leadTimeCount,
+      href: "/center/alerts",
+      accent: leadTimeCount > 0 ? "text-red-600" : "text-slate-400",
     },
   ];
 
@@ -111,7 +121,7 @@ export default async function CenterDashboardPage() {
       </header>
 
       {/* 요약 통계 */}
-      <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((s) => (
           <Link
             key={s.label}
