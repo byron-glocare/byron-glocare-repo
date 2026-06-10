@@ -27,23 +27,57 @@ function programTypeLabel(locale: Locale, programType: string): string {
   }
 }
 
+function languageTrackLabel(locale: Locale, track: string): string {
+  switch (track) {
+    case "korean":
+      return tr(locale, "한국어", "Tiếng Hàn");
+    case "english":
+      return tr(locale, "영어", "Tiếng Anh");
+    case "chinese":
+      return tr(locale, "중국어", "Tiếng Trung");
+    default:
+      return track;
+  }
+}
+
+function locationScopeLabel(locale: Locale, scope: string): string {
+  switch (scope) {
+    case "VN":
+      return tr(locale, "베트남 체류", "Tại Việt Nam");
+    case "KR":
+      return tr(locale, "한국 체류", "Tại Hàn Quốc");
+    default:
+      return "";
+  }
+}
+
 export default async function AdmissionsPage() {
   await verifyCenterSession();
   const locale = await getLocale();
   const supabase = await createCenterClient();
   const dateLocale = locale === "ko" ? "ko-KR" : "vi-VN";
 
-  const { data: specs, error } = await supabase
-    .from("study_admission_specs")
-    .select(
-      "id, university_id, term, program_type, departments, updated_at"
-    )
-    .eq("status", "approved")
-    .order("updated_at", { ascending: false });
+  const [{ data: specs, error }, { data: offerings }] = await Promise.all([
+    supabase
+      .from("study_admission_specs")
+      .select("id, university_id, term, program_type, departments, updated_at")
+      .eq("status", "approved")
+      .order("updated_at", { ascending: false }),
+    // 모집 중(글로케어가 실제로 모집하는) offering — RLS 가 published 만 노출
+    supabase
+      .from("study_offerings")
+      .select(
+        "id, university_id, department_id, term, intake_quota, language_track, student_location_scope, sort_order"
+      )
+      .eq("status", "published"),
+  ]);
 
-  // universities 조인 — 베트남어 라벨용
+  // universities 조인 — 베트남어 라벨용 (specs + offerings 의 모든 대학)
   const universityIds = Array.from(
-    new Set((specs ?? []).map((s) => s.university_id))
+    new Set([
+      ...(specs ?? []).map((s) => s.university_id),
+      ...(offerings ?? []).map((o) => o.university_id),
+    ])
   );
   const { data: universities } =
     universityIds.length > 0
@@ -55,6 +89,31 @@ export default async function AdmissionsPage() {
   const uniMap = new Map(
     (universities ?? []).map((u) => [u.id, u])
   );
+
+  // offering 의 학과명 조인
+  const offeringDeptIds = Array.from(
+    new Set((offerings ?? []).map((o) => o.department_id))
+  );
+  const { data: offeringDepts } =
+    offeringDeptIds.length > 0
+      ? await supabase
+          .from("departments")
+          .select("id, name_ko, name_vi")
+          .in("id", offeringDeptIds)
+      : { data: [] as Array<{ id: number; name_ko: string; name_vi: string | null }> };
+  const deptMap = new Map((offeringDepts ?? []).map((d) => [d.id, d]));
+
+  const sortedOfferings = (offerings ?? [])
+    .slice()
+    .sort(
+      (a, b) =>
+        b.term.localeCompare(a.term) ||
+        a.sort_order - b.sort_order ||
+        (uniMap.get(a.university_id)?.name_ko ?? "").localeCompare(
+          uniMap.get(b.university_id)?.name_ko ?? "",
+          "ko"
+        )
+    );
 
   return (
     <div>
@@ -70,6 +129,76 @@ export default async function AdmissionsPage() {
           )}
         </p>
       </header>
+
+      {/* 모집 중 — 글로케어가 실제로 모집하는 학과/학기 + 모집수 */}
+      {sortedOfferings.length > 0 ? (
+        <section className="mb-8">
+          <h2 className="mb-3 text-lg font-semibold text-slate-900">
+            {tr(locale, "모집 중", "Đang tuyển sinh")}
+            <span className="ml-2 text-sm font-normal text-slate-500">
+              {tr(
+                locale,
+                "GLOCARE가 이번 학기에 모집하는 학과입니다",
+                "Các ngành GLOCARE đang tuyển trong học kỳ này"
+              )}
+            </span>
+          </h2>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {sortedOfferings.map((o) => {
+              const uni = uniMap.get(o.university_id);
+              const dept = deptMap.get(o.department_id);
+              const uniName =
+                (locale === "ko" ? uni?.name_ko : uni?.name_vi) ??
+                uni?.name_ko ??
+                "—";
+              const deptName =
+                (locale === "ko" ? dept?.name_ko : dept?.name_vi) ??
+                dept?.name_ko ??
+                "—";
+              const loc = locationScopeLabel(locale, o.student_location_scope);
+              return (
+                <div
+                  key={o.id}
+                  className="rounded-lg border border-emerald-200 bg-emerald-50/40 p-4"
+                >
+                  <div className="text-xs font-medium text-emerald-700">
+                    {uniName}
+                  </div>
+                  <div className="mt-0.5 font-semibold text-slate-900">
+                    {deptName}
+                  </div>
+                  <div className="mt-2 flex flex-wrap items-center gap-1.5 text-xs">
+                    <span className="rounded bg-white px-1.5 py-0.5 text-slate-600 ring-1 ring-slate-200">
+                      {o.term}
+                    </span>
+                    <span className="rounded bg-white px-1.5 py-0.5 text-slate-600 ring-1 ring-slate-200">
+                      {languageTrackLabel(locale, o.language_track)}
+                    </span>
+                    {loc ? (
+                      <span className="rounded bg-white px-1.5 py-0.5 text-slate-600 ring-1 ring-slate-200">
+                        {loc}
+                      </span>
+                    ) : null}
+                    {o.intake_quota != null ? (
+                      <span className="rounded bg-emerald-600 px-1.5 py-0.5 font-medium text-white">
+                        {tr(locale, "모집 ", "Tuyển ")}
+                        {o.intake_quota}
+                        {tr(locale, "명", " SV")}
+                      </span>
+                    ) : null}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      ) : null}
+
+      {sortedOfferings.length > 0 ? (
+        <h2 className="mb-3 text-lg font-semibold text-slate-900">
+          {tr(locale, "모집요강 상세", "Chi tiết hồ sơ tuyển sinh")}
+        </h2>
+      ) : null}
 
       {error ? (
         <div className="rounded-md bg-red-50 p-4 text-sm text-red-700">

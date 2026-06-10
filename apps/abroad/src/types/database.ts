@@ -1021,6 +1021,32 @@ export type Database = {
         ];
       };
 
+      study_offerings: {
+        Row: import("./study").StudyOffering;
+        Insert: Partial<import("./study").StudyOffering>;
+        Update: Partial<import("./study").StudyOffering>;
+        Relationships: [
+          {
+            foreignKeyName: "study_offerings_university_id_fkey";
+            columns: ["university_id"];
+            referencedRelation: "universities";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "study_offerings_department_id_fkey";
+            columns: ["department_id"];
+            referencedRelation: "departments";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "study_offerings_source_spec_id_fkey";
+            columns: ["source_spec_id"];
+            referencedRelation: "study_admission_specs";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+
       study_applications: {
         Row: import("./study").StudyApplication;
         Insert: Partial<import("./study").StudyApplication>;

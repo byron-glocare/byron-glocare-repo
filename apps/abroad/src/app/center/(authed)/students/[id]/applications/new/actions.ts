@@ -12,6 +12,10 @@ const emptyToUndef = <T extends z.ZodTypeAny>(s: T) =>
 
 const createApplicationSchema = z.object({
   admission_spec_id: z.string().uuid("Chọn hồ sơ tuyển sinh hợp lệ"),
+  // 모집(offering) 경로 — 희망 = 대학/학과/학기. 모집요강 직접 선택 시엔 없음.
+  offering_id: emptyToUndef(z.string().uuid().optional()),
+  // 실제 학과 FK (offering 경로면 채워짐)
+  target_department_id: emptyToUndef(z.coerce.number().int().positive().optional()),
   target_department_label: z
     .string()
     .min(1, "Chọn ngành học")
@@ -50,6 +54,8 @@ export async function createApplicationAction(
   const { error } = await supabase.from("study_applications").insert({
     student_id: studentId,
     admission_spec_id: data.admission_spec_id,
+    offering_id: data.offering_id ?? null,
+    target_department_id: data.target_department_id ?? null,
     target_department_label: data.target_department_label,
     status: "preparing",
     next_action: data.next_action ?? null,

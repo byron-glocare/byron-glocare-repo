@@ -23,6 +23,18 @@ export type SpecOption = {
   }>;
 };
 
+/** 모집 중(published) offering — 지원 가능 = 모집요강(source_spec_id) 연결됨 */
+export type OfferingOption = {
+  id: string;
+  sourceSpecId: string;
+  universityNameKo: string | null;
+  departmentId: number;
+  departmentNameKo: string;
+  term: string;
+  intakeQuota: number | null;
+  languageTrack: string;
+};
+
 function programTypeLabel(locale: Locale, programType: string): string {
   switch (programType) {
     case "language_program":
@@ -35,6 +47,19 @@ function programTypeLabel(locale: Locale, programType: string): string {
       return tr(locale, "학사 4년", "Cử nhân 4 năm");
     default:
       return programType;
+  }
+}
+
+function languageTrackLabel(locale: Locale, track: string): string {
+  switch (track) {
+    case "korean":
+      return tr(locale, "한국어", "Tiếng Hàn");
+    case "english":
+      return tr(locale, "영어", "Tiếng Anh");
+    case "chinese":
+      return tr(locale, "중국어", "Tiếng Trung");
+    default:
+      return track;
   }
 }
 
@@ -59,11 +84,13 @@ export function NewApplicationForm({
   studentId,
   studentName,
   specs,
+  offerings,
 }: {
   locale: Locale;
   studentId: string;
   studentName: string;
   specs: SpecOption[];
+  offerings: OfferingOption[];
 }) {
   const boundAction = createApplicationAction.bind(null, studentId);
   const [state, action, pending] = useActionState<
@@ -71,42 +98,65 @@ export function NewApplicationForm({
     FormData
   >(boundAction, undefined);
 
+  const hasOfferings = offerings.length > 0;
+  // 모집(offering)이 있으면 그것을 기본 경로로. 없으면 모집요강 직접 선택으로 폴백.
+  const [mode, setMode] = useState<"offering" | "spec">(
+    hasOfferings ? "offering" : "spec"
+  );
+
+  // --- offering 모드 상태 ---
+  const [offeringId, setOfferingId] = useState<string>("");
+  const selectedOffering = useMemo(
+    () => offerings.find((o) => o.id === offeringId),
+    [offeringId, offerings]
+  );
+
+  // --- spec 모드 상태 ---
   const [specId, setSpecId] = useState<string>("");
   const selectedSpec = useMemo(
     () => specs.find((s) => s.id === specId),
     [specId, specs]
   );
-
-  // spec 변경 시 학과 list 변경 → 첫 학과로 자동 선택 (1개면 고정)
   const [deptLabel, setDeptLabel] = useState<string>("");
   const onSpecChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const id = e.target.value;
     setSpecId(id);
     const spec = specs.find((s) => s.id === id);
-    if (spec && spec.departments.length > 0) {
-      setDeptLabel(departmentLabel(spec.departments[0]));
-    } else {
-      setDeptLabel("");
-    }
+    setDeptLabel(spec && spec.departments.length > 0 ? departmentLabel(spec.departments[0]) : "");
   };
 
   const fieldError = (name: string) => state?.fieldErrors?.[name]?.[0];
 
-  if (specs.length === 0) {
+  // 선택 결과 → insert 에 들어갈 값
+  const submitSpecId =
+    mode === "offering" ? selectedOffering?.sourceSpecId ?? "" : specId;
+  const submitDeptLabel =
+    mode === "offering" ? selectedOffering?.departmentNameKo ?? "" : deptLabel;
+  const submitDeptId =
+    mode === "offering" && selectedOffering
+      ? String(selectedOffering.departmentId)
+      : "";
+  const submitOfferingId = mode === "offering" ? offeringId : "";
+
+  const canSubmit =
+    mode === "offering" ? !!offeringId : !!specId && !!deptLabel;
+
+  // 아무 데이터도 없음
+  if (!hasOfferings && specs.length === 0) {
     return (
       <div className="rounded-md border border-dashed border-slate-300 p-8 text-center">
         <p className="text-sm text-slate-600">
           {tr(
             locale,
-            "승인된 모집요강이 없습니다.",
-            "Chưa có hồ sơ tuyển sinh nào được duyệt."
+            "현재 모집 중인 학과가 없습니다.",
+            "Hiện chưa có ngành nào đang tuyển sinh."
           )}
         </p>
         <p className="mt-2 text-xs text-slate-500">
           {tr(
             locale,
-            "GLOCARE에서 데이터를 준비 중입니다. 잠시 후 다시 시도해 주세요.",
-            "GLOCARE đang chuẩn bị dữ liệu. Vui lòng thử lại sau."
+            "GLOCARE에서 모집을 준비 중입니다. 잠시 후 다시 시도해 주세요.",
+            "GLOCARE đang chuẩn bị. Vui lòng thử lại sau."
           )}
         </p>
         <Link
@@ -121,78 +171,137 @@ export function NewApplicationForm({
 
   return (
     <form action={action} className="flex flex-col gap-5">
-      <input type="hidden" name="admission_spec_id" value={specId} />
+      <input type="hidden" name="admission_spec_id" value={submitSpecId} />
+      <input type="hidden" name="offering_id" value={submitOfferingId} />
+      <input type="hidden" name="target_department_id" value={submitDeptId} />
       <input
         type="hidden"
         name="target_department_label"
-        value={deptLabel}
+        value={submitDeptLabel}
       />
 
-      <label className={labelClass}>
-        <span className={labelTextClass}>
-          {tr(locale, "모집요강", "Hồ sơ tuyển sinh")}
-          <span className={requiredMarkClass}>*</span>
-        </span>
-        <select
-          required
-          className={inputClass}
-          value={specId}
-          onChange={onSpecChange}
-        >
-          <option value="">
-            {tr(locale, "— 대학 · 과정 선택 —", "— Chọn trường · chương trình —")}
-          </option>
-          {specs.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.universityNameKo ?? "?"} · {programTypeLabel(locale, s.programType)} · {s.term}
-            </option>
-          ))}
-        </select>
-        {fieldError("admission_spec_id") ? (
-          <span className={errorTextClass}>
-            {fieldError("admission_spec_id")}
-          </span>
-        ) : null}
-      </label>
-
-      {selectedSpec ? (
+      {mode === "offering" ? (
         <label className={labelClass}>
           <span className={labelTextClass}>
-            {tr(locale, "학과 · 전공", "Ngành · chuyên ngành")}
+            {tr(locale, "희망 학과 (모집 중)", "Ngành nguyện vọng (đang tuyển)")}
             <span className={requiredMarkClass}>*</span>
           </span>
-          {selectedSpec.departments.length > 1 ? (
-            <select
-              required
-              className={inputClass}
-              value={deptLabel}
-              onChange={(e) => setDeptLabel(e.target.value)}
+          <select
+            required
+            className={inputClass}
+            value={offeringId}
+            onChange={(e) => setOfferingId(e.target.value)}
+          >
+            <option value="">
+              {tr(locale, "— 대학 · 학과 · 학기 선택 —", "— Chọn trường · ngành · học kỳ —")}
+            </option>
+            {offerings.map((o) => (
+              <option key={o.id} value={o.id}>
+                {o.universityNameKo ?? "?"} · {o.departmentNameKo} · {o.term} ·{" "}
+                {languageTrackLabel(locale, o.languageTrack)}
+                {o.intakeQuota != null
+                  ? ` · ${tr(locale, "모집", "tuyển")} ${o.intakeQuota}${tr(locale, "명", " SV")}`
+                  : ""}
+              </option>
+            ))}
+          </select>
+          {specs.length > 0 ? (
+            <button
+              type="button"
+              onClick={() => setMode("spec")}
+              className="self-start text-xs text-slate-500 underline hover:text-slate-700"
             >
-              <option value="">{tr(locale, "— 학과 선택 —", "— Chọn ngành —")}</option>
-              {selectedSpec.departments.map((d) => {
-                const label = departmentLabel(d);
-                return (
-                  <option key={label} value={label}>
-                    {label}
-                  </option>
-                );
-              })}
-            </select>
-          ) : (
-            <input
-              type="text"
-              className={inputClass + " bg-slate-50"}
-              value={deptLabel}
-              readOnly
-            />
-          )}
-          {fieldError("target_department_label") ? (
+              {tr(
+                locale,
+                "원하는 학과가 없나요? 모집요강에서 직접 선택",
+                "Không thấy ngành mong muốn? Chọn trực tiếp từ hồ sơ tuyển sinh"
+              )}
+            </button>
+          ) : null}
+          {fieldError("admission_spec_id") ? (
             <span className={errorTextClass}>
-              {fieldError("target_department_label")}
+              {fieldError("admission_spec_id")}
             </span>
           ) : null}
         </label>
-      ) : null}
+      ) : (
+        <>
+          <label className={labelClass}>
+            <span className={labelTextClass}>
+              {tr(locale, "모집요강", "Hồ sơ tuyển sinh")}
+              <span className={requiredMarkClass}>*</span>
+            </span>
+            <select
+              required
+              className={inputClass}
+              value={specId}
+              onChange={onSpecChange}
+            >
+              <option value="">
+                {tr(locale, "— 대학 · 과정 선택 —", "— Chọn trường · chương trình —")}
+              </option>
+              {specs.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.universityNameKo ?? "?"} · {programTypeLabel(locale, s.programType)} · {s.term}
+                </option>
+              ))}
+            </select>
+            {hasOfferings ? (
+              <button
+                type="button"
+                onClick={() => setMode("offering")}
+                className="self-start text-xs text-slate-500 underline hover:text-slate-700"
+              >
+                {tr(locale, "← 모집 중 학과에서 선택", "← Chọn từ ngành đang tuyển")}
+              </button>
+            ) : null}
+            {fieldError("admission_spec_id") ? (
+              <span className={errorTextClass}>
+                {fieldError("admission_spec_id")}
+              </span>
+            ) : null}
+          </label>
+
+          {selectedSpec ? (
+            <label className={labelClass}>
+              <span className={labelTextClass}>
+                {tr(locale, "학과 · 전공", "Ngành · chuyên ngành")}
+                <span className={requiredMarkClass}>*</span>
+              </span>
+              {selectedSpec.departments.length > 1 ? (
+                <select
+                  required
+                  className={inputClass}
+                  value={deptLabel}
+                  onChange={(e) => setDeptLabel(e.target.value)}
+                >
+                  <option value="">{tr(locale, "— 학과 선택 —", "— Chọn ngành —")}</option>
+                  {selectedSpec.departments.map((d) => {
+                    const label = departmentLabel(d);
+                    return (
+                      <option key={label} value={label}>
+                        {label}
+                      </option>
+                    );
+                  })}
+                </select>
+              ) : (
+                <input
+                  type="text"
+                  className={inputClass + " bg-slate-50"}
+                  value={deptLabel}
+                  readOnly
+                />
+              )}
+              {fieldError("target_department_label") ? (
+                <span className={errorTextClass}>
+                  {fieldError("target_department_label")}
+                </span>
+              ) : null}
+            </label>
+          ) : null}
+        </>
+      )}
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <label className={labelClass}>
@@ -237,7 +346,7 @@ export function NewApplicationForm({
       <div className="mt-2 flex items-center gap-2">
         <button
           type="submit"
-          disabled={pending || !specId || !deptLabel}
+          disabled={pending || !canSubmit}
           className="rounded-md bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {pending
