@@ -50,6 +50,9 @@ export const studentDocumentTypeEnum = z.enum([
   "birth_certificate", "family_relations_certificate",
   // 재정
   "bank_balance", "financial_proof",
+  "parents_employment_proof", "parents_income_proof",
+  // 건강 (베트남=결핵 고위험국 → 사실상 필수)
+  "tb_certificate", "health_certificate",
   // 학교 소정양식
   "application_form", "self_intro", "study_plan",
   "financial_pledge_form", "privacy_consent", "academic_record_release",

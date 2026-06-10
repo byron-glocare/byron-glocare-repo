@@ -80,7 +80,7 @@ const SYSTEM_PROMPT = `당신은 한국 대학의 외국인 입학 모집요강�
   ],
   "required_documents": [
     {
-      "key": "highschool_diploma | highschool_transcript | passport_copy | photo | family_relations_certificate | nationality_proof | bank_balance | financial_proof | korean_proof | application_form | self_intro | study_plan | financial_pledge_form | privacy_consent | academic_record_release | topik_certificate | language_alt_certificate | career_certificate | license_copy | visa_application_form | other",
+      "key": "highschool_diploma | highschool_transcript | passport_copy | photo | family_relations_certificate | nationality_proof | bank_balance | financial_proof | parents_employment_proof | parents_income_proof | tb_certificate | health_certificate | korean_proof | application_form | self_intro | study_plan | financial_pledge_form | privacy_consent | academic_record_release | topik_certificate | language_alt_certificate | career_certificate | license_copy | visa_application_form | other",
       "name_ko": "string (원본 한국어 표기)",
       "required": "boolean",
       "target_person": "self | father | mother | other (이 서류가 누구 것인지. 본인 서류=self, 아버지/어머니 서류=father/mother, 보호자·재정보증인 등=other). 모집요강이 '본인/부모'처럼 구분하면 각각 분리해 적을 것",

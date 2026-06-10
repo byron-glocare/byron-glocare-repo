@@ -34,6 +34,11 @@ const KEY_OPTIONS: Array<{ value: string; label: string }> = [
   // 재정
   { value: "bank_balance", label: "은행 잔고증명서" },
   { value: "financial_proof", label: "재정증명서" },
+  { value: "parents_employment_proof", label: "부모 재직증명서" },
+  { value: "parents_income_proof", label: "부모 소득증명서" },
+  // 건강
+  { value: "tb_certificate", label: "결핵 진단서" },
+  { value: "health_certificate", label: "건강진단서" },
   // 학교 양식
   { value: "application_form", label: "입학원서 (학교 양식)" },
   { value: "self_intro", label: "자기소개서" },

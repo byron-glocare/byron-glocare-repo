@@ -32,7 +32,11 @@
     적용 조건(언어/거주지) 태그.
   - abroad: 학생 희망선택 시 언어(필수)·거주지(옵션 있으면 필수) 선택 → 저장. 센터 "모집 중" 표시 갱신.
     **리드타임 얼럿 + 접수준비 제출서류 목록이 선택값으로 분기**(applies_to 필터).
-- ⏭ **다음**: §5-4 새 제출서류 키(parents_income_proof, tb_certificate 등). + §6-B 백로그.
+- ✅ **우선순위 §5-4 새 제출서류 키 완료**: `studentDocumentTypeEnum`(spec-schema.ts) +
+  추출 프롬프트(extract.ts) + 어드민 라벨(required-documents-field.tsx)에
+  `parents_employment_proof`(부모 재직), `parents_income_proof`(부모 소득),
+  `tb_certificate`(결핵 진단서), `health_certificate`(건강진단서) 추가. AI 추출이 인식.
+- ⏭ **다음**: §5(1~4) 완료. 이후는 §6-B 백로그(모집요강 편집 UI 잔여, QA 수정, docx/HWPX 자동채움, 입력링크 등).
 
 ## 1. 확정된 핵심 비전 (6단계)
 플랫폼의 진짜 가치는 "모집요강 입력"이 아니라 **글로케어가 무엇을 얼마나 모집할지 관리 + 학생 서류 준비 자동화**.
@@ -77,7 +81,9 @@
 1. ~~**모집(offering) + 학기별 모집수**~~ ✅ 완료 (§0 참조).
 2. ~~**6단계 리드타임 역산 얼럿**~~ ✅ 완료 (웹 대시보드 카운트 + /center/alerts, §0 참조).
 3. ~~언어 + 거주지 서류 분기~~ ✅ 완료 (옵션세트+학생선택+applies_to 필터, §0 참조).
-4. 새 제출서류 키 (parents_income_proof, tb_certificate 등). ← **다음**
+4. ~~새 제출서류 키~~ ✅ 완료 (parents_employment/income_proof, tb_certificate, health_certificate).
+
+> §5(1~4) 전부 완료. 다음은 §6-B 백로그.
 
 ## 6-B. 보류·미해결 백로그 (과거 세션에서 답 못 받고 넘어간 것들)
 > 우선순위는 위 §5(현재 비전)이 먼저. 아래는 그 다음 또는 틈틈이.
