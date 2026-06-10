@@ -50,7 +50,7 @@ export default async function NewApplicationPage({
     supabase
       .from("study_offerings")
       .select(
-        "id, university_id, department_id, term, intake_quota, language_track, source_spec_id, sort_order"
+        "id, university_id, department_id, term, intake_quota, available_languages, location_options, source_spec_id, sort_order"
       )
       .eq("status", "published")
       .not("source_spec_id", "is", null)
@@ -99,7 +99,8 @@ export default async function NewApplicationPage({
       departmentNameKo: deptMap.get(o.department_id) ?? `학과 #${o.department_id}`,
       term: o.term,
       intakeQuota: o.intake_quota,
-      languageTrack: o.language_track,
+      availableLanguages: (o.available_languages ?? []) as string[],
+      locationOptions: (o.location_options ?? []) as string[],
     }));
 
   const specOptions: SpecOption[] = (specs ?? []).map((s) => {

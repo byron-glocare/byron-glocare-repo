@@ -1410,8 +1410,8 @@ export type Database = {
           department_id: number;
           term: string;
           intake_quota: number | null; // published 시 필수
-          language_track: "korean" | "english" | "chinese";
-          student_location_scope: "VN" | "KR" | "any";
+          available_languages: ("korean" | "english" | "other")[];
+          location_options: ("domestic" | "overseas")[];
           status: "draft" | "published" | "closed" | "archived";
           source_spec_id: string | null;
           sort_order: number;
@@ -1426,8 +1426,8 @@ export type Database = {
           department_id: number;
           term: string;
           intake_quota?: number | null;
-          language_track?: "korean" | "english" | "chinese";
-          student_location_scope?: "VN" | "KR" | "any";
+          available_languages?: ("korean" | "english" | "other")[];
+          location_options?: ("domestic" | "overseas")[];
           status?: "draft" | "published" | "closed" | "archived";
           source_spec_id?: string | null;
           sort_order?: number;
@@ -1482,6 +1482,8 @@ export type Database = {
           };
           required_data_type_keys: string[];
           aliases: string[];
+          applies_to_languages: ("korean" | "english" | "other")[];
+          applies_to_locations: ("domestic" | "overseas")[];
           sort_order: number;
           is_active: boolean;
           status: "draft" | "approved" | "archived";
@@ -1497,6 +1499,8 @@ export type Database = {
           department_id?: number | null;
           name_ko: string;
           name_vi?: string | null;
+          applies_to_languages?: ("korean" | "english" | "other")[];
+          applies_to_locations?: ("domestic" | "overseas")[];
           target_person?: "self" | "father" | "mother" | "other" | null;
           target_person_note?: string | null;
           sample_image_url?: string | null;

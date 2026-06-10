@@ -56,10 +56,12 @@ export type DocumentStatus =
   | "human_review"
   | "approved"
   | "rejected";
-// C1 — 모집(offering)
-export type LanguageTrack = "korean" | "english" | "chinese";
-export type StudentLocationScope = "VN" | "KR" | "any";
+// C1/C2 — 모집(offering)
 export type OfferingStatus = "draft" | "published" | "closed" | "archived";
+/** 모집 언어 옵션 (한국어/영어/기타) — 글로케어가 offering 별로 available 지정 */
+export type OfferingLanguage = "korean" | "english" | "other";
+/** 거주지 옵션 (국내=한국 체류 / 해외=한국 밖) — 서류 분기용 */
+export type OfferingLocation = "domestic" | "overseas";
 export type ReviewerType = "ai" | "human";
 export type ReviewSeverity = "info" | "warning" | "error";
 export type InvoiceStatus = "draft" | "sent" | "paid" | "cancelled";
@@ -191,6 +193,9 @@ export type StudyRequiredSubmission = {
   };
   required_data_type_keys: string[];
   aliases: string[];
+  // C2 — 서류 분기. 빈 배열 = 전체 적용 / 값 있으면 그 선택 학생에게만.
+  applies_to_languages: OfferingLanguage[];
+  applies_to_locations: OfferingLocation[];
   sort_order: number;
   is_active: boolean;
   status: "draft" | "approved" | "archived";
@@ -355,8 +360,8 @@ export type StudyOffering = {
   department_id: number; // departments.id = bigint → number
   term: string;
   intake_quota: number | null; // 학기별 모집수. published 시 필수
-  language_track: LanguageTrack;
-  student_location_scope: StudentLocationScope;
+  available_languages: OfferingLanguage[]; // 글로케어가 제공하는 언어 옵션 (≥1)
+  location_options: OfferingLocation[]; // 거주지 분기 옵션 (빈 배열 = 분기 없음)
   status: OfferingStatus;
   source_spec_id: string | null; // study_admission_specs.id (nullable)
   sort_order: number;
@@ -374,6 +379,8 @@ export type StudyApplication = {
   student_id: string;
   admission_spec_id: string;
   offering_id: string | null; // C1 — 희망 offering(대학/학과/학기)
+  selected_language: OfferingLanguage | null; // C2 — 선택 언어
+  selected_location: OfferingLocation | null; // C2 — 선택 거주지
   target_department_id: number | null;
   target_department_label: string | null;
   status: ApplicationStatus;

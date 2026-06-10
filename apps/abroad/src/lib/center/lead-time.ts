@@ -65,7 +65,7 @@ export async function computeLeadTimeFlags(
   const { data: appsRaw } = await supabase
     .from("study_applications")
     .select(
-      "id, student_id, admission_spec_id, target_department_id, next_deadline, status"
+      "id, student_id, admission_spec_id, target_department_id, next_deadline, status, selected_language, selected_location"
     );
   const apps = (appsRaw ?? []).filter(
     (a) =>
@@ -91,7 +91,9 @@ export async function computeLeadTimeFlags(
       // 직접제출 서류 (RLS = approved + is_active). 공용(university_id=null) 포함.
       supabase
         .from("study_required_submissions")
-        .select("university_id, department_id, name_ko, issuance_requirements"),
+        .select(
+          "university_id, department_id, name_ko, issuance_requirements, applies_to_languages, applies_to_locations"
+        ),
     ]);
 
   const specUni = new Map(
@@ -130,12 +132,22 @@ export async function computeLeadTimeFlags(
       (deadline.getTime() - today.getTime()) / MS_PER_DAY
     );
 
-    // 이 지원에 해당하는 직접제출 서류 (공용 + 대학 일치) ∩ (학과 무관 + 학과 일치)
+    // 이 지원에 해당하는 직접제출 서류
+    //   (공용 + 대학 일치) ∩ (학과 무관 + 학과 일치) ∩ (언어/거주지 분기)
     const applicable = subs.filter((s) => {
       const uniMatch = s.university_id == null || s.university_id === uniId;
       const deptMatch =
         s.department_id == null || s.department_id === a.target_department_id;
-      return uniMatch && deptMatch;
+      const langs = (s.applies_to_languages ?? []) as string[];
+      const locs = (s.applies_to_locations ?? []) as string[];
+      // 분기 태그가 있으면, 학생 선택값이 그 안에 있어야 적용 (선택 안 했으면 제외)
+      const langMatch =
+        langs.length === 0 ||
+        (a.selected_language != null && langs.includes(a.selected_language));
+      const locMatch =
+        locs.length === 0 ||
+        (a.selected_location != null && locs.includes(a.selected_location));
+      return uniMatch && deptMatch && langMatch && locMatch;
     });
 
     const documents: LeadTimeFlag["documents"] = [];

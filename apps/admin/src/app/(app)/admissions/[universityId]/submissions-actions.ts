@@ -21,6 +21,8 @@ const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
 
 const STATUSES = ["draft", "approved", "archived"] as const;
 const TARGET_PERSONS = ["self", "father", "mother", "other"] as const;
+const LANGUAGES = ["korean", "english", "other"] as const;
+const LOCATIONS = ["domestic", "overseas"] as const;
 
 const saveSchema = z.object({
   // 공용(전체 공통)이면 null, 대학별이면 대학 id
@@ -141,6 +143,16 @@ export async function saveRequiredSubmissionAction(
     formData.get("required_data_type_keys")
   );
   const aliases = parseJsonStringArray(formData.get("aliases"));
+  const appliesToLanguages = parseJsonStringArray(
+    formData.get("applies_to_languages")
+  ).filter((x): x is (typeof LANGUAGES)[number] =>
+    (LANGUAGES as readonly string[]).includes(x)
+  );
+  const appliesToLocations = parseJsonStringArray(
+    formData.get("applies_to_locations")
+  ).filter((x): x is (typeof LOCATIONS)[number] =>
+    (LOCATIONS as readonly string[]).includes(x)
+  );
   // 대학별 오버라이드면 공용 마스터 id 참조 (공용/대학전용이면 null)
   const baseSubmissionId = emptyToNull(formData.get("base_submission_id"));
 
@@ -201,6 +213,8 @@ export async function saveRequiredSubmissionAction(
       issuance_requirements: issuance,
       required_data_type_keys: requiredKeys,
       aliases,
+      applies_to_languages: appliesToLanguages,
+      applies_to_locations: appliesToLocations,
     };
     if (newSampleUrl) patch.sample_image_url = newSampleUrl;
 
@@ -236,6 +250,8 @@ export async function saveRequiredSubmissionAction(
       issuance_requirements: issuance,
       required_data_type_keys: requiredKeys,
       aliases,
+      applies_to_languages: appliesToLanguages,
+      applies_to_locations: appliesToLocations,
       sample_image_url: newSampleUrl,
       created_by: user.id,
     };

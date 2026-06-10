@@ -77,7 +77,9 @@ export default async function StudentFormsListPage({
   // application + spec + university + applicable forms
   const { data: apps } = await supabase
     .from("study_applications")
-    .select("id, admission_spec_id, target_department_label")
+    .select(
+      "id, admission_spec_id, target_department_label, selected_language, selected_location"
+    )
     .eq("student_id", id);
 
   type FormEntry = {
@@ -185,7 +187,25 @@ export default async function StudentFormsListPage({
           notes: iss.notes,
         };
       };
-      const submissionsFor = (uniId: number): SubmissionItem[] => {
+      // 언어/거주지 분기: 태그 있으면 학생 선택값이 그 안에 있어야 적용
+      const appliesToSel = (
+        s: (typeof allSubs)[number],
+        selLang: string | null,
+        selLoc: string | null
+      ): boolean => {
+        const langs = (s.applies_to_languages ?? []) as string[];
+        const locs = (s.applies_to_locations ?? []) as string[];
+        const langOk =
+          langs.length === 0 || (selLang != null && langs.includes(selLang));
+        const locOk =
+          locs.length === 0 || (selLoc != null && locs.includes(selLoc));
+        return langOk && locOk;
+      };
+      const submissionsFor = (
+        uniId: number,
+        selLang: string | null,
+        selLoc: string | null
+      ): SubmissionItem[] => {
         const masters = allSubs.filter(
           (s) => s.university_id === null && !s.base_submission_id
         );
@@ -198,27 +218,40 @@ export default async function StudentFormsListPage({
           (s) => s.university_id === uniId && !s.base_submission_id
         );
         return [
-          ...masters.map((m) => subItem(ovByBase.get(m.id) ?? m)),
-          ...ownDept.map(subItem),
-        ];
+          ...masters.map((m) => ovByBase.get(m.id) ?? m),
+          ...ownDept,
+        ]
+          .filter((s) => appliesToSel(s, selLang, selLoc))
+          .map(subItem);
       };
 
       // 온라인 접수 대학별 목적지 구성
       for (const [uniId, info] of onlineUni.entries()) {
-        const labels = Array.from(
-          new Set(
-            (apps ?? [])
-              .filter((a) => specToUni.get(a.admission_spec_id) === uniId)
-              .map((a) => a.target_department_label ?? allLabel)
-          )
+        const uniApps = (apps ?? []).filter(
+          (a) => specToUni.get(a.admission_spec_id) === uniId
         );
+        const labels = Array.from(
+          new Set(uniApps.map((a) => a.target_department_label ?? allLabel))
+        );
+        // 이 대학의 각 지원 선택값(언어/거주지)으로 분기 → id 기준 합집합
+        const subMap = new Map<string, SubmissionItem>();
+        const appSel = uniApps.length > 0 ? uniApps : [null];
+        for (const a of appSel) {
+          for (const item of submissionsFor(
+            uniId,
+            a?.selected_language ?? null,
+            a?.selected_location ?? null
+          )) {
+            if (!subMap.has(item.id)) subMap.set(item.id, item);
+          }
+        }
         onlineDestinations.push({
           university_id: uniId,
           university_name_ko: uniName.get(uniId) ?? "?",
           guide_url: info.guide_url,
           form_url: info.form_url,
           department_labels: labels,
-          submissions: submissionsFor(uniId),
+          submissions: Array.from(subMap.values()),
         });
       }
 

@@ -29,7 +29,7 @@ export default async function OfferingsPage() {
     supabase
       .from("study_offerings")
       .select(
-        "id, university_id, department_id, term, intake_quota, language_track, student_location_scope, status, source_spec_id, sort_order, notes"
+        "id, university_id, department_id, term, intake_quota, available_languages, location_options, status, source_spec_id, sort_order, notes"
       )
       .order("created_at", { ascending: false }),
   ]);

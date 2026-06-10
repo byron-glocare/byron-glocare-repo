@@ -227,6 +227,8 @@ export default async function AdmissionsPage() {
     issuance_requirements: r.issuance_requirements ?? {},
     required_data_type_keys: r.required_data_type_keys ?? [],
     aliases: r.aliases ?? [],
+    applies_to_languages: r.applies_to_languages ?? [],
+    applies_to_locations: r.applies_to_locations ?? [],
     sort_order: r.sort_order,
     is_active: r.is_active,
     status: r.status,

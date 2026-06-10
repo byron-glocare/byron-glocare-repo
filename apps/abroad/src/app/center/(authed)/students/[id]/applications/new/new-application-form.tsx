@@ -32,7 +32,8 @@ export type OfferingOption = {
   departmentNameKo: string;
   term: string;
   intakeQuota: number | null;
-  languageTrack: string;
+  availableLanguages: string[];
+  locationOptions: string[];
 };
 
 function programTypeLabel(locale: Locale, programType: string): string {
@@ -50,16 +51,27 @@ function programTypeLabel(locale: Locale, programType: string): string {
   }
 }
 
-function languageTrackLabel(locale: Locale, track: string): string {
-  switch (track) {
+function languageLabel(locale: Locale, lang: string): string {
+  switch (lang) {
     case "korean":
       return tr(locale, "한국어", "Tiếng Hàn");
     case "english":
       return tr(locale, "영어", "Tiếng Anh");
-    case "chinese":
-      return tr(locale, "중국어", "Tiếng Trung");
+    case "other":
+      return tr(locale, "기타", "Khác");
     default:
-      return track;
+      return lang;
+  }
+}
+
+function locationLabel(locale: Locale, loc: string): string {
+  switch (loc) {
+    case "domestic":
+      return tr(locale, "국내 (한국 체류)", "Trong nước (tại Hàn)");
+    case "overseas":
+      return tr(locale, "해외 (한국 밖)", "Ngoài nước");
+    default:
+      return loc;
   }
 }
 
@@ -110,6 +122,21 @@ export function NewApplicationForm({
     () => offerings.find((o) => o.id === offeringId),
     [offeringId, offerings]
   );
+  const [selectedLanguage, setSelectedLanguage] = useState<string>("");
+  const [selectedLocation, setSelectedLocation] = useState<string>("");
+  const onOfferingChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const id = e.target.value;
+    setOfferingId(id);
+    const o = offerings.find((x) => x.id === id);
+    // 언어 1개면 자동 선택, 여러 개면 미선택
+    setSelectedLanguage(
+      o && o.availableLanguages.length === 1 ? o.availableLanguages[0] : ""
+    );
+    // 거주지 옵션 1개면 자동, 여러 개면 미선택
+    setSelectedLocation(
+      o && o.locationOptions.length === 1 ? o.locationOptions[0] : ""
+    );
+  };
 
   // --- spec 모드 상태 ---
   const [specId, setSpecId] = useState<string>("");
@@ -138,8 +165,12 @@ export function NewApplicationForm({
       : "";
   const submitOfferingId = mode === "offering" ? offeringId : "";
 
+  const needsLocation =
+    mode === "offering" && (selectedOffering?.locationOptions.length ?? 0) > 0;
   const canSubmit =
-    mode === "offering" ? !!offeringId : !!specId && !!deptLabel;
+    mode === "offering"
+      ? !!offeringId && !!selectedLanguage && (!needsLocation || !!selectedLocation)
+      : !!specId && !!deptLabel;
 
   // 아무 데이터도 없음
   if (!hasOfferings && specs.length === 0) {
@@ -179,8 +210,19 @@ export function NewApplicationForm({
         name="target_department_label"
         value={submitDeptLabel}
       />
+      <input
+        type="hidden"
+        name="selected_language"
+        value={mode === "offering" ? selectedLanguage : ""}
+      />
+      <input
+        type="hidden"
+        name="selected_location"
+        value={mode === "offering" ? selectedLocation : ""}
+      />
 
       {mode === "offering" ? (
+        <>
         <label className={labelClass}>
           <span className={labelTextClass}>
             {tr(locale, "희망 학과 (모집 중)", "Ngành nguyện vọng (đang tuyển)")}
@@ -190,15 +232,14 @@ export function NewApplicationForm({
             required
             className={inputClass}
             value={offeringId}
-            onChange={(e) => setOfferingId(e.target.value)}
+            onChange={onOfferingChange}
           >
             <option value="">
               {tr(locale, "— 대학 · 학과 · 학기 선택 —", "— Chọn trường · ngành · học kỳ —")}
             </option>
             {offerings.map((o) => (
               <option key={o.id} value={o.id}>
-                {o.universityNameKo ?? "?"} · {o.departmentNameKo} · {o.term} ·{" "}
-                {languageTrackLabel(locale, o.languageTrack)}
+                {o.universityNameKo ?? "?"} · {o.departmentNameKo} · {o.term}
                 {o.intakeQuota != null
                   ? ` · ${tr(locale, "모집", "tuyển")} ${o.intakeQuota}${tr(locale, "명", " SV")}`
                   : ""}
@@ -224,6 +265,69 @@ export function NewApplicationForm({
             </span>
           ) : null}
         </label>
+
+        {selectedOffering ? (
+          <label className={labelClass}>
+            <span className={labelTextClass}>
+              {tr(locale, "어학 능력", "Năng lực ngoại ngữ")}
+              <span className={requiredMarkClass}>*</span>
+            </span>
+            {selectedOffering.availableLanguages.length > 1 ? (
+              <select
+                required
+                className={inputClass}
+                value={selectedLanguage}
+                onChange={(e) => setSelectedLanguage(e.target.value)}
+              >
+                <option value="">{tr(locale, "— 선택 —", "— Chọn —")}</option>
+                {selectedOffering.availableLanguages.map((l) => (
+                  <option key={l} value={l}>
+                    {languageLabel(locale, l)}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <input
+                type="text"
+                className={inputClass + " bg-slate-50"}
+                value={
+                  selectedLanguage ? languageLabel(locale, selectedLanguage) : ""
+                }
+                readOnly
+              />
+            )}
+          </label>
+        ) : null}
+
+        {selectedOffering && selectedOffering.locationOptions.length > 0 ? (
+          <label className={labelClass}>
+            <span className={labelTextClass}>
+              {tr(locale, "현재 거주지", "Nơi cư trú hiện tại")}
+              <span className={requiredMarkClass}>*</span>
+            </span>
+            <select
+              required
+              className={inputClass}
+              value={selectedLocation}
+              onChange={(e) => setSelectedLocation(e.target.value)}
+            >
+              <option value="">{tr(locale, "— 선택 —", "— Chọn —")}</option>
+              {selectedOffering.locationOptions.map((l) => (
+                <option key={l} value={l}>
+                  {locationLabel(locale, l)}
+                </option>
+              ))}
+            </select>
+            <span className={helpTextClass}>
+              {tr(
+                locale,
+                "거주지에 따라 제출 서류가 달라집니다.",
+                "Giấy tờ cần nộp thay đổi theo nơi cư trú."
+              )}
+            </span>
+          </label>
+        ) : null}
+        </>
       ) : (
         <>
           <label className={labelClass}>

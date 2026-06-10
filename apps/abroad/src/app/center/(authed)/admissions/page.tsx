@@ -27,27 +27,27 @@ function programTypeLabel(locale: Locale, programType: string): string {
   }
 }
 
-function languageTrackLabel(locale: Locale, track: string): string {
-  switch (track) {
+function languageLabel(locale: Locale, lang: string): string {
+  switch (lang) {
     case "korean":
       return tr(locale, "한국어", "Tiếng Hàn");
     case "english":
       return tr(locale, "영어", "Tiếng Anh");
-    case "chinese":
-      return tr(locale, "중국어", "Tiếng Trung");
+    case "other":
+      return tr(locale, "기타", "Khác");
     default:
-      return track;
+      return lang;
   }
 }
 
-function locationScopeLabel(locale: Locale, scope: string): string {
-  switch (scope) {
-    case "VN":
-      return tr(locale, "베트남 체류", "Tại Việt Nam");
-    case "KR":
-      return tr(locale, "한국 체류", "Tại Hàn Quốc");
+function locationLabel(locale: Locale, loc: string): string {
+  switch (loc) {
+    case "domestic":
+      return tr(locale, "국내", "Trong nước");
+    case "overseas":
+      return tr(locale, "해외", "Ngoài nước");
     default:
-      return "";
+      return loc;
   }
 }
 
@@ -67,7 +67,7 @@ export default async function AdmissionsPage() {
     supabase
       .from("study_offerings")
       .select(
-        "id, university_id, department_id, term, intake_quota, language_track, student_location_scope, sort_order"
+        "id, university_id, department_id, term, intake_quota, available_languages, location_options, sort_order"
       )
       .eq("status", "published"),
   ]);
@@ -155,7 +155,8 @@ export default async function AdmissionsPage() {
                 (locale === "ko" ? dept?.name_ko : dept?.name_vi) ??
                 dept?.name_ko ??
                 "—";
-              const loc = locationScopeLabel(locale, o.student_location_scope);
+              const langs = (o.available_languages ?? []) as string[];
+              const locs = (o.location_options ?? []) as string[];
               return (
                 <div
                   key={o.id}
@@ -171,12 +172,17 @@ export default async function AdmissionsPage() {
                     <span className="rounded bg-white px-1.5 py-0.5 text-slate-600 ring-1 ring-slate-200">
                       {o.term}
                     </span>
-                    <span className="rounded bg-white px-1.5 py-0.5 text-slate-600 ring-1 ring-slate-200">
-                      {languageTrackLabel(locale, o.language_track)}
-                    </span>
-                    {loc ? (
+                    {langs.map((l) => (
+                      <span
+                        key={l}
+                        className="rounded bg-white px-1.5 py-0.5 text-slate-600 ring-1 ring-slate-200"
+                      >
+                        {languageLabel(locale, l)}
+                      </span>
+                    ))}
+                    {locs.length > 0 ? (
                       <span className="rounded bg-white px-1.5 py-0.5 text-slate-600 ring-1 ring-slate-200">
-                        {loc}
+                        {locs.map((l) => locationLabel(locale, l)).join("/")}
                       </span>
                     ) : null}
                     {o.intake_quota != null ? (

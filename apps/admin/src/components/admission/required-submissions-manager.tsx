@@ -54,10 +54,28 @@ export type SubmissionRow = {
   };
   required_data_type_keys: string[];
   aliases: string[];
+  applies_to_languages: string[];
+  applies_to_locations: string[];
   sort_order: number;
   is_active: boolean;
   status: string;
 };
+
+const SUB_LANGUAGE_OPTIONS = [
+  { value: "korean", label: "한국어" },
+  { value: "english", label: "영어" },
+  { value: "other", label: "기타" },
+] as const;
+const SUB_LOCATION_OPTIONS = [
+  { value: "domestic", label: "국내 (한국 체류)" },
+  { value: "overseas", label: "해외 (한국 밖)" },
+] as const;
+const SUB_LANGUAGE_LABEL: Record<string, string> = Object.fromEntries(
+  SUB_LANGUAGE_OPTIONS.map((o) => [o.value, o.label])
+);
+const SUB_LOCATION_LABEL: Record<string, string> = Object.fromEntries(
+  SUB_LOCATION_OPTIONS.map((o) => [o.value, o.label])
+);
 
 export type DataTypeOption = {
   key: string;
@@ -362,6 +380,20 @@ export function SubmissionForm({
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(
     new Set(submission?.required_data_type_keys ?? [])
   );
+  const [appliesLanguages, setAppliesLanguages] = useState<string[]>(
+    submission?.applies_to_languages ?? []
+  );
+  const [appliesLocations, setAppliesLocations] = useState<string[]>(
+    submission?.applies_to_locations ?? []
+  );
+  const toggleIn = (
+    list: string[],
+    set: (v: string[]) => void,
+    value: string
+  ) =>
+    set(
+      list.includes(value) ? list.filter((v) => v !== value) : [...list, value]
+    );
 
   // 샘플 이미지
   const [sample, setSample] = useState<{
@@ -416,6 +448,8 @@ export function SubmissionForm({
         );
         fd.set("required_data_type_keys", JSON.stringify(Array.from(selectedKeys)));
         fd.set("aliases", JSON.stringify(aliases));
+        fd.set("applies_to_languages", JSON.stringify(appliesLanguages));
+        fd.set("applies_to_locations", JSON.stringify(appliesLocations));
         if (sample) {
           fd.set("sample_base64", sample.base64);
           fd.set("sample_name", sample.name);
@@ -671,6 +705,48 @@ export function SubmissionForm({
         selectedKeys={selectedKeys}
         setSelectedKeys={setSelectedKeys}
       />
+
+      {/* 서류 분기 — 특정 언어/거주지 선택 학생에게만 적용 (빈값 = 전체) */}
+      <div className="rounded-md border bg-background p-3 space-y-2">
+        <div className="text-sm font-medium">
+          적용 조건 (서류 분기)
+          <span className="ml-2 text-xs font-normal text-muted-foreground">
+            비워두면 모든 학생. 선택하면 그 조건의 학생에게만 필요.
+          </span>
+        </div>
+        <div className="flex flex-col gap-2">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-xs text-muted-foreground w-14">언어</span>
+            {SUB_LANGUAGE_OPTIONS.map((o) => (
+              <label key={o.value} className="flex items-center gap-1.5 text-sm">
+                <input
+                  type="checkbox"
+                  checked={appliesLanguages.includes(o.value)}
+                  onChange={() =>
+                    toggleIn(appliesLanguages, setAppliesLanguages, o.value)
+                  }
+                />
+                <span>{o.label}</span>
+              </label>
+            ))}
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-xs text-muted-foreground w-14">거주지</span>
+            {SUB_LOCATION_OPTIONS.map((o) => (
+              <label key={o.value} className="flex items-center gap-1.5 text-sm">
+                <input
+                  type="checkbox"
+                  checked={appliesLocations.includes(o.value)}
+                  onChange={() =>
+                    toggleIn(appliesLocations, setAppliesLocations, o.value)
+                  }
+                />
+                <span>{o.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      </div>
 
       <div className="flex flex-wrap items-center gap-4">
         <label className="flex items-center gap-2 text-sm">

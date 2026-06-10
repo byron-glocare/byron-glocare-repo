@@ -9,8 +9,8 @@ import type { Database } from "@/types/database";
 type OfferingInsert = Database["public"]["Tables"]["study_offerings"]["Insert"];
 type OfferingUpdate = Database["public"]["Tables"]["study_offerings"]["Update"];
 
-const LANGUAGE_TRACKS = ["korean", "english", "chinese"] as const;
-const LOCATION_SCOPES = ["VN", "KR", "any"] as const;
+const LANGUAGES = ["korean", "english", "other"] as const;
+const LOCATIONS = ["domestic", "overseas"] as const;
 const STATUSES = ["draft", "published", "closed", "archived"] as const;
 
 const saveSchema = z.object({
@@ -18,13 +18,31 @@ const saveSchema = z.object({
   department_id: z.coerce.number().int().positive(),
   term: z.string().min(1).max(100),
   intake_quota: z.coerce.number().int().min(0).max(100000).nullable(),
-  language_track: z.enum(LANGUAGE_TRACKS),
-  student_location_scope: z.enum(LOCATION_SCOPES),
+  available_languages: z.array(z.enum(LANGUAGES)).min(1, "언어를 1개 이상 선택하세요"),
+  location_options: z.array(z.enum(LOCATIONS)),
   status: z.enum(STATUSES),
   source_spec_id: z.string().uuid().nullable(),
   sort_order: z.coerce.number().int().min(0).max(9999),
   notes: z.string().max(2000).nullable(),
 });
+
+function parseEnumArray<T extends readonly string[]>(
+  v: FormDataEntryValue | null,
+  allowed: T
+): T[number][] {
+  if (typeof v !== "string" || v.trim() === "") return [];
+  try {
+    const parsed = JSON.parse(v);
+    if (Array.isArray(parsed)) {
+      return parsed.filter((x): x is T[number] =>
+        (allowed as readonly string[]).includes(x)
+      );
+    }
+  } catch {
+    // 무시
+  }
+  return [];
+}
 
 export type SaveOfferingState =
   | {
@@ -68,8 +86,11 @@ export async function saveOfferingAction(
     department_id: numOrNull(formData.get("department_id")),
     term: formData.get("term"),
     intake_quota: numOrNull(formData.get("intake_quota")),
-    language_track: formData.get("language_track") || "korean",
-    student_location_scope: formData.get("student_location_scope") || "any",
+    available_languages: parseEnumArray(
+      formData.get("available_languages"),
+      LANGUAGES
+    ),
+    location_options: parseEnumArray(formData.get("location_options"), LOCATIONS),
     status: formData.get("status") || "draft",
     source_spec_id: emptyToNull(formData.get("source_spec_id")),
     sort_order: formData.get("sort_order") || "0",
@@ -102,8 +123,8 @@ export async function saveOfferingAction(
       department_id: data.department_id,
       term: data.term,
       intake_quota: data.intake_quota,
-      language_track: data.language_track,
-      student_location_scope: data.student_location_scope,
+      available_languages: data.available_languages,
+      location_options: data.location_options,
       status: data.status,
       source_spec_id: data.source_spec_id,
       sort_order: data.sort_order,
@@ -128,8 +149,8 @@ export async function saveOfferingAction(
       department_id: data.department_id,
       term: data.term,
       intake_quota: data.intake_quota,
-      language_track: data.language_track,
-      student_location_scope: data.student_location_scope,
+      available_languages: data.available_languages,
+      location_options: data.location_options,
       status: data.status,
       source_spec_id: data.source_spec_id,
       sort_order: data.sort_order,
