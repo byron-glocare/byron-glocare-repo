@@ -11,20 +11,7 @@ import Link from "next/link";
 
 import { verifyCenterSession } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
-import { getLocale, tr, type Locale } from "@/lib/i18n";
-
-function languageLabel(locale: Locale, lang: string): string {
-  switch (lang) {
-    case "korean":
-      return tr(locale, "한국어", "Tiếng Hàn");
-    case "english":
-      return tr(locale, "영어", "Tiếng Anh");
-    case "other":
-      return tr(locale, "기타", "Khác");
-    default:
-      return lang;
-  }
-}
+import { getLocale, tr } from "@/lib/i18n";
 
 export default async function AdmissionsPage() {
   await verifyCenterSession();
@@ -35,7 +22,7 @@ export default async function AdmissionsPage() {
   const { data: offerings, error } = await supabase
     .from("study_offerings")
     .select(
-      "id, university_id, department_id, term, intake_quota, available_languages, source_spec_id, sort_order"
+      "id, university_id, department_id, term, intake_quota, source_spec_id, sort_order"
     )
     .eq("status", "published");
 
@@ -128,7 +115,6 @@ export default async function AdmissionsPage() {
               (locale === "ko" ? dept?.name_ko : dept?.name_vi) ??
               dept?.name_ko ??
               "—";
-            const langs = (o.available_languages ?? []) as string[];
 
             const inner = (
               <>
@@ -142,14 +128,6 @@ export default async function AdmissionsPage() {
                   <span className="rounded bg-white px-1.5 py-0.5 text-slate-600 ring-1 ring-slate-200">
                     {o.term}
                   </span>
-                  {langs.map((l) => (
-                    <span
-                      key={l}
-                      className="rounded bg-white px-1.5 py-0.5 text-slate-600 ring-1 ring-slate-200"
-                    >
-                      {languageLabel(locale, l)}
-                    </span>
-                  ))}
                   {o.intake_quota != null ? (
                     <span className="rounded bg-emerald-600 px-1.5 py-0.5 font-medium text-white">
                       {tr(locale, "모집 ", "Tuyển ")}
