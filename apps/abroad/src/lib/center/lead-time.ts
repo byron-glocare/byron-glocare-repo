@@ -12,6 +12,7 @@
  */
 
 import type { createCenterClient } from "@/lib/supabase/center";
+import { residenceFromStudentLocation } from "@/lib/admission/offering-languages";
 
 type CenterClient = Awaited<ReturnType<typeof createCenterClient>>;
 
@@ -65,7 +66,7 @@ export async function computeLeadTimeFlags(
   const { data: appsRaw } = await supabase
     .from("study_applications")
     .select(
-      "id, student_id, admission_spec_id, target_department_id, next_deadline, status, selected_language, selected_location"
+      "id, student_id, admission_spec_id, target_department_id, next_deadline, status, selected_language"
     );
   const apps = (appsRaw ?? []).filter(
     (a) =>
@@ -86,7 +87,7 @@ export async function computeLeadTimeFlags(
         .in("id", specIds),
       supabase
         .from("study_managed_students")
-        .select("id, name")
+        .select("id, name, location")
         .in("id", studentIds),
       // 직접제출 서류 (RLS = approved + is_active). 공용(university_id=null) 포함.
       supabase
@@ -100,6 +101,13 @@ export async function computeLeadTimeFlags(
     (specs ?? []).map((s) => [s.id, s.university_id as number])
   );
   const studentName = new Map((students ?? []).map((s) => [s.id, s.name]));
+  // 학생 거주지(국내/해외) = location 속성 그대로 (offering·지원에서 따로 안 물음)
+  const studentResidence = new Map(
+    (students ?? []).map((s) => [
+      s.id,
+      residenceFromStudentLocation(s.location as string | null),
+    ])
+  );
 
   // 대학명
   const uniIds = Array.from(
@@ -140,13 +148,13 @@ export async function computeLeadTimeFlags(
         s.department_id == null || s.department_id === a.target_department_id;
       const langs = (s.applies_to_languages ?? []) as string[];
       const locs = (s.applies_to_locations ?? []) as string[];
-      // 분기 태그가 있으면, 학생 선택값이 그 안에 있어야 적용 (선택 안 했으면 제외)
+      // 언어 분기: 학생 선택 언어. 거주지 분기: 학생 location(국내/해외).
+      const residence = studentResidence.get(a.student_id) ?? null;
       const langMatch =
         langs.length === 0 ||
         (a.selected_language != null && langs.includes(a.selected_language));
       const locMatch =
-        locs.length === 0 ||
-        (a.selected_location != null && locs.includes(a.selected_location));
+        locs.length === 0 || (residence != null && locs.includes(residence));
       return uniMatch && deptMatch && langMatch && locMatch;
     });
 

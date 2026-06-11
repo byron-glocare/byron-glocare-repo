@@ -16,12 +16,9 @@ const createApplicationSchema = z.object({
   offering_id: emptyToUndef(z.string().uuid().optional()),
   // 실제 학과 FK (offering 경로면 채워짐)
   target_department_id: emptyToUndef(z.coerce.number().int().positive().optional()),
-  // C2 — 선택 언어/거주지 (offering 경로)
+  // C2 — 선택 언어 (offering 경로). 거주지는 학생 속성(location)을 그대로 사용.
   selected_language: emptyToUndef(
     z.enum(["korean", "english", "other"]).optional()
-  ),
-  selected_location: emptyToUndef(
-    z.enum(["domestic", "overseas"]).optional()
   ),
   target_department_label: z
     .string()
@@ -63,7 +60,6 @@ export async function createApplicationAction(
     admission_spec_id: data.admission_spec_id,
     offering_id: data.offering_id ?? null,
     selected_language: data.selected_language ?? null,
-    selected_location: data.selected_location ?? null,
     target_department_id: data.target_department_id ?? null,
     target_department_label: data.target_department_label,
     status: "preparing",

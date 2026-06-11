@@ -16,23 +16,6 @@ import {
 // ---------------------------------------------------------------------------
 // 라벨 / 옵션
 // ---------------------------------------------------------------------------
-const LANGUAGE_OPTIONS = [
-  { value: "korean", label: "한국어" },
-  { value: "english", label: "영어" },
-  { value: "other", label: "기타" },
-] as const;
-const LANGUAGE_LABEL: Record<string, string> = Object.fromEntries(
-  LANGUAGE_OPTIONS.map((o) => [o.value, o.label])
-);
-
-const LOCATION_OPTIONS = [
-  { value: "domestic", label: "국내 (한국 체류)" },
-  { value: "overseas", label: "해외 (한국 밖)" },
-] as const;
-const LOCATION_LABEL: Record<string, string> = Object.fromEntries(
-  LOCATION_OPTIONS.map((o) => [o.value, o.label])
-);
-
 const STATUS_OPTIONS = [
   { value: "draft", label: "초안 (센터 비노출)" },
   { value: "published", label: "노출 (모집중)" },
@@ -52,8 +35,6 @@ export type OfferingRow = {
   department_id: number;
   term: string;
   intake_quota: number | null;
-  available_languages: string[];
-  location_options: string[];
   status: string;
   source_spec_id: string | null;
   sort_order: number;
@@ -212,23 +193,6 @@ export function OfferingsManager({
                                 모집수 미정
                               </Badge>
                             )}
-                            {o.available_languages.map((lang) => (
-                              <Badge
-                                key={lang}
-                                variant="outline"
-                                className="text-[10px]"
-                              >
-                                {LANGUAGE_LABEL[lang] ?? lang}
-                              </Badge>
-                            ))}
-                            {o.location_options.length > 0 ? (
-                              <Badge variant="outline" className="text-[10px]">
-                                거주지:{" "}
-                                {o.location_options
-                                  .map((l) => LOCATION_LABEL[l] ?? l)
-                                  .join("/")}
-                              </Badge>
-                            ) : null}
                             {o.status === "published" ? (
                               <Badge className="border-success/20 bg-success/10 text-[10px] text-success">
                                 {STATUS_LABEL[o.status]}
@@ -383,19 +347,6 @@ function OfferingForm({
   const [intakeQuota, setIntakeQuota] = useState<string>(
     offering?.intake_quota != null ? String(offering.intake_quota) : ""
   );
-  const [languages, setLanguages] = useState<string[]>(
-    offering?.available_languages?.length ? offering.available_languages : ["korean"]
-  );
-  const [locations, setLocations] = useState<string[]>(
-    offering?.location_options ?? []
-  );
-  const toggle = (
-    list: string[],
-    set: (v: string[]) => void,
-    value: string
-  ) => {
-    set(list.includes(value) ? list.filter((v) => v !== value) : [...list, value]);
-  };
   const [status, setStatus] = useState(offering?.status ?? "draft");
   const [sourceSpecId, setSourceSpecId] = useState<string>(
     offering?.source_spec_id ?? ""
@@ -429,8 +380,6 @@ function OfferingForm({
         fd.set("university_id", universityId);
         fd.set("department_id", departmentId);
         fd.set("source_spec_id", sourceSpecId);
-        fd.set("available_languages", JSON.stringify(languages));
-        fd.set("location_options", JSON.stringify(locations));
         action(fd);
       }}
       className="space-y-3"
@@ -514,45 +463,6 @@ function OfferingForm({
           />
           <span className="text-[11px] text-muted-foreground">
             노출(모집중) 상태에는 필수. 모집요강 정원과 별개인 실제 모집 인원.
-          </span>
-        </Field>
-
-        <Field
-          label="제공 언어 (학생이 1개 선택)"
-          error={fieldErr("available_languages")}
-        >
-          <div className="flex flex-wrap gap-3 pt-1">
-            {LANGUAGE_OPTIONS.map((o) => (
-              <label key={o.value} className="flex items-center gap-1.5 text-sm">
-                <input
-                  type="checkbox"
-                  checked={languages.includes(o.value)}
-                  onChange={() => toggle(languages, setLanguages, o.value)}
-                />
-                <span>{o.label}</span>
-              </label>
-            ))}
-          </div>
-          <span className="text-[11px] text-muted-foreground">
-            글로케어가 제공하는 어학 능력 옵션. 학생/센터가 이 중에서 고릅니다.
-          </span>
-        </Field>
-
-        <Field label="거주지 분기 (선택지 제공 시)">
-          <div className="flex flex-wrap gap-3 pt-1">
-            {LOCATION_OPTIONS.map((o) => (
-              <label key={o.value} className="flex items-center gap-1.5 text-sm">
-                <input
-                  type="checkbox"
-                  checked={locations.includes(o.value)}
-                  onChange={() => toggle(locations, setLocations, o.value)}
-                />
-                <span>{o.label}</span>
-              </label>
-            ))}
-          </div>
-          <span className="text-[11px] text-muted-foreground">
-            거주지에 따라 제출서류가 다르면 선택지 제공. 비워두면 거주지 분기 없음.
           </span>
         </Field>
 

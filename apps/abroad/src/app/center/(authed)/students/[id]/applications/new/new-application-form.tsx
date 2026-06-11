@@ -33,7 +33,6 @@ export type OfferingOption = {
   term: string;
   intakeQuota: number | null;
   availableLanguages: string[];
-  locationOptions: string[];
 };
 
 function programTypeLabel(locale: Locale, programType: string): string {
@@ -64,16 +63,6 @@ function languageLabel(locale: Locale, lang: string): string {
   }
 }
 
-function locationLabel(locale: Locale, loc: string): string {
-  switch (loc) {
-    case "domestic":
-      return tr(locale, "국내 (한국 체류)", "Trong nước (tại Hàn)");
-    case "overseas":
-      return tr(locale, "해외 (한국 밖)", "Ngoài nước");
-    default:
-      return loc;
-  }
-}
 
 const inputClass =
   "rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200";
@@ -123,7 +112,6 @@ export function NewApplicationForm({
     [offeringId, offerings]
   );
   const [selectedLanguage, setSelectedLanguage] = useState<string>("");
-  const [selectedLocation, setSelectedLocation] = useState<string>("");
   const onOfferingChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const id = e.target.value;
     setOfferingId(id);
@@ -131,10 +119,6 @@ export function NewApplicationForm({
     // 언어 1개면 자동 선택, 여러 개면 미선택
     setSelectedLanguage(
       o && o.availableLanguages.length === 1 ? o.availableLanguages[0] : ""
-    );
-    // 거주지 옵션 1개면 자동, 여러 개면 미선택
-    setSelectedLocation(
-      o && o.locationOptions.length === 1 ? o.locationOptions[0] : ""
     );
   };
 
@@ -165,11 +149,9 @@ export function NewApplicationForm({
       : "";
   const submitOfferingId = mode === "offering" ? offeringId : "";
 
-  const needsLocation =
-    mode === "offering" && (selectedOffering?.locationOptions.length ?? 0) > 0;
   const canSubmit =
     mode === "offering"
-      ? !!offeringId && !!selectedLanguage && (!needsLocation || !!selectedLocation)
+      ? !!offeringId && !!selectedLanguage
       : !!specId && !!deptLabel;
 
   // 아무 데이터도 없음
@@ -214,11 +196,6 @@ export function NewApplicationForm({
         type="hidden"
         name="selected_language"
         value={mode === "offering" ? selectedLanguage : ""}
-      />
-      <input
-        type="hidden"
-        name="selected_location"
-        value={mode === "offering" ? selectedLocation : ""}
       />
 
       {mode === "offering" ? (
@@ -299,34 +276,6 @@ export function NewApplicationForm({
           </label>
         ) : null}
 
-        {selectedOffering && selectedOffering.locationOptions.length > 0 ? (
-          <label className={labelClass}>
-            <span className={labelTextClass}>
-              {tr(locale, "현재 거주지", "Nơi cư trú hiện tại")}
-              <span className={requiredMarkClass}>*</span>
-            </span>
-            <select
-              required
-              className={inputClass}
-              value={selectedLocation}
-              onChange={(e) => setSelectedLocation(e.target.value)}
-            >
-              <option value="">{tr(locale, "— 선택 —", "— Chọn —")}</option>
-              {selectedOffering.locationOptions.map((l) => (
-                <option key={l} value={l}>
-                  {locationLabel(locale, l)}
-                </option>
-              ))}
-            </select>
-            <span className={helpTextClass}>
-              {tr(
-                locale,
-                "거주지에 따라 제출 서류가 달라집니다.",
-                "Giấy tờ cần nộp thay đổi theo nơi cư trú."
-              )}
-            </span>
-          </label>
-        ) : null}
         </>
       ) : (
         <>

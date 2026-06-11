@@ -11,6 +11,8 @@ import { verifyCenterSession } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
 import { getLocale, tr } from "@/lib/i18n";
 
+import { deriveOfferingLanguages } from "@/lib/admission/offering-languages";
+
 import {
   NewApplicationForm,
   type SpecOption,
@@ -43,19 +45,24 @@ export default async function NewApplicationPage({
     supabase
       .from("study_admission_specs")
       .select(
-        "id, university_id, term, admission_category, program_type, departments"
+        "id, university_id, term, admission_category, program_type, departments, eligibility"
       )
       .eq("status", "approved")
       .order("updated_at", { ascending: false }),
     supabase
       .from("study_offerings")
       .select(
-        "id, university_id, department_id, term, intake_quota, available_languages, location_options, source_spec_id, sort_order"
+        "id, university_id, department_id, term, intake_quota, source_spec_id, sort_order"
       )
       .eq("status", "published")
       .not("source_spec_id", "is", null)
       .order("term", { ascending: false }),
   ]);
+
+  // 언어 도출용: spec.id → eligibility
+  const specEligById = new Map(
+    (specs ?? []).map((s) => [s.id, s.eligibility])
+  );
 
   // 3. universities 이름 join (지금 schema 의 FK 가 number 라 별도 query)
   const universityIds = Array.from(
@@ -91,17 +98,23 @@ export default async function NewApplicationPage({
 
   const offeringOptions: OfferingOption[] = (offerings ?? [])
     .filter((o) => o.source_spec_id) // 지원 가능 = 모집요강 연결 (admission_spec_id NOT NULL 충족)
-    .map((o) => ({
-      id: o.id,
-      sourceSpecId: o.source_spec_id as string,
-      universityNameKo: universityMap.get(o.university_id) ?? null,
-      departmentId: o.department_id,
-      departmentNameKo: deptMap.get(o.department_id) ?? `학과 #${o.department_id}`,
-      term: o.term,
-      intakeQuota: o.intake_quota,
-      availableLanguages: (o.available_languages ?? []) as string[],
-      locationOptions: (o.location_options ?? []) as string[],
-    }));
+    .map((o) => {
+      const deptName = deptMap.get(o.department_id) ?? `학과 #${o.department_id}`;
+      return {
+        id: o.id,
+        sourceSpecId: o.source_spec_id as string,
+        universityNameKo: universityMap.get(o.university_id) ?? null,
+        departmentId: o.department_id,
+        departmentNameKo: deptName,
+        term: o.term,
+        intakeQuota: o.intake_quota,
+        // 언어는 모집요강 자격요건에서 도출 (offering 에 따로 입력 안 함)
+        availableLanguages: deriveOfferingLanguages(
+          o.source_spec_id ? specEligById.get(o.source_spec_id) ?? null : null,
+          deptName
+        ),
+      };
+    });
 
   const specOptions: SpecOption[] = (specs ?? []).map((s) => {
     const depts = Array.isArray(s.departments)

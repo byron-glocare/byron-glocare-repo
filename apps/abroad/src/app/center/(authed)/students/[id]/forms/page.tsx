@@ -10,6 +10,7 @@ import { notFound } from "next/navigation";
 
 import { verifyCenterSession } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
+import { residenceFromStudentLocation } from "@/lib/admission/offering-languages";
 import { getLocale, tr, type Locale } from "@/lib/i18n";
 import type { AdmissionFormFileKey } from "@/types/study";
 
@@ -69,16 +70,19 @@ export default async function StudentFormsListPage({
 
   const { data: student } = await supabase
     .from("study_managed_students")
-    .select("id, name")
+    .select("id, name, location")
     .eq("id", id)
     .maybeSingle();
   if (!student) notFound();
+
+  // 학생 거주지(국내/해외) — 서류 분기용. location 속성 그대로 사용.
+  const studentResidence = residenceFromStudentLocation(student.location);
 
   // application + spec + university + applicable forms
   const { data: apps } = await supabase
     .from("study_applications")
     .select(
-      "id, admission_spec_id, target_department_label, selected_language, selected_location"
+      "id, admission_spec_id, target_department_label, selected_language"
     )
     .eq("student_id", id);
 
@@ -233,14 +237,14 @@ export default async function StudentFormsListPage({
         const labels = Array.from(
           new Set(uniApps.map((a) => a.target_department_label ?? allLabel))
         );
-        // 이 대학의 각 지원 선택값(언어/거주지)으로 분기 → id 기준 합집합
+        // 언어=각 지원의 선택, 거주지=학생 location(국내/해외) → id 기준 합집합
         const subMap = new Map<string, SubmissionItem>();
         const appSel = uniApps.length > 0 ? uniApps : [null];
         for (const a of appSel) {
           for (const item of submissionsFor(
             uniId,
             a?.selected_language ?? null,
-            a?.selected_location ?? null
+            studentResidence
           )) {
             if (!subMap.has(item.id)) subMap.set(item.id, item);
           }
