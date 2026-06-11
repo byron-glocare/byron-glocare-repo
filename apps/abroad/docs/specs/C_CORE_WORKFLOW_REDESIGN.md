@@ -36,6 +36,18 @@
   추출 프롬프트(extract.ts) + 어드민 라벨(required-documents-field.tsx)에
   `parents_employment_proof`(부모 재직), `parents_income_proof`(부모 소득),
   `tb_certificate`(결핵 진단서), `health_certificate`(건강진단서) 추가. AI 추출이 인식.
+- ✅ **테스트 피드백 반영 (2026-06-11)**:
+  - 센터 `/center/admissions` = **published offering만** 노출(approved spec 직접 노출 표 제거).
+    카드 클릭 → 그 모집요강 상세(source_spec_id).
+  - **offering에서 언어·거주지 입력 제거** (운영자 결정): 둘 다 모집요강/학생속성에 이미 있음.
+    · 언어 = 연결 모집요강 eligibility에서 도출(`lib/admission/offering-languages.ts`
+      `deriveOfferingLanguages`: 한국어 항상 / 영어 if english_proficiency·해당학과). 학생이 선택.
+    · 거주지 = 학생 `study_managed_students.location`(KR=국내/그외=해외) 그대로. 지원 시 안 물음.
+      (`residenceFromStudentLocation`). 서류분기(얼럿·접수준비)도 이걸로.
+    · offering = 대학·학과·학기 + 모집수 + 모집요강연결 + 노출. (순수 큐레이션)
+    · ⚠ DB컬럼 offering.available_languages/location_options, applications.selected_location 은
+      미사용 상태로 남겨둠(드롭 SQL 미실행). 추후 정리.
+    · ⏳ 서류별 국내/해외 분기 태그는 현재 직접제출 `applies_to_locations`(수동). 추후 모집요강 AI 추출로 자동화 옵션 있음.
 - ⏭ **다음**: §5(1~4) 완료. 이후는 §6-B 백로그(모집요강 편집 UI 잔여, QA 수정, docx/HWPX 자동채움, 입력링크 등).
 
 ## 1. 확정된 핵심 비전 (6단계)
