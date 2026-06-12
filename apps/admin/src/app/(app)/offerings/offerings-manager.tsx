@@ -99,47 +99,38 @@ export function OfferingsManager({
 
   return (
     <div className="space-y-4">
-      <Card className="p-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-sm font-semibold">모집 큐레이션</h3>
-            <p className="mt-0.5 text-xs text-muted-foreground">
-              어느 대학·학과·학기를 유학센터에 줄지 결정하고, 학기별 모집수를
-              관리합니다. <b>노출(모집중)</b> 상태여야 센터에 보입니다.
-            </p>
-          </div>
-          <Button
-            type="button"
-            variant={adding ? "outline" : "default"}
-            size="sm"
-            onClick={() => {
-              setAdding((v) => !v);
-              setEditingId(null);
-            }}
-          >
-            {adding ? (
-              "취소"
-            ) : (
-              <>
-                <Plus className="size-4" />
-                모집 추가
-              </>
-            )}
-          </Button>
-        </div>
+      <div className="flex justify-end">
+        <Button
+          type="button"
+          variant={adding ? "outline" : "default"}
+          size="sm"
+          onClick={() => {
+            setAdding((v) => !v);
+            setEditingId(null);
+          }}
+        >
+          {adding ? (
+            "취소"
+          ) : (
+            <>
+              <Plus className="size-4" />
+              모집 추가
+            </>
+          )}
+        </Button>
+      </div>
 
-        {adding ? (
-          <div className="mt-4">
-            <OfferingForm
-              universities={universities}
-              departments={departments}
-              specs={specs}
-              knownTerms={knownTerms}
-              onDone={() => setAdding(false)}
-            />
-          </div>
-        ) : null}
-      </Card>
+      {adding ? (
+        <Card className="p-4">
+          <OfferingForm
+            universities={universities}
+            departments={departments}
+            specs={specs}
+            knownTerms={knownTerms}
+            onDone={() => setAdding(false)}
+          />
+        </Card>
+      ) : null}
 
       {offerings.length === 0 ? (
         <Card className="p-12 text-center text-sm text-muted-foreground">

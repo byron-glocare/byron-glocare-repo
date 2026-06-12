@@ -38,7 +38,7 @@ export default async function OfferingsPage() {
     <>
       <PageHeader
         title="모집"
-        description="유학 도메인 — 어느 대학·학과·학기를 얼마나 모집할지 큐레이션"
+        description="현재 유학센터 및 학생들이 지원할 수 있는 대학/학과/학기를 설정"
         breadcrumbs={[{ label: "모집" }]}
       />
       <div className="p-6">
