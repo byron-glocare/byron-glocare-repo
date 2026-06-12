@@ -82,6 +82,31 @@ export default async function UniversityEditPage({
     return ap - bp || a.sort_order - b.sort_order;
   });
 
+  // 모집요강 = 학기별 1줄. 같은 학기에 요강이 여러 개면 최신을 대표로, 나머지는 +N.
+  //   (specs 는 updated_at desc 정렬 → 각 term 의 첫 항목이 최신)
+  const termGroups = (() => {
+    type Spec = NonNullable<typeof specs>[number];
+    const byTerm = new Map<string, Spec[]>();
+    for (const s of specs ?? []) {
+      const arr = byTerm.get(s.term) ?? [];
+      arr.push(s);
+      byTerm.set(s.term, arr);
+    }
+    return Array.from(byTerm.entries())
+      .map(([term, list]) => {
+        const rep = list[0];
+        const deptNames = new Set<string>();
+        for (const sp of list) {
+          const ds = Array.isArray(sp.departments)
+            ? (sp.departments as Array<{ name?: string }>)
+            : [];
+          for (const d of ds) if (d?.name) deptNames.add(d.name);
+        }
+        return { term, rep, extra: list.length - 1, deptNames: Array.from(deptNames) };
+      })
+      .sort((a, b) => b.term.localeCompare(a.term));
+  })();
+
   const defaultValues: Partial<UniversityInput> = {
     active: row.active,
     name_ko: row.name_ko,
@@ -123,6 +148,15 @@ export default async function UniversityEditPage({
           { href: "/universities", label: "대학교" },
           { label: row.name_ko },
         ]}
+        actions={
+          <Link
+            href={`/admissions/new?university_id=${numericId}`}
+            className={buttonVariants()}
+          >
+            <Plus className="size-4" />
+            새학기 모집요강 추가
+          </Link>
+        }
       />
       <div className="p-6 space-y-6">
         <UniversityForm
@@ -240,24 +274,15 @@ export default async function UniversityEditPage({
           <div className="p-4 flex items-center justify-between border-b">
             <div className="flex items-center gap-2">
               <h2 className="font-semibold text-base">모집요강</h2>
-              <Badge variant="secondary">{specs?.length ?? 0}</Badge>
+              <Badge variant="secondary">{termGroups.length} 학기</Badge>
             </div>
-            <div className="flex items-center gap-2">
-              <Link
-                href={`/admissions/${numericId}`}
-                className={buttonVariants({ variant: "outline", size: "sm" })}
-              >
-                <FileText className="size-4" />
-                입학서류 (모집요강+양식)
-              </Link>
-              <Link
-                href={`/admissions/new?university_id=${numericId}`}
-                className={buttonVariants({ variant: "outline", size: "sm" })}
-              >
-                <Plus className="size-4" />
-                새학기 모집요강 추가
-              </Link>
-            </div>
+            <Link
+              href={`/admissions/${numericId}`}
+              className={buttonVariants({ variant: "outline", size: "sm" })}
+            >
+              <FileText className="size-4" />
+              입학서류 (모집요강+양식)
+            </Link>
           </div>
           {!specs || specs.length === 0 ? (
             <div className="p-8 text-center text-sm text-muted-foreground">
@@ -278,24 +303,23 @@ export default async function UniversityEditPage({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {specs.map((s) => {
-                  const href = `/admissions/specs/${s.id}`;
-                  const depts = Array.isArray(s.departments)
-                    ? (s.departments as Array<{ name?: string }>)
-                    : [];
-                  const deptNames = depts
-                    .map((d) => d?.name)
-                    .filter(Boolean) as string[];
+                {termGroups.map(({ term, rep, extra, deptNames }) => {
+                  const href = `/admissions/specs/${rep.id}`;
                   return (
-                    <TableRow key={s.id} className="cursor-pointer">
+                    <TableRow key={term} className="cursor-pointer">
                       <TableCell className="text-sm">
                         <Link href={href} className="block hover:text-primary font-medium">
-                          {s.term}
+                          {term}
+                          {extra > 0 ? (
+                            <span className="ml-1 text-xs font-normal text-muted-foreground">
+                              +{extra}개 요강
+                            </span>
+                          ) : null}
                         </Link>
                       </TableCell>
                       <TableCell className="text-sm">
                         <Link href={href} className="block">
-                          {PROGRAM_TYPE_LABEL[s.program_type] ?? s.program_type}
+                          {PROGRAM_TYPE_LABEL[rep.program_type] ?? rep.program_type}
                         </Link>
                       </TableCell>
                       <TableCell className="text-sm text-muted-foreground">
@@ -308,20 +332,20 @@ export default async function UniversityEditPage({
                       </TableCell>
                       <TableCell className="text-center">
                         <Link href={href} className="block">
-                          {s.status === "approved" ? (
+                          {rep.status === "approved" ? (
                             <Badge className="bg-success/10 text-success border-success/20">
-                              {SPEC_STATUS_LABEL[s.status] ?? s.status}
+                              {SPEC_STATUS_LABEL[rep.status] ?? rep.status}
                             </Badge>
                           ) : (
                             <Badge variant="outline">
-                              {SPEC_STATUS_LABEL[s.status] ?? s.status}
+                              {SPEC_STATUS_LABEL[rep.status] ?? rep.status}
                             </Badge>
                           )}
                         </Link>
                       </TableCell>
                       <TableCell className="text-xs text-muted-foreground">
                         <Link href={href} className="block">
-                          {new Date(s.updated_at).toLocaleDateString("ko-KR")}
+                          {new Date(rep.updated_at).toLocaleDateString("ko-KR")}
                         </Link>
                       </TableCell>
                     </TableRow>

@@ -34,7 +34,7 @@ const CATEGORY_LABEL_KO: Record<string, string> = {
   contact: "연락처",
   career: "경력·자격",
   essay: "서술형 기초 데이터",
-  document: "첨부 파일",
+  document: "발급 서류",
   other: "기타",
 };
 

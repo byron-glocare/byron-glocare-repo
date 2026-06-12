@@ -33,7 +33,7 @@ const CATEGORY_LABEL: Record<string, string> = {
   contact: "연락처",
   career: "경력·자격",
   essay: "서술형 (작문 기초)",
-  document: "첨부 파일",
+  document: "발급 서류",
   other: "기타",
 };
 

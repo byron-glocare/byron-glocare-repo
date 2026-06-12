@@ -85,7 +85,7 @@ function categoryLabel(locale: Locale, category: string): string {
     case "essay":
       return tr(locale, "작문 (AI 기초자료)", "Văn viết (cơ sở AI)");
     case "document":
-      return tr(locale, "첨부 파일", "Tệp đính kèm");
+      return tr(locale, "발급 서류", "Giấy tờ phát hành");
     case "other":
       return tr(locale, "기타", "Khác");
     default:

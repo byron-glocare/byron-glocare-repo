@@ -1,7 +1,8 @@
 "use client";
 
 import { useActionState, useEffect, useMemo, useState } from "react";
-import { Loader2, Pencil, Plus, Save, Trash2, X, Eye, EyeOff } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Loader2, Pencil, Save, Trash2, X, Eye, EyeOff } from "lucide-react";
 
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -62,14 +63,18 @@ export function OfferingsManager({
   departments,
   specs,
   offerings,
+  adding,
 }: {
   universities: UniversityOption[];
   departments: DepartmentOption[];
   specs: SpecOption[];
   offerings: OfferingRow[];
+  /** 상단 '모집 추가' 버튼(URL ?new=1)으로 제어 */
+  adding: boolean;
 }) {
-  const [adding, setAdding] = useState(false);
+  const router = useRouter();
   const [editingId, setEditingId] = useState<string | null>(null);
+  const closeAdd = () => router.push("/offerings");
 
   const uniName = (id: number) =>
     universities.find((u) => u.id === id)?.name_ko ?? `대학 #${id}`;
@@ -99,27 +104,6 @@ export function OfferingsManager({
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
-        <Button
-          type="button"
-          variant={adding ? "outline" : "default"}
-          size="sm"
-          onClick={() => {
-            setAdding((v) => !v);
-            setEditingId(null);
-          }}
-        >
-          {adding ? (
-            "취소"
-          ) : (
-            <>
-              <Plus className="size-4" />
-              모집 추가
-            </>
-          )}
-        </Button>
-      </div>
-
       {adding ? (
         <Card className="p-4">
           <OfferingForm
@@ -127,7 +111,7 @@ export function OfferingsManager({
             departments={departments}
             specs={specs}
             knownTerms={knownTerms}
-            onDone={() => setAdding(false)}
+            onDone={closeAdd}
           />
         </Card>
       ) : null}
@@ -249,10 +233,9 @@ export function OfferingsManager({
                             type="button"
                             variant="outline"
                             size="sm"
-                            onClick={() => {
-                              setEditingId((cur) => (cur === o.id ? null : o.id));
-                              setAdding(false);
-                            }}
+                            onClick={() =>
+                              setEditingId((cur) => (cur === o.id ? null : o.id))
+                            }
                           >
                             <Pencil className="size-3" />
                           </Button>

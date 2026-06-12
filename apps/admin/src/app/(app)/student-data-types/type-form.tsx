@@ -24,7 +24,7 @@ const CATEGORY_OPTIONS = [
   { value: "contact", label: "연락처" },
   { value: "career", label: "경력·자격" },
   { value: "essay", label: "서술형 (작문 기초)" },
-  { value: "document", label: "첨부 파일" },
+  { value: "document", label: "발급 서류" },
   { value: "other", label: "기타" },
 ] as const;
 

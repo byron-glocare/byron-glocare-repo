@@ -1,11 +1,20 @@
+import Link from "next/link";
+import { Plus } from "lucide-react";
+
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/page-header";
+import { buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { OfferingsManager } from "./offerings-manager";
 
 export const dynamic = "force-dynamic";
 
-export default async function OfferingsPage() {
+export default async function OfferingsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ new?: string }>;
+}) {
+  const adding = (await searchParams).new === "1";
   const supabase = await createClient();
 
   const [
@@ -40,6 +49,21 @@ export default async function OfferingsPage() {
         title="모집"
         description="현재 유학센터 및 학생들이 지원할 수 있는 대학/학과/학기를 설정"
         breadcrumbs={[{ label: "모집" }]}
+        actions={
+          adding ? (
+            <Link
+              href="/offerings"
+              className={buttonVariants({ variant: "outline" })}
+            >
+              취소
+            </Link>
+          ) : (
+            <Link href="/offerings?new=1" className={buttonVariants()}>
+              <Plus className="size-4" />
+              모집 추가
+            </Link>
+          )
+        }
       />
       <div className="p-6">
         {error ? (
@@ -52,6 +76,7 @@ export default async function OfferingsPage() {
             departments={(departments ?? []).filter((d) => d.active)}
             specs={specs ?? []}
             offerings={offerings ?? []}
+            adding={adding}
           />
         )}
       </div>
