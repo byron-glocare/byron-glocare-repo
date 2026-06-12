@@ -44,6 +44,7 @@ export default async function DepartmentEditPage({
     badge: row.badge,
     case_ids: row.case_ids,
     course: row.course,
+    study_period: row.study_period,
     sort_order: row.sort_order,
   };
 

@@ -50,7 +50,7 @@ export default async function UniversityEditPage({
       supabase
         .from("departments")
         .select(
-          "id, active, icon, name_ko, name_vi, category, course, badge, sort_order"
+          "id, active, icon, name_ko, name_vi, category, course, badge, sort_order, study_period"
         )
         .eq("university_id", numericId)
         .order("sort_order"),
@@ -103,6 +103,10 @@ export default async function UniversityEditPage({
     dormitory: row.dormitory,
     dormitory_desc_ko: row.dormitory_desc_ko,
     dormitory_desc_vi: row.dormitory_desc_vi,
+    feature_transport: row.feature_transport,
+    feature_parttime: row.feature_parttime,
+    feature_housing: row.feature_housing,
+    feature_dormitory: row.feature_dormitory,
     strengths: row.strengths,
     tags_ko: row.tags_ko,
     tags_vi: row.tags_vi,
@@ -151,6 +155,7 @@ export default async function UniversityEditPage({
                 <TableRow>
                   <TableHead className="w-12">아이콘</TableHead>
                   <TableHead>학과명</TableHead>
+                  <TableHead className="w-24">과정</TableHead>
                   <TableHead>모집학기</TableHead>
                   <TableHead className="w-24 text-center">노출 순서</TableHead>
                   <TableHead className="w-20 text-center">상태</TableHead>
@@ -179,6 +184,11 @@ export default async function UniversityEditPage({
                             {d.name_vi}
                           </Link>
                         )}
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        <Link href={href} className="block">
+                          {d.study_period ? d.study_period : "—"}
+                        </Link>
                       </TableCell>
                       <TableCell>
                         <Link href={href} className="flex flex-wrap gap-1">

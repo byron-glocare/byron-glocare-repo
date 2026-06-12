@@ -80,6 +80,10 @@ const EMPTY: UniversityInput = {
   dormitory: false,
   dormitory_desc_ko: null,
   dormitory_desc_vi: null,
+  feature_transport: false,
+  feature_parttime: false,
+  feature_housing: false,
+  feature_dormitory: false,
   strengths: null,
   tags_ko: null,
   tags_vi: null,
@@ -311,24 +315,37 @@ export function UniversityForm({
               <CardTitle className="text-base">홈페이지 노출 정보</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <FormField
-                control={form.control}
-                name="strengths"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>특징 / 강점</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        {...field}
-                        value={field.value ?? ""}
-                        rows={2}
-                        placeholder="홈페이지 학과 모달에 노출"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <FormItem>
+                <FormLabel>특징 / 강점</FormLabel>
+                <div className="grid grid-cols-2 gap-2">
+                  {(
+                    [
+                      ["feature_transport", "🚍 편리한 교통"],
+                      ["feature_parttime", "💼 많은 알바 자리"],
+                      ["feature_housing", "🏘️ 많은 숙소"],
+                      ["feature_dormitory", "🏠 기숙사"],
+                    ] as const
+                  ).map(([name, label]) => (
+                    <FormField
+                      key={name}
+                      control={form.control}
+                      name={name}
+                      render={({ field }) => (
+                        <label className="flex items-center gap-2 rounded-md border border-input px-3 py-2 text-sm">
+                          <input
+                            type="checkbox"
+                            checked={field.value ?? false}
+                            onChange={(e) => field.onChange(e.target.checked)}
+                            className="size-4"
+                          />
+                          {label}
+                        </label>
+                      )}
+                    />
+                  ))}
+                </div>
+                <FormDescription>홈페이지 학과 모달에 노출</FormDescription>
+              </FormItem>
 
               <div className="grid sm:grid-cols-2 gap-4">
                 <FormField

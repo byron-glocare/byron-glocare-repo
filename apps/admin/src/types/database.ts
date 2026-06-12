@@ -681,6 +681,10 @@ export type Database = {
           dormitory: boolean;
           dormitory_desc_ko: string | null;
           dormitory_desc_vi: string | null;
+          feature_transport: boolean;
+          feature_parttime: boolean;
+          feature_housing: boolean;
+          feature_dormitory: boolean;
           strengths: string | null;
           tags_ko: string | null;
           tags_vi: string | null;
@@ -711,6 +715,10 @@ export type Database = {
           dormitory?: boolean;
           dormitory_desc_ko?: string | null;
           dormitory_desc_vi?: string | null;
+          feature_transport?: boolean;
+          feature_parttime?: boolean;
+          feature_housing?: boolean;
+          feature_dormitory?: boolean;
           strengths?: string | null;
           tags_ko?: string | null;
           tags_vi?: string | null;
@@ -741,6 +749,7 @@ export type Database = {
           badge: string | null;
           case_ids: string | null;
           course: string | null;
+          study_period: string | null;
           sort_order: number;
           created_at: string;
           updated_at: string;
@@ -762,6 +771,7 @@ export type Database = {
           badge?: string | null;
           case_ids?: string | null;
           course?: string | null;
+          study_period?: string | null;
           sort_order?: number;
           created_at?: string;
           updated_at?: string;

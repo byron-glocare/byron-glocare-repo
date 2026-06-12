@@ -72,6 +72,7 @@ const EMPTY_BASE: Omit<DepartmentInput, "university_id"> = {
   badge: null,
   case_ids: null,
   course: null,
+  study_period: null,
   sort_order: 0,
 };
 
@@ -361,7 +362,7 @@ export function DepartmentForm({
               />
             </div>
 
-            <div className="grid sm:grid-cols-2 gap-4">
+            <div className="grid sm:grid-cols-3 gap-4">
               <FormField
                 control={form.control}
                 name="degree_years"
@@ -377,6 +378,23 @@ export function DepartmentForm({
                           field.onChange(e.target.value === "" ? null : e.target.value)
                         }
                         placeholder="예: 4"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="study_period"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>과정 (수학기간 표기)</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        value={field.value ?? ""}
+                        placeholder="예: 2년, 4년, 1년 6개월"
                       />
                     </FormControl>
                     <FormMessage />
