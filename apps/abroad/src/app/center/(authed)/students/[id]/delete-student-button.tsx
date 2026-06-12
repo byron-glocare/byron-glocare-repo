@@ -9,11 +9,13 @@ export function DeleteStudentButton({
   studentId,
   studentName,
   applicationCount,
+  small,
 }: {
   locale: Locale;
   studentId: string;
   studentName: string;
   applicationCount: number;
+  small?: boolean;
 }) {
   return (
     <form
@@ -36,7 +38,11 @@ export function DeleteStudentButton({
     >
       <button
         type="submit"
-        className="rounded-md border border-red-300 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-50"
+        className={
+          small
+            ? "shrink-0 rounded-md border border-red-200 px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-50"
+            : "rounded-md border border-red-300 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-50"
+        }
       >
         {tr(locale, "학생 삭제", "Xóa sinh viên")}
       </button>

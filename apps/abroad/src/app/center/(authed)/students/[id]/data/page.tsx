@@ -4,7 +4,6 @@
  * 카테고리별 입력 + 학생의 지원 의향 → 필요한 양식 → 필요한 데이터 타입 자동 식별 → 부족 항목 highlight.
  */
 
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { verifyCenterSession } from "@/lib/center/dal";
@@ -121,14 +120,8 @@ export default async function StudentDataPage({
   return (
     <div className="space-y-4">
       <header>
-        <Link
-          href={`/center/students/${id}`}
-          className="text-sm text-slate-500 hover:underline"
-        >
-          ← {student.name}
-        </Link>
-        <h1 className="mt-2 text-2xl font-bold text-slate-900">
-          {tr(locale, "학생 상세 정보", "Thông tin chi tiết sinh viên")}
+        <h1 className="text-xl font-bold text-slate-900">
+          {tr(locale, "정보 입력", "Nhập thông tin")}
         </h1>
         <p className="mt-1 text-sm text-slate-600">
           {tr(

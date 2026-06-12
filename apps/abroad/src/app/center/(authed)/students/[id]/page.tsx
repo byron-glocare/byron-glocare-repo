@@ -4,18 +4,12 @@
  *   후속: 학생 정보 편집 / 지원 의향 등록·관리 (모집요강 페이지 본격 후).
  */
 
-import { Fragment } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { verifyCenterSession } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
 import { getLocale, tr, type Locale } from "@/lib/i18n";
-
-import { updateApplicationStatusAction } from "./applications/actions";
-import { APP_STATUS_VALUES } from "./applications/status";
-import { DeleteApplicationButton } from "./applications/delete-application-button";
-import { DeleteStudentButton } from "./delete-student-button";
 
 function visaLabel(locale: Locale, visa: string): string {
   switch (visa) {
@@ -100,53 +94,24 @@ export default async function StudentDetailPage({
     .order("created_at", { ascending: false });
 
   return (
-    <div className="max-w-4xl">
-      <header className="mb-6">
-        <Link
-          href="/center/students"
-          className="text-sm text-slate-500 hover:underline"
-        >
-          {tr(locale, "← 목록으로 돌아가기", "← Quay lại danh sách")}
-        </Link>
-        <div className="mt-2 flex items-start justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-slate-900">
-              {student.name}
-            </h1>
-            <p className="mt-1 text-sm text-slate-600">
-              {tr(locale, "등록일", "Đăng ký")}:{" "}
-              {new Date(student.created_at).toLocaleDateString(dateLocale)}
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Link
-              href={`/center/students/${id}/edit`}
-              className="rounded-md border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
-            >
-              {tr(locale, "기본정보 수정", "Sửa thông tin")}
-            </Link>
-            <DeleteStudentButton
-              locale={locale}
-              studentId={id}
-              studentName={student.name}
-              applicationCount={applications?.length ?? 0}
-            />
-          </div>
-        </div>
-
-        {/* 진행 플로우 — 학생 처리는 1방향 단계로 */}
-        <ProcessFlow
-          locale={locale}
-          studentId={id}
-          hasApplications={(applications?.length ?? 0) > 0}
-        />
-      </header>
-
+    <div className="space-y-6">
       {/* 학생 기본 정보 */}
-      <section className="mb-6 rounded-lg border border-slate-200 bg-white p-6">
-        <h2 className="mb-4 text-lg font-semibold text-slate-900">
-          {tr(locale, "기본 정보", "Thông tin cơ bản")}
-        </h2>
+      <section className="rounded-lg border border-slate-200 bg-white p-6">
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-slate-900">
+            {tr(locale, "기본 정보", "Thông tin cơ bản")}
+          </h2>
+          <Link
+            href={`/center/students/${id}/edit`}
+            className="rounded-md border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
+          >
+            {tr(locale, "편집", "Sửa")}
+          </Link>
+        </div>
+        <p className="mb-4 text-xs text-slate-500">
+          {tr(locale, "등록일", "Đăng ký")}:{" "}
+          {new Date(student.created_at).toLocaleDateString(dateLocale)}
+        </p>
         <dl className="grid grid-cols-1 gap-x-6 gap-y-4 text-sm sm:grid-cols-2">
           <Field label={tr(locale, "생년월일", "Ngày sinh")} value={student.dob} />
           <Field
@@ -195,17 +160,17 @@ export default async function StudentDetailPage({
         ) : null}
       </section>
 
-      {/* 지원 의향 list */}
+      {/* 대학 정보 (요약) — 관리는 '대학 선택' 탭 */}
       <section className="rounded-lg border border-slate-200 bg-white p-6">
         <header className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-slate-900">
-            {tr(locale, "지원 현황", "Đơn tuyển sinh")}
+            {tr(locale, "대학 정보", "Thông tin trường")}
           </h2>
           <Link
-            href={`/center/students/${id}/applications/new`}
-            className="rounded-md bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-800"
+            href={`/center/students/${id}/select`}
+            className="shrink-0 rounded-md border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
           >
-            {tr(locale, "+ 지원 추가", "+ Thêm đơn")}
+            {tr(locale, "대학 선택 →", "Chọn trường →")}
           </Link>
         </header>
 
@@ -213,91 +178,34 @@ export default async function StudentDetailPage({
           <div className="rounded-md border border-dashed border-slate-300 px-4 py-8 text-center text-sm text-slate-500">
             {tr(
               locale,
-              "등록된 지원 내역이 없습니다.",
-              "Chưa có đơn tuyển sinh nào."
-            )}
-            <br />
-            {tr(
-              locale,
-              '"+ 지원 추가"를 눌러 승인된 모집요강과 학생을 연결하세요.',
-              'Nhấn "+ Thêm đơn" để liên kết sinh viên với hồ sơ tuyển sinh đã được duyệt.'
+              "아직 선택한 대학이 없습니다. '대학 선택'에서 모집 중인 대학·학과를 선택하세요.",
+              "Chưa chọn trường. Hãy chọn trường·ngành đang tuyển ở 'Chọn trường'."
             )}
           </div>
         ) : (
           <ul className="divide-y divide-slate-200">
             {applications.map((app) => (
-              <li key={app.id} className="py-3">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1">
-                    <div className="font-medium text-slate-900">
-                      {app.target_department_label ?? "—"}
-                    </div>
-                    <div className="mt-0.5 text-xs text-slate-500">
-                      {app.next_action ? `${app.next_action}` : null}
-                      {app.next_action && app.next_deadline ? " · " : null}
-                      {app.next_deadline
-                        ? tr(
-                            locale,
-                            `마감 ${new Date(app.next_deadline).toLocaleDateString(dateLocale)}`,
-                            `Hạn ${new Date(app.next_deadline).toLocaleDateString(dateLocale)}`
-                          )
-                        : null}
-                      {!app.next_action && !app.next_deadline ? (
-                        <span className="text-slate-400">
-                          {tr(
-                            locale,
-                            "진행 메모 없음",
-                            "Chưa có ghi chú tiến độ"
-                          )}
-                        </span>
-                      ) : null}
-                    </div>
+              <li
+                key={app.id}
+                className="flex items-center justify-between gap-3 py-2.5"
+              >
+                <div className="min-w-0">
+                  <div className="truncate font-medium text-slate-900">
+                    {app.target_department_label ?? "—"}
                   </div>
-
-                  <div className="flex items-center gap-1.5">
-                    {/* inline status form */}
-                    <form
-                      action={updateApplicationStatusAction.bind(
-                        null,
-                        app.id,
-                        id
+                  {app.next_deadline ? (
+                    <div className="text-xs text-slate-500">
+                      {tr(
+                        locale,
+                        `마감 ${new Date(app.next_deadline).toLocaleDateString(dateLocale)}`,
+                        `Hạn ${new Date(app.next_deadline).toLocaleDateString(dateLocale)}`
                       )}
-                      className="flex items-center gap-1.5"
-                    >
-                      <select
-                        name="status"
-                        defaultValue={app.status}
-                        className="rounded-md border border-slate-300 px-2 py-1 text-xs focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-300"
-                      >
-                        {APP_STATUS_VALUES.map((s) => (
-                          <option key={s} value={s}>
-                            {appStatusLabel(locale, s)}
-                          </option>
-                        ))}
-                      </select>
-                      <button
-                        type="submit"
-                        className="rounded-md border border-slate-300 px-2 py-1 text-xs text-slate-700 hover:bg-slate-100"
-                        title={tr(locale, "변경사항 저장", "Lưu thay đổi")}
-                      >
-                        {tr(locale, "저장", "Lưu")}
-                      </button>
-                    </form>
-                    <Link
-                      href={`/center/students/${id}/applications/${app.id}/edit`}
-                      className="rounded-md border border-slate-300 px-2 py-1 text-xs text-slate-700 hover:bg-slate-100"
-                      title={tr(locale, "학과 / 진행 수정", "Chỉnh sửa ngành / tiến độ")}
-                    >
-                      {tr(locale, "수정", "Sửa")}
-                    </Link>
-                    <DeleteApplicationButton
-                      locale={locale}
-                      applicationId={app.id}
-                      studentId={id}
-                      departmentLabel={app.target_department_label}
-                    />
-                  </div>
+                    </div>
+                  ) : null}
                 </div>
+                <span className="shrink-0 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600">
+                  {appStatusLabel(locale, app.status)}
+                </span>
               </li>
             ))}
           </ul>
@@ -318,102 +226,3 @@ function Field({ label, value }: { label: string; value: string | null }) {
   );
 }
 
-/**
- * 학생 처리 1방향 플로우:
- *   기본 등록 → 대학 선택 → 상세 정보 → 서류 작성 → 검토·컨펌 → 다운로드
- *   (자기소개서·입학원서는 '서류 작성' 한 단계로 통합)
- */
-function ProcessFlow({
-  locale,
-  studentId,
-  hasApplications,
-}: {
-  locale: Locale;
-  studentId: string;
-  hasApplications: boolean;
-}) {
-  const base = `/center/students/${studentId}`;
-  const steps: Array<{
-    n: number;
-    label: string;
-    href: string;
-    done: boolean;
-  }> = [
-    {
-      n: 1,
-      label: tr(locale, "기본 등록", "Đăng ký"),
-      href: `${base}/edit`,
-      done: true, // 이 학생이 존재 = 등록 완료
-    },
-    {
-      n: 2,
-      label: tr(locale, "대학 선택", "Chọn trường"),
-      href: `${base}/applications/new`,
-      done: hasApplications,
-    },
-    {
-      n: 3,
-      label: tr(locale, "상세 정보", "Thông tin chi tiết"),
-      href: `${base}/data`,
-      done: false,
-    },
-    {
-      n: 4,
-      label: tr(locale, "서류 작성", "Soạn hồ sơ"),
-      href: `${base}/forms`,
-      done: false,
-    },
-    {
-      n: 5,
-      label: tr(locale, "검토·컨펌", "Kiểm tra & xác nhận"),
-      href: `${base}/forms`,
-      done: false,
-    },
-    {
-      n: 6,
-      label: tr(locale, "다운로드", "Tải hồ sơ"),
-      href: `${base}/forms`,
-      done: false,
-    },
-  ];
-
-  return (
-    <div className="mt-5">
-      <nav className="flex flex-wrap items-center gap-y-2">
-        {steps.map((s, i) => (
-          <Fragment key={s.n}>
-            <Link
-              href={s.href}
-              className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
-                s.done
-                  ? "border-emerald-200 bg-emerald-50 text-emerald-800 hover:bg-emerald-100"
-                  : "border-slate-200 bg-white text-slate-700 hover:border-emerald-300 hover:bg-emerald-50"
-              }`}
-            >
-              <span
-                className={`flex size-5 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
-                  s.done
-                    ? "bg-emerald-600 text-white"
-                    : "bg-slate-200 text-slate-600"
-                }`}
-              >
-                {s.done ? "✓" : s.n}
-              </span>
-              {s.label}
-            </Link>
-            {i < steps.length - 1 ? (
-              <span className="px-1 text-slate-300">→</span>
-            ) : null}
-          </Fragment>
-        ))}
-      </nav>
-      <p className="mt-2 text-xs text-slate-500">
-        {tr(
-          locale,
-          "입학원서·자기소개서는 '서류 작성' 단계에서 함께 작성하고, 검토·수정 후 완성본을 내려받습니다.",
-          "Đơn nhập học và bài luận được soạn cùng nhau ở bước 'Soạn hồ sơ', sau khi kiểm tra & chỉnh sửa thì tải bản hoàn chỉnh."
-        )}
-      </p>
-    </div>
-  );
-}
