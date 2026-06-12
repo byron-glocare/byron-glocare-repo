@@ -1,10 +1,17 @@
 /**
  * /center/students/[id]/final — 최종 서류 탭.
- *   (P4에서 본격 구현: 작성서류 생성 + 제출서류 리네임 다운로드 통합)
- *   현재는 기존 '서류 작성'(/forms) 화면으로 연결한다.
+ *   지원(대학/학과/학기)별로 최종 제출할 서류를 모아 다운로드.
+ *     · 작성서류(form_files): 학생 데이터 채워 DOCX 생성·다운로드 (정보 충분/부족 표시)
+ *     · 제출서류(submissions): 업로드한 파일을 규칙 파일명으로 리네임 다운로드
+ *   준비 완료 여부(정보 충분 / 업로드됨)를 배지로 구분.
  */
 
-import { redirect } from "next/navigation";
+import Link from "next/link";
+
+import { verifyCenterSession } from "@/lib/center/dal";
+import { createCenterClient } from "@/lib/supabase/center";
+import { residenceFromStudentLocation } from "@/lib/admission/offering-languages";
+import { getLocale, tr } from "@/lib/i18n";
 
 export default async function FinalPage({
   params,
@@ -12,5 +19,240 @@ export default async function FinalPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  redirect(`/center/students/${id}/forms`);
+  await verifyCenterSession();
+  const locale = await getLocale();
+  const supabase = await createCenterClient();
+  const base = `/center/students/${id}`;
+
+  const { data: student } = await supabase
+    .from("study_managed_students")
+    .select("id, name, location")
+    .eq("id", id)
+    .maybeSingle();
+  if (!student) {
+    return null;
+  }
+  const residence = residenceFromStudentLocation(student.location);
+
+  const { data: apps } = await supabase
+    .from("study_applications")
+    .select(
+      "id, admission_spec_id, target_department_id, target_department_label, selected_language"
+    )
+    .eq("student_id", id);
+  const applications = apps ?? [];
+  const specIds = Array.from(
+    new Set(applications.map((a) => a.admission_spec_id))
+  );
+
+  const [{ data: specs }, { data: vals }, { data: files }] = await Promise.all([
+    specIds.length > 0
+      ? supabase
+          .from("study_admission_specs")
+          .select("id, university_id, term")
+          .in("id", specIds)
+      : Promise.resolve({ data: [] as Array<{ id: string; university_id: number; term: string }> }),
+    supabase
+      .from("study_student_data_values")
+      .select("data_type_key")
+      .eq("student_id", id),
+    supabase
+      .from("study_student_submission_files")
+      .select("submission_id")
+      .eq("student_id", id),
+  ]);
+  const specMap = new Map((specs ?? []).map((s) => [s.id, s]));
+  const filledKeys = new Set((vals ?? []).map((v) => v.data_type_key));
+  const uploadedSubs = new Set((files ?? []).map((f) => f.submission_id));
+
+  const uniIds = Array.from(new Set((specs ?? []).map((s) => s.university_id)));
+  const [{ data: unis }, { data: forms }, { data: subs }] = await Promise.all([
+    uniIds.length > 0
+      ? supabase.from("universities").select("id, name_ko, name_vi").in("id", uniIds)
+      : Promise.resolve({ data: [] as Array<{ id: number; name_ko: string; name_vi: string | null }> }),
+    uniIds.length > 0
+      ? supabase
+          .from("study_admission_form_files")
+          .select("id, university_id, department_name, name_ko, required_data_type_keys")
+          .in("university_id", uniIds)
+          .eq("is_current", true)
+      : Promise.resolve({ data: [] as Array<{ id: string; university_id: number; department_name: string | null; name_ko: string; required_data_type_keys: string[] | null }> }),
+    supabase
+      .from("study_required_submissions")
+      .select("id, university_id, department_id, name_ko, applies_to_languages, applies_to_locations")
+      .eq("is_active", true)
+      .eq("status", "approved"),
+  ]);
+  const uniMap = new Map((unis ?? []).map((u) => [u.id, u]));
+  const uniName = (uid: number) => {
+    const u = uniMap.get(uid);
+    return (locale === "ko" ? u?.name_ko : u?.name_vi) ?? u?.name_ko ?? `#${uid}`;
+  };
+
+  // 지원별 묶음
+  const groups = applications.map((a) => {
+    const spec = specMap.get(a.admission_spec_id);
+    const uni = spec?.university_id ?? null;
+    const writeForms = (forms ?? []).filter((f) => {
+      if (f.university_id !== uni) return false;
+      if (f.department_name == null) return true;
+      return a.target_department_label === f.department_name;
+    });
+    const submitDocs = (subs ?? []).filter((s) => {
+      const uniMatch = s.university_id == null || s.university_id === uni;
+      const deptMatch =
+        s.department_id == null || s.department_id === a.target_department_id;
+      const langs = (s.applies_to_languages ?? []) as string[];
+      const locs = (s.applies_to_locations ?? []) as string[];
+      const langOk =
+        langs.length === 0 ||
+        (a.selected_language != null && langs.includes(a.selected_language));
+      const locOk = locs.length === 0 || locs.includes(residence);
+      return uniMatch && deptMatch && langOk && locOk;
+    });
+    return { app: a, spec, writeForms, submitDocs };
+  });
+
+  return (
+    <div className="space-y-5">
+      <header>
+        <h1 className="text-xl font-bold text-slate-900">
+          {tr(locale, "최종 서류", "Hồ sơ cuối")}
+        </h1>
+        <p className="mt-1 text-sm text-slate-600">
+          {tr(
+            locale,
+            "지원별 최종 제출 서류입니다. 작성서류는 생성·다운로드, 제출서류는 업로드 파일을 규칙 파일명으로 내려받습니다.",
+            "Hồ sơ cuối theo từng nguyện vọng. Hồ sơ soạn: tạo & tải; hồ sơ nộp: tải tệp đã upload với tên chuẩn."
+          )}
+        </p>
+      </header>
+
+      {groups.length === 0 ? (
+        <div className="rounded-lg border border-dashed border-slate-300 bg-white p-12 text-center text-sm text-slate-500">
+          {tr(
+            locale,
+            "선택한 대학이 없습니다. '대학 선택'에서 먼저 지원을 등록하세요.",
+            "Chưa chọn trường. Hãy đăng ký ở 'Chọn trường'."
+          )}
+        </div>
+      ) : (
+        groups.map(({ app, spec, writeForms, submitDocs }) => (
+          <section
+            key={app.id}
+            className="rounded-lg border border-slate-200 bg-white p-6"
+          >
+            <div className="mb-3">
+              <h2 className="text-base font-semibold text-slate-900">
+                {spec ? uniName(spec.university_id) : "—"}
+                {app.target_department_label ? ` · ${app.target_department_label}` : ""}
+              </h2>
+              <p className="text-xs text-slate-500">{spec?.term ?? ""}</p>
+            </div>
+
+            {/* 작성서류 */}
+            <div className="mb-4">
+              <h3 className="mb-1.5 text-sm font-medium text-slate-700">
+                {tr(locale, "작성서류 (생성)", "Hồ sơ soạn")}
+              </h3>
+              {writeForms.length === 0 ? (
+                <p className="pl-1 text-xs text-slate-400">
+                  {tr(locale, "없음", "Không có")}
+                </p>
+              ) : (
+                <ul className="space-y-1.5">
+                  {writeForms.map((f) => {
+                    const ready = (f.required_data_type_keys ?? []).every((k) =>
+                      filledKeys.has(k)
+                    );
+                    return (
+                      <li
+                        key={f.id}
+                        className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-slate-100 bg-slate-50/50 px-3 py-2"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium text-slate-800">
+                            {f.name_ko}
+                          </span>
+                          {ready ? (
+                            <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] text-emerald-700">
+                              {tr(locale, "정보 충분", "Đủ thông tin")}
+                            </span>
+                          ) : (
+                            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] text-amber-700">
+                              {tr(locale, "정보 부족", "Thiếu thông tin")}
+                            </span>
+                          )}
+                        </div>
+                        <a
+                          href={`${base}/final/docx?form=${f.id}&app=${app.id}`}
+                          className="shrink-0 rounded-md bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-800"
+                        >
+                          {tr(locale, "생성 · 다운로드", "Tạo & tải")}
+                        </a>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </div>
+
+            {/* 제출서류 */}
+            <div>
+              <h3 className="mb-1.5 text-sm font-medium text-slate-700">
+                {tr(locale, "제출서류 (업로드)", "Hồ sơ nộp")}
+              </h3>
+              {submitDocs.length === 0 ? (
+                <p className="pl-1 text-xs text-slate-400">
+                  {tr(locale, "없음", "Không có")}
+                </p>
+              ) : (
+                <ul className="space-y-1.5">
+                  {submitDocs.map((s) => {
+                    const uploaded = uploadedSubs.has(s.id);
+                    return (
+                      <li
+                        key={s.id}
+                        className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-slate-100 bg-slate-50/50 px-3 py-2"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium text-slate-800">
+                            {s.name_ko}
+                          </span>
+                          {uploaded ? (
+                            <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] text-emerald-700">
+                              {tr(locale, "업로드됨", "Đã tải")}
+                            </span>
+                          ) : (
+                            <span className="rounded-full bg-slate-200 px-2 py-0.5 text-[11px] text-slate-600">
+                              {tr(locale, "미업로드", "Chưa tải")}
+                            </span>
+                          )}
+                        </div>
+                        {uploaded ? (
+                          <a
+                            href={`${base}/final/submission?sub=${s.id}&app=${app.id}`}
+                            className="shrink-0 rounded-md border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100"
+                          >
+                            {tr(locale, "다운로드", "Tải")}
+                          </a>
+                        ) : (
+                          <Link
+                            href={`${base}/documents`}
+                            className="shrink-0 rounded-md border border-slate-300 px-3 py-1.5 text-xs text-slate-500 hover:bg-slate-100"
+                          >
+                            {tr(locale, "서류 등록에서 올리기", "Tải ở 'Tải giấy tờ'")}
+                          </Link>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </div>
+          </section>
+        ))
+      )}
+    </div>
+  );
 }
