@@ -109,9 +109,9 @@ export default async function StudentOverviewPage({
     specIds.length > 0
       ? supabase
           .from("study_admission_specs")
-          .select("id, university_id, term, schedule")
+          .select("id, university_id, term, schedule, is_online_submission")
           .in("id", specIds)
-      : Promise.resolve({ data: [] as Array<{ id: string; university_id: number; term: string; schedule: unknown }> }),
+      : Promise.resolve({ data: [] as Array<{ id: string; university_id: number; term: string; schedule: unknown; is_online_submission: boolean | null }> }),
     supabase
       .from("study_student_data_values")
       .select("data_type_key")
@@ -134,10 +134,10 @@ export default async function StudentOverviewPage({
       uniIds.length > 0
         ? supabase
             .from("study_admission_form_files")
-            .select("id, university_id, department_name, name_ko, required_data_type_keys")
+            .select("id, university_id, department_name, name_ko, required_data_type_keys, essay_questions")
             .in("university_id", uniIds)
             .eq("is_current", true)
-        : Promise.resolve({ data: [] as Array<{ id: string; university_id: number; department_name: string | null; name_ko: string; required_data_type_keys: string[] | null }> }),
+        : Promise.resolve({ data: [] as Array<{ id: string; university_id: number; department_name: string | null; name_ko: string; required_data_type_keys: string[] | null; essay_questions: unknown }> }),
       uniIds.length > 0
         ? supabase
             .from("study_required_submissions")
@@ -179,6 +179,16 @@ export default async function StudentOverviewPage({
       return uniMatch && deptMatch && langOk && locOk;
     });
   });
+
+  // 추가 도구 노출 판정 — 새 5탭에 없는 기능을 관련 있을 때만 안내
+  //   · 온라인 접수 대학이 있으면 접수 가이드(/forms)
+  //   · 서술형 문항이 있으면 AI 자기소개서(/essays)
+  const hasOnlineSubmission = applications.some(
+    (a) => specMap.get(a.admission_spec_id)?.is_online_submission === true
+  );
+  const hasEssayQuestions = applicableForms.some(
+    (f) => Array.isArray(f.essay_questions) && f.essay_questions.length > 0
+  );
 
   // 상세정보 완성도 = 필요 데이터 키 중 채워진 비율
   const requiredKeys = new Set<string>();
@@ -479,6 +489,58 @@ export default async function StudentOverviewPage({
           </div>
         )}
       </section>
+
+      {/* 5. 추가 도구 — 새 탭에 없는 기능을 관련 있을 때만 안내 */}
+      {hasOnlineSubmission || hasEssayQuestions ? (
+        <section className="rounded-lg border border-slate-200 bg-white p-6">
+          <h2 className="mb-1 text-base font-semibold text-slate-900">
+            {tr(locale, "추가 도구", "Công cụ khác")}
+          </h2>
+          <p className="mb-3 text-xs text-slate-500">
+            {tr(
+              locale,
+              "이 학생에게 해당하는 경우에만 표시됩니다.",
+              "Chỉ hiển thị khi áp dụng cho sinh viên này."
+            )}
+          </p>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            {hasOnlineSubmission ? (
+              <Link
+                href={`${base}/forms`}
+                className="flex-1 rounded-md border border-sky-200 bg-sky-50 px-4 py-3 hover:bg-sky-100"
+              >
+                <div className="text-sm font-semibold text-sky-900">
+                  🔗 {tr(locale, "온라인 접수 안내", "Hướng dẫn nộp trực tuyến")}
+                </div>
+                <div className="mt-0.5 text-xs text-sky-700">
+                  {tr(
+                    locale,
+                    "온라인으로 접수하는 대학의 가이드·접수폼·제출서류를 확인합니다.",
+                    "Hướng dẫn, biểu mẫu, giấy tờ cho trường nộp trực tuyến."
+                  )}
+                </div>
+              </Link>
+            ) : null}
+            {hasEssayQuestions ? (
+              <Link
+                href={`${base}/essays`}
+                className="flex-1 rounded-md border border-violet-200 bg-violet-50 px-4 py-3 hover:bg-violet-100"
+              >
+                <div className="text-sm font-semibold text-violet-900">
+                  ✍️ {tr(locale, "AI 자기소개서", "Bài luận AI")}
+                </div>
+                <div className="mt-0.5 text-xs text-violet-700">
+                  {tr(
+                    locale,
+                    "양식의 서술형 문항 답변을 학생 정보 기반으로 작성합니다.",
+                    "Soạn câu trả lời tự luận dựa trên thông tin sinh viên."
+                  )}
+                </div>
+              </Link>
+            ) : null}
+          </div>
+        </section>
+      ) : null}
     </div>
   );
 }
