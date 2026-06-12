@@ -16,7 +16,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { dash } from "@/lib/format";
 import type { UniversityInput } from "@/lib/validators";
 
 export const dynamic = "force-dynamic";
@@ -45,7 +44,7 @@ export default async function UniversityEditPage({
   if (!Number.isFinite(numericId)) notFound();
 
   const supabase = await createClient();
-  const [{ data: row, error }, { data: depts }, { data: specs }] =
+  const [{ data: row, error }, { data: depts }, { data: specs }, { data: offerings }] =
     await Promise.all([
       supabase.from("universities").select("*").eq("id", numericId).single(),
       supabase
@@ -60,9 +59,28 @@ export default async function UniversityEditPage({
         .select("id, term, program_type, admission_category, status, departments, updated_at")
         .eq("university_id", numericId)
         .order("updated_at", { ascending: false }),
+      supabase
+        .from("study_offerings")
+        .select("department_id, term, status")
+        .eq("university_id", numericId),
     ]);
 
   if (error || !row) notFound();
+
+  // 학과별 모집(노출 중) 학기 태그 + 모집 노출 여부
+  const publishedTermsByDept = new Map<number, string[]>();
+  for (const o of offerings ?? []) {
+    if (o.status !== "published" || o.department_id == null) continue;
+    const arr = publishedTermsByDept.get(o.department_id) ?? [];
+    if (!arr.includes(o.term)) arr.push(o.term);
+    publishedTermsByDept.set(o.department_id, arr);
+  }
+  // 모집 노출 중인 학과 우선 → 그다음 노출 순서
+  const sortedDepts = (depts ?? []).slice().sort((a, b) => {
+    const ap = publishedTermsByDept.has(a.id) ? 0 : 1;
+    const bp = publishedTermsByDept.has(b.id) ? 0 : 1;
+    return ap - bp || a.sort_order - b.sort_order;
+  });
 
   const defaultValues: Partial<UniversityInput> = {
     active: row.active,
@@ -95,7 +113,7 @@ export default async function UniversityEditPage({
   return (
     <>
       <PageHeader
-        title={`${row.emoji ?? "🎓"} ${row.name_ko}`}
+        title={row.name_ko}
         description={`대학 #${numericId}`}
         breadcrumbs={[
           { href: "/universities", label: "대학교" },
@@ -133,15 +151,15 @@ export default async function UniversityEditPage({
                 <TableRow>
                   <TableHead className="w-12">아이콘</TableHead>
                   <TableHead>학과명</TableHead>
-                  <TableHead className="w-28">코스</TableHead>
-                  <TableHead className="w-20 text-center">뱃지</TableHead>
-                  <TableHead className="w-20 text-center">정렬</TableHead>
+                  <TableHead>모집학기</TableHead>
+                  <TableHead className="w-24 text-center">노출 순서</TableHead>
                   <TableHead className="w-20 text-center">상태</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {depts.map((d) => {
+                {sortedDepts.map((d) => {
                   const href = `/departments/${d.id}`;
+                  const terms = publishedTermsByDept.get(d.id) ?? [];
                   return (
                     <TableRow key={d.id} className="cursor-pointer">
                       <TableCell>
@@ -162,17 +180,24 @@ export default async function UniversityEditPage({
                           </Link>
                         )}
                       </TableCell>
-                      <TableCell className="text-xs text-muted-foreground">
-                        <Link href={href} className="block">
-                          {dash(d.course)}
-                        </Link>
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <Link href={href} className="block">
-                          {d.badge ? (
-                            <Badge variant="outline">{d.badge}</Badge>
+                      <TableCell>
+                        <Link href={href} className="flex flex-wrap gap-1">
+                          {terms.length === 0 ? (
+                            <span className="text-xs text-muted-foreground">
+                              모집 없음
+                            </span>
                           ) : (
-                            <span className="text-xs text-muted-foreground">—</span>
+                            terms
+                              .slice()
+                              .sort((a, b) => b.localeCompare(a))
+                              .map((t) => (
+                                <Badge
+                                  key={t}
+                                  className="border-success/20 bg-success/10 text-[10px] text-success"
+                                >
+                                  {t}
+                                </Badge>
+                              ))
                           )}
                         </Link>
                       </TableCell>
@@ -220,7 +245,7 @@ export default async function UniversityEditPage({
                 className={buttonVariants({ variant: "outline", size: "sm" })}
               >
                 <Plus className="size-4" />
-                모집요강 추가
+                새학기 모집요강 추가
               </Link>
             </div>
           </div>

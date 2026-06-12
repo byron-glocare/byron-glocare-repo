@@ -181,19 +181,39 @@ export function UniversityForm({
               <CardTitle className="text-base">기본 정보</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              <FormField
+                control={form.control}
+                name="active"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>공개 여부</FormLabel>
+                    <FormControl>
+                      <label className="flex items-center gap-2 text-sm h-9">
+                        <input
+                          type="checkbox"
+                          checked={field.value ?? true}
+                          onChange={(e) => field.onChange(e.target.checked)}
+                          className="size-4"
+                        />
+                        활성
+                      </label>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <div className="grid sm:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
-                  name="emoji"
+                  name="name_ko"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>이모지</FormLabel>
+                      <FormLabel>
+                        대학명 (KR) <span className="text-destructive">*</span>
+                      </FormLabel>
                       <FormControl>
-                        <Input
-                          {...field}
-                          value={field.value ?? ""}
-                          placeholder="🎓"
-                        />
+                        <Input {...field} placeholder="예: 호산대학교" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -201,20 +221,12 @@ export function UniversityForm({
                 />
                 <FormField
                   control={form.control}
-                  name="active"
+                  name="name_vi"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>공개 여부</FormLabel>
+                      <FormLabel>대학명 (VN)</FormLabel>
                       <FormControl>
-                        <label className="flex items-center gap-2 text-sm h-9">
-                          <input
-                            type="checkbox"
-                            checked={field.value ?? true}
-                            onChange={(e) => field.onChange(e.target.checked)}
-                            className="size-4"
-                          />
-                          활성
-                        </label>
+                        <Input {...field} value={field.value ?? ""} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -222,42 +234,13 @@ export function UniversityForm({
                 />
               </div>
 
-              <FormField
-                control={form.control}
-                name="name_ko"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      대학명 (한) <span className="text-destructive">*</span>
-                    </FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="예: 호산대학교" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="name_vi"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>대학명 (베)</FormLabel>
-                    <FormControl>
-                      <Input {...field} value={field.value ?? ""} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               <div className="grid sm:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="region_ko"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>지역 (한)</FormLabel>
+                      <FormLabel>지역 (KR)</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
@@ -274,7 +257,7 @@ export function UniversityForm({
                   name="region_vi"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>지역 (베)</FormLabel>
+                      <FormLabel>지역 (VN)</FormLabel>
                       <FormControl>
                         <Input {...field} value={field.value ?? ""} />
                       </FormControl>
@@ -352,7 +335,7 @@ export function UniversityForm({
                   name="tags_ko"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>태그 (한)</FormLabel>
+                      <FormLabel>태그 (KR)</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
@@ -370,7 +353,7 @@ export function UniversityForm({
                   name="tags_vi"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>태그 (베)</FormLabel>
+                      <FormLabel>태그 (VN)</FormLabel>
                       <FormControl>
                         <Input {...field} value={field.value ?? ""} />
                       </FormControl>
@@ -414,7 +397,7 @@ export function UniversityForm({
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">상세 설명 (선택)</CardTitle>
+            <CardTitle className="text-base">상세 설명</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid sm:grid-cols-2 gap-4">
@@ -423,7 +406,7 @@ export function UniversityForm({
                 name="desc_ko"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>설명 (한)</FormLabel>
+                    <FormLabel>설명 (KR)</FormLabel>
                     <FormControl>
                       <Textarea
                         {...field}
@@ -440,46 +423,13 @@ export function UniversityForm({
                 name="desc_vi"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>설명 (베)</FormLabel>
+                    <FormLabel>설명 (VN)</FormLabel>
                     <FormControl>
                       <Textarea
                         {...field}
                         value={field.value ?? ""}
                         rows={3}
                       />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="grid sm:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="class_days_ko"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>수업일 (한)</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        value={field.value ?? ""}
-                        placeholder="예: 월~금 9-18시"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="class_days_vi"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>수업일 (베)</FormLabel>
-                    <FormControl>
-                      <Input {...field} value={field.value ?? ""} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
