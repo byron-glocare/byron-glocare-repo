@@ -20,7 +20,15 @@
 - **최종 서류**(final): 지원별 작성서류 **DOCX 생성**(buildSheetDocx, docx 패키지) +
   제출서류 **리네임 다운로드**. 파일명 `양식명/서류명_이름(영대)_대학_학과_학기.확장자`.
   라우트 final/docx, final/submission. (HWPX 기존 /forms 는 잔존.)
-- ⏳ 남은 것: **서류 업로드 AI 추출**(보류). 옛 /forms 정리.
+- ✅ **서류 업로드 AI 추출 완료** (커밋 `ccd21d6`): 제출서류·첨부파일(여권·성적표·가족관계·잔고·TOPIK)
+  → Claude Sonnet vision → 정보입력 값 **제안→운영자 확인 적용**. lib/admission/extract-student-data.ts
+  (읽은 값만, select/date/number 정규화), data/extract-actions.ts(파일수집·다운로드 최대12개·현재값비교),
+  data/ai-extract-panel.tsx('AI로 채우기' 버튼+검토패널, 기본체크=빈항목만, 신뢰도/출처 배지),
+  student-data-editor 상단 연결. ⚠ 실사용 검증(학생+업로드서류+ANTHROPIC_API_KEY) 미수행.
+- ✅ **옛 /forms 정리 = 삭제 안 함, 재연결** (커밋 `0cc8448`): /forms·/essays 가 단순 죽은코드가 아니라
+  **온라인 접수 안내**(가이드·접수폼·제출서류)와 **AI 자기소개서**의 유일한 진입점 → 삭제 시 기능 손실.
+  개요 '추가 도구' 섹션에서 관련 있을 때만 재노출(is_online_submission→/forms, essay_questions→/essays).
+  옛 라우트·① 작성양식생성(최종서류와 중복)은 보존(무해).
 
 ## 0. 진행 상황 (2026-06-10)
 - ✅ **우선순위 §5-1 모집(offering) 엔티티 완료** (커밋 `ad0d8ae`, `fe29c9a`):
