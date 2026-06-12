@@ -3,6 +3,25 @@
 > 새 세션은 **이 문서부터** 읽고 시작. 직전 단계: B5(직접제출·온라인접수·서명·파생 등) 완료.
 > 관련: `B5_REDESIGN_ROADMAP.md`(이전 단계), `spec-schema.ts`(추출 스키마), `C1_offerings.sql`(모집 테이블).
 
+## 0-B. 학생 상세 페이지 탭 재설계 (2026-06-12)
+> 센터(3000) 학생 상세를 **고정 탭 위저드**로 전면 재구성. 커밋 다수.
+> ⚠ **운영자 실행 필요 SQL**: `C4_application_status.sql`(단계값), `C5_student_submission_files.sql`(제출서류 파일) — **둘 다 실행 완료**.
+- **탭 구조**(layout.tsx + student-tabs.tsx, sticky): 개요 → 대학 선택 → 서류 등록 → 정보 입력 → 최종 서류.
+  글로벌 기본정보수정 제거(개요 '편집'), 학생삭제 작게.
+- **개요**(page.tsx) = 모아보기 4섹션(없으면 '없음'): 기본정보(+편집) / 대학정보(대학·학과·학기 +
+  **다가오는 일정**=모집요강 schedule, 단계 즉시변경 StatusSelect, 지원포기, 모집요강 버튼) /
+  상세정보(완성도 막대) / 서류(준비됨·미완료). 작성서류 완비 시 **1회 팝업**(DocsCompletePopup)+배너.
+- **단계 재정의**(C4): payment_pending/preparing/docs_complete/submitted/enrolled/rejected/cancelled.
+  study.ts ApplicationStatus, applications/status.ts(라벨/톤).
+- **서류 등록**(documents): '제출서류 = 업로드'로 통합. 제출서류 목록 각 항목에 업로드 슬롯
+  (study_student_submission_files, C5). 발급조건 노출. 첨부파일(파일타입 표준데이터) 섹션 폐지.
+  공통 로더 lib/center/student-data-context.ts. (AI 자동추출은 보류.)
+- **정보 입력**(data): 이름변경 + 파일타입 제외(서류 등록으로 이동).
+- **최종 서류**(final): 지원별 작성서류 **DOCX 생성**(buildSheetDocx, docx 패키지) +
+  제출서류 **리네임 다운로드**. 파일명 `양식명/서류명_이름(영대)_대학_학과_학기.확장자`.
+  라우트 final/docx, final/submission. (HWPX 기존 /forms 는 잔존.)
+- ⏳ 남은 것: **서류 업로드 AI 추출**(보류). 옛 /forms 정리.
+
 ## 0. 진행 상황 (2026-06-10)
 - ✅ **우선순위 §5-1 모집(offering) 엔티티 완료** (커밋 `ad0d8ae`, `fe29c9a`):
   - `study_offerings` 테이블 라이브 적용(`C1_offerings.sql`): 대학×학과×학기 + intake_quota(모집수,
