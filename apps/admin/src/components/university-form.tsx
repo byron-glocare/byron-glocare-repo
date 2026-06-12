@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Loader2, Save, Trash2 } from "lucide-react";
+import { ImagePlus, Loader2, Save, Trash2, X } from "lucide-react";
 
 import {
   universitySchema,
@@ -17,6 +17,7 @@ import {
   updateUniversity,
   deleteUniversity,
   createSpecFromExtraction,
+  uploadUniversityImage,
 } from "@/app/(app)/universities/actions";
 import {
   UniversityAdmissionPrefill,
@@ -369,10 +370,16 @@ export function UniversityForm({
                   name="logo_url"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>로고 URL</FormLabel>
+                      <FormLabel>로고</FormLabel>
                       <FormControl>
-                        <Input {...field} value={field.value ?? ""} />
+                        <ImageUploadField
+                          kind="logo"
+                          square
+                          value={field.value ?? null}
+                          onChange={(url) => field.onChange(url)}
+                        />
                       </FormControl>
+                      <FormDescription>정사각형 이미지 권장</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -382,9 +389,13 @@ export function UniversityForm({
                   name="photo_url"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>대표 사진 URL</FormLabel>
+                      <FormLabel>대표 사진</FormLabel>
                       <FormControl>
-                        <Input {...field} value={field.value ?? ""} />
+                        <ImageUploadField
+                          kind="photo"
+                          value={field.value ?? null}
+                          onChange={(url) => field.onChange(url)}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -635,4 +646,121 @@ export function UniversityForm({
       </form>
     </Form>
   );
+}
+
+/** 로고/대표사진 업로드 필드 — 파일 선택 → 공개 버킷 업로드 → URL 저장 */
+function ImageUploadField({
+  kind,
+  value,
+  onChange,
+  square,
+}: {
+  kind: "logo" | "photo";
+  value: string | null;
+  onChange: (url: string | null) => void;
+  square?: boolean;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [busy, setBusy] = useState(false);
+
+  async function handlePick(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (inputRef.current) inputRef.current.value = "";
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast.error("이미지 파일만 업로드할 수 있습니다.");
+      return;
+    }
+    setBusy(true);
+    try {
+      const base64 = await fileToBase64(file);
+      const r = await uploadUniversityImage({
+        kind,
+        base64,
+        fileName: file.name,
+        mimeType: file.type,
+      });
+      if (!r.ok) {
+        toast.error("업로드 실패", { description: r.error });
+        return;
+      }
+      onChange(r.data.url);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="space-y-2">
+      {value ? (
+        <div className="flex items-start gap-3">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={value}
+            alt={kind}
+            className={
+              square
+                ? "size-20 rounded-md border object-cover"
+                : "h-20 w-32 rounded-md border object-cover"
+            }
+          />
+          <div className="flex flex-col gap-1.5">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={busy}
+              onClick={() => inputRef.current?.click()}
+            >
+              {busy ? <Loader2 className="size-4 animate-spin" /> : <ImagePlus className="size-4" />}
+              변경
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="text-destructive hover:bg-destructive/10"
+              disabled={busy}
+              onClick={() => onChange(null)}
+            >
+              <X className="size-4" />
+              삭제
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          disabled={busy}
+          onClick={() => inputRef.current?.click()}
+        >
+          {busy ? <Loader2 className="size-4 animate-spin" /> : <ImagePlus className="size-4" />}
+          {busy ? "업로드 중…" : "이미지 업로드"}
+        </Button>
+      )}
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        onChange={handlePick}
+        className="hidden"
+      />
+    </div>
+  );
+}
+
+/** File → base64 (data URL 프리픽스 제거) */
+function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = String(reader.result);
+      const comma = result.indexOf(",");
+      resolve(comma >= 0 ? result.slice(comma + 1) : result);
+    };
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
 }

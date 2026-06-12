@@ -20,6 +20,50 @@ export type ActionResult<T = unknown> =
   | { ok: false; error: string };
 
 // =============================================================================
+// 이미지 업로드 (로고 / 대표사진) — 공개 버킷에 올리고 공개 URL 반환
+// =============================================================================
+
+const IMAGE_BUCKET = "admission-form-files";
+const MAX_IMAGE_BYTES = 10 * 1024 * 1024; // 10MB
+
+export async function uploadUniversityImage(input: {
+  kind: "logo" | "photo";
+  base64: string;
+  fileName: string;
+  mimeType: string;
+}): Promise<ActionResult<{ url: string }>> {
+  let supabase;
+  try {
+    ({ supabase } = await requireAuth());
+  } catch {
+    return { ok: false, error: "Unauthorized" };
+  }
+
+  const buffer = Buffer.from(input.base64, "base64");
+  if (buffer.byteLength === 0) return { ok: false, error: "빈 파일입니다." };
+  if (buffer.byteLength > MAX_IMAGE_BYTES) {
+    return { ok: false, error: "이미지가 너무 큽니다 (최대 10MB)." };
+  }
+
+  const safe = (input.fileName || "image")
+    .replace(/[^\w.\-]+/g, "_")
+    .slice(-120);
+  const path = `university-${input.kind}/${Date.now()}_${safe}`;
+
+  const { error: upErr } = await supabase.storage
+    .from(IMAGE_BUCKET)
+    .upload(path, buffer, {
+      contentType: input.mimeType || "image/png",
+      upsert: false,
+    });
+  if (upErr) return { ok: false, error: `업로드 실패: ${upErr.message}` };
+
+  const url = supabase.storage.from(IMAGE_BUCKET).getPublicUrl(path).data
+    .publicUrl;
+  return { ok: true, data: { url } };
+}
+
+// =============================================================================
 // universities CRUD
 // =============================================================================
 
