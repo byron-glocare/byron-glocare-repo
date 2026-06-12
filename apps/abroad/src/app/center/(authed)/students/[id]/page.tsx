@@ -15,6 +15,35 @@ import { getLocale, tr, type Locale } from "@/lib/i18n";
 import { updateApplicationStatusAction } from "./applications/actions";
 import { StatusSelect } from "./applications/status-select";
 import { DeleteApplicationButton } from "./applications/delete-application-button";
+import { DocsCompletePopup } from "./docs-complete-popup";
+
+/** 모집요강 schedule 에서 다가오는(오늘 이후) 일정 항목 추출 */
+function upcomingSchedule(
+  schedule: unknown,
+  locale: Locale,
+  dateLocale: string
+): Array<{ label: string; date: string }> {
+  const rounds =
+    schedule && typeof schedule === "object"
+      ? ((schedule as { rounds?: unknown[] }).rounds ?? [])
+      : [];
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const out: Array<{ label: string; date: string; t: number }> = [];
+  const push = (label: string, v: unknown) => {
+    if (typeof v !== "string" || !/^\d{4}-\d{2}-\d{2}/.test(v)) return;
+    const d = new Date(`${v.slice(0, 10)}T00:00:00`);
+    if (Number.isNaN(d.getTime()) || d.getTime() < today.getTime()) return;
+    out.push({ label, date: d.toLocaleDateString(dateLocale), t: d.getTime() });
+  };
+  for (const r of rounds as Array<Record<string, unknown>>) {
+    push(tr(locale, "원서 마감", "Hạn nộp đơn"), r.application_close);
+    push(tr(locale, "서류 마감", "Hạn nộp hồ sơ"), r.document_submission_close);
+    push(tr(locale, "면접", "Phỏng vấn"), r.interview);
+    push(tr(locale, "합격 발표", "Công bố KQ"), r.result_announcement);
+  }
+  return out.sort((a, b) => a.t - b.t).slice(0, 3);
+}
 
 function visaLabel(locale: Locale, visa: string): string {
   switch (visa) {
@@ -80,9 +109,9 @@ export default async function StudentOverviewPage({
     specIds.length > 0
       ? supabase
           .from("study_admission_specs")
-          .select("id, university_id, term")
+          .select("id, university_id, term, schedule")
           .in("id", specIds)
-      : Promise.resolve({ data: [] as Array<{ id: string; university_id: number; term: string }> }),
+      : Promise.resolve({ data: [] as Array<{ id: string; university_id: number; term: string; schedule: unknown }> }),
     supabase
       .from("study_student_data_values")
       .select("data_type_key")
@@ -178,7 +207,16 @@ export default async function StudentOverviewPage({
 
   return (
     <div className="space-y-5">
-      {/* 서류 작성 완료 제안 배너 */}
+      {/* 서류 완비 시 1회 팝업으로 단계 변경 제안 */}
+      {suggestDocsComplete && singleApp ? (
+        <DocsCompletePopup
+          locale={locale}
+          applicationId={singleApp.id}
+          studentId={id}
+        />
+      ) : null}
+
+      {/* 서류 작성 완료 제안 배너 (수동 변경용) */}
       {suggestDocsComplete && singleApp ? (
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-sky-200 bg-sky-50 px-4 py-3">
           <p className="text-sm text-sky-800">
@@ -267,6 +305,11 @@ export default async function StudentOverviewPage({
           <ul className="divide-y divide-slate-100">
             {applications.map((a) => {
               const spec = specMap.get(a.admission_spec_id);
+              const upcoming = upcomingSchedule(
+                spec?.schedule,
+                locale,
+                dateLocale
+              );
               return (
                 <li key={a.id} className="py-3 first:pt-0">
                   <div className="flex flex-wrap items-start justify-between gap-2">
@@ -281,15 +324,22 @@ export default async function StudentOverviewPage({
                       <div className="mt-1 text-xs text-slate-500">
                         {tr(locale, "다가오는 일정", "Lịch sắp tới")}:{" "}
                         {a.next_deadline ? (
-                          <span className="text-slate-700">
+                          <span className="mr-2 text-slate-700">
                             {tr(locale, "마감 ", "Hạn ")}
                             {new Date(a.next_deadline).toLocaleDateString(dateLocale)}
                           </span>
-                        ) : (
+                        ) : null}
+                        {upcoming.length > 0 ? (
+                          <span className="text-slate-600">
+                            {upcoming
+                              .map((u) => `${u.label} ${u.date}`)
+                              .join(" · ")}
+                          </span>
+                        ) : !a.next_deadline ? (
                           <span className="text-slate-400">
                             {tr(locale, "없음", "Không có")}
                           </span>
-                        )}
+                        ) : null}
                       </div>
                     </div>
                     <div className="flex shrink-0 flex-wrap items-center gap-1.5">
