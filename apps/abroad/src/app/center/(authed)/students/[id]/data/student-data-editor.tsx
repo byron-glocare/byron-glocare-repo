@@ -13,6 +13,7 @@ import {
   getStudentFileSignedUrlAction,
   removeStudentFileAction,
 } from "./actions";
+import { AiExtractPanel } from "./ai-extract-panel";
 
 export type DataTypeMeta = {
   key: string;
@@ -139,6 +140,15 @@ export function StudentDataEditor({
 
   return (
     <div className="space-y-4">
+      {/* AI 추출 — 업로드 서류에서 값 제안 → 확인 적용 */}
+      <AiExtractPanel
+        locale={locale}
+        studentId={studentId}
+        onApplied={(key, value) =>
+          setValues((cur) => ({ ...cur, [key]: value }))
+        }
+      />
+
       {/* 부족 항목 요약 */}
       {requiredKeys.length > 0 ? (
         <section
