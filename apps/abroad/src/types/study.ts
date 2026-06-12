@@ -310,6 +310,22 @@ export type StudyStudentDataType = {
 };
 
 // =============================================================================
+// 5b-3. study_student_submission_files (C5) — 학생별 제출서류 업로드 파일
+// =============================================================================
+export type StudyStudentSubmissionFile = {
+  id: string;
+  student_id: string;
+  submission_id: string;
+  file_path: string;
+  file_name: string;
+  size_bytes: number | null;
+  mime_type: string | null;
+  uploaded_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+// =============================================================================
 // 5d. study_student_data_values — 학생별 데이터 값 (B4-4)
 // =============================================================================
 export type StudyStudentDataValue = {

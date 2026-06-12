@@ -987,6 +987,26 @@ export type Database = {
         Relationships: [];
       };
 
+      study_student_submission_files: {
+        Row: import("./study").StudyStudentSubmissionFile;
+        Insert: Partial<import("./study").StudyStudentSubmissionFile>;
+        Update: Partial<import("./study").StudyStudentSubmissionFile>;
+        Relationships: [
+          {
+            foreignKeyName: "study_student_submission_files_student_id_fkey";
+            columns: ["student_id"];
+            referencedRelation: "study_managed_students";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "study_student_submission_files_submission_id_fkey";
+            columns: ["submission_id"];
+            referencedRelation: "study_required_submissions";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+
       study_student_data_values: {
         Row: import("./study").StudyStudentDataValue;
         Insert: Partial<import("./study").StudyStudentDataValue>;
