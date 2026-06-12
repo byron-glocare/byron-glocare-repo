@@ -40,15 +40,14 @@ export type AdmissionProgramType =
   | "associate_2yr"
   | "bachelor_3yr_extension"
   | "bachelor_4yr";
+// C4 — 단계 재정의 (결제전/서류작성중/완료/제출완료/입학/불합격/중도취소)
 export type ApplicationStatus =
+  | "payment_pending"
   | "preparing"
-  | "ready_for_review"
-  | "reviewing"
-  | "revisions_required"
+  | "docs_complete"
   | "submitted"
-  | "accepted"
-  | "rejected"
   | "enrolled"
+  | "rejected"
   | "cancelled";
 export type DocumentStatus =
   | "pending"

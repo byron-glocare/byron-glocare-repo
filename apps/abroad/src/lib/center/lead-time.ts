@@ -33,12 +33,7 @@ export type LeadTimeFlag = {
   }>;
 };
 
-const PRE_SUBMISSION_STATUSES = [
-  "preparing",
-  "ready_for_review",
-  "reviewing",
-  "revisions_required",
-];
+const PRE_SUBMISSION_STATUSES = ["payment_pending", "preparing"];
 
 const MS_PER_DAY = 86_400_000;
 

@@ -62,7 +62,7 @@ export async function createApplicationAction(
     selected_language: data.selected_language ?? null,
     target_department_id: data.target_department_id ?? null,
     target_department_label: data.target_department_label,
-    status: "preparing",
+    status: "payment_pending",
     next_action: data.next_action ?? null,
     next_deadline: data.next_deadline ?? null,
   });

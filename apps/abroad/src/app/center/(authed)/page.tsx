@@ -11,10 +11,9 @@ import { computeLeadTimeFlags } from "@/lib/center/lead-time";
 import { getLocale, tr } from "@/lib/i18n";
 
 const ACTIVE_APP_STATUSES = [
+  "payment_pending",
   "preparing",
-  "ready_for_review",
-  "reviewing",
-  "revisions_required",
+  "docs_complete",
   "submitted",
 ];
 

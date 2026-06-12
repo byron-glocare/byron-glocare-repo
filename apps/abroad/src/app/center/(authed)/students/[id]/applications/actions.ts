@@ -47,7 +47,6 @@ export async function updateApplicationStatusAction(
     last_review_at: nowIso,
   };
   if (status === "submitted") patch.submitted_to_university_at = nowIso;
-  if (status === "accepted") patch.accepted_at = nowIso;
   if (status === "enrolled") patch.enrolled_at = nowIso;
   if (status === "cancelled") patch.cancelled_at = nowIso;
 
@@ -61,6 +60,7 @@ export async function updateApplicationStatusAction(
     .eq("id", applicationId);
 
   revalidatePath(`/center/students/${studentId}`);
+  revalidatePath(`/center/students/${studentId}/select`);
 }
 
 /**
@@ -81,4 +81,5 @@ export async function deleteApplicationAction(
     .eq("id", applicationId);
 
   revalidatePath(`/center/students/${studentId}`);
+  revalidatePath(`/center/students/${studentId}/select`);
 }

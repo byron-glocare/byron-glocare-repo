@@ -7,36 +7,10 @@ import Link from "next/link";
 
 import { verifyCenterSession } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
-import { getLocale, tr, type Locale } from "@/lib/i18n";
+import { getLocale, tr } from "@/lib/i18n";
 
-import { updateApplicationStatusAction } from "../applications/actions";
-import { APP_STATUS_VALUES } from "../applications/status";
+import { StatusSelect } from "../applications/status-select";
 import { DeleteApplicationButton } from "../applications/delete-application-button";
-
-function appStatusLabel(locale: Locale, status: string): string {
-  switch (status) {
-    case "preparing":
-      return tr(locale, "준비 중", "Đang chuẩn bị");
-    case "ready_for_review":
-      return tr(locale, "검토 대기", "Sẵn sàng kiểm tra");
-    case "reviewing":
-      return tr(locale, "검토 중", "Đang kiểm tra");
-    case "revisions_required":
-      return tr(locale, "수정 필요", "Cần chỉnh sửa");
-    case "submitted":
-      return tr(locale, "대학 제출 완료", "Đã nộp trường");
-    case "accepted":
-      return tr(locale, "합격", "Đã trúng tuyển");
-    case "rejected":
-      return tr(locale, "불합격", "Bị từ chối");
-    case "enrolled":
-      return tr(locale, "입학 완료", "Đã nhập học");
-    case "cancelled":
-      return tr(locale, "취소됨", "Đã hủy");
-    default:
-      return status;
-  }
-}
 
 export default async function SelectPage({
   params,
@@ -115,28 +89,12 @@ export default async function SelectPage({
                 </div>
 
                 <div className="flex items-center gap-1.5">
-                  <form
-                    action={updateApplicationStatusAction.bind(null, app.id, id)}
-                    className="flex items-center gap-1.5"
-                  >
-                    <select
-                      name="status"
-                      defaultValue={app.status}
-                      className="rounded-md border border-slate-300 px-2 py-1 text-xs focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-300"
-                    >
-                      {APP_STATUS_VALUES.map((s) => (
-                        <option key={s} value={s}>
-                          {appStatusLabel(locale, s)}
-                        </option>
-                      ))}
-                    </select>
-                    <button
-                      type="submit"
-                      className="rounded-md border border-slate-300 px-2 py-1 text-xs text-slate-700 hover:bg-slate-100"
-                    >
-                      {tr(locale, "저장", "Lưu")}
-                    </button>
-                  </form>
+                  <StatusSelect
+                    locale={locale}
+                    applicationId={app.id}
+                    studentId={id}
+                    current={app.status}
+                  />
                   <Link
                     href={`/center/students/${id}/applications/${app.id}/edit`}
                     className="rounded-md border border-slate-300 px-2 py-1 text-xs text-slate-700 hover:bg-slate-100"
