@@ -9,11 +9,14 @@
 ## 1. 로컬 실행·명령은 PowerShell 로 그냥 한다
 
 - 앱/서버 실행, 빌드, 스크립트는 **PowerShell 로 직접** 실행한다. `npm run dev` 는 백그라운드로.
-- **브라우저 검증**: 관리형 preview 브라우저는 이 환경에서 자주 **얼어붙는다**
-  (레포가 OneDrive 폴더라 `.next` 동기화로 dev 가 매우 느림 — `dev_onedrive_slow_fs` 메모 참조).
-  → dev 서버를 PowerShell 로 띄우고 **운영자가 자기 Chrome 에서 `localhost:3000` 확인**하거나,
+- **레포 위치**: `C:\dev\glocare` (로컬). 예전에 OneDrive 폴더에 있어 `.next` 동기화로
+  dev 가 매우 느렸으나 **지금은 C:\dev 로 이전됨 — OneDrive 아님**. (낡은 `dev_onedrive_slow_fs` 메모는 무시.)
+- **브라우저 검증**: 관리형 preview 브라우저는 이 환경에서 자주 **얼어붙는다**.
+  → dev 서버를 PowerShell 로 띄우고 **운영자가 자기 Chrome 에서 `localhost:3001` 확인**하거나,
     인증된 상태에서 `fetch(path)` 로 SSR HTML 을 받아 검증한다.
   → preview 브라우저 네비게이션을 억지로 우회하는 삽질 금지.
+- **dev 가 모든 라우트 404 등 이상하면** `.next` 캐시 손상 가능 → 해당 앱 dev 종료 후
+  `.next` 삭제하고 재기동(OneDrive 와 무관).
 - **원칙**: 실행이 막히면 새 방식을 발명하기 전에 "그냥 PowerShell 로 하면 되는가?" 부터 본다.
 
 ## 2. Supabase 스키마 변경 = SQL 을 써주면 운영자가 에디터에 붙여넣는다
