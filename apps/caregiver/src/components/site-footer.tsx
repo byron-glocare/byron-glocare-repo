@@ -31,6 +31,28 @@ export async function SiteFooter() {
           </div>
         </div>
 
+        {/* 바로가기 — 상단에서 강등된 소개/파트너스/엠버서더 */}
+        <div>
+          <div className="foot-h">{t["nav.about"]}</div>
+          <ul className="foot-ul">
+            <li>
+              <Link href="/about" style={{ color: "inherit" }}>
+                {t["footer.about"]}
+              </Link>
+            </li>
+            <li>
+              <Link href="/partners" style={{ color: "inherit" }}>
+                {t["nav.partners"]}
+              </Link>
+            </li>
+            <li>
+              <Link href="/ambassador" style={{ color: "inherit" }}>
+                {t["nav.ambassador"]}
+              </Link>
+            </li>
+          </ul>
+        </div>
+
         {/* 회사 정보 */}
         <div>
           <div className="foot-h">회사 정보</div>

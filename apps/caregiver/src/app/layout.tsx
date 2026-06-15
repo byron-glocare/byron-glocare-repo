@@ -48,16 +48,17 @@ export default async function RootLayout({
   const auth = await getAuthState();
   const authed = auth.kind !== "guest";
 
-  const tabs = [
-    { href: "/", label: t["nav.home"] },
-    { href: "/about", label: t["nav.about"] },
-    { href: "/videos", label: t["nav.videos"] },
-    { href: "/cbt", label: t["nav.cbt"] },
-    { href: "/partners", label: t["nav.partners"] },
-    { href: "/ambassador", label: t["nav.ambassador"] },
-    { href: "/resume", label: t["nav.resume"] },
-    ...(authed ? [{ href: "/profile", label: t["nav.profile"] }] : []),
+  // 적응형 네비 — 비로그인(영업 모드) vs 로그인(이용 모드)
+  const guestTabs = [
+    { href: "/service", label: t["nav.learn_public"] },
+    { href: "/reviews", label: t["nav.reviews"] },
+    { href: "/pricing", label: t["nav.pricing"] },
   ];
+  const memberTabs = [
+    { href: "/learn", label: t["nav.learn_member"] },
+    { href: "/my", label: t["nav.mypage"] },
+  ];
+  const tabs = authed ? memberTabs : guestTabs;
 
   return (
     <html
@@ -66,7 +67,13 @@ export default async function RootLayout({
     >
       <body>
         <LangBar locale={locale} />
-        <SiteNav tabs={tabs} loginLabel={t["nav.login"]} authed={authed} />
+        <SiteNav
+          tabs={tabs}
+          loginLabel={t["nav.login"]}
+          authed={authed}
+          applyLabel={t["nav.apply"]}
+          applyHref="/service"
+        />
         {auth.kind === "unmapped" && <UnmappedBanner locale={locale} />}
         <main>{children}</main>
         <SiteFooter />

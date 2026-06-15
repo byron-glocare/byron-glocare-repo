@@ -12,7 +12,13 @@ import { NewSubmissionDoc } from "./new-submission-doc";
 
 export const dynamic = "force-dynamic";
 
-export default async function NewSubmissionDocPage() {
+export default async function NewSubmissionDocPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ uni?: string; name?: string }>;
+}) {
+  const { uni, name } = await searchParams;
+
   const supabaseUser = await createClient();
   const {
     data: { user },
@@ -20,15 +26,22 @@ export default async function NewSubmissionDocPage() {
   if (!user) redirect("/login?redirect=/admissions/submissions/new");
 
   const supabase = createAdminClient();
-  const [{ data: universities }, { data: masters }] = await Promise.all([
-    supabase.from("universities").select("id, name_ko").order("name_ko"),
-    supabase
-      .from("study_required_submissions")
-      .select("id, name_ko")
-      .is("university_id", null)
-      .is("base_submission_id", null)
-      .order("sort_order"),
-  ]);
+  const [{ data: universities }, { data: masters }, { data: docTypes }] =
+    await Promise.all([
+      supabase.from("universities").select("id, name_ko").order("name_ko"),
+      supabase
+        .from("study_required_submissions")
+        .select("id, name_ko, std_key")
+        .is("university_id", null)
+        .is("base_submission_id", null)
+        .order("sort_order"),
+      supabase
+        .from("study_student_data_types")
+        .select("key, label_ko")
+        .eq("is_active", true)
+        .eq("category", "document")
+        .order("sort_order"),
+    ]);
 
   return (
     <>
@@ -44,6 +57,9 @@ export default async function NewSubmissionDocPage() {
         <NewSubmissionDoc
           universities={universities ?? []}
           masters={masters ?? []}
+          docTypes={docTypes ?? []}
+          defaultUniId={uni ?? ""}
+          defaultName={name ?? ""}
         />
       </div>
     </>

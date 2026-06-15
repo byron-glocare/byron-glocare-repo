@@ -216,6 +216,7 @@ export default async function UniversityAdmissionPage({
     base_submission_id: r.base_submission_id,
     name_ko: r.name_ko,
     name_vi: r.name_vi,
+    std_key: r.std_key ?? null,
     target_person: r.target_person,
     target_person_note: r.target_person_note,
     sample_image_url: r.sample_image_url,

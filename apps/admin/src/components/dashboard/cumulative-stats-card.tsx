@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Award, BookOpenCheck, Briefcase } from "lucide-react";
 import {
   Card,
@@ -27,16 +28,19 @@ export function CumulativeStatsCard({ trained, certified, working }: Props) {
             icon={<BookOpenCheck className="size-3" />}
             label="누적 교육생"
             value={trained}
+            href="/customers?cumulative=trained"
           />
           <Metric
             icon={<Award className="size-3" />}
             label="자격증 취득"
             value={certified}
+            href="/customers?cumulative=certified"
           />
           <Metric
             icon={<Briefcase className="size-3" />}
             label="근무 중"
             value={working}
+            href="/customers?cumulative=working"
           />
         </div>
       </CardContent>
@@ -48,13 +52,18 @@ function Metric({
   icon,
   label,
   value,
+  href,
 }: {
   icon: React.ReactNode;
   label: string;
   value: number;
+  href: string;
 }) {
   return (
-    <div>
+    <Link
+      href={href}
+      className="block rounded-md -m-1 p-1 hover:bg-accent/40 transition-colors"
+    >
       <div className="text-[11px] text-muted-foreground inline-flex items-center gap-1">
         {icon}
         {label}
@@ -65,6 +74,6 @@ function Metric({
           명
         </span>
       </div>
-    </div>
+    </Link>
   );
 }

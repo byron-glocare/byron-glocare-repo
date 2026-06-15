@@ -278,6 +278,106 @@ const koDict = {
   "footer.privacy": "개인정보처리방침",
   "footer.terms": "이용약관",
   "footer.copyright": "© 2026 글로케어(GloCare). All rights reserved.",
+  "footer.company": "글로케어(GloCare)",
+  "footer.contact": "고객센터 02-456-0724 (평일 09:00~18:00)",
+  "footer.about": "회사 소개",
+
+  // Nav (신규 — 마케팅 라벨)
+  "nav.learn_public": "자격증 따기",
+  "nav.learn_member": "내 강의실",
+  "nav.reviews": "선배 후기",
+  "nav.pricing": "요금",
+  "nav.apply": "지금 신청하기",
+  "nav.mypage": "마이페이지",
+
+  // Service 안내 페이지
+  "service.eyebrow": "이용 안내",
+  "service.title": "신청부터 취업까지, 이렇게 진행돼요",
+  "service.intro":
+    "복잡하지 않아요. 가입하고 신청하면 글로케어가 단계마다 같이 합니다.",
+  "service.step1.title": "가입 · 신청서 작성",
+  "service.step1.desc": "전화번호나 SNS로 가입하고, 간단한 신청서를 작성해요.",
+  "service.step2.title": "상담사 확인",
+  "service.step2.desc":
+    "담당 상담사가 내용을 확인하고 부족한 부분을 같이 채워요.",
+  "service.step3.title": "예약금 결제",
+  "service.step3.desc":
+    "체크카드 · 계좌이체 · 가상계좌로 간편하게. (요금은 '요금' 메뉴 참고)",
+  "service.step4.title": "교육원 배정 · 컨펌",
+  "service.step4.desc": "집 근처 교육원과 강의를 배정받고 확인하면 끝.",
+  "service.step5.title": "온라인 학습 시작",
+  "service.step5.desc":
+    "교육 시작일부터 동영상 · CBT가 열리고, 매일 카톡으로 챙겨드려요.",
+  "service.step6.title": "취업 · 비자 지원",
+  "service.step6.desc": "수료 후 요양원 취업과 비자 변경 · 연장까지 함께해요.",
+  "service.employment.title": "취업 · 비자까지 함께해요",
+  "service.employment.desc":
+    "지역 · 근무시간을 고려한 요양원 매칭과 전담 행정사의 비자 변경 · 연장 지원.",
+  "service.cta": "지금 신청하기",
+
+  // Pricing 요금 페이지
+  "pricing.eyebrow": "요금 안내",
+  "pricing.title": "투명한 요금 안내",
+  "pricing.intro": "예약금만 내고 시작해요. 자세한 내용은 상담에서 안내해드려요.",
+  "pricing.edu.name": "교육 과정",
+  "pricing.edu.deposit": "예약금 35,000원",
+  "pricing.edu.note": "수료하면 예약금을 돌려드려요 (사실상 무료).",
+  "pricing.edu.feat1": "온라인 동영상 강의",
+  "pricing.edu.feat2": "CBT 문제풀이 + 매일 카톡 알림",
+  "pricing.edu.feat3": "집 근처 교육원 배정",
+  "pricing.job.name": "교육 + 취업 과정",
+  "pricing.job.deposit": "예약금 100,000원",
+  "pricing.job.note": "취업서비스 이용 시 수료 후 잔금 결제 (55 · 60 · 65만원).",
+  "pricing.job.feat1": "교육 과정 전체 포함",
+  "pricing.job.feat2": "요양원 취업 매칭",
+  "pricing.job.feat3": "비자 변경 · 연장 지원",
+  "pricing.method": "결제수단: 체크카드 · 계좌이체 · 가상계좌",
+  "pricing.cta": "지금 신청하기",
+
+  // Reviews 후기 페이지
+  "reviews.eyebrow": "선배 후기",
+  "reviews.title": "먼저 시작한 선배들 이야기",
+  "reviews.intro":
+    "글로케어와 함께 자격증을 따고 일하고 있는 선배들의 후기예요.",
+  "reviews.empty": "후기를 준비하고 있어요.",
+
+  // Home v2 (구어체)
+  "home.hero.title": "온라인으로 쉽고 빠르게,\n요양보호사 자격증 따기",
+  "home.hero.sub": "취업 · 비자까지 글로케어가 함께해요.",
+  "home.hero.cta": "지금 신청하기",
+  "home.hero.cta2": "어떻게 배우나 보기",
+  "home.steps.title": "신청하면 이렇게 진행돼요",
+  "home.steps.s1": "신청",
+  "home.steps.s2": "교육",
+  "home.steps.s3": "취업",
+  "home.steps.more": "전체 과정 보기",
+  "home.features.title": "이런 걸로 공부해요",
+  "home.usp.title": "왜 글로케어일까요?",
+  "home.reviews.title": "먼저 시작한 선배들 이야기",
+  "home.reviews.cta": "후기 보기",
+
+  // Learn 학습센터 허브
+  "learn.eyebrow": "내 강의실",
+  "learn.title": "내 강의실",
+  "learn.intro":
+    "교육 기간 동안 동영상 강의와 CBT 문제풀이를 이용할 수 있어요.",
+  "learn.videos.title": "동영상 강의",
+  "learn.videos.desc": "베트남어 보충 영상으로 핵심 개념을 익혀요.",
+  "learn.cbt.title": "CBT 문제풀이",
+  "learn.cbt.desc": "실전처럼 문제를 풀고 해설로 복습해요.",
+
+  // My 마이페이지 허브
+  "my.eyebrow": "마이페이지",
+  "my.title": "마이페이지",
+  "my.intro": "내 학습현황과 정보를 한곳에서 관리해요.",
+  "my.learn.title": "내 강의실",
+  "my.learn.desc": "동영상 · CBT 이어서 학습하기",
+  "my.resume.title": "이력서",
+  "my.resume.desc": "이력서 만들기 · PDF 다운로드",
+  "my.profile.title": "내 정보",
+  "my.profile.desc": "프로필 · 문의 · 로그아웃",
+  "my.soon.title": "신청 · 결제 (준비 중)",
+  "my.soon.desc": "신청 현황과 예약금 · 잔금 결제는 곧 제공돼요.",
 };
 
 type DictShape = { readonly [K in keyof typeof koDict]: string };
@@ -534,6 +634,105 @@ const viDict: DictShape = {
   "footer.privacy": "Chính sách bảo mật",
   "footer.terms": "Điều khoản sử dụng",
   "footer.copyright": "© 2026 GLOCARE. All rights reserved.",
+  "footer.company": "GLOCARE",
+  "footer.contact": "CSKH 02-456-0724 (T2–T6, 09:00~18:00)",
+  "footer.about": "Giới thiệu công ty",
+
+  "nav.learn_public": "Lấy chứng chỉ",
+  "nav.learn_member": "Lớp học của tôi",
+  "nav.reviews": "Đánh giá",
+  "nav.pricing": "Học phí",
+  "nav.apply": "Đăng ký ngay",
+  "nav.mypage": "Trang của tôi",
+
+  "service.eyebrow": "Hướng dẫn sử dụng",
+  "service.title": "Từ đăng ký đến việc làm, quy trình như sau",
+  "service.intro":
+    "Không hề phức tạp. Bạn đăng ký và điền đơn, GLOCARE sẽ đồng hành từng bước.",
+  "service.step1.title": "Đăng ký · Điền đơn",
+  "service.step1.desc":
+    "Đăng ký bằng số điện thoại hoặc SNS và điền đơn đăng ký đơn giản.",
+  "service.step2.title": "Tư vấn viên xác nhận",
+  "service.step2.desc":
+    "Tư vấn viên phụ trách kiểm tra nội dung và bổ sung phần còn thiếu cùng bạn.",
+  "service.step3.title": "Thanh toán đặt cọc",
+  "service.step3.desc":
+    "Thanh toán dễ dàng bằng thẻ ghi nợ · chuyển khoản · tài khoản ảo. (Xem mục 'Học phí')",
+  "service.step4.title": "Phân bổ trung tâm · Xác nhận",
+  "service.step4.desc":
+    "Được phân bổ trung tâm và lớp học gần nhà, xác nhận là xong.",
+  "service.step5.title": "Bắt đầu học online",
+  "service.step5.desc":
+    "Từ ngày khai giảng, video · CBT được mở và nhắc nhở mỗi ngày qua KakaoTalk.",
+  "service.step6.title": "Hỗ trợ việc làm · Visa",
+  "service.step6.desc":
+    "Sau khi hoàn thành, hỗ trợ việc làm tại viện dưỡng lão và đổi · gia hạn visa.",
+  "service.employment.title": "Đồng hành đến việc làm · visa",
+  "service.employment.desc":
+    "Ghép nối viện dưỡng lão theo khu vực · giờ làm và hỗ trợ đổi · gia hạn visa qua chuyên viên.",
+  "service.cta": "Đăng ký ngay",
+
+  "pricing.eyebrow": "Thông tin học phí",
+  "pricing.title": "Học phí minh bạch",
+  "pricing.intro":
+    "Chỉ cần đặt cọc để bắt đầu. Chi tiết sẽ được tư vấn hướng dẫn.",
+  "pricing.edu.name": "Khóa đào tạo",
+  "pricing.edu.deposit": "Đặt cọc 35.000 won",
+  "pricing.edu.note": "Hoàn lại tiền cọc khi hoàn thành (gần như miễn phí).",
+  "pricing.edu.feat1": "Video bài giảng online",
+  "pricing.edu.feat2": "Luyện thi CBT + nhắc nhở KakaoTalk mỗi ngày",
+  "pricing.edu.feat3": "Phân bổ trung tâm gần nhà",
+  "pricing.job.name": "Khóa Đào tạo + Việc làm",
+  "pricing.job.deposit": "Đặt cọc 100.000 won",
+  "pricing.job.note":
+    "Khi dùng dịch vụ việc làm, thanh toán phần còn lại sau khi hoàn thành (55 · 60 · 65 vạn won).",
+  "pricing.job.feat1": "Bao gồm toàn bộ khóa đào tạo",
+  "pricing.job.feat2": "Ghép nối việc làm viện dưỡng lão",
+  "pricing.job.feat3": "Hỗ trợ đổi · gia hạn visa",
+  "pricing.method": "Phương thức: thẻ ghi nợ · chuyển khoản · tài khoản ảo",
+  "pricing.cta": "Đăng ký ngay",
+
+  "reviews.eyebrow": "Đánh giá",
+  "reviews.title": "Câu chuyện của các tiền bối",
+  "reviews.intro":
+    "Đánh giá của các tiền bối đã lấy chứng chỉ và đang làm việc cùng GLOCARE.",
+  "reviews.empty": "Chúng tôi đang chuẩn bị các đánh giá.",
+
+  "home.hero.title": "Học online dễ và nhanh,\nlấy chứng chỉ Điều dưỡng viên",
+  "home.hero.sub": "GLOCARE đồng hành đến cả việc làm · visa.",
+  "home.hero.cta": "Đăng ký ngay",
+  "home.hero.cta2": "Xem cách học",
+  "home.steps.title": "Đăng ký rồi sẽ tiến hành thế này",
+  "home.steps.s1": "Đăng ký",
+  "home.steps.s2": "Đào tạo",
+  "home.steps.s3": "Việc làm",
+  "home.steps.more": "Xem toàn bộ quy trình",
+  "home.features.title": "Bạn sẽ học bằng những thứ này",
+  "home.usp.title": "Vì sao chọn GLOCARE?",
+  "home.reviews.title": "Câu chuyện của các tiền bối",
+  "home.reviews.cta": "Xem đánh giá",
+
+  "learn.eyebrow": "Lớp học của tôi",
+  "learn.title": "Lớp học của tôi",
+  "learn.intro":
+    "Trong thời gian đào tạo, bạn có thể dùng video bài giảng và luyện thi CBT.",
+  "learn.videos.title": "Video bài giảng",
+  "learn.videos.desc": "Nắm khái niệm chính qua video bổ sung tiếng Việt.",
+  "learn.cbt.title": "Luyện thi CBT",
+  "learn.cbt.desc": "Làm bài như thi thật và ôn lại bằng phần giải thích.",
+
+  "my.eyebrow": "Trang của tôi",
+  "my.title": "Trang của tôi",
+  "my.intro": "Quản lý tiến độ học và thông tin của bạn tại một nơi.",
+  "my.learn.title": "Lớp học của tôi",
+  "my.learn.desc": "Học tiếp video · CBT",
+  "my.resume.title": "CV",
+  "my.resume.desc": "Tạo CV · tải PDF",
+  "my.profile.title": "Thông tin của tôi",
+  "my.profile.desc": "Hồ sơ · liên hệ · đăng xuất",
+  "my.soon.title": "Đăng ký · Thanh toán (sắp có)",
+  "my.soon.desc":
+    "Tình trạng đăng ký và thanh toán đặt cọc · phần còn lại sẽ sớm có.",
 };
 
 const dict: Record<Locale, DictShape> = { ko: koDict, vi: viDict };

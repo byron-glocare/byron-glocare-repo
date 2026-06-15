@@ -29,6 +29,7 @@ type Sub = {
   base_submission_id: string | null;
   name_ko: string;
   name_vi: string | null;
+  std_key: string | null;
   target_person: string | null;
   target_person_note: string | null;
   sample_image_url: string | null;
@@ -92,7 +93,10 @@ export function SubmissionDocDetail({
   const [notarize, setNotarize] = useState(!!iss.needs_notarization);
   const [translate, setTranslate] = useState(!!iss.needs_translation);
   const [issNotes, setIssNotes] = useState(iss.notes ?? "");
-  const [mappedKey, setMappedKey] = useState(sub.required_data_type_keys[0] ?? "");
+  // 표준 문서 카탈로그 정본 키 (공용↔대학별 매칭 기준). 과거 데이터 폴백: required_data_type_keys[0]
+  const [stdKey, setStdKey] = useState(
+    sub.std_key ?? sub.required_data_type_keys[0] ?? ""
+  );
   const [status, setStatus] = useState(sub.status);
   const [isActive, setIsActive] = useState(sub.is_active);
 
@@ -154,11 +158,12 @@ export function SubmissionDocDetail({
         if (notarize) fd.set("iss_needs_notarization", "on");
         if (translate) fd.set("iss_needs_translation", "on");
         fd.set("iss_notes", issNotes);
+        fd.set("std_key", stdKey);
+        // 이 화면에서 안 다루는 값은 보존 (required_data_type_keys = '이 서류에서 뽑을 데이터')
         fd.set(
           "required_data_type_keys",
-          JSON.stringify(mappedKey ? [mappedKey] : [])
+          JSON.stringify(sub.required_data_type_keys)
         );
-        // 이 화면에서 안 다루는 값은 보존
         fd.set("aliases", JSON.stringify(sub.aliases));
         fd.set("applies_to_languages", JSON.stringify(sub.applies_to_languages));
         fd.set("applies_to_locations", JSON.stringify(sub.applies_to_locations));
@@ -277,11 +282,11 @@ export function SubmissionDocDetail({
 
           <label className="flex flex-col gap-1.5">
             <span className="text-xs font-medium">
-              표준데이터 매핑 (발급 서류 1:1)
+              표준 발급서류 매핑 (정본 키)
             </span>
             <select
-              value={mappedKey}
-              onChange={(e) => setMappedKey(e.target.value)}
+              value={stdKey}
+              onChange={(e) => setStdKey(e.target.value)}
               className="h-9 rounded-md border border-input bg-background px-3 text-sm"
             >
               <option value="">— 매핑 안 함</option>
@@ -292,7 +297,7 @@ export function SubmissionDocDetail({
               ))}
             </select>
             <span className="text-[11px] text-muted-foreground">
-              학생이 업로드할 표준데이터 '발급 서류' 항목과 연결
+              표준데이터 '발급 서류' 카탈로그와 1:1 연결 — 공용↔대학별 자동 매칭 기준
             </span>
           </label>
 

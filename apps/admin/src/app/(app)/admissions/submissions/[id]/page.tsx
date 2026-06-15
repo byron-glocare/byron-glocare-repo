@@ -82,6 +82,7 @@ export default async function SubmissionDocDetailPage({
             base_submission_id: sub.base_submission_id,
             name_ko: sub.name_ko,
             name_vi: sub.name_vi,
+            std_key: sub.std_key ?? null,
             target_person: sub.target_person,
             target_person_note: sub.target_person_note,
             sample_image_url: sub.sample_image_url,

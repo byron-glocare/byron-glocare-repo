@@ -30,6 +30,8 @@ const saveSchema = z.object({
   department_id: z.number().int().positive().nullable(),
   name_ko: z.string().min(1).max(300),
   name_vi: z.string().max(300).nullable(),
+  // 표준 문서 카탈로그 정본 키 (공용↔대학별 매칭 기준)
+  std_key: z.string().max(120).nullable(),
   // 서류 대상자
   target_person: z.enum(TARGET_PERSONS).nullable(),
   target_person_note: z.string().max(500).nullable(),
@@ -115,6 +117,7 @@ export async function saveRequiredSubmissionAction(
     department_id: numOrNull(formData.get("department_id")),
     name_ko: formData.get("name_ko"),
     name_vi: emptyToNull(formData.get("name_vi")),
+    std_key: emptyToNull(formData.get("std_key")),
     target_person: emptyToNull(formData.get("target_person")),
     target_person_note: emptyToNull(formData.get("target_person_note")),
     status: formData.get("status") || "draft",
@@ -205,6 +208,7 @@ export async function saveRequiredSubmissionAction(
       department_id: data.department_id,
       name_ko: data.name_ko,
       name_vi: data.name_vi,
+      std_key: data.std_key,
       target_person: data.target_person,
       target_person_note: data.target_person_note,
       status: data.status,
@@ -242,6 +246,7 @@ export async function saveRequiredSubmissionAction(
       department_id: data.department_id,
       name_ko: data.name_ko,
       name_vi: data.name_vi,
+      std_key: data.std_key,
       target_person: data.target_person,
       target_person_note: data.target_person_note,
       status: data.status,
@@ -301,4 +306,72 @@ export async function deleteRequiredSubmissionAction(
 
   revalidatePath("/admissions");
   if (universityId) revalidatePath(`/admissions/${universityId}`);
+}
+
+/**
+ * U2: 공용 표준 발급서류를 특정 대학에 "연결(대학별 조정본 생성)".
+ *   공용 마스터(university_id=null)를 복제해 대학별 행을 만들고 base_submission_id 로 연결한다.
+ *   이미 연결된 조정본이 있으면 그 id 를 그대로 반환(중복 방지).
+ *   생성된 조정본은 status='draft' — 상세에서 대학별 세부조건을 덮어쓴 뒤 승인한다.
+ */
+export async function linkSharedSubmissionAction(
+  universityId: number,
+  masterId: string
+): Promise<{ ok: boolean; error?: string; id?: string }> {
+  const supabaseUser = await createClient();
+  const {
+    data: { user },
+  } = await supabaseUser.auth.getUser();
+  if (!user) return { ok: false, error: "로그인이 필요합니다" };
+
+  const supabase = createAdminClient();
+
+  const { data: master } = await supabase
+    .from("study_required_submissions")
+    .select("*")
+    .eq("id", masterId)
+    .is("university_id", null)
+    .maybeSingle();
+  if (!master) return { ok: false, error: "공용 마스터를 찾을 수 없습니다" };
+
+  // 이미 이 대학에 연결된 조정본이 있으면 재사용
+  const { data: existing } = await supabase
+    .from("study_required_submissions")
+    .select("id")
+    .eq("university_id", universityId)
+    .eq("base_submission_id", masterId)
+    .maybeSingle();
+  if (existing) return { ok: true, id: existing.id };
+
+  const ins: RequiredSubmissionInsert = {
+    university_id: universityId,
+    base_submission_id: master.id,
+    std_key: master.std_key,
+    department_id: null,
+    name_ko: master.name_ko,
+    name_vi: master.name_vi,
+    target_person: master.target_person,
+    target_person_note: master.target_person_note,
+    sample_image_url: master.sample_image_url, // 공개 버킷 — 동일 URL 참조
+    issuance_requirements: master.issuance_requirements,
+    required_data_type_keys: master.required_data_type_keys,
+    aliases: master.aliases,
+    applies_to_languages: master.applies_to_languages,
+    applies_to_locations: master.applies_to_locations,
+    status: "draft",
+    is_active: true,
+    sort_order: master.sort_order,
+    created_by: user.id,
+  };
+  const { data: created, error } = await supabase
+    .from("study_required_submissions")
+    .insert(ins)
+    .select("id")
+    .single();
+  if (error) return { ok: false, error: `연결 실패: ${error.message}` };
+
+  revalidatePath("/admissions");
+  revalidatePath(`/admissions/${universityId}`);
+  revalidatePath(`/universities/${universityId}`);
+  return { ok: true, id: created.id };
 }

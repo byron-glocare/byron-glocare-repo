@@ -1,18 +1,15 @@
 import Link from "next/link";
 import {
+  ArrowRight,
   BookOpenCheck,
   Briefcase,
   FileText,
-  Hospital,
-  Info,
   MapPin,
   PlaySquare,
-  Sparkles,
   Stethoscope,
 } from "lucide-react";
 
 import { TrainingSignupTrigger } from "@/components/training-signup-modal";
-import { PartnershipTrigger } from "@/components/partnership-modal";
 import { createClient } from "@/lib/supabase/server";
 import { getDict } from "@/lib/i18n";
 
@@ -32,7 +29,6 @@ export default async function HomePage() {
     { count: universitiesCount },
   ] = await Promise.all([
     supabase.from("customers").select("id", { count: "exact", head: true }),
-    // 일하는 사람: work_start_date 가 있고, work_end_date 가 없거나 미래
     supabase
       .from("customers")
       .select("id", { count: "exact", head: true })
@@ -57,22 +53,16 @@ export default async function HomePage() {
     { label: t["kpi.universities"], value: universitiesCount ?? 0 },
   ];
 
+  const steps = [t["home.steps.s1"], t["home.steps.s2"], t["home.steps.s3"]];
+
   const usps = [
-    {
-      icon: <MapPin />,
-      title: t["usp.local.title"],
-      desc: t["usp.local.desc"],
-    },
+    { icon: <MapPin />, title: t["usp.local.title"], desc: t["usp.local.desc"] },
     {
       icon: <BookOpenCheck />,
       title: t["usp.material.title"],
       desc: t["usp.material.desc"],
     },
-    {
-      icon: <Briefcase />,
-      title: t["usp.job.title"],
-      desc: t["usp.job.desc"],
-    },
+    { icon: <Briefcase />, title: t["usp.job.title"], desc: t["usp.job.desc"] },
     {
       icon: <Stethoscope />,
       title: t["usp.visa.title"],
@@ -81,12 +71,6 @@ export default async function HomePage() {
   ];
 
   const features = [
-    {
-      href: "/about",
-      icon: <Info />,
-      title: t["feature.about.title"],
-      desc: t["feature.about.desc"],
-    },
     {
       href: "/videos",
       icon: <PlaySquare />,
@@ -100,24 +84,34 @@ export default async function HomePage() {
       desc: t["feature.cbt.desc"],
     },
     {
-      href: "/partners",
-      icon: <Hospital />,
-      title: t["feature.partners.title"],
-      desc: t["feature.partners.desc"],
-    },
-    {
-      href: "/ambassador",
-      icon: <Sparkles />,
-      title: t["feature.ambassador.title"],
-      desc: t["feature.ambassador.desc"],
-    },
-    {
       href: "/resume",
       icon: <FileText />,
       title: t["feature.resume.title"],
       desc: t["feature.resume.desc"],
     },
   ];
+
+  const trainingStrings = {
+    title: t["modal.training.title"],
+    subtitle: t["modal.training.subtitle"],
+    name: t["modal.training.name"],
+    namePh: t["modal.training.namePh"],
+    phone: t["modal.training.phone"],
+    phonePh: t["modal.training.phonePh"],
+    email: t["modal.training.email"],
+    emailPh: t["modal.training.emailPh"],
+    region: t["modal.training.region"],
+    regionPh: t["modal.training.regionPh"],
+    topik: t["modal.training.topik"],
+    topikPh: t["modal.training.topikPh"],
+    visa: t["modal.training.visa"],
+    visaPh: t["modal.training.visaPh"],
+    message: t["modal.training.message"],
+    messagePh: t["modal.training.messagePh"],
+    submit: t["modal.training.submit"],
+    success: t["modal.training.success"],
+    needLogin: t["modal.training.needLogin"],
+  };
 
   return (
     <>
@@ -132,11 +126,17 @@ export default async function HomePage() {
       >
         <div className="page-wrap" style={{ padding: 0, maxWidth: 760 }}>
           <div className="eyebrow">GLOCARE</div>
-          <h1 className="page-title fade-up">
-            <em>{t["home.heading"]}</em>
+          <h1
+            className="page-title fade-up"
+            style={{ whiteSpace: "pre-line" }}
+          >
+            <em>{t["home.hero.title"]}</em>
           </h1>
-          <p className="page-desc fade-up" style={{ margin: "0.8rem auto 1.8rem" }}>
-            {t["home.tagline"]}
+          <p
+            className="page-desc fade-up"
+            style={{ margin: "0.8rem auto 1.8rem" }}
+          >
+            {t["home.hero.sub"]}
           </p>
           <div
             style={{
@@ -147,61 +147,82 @@ export default async function HomePage() {
             }}
           >
             <TrainingSignupTrigger
-              label={t["home.cta.training"]}
-              strings={{
-                title: t["modal.training.title"],
-                subtitle: t["modal.training.subtitle"],
-                name: t["modal.training.name"],
-                namePh: t["modal.training.namePh"],
-                phone: t["modal.training.phone"],
-                phonePh: t["modal.training.phonePh"],
-                email: t["modal.training.email"],
-                emailPh: t["modal.training.emailPh"],
-                region: t["modal.training.region"],
-                regionPh: t["modal.training.regionPh"],
-                topik: t["modal.training.topik"],
-                topikPh: t["modal.training.topikPh"],
-                visa: t["modal.training.visa"],
-                visaPh: t["modal.training.visaPh"],
-                message: t["modal.training.message"],
-                messagePh: t["modal.training.messagePh"],
-                submit: t["modal.training.submit"],
-                success: t["modal.training.success"],
-                needLogin: t["modal.training.needLogin"],
-              }}
+              label={t["home.hero.cta"]}
+              strings={trainingStrings}
             />
-            <PartnershipTrigger
-              label={t["home.cta.partner"]}
-              strings={{
-                title: t["modal.partnership.title"],
-                subtitle: t["modal.partnership.subtitle"],
-                name: t["modal.partnership.name"],
-                company: t["modal.partnership.company"],
-                companyPh: t["modal.partnership.companyPh"],
-                phone: t["modal.partnership.phone"],
-                email: t["modal.partnership.email"],
-                emailPh: t["modal.partnership.emailPh"],
-                message: t["modal.partnership.message"],
-                messagePh: t["modal.partnership.messagePh"],
-                submit: t["modal.partnership.submit"],
-                success: t["modal.partnership.success"],
+            <Link
+              href="/service"
+              className="card"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+                padding: "0.7rem 1.4rem",
+                background: "var(--white)",
+                color: "var(--coral)",
+                fontWeight: 700,
               }}
-            />
+            >
+              {t["home.hero.cta2"]} <ArrowRight size={16} />
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* KPI STRIP */}
-      <section
-        style={{
-          background: "var(--ink)",
-          padding: "2.5rem 20px",
-        }}
-      >
+      {/* 진행 3스텝 */}
+      <section className="page-wrap" style={{ textAlign: "center" }}>
+        <h2 className="page-title" style={{ marginBottom: "1.6rem" }}>
+          {t["home.steps.title"]}
+        </h2>
         <div
-          className="page-wrap"
-          style={{ padding: 0 }}
+          style={{
+            display: "flex",
+            gap: "0.6rem",
+            justifyContent: "center",
+            alignItems: "center",
+            flexWrap: "wrap",
+            marginBottom: "1.4rem",
+          }}
         >
+          {steps.map((s, i) => (
+            <div
+              key={s}
+              style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}
+            >
+              <div
+                className="card"
+                style={{
+                  padding: "0.8rem 1.6rem",
+                  fontWeight: 800,
+                  color: "var(--ink)",
+                  fontFamily: "var(--font-noto-serif-kr), serif",
+                }}
+              >
+                {s}
+              </div>
+              {i < steps.length - 1 && (
+                <ArrowRight size={18} style={{ color: "var(--coral)" }} />
+              )}
+            </div>
+          ))}
+        </div>
+        <Link
+          href="/service"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 6,
+            fontWeight: 700,
+            color: "var(--coral)",
+          }}
+        >
+          {t["home.steps.more"]} <ArrowRight size={16} />
+        </Link>
+      </section>
+
+      {/* KPI STRIP */}
+      <section style={{ background: "var(--ink)", padding: "2.5rem 20px" }}>
+        <div className="page-wrap" style={{ padding: 0 }}>
           <div
             style={{
               display: "grid",
@@ -240,58 +261,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* USP — 4 강점 */}
-      <section className="page-wrap">
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-            gap: "1.2rem",
-          }}
-        >
-          {usps.map((u) => (
-            <div key={u.title} className="card">
-              <div
-                style={{
-                  width: 44,
-                  height: 44,
-                  borderRadius: 10,
-                  background: "var(--coral-pale)",
-                  color: "var(--coral)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  marginBottom: "0.9rem",
-                }}
-              >
-                {u.icon}
-              </div>
-              <div
-                style={{
-                  fontFamily: "var(--font-noto-serif-kr), serif",
-                  fontSize: "1.05rem",
-                  fontWeight: 800,
-                  color: "var(--ink)",
-                  marginBottom: "0.4rem",
-                }}
-              >
-                {u.title}
-              </div>
-              <div
-                style={{
-                  fontSize: "0.85rem",
-                  color: "var(--ink-light)",
-                  lineHeight: 1.6,
-                }}
-              >
-                {u.desc}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* 기능 카드 */}
+      {/* 기능 카드 — 이런 걸로 공부해요 */}
       <section
         className="page-wrap"
         style={{ background: "var(--peach)", maxWidth: "none", margin: 0 }}
@@ -301,7 +271,7 @@ export default async function HomePage() {
             className="page-title"
             style={{ textAlign: "center", marginBottom: "2rem" }}
           >
-            서비스 둘러보기
+            {t["home.features.title"]}
           </h2>
           <div
             style={{
@@ -357,7 +327,86 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 고객센터 안내 */}
+      {/* USP — 왜 글로케어일까요? */}
+      <section className="page-wrap">
+        <h2
+          className="page-title"
+          style={{ textAlign: "center", marginBottom: "2rem" }}
+        >
+          {t["home.usp.title"]}
+        </h2>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+            gap: "1.2rem",
+          }}
+        >
+          {usps.map((u) => (
+            <div key={u.title} className="card">
+              <div
+                style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 10,
+                  background: "var(--coral-pale)",
+                  color: "var(--coral)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginBottom: "0.9rem",
+                }}
+              >
+                {u.icon}
+              </div>
+              <div
+                style={{
+                  fontFamily: "var(--font-noto-serif-kr), serif",
+                  fontSize: "1.05rem",
+                  fontWeight: 800,
+                  color: "var(--ink)",
+                  marginBottom: "0.4rem",
+                }}
+              >
+                {u.title}
+              </div>
+              <div
+                style={{
+                  fontSize: "0.85rem",
+                  color: "var(--ink-light)",
+                  lineHeight: 1.6,
+                }}
+              >
+                {u.desc}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 후기 티저 */}
+      <section
+        className="page-wrap"
+        style={{ textAlign: "center", paddingTop: 0 }}
+      >
+        <h2 className="page-title" style={{ marginBottom: "1rem" }}>
+          {t["home.reviews.title"]}
+        </h2>
+        <Link
+          href="/reviews"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 6,
+            fontWeight: 700,
+            color: "var(--coral)",
+          }}
+        >
+          {t["home.reviews.cta"]} <ArrowRight size={16} />
+        </Link>
+      </section>
+
+      {/* 고객센터 */}
       <section
         style={{
           background: "var(--coral-l)",
@@ -366,20 +415,11 @@ export default async function HomePage() {
           color: "var(--white)",
         }}
       >
-        <p
-          style={{
-            fontWeight: 800,
-            fontSize: "1.1rem",
-            marginBottom: "0.4rem",
-          }}
-        >
-          글로케어는 여러분의 요양보호사 자격증 취득부터 취업, 비자 연장까지 함께
-          합니다.
+        <p style={{ fontWeight: 800, fontSize: "1.1rem", marginBottom: "0.4rem" }}>
+          {t["brand.tagline"]}
         </p>
         <p style={{ opacity: 0.85, fontSize: "0.9rem", lineHeight: 1.7 }}>
-          요양보호사 자격증 취득 상담 · 요양보호사 교육원/요양원 제휴 상담
-          <br />
-          고객센터: <strong>02-456-0724</strong> (오전 9시 ~ 오후 6시)
+          {t["footer.contact"]}
         </p>
       </section>
     </>

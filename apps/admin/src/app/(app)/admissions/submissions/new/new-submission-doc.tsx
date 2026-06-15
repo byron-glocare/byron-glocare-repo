@@ -14,14 +14,21 @@ import {
 } from "@/app/(app)/admissions/[universityId]/submissions-actions";
 
 type Uni = { id: number; name_ko: string };
-type Master = { id: string; name_ko: string };
+type Master = { id: string; name_ko: string; std_key: string | null };
+type DocType = { key: string; label_ko: string };
 
 export function NewSubmissionDoc({
   universities,
   masters,
+  docTypes,
+  defaultUniId = "",
+  defaultName = "",
 }: {
   universities: Uni[];
   masters: Master[];
+  docTypes: DocType[];
+  defaultUniId?: string;
+  defaultName?: string;
 }) {
   const router = useRouter();
   const bound = saveRequiredSubmissionAction.bind(null, null);
@@ -30,17 +37,21 @@ export function NewSubmissionDoc({
     FormData
   >(bound, undefined);
 
-  const [scope, setScope] = useState<"shared" | "university">("shared");
-  const [uniId, setUniId] = useState("");
+  const [scope, setScope] = useState<"shared" | "university">(
+    defaultUniId ? "university" : "shared"
+  );
+  const [uniId, setUniId] = useState(defaultUniId);
   const [baseId, setBaseId] = useState("");
-  const [nameKo, setNameKo] = useState("");
+  const [nameKo, setNameKo] = useState(defaultName);
+  const [stdKey, setStdKey] = useState("");
   const submitted = useRef(false);
 
-  // 공용 마스터 기반 선택 시 이름 자동완성
+  // 공용 마스터 기반 선택 시 이름·정본키 자동완성
   function pickBase(id: string) {
     setBaseId(id);
     const m = masters.find((x) => x.id === id);
     if (m && !nameKo.trim()) setNameKo(m.name_ko);
+    if (m?.std_key && !stdKey) setStdKey(m.std_key);
   }
 
   useEffect(() => {
@@ -67,6 +78,7 @@ export function NewSubmissionDoc({
     fd.set("department_id", "");
     fd.set("name_ko", nameKo.trim());
     fd.set("name_vi", "");
+    fd.set("std_key", stdKey);
     fd.set("status", "draft");
     fd.set("is_active", "on");
     fd.set("sort_order", "0");
@@ -145,6 +157,25 @@ export function NewSubmissionDoc({
       <label className="flex flex-col gap-1.5">
         <span className="text-xs font-medium">서류명 *</span>
         <Input value={nameKo} onChange={(e) => setNameKo(e.target.value)} />
+      </label>
+
+      <label className="flex flex-col gap-1.5">
+        <span className="text-xs font-medium">표준 발급서류 매핑 (정본 키)</span>
+        <select
+          value={stdKey}
+          onChange={(e) => setStdKey(e.target.value)}
+          className="h-9 rounded-md border border-input bg-background px-3 text-sm"
+        >
+          <option value="">— 매핑 안 함 (나중에 설정)</option>
+          {docTypes.map((d) => (
+            <option key={d.key} value={d.key}>
+              {d.label_ko}
+            </option>
+          ))}
+        </select>
+        <span className="text-[11px] text-muted-foreground">
+          표준데이터 '발급 서류' 카탈로그와 1:1 연결 — 공용↔대학별 자동 매칭 기준
+        </span>
       </label>
 
       <div className="flex justify-end">

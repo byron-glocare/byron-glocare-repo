@@ -1,0 +1,1036 @@
+[
+  {
+    "identity": {
+      "university_name_ko": "경남정보대학교",
+      "term": "2026-Spring",
+      "campus_location_ko": null
+    },
+    "submission": {
+      "is_online_submission": null,
+      "online_form_url": null
+    },
+    "departments": [
+      {
+        "faculty": null,
+        "name": "전 모집학과 (2년제 / 보건계열 6개 제외)",
+        "program_kind": "degree",
+        "degree": "associate",
+        "years": 2,
+        "capacity": "unlimited",
+        "korean_min_topik": 2,
+        "tuition_per_semester_krw": null
+      },
+      {
+        "faculty": null,
+        "name": "전 모집학과 (3년제 / 보건계열 6개 제외)",
+        "program_kind": "degree",
+        "degree": "associate",
+        "years": 3,
+        "capacity": "unlimited",
+        "korean_min_topik": 2,
+        "tuition_per_semester_krw": null
+      }
+    ],
+    "required_documents": [],
+    "eligibility": {
+      "applicant_categories": [
+        "부모 모두 외국인인 외국인(순수외국인)",
+        "외국에서 우리나라 초·중등교육에 상응하는 교육과정을 전부 이수한 외국인"
+      ],
+      "education_required": "high_school",
+      "education_exclusions": [],
+      "korean_proficiency": {
+        "topik_min_default": 2,
+        "topik_min_by_dept_category": {},
+        "alternative_paths": [
+          {
+            "type": "other",
+            "description": "TOPIK 2급에 상응하는 자격증 또는 수료증"
+          }
+        ],
+        "post_admission_requirement": null
+      },
+      "financial_minimum": {
+        "amount": null,
+        "currency": "KRW",
+        "holder_relations": [],
+        "holder_other_note": null,
+        "freshness_days": null
+      },
+      "exclusions": [
+        "순수외국인 전형은 모집인원 제한 없음. 단 물리치료과·치위생과·작업치료과·간호학과·임상병리과·유아교육과는 제외"
+      ]
+    },
+    "schedule": {
+      "rounds": [
+        {
+          "name": "수시1차",
+          "application_open": "2025-09-08",
+          "application_close": "2025-09-30",
+          "document_submission_close": null,
+          "interview": null,
+          "result_announcement": "2025-10-31",
+          "payment_period": ["2025-12-15", "2025-12-17"]
+        },
+        {
+          "name": "수시2차",
+          "application_open": "2025-11-07",
+          "application_close": "2025-11-21",
+          "document_submission_close": null,
+          "interview": null,
+          "result_announcement": "2025-12-12",
+          "payment_period": []
+        },
+        {
+          "name": "정시",
+          "application_open": "2025-12-29",
+          "application_close": "2026-01-14",
+          "document_submission_close": null,
+          "interview": null,
+          "result_announcement": "2026-01-30",
+          "payment_period": ["2026-02-03", "2026-02-05"]
+        }
+      ],
+      "semester_start": null,
+      "submission_method": null
+    },
+    "tuition": {
+      "currency": "KRW",
+      "unit": "pending",
+      "application_fee": null,
+      "admission_fee": null,
+      "tuition_per_semester": null,
+      "tuition_per_year": null,
+      "dorm_fee": null,
+      "notes": "본 문서는 2026학년도 입학전형 시행계획(변경)으로 등록금·장학금·기숙사·제출서류 정보는 포함되지 않음"
+    },
+    "scholarships": [],
+    "metadata": {
+      "selection_process": {
+        "method": "서류 100% (순수외국인 정원외 특별전형)",
+        "interview_required": false
+      },
+      "post_acceptance": {
+        "visa_type": null
+      },
+      "contacts": {
+        "phone": null,
+        "email": null,
+        "website": null,
+        "online_apply_url": null
+      },
+      "country_specific_notes_vi": null
+    }
+  },
+  {
+    "identity": {
+      "university_name_ko": "백석대학교",
+      "term": "2025-Year",
+      "campus_location_ko": "충청남도 천안시"
+    },
+    "submission": {
+      "is_online_submission": false,
+      "online_form_url": null
+    },
+    "departments": [
+      {
+        "faculty": "인문·사회/자연 계열",
+        "name": "인문·사회/자연 계열 전 학과 (편입학)",
+        "program_kind": "degree",
+        "degree": "bachelor",
+        "years": 4,
+        "capacity": "unlimited",
+        "korean_min_topik": 3,
+        "tuition_per_semester_krw": null
+      },
+      {
+        "faculty": "예·체능 계열",
+        "name": "예·체능 계열 전 학과 (편입학)",
+        "program_kind": "degree",
+        "degree": "bachelor",
+        "years": 4,
+        "capacity": "unlimited",
+        "korean_min_topik": 2,
+        "tuition_per_semester_krw": null
+      }
+    ],
+    "required_documents": [
+      {
+        "key": "application_form",
+        "name_ko": "입학원서(본교양식)",
+        "required": true,
+        "target_person": "self",
+        "target_person_note": null,
+        "notarization": "none",
+        "language": "ko",
+        "notes": "지원서·학력조회동의서·재정능력입증서·자기소개서 및 수학계획서 포함, 한국어 작성"
+      },
+      {
+        "key": "self_intro",
+        "name_ko": "자기소개서",
+        "required": true,
+        "target_person": "self",
+        "target_person_note": null,
+        "notarization": "none",
+        "language": "ko",
+        "notes": "입학원서에 포함"
+      },
+      {
+        "key": "study_plan",
+        "name_ko": "수학계획서",
+        "required": true,
+        "target_person": "self",
+        "target_person_note": null,
+        "notarization": "none",
+        "language": "ko",
+        "notes": "입학원서에 포함"
+      },
+      {
+        "key": "academic_record_release",
+        "name_ko": "학력조회동의서",
+        "required": true,
+        "target_person": "self",
+        "target_person_note": null,
+        "notarization": "none",
+        "language": "ko",
+        "notes": "입학원서에 포함"
+      },
+      {
+        "key": "financial_pledge_form",
+        "name_ko": "재정능력입증서(재정보증서)",
+        "required": true,
+        "target_person": "self",
+        "target_person_note": null,
+        "notarization": "none",
+        "language": "ko",
+        "notes": "입학원서에 포함"
+      },
+      {
+        "key": "family_relations_certificate",
+        "name_ko": "가족관계 증명서",
+        "required": true,
+        "target_person": "other",
+        "target_person_note": "지원자-부모 관계",
+        "notarization": "translation_notarization",
+        "language": "ko_or_en",
+        "notes": "베트남: 호적부(So Ho Khau) 또는 출생증명서(Giay khai sinh). 한국어/영어 외 문서는 번역문+번역자 확인서 첨부"
+      },
+      {
+        "key": "passport_copy",
+        "name_ko": "신분증 사본(본인 여권)",
+        "required": true,
+        "target_person": "self",
+        "target_person_note": null,
+        "notarization": "none",
+        "language": null,
+        "notes": "본인 여권 사본 1부"
+      },
+      {
+        "key": "nationality_proof",
+        "name_ko": "부모 신분증 사본",
+        "required": true,
+        "target_person": "other",
+        "target_person_note": "부모",
+        "notarization": "none",
+        "language": null,
+        "notes": "부모 현지 신분증 각 1부. 국내 체류 시 외국인등록증"
+      },
+      {
+        "key": "bank_balance",
+        "name_ko": "잔고 증명",
+        "required": true,
+        "target_person": "other",
+        "target_person_note": "본인 또는 부모",
+        "notarization": "none",
+        "language": "en",
+        "notes": "해외/국내 1,600만원 이상(본교 어학연수생 800만원), 발급 30일 이내, 영문 2부"
+      },
+      {
+        "key": "highschool_diploma",
+        "name_ko": "고등학교 졸업증명서",
+        "required": true,
+        "target_person": "self",
+        "target_person_note": null,
+        "notarization": "apostille_or_consul",
+        "language": "ko_or_en",
+        "notes": "영사인증 원본 또는 아포스티유 번역공증본. 졸업예정자는 졸업예정증명서 우선 제출 후 졸업증명서 제출"
+      },
+      {
+        "key": "highschool_transcript",
+        "name_ko": "고등학교 성적증명서",
+        "required": true,
+        "target_person": "self",
+        "target_person_note": null,
+        "notarization": "apostille_or_consul",
+        "language": "ko_or_en",
+        "notes": "전 학년 성적증명서"
+      },
+      {
+        "key": "korean_proof",
+        "name_ko": "한국어능력 입증서류",
+        "required": false,
+        "target_person": "self",
+        "target_person_note": null,
+        "notarization": "none",
+        "language": null,
+        "notes": "TOPIK 3급(예체능 2급) 이상 또는 본교 모의TOPIK 합격증. 소지자에 한함"
+      },
+      {
+        "key": "photo",
+        "name_ko": "여권사진",
+        "required": true,
+        "target_person": "self",
+        "target_person_note": null,
+        "notarization": "none",
+        "language": null,
+        "notes": "3.5cm×4.5cm 4매"
+      },
+      {
+        "key": "other",
+        "name_ko": "전적대학 졸업(재학)증명 및 전 학년 성적증명서",
+        "required": true,
+        "target_person": "self",
+        "target_person_note": null,
+        "notarization": "apostille_or_consul",
+        "language": "ko_or_en",
+        "notes": "편입생 추가 서류. 대학 졸업(또는 재학)증명 + 대학 전체 성적증명"
+      }
+    ],
+    "eligibility": {
+      "applicant_categories": [
+        "본인 및 부모 모두 외국인(순수외국인)"
+      ],
+      "education_required": null,
+      "education_exclusions": [],
+      "korean_proficiency": {
+        "topik_min_default": 3,
+        "topik_min_by_dept_category": {
+          "예·체능계열": 2
+        },
+        "alternative_paths": [
+          {
+            "type": "university_internal_test",
+            "name": "본교 모의TOPIK",
+            "description": "국제교류처 주관 모의한국어능력시험 통과"
+          },
+          {
+            "type": "other",
+            "description": "영어능력으로 대체 가능: TOEFL 530(CBT 197, iBT 71), IELTS 5.5, CEFR B2, TEPS 600"
+          }
+        ],
+        "post_admission_requirement": null
+      },
+      "financial_minimum": {
+        "amount": 16000000,
+        "currency": "KRW",
+        "holder_relations": ["self", "parent"],
+        "holder_other_note": null,
+        "freshness_days": 30
+      },
+      "exclusions": [
+        "복수국적자(이중국적자)는 외국인으로 인정하지 않음",
+        "4학년 편입은 졸업기준 미충족 시 1년 내 졸업이 불가할 수 있음"
+      ]
+    },
+    "schedule": {
+      "rounds": [
+        {
+          "name": "전기",
+          "application_open": "2024-12-16",
+          "application_close": "2025-01-10",
+          "document_submission_close": null,
+          "interview": null,
+          "result_announcement": null,
+          "payment_period": []
+        },
+        {
+          "name": "후기",
+          "application_open": "2025-03-04",
+          "application_close": "2025-07-18",
+          "document_submission_close": null,
+          "interview": null,
+          "result_announcement": null,
+          "payment_period": []
+        }
+      ],
+      "semester_start": null,
+      "submission_method": "방문 제출(우편 접수 불가). 합격자 발표는 서류 도착일 기준 4주 이내, 등록금은 추후 공지"
+    },
+    "tuition": {
+      "currency": "KRW",
+      "unit": "pending",
+      "application_fee": 100000,
+      "admission_fee": null,
+      "tuition_per_semester": null,
+      "tuition_per_year": null,
+      "dorm_fee": null,
+      "notes": "전형료 100,000원(서류심사비 50,000+서류전형비 50,000). 등록금은 합격자 발표 후 별도 공지"
+    },
+    "scholarships": [
+      {
+        "name": "외국인유학생 장학금",
+        "applies_to": "both",
+        "condition": "외국인유학생 장학금 지급 규정에 따름",
+        "benefit_type": "policy",
+        "benefit_value": null,
+        "tiered_by_topik": null,
+        "notes": "세부 규정 별도"
+      }
+    ],
+    "metadata": {
+      "selection_process": {
+        "method": "서류심사 100%",
+        "interview_required": false
+      },
+      "post_acceptance": {
+        "visa_type": null
+      },
+      "contacts": {
+        "phone": null,
+        "email": null,
+        "website": "https://www.bu.ac.kr/",
+        "online_apply_url": null
+      },
+      "country_specific_notes_vi": "베트남 가족관계증명서: 호적부(So Ho Khau) 또는 출생증명서(Giay khai sinh)"
+    }
+  },
+  {
+    "identity": {
+      "university_name_ko": "명지전문대학",
+      "term": "2026-Spring",
+      "campus_location_ko": "서울특별시 서대문구"
+    },
+    "submission": {
+      "is_online_submission": true,
+      "online_form_url": null
+    },
+    "departments": [
+      {
+        "faculty": null,
+        "name": "사회복지과 (노인요양복지 별도반)",
+        "program_kind": "degree",
+        "degree": "associate",
+        "years": 2,
+        "capacity": 40,
+        "korean_min_topik": 2,
+        "tuition_per_semester_krw": null
+      },
+      {
+        "faculty": null,
+        "name": "보건의료정보과 (요양보건관리전공 별도반, 전공심화 2+2)",
+        "program_kind": "degree",
+        "degree": "bachelor",
+        "years": 2,
+        "capacity": 20,
+        "korean_min_topik": 2,
+        "tuition_per_semester_krw": null
+      }
+    ],
+    "required_documents": [],
+    "eligibility": {
+      "applicant_categories": [
+        "외국인(순수외국인)"
+      ],
+      "education_required": "high_school",
+      "education_exclusions": [],
+      "korean_proficiency": {
+        "topik_min_default": 2,
+        "topik_min_by_dept_category": {},
+        "alternative_paths": [
+          {
+            "type": "health_science_degree",
+            "description": "해외 대학 간호학·보건학 관련 전공 졸업(예정)자 (외국 고교 졸업이 필수 전제)"
+          }
+        ],
+        "post_admission_requirement": "TOPIK 3급 이상 (3학기 과정 이수 + 요양보호사 자격시험 합격 시 취업 알선)"
+      },
+      "financial_minimum": {
+        "amount": null,
+        "currency": "KRW",
+        "holder_relations": [],
+        "holder_other_note": null,
+        "freshness_days": null
+      },
+      "exclusions": []
+    },
+    "schedule": {
+      "rounds": [
+        {
+          "name": "수시2차",
+          "application_open": "2025-11-07",
+          "application_close": "2025-11-21",
+          "document_submission_close": "2025-11-26",
+          "interview": "2025-11-29",
+          "result_announcement": "2025-12-12",
+          "payment_period": ["2026-02-03", "2026-02-05"]
+        },
+        {
+          "name": "정시",
+          "application_open": "2025-12-29",
+          "application_close": "2026-01-14",
+          "document_submission_close": "2026-01-17",
+          "interview": "2026-01-18",
+          "result_announcement": "2026-02-02",
+          "payment_period": ["2026-02-03", "2026-02-05"]
+        }
+      ],
+      "semester_start": null,
+      "submission_method": "온라인 접수(진학사, 유웨이어플라이)"
+    },
+    "tuition": {
+      "currency": "KRW",
+      "unit": "pending",
+      "application_fee": null,
+      "admission_fee": null,
+      "tuition_per_semester": null,
+      "tuition_per_year": null,
+      "dorm_fee": null,
+      "notes": "리플릿(브로슈어) 자료로 등록금·기숙사비 금액 미기재. 생활관(기숙사) 외국인유학생 저렴 제공 안내만 있음"
+    },
+    "scholarships": [],
+    "metadata": {
+      "selection_process": {
+        "method": "서류 + 면접",
+        "interview_required": true
+      },
+      "post_acceptance": {
+        "visa_type": "졸업 후 E-7 취업비자 발급 가능 (법무부·보건복지부 지정 외국인 요양보호사 양성대학, 비자 발급 재정요건·체류 연장 완화)"
+      },
+      "contacts": {
+        "phone": "02-300-1298",
+        "email": "globaledu@mjc.ac.kr",
+        "website": "https://ipsi.mjc.ac.kr",
+        "online_apply_url": null
+      },
+      "country_specific_notes_vi": null
+    }
+  },
+  {
+    "identity": {
+      "university_name_ko": "원광대학교",
+      "term": "2026-Spring",
+      "campus_location_ko": "전라북도 익산시"
+    },
+    "submission": {
+      "is_online_submission": false,
+      "online_form_url": null
+    },
+    "departments": [
+      {
+        "faculty": "인문·사회 계열",
+        "name": "인문·사회 계열 학과 (신입학 1학년 / 편입학 2~4학년)",
+        "program_kind": "degree",
+        "degree": "bachelor",
+        "years": 4,
+        "capacity": null,
+        "korean_min_topik": null,
+        "tuition_per_semester_krw": 3194500
+      },
+      {
+        "faculty": "이학·체육 계열",
+        "name": "이학·체육 계열 학과 (신입학 1학년 / 편입학 2~4학년)",
+        "program_kind": "degree",
+        "degree": "bachelor",
+        "years": 4,
+        "capacity": null,
+        "korean_min_topik": null,
+        "tuition_per_semester_krw": 3749000
+      },
+      {
+        "faculty": "공학·예능 계열",
+        "name": "공학·예능 계열 학과 (신입학 1학년 / 편입학 2~4학년)",
+        "program_kind": "degree",
+        "degree": "bachelor",
+        "years": 4,
+        "capacity": null,
+        "korean_min_topik": null,
+        "tuition_per_semester_krw": 4303000
+      },
+      {
+        "faculty": "공과대학",
+        "name": "건축학과 (5년제)",
+        "program_kind": "degree",
+        "degree": "bachelor",
+        "years": 5,
+        "capacity": null,
+        "korean_min_topik": null,
+        "tuition_per_semester_krw": 4303000
+      },
+      {
+        "faculty": "보건의료대학",
+        "name": "치기공학과 (전공심화과정 4학년)",
+        "program_kind": "degree",
+        "degree": "bachelor",
+        "years": null,
+        "capacity": null,
+        "korean_min_topik": null,
+        "tuition_per_semester_krw": null
+      }
+    ],
+    "required_documents": [
+      {
+        "key": "application_form",
+        "name_ko": "입학원서(본교서식)",
+        "required": true,
+        "target_person": "self",
+        "target_person_note": null,
+        "notarization": "none",
+        "language": "ko",
+        "notes": null
+      },
+      {
+        "key": "privacy_consent",
+        "name_ko": "개인정보 수집 및 이용에 대한 동의서(본교서식)",
+        "required": true,
+        "target_person": "self",
+        "target_person_note": null,
+        "notarization": "none",
+        "language": "ko",
+        "notes": null
+      },
+      {
+        "key": "highschool_diploma",
+        "name_ko": "고등학교 졸업(예정)증명서(원본)",
+        "required": true,
+        "target_person": "self",
+        "target_person_note": null,
+        "notarization": "apostille_or_consul",
+        "language": "ko_or_en",
+        "notes": "신입학 필수. 졸업예정자는 졸업예정증명서 우선 제출 후 졸업증명서 추가 제출"
+      },
+      {
+        "key": "highschool_transcript",
+        "name_ko": "고등학교 전체 성적증명서(사본)",
+        "required": true,
+        "target_person": "self",
+        "target_person_note": null,
+        "notarization": "none",
+        "language": "ko_or_en",
+        "notes": "신입학"
+      },
+      {
+        "key": "other",
+        "name_ko": "전문대학(대학교) 졸업(예정)·수료증명서 및 전체 성적증명서",
+        "required": true,
+        "target_person": "self",
+        "target_person_note": null,
+        "notarization": "apostille_or_consul",
+        "language": "ko_or_en",
+        "notes": "편입학 필수"
+      },
+      {
+        "key": "other",
+        "name_ko": "최종학력입증서류(원본)",
+        "required": true,
+        "target_person": "self",
+        "target_person_note": null,
+        "notarization": "apostille_or_consul",
+        "language": "ko_or_en",
+        "notes": "3개월 이내 발급. 아포스티유 협약국=아포스티유, 미가입국=영사확인서, 그 외 법무부 지침 인정 인증보고서"
+      },
+      {
+        "key": "nationality_proof",
+        "name_ko": "외국인등록증(사본)",
+        "required": false,
+        "target_person": "self",
+        "target_person_note": null,
+        "notarization": "none",
+        "language": null,
+        "notes": "한국 거주자(소지자에 한함)"
+      },
+      {
+        "key": "passport_copy",
+        "name_ko": "여권(사본)",
+        "required": true,
+        "target_person": "self",
+        "target_person_note": null,
+        "notarization": "none",
+        "language": null,
+        "notes": "잔여기간 6개월 이상 필수"
+      },
+      {
+        "key": "korean_proof",
+        "name_ko": "어학(한국어) 입증 가능 서류",
+        "required": false,
+        "target_person": "self",
+        "target_person_note": null,
+        "notarization": "none",
+        "language": null,
+        "notes": "소지자에 한함(입학 시 선택요건)"
+      },
+      {
+        "key": "family_relations_certificate",
+        "name_ko": "가족관계증명서(사본)",
+        "required": true,
+        "target_person": "other",
+        "target_person_note": "지원자-부모 관계",
+        "notarization": "none",
+        "language": "ko_or_en",
+        "notes": "한글/영문 외 언어는 한글 번역본+번역자 확인서 첨부"
+      },
+      {
+        "key": "nationality_proof",
+        "name_ko": "부·모 신분증(사본)",
+        "required": true,
+        "target_person": "other",
+        "target_person_note": "부모",
+        "notarization": "none",
+        "language": null,
+        "notes": null
+      },
+      {
+        "key": "other",
+        "name_ko": "번역자 확인서(학교서식) 및 번역자 신분증(사본)",
+        "required": false,
+        "target_person": "other",
+        "target_person_note": "번역자",
+        "notarization": "none",
+        "language": null,
+        "notes": "번역본 있는 경우만 해당"
+      },
+      {
+        "key": "photo",
+        "name_ko": "사진 2매",
+        "required": true,
+        "target_person": "self",
+        "target_person_note": null,
+        "notarization": "none",
+        "language": null,
+        "notes": "칼라 3.5cm×4.5cm, 흰색 배경, 뒷면 이름 기재"
+      },
+      {
+        "key": "financial_proof",
+        "name_ko": "재정능력 입증서류(원본 및 사본)",
+        "required": true,
+        "target_person": "self",
+        "target_person_note": null,
+        "notarization": "none",
+        "language": "ko_or_en",
+        "notes": "합격 후 등록기간 내 제출. 16,000,000KRW 이상 본인명의, 발급 1개월 이내(중국 동결기간 3개월 이상), 원본 2부"
+      }
+    ],
+    "eligibility": {
+      "applicant_categories": [
+        "부·모 모두 외국인인 외국인(순수외국인)",
+        "우리나라 초·중·고 12년 교육에 상응하는 교육과정을 전부 이수한 자"
+      ],
+      "education_required": "high_school_12yrs",
+      "education_exclusions": [],
+      "korean_proficiency": {
+        "topik_min_default": null,
+        "topik_min_by_dept_category": {},
+        "alternative_paths": [
+          {
+            "type": "kiip",
+            "level": "4단계 이상",
+            "description": "사회통합프로그램(KIIP) 4단계 이상 이수 또는 사전평가 81점 이상 (졸업기준)"
+          },
+          {
+            "type": "sejong_institute",
+            "level": "중급2 이상",
+            "description": "세종학당 한국어 중급2 과정 이상 (졸업기준)"
+          },
+          {
+            "type": "university_internal_test",
+            "name": "WKU-TOPIK",
+            "description": "원광대 자체 한국어능력시험 통과 (졸업기준)"
+          },
+          {
+            "type": "korean_education_center",
+            "name": "원광대 한국문화교육센터",
+            "description": "2개 학기(20주) 이상 수료. 4학년 편입생은 필수 (졸업기준)"
+          }
+        ],
+        "post_admission_requirement": "졸업기준(필수): TOPIK 4급(예체능 3급) 이상 또는 KIIP 4단계/세종학당 중급2/WKU-TOPIK 통과/한국문화교육센터 2학기 이상 중 1가지. 입학 시 한국어 최저요건 없음(소지자만 증빙 제출)"
+      },
+      "financial_minimum": {
+        "amount": 16000000,
+        "currency": "KRW",
+        "holder_relations": ["self"],
+        "holder_other_note": null,
+        "freshness_days": 30
+      },
+      "exclusions": [
+        "비자(사증) 발급 거부 시 입학허가 취소",
+        "본교 어학연수생의 학부 지원 시 재정요건 1/2 완화 가능"
+      ]
+    },
+    "schedule": {
+      "rounds": [
+        {
+          "name": "1차",
+          "application_open": "2025-12-01",
+          "application_close": "2025-12-05",
+          "document_submission_close": null,
+          "interview": "2025-12-19",
+          "result_announcement": "2025-12-24",
+          "payment_period": ["2026-01-26", "2026-01-30"]
+        },
+        {
+          "name": "2차",
+          "application_open": "2026-01-05",
+          "application_close": "2026-01-09",
+          "document_submission_close": null,
+          "interview": "2026-01-19",
+          "result_announcement": "2026-01-23",
+          "payment_period": ["2026-01-26", "2026-01-30"]
+        }
+      ],
+      "semester_start": "2026-03-02",
+      "submission_method": "방문접수(국내, 학생지원관 2층 국제교류과) / 우편접수(해외)"
+    },
+    "tuition": {
+      "currency": "KRW",
+      "unit": "per_semester",
+      "application_fee": 50000,
+      "admission_fee": null,
+      "tuition_per_semester": null,
+      "tuition_per_year": null,
+      "dorm_fee": 796000,
+      "notes": "등록금은 계열별 상이(최초학기 기준 인문사회 3,194,500 / 이학·체육 3,749,000 / 공학·예능 4,303,000, 잔여학기는 각각 3,079,500 / 3,634,000 / 4,188,000, 2025학년도 참고용). 기숙사비 학기(15주) 2인1실 796,000원(관리비), 식비 별도(1일1식 474,000 / 2식 830,000 / 3식 1,067,000)"
+    },
+    "scholarships": [
+      {
+        "name": "외국인장학금(신·편입학)",
+        "applies_to": "freshman",
+        "condition": "TOPIK 등급별 수업료 감면",
+        "benefit_type": "tuition_pct",
+        "benefit_value": null,
+        "tiered_by_topik": {
+          "3": 0.5,
+          "4": 0.6,
+          "5": 1.0
+        },
+        "notes": "TOPIK 5급 이상 100%, 4급 60%, 3급 50% 감면. 4학년 편입생·전공심화과정생 미적용"
+      },
+      {
+        "name": "외국인장학금(재학생)",
+        "applies_to": "enrolled",
+        "condition": "직전학기 평점평균 + TOPIK 조건",
+        "benefit_type": "tuition_pct",
+        "benefit_value": null,
+        "tiered_by_topik": null,
+        "notes": "평점 4.0 이상 & TOPIK 4급 이상 100%, 평점 3.0 이상 & TOPIK 4급 60%, 평점 2.0 이상 30%"
+      },
+      {
+        "name": "TOPIK우대장학금(재학생)",
+        "applies_to": "enrolled",
+        "condition": "TOPIK 신규 취득/등급 상승",
+        "benefit_type": "stipend",
+        "benefit_value": null,
+        "tiered_by_topik": null,
+        "notes": "등급 상승 시 100,000원, 4급 신규 200,000원, 3급 이하→5급 300,000원, 3급 이하→6급 400,000원. 입학 시 6급 소지자는 미지급"
+      },
+      {
+        "name": "세종학당장학금(신·편입학)",
+        "applies_to": "freshman",
+        "condition": "세종학당 + TOPIK 등급",
+        "benefit_type": "tuition_pct",
+        "benefit_value": null,
+        "tiered_by_topik": {
+          "4": 0.7,
+          "5": 1.0
+        },
+        "notes": "전형료 면제 + TOPIK 5급 이상 100%, 4급 70% 감면"
+      },
+      {
+        "name": "외국인특수장학금(해외자매대학/한국문화교육센터)",
+        "applies_to": "both",
+        "condition": "해외 MOU 편입생 또는 한국문화교육센터 수료자",
+        "benefit_type": "tuition_pct",
+        "benefit_value": 0.5,
+        "tiered_by_topik": null,
+        "notes": "첫 학기 수업료 50% 감면. 외국인장학금과 중복 불가(큰 금액으로 지급), 4학년 편입생·전공심화 미적용"
+      }
+    ],
+    "metadata": {
+      "selection_process": {
+        "method": "서류심사 40점 + 면접 60점, 총점 60점 이상 합격(면접은 한국어로 진행)",
+        "interview_required": true
+      },
+      "post_acceptance": {
+        "visa_type": "D-2 (비자 자격변경 D-4→D-2 및 기간연장 D-2 기준 재정요건 명시)"
+      },
+      "contacts": {
+        "phone": "063-850-5751~2",
+        "email": "bon5752@wku.ac.kr",
+        "website": "www.wku.ac.kr",
+        "online_apply_url": null
+      },
+      "country_specific_notes_vi": null
+    }
+  },
+  {
+    "identity": {
+      "university_name_ko": "신성대학교",
+      "term": "2026-Spring",
+      "campus_location_ko": "충청남도 당진시"
+    },
+    "submission": {
+      "is_online_submission": true,
+      "online_form_url": "https://ssinfo.shinsung.ac.kr/ipsi"
+    },
+    "departments": [
+      {
+        "faculty": "글로벌산업융합계열",
+        "name": "글로벌산업융합계열 (글로벌공학·글로벌시니어케어·한국어전공, 외국인전담)",
+        "program_kind": "degree",
+        "degree": "associate",
+        "years": 2,
+        "capacity": 62,
+        "korean_min_topik": 3,
+        "tuition_per_semester_krw": null
+      }
+    ],
+    "required_documents": [
+      {
+        "key": "application_form",
+        "name_ko": "입학원서",
+        "required": true,
+        "target_person": "self",
+        "target_person_note": null,
+        "notarization": "none",
+        "language": "ko",
+        "notes": "온라인·모바일 접수자는 미제출"
+      },
+      {
+        "key": "highschool_diploma",
+        "name_ko": "고교졸업증명서",
+        "required": true,
+        "target_person": "self",
+        "target_person_note": null,
+        "notarization": "apostille_or_consul",
+        "language": "ko_or_en",
+        "notes": "아포스티유 가입국=외교부 발급, 비가입국=해당국 영사관/대사관 발급 후 한글 공증"
+      },
+      {
+        "key": "topik_certificate",
+        "name_ko": "한국어능력시험 3급 이상 증명서",
+        "required": true,
+        "target_person": "self",
+        "target_person_note": null,
+        "notarization": "none",
+        "language": null,
+        "notes": null
+      },
+      {
+        "key": "nationality_proof",
+        "name_ko": "신분증(외국) 사본 / 외국인등록증(국내) 사본",
+        "required": true,
+        "target_person": "self",
+        "target_person_note": null,
+        "notarization": "none",
+        "language": null,
+        "notes": null
+      },
+      {
+        "key": "other",
+        "name_ko": "기타",
+        "required": false,
+        "target_person": null,
+        "target_person_note": null,
+        "notarization": null,
+        "language": null,
+        "notes": "추가 요구 가능"
+      }
+    ],
+    "eligibility": {
+      "applicant_categories": [
+        "순수외국인",
+        "외국에서 우리나라 초·중등교육에 상응하는 교육과정을 전부 이수한 재외국민·외국인"
+      ],
+      "education_required": "high_school_12yrs",
+      "education_exclusions": [],
+      "korean_proficiency": {
+        "topik_min_default": 3,
+        "topik_min_by_dept_category": {},
+        "alternative_paths": [
+          {
+            "type": "korean_education_center",
+            "name": "신성대학교 어학연수 과정",
+            "description": "우리대학 어학연수 과정 수료 + 한국어능력 3급 이상 취득"
+          }
+        ],
+        "post_admission_requirement": null
+      },
+      "financial_minimum": {
+        "amount": null,
+        "currency": "KRW",
+        "holder_relations": [],
+        "holder_other_note": null,
+        "freshness_days": null
+      },
+      "exclusions": []
+    },
+    "schedule": {
+      "rounds": [
+        {
+          "name": "수시1차",
+          "application_open": "2025-09-08",
+          "application_close": "2025-09-30",
+          "document_submission_close": null,
+          "interview": null,
+          "result_announcement": "2025-10-27",
+          "payment_period": ["2025-12-15", "2025-12-17"]
+        },
+        {
+          "name": "수시2차",
+          "application_open": "2025-11-07",
+          "application_close": "2025-11-21",
+          "document_submission_close": null,
+          "interview": null,
+          "result_announcement": "2025-12-08",
+          "payment_period": []
+        },
+        {
+          "name": "정시",
+          "application_open": "2025-12-29",
+          "application_close": "2026-01-14",
+          "document_submission_close": null,
+          "interview": null,
+          "result_announcement": "2026-01-26",
+          "payment_period": ["2026-02-03", "2026-02-05"]
+        }
+      ],
+      "semester_start": null,
+      "submission_method": "인터넷 접수(유웨이/진학사), 모바일 자체접수(전형료 면제), 우편·창구 접수. 외국인 전형 지원자는 입학홍보처 유선 문의 권장"
+    },
+    "tuition": {
+      "currency": "KRW",
+      "unit": "pending",
+      "application_fee": 25000,
+      "admission_fee": null,
+      "tuition_per_semester": null,
+      "tuition_per_year": null,
+      "dorm_fee": 875000,
+      "notes": "전형료 25,000원(모바일·본교·우편·박람회·설명회 접수 시 면제). 등록금 금액 미기재. 기숙사비 2관 2인실 875,000원 / 3관 2인실 935,000원(2024 기준, 연 2회 납부)"
+    },
+    "scholarships": [
+      {
+        "name": "외국인장학금(교내 복지장학금)",
+        "applies_to": "both",
+        "condition": "외국인 재학생 대상 교내 복지장학금",
+        "benefit_type": "policy",
+        "benefit_value": null,
+        "tiered_by_topik": null,
+        "notes": "교내·외 장학금 60여 종 운영(2024년 재학생 수혜율 79.9%). 국가장학금 등 교외 장학금 상당수는 순수외국인 대상 아님"
+      }
+    ],
+    "metadata": {
+      "selection_process": {
+        "method": "서류 100% (외국인 전형, 외국에서 이수한 최종학력 심사)",
+        "interview_required": false
+      },
+      "post_acceptance": {
+        "visa_type": null
+      },
+      "contacts": {
+        "phone": "041-350-1400",
+        "email": null,
+        "website": "ipsi.shinsung.ac.kr",
+        "online_apply_url": "https://ssinfo.shinsung.ac.kr/ipsi"
+      },
+      "country_specific_notes_vi": null
+    }
+  }
+]

@@ -41,6 +41,7 @@ export type SubmissionRow = {
   base_submission_id: string | null;
   name_ko: string;
   name_vi: string | null;
+  std_key: string | null;
   target_person: string | null;
   target_person_note: string | null;
   sample_image_url: string | null;
@@ -347,6 +348,8 @@ export function SubmissionForm({
   const iss = submission?.issuance_requirements ?? {};
   const [nameKo, setNameKo] = useState(submission?.name_ko ?? "");
   const [nameVi, setNameVi] = useState(submission?.name_vi ?? "");
+  const [stdKey, setStdKey] = useState(submission?.std_key ?? "");
+  const docTypeOptions = dataTypes.filter((d) => d.category === "document");
   const [departmentId, setDepartmentId] = useState<string>(
     submission?.department_id != null ? String(submission.department_id) : ""
   );
@@ -441,6 +444,7 @@ export function SubmissionForm({
       action={(fd: FormData) => {
         fd.set("university_id", universityId != null ? String(universityId) : "");
         fd.set("base_submission_id", baseSubmissionId ?? "");
+        fd.set("std_key", stdKey);
         fd.set("target_person", targetPerson);
         fd.set(
           "target_person_note",
@@ -544,6 +548,25 @@ export function SubmissionForm({
           </select>
         </Field>
       </div>
+
+      {/* 표준 발급서류 매핑 (정본 키) */}
+      <Field label="표준 발급서류 매핑 (정본 키)">
+        <select
+          value={stdKey}
+          onChange={(e) => setStdKey(e.target.value)}
+          className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+        >
+          <option value="">— 매핑 안 함</option>
+          {docTypeOptions.map((d) => (
+            <option key={d.key} value={d.key}>
+              {d.label_ko}
+            </option>
+          ))}
+        </select>
+        <span className="text-[11px] text-muted-foreground">
+          표준데이터 '발급 서류' 카탈로그와 1:1 연결 — 공용↔대학별 자동 매칭 기준
+        </span>
+      </Field>
 
       {/* 샘플 이미지 */}
       <div className="rounded-md border bg-background p-3 space-y-2">

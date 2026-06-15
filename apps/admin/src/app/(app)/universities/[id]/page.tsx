@@ -19,9 +19,13 @@ import {
 import type { UniversityInput } from "@/lib/validators";
 import {
   classifyRequiredDocs,
-  normalizeDocName,
   type RequiredDoc,
 } from "@/lib/admission/classify-documents";
+import {
+  buildSubmissionIndex,
+  matchIssuedDoc,
+} from "@/lib/admission/match-submissions";
+import { IssuedDocActions } from "./issued-doc-actions";
 
 export const dynamic = "force-dynamic";
 
@@ -84,7 +88,9 @@ export default async function UniversityEditPage({
         .order("uploaded_at", { ascending: false }),
       supabase
         .from("study_required_submissions")
-        .select("id, university_id, department_id, name_ko, sample_image_url, status, is_active, sort_order")
+        .select(
+          "id, university_id, base_submission_id, department_id, name_ko, std_key, aliases, sample_image_url, status, is_active, sort_order"
+        )
         .or(`university_id.eq.${numericId},university_id.is.null`)
         .eq("is_active", true)
         .order("sort_order"),
@@ -144,8 +150,18 @@ export default async function UniversityEditPage({
   const formByKey = new Map(
     (formFiles ?? []).map((f) => [f.key as string, f] as const)
   );
-  const submissionByName = new Map(
-    (submissions ?? []).map((s) => [normalizeDocName(s.name_ko), s] as const)
+  // 발급서류 매칭 인덱스 (공용 마스터 + 대학별 조정본, std_key→이름/별칭)
+  const submissionIndex = buildSubmissionIndex(
+    (submissions ?? []).map((s) => ({
+      id: s.id,
+      university_id: s.university_id,
+      base_submission_id: s.base_submission_id,
+      name_ko: s.name_ko,
+      std_key: s.std_key ?? null,
+      aliases: s.aliases ?? [],
+      sample_image_url: s.sample_image_url,
+      status: s.status,
+    }))
   );
 
   const defaultValues: Partial<UniversityInput> = {
@@ -511,33 +527,36 @@ export default async function UniversityEditPage({
                     <TableHeader>
                       <TableRow>
                         <TableHead>서류명</TableHead>
-                        <TableHead className="w-24 text-center">상태</TableHead>
+                        <TableHead className="w-28 text-center">구분</TableHead>
                         <TableHead className="w-24 text-center">샘플</TableHead>
                         <TableHead className="w-28 text-center">관리</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {derivedIssued.map((doc) => {
-                        const sub = submissionByName.get(
-                          normalizeDocName(doc.name_ko)
-                        );
+                        const m = matchIssuedDoc(doc, submissionIndex);
+                        const sample =
+                          m.submission?.sample_image_url ??
+                          m.master?.sample_image_url ??
+                          null;
                         return (
                           <TableRow key={`issued-${doc.key}-${doc.name_ko}`}>
                             <TableCell className="font-medium">
-                              <span className="flex flex-wrap items-center gap-1.5">
-                                {doc.name_ko}
-                                {sub && sub.university_id == null ? (
-                                  <Badge variant="outline" className="text-[10px]">
-                                    공용
-                                  </Badge>
-                                ) : null}
-                              </span>
+                              {doc.name_ko}
                             </TableCell>
                             <TableCell className="text-center">
-                              {sub ? (
-                                <Badge className="border-success/20 bg-success/10 text-success">
-                                  사용
-                                </Badge>
+                              {m.kind === "university" ? (
+                                m.master ? (
+                                  <Badge className="border-success/20 bg-success/10 text-success">
+                                    공용 기반(조정)
+                                  </Badge>
+                                ) : (
+                                  <Badge className="border-success/20 bg-success/10 text-success">
+                                    대학 전용
+                                  </Badge>
+                                )
+                              ) : m.kind === "shared" ? (
+                                <Badge variant="outline">공용 표준</Badge>
                               ) : (
                                 <Badge variant="outline" className="text-amber-600">
                                   미등록
@@ -545,7 +564,7 @@ export default async function UniversityEditPage({
                               )}
                             </TableCell>
                             <TableCell className="text-center">
-                              {sub?.sample_image_url ? (
+                              {sample ? (
                                 <Badge className="border-success/20 bg-success/10 text-success">
                                   있음
                                 </Badge>
@@ -554,16 +573,13 @@ export default async function UniversityEditPage({
                               )}
                             </TableCell>
                             <TableCell className="text-center">
-                              <Link
-                                href={
-                                  sub
-                                    ? `/admissions/submissions/${sub.id}`
-                                    : `/admissions/submissions/new`
-                                }
-                                className="text-xs text-primary hover:underline"
-                              >
-                                {sub ? "편집" : "발급서류 등록"} →
-                              </Link>
+                              <IssuedDocActions
+                                kind={m.kind}
+                                universityId={numericId}
+                                submissionId={m.submission?.id ?? null}
+                                masterId={m.master?.id ?? null}
+                                docName={doc.name_ko}
+                              />
                             </TableCell>
                           </TableRow>
                         );

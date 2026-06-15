@@ -9,10 +9,14 @@ export function SiteNav({
   tabs,
   loginLabel,
   authed,
+  applyLabel,
+  applyHref = "/service",
 }: {
   tabs: Tab[];
   loginLabel: string;
   authed: boolean;
+  applyLabel?: string;
+  applyHref?: string;
 }) {
   const pathname = usePathname();
   const isActive = (href: string) =>
@@ -39,6 +43,16 @@ export function SiteNav({
               style={{ background: "var(--coral-pale)", color: "var(--coral)" }}
             >
               {loginLabel}
+            </Link>
+          </li>
+        )}
+        {!authed && applyLabel && (
+          <li>
+            <Link
+              href={applyHref}
+              style={{ background: "var(--coral)", color: "var(--white)" }}
+            >
+              {applyLabel}
             </Link>
           </li>
         )}

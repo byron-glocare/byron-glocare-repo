@@ -1483,6 +1483,7 @@ export type Database = {
           department_id: number | null;
           name_ko: string;
           name_vi: string | null;
+          std_key: string | null; // 표준 문서 카탈로그(study_student_data_types.key, category=document) 정본 키
           target_person: "self" | "father" | "mother" | "other" | null;
           target_person_note: string | null;
           sample_image_url: string | null;
@@ -1513,6 +1514,7 @@ export type Database = {
           department_id?: number | null;
           name_ko: string;
           name_vi?: string | null;
+          std_key?: string | null;
           applies_to_languages?: ("korean" | "english" | "other")[];
           applies_to_locations?: ("domestic" | "overseas")[];
           target_person?: "self" | "father" | "mother" | "other" | null;
