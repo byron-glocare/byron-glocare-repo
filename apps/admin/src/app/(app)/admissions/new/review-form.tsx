@@ -77,11 +77,13 @@ export function ReviewForm({
   spec,
   meta,
   universities,
+  docTypes = [],
   aiLog,
 }: {
   spec: ExtractedSpec;
   meta: ExtractMetaPrefill;
   universities: UniversityOption[];
+  docTypes?: Array<{ key: string; label_ko: string }>;
   aiLog?: AiLogPrefill;
 }) {
   const [state, action, pending] = useActionState<ApproveSpecState, FormData>(
@@ -378,6 +380,7 @@ export function ReviewForm({
           <RequiredDocumentsField
             name="spec_required_documents"
             initial={initialDocuments}
+            docTypes={docTypes}
           />
         </Section>
 

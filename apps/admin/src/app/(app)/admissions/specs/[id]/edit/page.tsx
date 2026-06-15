@@ -26,14 +26,21 @@ export default async function EditAdmissionPage({
   const { id } = await params;
   const supabase = await createClient();
 
-  const [{ data: spec }, { data: universities }] = await Promise.all([
-    supabase.from("study_admission_specs").select("*").eq("id", id).maybeSingle(),
-    supabase
-      .from("universities")
-      .select("id, name_ko")
-      .eq("active", true)
-      .order("name_ko", { ascending: true }),
-  ]);
+  const [{ data: spec }, { data: universities }, { data: docTypes }] =
+    await Promise.all([
+      supabase.from("study_admission_specs").select("*").eq("id", id).maybeSingle(),
+      supabase
+        .from("universities")
+        .select("id, name_ko")
+        .eq("active", true)
+        .order("name_ko", { ascending: true }),
+      supabase
+        .from("study_student_data_types")
+        .select("key, label_ko")
+        .eq("is_active", true)
+        .eq("category", "document")
+        .order("sort_order"),
+    ]);
 
   if (!spec) notFound();
 
@@ -55,6 +62,7 @@ export default async function EditAdmissionPage({
         <EditSpecForm
           spec={spec as EditableSpec}
           universities={(universities ?? []) as UniversityOption[]}
+          docTypes={docTypes ?? []}
         />
       </div>
     </>

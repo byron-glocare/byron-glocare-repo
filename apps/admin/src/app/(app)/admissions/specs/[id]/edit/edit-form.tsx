@@ -84,9 +84,11 @@ export type EditableSpec = {
 export function EditSpecForm({
   spec,
   universities,
+  docTypes = [],
 }: {
   spec: EditableSpec;
   universities: UniversityOption[];
+  docTypes?: Array<{ key: string; label_ko: string }>;
 }) {
   const bound = updateSpecAction.bind(null, spec.id);
   const [state, action, pending] = useActionState<UpdateSpecState, FormData>(
@@ -361,6 +363,7 @@ export function EditSpecForm({
           <RequiredDocumentsField
             name="spec_required_documents"
             initial={initialDocuments}
+            docTypes={docTypes}
           />
         </Section>
 

@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { isFormDoc, suggestStdKey } from "@/lib/admission/classify-documents";
 
 export type RequiredDocument = {
   key: string;
@@ -15,7 +17,11 @@ export type RequiredDocument = {
   notarization?: string | null;
   group?: string | null;
   notes?: string | null;
+  /** U3: 발급 서류의 표준 카탈로그 정본 키 (직접작성이면 무시) */
+  std_key?: string | null;
 };
+
+export type DocCatalogOption = { key: string; label_ko: string };
 
 const KEY_OPTIONS: Array<{ value: string; label: string }> = [
   // 신원
@@ -99,16 +105,23 @@ const emptyDoc = (): RequiredDocument => ({
   notarization: "",
   group: "",
   notes: "",
+  std_key: "",
 });
 
 export function RequiredDocumentsField({
   name,
   initial,
+  docTypes = [],
 }: {
   name: string;
   initial: RequiredDocument[];
+  /** U3: 표준 발급서류 카탈로그(category=document). std 매핑 제안·선택용 */
+  docTypes?: DocCatalogOption[];
 }) {
   const [items, setItems] = useState<RequiredDocument[]>(initial);
+  // 발급 서류의 표준 정본 키 (저장값 우선, 없으면 자동 제안)
+  const effectiveStd = (d: RequiredDocument): string =>
+    (d.std_key || "").trim() || suggestStdKey(d, docTypes);
 
   const add = () => setItems([...items, emptyDoc()]);
   const remove = (idx: number) =>
@@ -122,7 +135,7 @@ export function RequiredDocumentsField({
       items.map((d, i) => (i === idx ? { ...d, [field]: value } : d))
     );
 
-  // 직렬화 — 빈 string 은 null 로 변환
+  // 직렬화 — 빈 string 은 null 로 변환. 발급 서류는 std_key(저장값|자동제안) 캡처.
   const serialized = JSON.stringify(
     items.map((d) => ({
       key: d.key,
@@ -134,6 +147,7 @@ export function RequiredDocumentsField({
       notarization: d.notarization || null,
       group: d.group || null,
       notes: d.notes || null,
+      std_key: isFormDoc(d) ? null : effectiveStd(d) || null,
     }))
   );
 
@@ -148,8 +162,17 @@ export function RequiredDocumentsField({
           {items.map((d, idx) => (
             <div key={idx} className="rounded-md border bg-background p-3">
               <div className="mb-2 flex items-center justify-between">
-                <span className="text-xs font-medium text-muted-foreground">
+                <span className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
                   #{idx + 1}
+                  {isFormDoc(d) ? (
+                    <Badge variant="secondary" className="text-[10px]">
+                      직접작성
+                    </Badge>
+                  ) : (
+                    <Badge variant="outline" className="text-[10px]">
+                      발급
+                    </Badge>
+                  )}
                 </span>
                 <Button
                   type="button"
@@ -228,6 +251,32 @@ export function RequiredDocumentsField({
                   placeholder="추가 안내사항 (선택)"
                 />
               </div>
+
+              {/* U3: 발급 서류 표준 매핑 (직접작성은 불필요) */}
+              {!isFormDoc(d) && docTypes.length > 0 ? (
+                <div className="mt-2">
+                  <label className="flex flex-col gap-1">
+                    <span className="text-xs text-muted-foreground">
+                      표준 발급서류 매핑 (정본 키)
+                      {!d.std_key && effectiveStd(d) ? (
+                        <span className="ml-1 text-primary">· 자동 제안됨</span>
+                      ) : null}
+                    </span>
+                    <select
+                      value={effectiveStd(d)}
+                      onChange={(e) => update(idx, "std_key", e.target.value)}
+                      className="rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+                    >
+                      <option value="">— 매핑 안 함</option>
+                      {docTypes.map((o) => (
+                        <option key={o.key} value={o.key}>
+                          {o.label_ko}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
+              ) : null}
             </div>
           ))}
         </div>

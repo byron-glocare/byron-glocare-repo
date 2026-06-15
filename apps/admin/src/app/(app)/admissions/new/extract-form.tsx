@@ -29,9 +29,11 @@ export type UniversityOption = {
 export function ExtractForm({
   universities,
   defaultUniversityNameKo = "",
+  docTypes = [],
 }: {
   universities: UniversityOption[];
   defaultUniversityNameKo?: string;
+  docTypes?: Array<{ key: string; label_ko: string }>;
 }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -273,6 +275,7 @@ export function ExtractForm({
               sourceFileName: fileName,
             }}
             universities={universities}
+            docTypes={docTypes}
             aiLog={{
               raw: result.raw,
               confidence: result.confidence,

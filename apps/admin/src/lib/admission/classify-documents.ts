@@ -29,6 +29,8 @@ export type RequiredDoc = {
   required?: boolean | null;
   target_person?: string | null;
   language?: string | null;
+  group?: string | null;
+  std_key?: string | null;
 };
 
 export type ClassifiedDoc = {
@@ -37,6 +39,7 @@ export type ClassifiedDoc = {
   notes: string | null;
   notarization: string | null;
   required: boolean;
+  std_key: string | null;
   kind: "form" | "issued";
 };
 
@@ -45,6 +48,7 @@ const FORM_NOTE_RE = /(본교\s*양식|학교\s*양식|소정\s*양식|본교양
 export function isFormDoc(doc: RequiredDoc): boolean {
   const key = (doc.key ?? "").trim();
   if (FORM_DOC_KEYS.has(key)) return true;
+  if ((doc.group ?? "").trim() === "university_form") return true;
   if (doc.notes && FORM_NOTE_RE.test(doc.notes)) return true;
   return false;
 }
@@ -76,6 +80,7 @@ export function classifyRequiredDocs(docs: RequiredDoc[] | null | undefined): {
       notes: d.notes ?? null,
       notarization: d.notarization ?? null,
       required: d.required !== false,
+      std_key: (d.std_key ?? "").trim() || null,
       kind: isFormDoc(d) ? "form" : "issued",
     };
     (item.kind === "form" ? forms : issued).push(item);
@@ -87,4 +92,24 @@ export function classifyRequiredDocs(docs: RequiredDoc[] | null | undefined): {
 /** 이름 정규화 — 발급서류 매칭용 */
 export function normalizeDocName(s: string): string {
   return s.trim().replace(/\s+/g, " ").toLowerCase();
+}
+
+/**
+ * U3: 발급 서류의 표준 카탈로그(study_student_data_types, category=document) 정본 키 제안.
+ *   1) doc.key 가 카탈로그 키와 동일하면 그대로
+ *   2) 이름(name_ko)이 카탈로그 라벨과 정규화 일치
+ *   못 찾으면 "" (운영자가 직접 선택).
+ */
+export function suggestStdKey(
+  doc: { key?: string | null; name_ko?: string | null },
+  catalog: Array<{ key: string; label_ko: string }>
+): string {
+  const key = (doc.key ?? "").trim();
+  if (key && catalog.some((c) => c.key === key)) return key;
+  const name = normalizeDocName(doc.name_ko ?? "");
+  if (name) {
+    const hit = catalog.find((c) => normalizeDocName(c.label_ko) === name);
+    if (hit) return hit.key;
+  }
+  return "";
 }
