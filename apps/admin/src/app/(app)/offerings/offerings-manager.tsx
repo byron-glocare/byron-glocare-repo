@@ -1,8 +1,15 @@
 "use client";
 
-import { useActionState, useEffect, useMemo, useState } from "react";
+import {
+  useActionState,
+  useEffect,
+  useMemo,
+  useState,
+  useTransition,
+} from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, Pencil, Save, Trash2, X, Eye, EyeOff } from "lucide-react";
+import { toast } from "sonner";
 
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -74,7 +81,31 @@ export function OfferingsManager({
 }) {
   const router = useRouter();
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [togglePending, startToggle] = useTransition();
   const closeAdd = () => router.push("/offerings");
+
+  // U5: 노출/숨김 토글 — 노출 게이트(승인 요강 필수) 결과를 토스트로 안내
+  const toggleStatus = (id: string, status: "published" | "draft") => {
+    startToggle(async () => {
+      const res = await updateOfferingStatusAction(id, status);
+      if (!res.ok) {
+        toast.error("노출할 수 없습니다", { description: res.error });
+        return;
+      }
+      if (status === "published") {
+        if (res.warnings && res.warnings.length > 0) {
+          toast.warning("노출했지만 미완료 항목이 있습니다", {
+            description: res.warnings.join(" / "),
+          });
+        } else {
+          toast.success("센터에 노출했습니다.");
+        }
+      } else {
+        toast.success("노출을 중지했습니다.");
+      }
+      router.refresh();
+    });
+  };
 
   const uniName = (id: number) =>
     universities.find((u) => u.id === id)?.name_ko ?? `대학 #${id}`;
@@ -192,42 +223,30 @@ export function OfferingsManager({
 
                         <div className="flex shrink-0 items-center gap-1">
                           {canPublish ? (
-                            <form
-                              action={updateOfferingStatusAction.bind(
-                                null,
-                                o.id,
-                                "published"
-                              )}
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              title="센터에 노출"
+                              disabled={togglePending}
+                              onClick={() => toggleStatus(o.id, "published")}
                             >
-                              <Button
-                                type="submit"
-                                variant="outline"
-                                size="sm"
-                                title="센터에 노출"
-                              >
-                                <Eye className="size-3" />
-                                노출
-                              </Button>
-                            </form>
+                              <Eye className="size-3" />
+                              노출
+                            </Button>
                           ) : null}
                           {o.status === "published" ? (
-                            <form
-                              action={updateOfferingStatusAction.bind(
-                                null,
-                                o.id,
-                                "draft"
-                              )}
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              title="노출 중지"
+                              disabled={togglePending}
+                              onClick={() => toggleStatus(o.id, "draft")}
                             >
-                              <Button
-                                type="submit"
-                                variant="outline"
-                                size="sm"
-                                title="노출 중지"
-                              >
-                                <EyeOff className="size-3" />
-                                숨김
-                              </Button>
-                            </form>
+                              <EyeOff className="size-3" />
+                              숨김
+                            </Button>
                           ) : null}
                           <Button
                             type="button"
@@ -331,7 +350,14 @@ function OfferingForm({
   const [notes, setNotes] = useState(offering?.notes ?? "");
 
   useEffect(() => {
-    if (state?.success) onDone();
+    if (state?.success) {
+      if (state.warnings && state.warnings.length > 0) {
+        toast.warning("저장했지만 미완료 항목이 있습니다", {
+          description: state.warnings.join(" / "),
+        });
+      }
+      onDone();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state]);
 

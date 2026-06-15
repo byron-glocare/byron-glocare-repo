@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import { createClient, createAdminClient } from "@/lib/supabase/server";
 import type { Database } from "@/types/database";
+import { assessOfferingReadiness } from "@/lib/admission/assess-offering-readiness";
 
 type OfferingInsert = Database["public"]["Tables"]["study_offerings"]["Insert"];
 type OfferingUpdate = Database["public"]["Tables"]["study_offerings"]["Update"];
@@ -27,6 +28,8 @@ export type SaveOfferingState =
       error?: string;
       fieldErrors?: Record<string, string>;
       success?: boolean;
+      /** U5: 노출 성공했지만 미완료 항목이 있을 때 */
+      warnings?: string[];
     }
   | undefined;
 
@@ -90,6 +93,19 @@ export async function saveOfferingAction(
     };
   }
 
+  // U5: 노출 게이트 — 승인된 모집요강이 없으면 노출 불가
+  let publishWarnings: string[] = [];
+  if (data.status === "published") {
+    const readiness = await assessOfferingReadiness(
+      data.university_id,
+      data.term
+    );
+    if (readiness.blocked) {
+      return { error: readiness.reason };
+    }
+    publishWarnings = readiness.warnings;
+  }
+
   if (id) {
     const patch: OfferingUpdate = {
       university_id: data.university_id,
@@ -139,7 +155,7 @@ export async function saveOfferingAction(
   }
 
   revalidatePath("/offerings");
-  return { success: true };
+  return { success: true, warnings: publishWarnings };
 }
 
 /**
@@ -165,24 +181,38 @@ export async function deleteOfferingAction(id: string): Promise<void> {
 export async function updateOfferingStatusAction(
   id: string,
   status: (typeof STATUSES)[number]
-): Promise<void> {
+): Promise<{ ok: boolean; error?: string; warnings?: string[] }> {
   const supabaseUser = await createClient();
   const {
     data: { user },
   } = await supabaseUser.auth.getUser();
-  if (!user) return;
+  if (!user) return { ok: false, error: "로그인이 필요합니다" };
 
   const supabase = createAdminClient();
 
+  let warnings: string[] = [];
   if (status === "published") {
     const { data: row } = await supabase
       .from("study_offerings")
-      .select("intake_quota")
+      .select("intake_quota, university_id, term")
       .eq("id", id)
       .maybeSingle();
-    if (!row || row.intake_quota == null) return; // 모집수 없으면 노출 불가
+    if (!row) return { ok: false, error: "모집을 찾을 수 없습니다" };
+    if (row.intake_quota == null) {
+      return { ok: false, error: "노출하려면 학기별 모집수를 입력하세요." };
+    }
+    // U5: 노출 게이트 — 승인된 모집요강 필수
+    const readiness = await assessOfferingReadiness(
+      row.university_id,
+      row.term
+    );
+    if (readiness.blocked) {
+      return { ok: false, error: readiness.reason };
+    }
+    warnings = readiness.warnings;
   }
 
   await supabase.from("study_offerings").update({ status }).eq("id", id);
   revalidatePath("/offerings");
+  return { ok: true, warnings };
 }
