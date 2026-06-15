@@ -17,6 +17,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { UniversityInput } from "@/lib/validators";
+import {
+  classifyRequiredDocs,
+  normalizeDocName,
+  type RequiredDoc,
+} from "@/lib/admission/classify-documents";
 
 export const dynamic = "force-dynamic";
 
@@ -62,7 +67,7 @@ export default async function UniversityEditPage({
         .order("sort_order"),
       supabase
         .from("study_admission_specs")
-        .select("id, term, program_type, admission_category, status, departments, updated_at")
+        .select("id, term, program_type, admission_category, status, departments, required_documents, updated_at")
         .eq("university_id", numericId)
         .order("updated_at", { ascending: false }),
       supabase
@@ -128,6 +133,20 @@ export default async function UniversityEditPage({
       })
       .sort((a, b) => b.term.localeCompare(a.term));
   })();
+
+  // 제출서류 = 최신 모집요강(승인 우선)의 required_documents 파생 + 자동분류
+  const repSpec =
+    (specs ?? []).find((s) => s.status === "approved") ?? (specs ?? [])[0];
+  const { forms: derivedForms, issued: derivedIssued } = classifyRequiredDocs(
+    (repSpec?.required_documents as RequiredDoc[]) ?? []
+  );
+  // 관리 상태 오버레이용 인덱스
+  const formByKey = new Map(
+    (formFiles ?? []).map((f) => [f.key as string, f] as const)
+  );
+  const submissionByName = new Map(
+    (submissions ?? []).map((s) => [normalizeDocName(s.name_ko), s] as const)
+  );
 
   const defaultValues: Partial<UniversityInput> = {
     active: row.active,
@@ -378,193 +397,183 @@ export default async function UniversityEditPage({
           )}
         </Card>
 
-        {/* 제출서류 — 해당 대학 모집요강 기반. 직접작성(양식파일) / 발급 서류 2섹션 */}
+        {/* 제출서류 — 최신 모집요강 required_documents 파생 + 자동분류(직접작성/발급) */}
         <Card className="overflow-hidden p-0">
           <div className="border-b p-4">
             <h2 className="text-base font-semibold">제출서류</h2>
             <p className="mt-0.5 text-xs text-muted-foreground">
-              이 대학의 모집요강 기반 서류 목록입니다. 직접작성 서류는 양식파일,
-              발급 서류는 샘플·발급조건을 관리합니다.
+              {repSpec
+                ? `최신 모집요강(${repSpec.term}) 기준으로 자동 분류된 목록입니다. 각 서류를 눌러 양식 업로드·발급 조건을 관리하세요.`
+                : "모집요강을 먼저 등록하면 제출서류 목록이 표시됩니다."}
             </p>
           </div>
 
-          {/* 1) 직접작성 서류 (양식파일) */}
-          <div className="border-b">
-            <div className="flex items-center gap-2 px-4 py-2.5">
-              <h3 className="text-sm font-semibold">직접작성 서류</h3>
-              <Badge variant="secondary">{formFiles?.length ?? 0}</Badge>
+          {!repSpec ? (
+            <div className="px-4 py-8 text-center text-sm text-muted-foreground">
+              등록된 모집요강이 없습니다.{" "}
+              <Link
+                href={`/admissions/new?university_id=${numericId}`}
+                className="text-primary hover:underline"
+              >
+                새학기 모집요강 추가 →
+              </Link>
             </div>
-            {!formFiles || formFiles.length === 0 ? (
-              <div className="px-4 pb-4 text-sm text-muted-foreground">
-                등록된 양식파일이 없습니다.{" "}
-                <Link href={`/admissions/forms/new?university_id=${numericId}`} className="text-primary hover:underline">
-                  양식 추가 →
-                </Link>
-              </div>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>서류명</TableHead>
-                    <TableHead className="w-32">적용학과</TableHead>
-                    <TableHead className="w-32">적용학기</TableHead>
-                    <TableHead className="w-40">파일명</TableHead>
-                    <TableHead className="w-20 text-center">상태</TableHead>
-                    <TableHead className="w-28">업로드일</TableHead>
-                    <TableHead className="w-24 text-center">다운로드</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {formFiles.map((f) => {
-                    const href = `/admissions/forms/${f.id}`;
-                    return (
-                      <TableRow key={f.id} className="cursor-pointer">
-                        <TableCell className="font-medium">
-                          <Link href={href} className="hover:text-primary">
-                            {f.name_ko}_{row.name_ko}
-                          </Link>
-                        </TableCell>
-                        <TableCell className="text-sm text-muted-foreground">
-                          <Link href={href} className="block">
-                            {f.department_name ??
-                              (f.applies_to_department_ids &&
-                              f.applies_to_department_ids.length > 0
-                                ? f.applies_to_department_ids
-                                    .map((did) => deptNameById.get(did) ?? `#${did}`)
-                                    .join(", ")
-                                : "모든 학과")}
-                          </Link>
-                        </TableCell>
-                        <TableCell className="text-xs text-muted-foreground">
-                          <Link href={href} className="block">
-                            {f.applies_to_terms && f.applies_to_terms.length > 0
-                              ? f.applies_to_terms.join(", ")
-                              : "전체 학기"}
-                          </Link>
-                        </TableCell>
-                        <TableCell className="text-xs text-muted-foreground">
-                          <Link href={href} className="block truncate" title={f.file_name}>
-                            {f.file_name}
-                          </Link>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <Link href={href} className="block">
-                            {f.is_current ? (
-                              <Badge className="border-success/20 bg-success/10 text-success">
-                                사용
-                              </Badge>
-                            ) : (
-                              <Badge variant="outline" className="text-muted-foreground">
-                                미사용
-                              </Badge>
-                            )}
-                          </Link>
-                        </TableCell>
-                        <TableCell className="text-xs text-muted-foreground">
-                          <Link href={href} className="block">
-                            {new Date(f.uploaded_at).toLocaleDateString("ko-KR")}
-                          </Link>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <a
-                            href={f.file_url}
-                            target="_blank"
-                            rel="noreferrer"
-                            download
-                            className={buttonVariants({ variant: "outline", size: "sm" })}
-                          >
-                            <Download className="size-4" />
-                          </a>
-                        </TableCell>
+          ) : (
+            <>
+              {/* 1) 직접작성 서류 */}
+              <div className="border-b">
+                <div className="flex items-center gap-2 px-4 py-2.5">
+                  <h3 className="text-sm font-semibold">직접작성 서류 (학교 양식)</h3>
+                  <Badge variant="secondary">{derivedForms.length}</Badge>
+                </div>
+                {derivedForms.length === 0 ? (
+                  <div className="px-4 pb-4 text-xs text-muted-foreground">
+                    모집요강에 직접작성 양식이 없습니다.
+                  </div>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>서류명</TableHead>
+                        <TableHead className="w-24 text-center">상태</TableHead>
+                        <TableHead className="w-40">파일</TableHead>
+                        <TableHead className="w-28 text-center">관리</TableHead>
                       </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            )}
-          </div>
+                    </TableHeader>
+                    <TableBody>
+                      {derivedForms.map((doc) => {
+                        const file = formByKey.get(doc.key);
+                        return (
+                          <TableRow key={`form-${doc.key}-${doc.name_ko}`}>
+                            <TableCell className="font-medium">
+                              {doc.name_ko}_{row.name_ko}
+                            </TableCell>
+                            <TableCell className="text-center">
+                              {file ? (
+                                <Badge className="border-success/20 bg-success/10 text-success">
+                                  사용
+                                </Badge>
+                              ) : (
+                                <Badge variant="outline" className="text-amber-600">
+                                  미등록
+                                </Badge>
+                              )}
+                            </TableCell>
+                            <TableCell className="text-xs text-muted-foreground">
+                              {file ? (
+                                <a
+                                  href={file.file_url}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  download
+                                  className="inline-flex items-center gap-1 text-primary hover:underline"
+                                  title={file.file_name}
+                                >
+                                  <Download className="size-3.5" />
+                                  {file.file_name}
+                                </a>
+                              ) : (
+                                "—"
+                              )}
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <Link
+                                href={
+                                  file
+                                    ? `/admissions/forms/${file.id}`
+                                    : `/admissions/forms/new?university_id=${numericId}`
+                                }
+                                className="text-xs text-primary hover:underline"
+                              >
+                                {file ? "편집" : "양식 업로드"} →
+                              </Link>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                )}
+              </div>
 
-          {/* 2) 발급 서류 (캡쳐·발급해서 제출) */}
-          <div>
-            <div className="flex items-center gap-2 px-4 py-2.5">
-              <h3 className="text-sm font-semibold">발급 서류</h3>
-              <Badge variant="secondary">{submissions?.length ?? 0}</Badge>
-            </div>
-            {!submissions || submissions.length === 0 ? (
-              <div className="px-4 pb-4 text-sm text-muted-foreground">
-                등록된 발급 서류가 없습니다.{" "}
-                <Link href={`/admissions/submissions/new`} className="text-primary hover:underline">
-                  발급 서류 추가 →
-                </Link>
-              </div>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>서류명</TableHead>
-                    <TableHead className="w-32">적용학과</TableHead>
-                    <TableHead className="w-24 text-center">이미지</TableHead>
-                    <TableHead className="w-20 text-center">상태</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {submissions.map((s) => {
-                    const href = `/admissions/submissions/${s.id}`;
-                    const isShared = s.university_id == null;
-                    return (
-                      <TableRow key={s.id} className="cursor-pointer">
-                        <TableCell className="font-medium">
-                          <Link href={href} className="flex flex-wrap items-center gap-1.5 hover:text-primary">
-                            {s.name_ko}
-                            {isShared ? (
-                              <Badge variant="outline" className="text-[10px]">
-                                공용
-                              </Badge>
-                            ) : null}
-                          </Link>
-                        </TableCell>
-                        <TableCell className="text-sm text-muted-foreground">
-                          <Link href={href} className="block">
-                            {s.department_id == null
-                              ? "전체 학과"
-                              : deptNameById.get(s.department_id) ?? `학과 #${s.department_id}`}
-                          </Link>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <Link href={href} className="block">
-                            {s.sample_image_url ? (
-                              <Badge className="border-success/20 bg-success/10 text-success">
-                                있음
-                              </Badge>
-                            ) : (
-                              <span className="text-xs text-muted-foreground">없음</span>
-                            )}
-                          </Link>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <Link href={href} className="block">
-                            {s.status === "approved" ? (
-                              <Badge className="border-success/20 bg-success/10 text-success">
-                                사용
-                              </Badge>
-                            ) : s.status === "draft" ? (
-                              <Badge variant="outline" className="text-amber-600">
-                                미등록
-                              </Badge>
-                            ) : (
-                              <Badge variant="outline" className="text-muted-foreground">
-                                미사용
-                              </Badge>
-                            )}
-                          </Link>
-                        </TableCell>
+              {/* 2) 발급 서류 */}
+              <div>
+                <div className="flex items-center gap-2 px-4 py-2.5">
+                  <h3 className="text-sm font-semibold">발급 서류</h3>
+                  <Badge variant="secondary">{derivedIssued.length}</Badge>
+                </div>
+                {derivedIssued.length === 0 ? (
+                  <div className="px-4 pb-4 text-xs text-muted-foreground">
+                    모집요강에 발급 서류가 없습니다.
+                  </div>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>서류명</TableHead>
+                        <TableHead className="w-24 text-center">상태</TableHead>
+                        <TableHead className="w-24 text-center">샘플</TableHead>
+                        <TableHead className="w-28 text-center">관리</TableHead>
                       </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            )}
-          </div>
+                    </TableHeader>
+                    <TableBody>
+                      {derivedIssued.map((doc) => {
+                        const sub = submissionByName.get(
+                          normalizeDocName(doc.name_ko)
+                        );
+                        return (
+                          <TableRow key={`issued-${doc.key}-${doc.name_ko}`}>
+                            <TableCell className="font-medium">
+                              <span className="flex flex-wrap items-center gap-1.5">
+                                {doc.name_ko}
+                                {sub && sub.university_id == null ? (
+                                  <Badge variant="outline" className="text-[10px]">
+                                    공용
+                                  </Badge>
+                                ) : null}
+                              </span>
+                            </TableCell>
+                            <TableCell className="text-center">
+                              {sub ? (
+                                <Badge className="border-success/20 bg-success/10 text-success">
+                                  사용
+                                </Badge>
+                              ) : (
+                                <Badge variant="outline" className="text-amber-600">
+                                  미등록
+                                </Badge>
+                              )}
+                            </TableCell>
+                            <TableCell className="text-center">
+                              {sub?.sample_image_url ? (
+                                <Badge className="border-success/20 bg-success/10 text-success">
+                                  있음
+                                </Badge>
+                              ) : (
+                                <span className="text-xs text-muted-foreground">없음</span>
+                              )}
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <Link
+                                href={
+                                  sub
+                                    ? `/admissions/submissions/${sub.id}`
+                                    : `/admissions/submissions/new`
+                                }
+                                className="text-xs text-primary hover:underline"
+                              >
+                                {sub ? "편집" : "발급서류 등록"} →
+                              </Link>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                )}
+              </div>
+            </>
+          )}
         </Card>
       </div>
     </>
