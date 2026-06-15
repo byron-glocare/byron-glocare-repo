@@ -71,7 +71,9 @@ export default async function UniversityEditPage({
         .eq("university_id", numericId),
       supabase
         .from("study_admission_form_files")
-        .select("id, name_ko, key, department_name, file_url, file_name, is_current, uploaded_at")
+        .select(
+          "id, name_ko, key, department_name, applies_to_terms, applies_to_department_ids, file_url, file_name, is_current, uploaded_at"
+        )
         .eq("university_id", numericId)
         .eq("is_current", true)
         .order("uploaded_at", { ascending: false }),
@@ -405,6 +407,7 @@ export default async function UniversityEditPage({
                   <TableRow>
                     <TableHead>서류명</TableHead>
                     <TableHead className="w-32">적용학과</TableHead>
+                    <TableHead className="w-32">적용학기</TableHead>
                     <TableHead className="w-40">파일명</TableHead>
                     <TableHead className="w-20 text-center">상태</TableHead>
                     <TableHead className="w-28">업로드일</TableHead>
@@ -423,7 +426,20 @@ export default async function UniversityEditPage({
                         </TableCell>
                         <TableCell className="text-sm text-muted-foreground">
                           <Link href={href} className="block">
-                            {f.department_name ?? "전체 학과"}
+                            {f.department_name ??
+                              (f.applies_to_department_ids &&
+                              f.applies_to_department_ids.length > 0
+                                ? f.applies_to_department_ids
+                                    .map((did) => deptNameById.get(did) ?? `#${did}`)
+                                    .join(", ")
+                                : "모든 학과")}
+                          </Link>
+                        </TableCell>
+                        <TableCell className="text-xs text-muted-foreground">
+                          <Link href={href} className="block">
+                            {f.applies_to_terms && f.applies_to_terms.length > 0
+                              ? f.applies_to_terms.join(", ")
+                              : "전체 학기"}
                           </Link>
                         </TableCell>
                         <TableCell className="text-xs text-muted-foreground">
