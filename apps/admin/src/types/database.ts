@@ -1339,6 +1339,8 @@ export type Database = {
           uploaded_at: string;
           notes: string | null;
           required_data_type_keys: string[];
+          applies_to_terms: string[];
+          applies_to_department_ids: number[];
           essay_questions: Array<{
             question_ko: string;
             question_vi?: string;
@@ -1379,6 +1381,8 @@ export type Database = {
           uploaded_at?: string;
           notes?: string | null;
           required_data_type_keys?: string[];
+          applies_to_terms?: string[];
+          applies_to_department_ids?: number[];
           essay_questions?: Array<{
             question_ko: string;
             question_vi?: string;

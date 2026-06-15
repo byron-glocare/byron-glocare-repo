@@ -413,7 +413,7 @@ export default async function UniversityEditPage({
                 </TableHeader>
                 <TableBody>
                   {formFiles.map((f) => {
-                    const href = `/admissions/${numericId}`;
+                    const href = `/admissions/forms/${f.id}`;
                     return (
                       <TableRow key={f.id} className="cursor-pointer">
                         <TableCell className="font-medium">

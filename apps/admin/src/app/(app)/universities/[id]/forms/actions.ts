@@ -542,6 +542,73 @@ export async function deleteFormFileAction(
 }
 
 /**
+ * [작성서류] 상세 — 단일 row 메타 저장.
+ *   적용학과/학기(복수, 신규 컬럼) + 서류명·양식종류·필요데이터·메모.
+ *   (대학 이동·버전체인은 다루지 않음 — 단순 per-row 업데이트.)
+ */
+export type UpdateFormDetailState =
+  | { error?: string; success?: boolean }
+  | undefined;
+
+export async function updateFormFileDetailAction(
+  _prev: UpdateFormDetailState,
+  formData: FormData
+): Promise<UpdateFormDetailState> {
+  const supabaseUser = await createClient();
+  const {
+    data: { user },
+  } = await supabaseUser.auth.getUser();
+  if (!user) return { error: "로그인이 필요합니다" };
+  const supabase = createAdminClient();
+
+  const id = String(formData.get("form_file_id") ?? "");
+  if (!id) return { error: "대상 양식이 없습니다" };
+
+  const name_ko = String(formData.get("name_ko") ?? "").trim();
+  if (!name_ko) return { error: "서류명을 입력하세요" };
+
+  let key = String(formData.get("key") ?? "other");
+  if (!(FORM_KEYS as readonly string[]).includes(key)) key = "other";
+
+  const notesRaw = String(formData.get("notes") ?? "").trim();
+  const notes = notesRaw || null;
+
+  const parseStrArr = (name: string): string[] => {
+    const raw = formData.get(name);
+    if (typeof raw !== "string" || !raw.trim()) return [];
+    try {
+      const p = JSON.parse(raw);
+      return Array.isArray(p) ? p.filter((x): x is string => typeof x === "string") : [];
+    } catch {
+      return [];
+    }
+  };
+
+  const required_data_type_keys = parseStrArr("required_data_type_keys");
+  const applies_to_terms = parseStrArr("applies_to_terms");
+  const applies_to_department_ids = parseStrArr("applies_to_department_ids")
+    .map(Number)
+    .filter((n) => Number.isFinite(n));
+
+  const { error } = await supabase
+    .from("study_admission_form_files")
+    .update({
+      name_ko,
+      key: key as (typeof FORM_KEYS)[number],
+      notes,
+      required_data_type_keys,
+      applies_to_terms,
+      applies_to_department_ids,
+    })
+    .eq("id", id);
+  if (error) return { error: `저장 실패: ${error.message}` };
+
+  revalidatePath(`/admissions/forms/${id}`);
+  revalidatePath("/admissions");
+  return { success: true };
+}
+
+/**
  * archive 된 버전 복원.
  */
 export async function restoreFormFileAction(
