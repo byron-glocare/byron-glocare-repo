@@ -51,7 +51,12 @@ const STAGE_ORDER_MAP: Record<StageSummary["currentStage"], number> = {
 
 export type CustomerListFilters = {
   q?: string;
-  stage?: string;
+  /**
+   * 단계 필터 — multi-select.
+   * URL 에서는 `?stage=A&stage=B` 형태로 반복 전달.
+   * 단일값(`?stage=A`)도 호환 (string | string[]).
+   */
+  stage?: string | string[];
   center?: string;
   care?: string;
   page?: string;
@@ -67,6 +72,14 @@ export type CustomerListFilters = {
    * computeTaskBuckets 의 key 와 동일.
    */
   bucket?: string;
+  /**
+   * 대시보드 누적 통계 카드 클릭 시 진입 — 누적 그룹 필터.
+   *   - "trained"   : 교육 진입 (중/완료/드랍/자격증 취득)
+   *   - "certified" : 자격증 취득
+   *   - "working"   : 근무 중 (workPhase = "중")
+   * 종료된 고객도 포함하기 위해 자동으로 view="all" 처리.
+   */
+  cumulative?: string;
 };
 
 export type CustomerListProps = {
@@ -103,10 +116,26 @@ export async function CustomerListPanel({
   const q = filters.q?.trim() ?? "";
   const centerFilter = fixed?.trainingCenterId ?? filters.center?.trim() ?? "";
   const careFilter = fixed?.careHomeId ?? filters.care?.trim() ?? "";
-  const stageFilter = filters.stage?.trim() ?? "";
+  // 단계 필터 — multi-select. URL 에서 string 또는 string[] 둘 다 받음.
+  const stageFiltersSet = new Set(
+    (Array.isArray(filters.stage)
+      ? filters.stage
+      : filters.stage
+        ? [filters.stage]
+        : []
+    )
+      .map((s) => s.trim())
+      .filter(Boolean)
+  );
+  const stageFilters = Array.from(stageFiltersSet);
+  const cumulativeFilter = filters.cumulative?.trim() ?? "";
   const viewRaw = (filters.view ?? "").trim();
-  const view: "active" | "all" | "terminated" =
-    viewRaw === "all" || viewRaw === "terminated" ? viewRaw : "active";
+  // cumulative 가 활성이면 종료 포함 강제 (count 와 일치시키기 위함)
+  const view: "active" | "all" | "terminated" = cumulativeFilter
+    ? "all"
+    : viewRaw === "all" || viewRaw === "terminated"
+      ? viewRaw
+      : "active";
   const bucketFilter = filters.bucket?.trim() ?? "";
   const page = Math.max(1, parseInt(filters.page ?? "1", 10) || 1);
 
@@ -317,11 +346,36 @@ export async function CustomerListPanel({
       const diff = STAGE_ORDER_MAP[a[1]] - STAGE_ORDER_MAP[b[1]];
       return diff !== 0 ? diff : a[0].localeCompare(b[0], "ko");
     })
-    .map(([label]) => label);
+    .map(([label, stage]) => ({ label, stage }));
 
-  const filtered = stageFilter
-    ? viewFiltered.filter((x) => x.summary?.label === stageFilter)
-    : viewFiltered;
+  // 단계 필터 (multi) + 누적 통계 필터를 viewFiltered 위에 적용
+  let filtered = viewFiltered;
+  if (stageFilters.length > 0) {
+    filtered = filtered.filter(
+      (x) => x.summary && stageFiltersSet.has(x.summary.label)
+    );
+  }
+  if (cumulativeFilter) {
+    filtered = filtered.filter((x) => {
+      if (!x.summary) return false;
+      const t = x.summary.training;
+      if (cumulativeFilter === "trained") {
+        return (
+          t.phase === "중" ||
+          t.phase === "완료" ||
+          t.dropped ||
+          t.certificateAcquired
+        );
+      }
+      if (cumulativeFilter === "certified") {
+        return t.certificateAcquired;
+      }
+      if (cumulativeFilter === "working") {
+        return x.summary.work.workPhase === "중";
+      }
+      return true;
+    });
+  }
 
   const count = filtered.length;
   const totalPages = Math.max(1, Math.ceil(count / PAGE_SIZE));
@@ -334,21 +388,29 @@ export async function CustomerListPanel({
 
   const hasAnyUserFilter = !!(
     q ||
-    stageFilter ||
+    stageFilters.length > 0 ||
+    cumulativeFilter ||
     view !== "active" ||
     bucketFilter ||
     (filters.center && !hiddenCenter) ||
     (filters.care && !hiddenCare)
   );
 
-  // URL 유지 파라미터 (tab 같은 외부 컨텍스트) — 폼 / 페이지 링크에 preserved
-  function buildUrl(extra: Record<string, string>): string {
+  // URL 유지 파라미터 (tab 같은 외부 컨텍스트) — 폼 / 페이지 링크에 preserved.
+  // value 가 배열이면 같은 키로 반복 append (예: stage=A&stage=B).
+  function buildUrl(extra: Record<string, string | string[]>): string {
     const params = new URLSearchParams();
     for (const [k, v] of Object.entries(preservedParams)) {
       if (v) params.set(k, v);
     }
     for (const [k, v] of Object.entries(extra)) {
-      if (v) params.set(k, v);
+      if (Array.isArray(v)) {
+        for (const item of v) {
+          if (item) params.append(k, item);
+        }
+      } else if (v) {
+        params.set(k, v);
+      }
     }
     const s = params.toString();
     return s ? `${basePath}?${s}` : basePath;
@@ -375,6 +437,33 @@ export async function CustomerListPanel({
           </Link>
         </div>
       )}
+      {/* cumulative 필터 (대시보드 누적통계 카드 클릭으로 진입) */}
+      {cumulativeFilter && (
+        <div className="flex items-center gap-2 text-sm">
+          <span className="text-muted-foreground">누적 통계 필터:</span>
+          <Badge
+            variant="outline"
+            className="bg-info/10 text-info border-info/20"
+          >
+            {cumulativeFilter === "trained"
+              ? "누적 교육생"
+              : cumulativeFilter === "certified"
+                ? "자격증 취득"
+                : cumulativeFilter === "working"
+                  ? "근무 중"
+                  : cumulativeFilter}
+            {" · "}
+            {count}명
+          </Badge>
+          <Link
+            href={buildUrl({})}
+            className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+          >
+            <X className="size-3" />
+            해제
+          </Link>
+        </div>
+      )}
       {/* 검색 + 필터 */}
       <form method="get" action={basePath} className="flex flex-wrap gap-2 items-end">
         {/* preservedParams 를 hidden 으로 유지 */}
@@ -384,6 +473,10 @@ export async function CustomerListPanel({
         {/* bucket 필터가 있으면 검색/필터 변경 시에도 유지 (해제 링크로만 풀림) */}
         {bucketFilter && (
           <input type="hidden" name="bucket" value={bucketFilter} />
+        )}
+        {/* cumulative 필터도 마찬가지로 유지 */}
+        {cumulativeFilter && (
+          <input type="hidden" name="cumulative" value={cumulativeFilter} />
         )}
         <div className="flex-1 min-w-60">
           <label className="text-xs text-muted-foreground block mb-1">
@@ -437,25 +530,64 @@ export async function CustomerListPanel({
             </select>
           </div>
         )}
-        <div>
+        <div className="min-w-60">
           <label className="text-xs text-muted-foreground block mb-1">
-            현재 단계
+            현재 단계 (복수 선택 가능)
           </label>
-          <select
-            name="stage"
-            defaultValue={stageFilter}
-            className="h-8 rounded-md border border-input bg-background px-2 text-sm min-w-44"
-          >
-            <option value="">전체</option>
-            {stageFilter && !labelOptions.includes(stageFilter) && (
-              <option value={stageFilter}>{stageFilter}</option>
-            )}
-            {labelOptions.map((label) => (
-              <option key={label} value={label}>
-                {label}
-              </option>
-            ))}
-          </select>
+          <details className="rounded-md border border-input bg-background">
+            <summary className="h-8 px-2 flex items-center text-sm cursor-pointer select-none">
+              {stageFilters.length === 0
+                ? "전체"
+                : stageFilters.length === 1
+                  ? stageFilters[0]
+                  : `${stageFilters.length}개 선택됨`}
+              <span className="ml-auto text-muted-foreground text-xs">
+                ▼
+              </span>
+            </summary>
+            <div className="p-2 max-h-72 overflow-y-auto grid grid-cols-1 gap-1 border-t border-input bg-card">
+              {/* 현재 보이는 라벨 중 선택 안 된 것 + 선택된 것 모두 표시.
+                  선택됐는데 라벨에 없는 경우(view 가 좁아져서 빠진 단계)도 노출. */}
+              {(() => {
+                const seen = new Set<string>();
+                const items: { label: string; stage: StageSummary["currentStage"] | null }[] = [];
+                for (const lo of labelOptions) {
+                  if (!seen.has(lo.label)) {
+                    items.push(lo);
+                    seen.add(lo.label);
+                  }
+                }
+                for (const s of stageFilters) {
+                  if (!seen.has(s)) {
+                    items.push({ label: s, stage: null });
+                    seen.add(s);
+                  }
+                }
+                return items.map(({ label }) => {
+                  const checked = stageFiltersSet.has(label);
+                  return (
+                    <label
+                      key={label}
+                      className="flex items-center gap-2 px-2 py-1 rounded hover:bg-accent/40 cursor-pointer text-sm"
+                    >
+                      <input
+                        type="checkbox"
+                        name="stage"
+                        value={label}
+                        defaultChecked={checked}
+                      />
+                      <span>{label}</span>
+                    </label>
+                  );
+                });
+              })()}
+              {labelOptions.length === 0 && stageFilters.length === 0 && (
+                <div className="text-xs text-muted-foreground px-2 py-1">
+                  표시할 단계가 없습니다.
+                </div>
+              )}
+            </div>
+          </details>
         </div>
         <div>
           <label className="text-xs text-muted-foreground block mb-1">
@@ -697,7 +829,8 @@ export async function CustomerListPanel({
               <PageLink
                 href={buildUrl({
                   q,
-                  stage: stageFilter,
+                  stage: stageFilters,
+                  cumulative: cumulativeFilter,
                   view: view === "active" ? "" : view,
                   bucket: bucketFilter,
                   ...(hiddenCenter ? {} : { center: filters.center ?? "" }),
@@ -714,7 +847,8 @@ export async function CustomerListPanel({
               <PageLink
                 href={buildUrl({
                   q,
-                  stage: stageFilter,
+                  stage: stageFilters,
+                  cumulative: cumulativeFilter,
                   view: view === "active" ? "" : view,
                   bucket: bucketFilter,
                   ...(hiddenCenter ? {} : { center: filters.center ?? "" }),
