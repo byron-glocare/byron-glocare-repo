@@ -297,11 +297,11 @@ export default async function UniversityEditPage({
               <Badge variant="secondary">{termGroups.length} 학기</Badge>
             </div>
             <Link
-              href={`/admissions/${numericId}`}
+              href={`/admissions?uni=${numericId}&tab=guidelines`}
               className={buttonVariants({ variant: "outline", size: "sm" })}
             >
               <FileText className="size-4" />
-              입학서류 (모집요강+양식)
+              입학서류에서 보기
             </Link>
           </div>
           {!specs || specs.length === 0 ? (
@@ -395,8 +395,8 @@ export default async function UniversityEditPage({
             {!formFiles || formFiles.length === 0 ? (
               <div className="px-4 pb-4 text-sm text-muted-foreground">
                 등록된 양식파일이 없습니다.{" "}
-                <Link href={`/admissions/${numericId}`} className="text-primary hover:underline">
-                  양식 관리 →
+                <Link href={`/admissions/forms/new?university_id=${numericId}`} className="text-primary hover:underline">
+                  양식 추가 →
                 </Link>
               </div>
             ) : (
@@ -477,8 +477,8 @@ export default async function UniversityEditPage({
             {!submissions || submissions.length === 0 ? (
               <div className="px-4 pb-4 text-sm text-muted-foreground">
                 등록된 발급 서류가 없습니다.{" "}
-                <Link href={`/admissions/${numericId}`} className="text-primary hover:underline">
-                  발급 서류 관리 →
+                <Link href={`/admissions/submissions/new`} className="text-primary hover:underline">
+                  발급 서류 추가 →
                 </Link>
               </div>
             ) : (

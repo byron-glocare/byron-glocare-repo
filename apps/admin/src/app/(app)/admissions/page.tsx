@@ -120,10 +120,22 @@ export default async function AdmissionsPage({
         description="작성 서류 양식 · 발급 서류 · 모집요강 서류"
         breadcrumbs={[{ label: "입학서류" }]}
         actions={
-          <Link href="/admissions/new" className={buttonVariants()}>
-            <Plus className="size-4" />
-            모집요강 추가
-          </Link>
+          tab === "forms" ? (
+            <Link href="/admissions/forms/new" className={buttonVariants()}>
+              <Plus className="size-4" />
+              양식 추가
+            </Link>
+          ) : tab === "submissions" ? (
+            <Link href="/admissions/submissions/new" className={buttonVariants()}>
+              <Plus className="size-4" />
+              발급서류 추가
+            </Link>
+          ) : (
+            <Link href="/admissions/new" className={buttonVariants()}>
+              <Plus className="size-4" />
+              모집요강 추가
+            </Link>
+          )
         }
       />
       <div className="p-6 space-y-4">
