@@ -157,10 +157,14 @@ export function UniversityForm({
     if (universityId == null) return;
     setDeleting(true);
     const r = await deleteUniversity(universityId);
-    if (r && !r.ok) {
+    if (!r.ok) {
       toast.error("삭제 실패", { description: r.error });
       setDeleting(false);
+      return;
     }
+    toast.success("삭제되었습니다.");
+    router.push("/universities");
+    router.refresh();
   }
 
   return (
@@ -623,8 +627,8 @@ export function UniversityForm({
                 <DialogHeader>
                   <DialogTitle>대학 삭제</DialogTitle>
                   <DialogDescription>
-                    이 대학을 삭제하시겠습니까? 소속 학과가 있으면 삭제되지
-                    않습니다.
+                    이 대학과 소속 학과·모집·모집요강·서류를 모두 삭제합니다.
+                    학생 지원이 연결돼 있으면 삭제되지 않습니다. 되돌릴 수 없습니다.
                   </DialogDescription>
                 </DialogHeader>
                 <DialogFooter>

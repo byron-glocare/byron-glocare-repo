@@ -1,9 +1,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
 import { requireAuth } from "@/lib/require-auth";
+import { createClient, createAdminClient } from "@/lib/supabase/server";
 import {
   universitySchema,
   departmentSchema,
@@ -217,35 +217,35 @@ export async function updateUniversity(
 }
 
 export async function deleteUniversity(id: number): Promise<ActionResult> {
-  let supabase;
-  try {
-    ({ supabase } = await requireAuth());
-  } catch {
-    return { ok: false, error: "Unauthorized" };
-  }
+  // 인증(user) + 작업은 service role (의존 데이터 cascade 정리)
+  const supabaseUser = await createClient();
+  const {
+    data: { user },
+  } = await supabaseUser.auth.getUser();
+  if (!user) return { ok: false, error: "Unauthorized" };
+  const supabase = createAdminClient();
 
-  // 학과가 있으면 차단
-  const { count } = await supabase
-    .from("departments")
-    .select("id", { count: "exact", head: true })
-    .eq("university_id", id);
+  // 의존 데이터 정리 후 대학 삭제 (개발: 테스트 대학 cascade)
+  //   학생 지원(study_applications)이 offering/spec 을 참조하면 아래 삭제가 FK 로 막히고
+  //   최종 university 삭제에서 에러가 반환됨(실데이터 보호).
+  await supabase.from("study_required_submissions").delete().eq("university_id", id);
+  await supabase.from("study_admission_form_files").delete().eq("university_id", id);
+  await supabase.from("study_offerings").delete().eq("university_id", id);
+  await supabase.from("study_admission_specs").delete().eq("university_id", id);
+  await supabase.from("departments").delete().eq("university_id", id);
 
-  if ((count ?? 0) > 0) {
+  const { error } = await supabase.from("universities").delete().eq("id", id);
+  if (error) {
     return {
       ok: false,
-      error: `소속 학과 ${count}개가 있어 삭제할 수 없습니다. 먼저 학과를 삭제하세요.`,
+      error:
+        "삭제할 수 없습니다(연결된 데이터가 남아 있음 — 학생 지원 등). " +
+        error.message,
     };
   }
 
-  const { error } = await supabase
-    .from("universities")
-    .delete()
-    .eq("id", id);
-
-  if (error) return { ok: false, error: error.message };
-
   revalidatePath("/universities");
-  redirect("/universities");
+  return { ok: true, data: null };
 }
 
 // =============================================================================
