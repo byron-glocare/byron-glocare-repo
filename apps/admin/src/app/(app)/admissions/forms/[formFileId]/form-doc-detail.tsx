@@ -307,15 +307,6 @@ export function FormDocDetail({
                 <Download className="size-4" />
                 원본 ({form.file_name})
               </a>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                disabled
-                title="원본 레이아웃 모사 빈양식 — 준비 중"
-              >
-                AI 빈양식 (준비 중)
-              </Button>
             </div>
           </div>
         </div>
@@ -461,9 +452,9 @@ export function FormDocDetail({
 
       {/* 미리보기 */}
       <Card className="p-6 space-y-3">
-        <h2 className="text-base font-semibold">미리보기</h2>
+        <h2 className="text-base font-semibold">채울 항목</h2>
         <p className="text-xs text-muted-foreground">
-          생성될 양식에 들어갈 항목입니다. (원본 레이아웃 모사 빈양식은 준비 중)
+          이 원본 양식에 채워 넣을 표준데이터 항목입니다.
         </p>
         {reqKeys.length === 0 ? (
           <p className="text-sm text-muted-foreground">
