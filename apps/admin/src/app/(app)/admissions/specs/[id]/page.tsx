@@ -14,6 +14,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { DeleteSpecButton } from "./delete-spec-button";
+import { CloneSpecButton } from "./clone-spec-button";
 
 export const dynamic = "force-dynamic";
 
@@ -257,6 +258,7 @@ export default async function AdmissionDetailPage({
               <Pencil className="size-4" />
               편집
             </Link>
+            <CloneSpecButton specId={id} currentTerm={spec.term} />
             <DeleteSpecButton specId={id} universityId={spec.university_id} />
           </div>
         }
