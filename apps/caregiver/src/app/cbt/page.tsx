@@ -15,7 +15,7 @@ export default async function CbtLandingPage() {
     return <UnmappedNotice t={t} />;
   }
 
-  const access = hasFeatureAccess(auth.customer.product_type, "cbt");
+  const access = hasFeatureAccess(auth.customer, "cbt");
   if (!access) {
     return <LockedView t={t} />;
   }

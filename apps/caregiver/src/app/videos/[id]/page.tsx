@@ -21,7 +21,7 @@ export default async function VideoPlayerPage({
   if (auth.kind === "guest") redirect(`/login?next=/videos/${id}`);
   if (auth.kind === "unmapped") redirect("/verify");
 
-  if (!hasFeatureAccess(auth.customer.product_type, "videos")) {
+  if (!hasFeatureAccess(auth.customer, "videos")) {
     redirect("/videos");
   }
 

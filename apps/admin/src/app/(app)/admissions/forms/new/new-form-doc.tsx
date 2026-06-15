@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useRef, useState } from "react";
+import { startTransition, useActionState, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, Upload } from "lucide-react";
 import { toast } from "sonner";
@@ -98,7 +98,7 @@ export function NewFormDoc({
     fd.set("mime_type", file.type || "application/octet-stream");
     fd.set("auto_analyze", "on");
     submitted.current = true;
-    action(fd);
+    startTransition(() => action(fd));
   }
 
   return (

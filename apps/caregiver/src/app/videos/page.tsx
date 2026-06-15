@@ -24,7 +24,7 @@ export default async function VideosListPage({
   if (auth.kind === "unmapped") {
     return <UnmappedNotice />;
   }
-  if (!hasFeatureAccess(auth.customer.product_type, "videos")) {
+  if (!hasFeatureAccess(auth.customer, "videos")) {
     return <LockedView t={t} />;
   }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useRef, useState } from "react";
+import { startTransition, useActionState, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, Plus } from "lucide-react";
 import { toast } from "sonner";
@@ -92,7 +92,7 @@ export function NewSubmissionDoc({
     fd.set("applies_to_locations", "[]");
     if (scope === "university" && baseId) fd.set("base_submission_id", baseId);
     submitted.current = true;
-    action(fd);
+    startTransition(() => action(fd));
   }
 
   return (

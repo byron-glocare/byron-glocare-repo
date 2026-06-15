@@ -23,7 +23,7 @@ export default async function ResumeLandingPage() {
   }
   if (auth.kind !== "mapped") return null;
 
-  if (!hasFeatureAccess(auth.customer.product_type, "resume")) {
+  if (!hasFeatureAccess(auth.customer, "resume")) {
     return (
       <div
         className="page-wrap"

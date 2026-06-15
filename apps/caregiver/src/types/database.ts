@@ -188,6 +188,49 @@ export type Database = {
       };
 
       // -----------------------------------------------------------------------
+      // 토스 게이트웨이 거래 원장 (0012)
+      payment_transactions: {
+        Row: {
+          id: number;
+          customer_id: string | null;
+          auth_user_id: string | null;
+          kind: string;
+          amount: number;
+          method: string | null;
+          status: string;
+          toss_order_id: string | null;
+          toss_payment_key: string | null;
+          va_due_date: string | null;
+          paid_at: string | null;
+          canceled_at: string | null;
+          raw: Record<string, unknown> | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: number;
+          customer_id?: string | null;
+          auth_user_id?: string | null;
+          kind: string;
+          amount: number;
+          method?: string | null;
+          status?: string;
+          toss_order_id?: string | null;
+          toss_payment_key?: string | null;
+          va_due_date?: string | null;
+          paid_at?: string | null;
+          canceled_at?: string | null;
+          raw?: Record<string, unknown> | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["payment_transactions"]["Insert"]
+        >;
+        Relationships: [];
+      };
+
+      // -----------------------------------------------------------------------
       customers: {
         Row: {
           id: string;
@@ -222,6 +265,11 @@ export type Database = {
           termination_reason: TerminationReason | null;
           /** Supabase Auth user 매핑 (caregiver homepage 0011 마이그레이션) */
           auth_user_id: string | null;
+          /** 자가가입/직원생성 구분 (0012) */
+          signup_source: string | null;
+          application_submitted_at: string | null;
+          enrollment_confirmed_at: string | null;
+          kakao_consent: boolean;
           created_at: string;
           updated_at: string;
         };
@@ -257,6 +305,10 @@ export type Database = {
           waiting_memo?: string | null;
           termination_reason?: TerminationReason | null;
           auth_user_id?: string | null;
+          signup_source?: string | null;
+          application_submitted_at?: string | null;
+          enrollment_confirmed_at?: string | null;
+          kakao_consent?: boolean;
           created_at?: string;
           updated_at?: string;
         };

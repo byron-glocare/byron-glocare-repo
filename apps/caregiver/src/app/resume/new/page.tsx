@@ -10,7 +10,7 @@ export default async function NewResumePage() {
   const auth = await getAuthState();
   if (auth.kind === "guest") redirect("/login?next=/resume/new");
   if (auth.kind === "unmapped") redirect("/verify");
-  if (!hasFeatureAccess(auth.customer.product_type, "resume")) {
+  if (!hasFeatureAccess(auth.customer, "resume")) {
     redirect("/resume");
   }
 

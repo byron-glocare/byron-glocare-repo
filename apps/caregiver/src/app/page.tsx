@@ -9,7 +9,6 @@ import {
   Stethoscope,
 } from "lucide-react";
 
-import { TrainingSignupTrigger } from "@/components/training-signup-modal";
 import { createClient } from "@/lib/supabase/server";
 import { getDict } from "@/lib/i18n";
 
@@ -91,28 +90,6 @@ export default async function HomePage() {
     },
   ];
 
-  const trainingStrings = {
-    title: t["modal.training.title"],
-    subtitle: t["modal.training.subtitle"],
-    name: t["modal.training.name"],
-    namePh: t["modal.training.namePh"],
-    phone: t["modal.training.phone"],
-    phonePh: t["modal.training.phonePh"],
-    email: t["modal.training.email"],
-    emailPh: t["modal.training.emailPh"],
-    region: t["modal.training.region"],
-    regionPh: t["modal.training.regionPh"],
-    topik: t["modal.training.topik"],
-    topikPh: t["modal.training.topikPh"],
-    visa: t["modal.training.visa"],
-    visaPh: t["modal.training.visaPh"],
-    message: t["modal.training.message"],
-    messagePh: t["modal.training.messagePh"],
-    submit: t["modal.training.submit"],
-    success: t["modal.training.success"],
-    needLogin: t["modal.training.needLogin"],
-  };
-
   return (
     <>
       {/* HERO */}
@@ -146,10 +123,20 @@ export default async function HomePage() {
               justifyContent: "center",
             }}
           >
-            <TrainingSignupTrigger
-              label={t["home.hero.cta"]}
-              strings={trainingStrings}
-            />
+            <Link
+              href="/apply"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                padding: "0.7rem 1.6rem",
+                background: "var(--coral)",
+                color: "var(--white)",
+                fontWeight: 700,
+                borderRadius: 12,
+              }}
+            >
+              {t["home.hero.cta"]}
+            </Link>
             <Link
               href="/service"
               className="card"

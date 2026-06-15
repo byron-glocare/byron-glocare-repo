@@ -29,29 +29,21 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // 세션 설정 완료 → 매핑 확인 후 적절한 페이지로
+  // 세션 설정 완료 → 본인 customer 자동 생성/연결 (자가가입)
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (user) {
-    const { data: customer } = await supabase
-      .from("customers")
-      .select("id")
-      .eq("auth_user_id", user.id)
-      .maybeSingle();
-
-    if (!customer) {
-      // unmapped → 본인 확인 페이지
-      url.pathname = "/verify";
-      url.searchParams.delete("code");
-      url.searchParams.delete("next");
-      url.searchParams.set("from", next);
-      return NextResponse.redirect(url);
-    }
+    const meta = (user.user_metadata ?? {}) as Record<string, string>;
+    await supabase.rpc("create_self_customer", {
+      p_name_kr: meta.full_name ?? meta.name ?? null,
+      p_name_vi: null,
+      p_phone: (user.phone as string) || meta.phone || null,
+    });
   }
 
-  // mapped → 원래 가려던 곳으로
+  // 원래 가려던 곳으로
   url.pathname = next;
   url.search = "";
   return NextResponse.redirect(url);

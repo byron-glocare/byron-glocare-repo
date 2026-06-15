@@ -72,7 +72,7 @@ export default async function RootLayout({
           loginLabel={t["nav.login"]}
           authed={authed}
           applyLabel={t["nav.apply"]}
-          applyHref="/service"
+          applyHref="/apply"
         />
         {auth.kind === "unmapped" && <UnmappedBanner locale={locale} />}
         <main>{children}</main>

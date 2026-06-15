@@ -31,7 +31,7 @@ export default async function CbtQuizPage({
     redirect(auth.kind === "guest" ? "/login?next=/cbt" : "/verify");
   }
 
-  if (!hasFeatureAccess(auth.customer.product_type, "cbt")) {
+  if (!hasFeatureAccess(auth.customer, "cbt")) {
     redirect("/cbt");
   }
 

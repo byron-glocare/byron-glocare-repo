@@ -129,7 +129,7 @@ export default async function PricingPage() {
 
       <div style={{ textAlign: "center", marginTop: "1.5rem" }}>
         <Link
-          href="/login"
+          href="/apply"
           style={{
             display: "inline-block",
             background: "var(--coral)",

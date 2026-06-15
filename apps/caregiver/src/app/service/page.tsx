@@ -110,7 +110,7 @@ export default async function ServicePage() {
 
       <div style={{ textAlign: "center", marginTop: "2rem" }}>
         <Link
-          href="/login"
+          href="/apply"
           style={{
             display: "inline-block",
             background: "var(--coral)",
