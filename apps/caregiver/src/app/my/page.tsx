@@ -14,6 +14,12 @@ export default async function MyPage() {
     redirect("/login?next=/my");
   }
 
+  const pt = auth.kind === "mapped" ? auth.customer.product_type : null;
+  const depositKind =
+    pt === "웰컴팩" || pt === "교육+웰컴팩"
+      ? "welcomepack_reservation"
+      : "education_reservation";
+
   const cards = [
     {
       href: "/learn",
@@ -95,7 +101,7 @@ export default async function MyPage() {
         ))}
       </div>
 
-      {/* 신청·결제 — P3/P4 에서 구현 예정 */}
+      {/* 예약금 결제 (P4) */}
       <div
         className="card"
         style={{
@@ -112,13 +118,31 @@ export default async function MyPage() {
             marginBottom: "0.35rem",
           }}
         >
-          {t["my.soon.title"]}
+          {t["my.pay.title"]}
         </div>
         <div
-          style={{ fontSize: "0.85rem", color: "var(--ink-mid)", lineHeight: 1.7 }}
+          style={{
+            fontSize: "0.85rem",
+            color: "var(--ink-mid)",
+            lineHeight: 1.7,
+            marginBottom: "0.9rem",
+          }}
         >
-          {t["my.soon.desc"]}
+          {t["my.pay.desc"]}
         </div>
+        <Link
+          href={`/pay?kind=${depositKind}`}
+          style={{
+            display: "inline-block",
+            background: "var(--coral)",
+            color: "var(--white)",
+            fontWeight: 700,
+            padding: "0.7rem 1.6rem",
+            borderRadius: 10,
+          }}
+        >
+          {t["my.pay.cta"]}
+        </Link>
       </div>
     </div>
   );

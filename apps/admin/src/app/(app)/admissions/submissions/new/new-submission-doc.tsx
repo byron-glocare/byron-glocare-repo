@@ -64,7 +64,11 @@ export function NewSubmissionDoc({
       submitted.current = false;
     } else if (state) {
       toast.success("발급서류가 생성되었습니다.");
-      router.push("/admissions?tab=submissions");
+      router.push(
+        scope === "university" && uniId
+          ? `/universities/${uniId}`
+          : "/admissions?tab=submissions"
+      );
     }
   }, [state, router]);
 

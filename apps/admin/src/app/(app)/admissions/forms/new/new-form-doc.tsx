@@ -70,7 +70,8 @@ export function NewFormDoc({
           ? `업로드 완료 — AI가 ${state.analyzedKeys}개 항목 정리`
           : "업로드 완료"
       );
-      router.push("/admissions?tab=forms");
+      // 진입한 대학 상세로 복귀(대학에서 들어온 경우), 아니면 입학서류 목록
+      router.push(uniId ? `/universities/${uniId}` : "/admissions?tab=forms");
     }
   }, [state, router]);
 

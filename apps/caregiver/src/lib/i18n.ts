@@ -390,6 +390,9 @@ const koDict = {
   "my.profile.desc": "프로필 · 문의 · 로그아웃",
   "my.soon.title": "신청 · 결제 (준비 중)",
   "my.soon.desc": "신청 현황과 예약금 · 잔금 결제는 곧 제공돼요.",
+  "my.pay.title": "예약금 결제",
+  "my.pay.desc": "예약금을 결제하면 접수가 확정돼요.",
+  "my.pay.cta": "예약금 결제하기",
 };
 
 type DictShape = { readonly [K in keyof typeof koDict]: string };
@@ -757,6 +760,9 @@ const viDict: DictShape = {
   "my.soon.title": "Đăng ký · Thanh toán (sắp có)",
   "my.soon.desc":
     "Tình trạng đăng ký và thanh toán đặt cọc · phần còn lại sẽ sớm có.",
+  "my.pay.title": "Thanh toán đặt cọc",
+  "my.pay.desc": "Thanh toán đặt cọc để xác nhận hồ sơ đăng ký.",
+  "my.pay.cta": "Thanh toán đặt cọc",
 };
 
 const dict: Record<Locale, DictShape> = { ko: koDict, vi: viDict };
