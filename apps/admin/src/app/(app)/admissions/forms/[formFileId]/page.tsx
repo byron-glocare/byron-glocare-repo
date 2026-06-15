@@ -34,7 +34,7 @@ export default async function FormDocDetailPage({
   const { data: form } = await supabase
     .from("study_admission_form_files")
     .select(
-      "id, university_id, key, name_ko, file_url, file_name, notes, uploaded_at, is_current, required_data_type_keys, applies_to_terms, applies_to_department_ids"
+      "id, university_id, key, name_ko, file_url, file_name, notes, uploaded_at, is_current, department_name, required_data_type_keys, applies_to_terms, applies_to_department_ids"
     )
     .eq("id", formFileId)
     .maybeSingle();
@@ -97,6 +97,7 @@ export default async function FormDocDetailPage({
             name_ko: form.name_ko,
             file_url: form.file_url,
             file_name: form.file_name,
+            department_name: form.department_name,
             notes: form.notes,
             uploaded_at: form.uploaded_at,
             required_data_type_keys: form.required_data_type_keys ?? [],

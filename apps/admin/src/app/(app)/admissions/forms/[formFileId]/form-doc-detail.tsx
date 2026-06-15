@@ -1,7 +1,8 @@
 "use client";
 
-import { useActionState, useEffect, useMemo, useState } from "react";
-import { Download, Loader2, Save } from "lucide-react";
+import { useActionState, useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Download, Loader2, RefreshCw, Save, Upload } from "lucide-react";
 import { toast } from "sonner";
 
 import { Card } from "@/components/ui/card";
@@ -10,7 +11,9 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
   updateFormFileDetailAction,
+  uploadFormFileAction,
   type UpdateFormDetailState,
+  type UploadFormFileState,
 } from "@/app/(app)/universities/[id]/forms/actions";
 
 // 양식 종류 라벨
@@ -52,6 +55,7 @@ type FormDoc = {
   name_ko: string;
   file_url: string;
   file_name: string;
+  department_name: string | null;
   notes: string | null;
   uploaded_at: string;
   required_data_type_keys: string[];
@@ -73,10 +77,21 @@ export function FormDocDetail({
   docNameOptions: string[];
   catalog: Catalog[];
 }) {
+  const router = useRouter();
   const [state, action, pending] = useActionState<UpdateFormDetailState, FormData>(
     updateFormFileDetailAction,
     undefined
   );
+  const [upState, upAction, upPending] = useActionState<
+    UploadFormFileState,
+    FormData
+  >(uploadFormFileAction, undefined);
+
+  // 파일 교체
+  const replaceRef = useRef<HTMLInputElement>(null);
+  const [replaceFile, setReplaceFile] = useState<File | null>(null);
+  const [replaceOpen, setReplaceOpen] = useState(false);
+  const upSubmitted = useRef(false);
 
   const [nameKo, setNameKo] = useState(form.name_ko);
   const [key, setKey] = useState(form.key);
@@ -91,6 +106,46 @@ export function FormDocDetail({
     if (state?.success) toast.success("저장되었습니다.");
     else if (state?.error) toast.error("저장 실패", { description: state.error });
   }, [state]);
+
+  useEffect(() => {
+    if (!upSubmitted.current) return;
+    if (upState?.error) {
+      toast.error("파일 교체 실패", { description: upState.error });
+      upSubmitted.current = false;
+    } else if (upState?.fieldErrors) {
+      toast.error("파일 교체 실패");
+      upSubmitted.current = false;
+    } else if (upState) {
+      toast.success("파일을 교체했습니다.");
+      router.push("/admissions?tab=forms");
+    }
+  }, [upState, router]);
+
+  async function doReplace(withAi: boolean) {
+    if (!replaceFile) return toast.error("교체할 파일을 선택하세요");
+    const dataUrl = await new Promise<string>((res, rej) => {
+      const r = new FileReader();
+      r.onload = () => res(String(r.result));
+      r.onerror = () => rej(r.error);
+      r.readAsDataURL(replaceFile);
+    });
+    const comma = dataUrl.indexOf(",");
+    const base64 = comma >= 0 ? dataUrl.slice(comma + 1) : dataUrl;
+    const fd = new FormData();
+    fd.set("university_id", String(form.university_id));
+    fd.set("key", form.key); // 같은 종류·범위로 새 버전 생성(기존 supersede)
+    fd.set("department_name", form.department_name ?? "");
+    fd.set("name_ko", nameKo.trim() || form.name_ko);
+    fd.set("file_base64", base64);
+    fd.set("file_name", replaceFile.name);
+    fd.set("file_size", String(replaceFile.size));
+    fd.set("mime_type", replaceFile.type || "application/octet-stream");
+    // 파일만 교체 = 기존 필요데이터 유지·AI 미실행 / 함께 교체 = AI 재분석
+    fd.set("required_data_type_keys", JSON.stringify(reqKeys));
+    fd.set("auto_analyze", withAi ? "on" : "off");
+    upSubmitted.current = true;
+    upAction(fd);
+  }
 
   const toggle = <T,>(arr: T[], v: T): T[] =>
     arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v];
@@ -263,6 +318,67 @@ export function FormDocDetail({
               </Button>
             </div>
           </div>
+        </div>
+
+        {/* 파일 교체 */}
+        <div className="border-t pt-4">
+          {!replaceOpen ? (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setReplaceOpen(true)}
+            >
+              <RefreshCw className="size-4" />
+              파일 교체
+            </Button>
+          ) : (
+            <div className="space-y-2 rounded-md border border-input p-3">
+              <p className="text-sm font-medium">새 파일로 변경하시겠습니까?</p>
+              <input
+                ref={replaceRef}
+                type="file"
+                onChange={(e) => setReplaceFile(e.target.files?.[0] ?? null)}
+                className="text-sm"
+              />
+              <div className="flex flex-wrap gap-2 pt-1">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  disabled={upPending || !replaceFile}
+                  onClick={() => doReplace(false)}
+                >
+                  {upPending ? <Loader2 className="size-4 animate-spin" /> : <Upload className="size-4" />}
+                  파일만 교체
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  disabled={upPending || !replaceFile}
+                  onClick={() => doReplace(true)}
+                >
+                  {upPending ? <Loader2 className="size-4 animate-spin" /> : <Upload className="size-4" />}
+                  양식과 파일 함께 교체 (AI)
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  disabled={upPending}
+                  onClick={() => {
+                    setReplaceOpen(false);
+                    setReplaceFile(null);
+                  }}
+                >
+                  취소
+                </Button>
+              </div>
+              <p className="text-[11px] text-muted-foreground">
+                '함께 교체'는 새 파일로 AI가 필요 표준데이터를 다시 정리합니다(30~60초).
+              </p>
+            </div>
+          )}
         </div>
       </Card>
 
