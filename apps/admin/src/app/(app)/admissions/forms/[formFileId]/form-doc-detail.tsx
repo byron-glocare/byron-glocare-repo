@@ -330,7 +330,7 @@ export function FormDocDetail({
                 ref={replaceRef}
                 type="file"
                 onChange={(e) => setReplaceFile(e.target.files?.[0] ?? null)}
-                className="text-sm"
+                className="text-sm file:mr-3 file:rounded-md file:border file:border-input file:bg-secondary file:px-3 file:py-1.5 file:text-sm file:font-medium hover:file:bg-secondary/80"
               />
               <div className="flex flex-wrap gap-2 pt-1">
                 <Button
