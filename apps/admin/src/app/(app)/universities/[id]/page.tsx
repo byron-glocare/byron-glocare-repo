@@ -493,7 +493,7 @@ export default async function UniversityEditPage({
                 </TableHeader>
                 <TableBody>
                   {submissions.map((s) => {
-                    const href = `/admissions/${numericId}`;
+                    const href = `/admissions/submissions/${s.id}`;
                     const isShared = s.university_id == null;
                     return (
                       <TableRow key={s.id} className="cursor-pointer">
