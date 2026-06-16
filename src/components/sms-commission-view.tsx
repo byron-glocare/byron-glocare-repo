@@ -54,7 +54,13 @@ type Group = {
   centerId: string;
   centerName: string;
   region: string | null;
+  /** 대표자 연락처 — 표시용 (없으면 빈 문자열) */
   directorPhone: string;
+  /** 대표 번호 — fallback 표시용 */
+  mainPhone: string;
+  /** 실제 발송에 사용되는 번호 (director_phone > phone fallback) */
+  recipientPhone: string;
+  phoneSource: "director" | "main" | "none";
   directorName: string;
   email: string;
   settlementMonth: string; // YYYY-MM-01
@@ -114,7 +120,7 @@ function GroupRow({ group }: { group: Group }) {
 
   // 문자 발송 모달
   const [smsModalOpen, setSmsModalOpen] = useState(false);
-  const [smsPhone, setSmsPhone] = useState(group.directorPhone);
+  const [smsPhone, setSmsPhone] = useState(group.recipientPhone);
   const [smsBody, setSmsBody] = useState(group.message);
   const [smsSending, setSmsSending] = useState(false);
 
@@ -125,7 +131,7 @@ function GroupRow({ group }: { group: Group }) {
   const printHref = `/settlements/print?center=${group.centerId}&month=${ym}&items=${encodeURIComponent(printItems)}`;
 
   function openSmsModal() {
-    setSmsPhone(group.directorPhone);
+    setSmsPhone(group.recipientPhone);
     setSmsBody(group.message);
     setSmsModalOpen(true);
   }
@@ -446,8 +452,8 @@ function GroupRow({ group }: { group: Group }) {
           <DialogHeader>
             <DialogTitle>문자 발송 — {group.centerName}</DialogTitle>
             <DialogDescription className="text-xs">
-              발신: 010-2825-4849 (글로케어). 수신자가 비어있으면 교육원 정보
-              [대표자 연락처] 를 입력하거나 아래에서 직접 입력하세요.
+              발신: 010-2825-4849 (글로케어). 수신자 기본값 = 교육원 대표자
+              번호 → (없으면) 대표 번호. 둘 다 없으면 아래에서 직접 입력하세요.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-3">
@@ -461,10 +467,20 @@ function GroupRow({ group }: { group: Group }) {
                 placeholder="010-0000-0000"
                 disabled={smsSending}
               />
-              {!group.directorPhone && (
+              {group.phoneSource === "director" && (
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  기본값: 교육원 <strong>대표자 번호</strong>
+                </p>
+              )}
+              {group.phoneSource === "main" && (
                 <p className="text-[11px] text-warning mt-1">
-                  ⚠ 이 교육원에 대표자 연락처가 등록되지 않았습니다. 수신자를
-                  직접 입력하거나 교육원 정보를 먼저 수정해주세요.
+                  기본값: 교육원 <strong>대표 번호</strong> (대표자 번호 미등록 — fallback)
+                </p>
+              )}
+              {group.phoneSource === "none" && (
+                <p className="text-[11px] text-warning mt-1">
+                  ⚠ 이 교육원에 대표자 / 대표 번호 모두 등록되지 않았습니다. 직접
+                  입력하거나 교육원 정보를 먼저 수정해주세요.
                 </p>
               )}
             </div>
