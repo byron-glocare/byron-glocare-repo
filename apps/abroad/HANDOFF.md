@@ -1,13 +1,23 @@
-# Glocare 통합 작업 — 인계 문서
+# Abroad (apps/abroad) — 새 Claude Code 세션 인계
 
-**작성**: 2026-04-28 (rate-limit 으로 세션 끊김 → 새 채팅에서 이어가기 위함)
+**최초 작성**: 2026-04-28 / **모노레포 통합 갱신**: 2026-06-15
+
+---
+
+## ⚠️ 위치 (2026-06 갱신)
+
+- **레포 위치**: `C:\dev\glocare/apps/abroad/` (모노레포 안)
+- **권장 cwd**: 채팅창은 `C:\dev\glocare` (루트) 에서 시작
+- **Production URL**: `youstudyinkorea.com` → glocare-homepage-abroad.vercel.app
+- **GitHub 연결**: 현재 `byron-glocare/glocare-homepage-abroad` (cutover 후엔 `byron-glocare/byron-glocare-repo` + Root Directory = `apps/abroad`)
+- **모노레포 통합 후 흐름**: [`../../WORKFLOW.md`](../../WORKFLOW.md) 참고
 
 ---
 
 ## 🎯 전체 그림
 
-`youstudyinkorea.com` (유학 홈페이지) 을 Cloudflare Workers + Google Drive DB 에서 → **Vercel + Supabase** 로 통합 이전. 
-Admin 은 기존 `glocare-customer.vercel.app` (Next.js) 안에 흡수.
+`youstudyinkorea.com` (유학 홈페이지) 을 Cloudflare Workers + Google Drive DB 에서 → **Vercel + Supabase** 로 통합 이전.
+Admin 은 모노레포 `apps/admin/` 안에 흡수 (glocare-admin.vercel.app).
 
 ```
 [Supabase 단일 프로젝트]
@@ -18,8 +28,9 @@ Admin 은 기존 `glocare-customer.vercel.app` (Next.js) 안에 흡수.
        │
    ┌───┴────────────────────────────────┐
    │                                    │
-[Vercel A] glocare-customer.vercel.app  [Vercel B] youstudyinkorea.com
-   ↑ admin (Next.js, 작동 중)            ↑ glocare_homepage_abroad (작업 중)
+[Vercel: glocare_admin]                 [Vercel: glocare-homepage-abroad]
+glocare-admin.vercel.app                youstudyinkorea.com
+↑ apps/admin                            ↑ apps/abroad
 ```
 
 ---
@@ -37,9 +48,9 @@ Admin 은 기존 `glocare-customer.vercel.app` (Next.js) 안에 흡수.
 
 ## 🟡 진행 중 — Phase 2 (홈페이지)
 
-### 폴더
-`C:\Users\kajka\OneDrive\Desktop\glocare_homepage_abroad\`  
-(GitHub: `byron-glocare/glocare-homepage-abroad`)
+### 폴더 (2026-06 갱신)
+`C:\dev\glocare\apps\abroad\` (모노레포 안)
+(GitHub: 현재 `byron-glocare/glocare-homepage-abroad`, cutover 후 `byron-glocare/byron-glocare-repo`/`apps/abroad`)
 
 ### 완료
 - [x] Next.js 16 + Tailwind 4 부트스트랩

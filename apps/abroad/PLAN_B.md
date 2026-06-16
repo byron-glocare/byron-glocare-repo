@@ -2,7 +2,7 @@
 
 > **변경 배경**: 2026-05-15 기준 비즈니스 모델 피벗. 학생 직접 대면(Plan A)에서 **유학센터(베트남 현지) 대상 B2B SaaS** 로 전환.
 >
-> **이 문서의 역할**: Plan B 의 단일 진실원(SSoT). 이전 문서들(PRD.md = Plan A 베이스, SESSION_HANDOFF.md = 2주 전 결정사항, ../glocare_customer_management/.../study_abroad_planning_v2.md)은 참고용으로 유지하되, **충돌 시 본 문서 우선**.
+> **이 문서의 역할**: Plan B 의 단일 진실원(SSoT). 이전 문서들(PRD.md = Plan A 베이스, SESSION_HANDOFF.md = 2주 전 결정사항, ../admin/.../study_abroad_planning_v2.md)은 참고용으로 유지하되, **충돌 시 본 문서 우선**.
 >
 > **개발 시작점**: `glocare_homepage_abroad` 기존 라이브 사이트 위에 기능 추가하는 방식.
 
@@ -515,7 +515,7 @@ def match_settlement(invoice_id, amount, bank_reference, proof_file):
 |---|---|---|---|
 | 공개 사이트 | `glocare_homepage_abroad` | 기존 Vercel | 랜딩·`/apply`·`/insurance`·`/universities` 등 — 다국어 (현행 유지) |
 | **외부 어드민** (유학센터용, 신규) | `glocare_homepage_abroad` 내 `src/app/center/...` | 동일 Vercel | **베트남어 디폴트**, 별도 인증 경계 (Supabase Auth + RLS) |
-| **내부 어드민** (글로케어 운영팀, 기존 확장) | `../glocare_customer_management` | https://glocare-admin.vercel.app/ | **한국어**, 요양보호사·유학생 통합 관리. 가격 plan 설정·인보이스·정산·모집요강 검수 화면 추가 |
+| **내부 어드민** (글로케어 운영팀, 기존 확장) | `../admin` | https://glocare-admin.vercel.app/ | **한국어**, 요양보호사·유학생 통합 관리. 가격 plan 설정·인보이스·정산·모집요강 검수 화면 추가 |
 
 DB는 Supabase 단일 인스턴스 공유. study_* 테이블군 신규 추가.
 
@@ -533,7 +533,7 @@ DB는 Supabase 단일 인스턴스 공유. study_* 테이블군 신규 추가.
 | 6 | UI 언어 (내부 어드민) | 한국어 | ✅ 확정 |
 | 7 | 학생 시스템 접근 | 없음 (메타데이터) | ✅ 확정 |
 | 8 | 모바일 앱 | 본 Phase 범위 외 (B+) | ✅ 확정 |
-| 9 | 어드민 위치 | 내부 = `../glocare_customer_management` 확장 (이미 사용 중, https://glocare-admin.vercel.app/) / 외부 = `glocare_homepage_abroad` 내 `src/app/center/...` 신규 | ✅ 확정 |
+| 9 | 어드민 위치 | 내부 = `../admin` 확장 (이미 사용 중, https://glocare-admin.vercel.app/) / 외부 = `glocare_homepage_abroad` 내 `src/app/center/...` 신규 | ✅ 확정 |
 | 10 | 모집요강 갱신 주기 | 연 2회 (학기별 — Spring/Fall). `study_admission_specs.term` 으로 표현 | ✅ 확정 |
 | 11 | 학생 일괄 업로드 엑셀 양식 | B1-3 작업항목. 기본 컬럼: 이름·생년·여권·연락처·이메일·지원대학·지원학과·메모. 베트남어 헤더 | 🟡 작업항목 |
 | 12 | 알림 채널 | 이메일 (Resend). Zalo/SMS 는 B+ | ✅ 확정 |
@@ -549,8 +549,8 @@ DB는 Supabase 단일 인스턴스 공유. study_* 테이블군 신규 추가.
 
 - **PRD.md** — Plan A 베이스 비즈니스 모델. **참고용** (구체적 페이지 구조·정산 로직 일부 재사용 가능, 단 학생 직접 부분은 모두 무시)
 - **SESSION_HANDOFF.md** — Plan A 시점 결정사항. **대부분 폐기**. AI/HWP 처리 / Supabase 공유 / 한국 법인 운영주체 / 변호사 자문 권장 등은 살아남음
-- **`../glocare_customer_management`** (배포: https://glocare-admin.vercel.app/) — **글로케어 내부 어드민. 이미 사용 중**. 본 Plan 의 가격 plan 설정·인보이스·정산·모집요강 검수 화면이 이쪽에 추가됨
-- **../glocare_customer_management/.claude/worktrees/determined-kapitsa-eb37f5/docs/study_abroad_planning_v2.md** — 어드민/DB 측 기획서 v2. **대부분 무관 (학생 직접 부분), AI/HWP/Supabase/법무 결정사항만 살아남음**
+- **`../admin`** (배포: https://glocare-admin.vercel.app/) — **글로케어 내부 어드민. 이미 사용 중**. 본 Plan 의 가격 plan 설정·인보이스·정산·모집요강 검수 화면이 이쪽에 추가됨
+- **../admin/.claude/worktrees/determined-kapitsa-eb37f5/docs/study_abroad_planning_v2.md** — 어드민/DB 측 기획서 v2. **대부분 무관 (학생 직접 부분), AI/HWP/Supabase/법무 결정사항만 살아남음**
 - **../Glocare_MoHinhKinhDoanh.html** — Plan A 시뮬레이터. **Plan B 에선 사용 안 함**
 
 ---

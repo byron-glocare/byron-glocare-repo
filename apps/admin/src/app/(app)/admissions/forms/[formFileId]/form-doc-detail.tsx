@@ -450,28 +450,79 @@ export function FormDocDetail({
         </label>
       </Card>
 
-      {/* 미리보기 */}
+      {/* 미리보기 — 원본 양식 */}
       <Card className="p-6 space-y-3">
-        <h2 className="text-base font-semibold">채울 항목</h2>
-        <p className="text-xs text-muted-foreground">
-          이 원본 양식에 채워 넣을 표준데이터 항목입니다.
-        </p>
-        {reqKeys.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            선택된 표준데이터 항목이 없습니다.
-          </p>
-        ) : (
-          <ul className="grid gap-1.5 sm:grid-cols-2">
-            {reqKeys.map((k) => (
-              <li
-                key={k}
-                className="rounded-md border border-input px-3 py-2 text-sm"
+        <h2 className="text-base font-semibold">미리보기 (원본 양식)</h2>
+        {(() => {
+          const ext = (form.file_name.split(".").pop() ?? "").toLowerCase();
+          const isPdf = ext === "pdf";
+          const isImage = ["png", "jpg", "jpeg", "webp", "gif"].includes(ext);
+          if (isPdf) {
+            return (
+              <iframe
+                src={form.file_url}
+                title="원본 양식 미리보기"
+                className="h-[640px] w-full rounded-md border"
+              />
+            );
+          }
+          if (isImage) {
+            return (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={form.file_url}
+                alt="원본 양식 미리보기"
+                className="max-h-[640px] w-full rounded-md border object-contain"
+              />
+            );
+          }
+          // HWP/HWPX/DOCX 등 — 브라우저 네이티브 렌더 불가
+          return (
+            <div className="rounded-md border border-dashed p-8 text-center">
+              <p className="text-sm text-muted-foreground">
+                {ext.toUpperCase() || "이 형식"} 은 브라우저에서 미리보기를 지원하지
+                않습니다. 원본을 내려받아 확인하세요.
+                <br />
+                <span className="text-xs">
+                  (미리보기·AI 채우기 모두 <strong>PDF</strong> 가 가장 안정적입니다.)
+                </span>
+              </p>
+              <a
+                href={form.file_url}
+                target="_blank"
+                rel="noreferrer"
+                download
+                className={`mt-3 inline-flex ${buttonVariants({ variant: "outline", size: "sm" })}`}
               >
-                {labelOf(k)}
-              </li>
-            ))}
-          </ul>
-        )}
+                <Download className="size-4" />
+                원본 다운로드 ({form.file_name})
+              </a>
+            </div>
+          );
+        })()}
+        {/* 채울 항목 요약 */}
+        <div className="border-t pt-3">
+          <p className="mb-1.5 text-xs font-medium">
+            채울 항목{" "}
+            <span className="font-normal text-muted-foreground">
+              ({reqKeys.length}개 · 위 “작성에 필요한 표준데이터”에서 편집)
+            </span>
+          </p>
+          {reqKeys.length === 0 ? (
+            <p className="text-sm text-muted-foreground">선택된 항목이 없습니다.</p>
+          ) : (
+            <div className="flex flex-wrap gap-1.5">
+              {reqKeys.map((k) => (
+                <span
+                  key={k}
+                  className="rounded-md border border-input px-2 py-0.5 text-xs"
+                >
+                  {labelOf(k)}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
       </Card>
 
       <div className="flex justify-end">

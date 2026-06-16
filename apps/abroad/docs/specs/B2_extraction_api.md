@@ -2,8 +2,8 @@
 
 작성: 2026-05-27 · 관련: [extract.ts](../../src/lib/admission/extract.ts) · [spec-schema.ts](../../src/lib/admission/spec-schema.ts) · [B2_admission_schema.md](./B2_admission_schema.md)
 
-> **호출자**: 글로케어 내부 어드민 (`glocare_customer_management` 저장소, https://glocare-admin.vercel.app/)
-> **백엔드**: `glocare_homepage_abroad` (본 저장소)
+> **호출자**: 글로케어 내부 어드민 (`apps/admin` 저장소, https://glocare-admin.vercel.app/)
+> **백엔드**: `apps/abroad` (본 저장소)
 > **분리 아키텍처**: 검수 UI 는 별도 저장소, AI 호출·zod 검증·향후 DB insert 는 본 저장소
 
 ---
@@ -22,8 +22,8 @@ POST https://youstudyinkorea.com/api/admission/extract
 X-Internal-Token: <env INTERNAL_API_TOKEN>
 ```
 
-- 본 저장소(`glocare_homepage_abroad`)의 Vercel 환경변수 `INTERNAL_API_TOKEN` 에 임의 토큰 설정 (`openssl rand -hex 32` 추천)
-- 글로케어 어드민(`glocare_customer_management`)의 환경변수에도 같은 값 설정 → fetch 헤더에 포함
+- 본 저장소(`apps/abroad`)의 Vercel 환경변수 `INTERNAL_API_TOKEN` 에 임의 토큰 설정 (`openssl rand -hex 32` 추천)
+- 글로케어 어드민(`apps/admin`)의 환경변수에도 같은 값 설정 → fetch 헤더에 포함
 - 401 = 토큰 누락/불일치, 500 = 서버에 토큰 미설정
 
 ### Content-Type
@@ -85,7 +85,7 @@ multipart/form-data
 
 ---
 
-## 3. 검수 UI 측 사용 흐름 (`glocare_customer_management`)
+## 3. 검수 UI 측 사용 흐름 (`apps/admin`)
 
 ```
 1. 운영자: 모집요강 PDF 업로드 (글로케어 어드민 화면)
@@ -122,7 +122,7 @@ multipart/form-data
 $tok = -join ((1..32) | ForEach-Object { '{0:x2}' -f (Get-Random -Max 256) })
 Write-Host $tok
 # Vercel 대시보드 → 본 프로젝트 → Settings → Environment Variables → INTERNAL_API_TOKEN
-# 같은 값을 glocare_customer_management 프로젝트의 환경변수에도 추가
+# 같은 값을 apps/admin 프로젝트의 환경변수에도 추가
 ```
 
 ---
@@ -155,7 +155,7 @@ curl -X POST https://youstudyinkorea.com/api/admission/extract \
 
 ## 7. 다음 라운드 작업
 
-- [ ] B2-3 — 글로케어 어드민(`glocare_customer_management`) 측 검수 UI (별도 세션)
+- [ ] B2-3 — 글로케어 어드민(`apps/admin`) 측 검수 UI (별도 세션)
 - [ ] B2-4 — 신뢰도 점수 정교화 (재추출 vs 첫 추출 diff, 핵심 필드 weight)
 - [ ] B2-5 — HWP 변환 endpoint (`/api/admission/hwp-to-pdf`) — `@hwp/core` 또는 LibreOffice
 - [ ] B2-6 — 추출 로그 보관 (`study_admission_specs.ai_extraction_log` 형식 표준화)
