@@ -76,6 +76,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(okUrl);
   }
 
+  if (data.status !== "DONE") {
+    return fail(`결제가 완료되지 않았습니다 (${data.status ?? "unknown"})`);
+  }
+
   await admin.rpc("record_payment_paid", {
     p_order_id: orderId,
     p_payment_key: paymentKey,

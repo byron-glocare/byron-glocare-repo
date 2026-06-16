@@ -13,13 +13,11 @@ export const runtime = "nodejs";
  *    templateParameter 키는 승인된 템플릿 변수에 맞춰 조정.
  */
 export async function GET(request: Request) {
-  // 1. 크론 인증
+  // 1. 크론 인증 — fail-closed (시크릿 미설정/불일치 모두 차단)
   const cronSecret = process.env.CRON_SECRET;
-  if (cronSecret) {
-    const auth = request.headers.get("authorization");
-    if (auth !== `Bearer ${cronSecret}`) {
-      return NextResponse.json({ error: "unauthorized" }, { status: 401 });
-    }
+  const auth = request.headers.get("authorization");
+  if (!cronSecret || auth !== `Bearer ${cronSecret}`) {
+    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
   // 2. env

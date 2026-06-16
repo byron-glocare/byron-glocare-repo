@@ -379,19 +379,16 @@ export async function CustomerListPanel({
       return true;
     });
   }
-  // 자가가입(signup_source='self') 집합 — 공유 Customer 타입 변경 없이 경량 조회
+  // 자가가입(signup_source='self') 집합 — 공유 Customer 타입 변경 없이 경량 조회.
+  // self 만 서버측 필터해 풀테이블 스캔/1000행 cap 회피.
   const selfRes = await (
-    supabase.from("customers") as unknown as {
-      select: (c: string) => Promise<{
-        data: Array<{ id: string; signup_source: string | null }> | null;
+    supabase.from("customers").select("id") as unknown as {
+      eq: (col: string, val: string) => Promise<{
+        data: Array<{ id: string }> | null;
       }>;
     }
-  ).select("id, signup_source");
-  const selfSet = new Set(
-    (selfRes.data ?? [])
-      .filter((r) => r.signup_source === "self")
-      .map((r) => r.id)
-  );
+  ).eq("signup_source", "self");
+  const selfSet = new Set((selfRes.data ?? []).map((r) => r.id));
 
   if (selfOnly) {
     filtered = filtered.filter((x) => selfSet.has(x.customer.id));
