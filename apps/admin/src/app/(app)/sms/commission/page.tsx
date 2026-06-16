@@ -58,8 +58,18 @@ export default async function SmsCommissionPage() {
     centerId: string;
     centerName: string;
     region: string | null;
-    /** 수신자 default — 대표자 연락처. 없으면 빈 문자열. */
+    /** 대표자 연락처 — 표시용 (없으면 빈 문자열) */
     directorPhone: string;
+    /** 대표 번호 (사업장) — fallback 표시용 */
+    mainPhone: string;
+    /**
+     * 실제 발송에 사용되는 수신자 번호.
+     *   - 1순위: director_phone
+     *   - 2순위: phone (대표 번호)
+     *   - 둘 다 없음: 빈 문자열
+     */
+    recipientPhone: string;
+    phoneSource: "director" | "main" | "none";
     /** 대표자 이름 — 표시용 */
     directorName: string;
     /** 발행 이메일 — 표시용 */
@@ -106,11 +116,22 @@ export default async function SmsCommissionPage() {
       existing.totals.deduction += row.deduction;
       existing.totals.net += row.net;
     } else {
+      const director = center.director_phone?.trim() ?? "";
+      const main = center.phone?.trim() ?? "";
+      const recipientPhone = director || main || "";
+      const phoneSource: "director" | "main" | "none" = director
+        ? "director"
+        : main
+          ? "main"
+          : "none";
       groupsMap.set(key, {
         centerId: center.id,
         centerName: center.name,
         region: center.region,
-        directorPhone: center.director_phone ?? "",
+        directorPhone: director,
+        mainPhone: main,
+        recipientPhone,
+        phoneSource,
         directorName: center.director_name ?? "",
         email: center.email ?? "",
         settlementMonth: cp.settlement_month,
