@@ -22,13 +22,9 @@ import {
 } from "@/lib/commission";
 import { computeSettlementSummary } from "@/lib/settlement";
 import { computeCustomerStatus } from "@/lib/customer-status";
-import { SettlementPendingCenterRow } from "@/components/settlement-pending-center-row";
 import { SettlementHistoryRow } from "@/components/settlement-history-row";
 import { SettlementByCustomerView } from "@/components/settlement-by-customer-view";
-import {
-  BulkConfirmAllPending,
-  type BulkBucket,
-} from "@/components/bulk-confirm-all-pending";
+import { PendingTabClient } from "@/components/pending-tab-client";
 
 export const dynamic = "force-dynamic";
 
@@ -241,22 +237,6 @@ export default async function SettlementsPage({
   const pendingGroups = Array.from(pendingByCenter.values()).sort((a, b) =>
     a.center.name.localeCompare(b.center.name, "ko")
   );
-
-  // 페이지 레벨 "도래분 일괄 확정" 용 버킷 — 각 그룹의 isDue 행만, default 공제 사용
-  const bulkBuckets: BulkBucket[] = pendingGroups
-    .map((g) => ({
-      centerId: g.center.id,
-      centerName: g.center.name,
-      rows: g.rows
-        .filter((r) => r.isDue)
-        .map((r) => ({
-          customerId: r.customerId,
-          customerName: r.customerName,
-          tuitionBase: r.tuitionBase,
-          defaultDeduction: r.defaultDeduction,
-        })),
-    }))
-    .filter((b) => b.rows.length > 0);
 
   // 완료 내역 — settlement_month 기준 그룹
   type HistoryRow = {
@@ -575,42 +555,11 @@ export default async function SettlementsPage({
                 현재 정산 예정인 교육생이 없습니다.
               </Card>
             ) : (
-              <>
-                <div className="flex items-center justify-between px-1 gap-3 flex-wrap">
-                  <div className="text-xs text-muted-foreground">
-                    기준{" "}
-                    <span className="font-mono">
-                      {currentMonth.slice(0, 7)}
-                    </span>{" "}
-                    말까지 정산 예정일 도래 · 과거 누적 미정산 포함
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="text-sm">
-                      전체{" "}
-                      <span className="font-semibold">
-                        {formatCurrency(
-                          pendingGroups.reduce((s, g) => s + g.totalNet, 0)
-                        )}
-                      </span>
-                    </div>
-                    <BulkConfirmAllPending
-                      settlementMonth={currentMonth}
-                      buckets={bulkBuckets}
-                    />
-                  </div>
-                </div>
-                {pendingGroups.map((group) => (
-                  <SettlementPendingCenterRow
-                    key={group.center.id}
-                    center={group.center}
-                    rows={group.rows}
-                    totalBase={group.totalBase}
-                    totalDefaultDeduction={group.totalDeduction}
-                    totalNet={group.totalNet}
-                    settlementMonth={currentMonth}
-                  />
-                ))}
-              </>
+              <PendingTabClient
+                groups={pendingGroups}
+                settlementMonth={currentMonth}
+                currentMonthLabel={currentMonth.slice(0, 7)}
+              />
             )}
           </TabsContent>
 
