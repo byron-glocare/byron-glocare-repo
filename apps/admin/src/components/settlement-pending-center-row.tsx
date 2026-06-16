@@ -4,6 +4,8 @@ import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
+// 체크/공제 override state 는 페이지 레벨 (`PendingTabClient`) 에서 lift up.
+// 이 컴포넌트는 controlled — props 의 checked/overrides 를 사용하고 변경은 콜백으로 위임.
 import {
   Check,
   ChevronDown,
@@ -73,30 +75,28 @@ type Props = {
   totalDefaultDeduction: number;
   totalNet: number;
   settlementMonth: string; // YYYY-MM-01
+  /** controlled — 페이지 레벨 (PendingTabClient) 에서 state 보유 */
+  checked: Record<string, boolean>;
+  overrides: Record<string, number>;
+  onCheckedChange: (customerId: string, v: boolean) => void;
+  /** 전체 토글 등 — 한 번에 교체 */
+  onCheckedReplace: (next: Record<string, boolean>) => void;
+  onOverrideChange: (customerId: string, v: number) => void;
 };
 
 export function SettlementPendingCenterRow({
   center,
   rows,
   settlementMonth,
+  checked,
+  overrides,
+  onCheckedChange,
+  onCheckedReplace,
+  onOverrideChange,
 }: Props) {
   const router = useRouter();
   const [expanded, setExpanded] = useState(false);
   const [pending, startTransition] = useTransition();
-
-  // 체크박스 상태 — default 는 isDue
-  const [checked, setChecked] = useState<Record<string, boolean>>(() => {
-    const m: Record<string, boolean> = {};
-    for (const r of rows) m[r.customerId] = r.isDue;
-    return m;
-  });
-
-  // 공제 override
-  const [overrides, setOverrides] = useState<Record<string, number>>(() => {
-    const m: Record<string, number> = {};
-    for (const r of rows) m[r.customerId] = r.defaultDeduction;
-    return m;
-  });
 
   const selectedRows = useMemo(
     () => rows.filter((r) => checked[r.customerId]),
@@ -117,7 +117,7 @@ export function SettlementPendingCenterRow({
   }, [selectedRows, overrides]);
 
   function setRowChecked(id: string, v: boolean) {
-    setChecked((s) => ({ ...s, [id]: v }));
+    onCheckedChange(id, v);
   }
 
   function handleBulkComplete() {
@@ -276,8 +276,8 @@ export function SettlementPendingCenterRow({
                         const next = e.target.checked;
                         const m: Record<string, boolean> = {};
                         for (const r of rows) m[r.customerId] = next;
-                        setChecked(m);
-                                          }}
+                        onCheckedReplace(m);
+                      }}
                       aria-label="전체 선택"
                     />
                   </TableHead>
@@ -349,11 +349,11 @@ export function SettlementPendingCenterRow({
                           min={0}
                           value={d}
                           onChange={(e) => {
-                            setOverrides((s) => ({
-                              ...s,
-                              [r.customerId]: Number(e.target.value) || 0,
-                            }));
-                                                  }}
+                            onOverrideChange(
+                              r.customerId,
+                              Number(e.target.value) || 0
+                            );
+                          }}
                           className="h-8 text-right font-mono"
                           disabled={!checked[r.customerId]}
                         />

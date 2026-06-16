@@ -114,40 +114,38 @@ export function BulkConfirmAllPending({ settlementMonth, buckets }: Props) {
     });
   }
 
-  if (totalCount === 0) return null;
-
   return (
     <>
       <Button
         type="button"
         size="sm"
         onClick={() => setOpen(true)}
-        disabled={pending}
+        disabled={pending || totalCount === 0}
+        title={
+          totalCount === 0
+            ? "선택된 행이 없습니다 (카드 안에서 체크하세요)"
+            : undefined
+        }
       >
         {pending ? (
           <Loader2 className="size-4 animate-spin" />
         ) : (
           <FileText className="size-4" />
         )}
-        도래분 일괄 확정 ({totalCount}명 · {formatCurrency(totalNet)})
+        선택 일괄 확정 ({totalCount}명 · {formatCurrency(totalNet)})
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>도래한 정산 예정 일괄 확정</DialogTitle>
+            <DialogTitle>선택한 정산 예정 일괄 확정</DialogTitle>
             <DialogDescription>
               <div className="space-y-2 text-sm">
                 <div>
                   <span className="font-medium text-foreground">
                     {buckets.length}개 교육원 · 총 {totalCount}명
                   </span>{" "}
-                  의 정산을 한 번에 확정합니다.
-                </div>
-                <div className="text-xs text-warning">
-                  ⚠️ <strong>카드 안에서 체크 해제·공제 override 한 게 있다면 무시됩니다.</strong>{" "}
-                  도래한(isDue) 모든 행을 default 공제 기준으로 처리합니다. 커스터마이즈가
-                  필요하면 이 버튼 대신 각 카드 안의 [정산 금액 확정] 버튼을 사용하세요.
+                  의 정산을 한 번에 확정합니다 (카드 안 체크·공제 변경 그대로 반영).
                 </div>
                 <div className="text-xs text-muted-foreground border-t border-border pt-2 mt-2">
                   대상 교육원:
