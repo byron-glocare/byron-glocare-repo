@@ -17,6 +17,11 @@
   → preview 브라우저 네비게이션을 억지로 우회하는 삽질 금지.
 - **dev 가 모든 라우트 404 등 이상하면** `.next` 캐시 손상 가능 → 해당 앱 dev 종료 후
   `.next` 삭제하고 재기동(OneDrive 와 무관).
+- **동적 `[id]` 상세 페이지만 "Jest worker encountered child process exceptions" 로 500** →
+  Node 24 + 이 Next 16.2.4 dev 의 **소스맵 심볼리케이션 워커**가 시작 단계에서 죽는 비호환.
+  (리스트/인덱스 라우트·prod 빌드는 정상 — dev 워커만 문제.) 코드 버그 아님.
+  → 해결: dev 를 `--disable-source-maps` 로 실행(루트 `dev:*` 스크립트에 반영됨).
+  메모리 부족(여유 1~2GB)도 워커 스폰 실패를 악화시키니 dev 서버는 필요한 것만 띄운다.
 - **원칙**: 실행이 막히면 새 방식을 발명하기 전에 "그냥 PowerShell 로 하면 되는가?" 부터 본다.
 
 ## 2. Supabase 스키마 변경 = SQL 을 써주면 운영자가 에디터에 붙여넣는다

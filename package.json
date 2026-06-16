@@ -8,9 +8,9 @@
     "packages/*"
   ],
   "scripts": {
-    "dev:abroad": "npm run dev -w abroad -- -p 3000",
-    "dev:admin": "npm run dev -w admin -- -p 3001",
-    "dev:caregiver": "npm run dev -w caregiver -- -p 3002",
+    "dev:abroad": "npm run dev -w abroad -- -p 3000 --disable-source-maps",
+    "dev:admin": "npm run dev -w admin -- -p 3001 --disable-source-maps",
+    "dev:caregiver": "npm run dev -w caregiver -- -p 3002 --disable-source-maps",
     "build:admin": "npm run build -w admin",
     "build:abroad": "npm run build -w abroad",
     "build:caregiver": "npm run build -w caregiver"
