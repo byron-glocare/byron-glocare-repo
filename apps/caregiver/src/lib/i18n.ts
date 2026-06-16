@@ -393,6 +393,14 @@ const koDict = {
   "my.pay.title": "예약금 결제",
   "my.pay.desc": "예약금을 결제하면 접수가 확정돼요.",
   "my.pay.cta": "예약금 결제하기",
+  "my.enroll.title": "교육 배정 확인",
+  "my.enroll.desc": "배정된 교육원·강의를 확인하고 컨펌해주세요.",
+  "my.enroll.cta": "배정 확인(컨펌)",
+  "my.enroll.done": "배정 확인 완료",
+  "my.consent.label": "카카오 알림톡 받기 (매일 CBT 안내)",
+  "my.consent.save": "저장",
+  "my.balance.visa": "비자 수수료 결제",
+  "my.balance.final": "잔금 결제",
 };
 
 type DictShape = { readonly [K in keyof typeof koDict]: string };
@@ -763,6 +771,14 @@ const viDict: DictShape = {
   "my.pay.title": "Thanh toán đặt cọc",
   "my.pay.desc": "Thanh toán đặt cọc để xác nhận hồ sơ đăng ký.",
   "my.pay.cta": "Thanh toán đặt cọc",
+  "my.enroll.title": "Xác nhận phân lớp",
+  "my.enroll.desc": "Vui lòng kiểm tra trung tâm·lớp được phân và xác nhận.",
+  "my.enroll.cta": "Xác nhận phân lớp",
+  "my.enroll.done": "Đã xác nhận phân lớp",
+  "my.consent.label": "Nhận KakaoTalk (nhắc CBT mỗi ngày)",
+  "my.consent.save": "Lưu",
+  "my.balance.visa": "Thanh toán phí visa",
+  "my.balance.final": "Thanh toán phần còn lại",
 };
 
 const dict: Record<Locale, DictShape> = { ko: koDict, vi: viDict };

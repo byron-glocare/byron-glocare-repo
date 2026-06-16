@@ -80,6 +80,8 @@ export type CustomerListFilters = {
    * 종료된 고객도 포함하기 위해 자동으로 view="all" 처리.
    */
   cumulative?: string;
+  /** 자가가입(홈페이지)만 보기 — "1" 이면 활성 */
+  self?: string;
 };
 
 export type CustomerListProps = {
@@ -137,6 +139,7 @@ export async function CustomerListPanel({
       ? viewRaw
       : "active";
   const bucketFilter = filters.bucket?.trim() ?? "";
+  const selfOnly = (filters.self ?? "").trim() === "1";
   const page = Math.max(1, parseInt(filters.page ?? "1", 10) || 1);
 
   const supabase = await createClient();
@@ -376,6 +379,23 @@ export async function CustomerListPanel({
       return true;
     });
   }
+  // 자가가입(signup_source='self') 집합 — 공유 Customer 타입 변경 없이 경량 조회
+  const selfRes = await (
+    supabase.from("customers") as unknown as {
+      select: (c: string) => Promise<{
+        data: Array<{ id: string; signup_source: string | null }> | null;
+      }>;
+    }
+  ).select("id, signup_source");
+  const selfSet = new Set(
+    (selfRes.data ?? [])
+      .filter((r) => r.signup_source === "self")
+      .map((r) => r.id)
+  );
+
+  if (selfOnly) {
+    filtered = filtered.filter((x) => selfSet.has(x.customer.id));
+  }
 
   const count = filtered.length;
   const totalPages = Math.max(1, Math.ceil(count / PAGE_SIZE));
@@ -392,6 +412,7 @@ export async function CustomerListPanel({
     cumulativeFilter ||
     view !== "active" ||
     bucketFilter ||
+    selfOnly ||
     (filters.center && !hiddenCenter) ||
     (filters.care && !hiddenCare)
   );
@@ -603,6 +624,12 @@ export async function CustomerListPanel({
             <option value="terminated">종료만</option>
           </select>
         </div>
+        <div className="flex items-end">
+          <label className="flex items-center gap-1.5 h-8 text-sm cursor-pointer whitespace-nowrap">
+            <input type="checkbox" name="self" value="1" defaultChecked={selfOnly} />
+            자가가입만
+          </label>
+        </div>
         <button type="submit" className={buttonVariants()}>
           적용
         </button>
@@ -695,6 +722,14 @@ export async function CustomerListPanel({
                           >
                             {dash(c.name_vi)}
                           </Link>
+                          {selfSet.has(c.id) && (
+                            <Badge
+                              variant="outline"
+                              className="ml-1.5 text-[10px] py-0 bg-info/10 text-info border-info/20"
+                            >
+                              자가가입
+                            </Badge>
+                          )}
                         </TableCell>
                         <TableCell>
                           <Link href={`/customers/${c.id}`} className="block">
@@ -833,6 +868,7 @@ export async function CustomerListPanel({
                   cumulative: cumulativeFilter,
                   view: view === "active" ? "" : view,
                   bucket: bucketFilter,
+                  self: selfOnly ? "1" : "",
                   ...(hiddenCenter ? {} : { center: filters.center ?? "" }),
                   ...(hiddenCare ? {} : { care: filters.care ?? "" }),
                   page: String(page - 1),
@@ -851,6 +887,7 @@ export async function CustomerListPanel({
                   cumulative: cumulativeFilter,
                   view: view === "active" ? "" : view,
                   bucket: bucketFilter,
+                  self: selfOnly ? "1" : "",
                   ...(hiddenCenter ? {} : { center: filters.center ?? "" }),
                   ...(hiddenCare ? {} : { care: filters.care ?? "" }),
                   page: String(page + 1),

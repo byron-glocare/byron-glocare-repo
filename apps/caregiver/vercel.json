@@ -1,0 +1,5 @@
+{
+  "crons": [
+    { "path": "/api/cron/cbt-reminder", "schedule": "0 0 * * *" }
+  ]
+}
