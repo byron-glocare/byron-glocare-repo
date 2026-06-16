@@ -228,6 +228,40 @@ export async function deleteEventPayment(
   return { ok: true, data: null };
 }
 
+/**
+ * 이벤트 지급 여부 토글 — gift_given 만 변경.
+ * true → 오늘 날짜로 gift_given_date 설정 / false → null
+ */
+export async function toggleEventGift(
+  paymentId: string,
+  customerId: string,
+  nextGiven: boolean
+): Promise<ActionResult> {
+  let supabase;
+  try {
+    ({ supabase } = await requireAuth());
+  } catch {
+    return { ok: false, error: "Unauthorized" };
+  }
+  const todayKst = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Seoul",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
+  const { error } = await supabase
+    .from("event_payments")
+    .update({
+      gift_given: nextGiven,
+      gift_given_date: nextGiven ? todayKst : null,
+    })
+    .eq("id", paymentId);
+  if (error) return { ok: false, error: error.message };
+
+  revalidatePath(`/customers/${customerId}`);
+  return { ok: true, data: null };
+}
+
 // =============================================================================
 // 웰컴팩 결제 (고객당 1개 — upsert)
 // =============================================================================

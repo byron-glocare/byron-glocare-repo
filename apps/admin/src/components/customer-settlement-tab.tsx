@@ -22,6 +22,7 @@ import {
   deleteReservationPayment,
   createEventPayment,
   deleteEventPayment,
+  toggleEventGift,
   upsertWelcomePackPayment,
 } from "@/app/(app)/customers/settlement-actions";
 import {
@@ -589,6 +590,18 @@ function EventPaymentsCard({
     }
   }
 
+  function onToggleGift(id: string, currentGiven: boolean) {
+    startTransition(async () => {
+      const result = await toggleEventGift(id, customerId, !currentGiven);
+      if (result.ok) {
+        toast.success(currentGiven ? "미지급으로 변경" : "지급 완료로 변경");
+        router.refresh();
+      } else {
+        toast.error("변경 실패", { description: result.error });
+      }
+    });
+  }
+
   return (
     <Card>
       <CardHeader className="flex-row items-center justify-between">
@@ -730,15 +743,30 @@ function EventPaymentsCard({
                         : "—"}
                     </TableCell>
                     <TableCell className="text-center">
-                      {p.gift_given ? (
-                        <Badge className="bg-success/10 text-success border-success/20">
-                          지급
-                        </Badge>
-                      ) : (
-                        <Badge variant="outline" className="text-muted-foreground">
-                          미지급
-                        </Badge>
-                      )}
+                      <button
+                        type="button"
+                        onClick={() => onToggleGift(p.id, p.gift_given)}
+                        disabled={pending}
+                        title={
+                          p.gift_given
+                            ? "클릭하면 미지급으로 변경"
+                            : "클릭하면 지급 완료로 변경"
+                        }
+                        className="inline-flex items-center transition-opacity hover:opacity-70 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {p.gift_given ? (
+                          <Badge className="bg-success/10 text-success border-success/20 cursor-pointer">
+                            지급
+                          </Badge>
+                        ) : (
+                          <Badge
+                            variant="outline"
+                            className="text-muted-foreground cursor-pointer"
+                          >
+                            미지급
+                          </Badge>
+                        )}
+                      </button>
                     </TableCell>
                     <TableCell>
                       <Button
