@@ -16,6 +16,7 @@ import {
   type RequiredDoc,
 } from "@/lib/admission/classify-documents";
 import { getLocale, tr } from "@/lib/i18n";
+import { WriteRowActions } from "./write-row-actions";
 
 /** 양식 매칭용 이름 정규화 (앞 번호 "2." 제거 + 공백/대소문자 무시) */
 function normFormName(s: string): string {
@@ -93,10 +94,25 @@ export default async function FinalPage({
     uniIds.length > 0
       ? supabase
           .from("study_admission_form_files")
-          .select("id, university_id, department_name, name_ko, key, required_data_type_keys")
+          .select(
+            "id, university_id, department_name, name_ko, key, required_data_type_keys, field_overlays, mime_type, file_name, file_url"
+          )
           .in("university_id", uniIds)
           .eq("is_current", true)
-      : Promise.resolve({ data: [] as Array<{ id: string; university_id: number; department_name: string | null; name_ko: string; key: string; required_data_type_keys: string[] | null }> }),
+      : Promise.resolve({
+          data: [] as Array<{
+            id: string;
+            university_id: number;
+            department_name: string | null;
+            name_ko: string;
+            key: string;
+            required_data_type_keys: string[] | null;
+            field_overlays: unknown;
+            mime_type: string | null;
+            file_name: string;
+            file_url: string;
+          }>,
+        }),
     supabase
       .from("study_required_submissions")
       .select("id, university_id, department_id, name_ko, applies_to_languages, applies_to_locations")
@@ -134,7 +150,17 @@ export default async function FinalPage({
       const ready = file
         ? (file.required_data_type_keys ?? []).every((k) => filledKeys.has(k))
         : false;
-      return { doc, file, ready };
+      // 좌표 오버레이가 있는 PDF 양식 → 원본에 채운 PDF 생성 (미리보기 가능)
+      const overlays = Array.isArray(file?.field_overlays)
+        ? (file!.field_overlays as unknown[])
+        : [];
+      const isPdf = file
+        ? (file.mime_type ?? "").toLowerCase().includes("pdf") ||
+          file.file_name.toLowerCase().endsWith(".pdf") ||
+          file.file_url.toLowerCase().includes(".pdf")
+        : false;
+      const canFill = !!file && isPdf && overlays.length > 0;
+      return { doc, file, ready, canFill };
     });
 
     const submitDocs = (subs ?? []).filter((s) => {
@@ -200,12 +226,12 @@ export default async function FinalPage({
                 </p>
               ) : (
                 <ul className="space-y-1.5">
-                  {writeRows.map(({ doc, file, ready }) => (
+                  {writeRows.map(({ doc, file, ready, canFill }) => (
                     <li
                       key={doc.key + doc.name_ko}
-                      className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-slate-100 bg-slate-50/50 px-3 py-2"
+                      className="flex flex-wrap items-start justify-between gap-2 rounded-md border border-slate-100 bg-slate-50/50 px-3 py-2"
                     >
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 pt-1">
                         <span className="text-sm font-medium text-slate-800">
                           {doc.name_ko}
                         </span>
@@ -222,16 +248,33 @@ export default async function FinalPage({
                             {tr(locale, "정보 부족", "Thiếu thông tin")}
                           </span>
                         )}
+                        {canFill ? (
+                          <span className="rounded-full bg-sky-100 px-2 py-0.5 text-[11px] text-sky-700">
+                            {tr(locale, "원본양식 채움", "Điền vào mẫu gốc")}
+                          </span>
+                        ) : null}
                       </div>
                       {file ? (
-                        <a
-                          href={`${base}/final/docx?form=${file.id}&app=${app.id}`}
-                          className="shrink-0 rounded-md bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-800"
-                        >
-                          {tr(locale, "생성 · 다운로드", "Tạo & tải")}
-                        </a>
+                        <div className="min-w-[180px] flex-1">
+                          <WriteRowActions
+                            canFill={canFill}
+                            downloadUrl={
+                              canFill
+                                ? `${base}/final/pdf?form=${file.id}&app=${app.id}`
+                                : `${base}/final/docx?form=${file.id}&app=${app.id}`
+                            }
+                            previewUrl={
+                              canFill
+                                ? `${base}/final/pdf?form=${file.id}&app=${app.id}&preview=1`
+                                : null
+                            }
+                            downloadLabel={tr(locale, "생성 · 다운로드", "Tạo & tải")}
+                            previewLabel={tr(locale, "미리보기", "Xem trước")}
+                            closeLabel={tr(locale, "닫기", "Đóng")}
+                          />
+                        </div>
                       ) : (
-                        <span className="shrink-0 text-[11px] text-slate-400">
+                        <span className="shrink-0 pt-1 text-[11px] text-slate-400">
                           {tr(locale, "글로케어에서 양식 등록 필요", "Cần đăng ký mẫu")}
                         </span>
                       )}

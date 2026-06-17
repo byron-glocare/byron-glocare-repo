@@ -1353,6 +1353,14 @@ export type Database = {
               data_type_key?: string;
             }>;
           }>;
+          field_overlays: Array<{
+            key: string;
+            page: number;
+            x: number;
+            y: number;
+            size?: number;
+            maxWidth?: number;
+          }>;
           created_at: string;
           updated_at: string;
         };
@@ -1394,6 +1402,14 @@ export type Database = {
               hint_vi?: string;
               data_type_key?: string;
             }>;
+          }>;
+          field_overlays?: Array<{
+            key: string;
+            page: number;
+            x: number;
+            y: number;
+            size?: number;
+            maxWidth?: number;
           }>;
           created_at?: string;
           updated_at?: string;

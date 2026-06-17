@@ -246,8 +246,26 @@ export type StudyAdmissionFormFile = {
       data_type_key?: string;
     }>;
   }>;
+  /** 원본 PDF 좌표 오버레이 — 학생 데이터 채움 위치 (0028). 빈 배열=미지정. */
+  field_overlays: FormFieldOverlay[];
   created_at: string;
   updated_at: string;
+};
+
+/** PDF 양식 위 한 항목을 그릴 좌표 (좌하단 원점, PDF 포인트). */
+export type FormFieldOverlay = {
+  /** 값 출처: data_type_key 또는 "essay:N" */
+  key: string;
+  /** 0-based 페이지 인덱스 */
+  page: number;
+  /** 가로 (왼쪽에서) */
+  x: number;
+  /** 세로 (아래에서, 텍스트 baseline) */
+  y: number;
+  /** 폰트 크기 pt (기본 11) */
+  size?: number;
+  /** 이 폭(pt) 초과 시 자동 축소 */
+  maxWidth?: number;
 };
 
 // =============================================================================
