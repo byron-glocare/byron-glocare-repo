@@ -271,14 +271,15 @@ export default async function FinalPage({
                       {file ? (
                         <div className="min-w-[180px] flex-1">
                           <WriteRowActions
-                            baseUrl={
+                            docxUrl={`${base}/final/docx?form=${file.id}&app=${app.id}`}
+                            pdfBaseUrl={
                               canFill
                                 ? `${base}/final/pdf?form=${file.id}&app=${app.id}`
-                                : `${base}/final/docx?form=${file.id}&app=${app.id}`
+                                : null
                             }
-                            canPreview={canFill}
                             inputFields={inputFields}
-                            downloadLabel={tr(locale, "생성 · 다운로드", "Tạo & tải")}
+                            sheetLabel={tr(locale, "데이터 시트", "Bảng dữ liệu")}
+                            pdfLabel={tr(locale, "원본양식 PDF", "PDF mẫu gốc")}
                             previewLabel={tr(locale, "미리보기", "Xem trước")}
                             closeLabel={tr(locale, "닫기", "Đóng")}
                             inputsTitle={tr(locale, "생성 정보 입력", "Nhập thông tin tạo")}
