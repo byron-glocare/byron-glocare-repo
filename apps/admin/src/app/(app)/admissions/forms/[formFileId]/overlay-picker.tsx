@@ -401,14 +401,27 @@ export function OverlayPicker({
     if (remaining) setActiveKey(remaining.key);
   }
 
-  // 박스 표시 라벨
+  // 박스 표시 라벨 (연결된 표준데이터를 보여줌 — 연결 안 되면 "연결필요")
   function boxLabel(o: Overlay): string {
     const kind = o.kind ?? "text";
-    if (kind === "check") return (o.dataKey ? labelOf(o.dataKey) : "체크") + " ✓";
-    if (kind === "image") return "이미지";
-    if (kind === "signature") return "사인";
-    if (o.source === "input") return o.inputLabel || "입력";
-    return labelOf(o.dataKey ?? o.key);
+    if (kind === "check")
+      return o.dataKey ? `${labelOf(o.dataKey)} ✓` : "체크(연결필요)";
+    if (kind === "image")
+      return o.dataKey ? `[이미지] ${labelOf(o.dataKey)}` : "[이미지] 연결필요";
+    if (kind === "signature")
+      return o.dataKey ? `[사인] ${labelOf(o.dataKey)}` : "[사인] 연결필요";
+    if (o.source === "input")
+      return o.inputLabel ? `[입력] ${o.inputLabel}` : "[입력] 라벨필요";
+    return o.dataKey ? labelOf(o.dataKey) : `${labelOf(o.key)} (연결필요)`;
+  }
+
+  /** 연결/설정이 필요한 미완성 박스 여부 (테두리 강조용). */
+  function boxIncomplete(o: Overlay): boolean {
+    const kind = o.kind ?? "text";
+    if (kind === "image" || kind === "signature" || kind === "check")
+      return !o.dataKey;
+    if (kind === "text" && o.source === "input") return !o.inputLabel;
+    return !o.dataKey; // text/student
   }
 
   // 박스 이동/크기조절 드래그
@@ -924,7 +937,21 @@ export function OverlayPicker({
               <button
                 type="button"
                 key={c.key}
-                onClick={() => setActiveKey(c.key)}
+                onClick={() => {
+                  // 선택된 이미지/사인/체크 박스가 있으면 그 박스에 이 항목을 연결
+                  const ab = overlays.find((o) => o.key === activeKey);
+                  const k = ab?.kind ?? "text";
+                  if (ab && (k === "image" || k === "signature" || k === "check")) {
+                    setOverlays((cur) =>
+                      cur.map((o) =>
+                        o.key === ab.key ? { ...o, dataKey: c.key } : o
+                      )
+                    );
+                    toast.success(`연결: ${c.label}`);
+                    return;
+                  }
+                  setActiveKey(c.key);
+                }}
                 className={`inline-flex items-center gap-1 rounded-md border px-2 py-1 text-xs ${
                   on
                     ? "border-primary bg-primary text-primary-foreground"
@@ -1066,7 +1093,9 @@ export function OverlayPicker({
                 className={`absolute box-border cursor-move rounded-[2px] border ${
                   on
                     ? "border-amber-500 bg-amber-300/20"
-                    : "border-sky-500 bg-sky-300/15"
+                    : boxIncomplete(o)
+                      ? "border-2 border-dashed border-red-400 bg-red-300/10"
+                      : "border-sky-500 bg-sky-300/15"
                 }`}
                 title="드래그=이동 · 우하단 모서리=크기조절 · ×=삭제"
               >
