@@ -515,38 +515,32 @@ export function OverlayPicker({
           const c = cellAt(grid, cx, cy);
           return c ? rectToBox(c) : null;
         };
-        // 값이 들어갈 영역: 라벨 칸에 여유가 있으면 라벨 다음~칸끝, 좁으면 오른쪽 칸 전체.
-        const valueBox = (midCx: number, endCx: number, cy: number) => {
+        // 값 영역: (A)라벨 다음~칸끝 vs (B)오른쪽 칸 중 더 넓은 쪽. 오른쪽 끝은 다음 라벨 직전까지.
+        const valueBox = (
+          midCx: number,
+          endCx: number,
+          cy: number,
+          limitCx: number
+        ) => {
           const lc = cellAt(grid, midCx, cy);
           if (!lc) return null;
-          const room = lc.right - endCx; // 라벨 뒤 같은 칸 여유 (px)
-          if (room > 28) {
-            return rectToBox({
-              left: Math.max(lc.left, endCx + 4),
-              right: lc.right,
-              top: lc.top,
-              bottom: lc.bottom,
-            });
-          }
-          // 라벨이 칸을 꽉 채움 → 오른쪽 칸을 값 칸으로
+          // A: 같은 칸 라벨 뒤 여유
+          const aLeft = Math.max(lc.left, endCx + 4);
+          const aRight = Math.min(lc.right, limitCx);
+          const aW = aRight - aLeft;
+          // B: 오른쪽 칸
           let nextRight = Infinity;
           for (const v of grid.vX) {
             if (v > lc.right + 1 && v < nextRight) nextRight = v;
           }
-          if (!isFinite(nextRight)) {
-            return rectToBox({
-              left: Math.max(lc.left, endCx + 4),
-              right: lc.right,
-              top: lc.top,
-              bottom: lc.bottom,
-            });
+          const bLeft = lc.right;
+          const bRight = Math.min(isFinite(nextRight) ? nextRight : lc.right, limitCx);
+          const bW = bRight - bLeft;
+          // 더 넓은 영역 선택 (B가 의미있게 넓으면 B)
+          if (bW > aW && bW > 20) {
+            return rectToBox({ left: bLeft, right: bRight, top: lc.top, bottom: lc.bottom });
           }
-          return rectToBox({
-            left: lc.right,
-            right: nextRight,
-            top: lc.top,
-            bottom: lc.bottom,
-          });
+          return rectToBox({ left: aLeft, right: aRight, top: lc.top, bottom: lc.bottom });
         };
 
         // AcroForm 텍스트필드
@@ -598,12 +592,21 @@ export function OverlayPicker({
           let box: { x: number; y: number; w: number; h: number } | null = null;
           const mid = toCanvas((t.x + t.endX) / 2, t.y);
           const endC = toCanvas(t.endX, t.y);
+          // 같은 행에서 오른쪽으로 가장 가까운 다음 라벨 시작점 → 값 박스가 넘지 않게
+          let nextTextPt = Infinity;
+          for (const o of texts) {
+            if (o !== t && Math.abs(o.y - t.y) <= 4 && o.x > t.endX)
+              nextTextPt = Math.min(nextTextPt, o.x);
+          }
+          const limitCx = isFinite(nextTextPt)
+            ? toCanvas(nextTextPt, t.y).cx - 3
+            : Infinity;
           if (special) {
             // 사진/서명/날짜: 라벨이 들어있는 칸
             box = cellBox(mid.cx, mid.cy);
           } else {
-            // 학생데이터: 라벨 칸의 값 영역(같은 칸 여유 or 오른쪽 칸)
-            box = valueBox(mid.cx, endC.cx, mid.cy);
+            // 학생데이터: 라벨 칸의 값 영역(같은 칸 여유 or 오른쪽 칸, 다음 라벨 직전까지)
+            box = valueBox(mid.cx, endC.cx, mid.cy, limitCx);
           }
 
           // 괘선 못 찾으면 라벨 오른쪽 빈칸 추정(폴백)
