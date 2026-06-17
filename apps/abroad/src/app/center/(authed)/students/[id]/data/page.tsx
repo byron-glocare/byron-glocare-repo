@@ -15,6 +15,7 @@ import {
   pickRequired,
 } from "@/lib/center/student-data-context";
 import { StudentDataEditor } from "./student-data-editor";
+import { FillLinkButton } from "./fill-link-button";
 
 export default async function StudentDataPage({
   params,
@@ -56,6 +57,8 @@ export default async function StudentDataPage({
           )}
         </p>
       </header>
+
+      <FillLinkButton locale={locale} studentId={id} />
 
       <StudentDataEditor
         locale={locale}

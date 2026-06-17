@@ -1021,6 +1021,20 @@ export type Database = {
         ];
       };
 
+      study_student_fill_links: {
+        Row: import("./study").StudyStudentFillLink;
+        Insert: Partial<import("./study").StudyStudentFillLink>;
+        Update: Partial<import("./study").StudyStudentFillLink>;
+        Relationships: [
+          {
+            foreignKeyName: "study_student_fill_links_student_id_fkey";
+            columns: ["student_id"];
+            referencedRelation: "study_managed_students";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+
       study_student_essay_drafts: {
         Row: import("./study").StudyStudentEssayDraft;
         Insert: Partial<import("./study").StudyStudentEssayDraft>;

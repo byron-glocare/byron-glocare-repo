@@ -57,6 +57,45 @@ export async function saveStudentDataValueAction(input: {
   return { ok: true };
 }
 
+export type CreateFillLinkResult =
+  | { ok: true; token: string; expiresAt: string }
+  | { ok: false; error: string };
+
+/**
+ * 정보 입력 공개 링크 생성 (유효기간 토큰).
+ *   - 본인 org 학생만 (RLS WITH CHECK)
+ *   - days: 1~90, 기본 7일
+ */
+export async function createFillLinkAction(input: {
+  studentId: string;
+  days?: number;
+}): Promise<CreateFillLinkResult> {
+  const session = await verifyCenterSession();
+  const supabase = await createCenterClient();
+
+  const { data: student } = await supabase
+    .from("study_managed_students")
+    .select("id")
+    .eq("id", input.studentId)
+    .maybeSingle();
+  if (!student) return { ok: false, error: "권한이 없습니다." };
+
+  const days = Math.min(Math.max(Math.round(input.days ?? 7), 1), 90);
+  const expiresAt = new Date(Date.now() + days * 86400000).toISOString();
+
+  const { data, error } = await supabase
+    .from("study_student_fill_links")
+    .insert({
+      student_id: input.studentId,
+      expires_at: expiresAt,
+      created_by: session.authUserId,
+    })
+    .select("token, expires_at")
+    .single();
+  if (error) return { ok: false, error: error.message };
+  return { ok: true, token: data.token, expiresAt: data.expires_at };
+}
+
 export type UploadFileResult =
   | { ok: true; value: { path: string; file_name: string } }
   | { ok: false; error: string };

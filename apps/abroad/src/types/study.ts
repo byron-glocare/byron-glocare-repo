@@ -327,6 +327,18 @@ export type StudyStudentSubmissionFile = {
 };
 
 // =============================================================================
+// 5c. study_student_fill_links (C7) — 정보 입력 공개 링크(유효기간 토큰)
+// =============================================================================
+export type StudyStudentFillLink = {
+  token: string;
+  student_id: string;
+  expires_at: string;
+  revoked: boolean;
+  created_by: string | null;
+  created_at: string;
+};
+
+// =============================================================================
 // 5d. study_student_data_values — 학생별 데이터 값 (B4-4)
 // =============================================================================
 export type StudyStudentDataValue = {
