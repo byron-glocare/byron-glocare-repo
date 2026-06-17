@@ -11,7 +11,7 @@ import { verifyCenterSession } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
 import { fillPdfOverlay } from "@/lib/admission/fill-pdf-overlay";
 import { finalDocFileName } from "@/lib/admission/build-form-sheet";
-import { loadKoreanFont } from "@/lib/admission/load-font";
+import { loadFillFonts } from "@/lib/admission/load-font";
 import type { FormFieldOverlay } from "@/types/study";
 import type { Json } from "@/types/database";
 
@@ -178,10 +178,11 @@ export async function GET(
 
   let bytes: Uint8Array;
   try {
-    const fontBytes = await loadKoreanFont(req.nextUrl.origin);
+    const fonts = await loadFillFonts(req.nextUrl.origin);
     bytes = await fillPdfOverlay({
       pdfBytes,
-      fontBytes,
+      koFontBytes: fonts.ko,
+      latinFontBytes: fonts.latin,
       overlays,
       values: valuesForFill,
     });

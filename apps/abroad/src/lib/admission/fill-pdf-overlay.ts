@@ -22,12 +22,17 @@ export type FillOverlayInput = {
   /** 원본 양식 PDF 바이트 */
   pdfBytes: ArrayBuffer | Uint8Array;
   /** 한글 TTF 폰트 바이트 */
-  fontBytes: ArrayBuffer | Uint8Array;
+  koFontBytes: ArrayBuffer | Uint8Array;
+  /** 베트남어·라틴 TTF 폰트 바이트 */
+  latinFontBytes: ArrayBuffer | Uint8Array;
   /** 채울 좌표 목록 */
   overlays: FormFieldOverlay[];
   /** overlay.key → 그릴 텍스트 (이미 문자열로 변환된 값) */
   values: Map<string, string>;
 };
+
+/** 한글(자모·음절) 포함 여부 — 폰트 선택용. */
+const HANGUL_RE = /[ᄀ-ᇿ㄰-㆏가-힣]/;
 
 /**
  * 텍스트를 maxWidth 안에 들어가도록 줄바꿈 (공백 우선, 없으면 글자 단위).
@@ -85,7 +90,10 @@ export async function fillPdfOverlay(
 ): Promise<Uint8Array> {
   const pdf = await PDFDocument.load(input.pdfBytes);
   pdf.registerFontkit(fontkit);
-  const font = await pdf.embedFont(input.fontBytes, { subset: true });
+  const koFont = await pdf.embedFont(input.koFontBytes, { subset: true });
+  const latinFont = await pdf.embedFont(input.latinFontBytes, { subset: true });
+  // 한글이 섞이면 한글 폰트, 아니면 베트남어/라틴 폰트.
+  const pickFont = (s: string) => (HANGUL_RE.test(s) ? koFont : latinFont);
 
   const pages = pdf.getPages();
   const black = rgb(0.05, 0.05, 0.05);
@@ -95,6 +103,7 @@ export async function fillPdfOverlay(
     if (!text) continue;
     const page = pages[ov.page];
     if (!page) continue;
+    const font = pickFont(text);
 
     let size = ov.size ?? DEFAULT_SIZE;
 
