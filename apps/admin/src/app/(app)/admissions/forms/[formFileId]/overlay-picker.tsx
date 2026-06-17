@@ -749,9 +749,28 @@ export function OverlayPicker({
           <p className="text-xs text-muted-foreground">
             <strong>자동 배치</strong>로 한번에 잡고, 박스를 드래그·크기조절해 보정하세요.
             ({placedCount}/{totalCount} 배치됨)
+            {placedCount > 0 ? (
+              <>
+                {" "}· <strong>전체 지우기</strong> 후 다시 누르면 새 규칙으로 재배치됩니다.
+              </>
+            ) : null}
           </p>
         </div>
         <div className="flex items-center gap-2">
+          {overlays.length > 0 ? (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setOverlays([]);
+                toast.message("박스를 모두 지웠습니다. ‘자동 배치’를 누르세요.");
+              }}
+              disabled={autoBusy}
+            >
+              <Trash2 className="size-4" />
+              전체 지우기
+            </Button>
+          ) : null}
           <Button
             type="button"
             variant="outline"
