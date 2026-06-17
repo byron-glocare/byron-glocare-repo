@@ -107,7 +107,9 @@ function inferSpecialKind(
   if (/(증명)?사진|photo|얼굴|반명함/i.test(s)) return { kind: "image" };
   if (/서명|사인|signature|자필|날인|서명인|인$/i.test(s))
     return { kind: "signature" };
-  if (/작성일|신청일|지원일|발급일|날짜|일자|년월일|date/i.test(s))
+  // 생년월일·졸업일 등 "학생 데이터 날짜"는 제외하고, 서류 작성/접수 날짜만 입력칸으로.
+  if (/생년|생일|졸업|발급|입국|만료|만기|시작|종료/.test(s)) return null;
+  if (/작성일|신청일|지원일|제출일|접수일|작성년월일|작성날짜/.test(s))
     return { kind: "input", inputLabel: label.trim() };
   return null;
 }
