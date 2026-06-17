@@ -61,7 +61,7 @@ export default async function FormDocDetailPage({
         .order("updated_at", { ascending: false }),
       supabase
         .from("study_student_data_types")
-        .select("key, label_ko, category")
+        .select("key, label_ko, category, aliases")
         .eq("is_active", true)
         .order("category")
         .order("sort_order"),
@@ -85,20 +85,29 @@ export default async function FormDocDetailPage({
     ext === "pdf" ||
     (form.mime_type ?? "").toLowerCase().includes("pdf") ||
     form.file_url.toLowerCase().includes(".pdf");
-  const catalogLabel = new Map(
-    (catalogRows ?? []).map((c) => [c.key, c.label_ko])
+  const catalogByKey = new Map(
+    (catalogRows ?? []).map((c) => [
+      c.key,
+      { label_ko: c.label_ko, aliases: (c.aliases as string[] | null) ?? [] },
+    ])
   );
   const essayQs = Array.isArray(form.essay_questions)
     ? (form.essay_questions as Array<{ question_ko?: string }>)
     : [];
   const overlayChoices: FieldChoice[] = [
-    ...(form.required_data_type_keys ?? []).map((k) => ({
-      key: k,
-      label: catalogLabel.get(k) ?? k,
-    })),
+    ...(form.required_data_type_keys ?? []).map((k) => {
+      const c = catalogByKey.get(k);
+      return {
+        key: k,
+        label: c?.label_ko ?? k,
+        // 매칭용 별칭: 라벨 + 카탈로그 별칭 (양식의 다양한 표기 흡수)
+        aliases: [c?.label_ko ?? k, ...(c?.aliases ?? [])],
+      };
+    }),
     ...essayQs.map((q, i) => ({
       key: `essay:${i}`,
       label: `[서술형] ${q.question_ko ?? `질문 ${i + 1}`}`,
+      aliases: q.question_ko ? [q.question_ko] : [],
     })),
   ];
   const initialOverlays: Overlay[] = Array.isArray(form.field_overlays)
