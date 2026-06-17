@@ -18,6 +18,8 @@ const DEFAULT_SIZE = 11;
 const MIN_SIZE = 6;
 const LINE_GAP = 2; // 줄 간격 여유 (pt)
 
+export type FillImage = { bytes: Uint8Array; type: "png" | "jpg" };
+
 export type FillOverlayInput = {
   /** 원본 양식 PDF 바이트 */
   pdfBytes: ArrayBuffer | Uint8Array;
@@ -25,10 +27,14 @@ export type FillOverlayInput = {
   koFontBytes: ArrayBuffer | Uint8Array;
   /** 베트남어·라틴 TTF 폰트 바이트 */
   latinFontBytes: ArrayBuffer | Uint8Array;
-  /** 채울 좌표 목록 */
+  /** 채울 박스 목록 */
   overlays: FormFieldOverlay[];
-  /** overlay.key → 그릴 텍스트 (이미 문자열로 변환된 값) */
+  /** kind=text: overlay.key → 그릴 텍스트 (문자열로 변환된 값) */
   values: Map<string, string>;
+  /** kind=check: overlay.key → 체크 여부 */
+  checks?: Map<string, boolean>;
+  /** kind=image|signature: overlay.key → 이미지 바이트 */
+  images?: Map<string, FillImage>;
 };
 
 /** 한글(자모·음절) 포함 여부 — 폰트 선택용. */
@@ -117,10 +123,63 @@ export async function fillPdfOverlay(
   const PAD = 2; // 박스 안쪽 여백 pt
 
   for (const ov of input.overlays) {
-    const text = foldLatinDiacritics((input.values.get(ov.key) ?? "").trim());
-    if (!text) continue;
     const page = pages[ov.page];
     if (!page) continue;
+    const kind = ov.kind ?? "text";
+
+    // ── 체크: 조건 충족 시 박스 안에 ✓ (벡터 — 폰트 글리프 의존 X)
+    if (kind === "check") {
+      if (!input.checks?.get(ov.key)) continue;
+      const bw = ov.w && ov.w > 0 ? ov.w : 12;
+      const bh = ov.h && ov.h > 0 ? ov.h : 12;
+      const cx = ov.x;
+      const cy = ov.y;
+      const t = Math.max(1, Math.min(bw, bh) * 0.12);
+      // ✓ 모양 두 획
+      page.drawLine({
+        start: { x: cx + bw * 0.2, y: cy + bh * 0.5 },
+        end: { x: cx + bw * 0.42, y: cy + bh * 0.28 },
+        thickness: t,
+        color: black,
+      });
+      page.drawLine({
+        start: { x: cx + bw * 0.42, y: cy + bh * 0.28 },
+        end: { x: cx + bw * 0.82, y: cy + bh * 0.75 },
+        thickness: t,
+        color: black,
+      });
+      continue;
+    }
+
+    // ── 이미지 / 사인: 박스 안에 비율 유지하며 삽입
+    if (kind === "image" || kind === "signature") {
+      const img = input.images?.get(ov.key);
+      if (!img) continue;
+      const bw = ov.w && ov.w > 0 ? ov.w : 80;
+      const bh = ov.h && ov.h > 0 ? ov.h : 80;
+      try {
+        const embedded =
+          img.type === "png"
+            ? await pdf.embedPng(img.bytes)
+            : await pdf.embedJpg(img.bytes);
+        const scale = Math.min(bw / embedded.width, bh / embedded.height);
+        const dw = embedded.width * scale;
+        const dh = embedded.height * scale;
+        page.drawImage(embedded, {
+          x: ov.x + (bw - dw) / 2,
+          y: ov.y + (bh - dh) / 2,
+          width: dw,
+          height: dh,
+        });
+      } catch {
+        // 임베드 실패(손상·미지원 포맷) — 건너뜀
+      }
+      continue;
+    }
+
+    // ── 텍스트 (학생데이터 / 생성 시 입력)
+    const text = foldLatinDiacritics((input.values.get(ov.key) ?? "").trim());
+    if (!text) continue;
     const font = pickFont(text);
 
     if (ov.w && ov.w > 0 && ov.h && ov.h > 0) {

@@ -258,7 +258,7 @@ export type StudyAdmissionFormFile = {
  *   - w,h 가 없으면 "레거시 점 모드": (x,y)=텍스트 baseline, maxWidth 만 적용.
  */
 export type FormFieldOverlay = {
-  /** 값 출처: data_type_key 또는 "essay:N" */
+  /** 박스 고유 id (레거시: data_type_key 또는 "essay:N") */
   key: string;
   /** 0-based 페이지 인덱스 */
   page: number;
@@ -274,6 +274,19 @@ export type FormFieldOverlay = {
   size?: number;
   /** (레거시) 이 폭(pt) 초과 시 자동 축소 */
   maxWidth?: number;
+
+  /** 박스 종류 (없으면 text). */
+  kind?: "text" | "image" | "signature" | "check";
+  /** text 출처: student=학생데이터 / input=생성 시 입력. (없으면 student) */
+  source?: "student" | "input";
+  /** 학생 데이터/이미지/체크의 연결 키 (data_type_key 또는 "essay:N"). */
+  dataKey?: string;
+  /** source=input: 생성 화면에 보일 라벨 (예: "작성일"). */
+  inputLabel?: string;
+  /** source=input: 입력 형식. */
+  inputType?: "date" | "text";
+  /** kind=check: 학생 값이 이 값과 같으면 체크 (예: 성별 "male"). 빈값=truthy면 체크. */
+  matchValue?: string;
 };
 
 // =============================================================================

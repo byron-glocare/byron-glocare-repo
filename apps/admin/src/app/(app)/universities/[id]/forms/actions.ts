@@ -616,6 +616,10 @@ export type SaveFieldOverlaysResult =
   | { ok: true }
   | { ok: false; error: string };
 
+type OverlayKind = "text" | "image" | "signature" | "check";
+type OverlaySource = "student" | "input";
+type OverlayInputType = "date" | "text";
+
 export async function saveFieldOverlaysAction(
   formFileId: string,
   overlays: Array<{
@@ -627,6 +631,12 @@ export async function saveFieldOverlaysAction(
     h?: number;
     size?: number;
     maxWidth?: number;
+    kind?: OverlayKind;
+    source?: OverlaySource;
+    dataKey?: string;
+    inputLabel?: string;
+    inputType?: OverlayInputType;
+    matchValue?: string;
   }>
 ): Promise<SaveFieldOverlaysResult> {
   const supabaseUser = await createClient();
@@ -649,6 +659,12 @@ export async function saveFieldOverlaysAction(
         h?: number;
         size?: number;
         maxWidth?: number;
+        kind?: OverlayKind;
+        source?: OverlaySource;
+        dataKey?: string;
+        inputLabel?: string;
+        inputType?: OverlayInputType;
+        matchValue?: string;
       } = {
         key: o.key,
         page: Math.max(0, Math.round(Number(o.page) || 0)),
@@ -660,6 +676,15 @@ export async function saveFieldOverlaysAction(
       if (Number.isFinite(o.size) && (o.size ?? 0) > 0) out.size = Number(o.size);
       if (Number.isFinite(o.maxWidth) && (o.maxWidth ?? 0) > 0)
         out.maxWidth = Number(o.maxWidth);
+      if (o.kind && o.kind !== "text") out.kind = o.kind;
+      if (o.source === "input") out.source = "input";
+      if (typeof o.dataKey === "string" && o.dataKey) out.dataKey = o.dataKey;
+      if (typeof o.inputLabel === "string" && o.inputLabel.trim())
+        out.inputLabel = o.inputLabel.trim();
+      if (o.inputType === "date" || o.inputType === "text")
+        out.inputType = o.inputType;
+      if (typeof o.matchValue === "string" && o.matchValue.trim())
+        out.matchValue = o.matchValue.trim();
       return out;
     });
 

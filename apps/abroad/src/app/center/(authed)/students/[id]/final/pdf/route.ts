@@ -91,15 +91,19 @@ export async function GET(
       .maybeSingle(),
   ]);
 
-  // overlay key 분리: 데이터 키 vs essay:N
+  // 박스 종류별 바인딩 키 수집. bindKey = dataKey(있으면) | key(레거시).
+  const bindKey = (ov: FormFieldOverlay) => ov.dataKey ?? ov.key;
   const dataKeys = new Set<string>();
   const essayIdx = new Set<number>();
   for (const ov of overlays) {
-    if (ov.key.startsWith("essay:")) {
-      const n = Number(ov.key.slice("essay:".length));
+    const kind = ov.kind ?? "text";
+    if (kind === "text" && ov.source === "input") continue; // 생성 시 입력 — DB 조회 불필요
+    const bk = bindKey(ov);
+    if (bk.startsWith("essay:")) {
+      const n = Number(bk.slice("essay:".length));
       if (Number.isFinite(n)) essayIdx.add(n);
     } else {
-      dataKeys.add(ov.key);
+      dataKeys.add(bk);
     }
   }
   const dataKeysArr = Array.from(dataKeys);
@@ -147,19 +151,94 @@ export async function GET(
     ])
   );
 
-  const valuesForFill = new Map<string, string>();
-  for (const ov of overlays) {
-    if (valuesForFill.has(ov.key)) continue;
-    if (ov.key.startsWith("essay:")) {
-      const n = Number(ov.key.slice("essay:".length));
-      valuesForFill.set(ov.key, draftMap.get(n) ?? "");
-    } else {
-      valuesForFill.set(
-        ov.key,
-        formatValue(valueMap.get(ov.key), inputTypeMap.get(ov.key) ?? "text")
-      );
+  // 생성 시 입력값 (쿼리 inputs=JSON, overlay.key 로 키잉) + 날짜 기본 오늘
+  let inputVals: Record<string, string> = {};
+  try {
+    const raw = req.nextUrl.searchParams.get("inputs");
+    if (raw) inputVals = JSON.parse(raw) as Record<string, string>;
+  } catch {
+    inputVals = {};
+  }
+  const today = new Date().toISOString().slice(0, 10);
+
+  const resolveStudentText = (bk: string): string => {
+    if (bk.startsWith("essay:")) {
+      const n = Number(bk.slice("essay:".length));
+      return draftMap.get(n) ?? "";
+    }
+    return formatValue(valueMap.get(bk), inputTypeMap.get(bk) ?? "text");
+  };
+
+  const norm = (s: unknown) => String(s ?? "").trim().toLowerCase();
+  const isChecked = (v: Json | undefined, match?: string): boolean => {
+    if (match && match.trim()) {
+      const m = norm(match);
+      if (Array.isArray(v)) return v.some((x) => norm(x) === m);
+      return norm(v) === m;
+    }
+    if (Array.isArray(v)) return v.length > 0;
+    if (typeof v === "string") return v.trim() !== "";
+    if (typeof v === "boolean") return v;
+    return v != null;
+  };
+
+  async function fetchImage(
+    url: string
+  ): Promise<{ bytes: Uint8Array; type: "png" | "jpg" } | null> {
+    try {
+      const r = await fetch(url);
+      if (!r.ok) return null;
+      const buf = new Uint8Array(await r.arrayBuffer());
+      const ct = (r.headers.get("content-type") ?? "").toLowerCase();
+      let type: "png" | "jpg" | null = null;
+      if (ct.includes("png") || /\.png($|\?)/i.test(url)) type = "png";
+      else if (ct.includes("jpeg") || ct.includes("jpg") || /\.jpe?g($|\?)/i.test(url))
+        type = "jpg";
+      else if (buf[0] === 0x89 && buf[1] === 0x50) type = "png";
+      else if (buf[0] === 0xff && buf[1] === 0xd8) type = "jpg";
+      if (!type) return null;
+      return { bytes: buf, type };
+    } catch {
+      return null;
     }
   }
+
+  const fileUrlOf = (v: Json | undefined): string | null => {
+    if (v && typeof v === "object" && !Array.isArray(v)) {
+      const o = v as { url?: string };
+      return typeof o.url === "string" ? o.url : null;
+    }
+    if (typeof v === "string" && /^https?:\/\//.test(v)) return v;
+    return null;
+  };
+
+  const valuesForFill = new Map<string, string>();
+  const checks = new Map<string, boolean>();
+  const imageJobs: Array<Promise<void>> = [];
+  const images = new Map<string, { bytes: Uint8Array; type: "png" | "jpg" }>();
+
+  for (const ov of overlays) {
+    const kind = ov.kind ?? "text";
+    const bk = bindKey(ov);
+    if (kind === "check") {
+      checks.set(ov.key, isChecked(valueMap.get(bk), ov.matchValue));
+    } else if (kind === "image" || kind === "signature") {
+      const url = fileUrlOf(valueMap.get(bk));
+      if (url) {
+        imageJobs.push(
+          fetchImage(url).then((img) => {
+            if (img) images.set(ov.key, img);
+          })
+        );
+      }
+    } else if (ov.source === "input") {
+      const v = inputVals[ov.key] ?? "";
+      valuesForFill.set(ov.key, v || (ov.inputType === "date" ? today : ""));
+    } else {
+      valuesForFill.set(ov.key, resolveStudentText(bk));
+    }
+  }
+  await Promise.all(imageJobs);
 
   // 원본 PDF + 폰트 로드
   let pdfBytes: ArrayBuffer;
@@ -185,6 +264,8 @@ export async function GET(
       latinFontBytes: fonts.latin,
       overlays,
       values: valuesForFill,
+      checks,
+      images,
     });
   } catch (e) {
     return new Response(
