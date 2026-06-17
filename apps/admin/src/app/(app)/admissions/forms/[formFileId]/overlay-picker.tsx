@@ -567,6 +567,12 @@ export function OverlayPicker({
             // 학생데이터: 라벨 오른쪽 점이 든 칸
             const c = toCanvas(t.endX + 4, t.y);
             box = cellBox(c.cx, c.cy);
+            // 라벨이 이 칸 안에 있으면(같은 칸) 라벨 글자 다음부터 시작 — 라벨 위 겹침 방지
+            if (box && t.endX + 4 > box.x) {
+              const nx = t.endX + 4;
+              const right = box.x + box.w;
+              box = { ...box, x: nx, w: Math.max(20, right - nx) };
+            }
           }
 
           // 괘선 못 찾으면 라벨 오른쪽 빈칸 추정(폴백)
