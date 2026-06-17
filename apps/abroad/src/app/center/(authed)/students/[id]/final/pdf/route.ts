@@ -12,6 +12,10 @@ import { createCenterClient } from "@/lib/supabase/center";
 import { fillPdfOverlay } from "@/lib/admission/fill-pdf-overlay";
 import { finalDocFileName } from "@/lib/admission/build-form-sheet";
 import { loadFillFonts } from "@/lib/admission/load-font";
+import {
+  createServiceClient,
+  STUDENT_FILES_BUCKET,
+} from "@/lib/supabase/service";
 import type { FormFieldOverlay } from "@/types/study";
 import type { Json } from "@/types/database";
 
@@ -21,13 +25,13 @@ function formatValue(v: Json | undefined, inputType: string): string {
   if (v === null || v === undefined || v === "") return "";
   if (inputType === "boolean") return v === true ? "예" : "아니오";
   if (Array.isArray(v)) return v.map(String).join(", ");
-  if (inputType === "file" && typeof v === "object" && v !== null) {
-    const o = v as { file_name?: string; url?: string };
-    return o.file_name ?? o.url ?? "";
-  }
-  if (typeof v === "object") return JSON.stringify(v);
+  // 파일/서명/이미지 등 객체 값은 텍스트로 그리지 않는다 (JSON 덤프 방지)
+  if (typeof v === "object") return "";
   return String(v);
 }
+
+/** 파일류 input_type — 이미지로 렌더. */
+const FILE_TYPES = new Set(["signature", "file", "image", "photo"]);
 
 export async function GET(
   req: NextRequest,
@@ -203,14 +207,38 @@ export async function GET(
     }
   }
 
-  const fileUrlOf = (v: Json | undefined): string | null => {
-    if (v && typeof v === "object" && !Array.isArray(v)) {
-      const o = v as { url?: string };
-      return typeof o.url === "string" ? o.url : null;
-    }
-    if (typeof v === "string" && /^https?:\/\//.test(v)) return v;
-    return null;
+  const typeOf = (cp: "png" | null, path: string, buf: Uint8Array) => {
+    if (/\.png($|\?)/i.test(path)) return "png" as const;
+    if (/\.jpe?g($|\?)/i.test(path)) return "jpg" as const;
+    if (buf[0] === 0x89 && buf[1] === 0x50) return "png" as const;
+    if (buf[0] === 0xff && buf[1] === 0xd8) return "jpg" as const;
+    return cp;
   };
+
+  // 파일/서명/사진 값({url} 또는 {path}) → 이미지 바이트. path 는 비공개 버킷에서 다운로드.
+  async function imageFromValue(
+    v: Json | undefined
+  ): Promise<{ bytes: Uint8Array; type: "png" | "jpg" } | null> {
+    if (typeof v === "string" && /^https?:\/\//.test(v)) return fetchImage(v);
+    if (!v || typeof v !== "object" || Array.isArray(v)) return null;
+    const o = v as { url?: string; path?: string };
+    if (o.url) return fetchImage(o.url);
+    if (o.path) {
+      try {
+        const svc = createServiceClient();
+        const { data, error } = await svc.storage
+          .from(STUDENT_FILES_BUCKET)
+          .download(o.path);
+        if (error || !data) return null;
+        const buf = new Uint8Array(await data.arrayBuffer());
+        const type = typeOf(null, o.path, buf);
+        return type ? { bytes: buf, type } : null;
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  }
 
   const valuesForFill = new Map<string, string>();
   const checks = new Map<string, boolean>();
@@ -220,17 +248,19 @@ export async function GET(
   for (const ov of overlays) {
     const kind = ov.kind ?? "text";
     const bk = bindKey(ov);
+    const it = inputTypeMap.get(bk) ?? "text";
+    // 종류가 이미지/사인 이거나, 연결된 데이터가 파일류면 이미지로 렌더
+    const asImage =
+      kind === "image" || kind === "signature" || FILE_TYPES.has(it);
     if (kind === "check") {
       checks.set(ov.key, isChecked(valueMap.get(bk), ov.matchValue));
-    } else if (kind === "image" || kind === "signature") {
-      const url = fileUrlOf(valueMap.get(bk));
-      if (url) {
-        imageJobs.push(
-          fetchImage(url).then((img) => {
-            if (img) images.set(ov.key, img);
-          })
-        );
-      }
+    } else if (asImage) {
+      const val = valueMap.get(bk);
+      imageJobs.push(
+        imageFromValue(val).then((img) => {
+          if (img) images.set(ov.key, img);
+        })
+      );
     } else if (ov.source === "input") {
       const v = inputVals[ov.key] ?? "";
       valuesForFill.set(ov.key, v || (ov.inputType === "date" ? today : ""));

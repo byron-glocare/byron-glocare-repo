@@ -683,6 +683,13 @@ export function OverlayPicker({
         if (usedCells.has(ck)) continue;
         if (c.special.kind === "image" || c.special.kind === "signature") {
           usedCells.add(ck);
+          // 서명→signature, 사진→document_photo 항목에 자동 연결(있으면)
+          const dataKey =
+            c.special.kind === "signature"
+              ? choices.find((ch) => ch.key === "signature")?.key
+              : choices.find(
+                  (ch) => ch.key === "document_photo" || /사진/.test(ch.label)
+                )?.key;
           additions.push({
             key: newKey(),
             page: c.page0,
@@ -692,6 +699,7 @@ export function OverlayPicker({
             h: Math.round(c.box.h),
             size: defaultSize,
             kind: c.special.kind,
+            ...(dataKey ? { dataKey } : {}),
           });
         } else {
           usedCells.add(ck);

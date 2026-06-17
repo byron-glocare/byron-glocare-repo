@@ -127,6 +127,33 @@ export async function fillPdfOverlay(
     if (!page) continue;
     const kind = ov.kind ?? "text";
 
+    // ── 이미지/사인: 해석된 이미지가 있으면 박스 종류와 무관하게 이미지로 (서명·사진)
+    const img0 = input.images?.get(ov.key);
+    if (img0) {
+      const bw = ov.w && ov.w > 0 ? ov.w : 80;
+      const bh = ov.h && ov.h > 0 ? ov.h : 80;
+      try {
+        const embedded =
+          img0.type === "png"
+            ? await pdf.embedPng(img0.bytes)
+            : await pdf.embedJpg(img0.bytes);
+        const sc = Math.min(bw / embedded.width, bh / embedded.height);
+        const dw = embedded.width * sc;
+        const dh = embedded.height * sc;
+        page.drawImage(embedded, {
+          x: ov.x + (bw - dw) / 2,
+          y: ov.y + (bh - dh) / 2,
+          width: dw,
+          height: dh,
+        });
+      } catch {
+        // 임베드 실패 — 건너뜀
+      }
+      continue;
+    }
+    // 이미지 종류인데 이미지가 없으면 빈칸(텍스트로 안 그림)
+    if (kind === "image" || kind === "signature") continue;
+
     // ── 체크: 조건 충족 시 박스 안에 ✓ (벡터 — 폰트 글리프 의존 X)
     if (kind === "check") {
       if (!input.checks?.get(ov.key)) continue;
@@ -148,32 +175,6 @@ export async function fillPdfOverlay(
         thickness: t,
         color: black,
       });
-      continue;
-    }
-
-    // ── 이미지 / 사인: 박스 안에 비율 유지하며 삽입
-    if (kind === "image" || kind === "signature") {
-      const img = input.images?.get(ov.key);
-      if (!img) continue;
-      const bw = ov.w && ov.w > 0 ? ov.w : 80;
-      const bh = ov.h && ov.h > 0 ? ov.h : 80;
-      try {
-        const embedded =
-          img.type === "png"
-            ? await pdf.embedPng(img.bytes)
-            : await pdf.embedJpg(img.bytes);
-        const scale = Math.min(bw / embedded.width, bh / embedded.height);
-        const dw = embedded.width * scale;
-        const dh = embedded.height * scale;
-        page.drawImage(embedded, {
-          x: ov.x + (bw - dw) / 2,
-          y: ov.y + (bh - dh) / 2,
-          width: dw,
-          height: dh,
-        });
-      } catch {
-        // 임베드 실패(손상·미지원 포맷) — 건너뜀
-      }
       continue;
     }
 
