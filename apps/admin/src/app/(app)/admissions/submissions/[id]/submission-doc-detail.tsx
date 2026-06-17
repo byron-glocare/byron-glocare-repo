@@ -115,7 +115,7 @@ export function SubmissionDocDetail({
   useEffect(() => {
     if (state?.success) {
       toast.success("저장되었습니다.");
-      router.refresh();
+      router.push("/admissions?tab=submissions");
     } else if (state?.error) {
       toast.error("저장 실패", { description: state.error });
     } else if (state?.fieldErrors) {
