@@ -108,10 +108,40 @@ export default async function UniversityEditPage({
     if (!arr.includes(o.term)) arr.push(o.term);
     publishedTermsByDept.set(o.department_id, arr);
   }
-  // 모집 노출 중인 학과 우선 → 그다음 노출 순서
+
+  // 학과 ↔ 모집요강 연결: 승인 모집요강의 학과명(JSON)으로 매칭.
+  //   학과 테이블의 '과정'(study_period 없을 때)·'모집학기'를 모집요강에서 파생해 둘을 잇는다.
+  const normDept = (s: string) => s.trim().replace(/\s+/g, "").toLowerCase();
+  const specTermsByDeptName = new Map<string, Set<string>>();
+  const programTypeByDeptName = new Map<string, string>();
+  for (const s of specs ?? []) {
+    if (s.status !== "approved") continue;
+    const ds = Array.isArray(s.departments)
+      ? (s.departments as Array<{ name?: string }>)
+      : [];
+    for (const d of ds) {
+      if (!d?.name) continue;
+      const key = normDept(d.name);
+      if (!specTermsByDeptName.has(key)) specTermsByDeptName.set(key, new Set());
+      specTermsByDeptName.get(key)!.add(s.term);
+      if (!programTypeByDeptName.has(key))
+        programTypeByDeptName.set(key, s.program_type);
+    }
+  }
+  const specTermsOf = (nameKo: string): string[] =>
+    Array.from(specTermsByDeptName.get(normDept(nameKo)) ?? []);
+  const courseOf = (d: { name_ko: string; study_period: string | null }): string => {
+    if (d.study_period) return d.study_period;
+    const pt = programTypeByDeptName.get(normDept(d.name_ko));
+    return pt ? PROGRAM_TYPE_LABEL[pt] ?? pt : "—";
+  };
+
+  // 모집 노출(offering) 또는 승인 모집요강이 있는 학과 우선 → 그다음 노출 순서
+  const deptHasRecruit = (d: { id: number; name_ko: string }): boolean =>
+    publishedTermsByDept.has(d.id) || specTermsOf(d.name_ko).length > 0;
   const sortedDepts = (depts ?? []).slice().sort((a, b) => {
-    const ap = publishedTermsByDept.has(a.id) ? 0 : 1;
-    const bp = publishedTermsByDept.has(b.id) ? 0 : 1;
+    const ap = deptHasRecruit(a) ? 0 : 1;
+    const bp = deptHasRecruit(b) ? 0 : 1;
     return ap - bp || a.sort_order - b.sort_order;
   });
 
@@ -255,7 +285,6 @@ export default async function UniversityEditPage({
               <TableBody>
                 {sortedDepts.map((d) => {
                   const href = `/departments/${d.id}`;
-                  const terms = publishedTermsByDept.get(d.id) ?? [];
                   return (
                     <TableRow key={d.id} className="cursor-pointer">
                       <TableCell>
@@ -278,28 +307,53 @@ export default async function UniversityEditPage({
                       </TableCell>
                       <TableCell className="text-sm text-muted-foreground">
                         <Link href={href} className="block">
-                          {d.study_period ? d.study_period : "—"}
+                          {courseOf(d)}
                         </Link>
                       </TableCell>
                       <TableCell>
                         <Link href={href} className="flex flex-wrap gap-1">
-                          {terms.length === 0 ? (
-                            <span className="text-xs text-muted-foreground">
-                              모집 없음
-                            </span>
-                          ) : (
-                            terms
+                          {(() => {
+                            // 판매중(offering published) + 요강만(승인 spec, offering 없음)
+                            const offeringTerms = (
+                              publishedTermsByDept.get(d.id) ?? []
+                            )
                               .slice()
-                              .sort((a, b) => b.localeCompare(a))
-                              .map((t) => (
-                                <Badge
-                                  key={t}
-                                  className="border-success/20 bg-success/10 text-[10px] text-success"
-                                >
-                                  {t}
-                                </Badge>
-                              ))
-                          )}
+                              .sort((a, b) => b.localeCompare(a));
+                            const offeringSet = new Set(offeringTerms);
+                            const specOnly = specTermsOf(d.name_ko)
+                              .filter((t) => !offeringSet.has(t))
+                              .sort((a, b) => b.localeCompare(a));
+                            if (offeringTerms.length === 0 && specOnly.length === 0) {
+                              return (
+                                <span className="text-xs text-muted-foreground">
+                                  모집요강 없음
+                                </span>
+                              );
+                            }
+                            return (
+                              <>
+                                {offeringTerms.map((t) => (
+                                  <Badge
+                                    key={`o-${t}`}
+                                    className="border-success/20 bg-success/10 text-[10px] text-success"
+                                    title="모집 노출중(판매)"
+                                  >
+                                    {t} 모집중
+                                  </Badge>
+                                ))}
+                                {specOnly.map((t) => (
+                                  <Badge
+                                    key={`s-${t}`}
+                                    variant="outline"
+                                    className="text-[10px] text-muted-foreground"
+                                    title="승인 모집요강 있음 · 아직 모집(노출) 안 함"
+                                  >
+                                    {t} 요강
+                                  </Badge>
+                                ))}
+                              </>
+                            );
+                          })()}
                         </Link>
                       </TableCell>
                       <TableCell className="text-center text-xs text-muted-foreground">
