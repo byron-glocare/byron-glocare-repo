@@ -16,6 +16,101 @@ import { saveFieldOverlaysAction } from "@/app/(app)/universities/[id]/forms/act
 
 export type FieldChoice = { key: string; label: string; aliases?: string[] };
 
+/** 인접한 선 인덱스를 하나로 묶어 대표값(평균)으로. */
+function clusterLines(idxs: number[], tol = 4): number[] {
+  if (idxs.length === 0) return [];
+  const sorted = [...idxs].sort((a, b) => a - b);
+  const out: number[] = [];
+  let group = [sorted[0]];
+  for (let i = 1; i < sorted.length; i++) {
+    if (sorted[i] - sorted[i - 1] <= tol) group.push(sorted[i]);
+    else {
+      out.push(group.reduce((s, v) => s + v, 0) / group.length);
+      group = [sorted[i]];
+    }
+  }
+  out.push(group.reduce((s, v) => s + v, 0) / group.length);
+  return out;
+}
+
+/** 렌더된 비트맵에서 표 괘선(가로/세로 긴 어두운 선)을 감지. (벡터·스캔 공통) */
+function detectGrid(
+  data: Uint8ClampedArray,
+  W: number,
+  H: number
+): { vX: number[]; hY: number[] } {
+  const dark = (x: number, y: number) => {
+    const i = (y * W + x) * 4;
+    return data[i] + data[i + 1] + data[i + 2] < 380 && data[i + 3] > 128;
+  };
+  const hY: number[] = [];
+  const hMin = W * 0.3;
+  for (let y = 0; y < H; y++) {
+    let run = 0;
+    let max = 0;
+    for (let x = 0; x < W; x++) {
+      if (dark(x, y)) {
+        run++;
+        if (run > max) max = run;
+      } else run = 0;
+    }
+    if (max > hMin) hY.push(y);
+  }
+  const vX: number[] = [];
+  const vMin = H * 0.2;
+  for (let x = 0; x < W; x++) {
+    let run = 0;
+    let max = 0;
+    for (let y = 0; y < H; y++) {
+      if (dark(x, y)) {
+        run++;
+        if (run > max) max = run;
+      } else run = 0;
+    }
+    if (max > vMin) vX.push(x);
+  }
+  return { vX: clusterLines(vX), hY: clusterLines(hY) };
+}
+
+/** 점(px,py, 캔버스 좌상단 원점)을 둘러싼 셀 경계(캔버스 px). 없으면 null. */
+function cellAt(
+  grid: { vX: number[]; hY: number[] },
+  px: number,
+  py: number
+): { left: number; right: number; top: number; bottom: number } | null {
+  let left = -Infinity;
+  let right = Infinity;
+  for (const v of grid.vX) {
+    if (v <= px && v > left) left = v;
+    if (v > px && v < right) right = v;
+  }
+  let top = -Infinity;
+  let bottom = Infinity;
+  for (const hy of grid.hY) {
+    if (hy <= py && hy > top) top = hy;
+    if (hy > py && hy < bottom) bottom = hy;
+  }
+  if (!isFinite(left) || !isFinite(right) || !isFinite(top) || !isFinite(bottom))
+    return null;
+  return { left, right, top, bottom };
+}
+
+/** 라벨 텍스트로 특수 박스 종류 추론 (사진/서명/날짜). */
+function inferSpecialKind(
+  label: string
+):
+  | { kind: "image" }
+  | { kind: "signature" }
+  | { kind: "input"; inputLabel: string }
+  | null {
+  const s = label.replace(/\s/g, "");
+  if (/(증명)?사진|photo/i.test(s)) return { kind: "image" };
+  if (/서명|사인|signature|자필/i.test(s)) return { kind: "signature" };
+  if (/작성일|신청일|지원일|날짜|일자|date/i.test(s))
+    return { kind: "input", inputLabel: label.trim() };
+  return null;
+}
+
 export type OverlayKind = "text" | "image" | "signature" | "check";
 
 export type Overlay = {
@@ -339,30 +434,74 @@ export function OverlayPicker({
     window.addEventListener("pointerup", up);
   }
 
-  // ── 자동 배치: PDF 양식필드(AcroForm) rect + 텍스트 라벨 위치를 그대로 읽고
-  //    카탈로그 별칭으로 항목 매칭 → 채움 박스 자동 생성. (좌표는 PDF가 제공)
+  // ── 자동 배치: 표 괘선(렌더 비트맵에서 감지)으로 박스를 칸에 스냅 + 종류 추론.
+  //    1) 사진/서명/날짜 라벨 → 이미지/사인/입력 박스(라벨이 든 칸).
+  //    2) 그 외 라벨 → 학생데이터 텍스트(별칭 매칭) → 라벨 오른쪽 칸.
+  //    3) AcroForm 텍스트필드 → 필드 rect.
+  const GRID_SCALE = 1.6;
   async function autoPlace() {
     if (!pdfRef.current) return;
     setAutoBusy(true);
     try {
       const pdf = pdfRef.current;
+
+      // 박스 후보: 위치(PDF pt) + 매칭용 텍스트 + 추론 종류
       type Cand = {
         text: string;
         page0: number;
-        x: number;
-        y: number;
-        w: number;
-        h: number;
-        size: number;
-        src: "field" | "label";
-        crowded?: boolean;
+        box: { x: number; y: number; w: number; h: number };
+        special: ReturnType<typeof inferSpecialKind>;
+        crowded: boolean;
       };
       const cands: Cand[] = [];
+      const fieldCands: Array<{
+        text: string;
+        page0: number;
+        box: { x: number; y: number; w: number; h: number };
+      }> = [];
 
       for (let p = 1; p <= pdf.numPages; p++) {
         const page = await pdf.getPage(p);
+        const vp = page.getViewport({ scale: GRID_SCALE });
+        const Hc = vp.height;
+        const Wc = vp.width;
 
-        // 1) 채우기 가능한 텍스트 필드 — 박스 = 필드 rect
+        // 오프스크린 렌더 → 괘선 감지
+        let grid: { vX: number[]; hY: number[] } = { vX: [], hY: [] };
+        try {
+          const oc = document.createElement("canvas");
+          oc.width = Wc;
+          oc.height = Hc;
+          const octx = oc.getContext("2d", { willReadFrequently: true });
+          if (octx) {
+            await page.render({ canvasContext: octx, viewport: vp }).promise;
+            const img = octx.getImageData(0, 0, Wc, Hc);
+            grid = detectGrid(img.data, Wc, Hc);
+          }
+        } catch {
+          // 렌더 실패 — 괘선 없이 진행
+        }
+
+        // PDF pt → 캔버스 px, 캔버스 셀 → PDF 박스
+        const toCanvas = (xPt: number, yPt: number) => ({
+          cx: xPt * GRID_SCALE,
+          cy: Hc - yPt * GRID_SCALE,
+        });
+        const cellBox = (cx: number, cy: number) => {
+          const c = cellAt(grid, cx, cy);
+          if (!c) return null;
+          const pad = 1.5;
+          const x = c.left / GRID_SCALE + pad;
+          const w = (c.right - c.left) / GRID_SCALE - pad * 2;
+          const yTop = (Hc - c.top) / GRID_SCALE;
+          const yBot = (Hc - c.bottom) / GRID_SCALE;
+          const y = yBot + pad;
+          const h = yTop - yBot - pad * 2;
+          if (w < 8 || h < 6 || w > 520) return null;
+          return { x, y, w, h };
+        };
+
+        // AcroForm 텍스트필드
         const anns = (await page.getAnnotations()) as Array<{
           fieldType?: string;
           fieldName?: string;
@@ -373,21 +512,19 @@ export function OverlayPicker({
           const r = a.rect;
           const x1 = Math.min(r[0], r[2]);
           const y1 = Math.min(r[1], r[3]);
-          const w = Math.abs(r[2] - r[0]);
-          const h = Math.abs(r[3] - r[1]);
-          cands.push({
+          fieldCands.push({
             text: a.fieldName,
             page0: p - 1,
-            x: x1 + 1,
-            y: y1 + 1,
-            w: Math.max(12, w - 2),
-            h: Math.max(8, h - 2),
-            size: Math.min(14, Math.max(8, Math.round(h * 0.55))),
-            src: "field",
+            box: {
+              x: x1 + 1,
+              y: y1 + 1,
+              w: Math.max(12, Math.abs(r[2] - r[0]) - 2),
+              h: Math.max(8, Math.abs(r[3] - r[1]) - 2),
+            },
           });
         }
 
-        // 2) 텍스트 라벨 — 박스 = 라벨 오른쪽 빈칸
+        // 텍스트 라벨
         const tc = await page.getTextContent();
         const raw = tc.items as Array<{
           str?: string;
@@ -408,80 +545,154 @@ export function OverlayPicker({
         for (const t of texts) {
           if (t.str.length > 24) continue;
           if (!/[A-Za-z가-힣]/.test(t.str)) continue;
-          let rightGap = Infinity;
-          for (const o of texts) {
-            if (o === t || Math.abs(o.y - t.y) > 4 || o.x <= t.endX) continue;
-            rightGap = Math.min(rightGap, o.x - t.endX);
+          const special = inferSpecialKind(t.str);
+
+          let box: { x: number; y: number; w: number; h: number } | null = null;
+          if (special) {
+            // 사진/서명/날짜: 라벨이 들어있는 칸
+            const c = toCanvas((t.x + t.endX) / 2, t.y);
+            box = cellBox(c.cx, c.cy);
+          } else {
+            // 학생데이터: 라벨 오른쪽 점이 든 칸
+            const c = toCanvas(t.endX + 4, t.y);
+            box = cellBox(c.cx, c.cy);
           }
-          const h = Math.round(defaultSize * 1.5);
-          const w =
-            Number.isFinite(rightGap) && rightGap < 480
-              ? Math.max(24, rightGap - 8)
-              : DEFAULT_W;
-          cands.push({
-            text: t.str,
-            page0: p - 1,
-            x: t.endX + 6,
-            y: t.y - defaultSize * 0.3,
-            w,
-            h,
+
+          // 괘선 못 찾으면 라벨 오른쪽 빈칸 추정(폴백)
+          let crowded = false;
+          if (!box) {
+            let rightGap = Infinity;
+            for (const o of texts) {
+              if (o === t || Math.abs(o.y - t.y) > 4 || o.x <= t.endX) continue;
+              rightGap = Math.min(rightGap, o.x - t.endX);
+            }
+            crowded = rightGap < 16;
+            const h = Math.round(defaultSize * 1.5);
+            const w =
+              Number.isFinite(rightGap) && rightGap < 480
+                ? Math.max(24, rightGap - 8)
+                : DEFAULT_W;
+            box = special
+              ? { x: t.x, y: t.y - defaultSize * 0.3, w: DEFAULT_W, h: special.kind === "image" ? 90 : h }
+              : { x: t.endX + 6, y: t.y - defaultSize * 0.3, w, h };
+          }
+          cands.push({ text: t.str, page0: p - 1, box, special, crowded });
+        }
+      }
+
+      const placed = new Set(overlays.map((o) => o.key));
+      const usedCells = new Set<string>();
+      const cellKey = (page0: number, b: { x: number; y: number }) =>
+        `${page0}:${Math.round(b.x)}:${Math.round(b.y)}`;
+      const additions: Overlay[] = [];
+
+      // 1) 특수 종류(사진/서명/날짜) — 라벨에서 바로 생성
+      for (const c of cands) {
+        if (!c.special) continue;
+        const ck = cellKey(c.page0, c.box);
+        if (usedCells.has(ck)) continue;
+        if (c.special.kind === "image" || c.special.kind === "signature") {
+          usedCells.add(ck);
+          additions.push({
+            key: `${c.special.kind}-${additions.length + 1}-${Math.round(c.box.x)}`,
+            page: c.page0,
+            x: c.box.x,
+            y: Math.max(0, c.box.y),
+            w: Math.round(c.box.w),
+            h: Math.round(c.box.h),
             size: defaultSize,
-            src: "label",
-            crowded: rightGap < 16,
+            kind: c.special.kind,
+          });
+        } else {
+          usedCells.add(ck);
+          additions.push({
+            key: `input-${additions.length + 1}-${Math.round(c.box.x)}`,
+            page: c.page0,
+            x: c.box.x,
+            y: Math.max(0, c.box.y),
+            w: Math.round(c.box.w),
+            h: Math.round(c.box.h),
+            size: defaultSize,
+            kind: "text",
+            source: "input",
+            inputType: "date",
+            inputLabel: c.special.inputLabel,
           });
         }
       }
 
-      // 매칭: 이미 배치된 항목은 보존, 나머지만 자동
-      const placed = new Set(overlays.map((o) => o.key));
+      // 2) 학생데이터 텍스트 — 별칭 매칭 (특수 아닌 후보만)
+      const textCands = cands.filter((c) => !c.special && !c.crowded);
       const bestByKey = new Map<string, { score: number; cand: Cand }>();
       for (const ch of choices) {
         if (placed.has(ch.key)) continue;
         const aliases = ch.aliases ?? [ch.label];
-        for (const cand of cands) {
-          if (cand.src === "label" && cand.crowded) continue;
-          const sc =
-            matchScore(cand.text, aliases) + (cand.src === "field" ? 0.5 : 0);
+        for (const cand of textCands) {
+          const sc = matchScore(cand.text, aliases);
           if (sc <= 0) continue;
           const prev = bestByKey.get(ch.key);
           if (!prev || sc > prev.score) bestByKey.set(ch.key, { score: sc, cand });
         }
       }
-
-      const usedCand = new Set<Cand>();
-      const additions: Overlay[] = [];
       const entries = Array.from(bestByKey.entries()).sort(
         (a, b) => b[1].score - a[1].score
       );
       for (const [key, { cand }] of entries) {
-        if (usedCand.has(cand)) continue;
-        usedCand.add(cand);
+        const ck = cellKey(cand.page0, cand.box);
+        if (usedCells.has(ck)) continue;
+        usedCells.add(ck);
         additions.push({
           key,
           page: cand.page0,
-          x: cand.x,
-          y: Math.max(0, cand.y),
-          w: Math.round(cand.w),
-          h: Math.round(cand.h),
-          size: Math.round(cand.size),
+          x: cand.box.x,
+          y: Math.max(0, cand.box.y),
+          w: Math.round(cand.box.w),
+          h: Math.round(cand.box.h),
+          size: defaultSize,
           kind: "text",
           source: "student",
           dataKey: key,
         });
       }
 
+      // 3) AcroForm 필드 — 미사용 choice 와 별칭 매칭
+      for (const fc of fieldCands) {
+        let bestKey: string | null = null;
+        let bestSc = 0;
+        for (const ch of choices) {
+          if (placed.has(ch.key) || additions.some((a) => a.key === ch.key))
+            continue;
+          const sc = matchScore(fc.text, ch.aliases ?? [ch.label]);
+          if (sc > bestSc) {
+            bestSc = sc;
+            bestKey = ch.key;
+          }
+        }
+        if (bestKey && bestSc > 0) {
+          additions.push({
+            key: bestKey,
+            page: fc.page0,
+            x: fc.box.x,
+            y: fc.box.y,
+            w: Math.round(fc.box.w),
+            h: Math.round(fc.box.h),
+            size: Math.min(14, Math.max(8, Math.round(fc.box.h * 0.55))),
+            kind: "text",
+            source: "student",
+            dataKey: bestKey,
+          });
+        }
+      }
+
       if (additions.length === 0) {
         toast.info(
-          "자동으로 매칭된 항목이 없습니다. 라벨 표기가 특이한 양식일 수 있어요 — 직접 박스를 놓아주세요."
+          "자동으로 잡은 칸이 없습니다. 양식 표가 특이하거나 괘선이 흐릴 수 있어요 — 직접 박스를 놓아주세요."
         );
       } else {
         setOverlays((cur) => [...cur, ...additions]);
         if (additions[0]) setPageNum(additions[0].page + 1);
-        const remain = choices.length - placed.size - additions.length;
         toast.success(
-          `${additions.length}개 자동 배치됨${
-            remain > 0 ? `, ${remain}개는 직접 배치 필요` : ""
-          }. 위치·크기 확인 후 저장하세요.`
+          `${additions.length}개 자동 배치됨 (칸에 맞춤·종류 추론). 종류·연결·위치 확인 후 저장하세요.`
         );
       }
     } catch (e) {
