@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 
 import type { Json } from "@/types/database";
 import { tr, type Locale } from "@/lib/i18n";
+import { MultiSelectWithOther } from "@/components/multi-select-other";
 import { savePublicValueAction, savePublicAllAction } from "./actions";
 
 export type PublicFieldMeta = {
@@ -305,27 +306,12 @@ function PublicInput({
       );
     case "multi_select":
       return (
-        <div className="flex flex-wrap gap-1.5">
-          {(field.options ?? []).map((o) => {
-            const arr = Array.isArray(value) ? (value as string[]) : [];
-            const checked = arr.includes(o.value);
-            return (
-              <button
-                key={o.value}
-                type="button"
-                onClick={() => {
-                  const next = checked ? arr.filter((x) => x !== o.value) : [...arr, o.value];
-                  onCommit(next.length > 0 ? next : null);
-                }}
-                className={`rounded-md border px-2 py-1 text-xs ${
-                  checked ? "border-emerald-500 bg-emerald-50 text-emerald-700" : "border-slate-300 hover:bg-slate-50"
-                }`}
-              >
-                {locale === "ko" ? o.label_ko : o.label_vi}
-              </button>
-            );
-          })}
-        </div>
+        <MultiSelectWithOther
+          locale={locale}
+          value={Array.isArray(value) ? (value as string[]) : []}
+          options={field.options ?? []}
+          onCommit={(arr) => onCommit(arr.length > 0 ? arr : null)}
+        />
       );
     case "boolean":
       return (

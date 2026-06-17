@@ -7,6 +7,7 @@ import {
   SignaturePad,
   type SignaturePadHandle,
 } from "@/components/signature-pad";
+import { MultiSelectWithOther } from "@/components/multi-select-other";
 import {
   saveStudentDataValueAction,
   uploadStudentFileAction,
@@ -639,7 +640,7 @@ function ValueInput({
 
     case "multi_select":
       return (
-        <MultiSelectInput
+        <MultiSelectWithOther
           locale={locale}
           value={Array.isArray(value) ? (value as string[]) : []}
           options={dataType.options ?? []}
@@ -1034,42 +1035,3 @@ function TextAreaInput({
   );
 }
 
-function MultiSelectInput({
-  locale,
-  value,
-  options,
-  onCommit,
-}: {
-  locale: Locale;
-  value: string[];
-  options: Array<{ value: string; label_ko: string; label_vi: string }>;
-  onCommit: (v: string[]) => void;
-}) {
-  const toggle = (v: string) => {
-    const next = value.includes(v)
-      ? value.filter((x) => x !== v)
-      : [...value, v];
-    onCommit(next);
-  };
-  return (
-    <div className="flex flex-wrap gap-1.5">
-      {options.map((o) => {
-        const checked = value.includes(o.value);
-        return (
-          <button
-            key={o.value}
-            type="button"
-            onClick={() => toggle(o.value)}
-            className={`rounded-md border px-2 py-1 text-xs ${
-              checked
-                ? "border-emerald-500 bg-emerald-50 text-emerald-700"
-                : "border-slate-300 hover:bg-slate-50"
-            }`}
-          >
-            {locale === "ko" ? o.label_ko : o.label_vi}
-          </button>
-        );
-      })}
-    </div>
-  );
-}
