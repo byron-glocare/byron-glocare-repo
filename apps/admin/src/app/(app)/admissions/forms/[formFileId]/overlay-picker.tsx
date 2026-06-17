@@ -230,9 +230,20 @@ export function OverlayPicker({
   const [scale, setScale] = useState(1);
   const [canvasH, setCanvasH] = useState(0);
 
-  const [overlays, setOverlays] = useState<Overlay[]>(
-    initialOverlays.map(toBox)
-  );
+  const [overlays, setOverlays] = useState<Overlay[]>(() => {
+    // 로드 시 key 중복 제거 (예전 자동배치가 만든 중복 key 데이터 방어)
+    const seen = new Set<string>();
+    const mk = () =>
+      typeof crypto !== "undefined" && crypto.randomUUID
+        ? crypto.randomUUID()
+        : `box-${seen.size}-${Math.round(Math.random() * 1e9)}`;
+    return initialOverlays.map(toBox).map((o) => {
+      let key = o.key;
+      while (seen.has(key)) key = mk();
+      seen.add(key);
+      return key === o.key ? o : { ...o, key };
+    });
+  });
   const [activeKey, setActiveKey] = useState<string>(
     choices.find((c) => !initialOverlays.some((o) => o.key === c.key))?.key ??
       choices[0]?.key ??
