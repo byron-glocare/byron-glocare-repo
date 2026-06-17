@@ -16,8 +16,10 @@ import { saveFieldOverlaysAction } from "@/app/(app)/universities/[id]/forms/act
 
 export type FieldChoice = { key: string; label: string; aliases?: string[] };
 
+export type OverlayKind = "text" | "image" | "signature" | "check";
+
 export type Overlay = {
-  key: string;
+  key: string; // 박스 고유 id
   page: number; // 0-based
   x: number; // 박스 좌하단 x (PDF pt)
   y: number; // 박스 좌하단 y (PDF pt, 좌하단 원점)
@@ -25,9 +27,15 @@ export type Overlay = {
   h: number; // 박스 높이 (PDF pt)
   size?: number; // 최대 글자 크기 (박스보다 크면 자동 축소)
   maxWidth?: number; // 레거시
+  kind?: OverlayKind; // 박스 종류 (기본 text)
+  source?: "student" | "input"; // text 출처
+  dataKey?: string; // 연결 키 (학생데이터/이미지/체크)
+  inputLabel?: string; // 생성 시 입력 라벨
+  inputType?: "date" | "text"; // 생성 시 입력 형식
+  matchValue?: string; // check 일치값
 };
 
-/** DB 에서 읽은 오버레이 — 레거시는 w/h 가 없을 수 있다. */
+/** DB 에서 읽은 오버레이 — 레거시는 w/h/kind 가 없을 수 있다. */
 export type RawOverlay = {
   key: string;
   page: number;
@@ -37,7 +45,14 @@ export type RawOverlay = {
   h?: number;
   size?: number;
   maxWidth?: number;
+  kind?: OverlayKind;
+  source?: "student" | "input";
+  dataKey?: string;
+  inputLabel?: string;
+  inputType?: "date" | "text";
+  matchValue?: string;
 };
+
 
 const DEFAULT_SIZE = 11;
 const DEFAULT_W = 150;
@@ -70,20 +85,30 @@ function matchScore(candidate: string, aliases: string[]): number {
   return best;
 }
 
-/** 레거시(점) 오버레이를 박스로 변환. */
+/** 레거시(점) 오버레이를 박스로 변환 + 종류 기본값 보정. */
 function toBox(o: RawOverlay): Overlay {
   const size = o.size ?? DEFAULT_SIZE;
-  if (o.w && o.h) {
-    return { ...o, w: o.w, h: o.h, size };
-  }
-  return {
+  const kind = o.kind ?? "text";
+  const common = {
     key: o.key,
     page: o.page,
+    size,
+    kind,
+    source: kind === "text" ? (o.source ?? "student") : undefined,
+    dataKey: o.dataKey ?? (kind === "text" && o.source === "input" ? undefined : o.key),
+    inputLabel: o.inputLabel,
+    inputType: o.inputType,
+    matchValue: o.matchValue,
+  };
+  if (o.w && o.h) {
+    return { ...common, x: o.x, y: o.y, w: o.w, h: o.h };
+  }
+  return {
+    ...common,
     x: o.x,
     w: o.maxWidth && o.maxWidth > 0 ? o.maxWidth : DEFAULT_W,
     h: Math.round(size * 1.6),
     y: Math.max(0, o.y - size * 0.3), // baseline → 박스 바닥(근사)
-    size,
   };
 }
 
@@ -179,10 +204,46 @@ export function OverlayPicker({
     };
   }, [ready, pageNum]);
 
-  // 빈 곳 클릭 → 선택 항목의 박스를 그 자리(좌상단)에 생성/이동
+  function nextId(kind: OverlayKind): string {
+    let n = 1;
+    while (overlays.some((o) => o.key === `${kind}-${n}`)) n++;
+    return `${kind}-${n}`;
+  }
+
+  // 종류별 박스 추가 (페이지 가운데 근처에 생성 후 선택 → 드래그·바인딩)
+  function addTypedBox(kind: OverlayKind) {
+    const page0 = pageNum - 1;
+    const cx = (canvasRef.current?.width ?? 400) / scale / 2;
+    const cy = (canvasRef.current?.height ?? 600) / scale / 2;
+    const dims =
+      kind === "check"
+        ? { w: 14, h: 14 }
+        : kind === "image"
+          ? { w: 90, h: 110 }
+          : kind === "signature"
+            ? { w: 120, h: 40 }
+            : { w: DEFAULT_W, h: Math.round(defaultSize * 1.6) };
+    const key = nextId(kind);
+    const box: Overlay = {
+      key,
+      page: page0,
+      x: Math.max(0, cx - dims.w / 2),
+      y: Math.max(0, cy - dims.h / 2),
+      ...dims,
+      size: defaultSize,
+      kind,
+      ...(kind === "text"
+        ? { source: "input", inputType: "date", inputLabel: "" }
+        : {}),
+    };
+    setOverlays((cur) => [...cur, box]);
+    setActiveKey(key);
+  }
+
+  // 빈 곳 클릭 → 선택 박스를 그 자리(좌상단)로 이동, 없으면 학생데이터 텍스트 박스 생성
   function handleCanvasClick(e: React.MouseEvent<HTMLCanvasElement>) {
     if (!activeKey) {
-      toast.error("먼저 배치할 항목을 선택하세요");
+      toast.error("먼저 항목을 선택하거나 박스를 추가하세요");
       return;
     }
     const canvas = canvasRef.current;
@@ -192,20 +253,48 @@ export function OverlayPicker({
     const py = e.clientY - rect.top;
     const topPt = (canvas.height - py) / scale; // 클릭점 = 박스 좌상단
     const x = px / scale;
+    const page0 = pageNum - 1;
+    const existing = overlays.find((o) => o.key === activeKey);
+    if (existing) {
+      // 기존 박스 이동 (종류·바인딩 유지)
+      const y = Math.max(0, topPt - existing.h);
+      setOverlays((cur) =>
+        cur.map((o) => (o.key === activeKey ? { ...o, page: page0, x, y } : o))
+      );
+      return;
+    }
+    // 학생데이터 텍스트 박스 신규 생성 (chip 으로 선택된 data_type_key)
     const h = defaultSize * 1.6;
     const y = Math.max(0, topPt - h);
-    const page0 = pageNum - 1;
-    setOverlays((cur) => {
-      const without = cur.filter((o) => o.key !== activeKey);
-      return [
-        ...without,
-        { key: activeKey, page: page0, x, y, w: DEFAULT_W, h, size: defaultSize },
-      ];
-    });
+    setOverlays((cur) => [
+      ...cur,
+      {
+        key: activeKey,
+        page: page0,
+        x,
+        y,
+        w: DEFAULT_W,
+        h,
+        size: defaultSize,
+        kind: "text",
+        source: "student",
+        dataKey: activeKey,
+      },
+    ]);
     const remaining = choices.find(
       (c) => c.key !== activeKey && !overlays.some((o) => o.key === c.key)
     );
     if (remaining) setActiveKey(remaining.key);
+  }
+
+  // 박스 표시 라벨
+  function boxLabel(o: Overlay): string {
+    const kind = o.kind ?? "text";
+    if (kind === "check") return (o.dataKey ? labelOf(o.dataKey) : "체크") + " ✓";
+    if (kind === "image") return "이미지";
+    if (kind === "signature") return "사인";
+    if (o.source === "input") return o.inputLabel || "입력";
+    return labelOf(o.dataKey ?? o.key);
   }
 
   // 박스 이동/크기조절 드래그
@@ -375,6 +464,9 @@ export function OverlayPicker({
           w: Math.round(cand.w),
           h: Math.round(cand.h),
           size: Math.round(cand.size),
+          kind: "text",
+          source: "student",
+          dataKey: key,
         });
       }
 
@@ -488,6 +580,50 @@ export function OverlayPicker({
         )}
       </div>
 
+      {/* 종류별 박스 추가 */}
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-xs font-medium">박스 추가:</span>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          disabled={!ready}
+          onClick={() => addTypedBox("text")}
+        >
+          + 입력칸(날짜 등)
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          disabled={!ready}
+          onClick={() => addTypedBox("check")}
+        >
+          + 체크
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          disabled={!ready}
+          onClick={() => addTypedBox("image")}
+        >
+          + 이미지
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          disabled={!ready}
+          onClick={() => addTypedBox("signature")}
+        >
+          + 사인
+        </Button>
+        <span className="text-[11px] text-muted-foreground">
+          추가 후 표에서 연결·설정하고, 캔버스에서 드래그로 위치 지정
+        </span>
+      </div>
+
       <label className="flex items-center gap-2 text-xs">
         기본 글자 크기(pt):
         <input
@@ -573,12 +709,12 @@ export function OverlayPicker({
                 title="드래그=이동 · 우하단 모서리=크기조절"
               >
                 <span
-                  style={{ fontSize: fs, lineHeight: 1.1 }}
-                  className={`pointer-events-none flex h-full items-center whitespace-nowrap px-0.5 font-medium ${
+                  style={{ fontSize: Math.max(7, Math.min(fs, 13)), lineHeight: 1.1 }}
+                  className={`pointer-events-none flex h-full items-center overflow-hidden whitespace-nowrap px-0.5 font-medium ${
                     on ? "text-amber-700" : "text-sky-700"
                   }`}
                 >
-                  {labelOf(o.key)}
+                  {boxLabel(o)}
                 </span>
                 {/* 크기조절 핸들 */}
                 <span
@@ -593,61 +729,141 @@ export function OverlayPicker({
         </div>
       </div>
 
-      {/* 배치 목록 (크기·삭제) */}
+      {/* 배치 목록 (종류·연결·크기·삭제) */}
       {overlays.length > 0 ? (
-        <div className="rounded-md border">
+        <div className="overflow-x-auto rounded-md border">
           <table className="w-full text-sm">
             <thead className="border-b bg-muted/40 text-xs text-muted-foreground">
               <tr>
-                <th className="px-3 py-1.5 text-left">항목</th>
-                <th className="px-3 py-1.5 text-left">페이지</th>
-                <th className="px-3 py-1.5 text-left">글자(pt)</th>
-                <th className="px-3 py-1.5 text-left">박스(W×H)</th>
+                <th className="px-3 py-1.5 text-left">종류</th>
+                <th className="px-3 py-1.5 text-left">연결 · 설정</th>
+                <th className="px-3 py-1.5 text-left">P</th>
+                <th className="px-3 py-1.5 text-left">글자</th>
+                <th className="px-3 py-1.5 text-left">박스</th>
                 <th className="px-3 py-1.5"></th>
               </tr>
             </thead>
             <tbody>
-              {overlays.map((o, i) => (
-                <tr key={o.key} className="border-b last:border-0">
-                  <td className="px-3 py-1.5">{labelOf(o.key)}</td>
-                  <td className="px-3 py-1.5">{o.page + 1}</td>
-                  <td className="px-3 py-1.5">
-                    <input
-                      type="number"
-                      min={6}
-                      max={40}
-                      value={o.size ?? DEFAULT_SIZE}
-                      onChange={(e) =>
-                        setOverlays((cur) =>
-                          cur.map((x, j) =>
-                            j === i
-                              ? {
-                                  ...x,
-                                  size: Number(e.target.value) || DEFAULT_SIZE,
-                                }
-                              : x
-                          )
-                        )
-                      }
-                      className="h-7 w-16 rounded-md border border-input bg-background px-2"
-                    />
-                  </td>
-                  <td className="px-3 py-1.5 text-muted-foreground">
-                    {Math.round(o.w)} × {Math.round(o.h)}
-                  </td>
-                  <td className="px-3 py-1.5 text-right">
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setOverlays((cur) => cur.filter((_, j) => j !== i))
-                      }
-                      className="text-muted-foreground hover:text-destructive"
-                    >
-                      <Trash2 className="size-4" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {overlays.map((o, i) => {
+                const patch = (p: Partial<Overlay>) =>
+                  setOverlays((cur) =>
+                    cur.map((x, j) => (j === i ? { ...x, ...p } : x))
+                  );
+                const kind = o.kind ?? "text";
+                const kindSel =
+                  kind === "text"
+                    ? o.source === "input"
+                      ? "text:input"
+                      : "text:student"
+                    : kind;
+                const dataSelect = (
+                  <select
+                    value={o.dataKey ?? ""}
+                    onChange={(e) => patch({ dataKey: e.target.value || undefined })}
+                    className="h-7 max-w-[180px] rounded-md border border-input bg-background px-1 text-xs"
+                  >
+                    <option value="">(연결 선택)</option>
+                    {choices.map((c) => (
+                      <option key={c.key} value={c.key}>
+                        {c.label}
+                      </option>
+                    ))}
+                  </select>
+                );
+                return (
+                  <tr key={o.key} className="border-b last:border-0 align-top">
+                    <td className="px-3 py-1.5">
+                      <select
+                        value={kindSel}
+                        onChange={(e) => {
+                          const v = e.target.value;
+                          if (v === "text:student")
+                            patch({ kind: "text", source: "student" });
+                          else if (v === "text:input")
+                            patch({
+                              kind: "text",
+                              source: "input",
+                              inputType: o.inputType ?? "date",
+                            });
+                          else
+                            patch({
+                              kind: v as OverlayKind,
+                              source: undefined,
+                            });
+                        }}
+                        className="h-7 rounded-md border border-input bg-background px-1 text-xs"
+                      >
+                        <option value="text:student">텍스트(학생)</option>
+                        <option value="text:input">텍스트(입력)</option>
+                        <option value="check">체크</option>
+                        <option value="image">이미지</option>
+                        <option value="signature">사인</option>
+                      </select>
+                    </td>
+                    <td className="px-3 py-1.5">
+                      {kind === "text" && o.source === "input" ? (
+                        <div className="flex flex-wrap items-center gap-1">
+                          <input
+                            value={o.inputLabel ?? ""}
+                            onChange={(e) => patch({ inputLabel: e.target.value })}
+                            placeholder="라벨 예: 작성일"
+                            className="h-7 w-28 rounded-md border border-input bg-background px-2 text-xs"
+                          />
+                          <select
+                            value={o.inputType ?? "date"}
+                            onChange={(e) =>
+                              patch({ inputType: e.target.value as "date" | "text" })
+                            }
+                            className="h-7 rounded-md border border-input bg-background px-1 text-xs"
+                          >
+                            <option value="date">날짜</option>
+                            <option value="text">텍스트</option>
+                          </select>
+                        </div>
+                      ) : kind === "check" ? (
+                        <div className="flex flex-wrap items-center gap-1">
+                          {dataSelect}
+                          <input
+                            value={o.matchValue ?? ""}
+                            onChange={(e) => patch({ matchValue: e.target.value })}
+                            placeholder="일치값(예: male)"
+                            className="h-7 w-28 rounded-md border border-input bg-background px-2 text-xs"
+                          />
+                        </div>
+                      ) : (
+                        dataSelect
+                      )}
+                    </td>
+                    <td className="px-3 py-1.5">{o.page + 1}</td>
+                    <td className="px-3 py-1.5">
+                      <input
+                        type="number"
+                        min={6}
+                        max={40}
+                        value={o.size ?? DEFAULT_SIZE}
+                        onChange={(e) =>
+                          patch({ size: Number(e.target.value) || DEFAULT_SIZE })
+                        }
+                        className="h-7 w-14 rounded-md border border-input bg-background px-2"
+                      />
+                    </td>
+                    <td className="px-3 py-1.5 text-xs text-muted-foreground">
+                      {Math.round(o.w)}×{Math.round(o.h)}
+                    </td>
+                    <td className="px-3 py-1.5 text-right">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setOverlays((cur) => cur.filter((_, j) => j !== i))
+                        }
+                        className="text-muted-foreground hover:text-destructive"
+                      >
+                        <Trash2 className="size-4" />
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

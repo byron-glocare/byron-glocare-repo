@@ -152,15 +152,29 @@ export default async function FinalPage({
         : false;
       // 좌표 오버레이가 있는 PDF 양식 → 원본에 채운 PDF 생성 (미리보기 가능)
       const overlays = Array.isArray(file?.field_overlays)
-        ? (file!.field_overlays as unknown[])
+        ? (file!.field_overlays as Array<{
+            key: string;
+            kind?: string;
+            source?: string;
+            inputLabel?: string;
+            inputType?: string;
+          }>)
         : [];
+      // 생성 시 입력받을 칸 (kind=text, source=input)
+      const inputFields = overlays
+        .filter((o) => (o.kind ?? "text") === "text" && o.source === "input")
+        .map((o) => ({
+          key: o.key,
+          label: o.inputLabel || "입력",
+          type: o.inputType === "text" ? "text" : "date",
+        }));
       const isPdf = file
         ? (file.mime_type ?? "").toLowerCase().includes("pdf") ||
           file.file_name.toLowerCase().endsWith(".pdf") ||
           file.file_url.toLowerCase().includes(".pdf")
         : false;
       const canFill = !!file && isPdf && overlays.length > 0;
-      return { doc, file, ready, canFill };
+      return { doc, file, ready, canFill, inputFields: canFill ? inputFields : [] };
     });
 
     const submitDocs = (subs ?? []).filter((s) => {
@@ -226,7 +240,7 @@ export default async function FinalPage({
                 </p>
               ) : (
                 <ul className="space-y-1.5">
-                  {writeRows.map(({ doc, file, ready, canFill }) => (
+                  {writeRows.map(({ doc, file, ready, canFill, inputFields }) => (
                     <li
                       key={doc.key + doc.name_ko}
                       className="flex flex-wrap items-start justify-between gap-2 rounded-md border border-slate-100 bg-slate-50/50 px-3 py-2"
@@ -257,20 +271,17 @@ export default async function FinalPage({
                       {file ? (
                         <div className="min-w-[180px] flex-1">
                           <WriteRowActions
-                            canFill={canFill}
-                            downloadUrl={
+                            baseUrl={
                               canFill
                                 ? `${base}/final/pdf?form=${file.id}&app=${app.id}`
                                 : `${base}/final/docx?form=${file.id}&app=${app.id}`
                             }
-                            previewUrl={
-                              canFill
-                                ? `${base}/final/pdf?form=${file.id}&app=${app.id}&preview=1`
-                                : null
-                            }
+                            canPreview={canFill}
+                            inputFields={inputFields}
                             downloadLabel={tr(locale, "생성 · 다운로드", "Tạo & tải")}
                             previewLabel={tr(locale, "미리보기", "Xem trước")}
                             closeLabel={tr(locale, "닫기", "Đóng")}
+                            inputsTitle={tr(locale, "생성 정보 입력", "Nhập thông tin tạo")}
                           />
                         </div>
                       ) : (
