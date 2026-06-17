@@ -15,12 +15,12 @@ import {
 export function SubmissionUploader({
   locale,
   studentId,
-  submissionId,
+  docKey,
   existing,
 }: {
   locale: Locale;
   studentId: string;
-  submissionId: string;
+  docKey: string;
   existing: { file_name: string; file_path: string } | null;
 }) {
   const router = useRouter();
@@ -32,7 +32,7 @@ export function SubmissionUploader({
     setErr(null);
     const fd = new FormData();
     fd.set("studentId", studentId);
-    fd.set("submissionId", submissionId);
+    fd.set("docKey", docKey);
     fd.set("file", file);
     const res = await uploadSubmissionFileAction(fd);
     if (!res.ok) {
@@ -59,7 +59,7 @@ export function SubmissionUploader({
       return;
     const res = await removeSubmissionFileAction({
       studentId,
-      submissionId,
+      docKey,
       path: existing.file_path,
     });
     if (!res.ok) {

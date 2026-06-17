@@ -27,10 +27,10 @@ export async function uploadSubmissionFileAction(
   const session = await verifyCenterSession();
 
   const studentId = String(formData.get("studentId") ?? "");
-  const submissionId = String(formData.get("submissionId") ?? "");
+  const docKey = String(formData.get("docKey") ?? "");
   const file = formData.get("file");
 
-  if (!studentId || !submissionId)
+  if (!studentId || !docKey)
     return { ok: false, error: "정보가 부족합니다." };
   if (!(file instanceof File) || file.size === 0)
     return { ok: false, error: "파일이 올바르지 않습니다." };
@@ -50,11 +50,13 @@ export async function uploadSubmissionFileAction(
     .from("study_student_submission_files")
     .select("file_path")
     .eq("student_id", studentId)
-    .eq("submission_id", submissionId)
+    .eq("doc_key", docKey)
     .maybeSingle();
 
+  // doc_key 를 경로 안전 문자열로
+  const safeKey = docKey.replace(/[^\w.\-]+/g, "_").slice(0, 80);
   const safeName = file.name.replace(/[^\w.\-]+/g, "_").slice(-120);
-  const path = `${session.org.id}/${studentId}/submissions/${submissionId}/${Date.now()}-${safeName}`;
+  const path = `${session.org.id}/${studentId}/submissions/${safeKey}/${Date.now()}-${safeName}`;
 
   const svc = createServiceClient();
   const buffer = Buffer.from(await file.arrayBuffer());
@@ -71,14 +73,14 @@ export async function uploadSubmissionFileAction(
     .upsert(
       {
         student_id: studentId,
-        submission_id: submissionId,
+        doc_key: docKey,
         file_path: path,
         file_name: file.name,
         size_bytes: file.size,
         mime_type: file.type || null,
         uploaded_by: session.authUserId,
       },
-      { onConflict: "student_id,submission_id" }
+      { onConflict: "student_id,doc_key" }
     );
   if (dbErr) {
     await svc.storage.from(STUDENT_FILES_BUCKET).remove([path]);
@@ -113,7 +115,7 @@ export async function getSubmissionFileSignedUrlAction(
 /** 제출서류 파일 삭제 (파일 + row) */
 export async function removeSubmissionFileAction(input: {
   studentId: string;
-  submissionId: string;
+  docKey: string;
   path: string;
 }): Promise<UploadSubmissionResult> {
   const session = await verifyCenterSession();
@@ -128,7 +130,7 @@ export async function removeSubmissionFileAction(input: {
     .from("study_student_submission_files")
     .delete()
     .eq("student_id", input.studentId)
-    .eq("submission_id", input.submissionId);
+    .eq("doc_key", input.docKey);
   if (error) return { ok: false, error: error.message };
 
   revalidatePath(`/center/students/${input.studentId}/documents`);

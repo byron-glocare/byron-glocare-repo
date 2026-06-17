@@ -315,7 +315,8 @@ export type StudyStudentDataType = {
 export type StudyStudentSubmissionFile = {
   id: string;
   student_id: string;
-  submission_id: string;
+  submission_id: string | null; // C6: doc_key 업로드 시 null
+  doc_key: string | null; // C6: 모집요강 문서 key 기반 업로드 식별
   file_path: string;
   file_name: string;
   size_bytes: number | null;

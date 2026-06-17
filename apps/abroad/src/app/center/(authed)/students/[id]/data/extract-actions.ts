@@ -113,12 +113,14 @@ export async function extractStudentDataAction(
   type FileRef = { label: string; path: string; file_name: string };
   const fileRefs: FileRef[] = [];
 
-  // (a) 제출서류 업로드
+  // (a) 제출서류 업로드 (모집요강 doc_key 기반 + 레거시 submission_id 기반 모두)
   const { data: subFiles } = await supabase
     .from("study_student_submission_files")
-    .select("submission_id, file_path, file_name")
+    .select("submission_id, doc_key, file_path, file_name")
     .eq("student_id", studentId);
-  const subIds = Array.from(new Set((subFiles ?? []).map((f) => f.submission_id)));
+  const subIds = Array.from(
+    new Set((subFiles ?? []).map((f) => f.submission_id).filter(Boolean))
+  ) as string[];
   const subNameById = new Map<string, string>();
   if (subIds.length > 0) {
     const { data: subs } = await supabase
@@ -127,9 +129,18 @@ export async function extractStudentDataAction(
       .in("id", subIds);
     for (const s of subs ?? []) subNameById.set(s.id, s.name_ko);
   }
+  // doc_key = "key::이름" → 라벨은 이름 부분
+  const labelFromDocKey = (dk: string | null): string | null => {
+    if (!dk) return null;
+    const idx = dk.indexOf("::");
+    return idx >= 0 ? dk.slice(idx + 2) : dk;
+  };
   for (const f of subFiles ?? []) {
     fileRefs.push({
-      label: subNameById.get(f.submission_id) ?? "제출서류",
+      label:
+        (f.submission_id ? subNameById.get(f.submission_id) : null) ??
+        labelFromDocKey(f.doc_key) ??
+        "제출서류",
       path: f.file_path,
       file_name: f.file_name,
     });
