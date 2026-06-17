@@ -103,10 +103,11 @@ function inferSpecialKind(
   | { kind: "signature" }
   | { kind: "input"; inputLabel: string }
   | null {
-  const s = label.replace(/\s/g, "");
-  if (/(증명)?사진|photo/i.test(s)) return { kind: "image" };
-  if (/서명|사인|signature|자필/i.test(s)) return { kind: "signature" };
-  if (/작성일|신청일|지원일|날짜|일자|date/i.test(s))
+  const s = label.replace(/[\s()]/g, "");
+  if (/(증명)?사진|photo|얼굴|반명함/i.test(s)) return { kind: "image" };
+  if (/서명|사인|signature|자필|날인|서명인|인$/i.test(s))
+    return { kind: "signature" };
+  if (/작성일|신청일|지원일|발급일|날짜|일자|년월일|date/i.test(s))
     return { kind: "input", inputLabel: label.trim() };
   return null;
 }
@@ -470,6 +471,16 @@ export function OverlayPicker({
         page0: number;
         box: { x: number; y: number; w: number; h: number };
       }> = [];
+      // 성별 체크박스 자동 생성용 — gender 항목 + 남/여 표식 위치
+      const genderChoice = choices.find(
+        (c) => c.key === "gender" || /성별|gender/i.test(c.label)
+      );
+      const genderMarks: Array<{
+        page0: number;
+        xPt: number;
+        yPt: number;
+        which: "male" | "female";
+      }> = [];
 
       for (let p = 1; p <= pdf.numPages; p++) {
         const page = await pdf.getPage(p);
@@ -584,6 +595,27 @@ export function OverlayPicker({
             (t): t is { str: string; x: number; endX: number; y: number } => !!t
           );
 
+        // 성별: 옵션 표식("남( )","여( )") 위치에 체크박스 자동 생성
+        if (genderChoice) {
+          for (const t of texts) {
+            if (!/[()（）]/.test(t.str)) continue; // 옵션 괄호가 있는 항목만
+            const W = t.endX - t.x;
+            const at = (token: string, which: "male" | "female") => {
+              const idx = t.str.indexOf(token);
+              if (idx < 0) return;
+              const frac = (idx + 0.9) / Math.max(1, t.str.length);
+              genderMarks.push({
+                page0: p - 1,
+                xPt: t.x + frac * W,
+                yPt: t.y,
+                which,
+              });
+            };
+            at("남", "male");
+            at("여", "female");
+          }
+        }
+
         for (const t of texts) {
           if (t.str.length > 24) continue;
           if (!/[A-Za-z가-힣]/.test(t.str)) continue;
@@ -679,11 +711,35 @@ export function OverlayPicker({
         }
       }
 
+      // 1-b) 성별 체크박스 — 남/여 표식마다 (gender 항목에 매치값 male/female)
+      if (genderChoice) {
+        const seenG = new Set<string>();
+        for (const g of genderMarks) {
+          const gk = `${g.page0}:${g.which}`;
+          if (seenG.has(gk)) continue;
+          seenG.add(gk);
+          additions.push({
+            key: newKey(),
+            page: g.page0,
+            x: Math.max(0, g.xPt),
+            y: Math.max(0, g.yPt - 2),
+            w: 12,
+            h: 12,
+            size: defaultSize,
+            kind: "check",
+            dataKey: genderChoice.key,
+            matchValue: g.which,
+          });
+        }
+      }
+
       // 2) 학생데이터 텍스트 — 별칭 매칭 (특수 아닌 후보만)
+      const genderHandled = !!genderChoice && genderMarks.length > 0;
       const textCands = cands.filter((c) => !c.special && !c.crowded);
       const bestByKey = new Map<string, { score: number; cand: Cand }>();
       for (const ch of choices) {
         if (placed.has(ch.key)) continue;
+        if (genderHandled && ch.key === genderChoice.key) continue; // 체크로 처리됨
         const aliases = ch.aliases ?? [ch.label];
         for (const cand of textCands) {
           const sc = matchScore(cand.text, aliases);
