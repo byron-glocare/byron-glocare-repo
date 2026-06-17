@@ -111,6 +111,15 @@ export function StudentDataEditor({
     existingValues as Record<string, Json | null>
   );
 
+  // 필요한 항목만 보기 (지원 대학 직접작성서류가 요구하는 키) ↔ 전체 보기
+  const requiredKeySet = new Set(Object.keys(requiredBySource));
+  const canScope = requiredKeySet.size > 0;
+  const [showAll, setShowAll] = useState(false);
+  const visibleTypes =
+    canScope && !showAll
+      ? dataTypes.filter((d) => requiredKeySet.has(d.key))
+      : dataTypes;
+
   // key → 메타 (파생 해석·라벨 조회용)
   const byKey = new Map<string, DataTypeMeta>();
   for (const dt of dataTypes) byKey.set(dt.key, dt);
@@ -123,9 +132,9 @@ export function StudentDataEditor({
     return r.state === "ok" ? r.value : null;
   };
 
-  // 카테고리별 그룹화
+  // 카테고리별 그룹화 (범위 적용)
   const byCategory = new Map<string, DataTypeMeta[]>();
-  for (const dt of dataTypes) {
+  for (const dt of visibleTypes) {
     if (!byCategory.has(dt.category)) byCategory.set(dt.category, []);
     byCategory.get(dt.category)!.push(dt);
   }
@@ -196,6 +205,34 @@ export function StudentDataEditor({
           </p>
         </section>
       )}
+
+      {/* 범위 토글 — 필요한 항목만 / 전체 */}
+      {canScope ? (
+        <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-2.5">
+          <span className="text-xs text-slate-600">
+            {showAll
+              ? tr(
+                  locale,
+                  "전체 표준 항목을 보고 있습니다.",
+                  "Đang xem tất cả mục tiêu chuẩn."
+                )
+              : tr(
+                  locale,
+                  "지원 대학의 작성서류에 필요한 항목만 표시 중입니다.",
+                  "Chỉ hiển thị mục cần cho giấy tờ của trường đã đăng ký."
+                )}
+          </span>
+          <button
+            type="button"
+            onClick={() => setShowAll((v) => !v)}
+            className="shrink-0 rounded-md border border-slate-300 px-3 py-1.5 text-xs font-medium hover:bg-slate-50"
+          >
+            {showAll
+              ? tr(locale, "필요한 항목만 보기", "Chỉ mục cần thiết")
+              : tr(locale, "전체 항목 보기", "Xem tất cả")}
+          </button>
+        </div>
+      ) : null}
 
       {/* 카테고리별 입력 */}
       {CATEGORY_ORDER.filter((c) => byCategory.has(c)).map((cat) => (

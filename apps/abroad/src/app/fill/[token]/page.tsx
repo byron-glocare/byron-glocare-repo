@@ -70,10 +70,52 @@ export default async function FillPage({
         .eq("student_id", studentId),
     ]);
 
-  // 공개 입력은 텍스트성 항목만 (파일·서명·파생 제외)
+  // 지원 대학 직접작성서류가 요구하는 키만 수집 (있으면 그 범위로 좁힘)
+  const { data: apps } = await svc
+    .from("study_applications")
+    .select("admission_spec_id, target_department_label")
+    .eq("student_id", studentId);
+  const requiredKeys = new Set<string>();
+  const specIds = Array.from(
+    new Set((apps ?? []).map((a) => a.admission_spec_id).filter(Boolean))
+  );
+  if (specIds.length > 0) {
+    const { data: specs } = await svc
+      .from("study_admission_specs")
+      .select("id, university_id")
+      .in("id", specIds);
+    const specToUni = new Map(
+      (specs ?? []).map((s) => [s.id, s.university_id])
+    );
+    const uniIds = Array.from(
+      new Set((specs ?? []).map((s) => s.university_id))
+    );
+    if (uniIds.length > 0) {
+      const { data: forms } = await svc
+        .from("study_admission_form_files")
+        .select("university_id, department_name, required_data_type_keys")
+        .in("university_id", uniIds)
+        .eq("is_current", true);
+      for (const a of apps ?? []) {
+        const uni = specToUni.get(a.admission_spec_id);
+        for (const f of forms ?? []) {
+          if (f.university_id !== uni) continue;
+          if (
+            f.department_name !== null &&
+            f.department_name !== a.target_department_label
+          )
+            continue;
+          for (const k of f.required_data_type_keys ?? []) requiredKeys.add(k);
+        }
+      }
+    }
+  }
+
+  // 공개 입력은 텍스트성 항목만 (파일·서명·파생 제외) + 필요한 키 범위(있으면)
   const EXCLUDED = new Set(["file", "signature"]);
   const fields: PublicFieldMeta[] = (dataTypes ?? [])
     .filter((d) => !EXCLUDED.has(d.input_type) && !d.is_derived)
+    .filter((d) => requiredKeys.size === 0 || requiredKeys.has(d.key))
     .map((d) => ({
       key: d.key,
       label_ko: d.label_ko,
