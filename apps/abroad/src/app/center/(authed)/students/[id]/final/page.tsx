@@ -11,7 +11,20 @@ import Link from "next/link";
 import { verifyCenterSession } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
 import { residenceFromStudentLocation } from "@/lib/admission/offering-languages";
+import {
+  classifyRequiredDocs,
+  type RequiredDoc,
+} from "@/lib/admission/classify-documents";
 import { getLocale, tr } from "@/lib/i18n";
+
+/** 양식 매칭용 이름 정규화 (앞 번호 "2." 제거 + 공백/대소문자 무시) */
+function normFormName(s: string): string {
+  return s
+    .trim()
+    .replace(/^\s*\d+[.)]\s*/, "")
+    .replace(/\s+/g, "")
+    .toLowerCase();
+}
 
 export default async function FinalPage({
   params,
@@ -49,9 +62,16 @@ export default async function FinalPage({
     specIds.length > 0
       ? supabase
           .from("study_admission_specs")
-          .select("id, university_id, term")
+          .select("id, university_id, term, required_documents")
           .in("id", specIds)
-      : Promise.resolve({ data: [] as Array<{ id: string; university_id: number; term: string }> }),
+      : Promise.resolve({
+          data: [] as Array<{
+            id: string;
+            university_id: number;
+            term: string;
+            required_documents: unknown;
+          }>,
+        }),
     supabase
       .from("study_student_data_values")
       .select("data_type_key")
@@ -73,10 +93,10 @@ export default async function FinalPage({
     uniIds.length > 0
       ? supabase
           .from("study_admission_form_files")
-          .select("id, university_id, department_name, name_ko, required_data_type_keys")
+          .select("id, university_id, department_name, name_ko, key, required_data_type_keys")
           .in("university_id", uniIds)
           .eq("is_current", true)
-      : Promise.resolve({ data: [] as Array<{ id: string; university_id: number; department_name: string | null; name_ko: string; required_data_type_keys: string[] | null }> }),
+      : Promise.resolve({ data: [] as Array<{ id: string; university_id: number; department_name: string | null; name_ko: string; key: string; required_data_type_keys: string[] | null }> }),
     supabase
       .from("study_required_submissions")
       .select("id, university_id, department_id, name_ko, applies_to_languages, applies_to_locations")
@@ -93,11 +113,30 @@ export default async function FinalPage({
   const groups = applications.map((a) => {
     const spec = specMap.get(a.admission_spec_id);
     const uni = spec?.university_id ?? null;
-    const writeForms = (forms ?? []).filter((f) => {
-      if (f.university_id !== uni) return false;
-      if (f.department_name == null) return true;
-      return a.target_department_label === f.department_name;
+
+    // 직접작성 = 모집요강에서 파생(자동분류·중복제거) → 현재 양식파일에 key|이름으로 매칭
+    const uniForms = (forms ?? []).filter(
+      (f) =>
+        f.university_id === uni &&
+        (f.department_name == null ||
+          f.department_name === a.target_department_label)
+    );
+    const byKey = new Map(uniForms.map((f) => [f.key, f] as const));
+    const byName = new Map(
+      uniForms.map((f) => [normFormName(f.name_ko), f] as const)
+    );
+    const { forms: docForms } = classifyRequiredDocs(
+      (spec?.required_documents as RequiredDoc[]) ?? []
+    );
+    const writeRows = docForms.map((doc) => {
+      const file =
+        byKey.get(doc.key) ?? byName.get(normFormName(doc.name_ko)) ?? null;
+      const ready = file
+        ? (file.required_data_type_keys ?? []).every((k) => filledKeys.has(k))
+        : false;
+      return { doc, file, ready };
     });
+
     const submitDocs = (subs ?? []).filter((s) => {
       const uniMatch = s.university_id == null || s.university_id === uni;
       const deptMatch =
@@ -110,7 +149,7 @@ export default async function FinalPage({
       const locOk = locs.length === 0 || locs.includes(residence);
       return uniMatch && deptMatch && langOk && locOk;
     });
-    return { app: a, spec, writeForms, submitDocs };
+    return { app: a, spec, writeRows, submitDocs };
   });
 
   return (
@@ -137,7 +176,7 @@ export default async function FinalPage({
           )}
         </div>
       ) : (
-        groups.map(({ app, spec, writeForms, submitDocs }) => (
+        groups.map(({ app, spec, writeRows, submitDocs }) => (
           <section
             key={app.id}
             className="rounded-lg border border-slate-200 bg-white p-6"
@@ -155,44 +194,49 @@ export default async function FinalPage({
               <h3 className="mb-1.5 text-sm font-medium text-slate-700">
                 {tr(locale, "작성서류 (생성)", "Hồ sơ soạn")}
               </h3>
-              {writeForms.length === 0 ? (
+              {writeRows.length === 0 ? (
                 <p className="pl-1 text-xs text-slate-400">
                   {tr(locale, "없음", "Không có")}
                 </p>
               ) : (
                 <ul className="space-y-1.5">
-                  {writeForms.map((f) => {
-                    const ready = (f.required_data_type_keys ?? []).every((k) =>
-                      filledKeys.has(k)
-                    );
-                    return (
-                      <li
-                        key={f.id}
-                        className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-slate-100 bg-slate-50/50 px-3 py-2"
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium text-slate-800">
-                            {f.name_ko}
+                  {writeRows.map(({ doc, file, ready }) => (
+                    <li
+                      key={doc.key + doc.name_ko}
+                      className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-slate-100 bg-slate-50/50 px-3 py-2"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium text-slate-800">
+                          {doc.name_ko}
+                        </span>
+                        {!file ? (
+                          <span className="rounded-full bg-slate-200 px-2 py-0.5 text-[11px] text-slate-600">
+                            {tr(locale, "양식 미등록", "Chưa có mẫu")}
                           </span>
-                          {ready ? (
-                            <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] text-emerald-700">
-                              {tr(locale, "정보 충분", "Đủ thông tin")}
-                            </span>
-                          ) : (
-                            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] text-amber-700">
-                              {tr(locale, "정보 부족", "Thiếu thông tin")}
-                            </span>
-                          )}
-                        </div>
+                        ) : ready ? (
+                          <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] text-emerald-700">
+                            {tr(locale, "정보 충분", "Đủ thông tin")}
+                          </span>
+                        ) : (
+                          <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] text-amber-700">
+                            {tr(locale, "정보 부족", "Thiếu thông tin")}
+                          </span>
+                        )}
+                      </div>
+                      {file ? (
                         <a
-                          href={`${base}/final/docx?form=${f.id}&app=${app.id}`}
+                          href={`${base}/final/docx?form=${file.id}&app=${app.id}`}
                           className="shrink-0 rounded-md bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-800"
                         >
                           {tr(locale, "생성 · 다운로드", "Tạo & tải")}
                         </a>
-                      </li>
-                    );
-                  })}
+                      ) : (
+                        <span className="shrink-0 text-[11px] text-slate-400">
+                          {tr(locale, "글로케어에서 양식 등록 필요", "Cần đăng ký mẫu")}
+                        </span>
+                      )}
+                    </li>
+                  ))}
                 </ul>
               )}
             </div>
