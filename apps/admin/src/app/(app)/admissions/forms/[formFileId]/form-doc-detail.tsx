@@ -1,6 +1,13 @@
 "use client";
 
-import { useActionState, useEffect, useMemo, useRef, useState } from "react";
+import {
+  startTransition,
+  useActionState,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useRouter } from "next/navigation";
 import { Download, Loader2, RefreshCw, Save, Upload } from "lucide-react";
 import { toast } from "sonner";
@@ -144,7 +151,7 @@ export function FormDocDetail({
     fd.set("required_data_type_keys", JSON.stringify(reqKeys));
     fd.set("auto_analyze", withAi ? "on" : "off");
     upSubmitted.current = true;
-    upAction(fd);
+    startTransition(() => upAction(fd));
   }
 
   const toggle = <T,>(arr: T[], v: T): T[] =>
