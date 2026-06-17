@@ -176,10 +176,22 @@ export default async function UniversityEditPage({
   const { forms: derivedForms, issued: derivedIssued } = classifyRequiredDocs(
     (repSpec?.required_documents as RequiredDoc[]) ?? []
   );
-  // 관리 상태 오버레이용 인덱스
+  // 관리 상태 오버레이용 인덱스 — key 우선, 안 맞으면 이름으로도 매칭
+  //   (운영자가 '양식 종류'를 기타로 올려 key 가 안 맞아도 서류명이 같으면 매칭)
+  const normFormName = (s: string) =>
+    s
+      .trim()
+      .replace(/^\s*\d+[.)]\s*/, "") // 앞의 "1. " "2) " 같은 번호 제거
+      .replace(/\s+/g, "")
+      .toLowerCase();
   const formByKey = new Map(
     (formFiles ?? []).map((f) => [f.key as string, f] as const)
   );
+  const formByName = new Map(
+    (formFiles ?? []).map((f) => [normFormName(f.name_ko), f] as const)
+  );
+  const formFileFor = (doc: { key: string; name_ko: string }) =>
+    formByKey.get(doc.key) ?? formByName.get(normFormName(doc.name_ko));
   // 발급서류 매칭 인덱스 (공용 마스터 + 대학별 조정본, std_key→이름/별칭)
   const submissionIndex = buildSubmissionIndex(
     (submissions ?? []).map((s) => ({
@@ -512,7 +524,7 @@ export default async function UniversityEditPage({
                     </TableHeader>
                     <TableBody>
                       {derivedForms.map((doc) => {
-                        const file = formByKey.get(doc.key);
+                        const file = formFileFor(doc);
                         return (
                           <TableRow key={`form-${doc.key}-${doc.name_ko}`}>
                             <TableCell className="font-medium">
