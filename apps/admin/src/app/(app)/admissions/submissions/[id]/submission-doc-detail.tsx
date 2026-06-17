@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { ImagePlus, Loader2, Save } from "lucide-react";
 import { toast } from "sonner";
 
@@ -69,6 +70,7 @@ export function SubmissionDocDetail({
   departments: Array<{ id: number; name_ko: string; active: boolean }>;
   docTypes: Array<{ key: string; label_ko: string }>;
 }) {
+  const router = useRouter();
   const bound = saveRequiredSubmissionAction.bind(null, sub.id);
   const [state, action, pending] = useActionState<
     SaveRequiredSubmissionState,
@@ -111,8 +113,19 @@ export function SubmissionDocDetail({
   } | null>(null);
 
   useEffect(() => {
-    if (state?.success) toast.success("저장되었습니다.");
-    else if (state?.error) toast.error("저장 실패", { description: state.error });
+    if (state?.success) {
+      toast.success("저장되었습니다.");
+      router.refresh();
+    } else if (state?.error) {
+      toast.error("저장 실패", { description: state.error });
+    } else if (state?.fieldErrors) {
+      toast.error("입력값을 확인하세요", {
+        description: Object.entries(state.fieldErrors)
+          .map(([k, v]) => `${k}: ${v}`)
+          .join(" / "),
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state]);
 
   async function pickImage(e: React.ChangeEvent<HTMLInputElement>) {

@@ -63,12 +63,18 @@ export function NewSubmissionDoc({
       toast.error("입력을 확인하세요");
       submitted.current = false;
     } else if (state) {
-      toast.success("발급서류가 생성되었습니다.");
-      router.push(
-        scope === "university" && uniId
-          ? `/universities/${uniId}`
-          : "/admissions?tab=submissions"
-      );
+      // 생성 직후 편집화면으로 이동해 상세값을 바로 입력 (id 있으면)
+      if (state.id) {
+        toast.success("생성됐습니다. 상세 정보를 입력하세요.");
+        router.push(`/admissions/submissions/${state.id}`);
+      } else {
+        toast.success("발급서류가 생성되었습니다.");
+        router.push(
+          scope === "university" && uniId
+            ? `/universities/${uniId}`
+            : "/admissions?tab=submissions"
+        );
+      }
     }
   }, [state, router]);
 

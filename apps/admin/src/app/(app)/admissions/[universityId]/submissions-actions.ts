@@ -52,6 +52,8 @@ export type SaveRequiredSubmissionState =
       error?: string;
       fieldErrors?: Record<string, string>;
       success?: boolean;
+      /** INSERT 성공 시 새 행 id (생성→편집화면 이동용) */
+      id?: string;
     }
   | undefined;
 
@@ -195,6 +197,8 @@ export async function saveRequiredSubmissionAction(
       .publicUrl;
   }
 
+  let newId: string | null = null;
+
   if (id) {
     // UPDATE
     const { data: orig } = await supabase
@@ -260,19 +264,22 @@ export async function saveRequiredSubmissionAction(
       sample_image_url: newSampleUrl,
       created_by: user.id,
     };
-    const { error: insErr } = await supabase
+    const { data: created, error: insErr } = await supabase
       .from("study_required_submissions")
-      .insert(ins);
+      .insert(ins)
+      .select("id")
+      .single();
     if (insErr) {
       if (uploadedPath) await supabase.storage.from(BUCKET).remove([uploadedPath]);
       return { error: `저장 실패: ${insErr.message}` };
     }
+    newId = created.id;
   }
 
   // 공용(university_id=null)·대학별 양쪽 화면 갱신
   revalidatePath("/admissions");
   if (data.university_id) revalidatePath(`/admissions/${data.university_id}`);
-  return { success: true };
+  return { success: true, id: newId ?? undefined };
 }
 
 /**
