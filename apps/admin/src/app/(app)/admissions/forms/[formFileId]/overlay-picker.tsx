@@ -8,7 +8,7 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Loader2, Save, Trash2, Crosshair, Sparkles } from "lucide-react";
+import { Loader2, Save, Trash2, Crosshair, Sparkles, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -260,6 +260,11 @@ export function OverlayPicker({
     (k: string) => choices.find((c) => c.key === k)?.label ?? k,
     [choices]
   );
+  // 항목이 배치됐는지 — 박스 key 또는 dataKey(연결) 어느 쪽이든
+  const isPlaced = useCallback(
+    (k: string) => overlays.some((o) => o.key === k || o.dataKey === k),
+    [overlays]
+  );
 
   // pdfjs 로드 + 문서 열기 (클라이언트 전용)
   useEffect(() => {
@@ -391,7 +396,7 @@ export function OverlayPicker({
       },
     ]);
     const remaining = choices.find(
-      (c) => c.key !== activeKey && !overlays.some((o) => o.key === c.key)
+      (c) => c.key !== activeKey && !isPlaced(c.key)
     );
     if (remaining) setActiveKey(remaining.key);
   }
@@ -665,7 +670,10 @@ export function OverlayPicker({
         }
       }
 
-      const placed = new Set(overlays.map((o) => o.key));
+      // 이미 배치/연결된 항목 키 (박스 key + dataKey 둘 다)
+      const placed = new Set(
+        overlays.flatMap((o) => [o.key, o.dataKey].filter(Boolean) as string[])
+      );
       const cellKey = (page0: number, b: { x: number; y: number }) =>
         `${page0}:${Math.round(b.x / 4)}:${Math.round(b.y / 4)}`;
       // 기존 박스가 점유한 칸은 재실행 시 중복 생성 방지
@@ -910,7 +918,7 @@ export function OverlayPicker({
           </span>
         ) : (
           choices.map((c) => {
-            const placed = overlays.some((o) => o.key === c.key);
+            const placed = isPlaced(c.key);
             const on = activeKey === c.key;
             return (
               <button
@@ -1055,21 +1063,34 @@ export function OverlayPicker({
                   width: o.w * scale,
                   height: o.h * scale,
                 }}
-                className={`absolute box-border cursor-move overflow-hidden rounded-[2px] border ${
+                className={`absolute box-border cursor-move rounded-[2px] border ${
                   on
                     ? "border-amber-500 bg-amber-300/20"
                     : "border-sky-500 bg-sky-300/15"
                 }`}
-                title="드래그=이동 · 우하단 모서리=크기조절"
+                title="드래그=이동 · 우하단 모서리=크기조절 · ×=삭제"
               >
                 <span
                   style={{ fontSize: Math.max(7, Math.min(fs, 13)), lineHeight: 1.1 }}
-                  className={`pointer-events-none flex h-full items-center overflow-hidden whitespace-nowrap px-0.5 font-medium ${
+                  className={`pointer-events-none flex h-full w-full items-center overflow-hidden whitespace-nowrap px-0.5 font-medium ${
                     on ? "text-amber-700" : "text-sky-700"
                   }`}
                 >
                   {boxLabel(o)}
                 </span>
+                {/* 삭제 버튼 */}
+                <button
+                  type="button"
+                  onPointerDown={(e) => e.stopPropagation()}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setOverlays((cur) => cur.filter((x) => x.key !== o.key));
+                  }}
+                  title="삭제"
+                  className="absolute -right-2 -top-2 flex size-4 items-center justify-center rounded-full bg-red-500 text-white shadow hover:bg-red-600"
+                >
+                  <X className="size-3" />
+                </button>
                 {/* 크기조절 핸들 */}
                 <span
                   onPointerDown={(e) => startDrag(e, o.key, "resize")}
