@@ -1358,6 +1358,8 @@ export type Database = {
             page: number;
             x: number;
             y: number;
+            w?: number;
+            h?: number;
             size?: number;
             maxWidth?: number;
           }>;
@@ -1408,6 +1410,8 @@ export type Database = {
             page: number;
             x: number;
             y: number;
+            w?: number;
+            h?: number;
             size?: number;
             maxWidth?: number;
           }>;

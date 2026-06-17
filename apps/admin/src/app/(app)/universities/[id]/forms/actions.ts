@@ -623,6 +623,8 @@ export async function saveFieldOverlaysAction(
     page: number;
     x: number;
     y: number;
+    w?: number;
+    h?: number;
     size?: number;
     maxWidth?: number;
   }>
@@ -643,6 +645,8 @@ export async function saveFieldOverlaysAction(
         page: number;
         x: number;
         y: number;
+        w?: number;
+        h?: number;
         size?: number;
         maxWidth?: number;
       } = {
@@ -651,6 +655,8 @@ export async function saveFieldOverlaysAction(
         x: Math.max(0, Number(o.x) || 0),
         y: Math.max(0, Number(o.y) || 0),
       };
+      if (Number.isFinite(o.w) && (o.w ?? 0) > 0) out.w = Number(o.w);
+      if (Number.isFinite(o.h) && (o.h ?? 0) > 0) out.h = Number(o.h);
       if (Number.isFinite(o.size) && (o.size ?? 0) > 0) out.size = Number(o.size);
       if (Number.isFinite(o.maxWidth) && (o.maxWidth ?? 0) > 0)
         out.maxWidth = Number(o.maxWidth);

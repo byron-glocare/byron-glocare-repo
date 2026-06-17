@@ -252,19 +252,27 @@ export type StudyAdmissionFormFile = {
   updated_at: string;
 };
 
-/** PDF 양식 위 한 항목을 그릴 좌표 (좌하단 원점, PDF 포인트). */
+/**
+ * PDF 양식 위 한 항목을 그릴 영역 (좌하단 원점, PDF 포인트).
+ *   - w,h 가 있으면 "박스 모드": (x,y)=박스 좌하단, 텍스트를 박스 안에 맞춰(축소·줄바꿈) 그림.
+ *   - w,h 가 없으면 "레거시 점 모드": (x,y)=텍스트 baseline, maxWidth 만 적용.
+ */
 export type FormFieldOverlay = {
   /** 값 출처: data_type_key 또는 "essay:N" */
   key: string;
   /** 0-based 페이지 인덱스 */
   page: number;
-  /** 가로 (왼쪽에서) */
+  /** 박스 좌하단 가로 (왼쪽에서) — 레거시 점 모드에선 baseline x */
   x: number;
-  /** 세로 (아래에서, 텍스트 baseline) */
+  /** 박스 좌하단 세로 (아래에서) — 레거시 점 모드에선 baseline y */
   y: number;
-  /** 폰트 크기 pt (기본 11) */
+  /** 박스 너비 pt (박스 모드) */
+  w?: number;
+  /** 박스 높이 pt (박스 모드) */
+  h?: number;
+  /** 폰트 크기 pt (기본 11, 박스보다 크면 자동 축소) */
   size?: number;
-  /** 이 폭(pt) 초과 시 자동 축소 */
+  /** (레거시) 이 폭(pt) 초과 시 자동 축소 */
   maxWidth?: number;
 };
 

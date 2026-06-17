@@ -114,6 +114,8 @@ export async function fillPdfOverlay(
   const pages = pdf.getPages();
   const black = rgb(0.05, 0.05, 0.05);
 
+  const PAD = 2; // 박스 안쪽 여백 pt
+
   for (const ov of input.overlays) {
     const text = foldLatinDiacritics((input.values.get(ov.key) ?? "").trim());
     if (!text) continue;
@@ -121,32 +123,45 @@ export async function fillPdfOverlay(
     if (!page) continue;
     const font = pickFont(text);
 
-    let size = ov.size ?? DEFAULT_SIZE;
-
-    if (ov.maxWidth && ov.maxWidth > 0) {
-      // 한 줄로 들어가도록 폰트 축소 (MIN_SIZE 까지) → 그래도 넘치면 줄바꿈
-      if (!text.includes("\n")) {
-        while (
-          size > MIN_SIZE &&
-          font.widthOfTextAtSize(text, size) > ov.maxWidth
-        ) {
-          size -= 0.5;
-        }
+    if (ov.w && ov.w > 0 && ov.h && ov.h > 0) {
+      // ── 박스 모드: (x,y)=좌하단, 텍스트를 박스 안에 맞춰 축소·줄바꿈하고 세로 가운데 정렬.
+      const maxW = Math.max(4, ov.w - PAD * 2);
+      let size = ov.size ?? DEFAULT_SIZE;
+      let lines = wrapText(text, font, size, maxW);
+      // 너비 또는 높이를 넘으면 폰트 축소
+      while (
+        size > MIN_SIZE &&
+        (lines.length * (size + LINE_GAP) > ov.h - PAD ||
+          lines.some((l) => font.widthOfTextAtSize(l, size) > maxW))
+      ) {
+        size -= 0.5;
+        lines = wrapText(text, font, size, maxW);
       }
-      const lines = wrapText(text, font, size, ov.maxWidth);
       const lineHeight = size + LINE_GAP;
-      lines.forEach((line, i) => {
+      const blockH = lines.length * lineHeight - LINE_GAP;
+      // 첫 줄 baseline: 박스 위에서부터 세로 가운데. (y+h)=박스 top.
+      const top = ov.y + ov.h;
+      let baseline = top - (ov.h - blockH) / 2 - size;
+      for (const line of lines) {
         page.drawText(line, {
-          x: ov.x,
-          y: ov.y - i * lineHeight,
+          x: ov.x + PAD,
+          y: baseline,
           size,
           font,
           color: black,
         });
-      });
+        baseline -= lineHeight;
+      }
     } else {
-      // maxWidth 없음 — 명시적 \n 만 줄바꿈
-      const lines = text.split("\n");
+      // ── 레거시 점 모드: (x,y)=baseline. maxWidth 만 적용.
+      let size = ov.size ?? DEFAULT_SIZE;
+      const mw = ov.maxWidth && ov.maxWidth > 0 ? ov.maxWidth : 0;
+      if (mw && !text.includes("\n")) {
+        while (size > MIN_SIZE && font.widthOfTextAtSize(text, size) > mw) {
+          size -= 0.5;
+        }
+      }
+      const lines = mw ? wrapText(text, font, size, mw) : text.split("\n");
       const lineHeight = size + LINE_GAP;
       lines.forEach((line, i) => {
         page.drawText(line, {

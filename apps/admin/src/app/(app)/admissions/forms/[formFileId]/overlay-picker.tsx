@@ -1,10 +1,10 @@
 "use client";
 
 /**
- * [작성서류] PDF 좌표 오버레이 지정기.
- *   원본 양식 PDF 를 pdfjs 로 캔버스에 렌더 → 운영자가 항목을 고르고 클릭해 위치를 찍는다.
- *   화면 좌표(px) → PDF 좌표(pt, 좌하단 원점) 변환해 저장.
- *   채움 엔진(abroad /final/pdf)이 이 좌표에 학생 데이터를 그려 넣는다.
+ * [작성서류] PDF 채움 영역(박스) 지정기.
+ *   원본 양식 PDF 를 pdfjs 로 캔버스에 렌더 → 운영자가 항목별 "채움 박스"를 놓고
+ *   드래그로 이동·모서리로 크기 조절. 화면(px) → PDF(pt, 좌하단 원점) 변환해 저장.
+ *   채움 엔진(abroad /final/pdf)이 박스 안에 학생 데이터를 맞춰(축소·줄바꿈) 그린다.
  */
 
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -15,6 +15,33 @@ import { Button } from "@/components/ui/button";
 import { saveFieldOverlaysAction } from "@/app/(app)/universities/[id]/forms/actions";
 
 export type FieldChoice = { key: string; label: string; aliases?: string[] };
+
+export type Overlay = {
+  key: string;
+  page: number; // 0-based
+  x: number; // 박스 좌하단 x (PDF pt)
+  y: number; // 박스 좌하단 y (PDF pt, 좌하단 원점)
+  w: number; // 박스 너비 (PDF pt)
+  h: number; // 박스 높이 (PDF pt)
+  size?: number; // 최대 글자 크기 (박스보다 크면 자동 축소)
+  maxWidth?: number; // 레거시
+};
+
+/** DB 에서 읽은 오버레이 — 레거시는 w/h 가 없을 수 있다. */
+export type RawOverlay = {
+  key: string;
+  page: number;
+  x: number;
+  y: number;
+  w?: number;
+  h?: number;
+  size?: number;
+  maxWidth?: number;
+};
+
+const DEFAULT_SIZE = 11;
+const DEFAULT_W = 150;
+const DEFAULT_H = 18;
 
 /** 매칭용 정규화: 공백·구두점·괄호·별표 제거, 소문자. */
 function norm(s: string): string {
@@ -27,7 +54,6 @@ function norm(s: string): string {
 /**
  * 후보 텍스트(양식 필드명/라벨) ↔ 항목(choice) 매칭 점수.
  *   3=완전일치, 2=접두/접미 일치, 1=포함. 0=불일치.
- *   짧은 별칭의 오매칭을 줄이기 위해 길이 가드 적용.
  */
 function matchScore(candidate: string, aliases: string[]): number {
   const c = norm(candidate);
@@ -43,16 +69,23 @@ function matchScore(candidate: string, aliases: string[]): number {
   }
   return best;
 }
-export type Overlay = {
-  key: string;
-  page: number; // 0-based
-  x: number; // PDF pt
-  y: number; // PDF pt (baseline, 좌하단 원점)
-  size?: number;
-  maxWidth?: number;
-};
 
-const DEFAULT_SIZE = 11;
+/** 레거시(점) 오버레이를 박스로 변환. */
+function toBox(o: RawOverlay): Overlay {
+  const size = o.size ?? DEFAULT_SIZE;
+  if (o.w && o.h) {
+    return { ...o, w: o.w, h: o.h, size };
+  }
+  return {
+    key: o.key,
+    page: o.page,
+    x: o.x,
+    w: o.maxWidth && o.maxWidth > 0 ? o.maxWidth : DEFAULT_W,
+    h: Math.round(size * 1.6),
+    y: Math.max(0, o.y - size * 0.3), // baseline → 박스 바닥(근사)
+    size,
+  };
+}
 
 export function OverlayPicker({
   formFileId,
@@ -63,7 +96,7 @@ export function OverlayPicker({
   formFileId: string;
   fileUrl: string;
   choices: FieldChoice[];
-  initialOverlays: Overlay[];
+  initialOverlays: RawOverlay[];
 }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -77,7 +110,9 @@ export function OverlayPicker({
   const [scale, setScale] = useState(1);
   const [canvasH, setCanvasH] = useState(0);
 
-  const [overlays, setOverlays] = useState<Overlay[]>(initialOverlays);
+  const [overlays, setOverlays] = useState<Overlay[]>(
+    initialOverlays.map(toBox)
+  );
   const [activeKey, setActiveKey] = useState<string>(
     choices.find((c) => !initialOverlays.some((o) => o.key === c.key))?.key ??
       choices[0]?.key ??
@@ -144,6 +179,7 @@ export function OverlayPicker({
     };
   }, [ready, pageNum]);
 
+  // 빈 곳 클릭 → 선택 항목의 박스를 그 자리(좌상단)에 생성/이동
   function handleCanvasClick(e: React.MouseEvent<HTMLCanvasElement>) {
     if (!activeKey) {
       toast.error("먼저 배치할 항목을 선택하세요");
@@ -154,40 +190,57 @@ export function OverlayPicker({
     const rect = canvas.getBoundingClientRect();
     const px = e.clientX - rect.left;
     const py = e.clientY - rect.top;
-    // px → PDF pt (좌하단 원점)
+    const topPt = (canvas.height - py) / scale; // 클릭점 = 박스 좌상단
     const x = px / scale;
-    const y = (canvas.height - py) / scale;
+    const h = defaultSize * 1.6;
+    const y = Math.max(0, topPt - h);
     const page0 = pageNum - 1;
     setOverlays((cur) => {
-      const without = cur.filter(
-        (o) => !(o.key === activeKey) // 같은 항목은 한 곳만 (재클릭 시 이동)
-      );
+      const without = cur.filter((o) => o.key !== activeKey);
       return [
         ...without,
-        { key: activeKey, page: page0, x, y, size: defaultSize },
+        { key: activeKey, page: page0, x, y, w: DEFAULT_W, h, size: defaultSize },
       ];
     });
-    // 다음 미배치 항목으로 자동 이동
     const remaining = choices.find(
-      (c) =>
-        c.key !== activeKey &&
-        !overlays.some((o) => o.key === c.key && o.key !== activeKey)
+      (c) => c.key !== activeKey && !overlays.some((o) => o.key === c.key)
     );
     if (remaining) setActiveKey(remaining.key);
   }
 
-  // 마커 드래그로 위치 미세조정 (클릭 재배치 없이 끌어서 이동).
-  function startDrag(e: React.PointerEvent, key: string) {
+  // 박스 이동/크기조절 드래그
+  function startDrag(
+    e: React.PointerEvent,
+    key: string,
+    mode: "move" | "resize"
+  ) {
     e.preventDefault();
     e.stopPropagation();
     setActiveKey(key);
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    const orig = overlays.find((o) => o.key === key);
+    if (!orig) return;
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const top = orig.y + orig.h; // resize 시 좌상단 고정용
     const move = (ev: PointerEvent) => {
-      const rect = canvas.getBoundingClientRect();
-      const x = Math.max(0, (ev.clientX - rect.left) / scale);
-      const y = Math.max(0, (canvas.height - (ev.clientY - rect.top)) / scale);
-      setOverlays((cur) => cur.map((o) => (o.key === key ? { ...o, x, y } : o)));
+      const dxPt = (ev.clientX - startX) / scale;
+      const dyPt = (ev.clientY - startY) / scale; // 화면 아래 = pt 감소
+      setOverlays((cur) =>
+        cur.map((o) => {
+          if (o.key !== key) return o;
+          if (mode === "move") {
+            return {
+              ...o,
+              x: Math.max(0, orig.x + dxPt),
+              y: Math.max(0, orig.y - dyPt),
+            };
+          }
+          // resize: 좌상단 고정, 우하단을 끌어 너비·높이 변경
+          const w = Math.max(20, orig.w + dxPt);
+          const h = Math.max(8, orig.h + dyPt);
+          return { ...o, w, h, y: Math.max(0, top - h) };
+        })
+      );
     };
     const up = () => {
       window.removeEventListener("pointermove", move);
@@ -198,7 +251,7 @@ export function OverlayPicker({
   }
 
   // ── 자동 배치: PDF 양식필드(AcroForm) rect + 텍스트 라벨 위치를 그대로 읽고
-  //    카탈로그 별칭으로 항목 매칭 → 좌표 자동 생성. (좌표는 PDF가 제공, AI 추측 X)
+  //    카탈로그 별칭으로 항목 매칭 → 채움 박스 자동 생성. (좌표는 PDF가 제공)
   async function autoPlace() {
     if (!pdfRef.current) return;
     setAutoBusy(true);
@@ -209,17 +262,18 @@ export function OverlayPicker({
         page0: number;
         x: number;
         y: number;
+        w: number;
+        h: number;
         size: number;
         src: "field" | "label";
-        maxWidth?: number;
-        crowded?: boolean; // 오른쪽에 값 들어갈 공간이 거의 없음(헤더행 등)
+        crowded?: boolean;
       };
       const cands: Cand[] = [];
 
       for (let p = 1; p <= pdf.numPages; p++) {
         const page = await pdf.getPage(p);
 
-        // 1) 채우기 가능한 텍스트 필드 (정확한 위치 + 칸 너비)
+        // 1) 채우기 가능한 텍스트 필드 — 박스 = 필드 rect
         const anns = (await page.getAnnotations()) as Array<{
           fieldType?: string;
           fieldName?: string;
@@ -235,15 +289,16 @@ export function OverlayPicker({
           cands.push({
             text: a.fieldName,
             page0: p - 1,
-            x: x1 + 2,
-            y: y1 + h * 0.28,
+            x: x1 + 1,
+            y: y1 + 1,
+            w: Math.max(12, w - 2),
+            h: Math.max(8, h - 2),
             size: Math.min(14, Math.max(8, Math.round(h * 0.55))),
             src: "field",
-            maxWidth: Math.max(10, w - 4),
           });
         }
 
-        // 2) 텍스트 라벨 — 라벨 오른쪽 빈칸에 값 배치 (칸 너비 인식)
+        // 2) 텍스트 라벨 — 박스 = 라벨 오른쪽 빈칸
         const tc = await page.getTextContent();
         const raw = tc.items as Array<{
           str?: string;
@@ -257,52 +312,53 @@ export function OverlayPicker({
             if (!str || !tr) return null;
             return { str, x: tr[4], endX: tr[4] + (it.width ?? 0), y: tr[5] };
           })
-          .filter((t): t is { str: string; x: number; endX: number; y: number } => !!t);
+          .filter(
+            (t): t is { str: string; x: number; endX: number; y: number } => !!t
+          );
 
         for (const t of texts) {
           if (t.str.length > 24) continue;
           if (!/[A-Za-z가-힣]/.test(t.str)) continue;
-          // 같은 행(베이스라인 ±4pt)에서 오른쪽으로 가장 가까운 텍스트와의 간격
           let rightGap = Infinity;
           for (const o of texts) {
             if (o === t || Math.abs(o.y - t.y) > 4 || o.x <= t.endX) continue;
             rightGap = Math.min(rightGap, o.x - t.endX);
           }
+          const h = Math.round(defaultSize * 1.5);
+          const w =
+            Number.isFinite(rightGap) && rightGap < 480
+              ? Math.max(24, rightGap - 8)
+              : DEFAULT_W;
           cands.push({
             text: t.str,
             page0: p - 1,
-            x: t.endX + 8,
-            y: t.y,
+            x: t.endX + 6,
+            y: t.y - defaultSize * 0.3,
+            w,
+            h,
             size: defaultSize,
             src: "label",
-            // 오른쪽 빈칸이 좁으면 칸 폭에 맞춰 자동 축소
-            maxWidth:
-              Number.isFinite(rightGap) && rightGap < 480
-                ? Math.max(20, rightGap - 8)
-                : undefined,
-            // 라벨이 줄줄이 붙은 빽빽한 칸(헤더행 등)은 값 자리가 없음 → 자동배치 제외
             crowded: rightGap < 16,
           });
         }
       }
 
-      // 매칭: 이미 (수동) 배치된 항목은 보존, 나머지만 자동
+      // 매칭: 이미 배치된 항목은 보존, 나머지만 자동
       const placed = new Set(overlays.map((o) => o.key));
       const bestByKey = new Map<string, { score: number; cand: Cand }>();
       for (const ch of choices) {
         if (placed.has(ch.key)) continue;
         const aliases = ch.aliases ?? [ch.label];
         for (const cand of cands) {
-          if (cand.src === "label" && cand.crowded) continue; // 빽빽한 칸 제외
-          // 양식필드(src=field)는 약간 가산점 — 위치가 정확하므로
-          const sc = matchScore(cand.text, aliases) + (cand.src === "field" ? 0.5 : 0);
+          if (cand.src === "label" && cand.crowded) continue;
+          const sc =
+            matchScore(cand.text, aliases) + (cand.src === "field" ? 0.5 : 0);
           if (sc <= 0) continue;
           const prev = bestByKey.get(ch.key);
           if (!prev || sc > prev.score) bestByKey.set(ch.key, { score: sc, cand });
         }
       }
 
-      // 한 후보가 여러 항목에 중복 매칭되지 않도록 점수순 처리
       const usedCand = new Set<Cand>();
       const additions: Overlay[] = [];
       const entries = Array.from(bestByKey.entries()).sort(
@@ -315,15 +371,16 @@ export function OverlayPicker({
           key,
           page: cand.page0,
           x: cand.x,
-          y: cand.y,
+          y: Math.max(0, cand.y),
+          w: Math.round(cand.w),
+          h: Math.round(cand.h),
           size: Math.round(cand.size),
-          ...(cand.maxWidth ? { maxWidth: Math.round(cand.maxWidth) } : {}),
         });
       }
 
       if (additions.length === 0) {
         toast.info(
-          "자동으로 매칭된 항목이 없습니다. 라벨 표기가 특이한 양식일 수 있어요 — 수동으로 지정해 주세요."
+          "자동으로 매칭된 항목이 없습니다. 라벨 표기가 특이한 양식일 수 있어요 — 직접 박스를 놓아주세요."
         );
       } else {
         setOverlays((cur) => [...cur, ...additions]);
@@ -331,8 +388,8 @@ export function OverlayPicker({
         const remain = choices.length - placed.size - additions.length;
         toast.success(
           `${additions.length}개 자동 배치됨${
-            remain > 0 ? `, ${remain}개는 수동 지정 필요` : ""
-          }. 위치 확인 후 저장하세요.`
+            remain > 0 ? `, ${remain}개는 직접 배치 필요` : ""
+          }. 위치·크기 확인 후 저장하세요.`
         );
       }
     } catch (e) {
@@ -361,10 +418,10 @@ export function OverlayPicker({
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-base font-semibold">좌표 채움 위치 지정</h2>
+          <h2 className="text-base font-semibold">채움 영역(박스) 지정</h2>
           <p className="text-xs text-muted-foreground">
-            <strong>자동 배치</strong>로 한번에 잡고, 빗나간 것만 클릭해 보정하세요. (
-            {placedCount}/{totalCount} 배치됨)
+            <strong>자동 배치</strong>로 한번에 잡고, 박스를 드래그·크기조절해 보정하세요.
+            ({placedCount}/{totalCount} 배치됨)
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -471,12 +528,12 @@ export function OverlayPicker({
       ) : null}
 
       <p className="text-xs text-muted-foreground">
-        파란 글자 = 그려질 위치(미리보기). <strong>마커를 드래그</strong>해 옮기고, 빈
-        곳을 클릭하면 선택한 항목이 그 자리에 놓입니다. (실제 학생 값은 길이가 다를 수
-        있어요)
+        파란 박스 = 채움 영역(글자가 길면 박스 안에서 자동 축소·줄바꿈). 박스를{" "}
+        <strong>드래그</strong>해 이동, <strong>우하단 모서리</strong>로 크기 조절.
+        빈 곳을 클릭하면 선택 항목 박스가 그 자리에 생깁니다.
       </p>
 
-      {/* 캔버스 + 마커 오버레이 */}
+      {/* 캔버스 + 박스 오버레이 */}
       <div
         ref={containerRef}
         className="relative max-h-[760px] w-full overflow-auto rounded-md border bg-muted/30"
@@ -492,48 +549,51 @@ export function OverlayPicker({
             onClick={handleCanvasClick}
             className="cursor-crosshair"
           />
-          {/* 현재 페이지 마커 — 드래그로 이동, 그려질 텍스트(샘플=항목명)를 실제 위치에 표시 */}
+          {/* 현재 페이지 채움 박스 */}
           {pageOverlays.map((o) => {
             const left = o.x * scale;
-            const baseTop = canvasH - o.y * scale;
-            const fs = (o.size ?? DEFAULT_SIZE) * scale;
+            const top = canvasH - (o.y + o.h) * scale;
             const on = o.key === activeKey;
+            const fs = (o.size ?? DEFAULT_SIZE) * scale;
             return (
               <div
                 key={o.key}
-                onPointerDown={(e) => startDrag(e, o.key)}
-                style={{ left, top: baseTop }}
-                className="absolute cursor-move select-none"
-                title="드래그해서 위치 이동"
+                onPointerDown={(e) => startDrag(e, o.key, "move")}
+                style={{
+                  left,
+                  top,
+                  width: o.w * scale,
+                  height: o.h * scale,
+                }}
+                className={`absolute box-border cursor-move overflow-hidden rounded-[2px] border ${
+                  on
+                    ? "border-amber-500 bg-amber-300/20"
+                    : "border-sky-500 bg-sky-300/15"
+                }`}
+                title="드래그=이동 · 우하단 모서리=크기조절"
               >
-                {/* baseline 기준점 */}
                 <span
-                  className={`absolute size-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full ring-1 ring-white ${
-                    on ? "bg-amber-500" : "bg-primary"
-                  }`}
-                />
-                {/* 그려질 텍스트(샘플=항목명) — baseline 위, 칸 너비(maxWidth)로 제한 */}
-                <span
-                  style={{
-                    fontSize: fs,
-                    lineHeight: 1,
-                    maxWidth: o.maxWidth ? o.maxWidth * scale : undefined,
-                  }}
-                  className={`absolute bottom-0 left-0 inline-block overflow-hidden whitespace-nowrap font-medium ${
-                    on
-                      ? "text-amber-700 [text-shadow:0_0_2px_white]"
-                      : "text-sky-700 [text-shadow:0_0_2px_white]"
+                  style={{ fontSize: fs, lineHeight: 1.1 }}
+                  className={`pointer-events-none flex h-full items-center whitespace-nowrap px-0.5 font-medium ${
+                    on ? "text-amber-700" : "text-sky-700"
                   }`}
                 >
                   {labelOf(o.key)}
                 </span>
+                {/* 크기조절 핸들 */}
+                <span
+                  onPointerDown={(e) => startDrag(e, o.key, "resize")}
+                  className={`absolute -bottom-1 -right-1 size-3 cursor-nwse-resize rounded-sm border border-white ${
+                    on ? "bg-amber-500" : "bg-sky-500"
+                  }`}
+                />
               </div>
             );
           })}
         </div>
       </div>
 
-      {/* 배치 목록 (크기·폭 편집·삭제) */}
+      {/* 배치 목록 (크기·삭제) */}
       {overlays.length > 0 ? (
         <div className="rounded-md border">
           <table className="w-full text-sm">
@@ -541,8 +601,8 @@ export function OverlayPicker({
               <tr>
                 <th className="px-3 py-1.5 text-left">항목</th>
                 <th className="px-3 py-1.5 text-left">페이지</th>
-                <th className="px-3 py-1.5 text-left">크기(pt)</th>
-                <th className="px-3 py-1.5 text-left">최대폭(pt)</th>
+                <th className="px-3 py-1.5 text-left">글자(pt)</th>
+                <th className="px-3 py-1.5 text-left">박스(W×H)</th>
                 <th className="px-3 py-1.5"></th>
               </tr>
             </thead>
@@ -561,7 +621,10 @@ export function OverlayPicker({
                         setOverlays((cur) =>
                           cur.map((x, j) =>
                             j === i
-                              ? { ...x, size: Number(e.target.value) || DEFAULT_SIZE }
+                              ? {
+                                  ...x,
+                                  size: Number(e.target.value) || DEFAULT_SIZE,
+                                }
                               : x
                           )
                         )
@@ -569,28 +632,8 @@ export function OverlayPicker({
                       className="h-7 w-16 rounded-md border border-input bg-background px-2"
                     />
                   </td>
-                  <td className="px-3 py-1.5">
-                    <input
-                      type="number"
-                      min={0}
-                      placeholder="자동"
-                      value={o.maxWidth ?? ""}
-                      onChange={(e) =>
-                        setOverlays((cur) =>
-                          cur.map((x, j) =>
-                            j === i
-                              ? {
-                                  ...x,
-                                  maxWidth: e.target.value
-                                    ? Number(e.target.value)
-                                    : undefined,
-                                }
-                              : x
-                          )
-                        )
-                      }
-                      className="h-7 w-20 rounded-md border border-input bg-background px-2"
-                    />
+                  <td className="px-3 py-1.5 text-muted-foreground">
+                    {Math.round(o.w)} × {Math.round(o.h)}
                   </td>
                   <td className="px-3 py-1.5 text-right">
                     <button

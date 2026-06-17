@@ -14,7 +14,11 @@ import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/page-header";
 import { Card } from "@/components/ui/card";
 import { FormDocDetail } from "./form-doc-detail";
-import { OverlayPicker, type Overlay, type FieldChoice } from "./overlay-picker";
+import {
+  OverlayPicker,
+  type RawOverlay,
+  type FieldChoice,
+} from "./overlay-picker";
 
 export const dynamic = "force-dynamic";
 
@@ -110,8 +114,8 @@ export default async function FormDocDetailPage({
       aliases: q.question_ko ? [q.question_ko] : [],
     })),
   ];
-  const initialOverlays: Overlay[] = Array.isArray(form.field_overlays)
-    ? (form.field_overlays as Overlay[])
+  const initialOverlays: RawOverlay[] = Array.isArray(form.field_overlays)
+    ? (form.field_overlays as RawOverlay[])
     : [];
 
   return (
