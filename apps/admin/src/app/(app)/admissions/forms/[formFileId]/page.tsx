@@ -12,7 +12,9 @@ import { notFound, redirect } from "next/navigation";
 
 import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/page-header";
+import { Card } from "@/components/ui/card";
 import { FormDocDetail } from "./form-doc-detail";
+import { OverlayPicker, type Overlay, type FieldChoice } from "./overlay-picker";
 
 export const dynamic = "force-dynamic";
 
@@ -34,7 +36,7 @@ export default async function FormDocDetailPage({
   const { data: form } = await supabase
     .from("study_admission_form_files")
     .select(
-      "id, university_id, key, name_ko, file_url, file_name, notes, uploaded_at, is_current, department_name, required_data_type_keys, applies_to_terms, applies_to_department_ids"
+      "id, university_id, key, name_ko, file_url, file_name, mime_type, notes, uploaded_at, is_current, department_name, required_data_type_keys, applies_to_terms, applies_to_department_ids, essay_questions, field_overlays"
     )
     .eq("id", formFileId)
     .maybeSingle();
@@ -77,6 +79,32 @@ export default async function FormDocDetailPage({
     return Array.from(out);
   })();
 
+  // 좌표 지정기용 — PDF 일 때만. 항목 = 필요 표준데이터(저장본) + 서술형 질문.
+  const ext = (form.file_name.split(".").pop() ?? "").toLowerCase();
+  const isPdf =
+    ext === "pdf" ||
+    (form.mime_type ?? "").toLowerCase().includes("pdf") ||
+    form.file_url.toLowerCase().includes(".pdf");
+  const catalogLabel = new Map(
+    (catalogRows ?? []).map((c) => [c.key, c.label_ko])
+  );
+  const essayQs = Array.isArray(form.essay_questions)
+    ? (form.essay_questions as Array<{ question_ko?: string }>)
+    : [];
+  const overlayChoices: FieldChoice[] = [
+    ...(form.required_data_type_keys ?? []).map((k) => ({
+      key: k,
+      label: catalogLabel.get(k) ?? k,
+    })),
+    ...essayQs.map((q, i) => ({
+      key: `essay:${i}`,
+      label: `[서술형] ${q.question_ko ?? `질문 ${i + 1}`}`,
+    })),
+  ];
+  const initialOverlays: Overlay[] = Array.isArray(form.field_overlays)
+    ? (form.field_overlays as Overlay[])
+    : [];
+
   return (
     <>
       <PageHeader
@@ -116,6 +144,25 @@ export default async function FormDocDetailPage({
             category: c.category,
           }))}
         />
+
+        {isPdf ? (
+          <Card className="mt-6 p-6">
+            <OverlayPicker
+              formFileId={form.id}
+              fileUrl={form.file_url}
+              choices={overlayChoices}
+              initialOverlays={initialOverlays}
+            />
+          </Card>
+        ) : (
+          <Card className="mt-6 p-6">
+            <h2 className="text-base font-semibold">좌표 채움 위치 지정</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              좌표 채움은 <strong>PDF</strong> 양식만 지원합니다. 위 “파일 교체”에서
+              PDF 로 교체하면 이 영역에서 위치를 지정할 수 있습니다.
+            </p>
+          </Card>
+        )}
       </div>
     </>
   );

@@ -609,6 +609,65 @@ export async function updateFormFileDetailAction(
 }
 
 /**
+ * [작성서류] PDF 좌표 오버레이 저장 — 원본 양식 위 학생 데이터 채움 위치.
+ *   field_overlays = [{key,page,x,y,size?,maxWidth?}] (PDF 포인트, 좌하단 원점).
+ */
+export type SaveFieldOverlaysResult =
+  | { ok: true }
+  | { ok: false; error: string };
+
+export async function saveFieldOverlaysAction(
+  formFileId: string,
+  overlays: Array<{
+    key: string;
+    page: number;
+    x: number;
+    y: number;
+    size?: number;
+    maxWidth?: number;
+  }>
+): Promise<SaveFieldOverlaysResult> {
+  const supabaseUser = await createClient();
+  const {
+    data: { user },
+  } = await supabaseUser.auth.getUser();
+  if (!user) return { ok: false, error: "로그인이 필요합니다" };
+  const supabase = createAdminClient();
+
+  // 검증·정규화 (숫자만, 음수 좌표 방지)
+  const clean = overlays
+    .filter((o) => o && typeof o.key === "string" && o.key.trim())
+    .map((o) => {
+      const out: {
+        key: string;
+        page: number;
+        x: number;
+        y: number;
+        size?: number;
+        maxWidth?: number;
+      } = {
+        key: o.key,
+        page: Math.max(0, Math.round(Number(o.page) || 0)),
+        x: Math.max(0, Number(o.x) || 0),
+        y: Math.max(0, Number(o.y) || 0),
+      };
+      if (Number.isFinite(o.size) && (o.size ?? 0) > 0) out.size = Number(o.size);
+      if (Number.isFinite(o.maxWidth) && (o.maxWidth ?? 0) > 0)
+        out.maxWidth = Number(o.maxWidth);
+      return out;
+    });
+
+  const { error } = await supabase
+    .from("study_admission_form_files")
+    .update({ field_overlays: clean })
+    .eq("id", formFileId);
+  if (error) return { ok: false, error: `저장 실패: ${error.message}` };
+
+  revalidatePath(`/admissions/forms/${formFileId}`);
+  return { ok: true };
+}
+
+/**
  * archive 된 버전 복원.
  */
 export async function restoreFormFileAction(
