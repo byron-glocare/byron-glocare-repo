@@ -581,9 +581,16 @@ export function OverlayPicker({
       }
 
       const placed = new Set(overlays.map((o) => o.key));
-      const usedCells = new Set<string>();
       const cellKey = (page0: number, b: { x: number; y: number }) =>
-        `${page0}:${Math.round(b.x)}:${Math.round(b.y)}`;
+        `${page0}:${Math.round(b.x / 4)}:${Math.round(b.y / 4)}`;
+      // 기존 박스가 점유한 칸은 재실행 시 중복 생성 방지
+      const usedCells = new Set<string>(
+        overlays.map((o) => cellKey(o.page, o))
+      );
+      const newKey = () =>
+        typeof crypto !== "undefined" && crypto.randomUUID
+          ? crypto.randomUUID()
+          : `box-${Math.round(performance.now())}-${Math.round(Math.random() * 1e6)}`;
       const additions: Overlay[] = [];
 
       // 1) 특수 종류(사진/서명/날짜) — 라벨에서 바로 생성
@@ -594,7 +601,7 @@ export function OverlayPicker({
         if (c.special.kind === "image" || c.special.kind === "signature") {
           usedCells.add(ck);
           additions.push({
-            key: `${c.special.kind}-${additions.length + 1}-${Math.round(c.box.x)}`,
+            key: newKey(),
             page: c.page0,
             x: c.box.x,
             y: Math.max(0, c.box.y),
@@ -606,7 +613,7 @@ export function OverlayPicker({
         } else {
           usedCells.add(ck);
           additions.push({
-            key: `input-${additions.length + 1}-${Math.round(c.box.x)}`,
+            key: newKey(),
             page: c.page0,
             x: c.box.x,
             y: Math.max(0, c.box.y),
