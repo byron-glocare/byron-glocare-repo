@@ -24,6 +24,9 @@ alter table study_student_submission_files
   add constraint sssf_target_chk
   check (submission_id is not null or doc_key is not null);
 
+-- ON CONFLICT(student_id, doc_key) 가 매칭되려면 '부분 인덱스(where)' 가 아니라
+-- 일반 unique 인덱스여야 한다. (doc_key NULL 인 레거시 submission 행은 NULL 끼리
+-- 중복으로 안 보므로 충돌하지 않음.)
+drop index if exists sssf_unique_doc_key;
 create unique index if not exists sssf_unique_doc_key
-  on study_student_submission_files (student_id, doc_key)
-  where doc_key is not null;
+  on study_student_submission_files (student_id, doc_key);
