@@ -35,6 +35,22 @@ export type FillOverlayInput = {
 const HANGUL_RE = /[ᄀ-ᇿ㄰-㆏가-힣]/;
 
 /**
+ * 베트남어·라틴 발음기호 제거 → ASCII 영문.
+ *   대부분의 입학서류는 한글 또는 영어로만 작성 → 베트남어 성조 문자(ố Đ ễ ư …)는
+ *   기본 알파벳으로 폴딩한다. 한글·숫자·기타 문자는 그대로 둔다.
+ *   예) "Nguyễn Văn Bố" → "Nguyen Van Bo", "Số 12, Đường Láng" → "So 12, Duong Lang".
+ */
+export function foldLatinDiacritics(s: string): string {
+  return s
+    .replace(/[À-ɏḀ-ỿ]/g, (ch) => {
+      const base = ch.normalize("NFD").replace(/[̀-ͯ]/g, "");
+      return base || ch;
+    })
+    .replace(/đ/g, "d")
+    .replace(/Đ/g, "D");
+}
+
+/**
  * 텍스트를 maxWidth 안에 들어가도록 줄바꿈 (공백 우선, 없으면 글자 단위).
  */
 function wrapText(
@@ -99,7 +115,7 @@ export async function fillPdfOverlay(
   const black = rgb(0.05, 0.05, 0.05);
 
   for (const ov of input.overlays) {
-    const text = (input.values.get(ov.key) ?? "").trim();
+    const text = foldLatinDiacritics((input.values.get(ov.key) ?? "").trim());
     if (!text) continue;
     const page = pages[ov.page];
     if (!page) continue;
