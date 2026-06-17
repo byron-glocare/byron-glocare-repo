@@ -176,6 +176,27 @@ export function OverlayPicker({
     if (remaining) setActiveKey(remaining.key);
   }
 
+  // 마커 드래그로 위치 미세조정 (클릭 재배치 없이 끌어서 이동).
+  function startDrag(e: React.PointerEvent, key: string) {
+    e.preventDefault();
+    e.stopPropagation();
+    setActiveKey(key);
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const move = (ev: PointerEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = Math.max(0, (ev.clientX - rect.left) / scale);
+      const y = Math.max(0, (canvas.height - (ev.clientY - rect.top)) / scale);
+      setOverlays((cur) => cur.map((o) => (o.key === key ? { ...o, x, y } : o)));
+    };
+    const up = () => {
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+    };
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", up);
+  }
+
   // ── 자동 배치: PDF 양식필드(AcroForm) rect + 텍스트 라벨 위치를 그대로 읽고
   //    카탈로그 별칭으로 항목 매칭 → 좌표 자동 생성. (좌표는 PDF가 제공, AI 추측 X)
   async function autoPlace() {
@@ -190,13 +211,15 @@ export function OverlayPicker({
         y: number;
         size: number;
         src: "field" | "label";
+        maxWidth?: number;
+        crowded?: boolean; // 오른쪽에 값 들어갈 공간이 거의 없음(헤더행 등)
       };
       const cands: Cand[] = [];
 
       for (let p = 1; p <= pdf.numPages; p++) {
         const page = await pdf.getPage(p);
 
-        // 1) 채우기 가능한 텍스트 필드 (정확한 위치)
+        // 1) 채우기 가능한 텍스트 필드 (정확한 위치 + 칸 너비)
         const anns = (await page.getAnnotations()) as Array<{
           fieldType?: string;
           fieldName?: string;
@@ -207,6 +230,7 @@ export function OverlayPicker({
           const r = a.rect;
           const x1 = Math.min(r[0], r[2]);
           const y1 = Math.min(r[1], r[3]);
+          const w = Math.abs(r[2] - r[0]);
           const h = Math.abs(r[3] - r[1]);
           cands.push({
             text: a.fieldName,
@@ -215,29 +239,49 @@ export function OverlayPicker({
             y: y1 + h * 0.28,
             size: Math.min(14, Math.max(8, Math.round(h * 0.55))),
             src: "field",
+            maxWidth: Math.max(10, w - 4),
           });
         }
 
-        // 2) 텍스트 라벨 — 라벨 오른쪽에 값 배치
+        // 2) 텍스트 라벨 — 라벨 오른쪽 빈칸에 값 배치 (칸 너비 인식)
         const tc = await page.getTextContent();
-        const items = tc.items as Array<{
+        const raw = tc.items as Array<{
           str?: string;
           transform?: number[];
           width?: number;
         }>;
-        for (const it of items) {
-          const str = (it.str ?? "").trim();
-          if (!str || str.length > 24) continue;
-          if (!/[A-Za-z가-힣]/.test(str)) continue;
-          const tr = it.transform;
-          if (!tr) continue;
+        const texts = raw
+          .map((it) => {
+            const str = (it.str ?? "").trim();
+            const tr = it.transform;
+            if (!str || !tr) return null;
+            return { str, x: tr[4], endX: tr[4] + (it.width ?? 0), y: tr[5] };
+          })
+          .filter((t): t is { str: string; x: number; endX: number; y: number } => !!t);
+
+        for (const t of texts) {
+          if (t.str.length > 24) continue;
+          if (!/[A-Za-z가-힣]/.test(t.str)) continue;
+          // 같은 행(베이스라인 ±4pt)에서 오른쪽으로 가장 가까운 텍스트와의 간격
+          let rightGap = Infinity;
+          for (const o of texts) {
+            if (o === t || Math.abs(o.y - t.y) > 4 || o.x <= t.endX) continue;
+            rightGap = Math.min(rightGap, o.x - t.endX);
+          }
           cands.push({
-            text: str,
+            text: t.str,
             page0: p - 1,
-            x: tr[4] + (it.width ?? 0) + 6,
-            y: tr[5],
+            x: t.endX + 8,
+            y: t.y,
             size: defaultSize,
             src: "label",
+            // 오른쪽 빈칸이 좁으면 칸 폭에 맞춰 자동 축소
+            maxWidth:
+              Number.isFinite(rightGap) && rightGap < 480
+                ? Math.max(20, rightGap - 8)
+                : undefined,
+            // 라벨이 줄줄이 붙은 빽빽한 칸(헤더행 등)은 값 자리가 없음 → 자동배치 제외
+            crowded: rightGap < 16,
           });
         }
       }
@@ -249,6 +293,7 @@ export function OverlayPicker({
         if (placed.has(ch.key)) continue;
         const aliases = ch.aliases ?? [ch.label];
         for (const cand of cands) {
+          if (cand.src === "label" && cand.crowded) continue; // 빽빽한 칸 제외
           // 양식필드(src=field)는 약간 가산점 — 위치가 정확하므로
           const sc = matchScore(cand.text, aliases) + (cand.src === "field" ? 0.5 : 0);
           if (sc <= 0) continue;
@@ -272,6 +317,7 @@ export function OverlayPicker({
           x: cand.x,
           y: cand.y,
           size: Math.round(cand.size),
+          ...(cand.maxWidth ? { maxWidth: Math.round(cand.maxWidth) } : {}),
         });
       }
 
@@ -424,6 +470,12 @@ export function OverlayPicker({
         </div>
       ) : null}
 
+      <p className="text-xs text-muted-foreground">
+        파란 글자 = 그려질 위치(미리보기). <strong>마커를 드래그</strong>해 옮기고, 빈
+        곳을 클릭하면 선택한 항목이 그 자리에 놓입니다. (실제 학생 값은 길이가 다를 수
+        있어요)
+      </p>
+
       {/* 캔버스 + 마커 오버레이 */}
       <div
         ref={containerRef}
@@ -440,22 +492,41 @@ export function OverlayPicker({
             onClick={handleCanvasClick}
             className="cursor-crosshair"
           />
-          {/* 현재 페이지 마커 */}
+          {/* 현재 페이지 마커 — 드래그로 이동, 그려질 텍스트(샘플=항목명)를 실제 위치에 표시 */}
           {pageOverlays.map((o) => {
             const left = o.x * scale;
-            const top = canvasH - o.y * scale;
+            const baseTop = canvasH - o.y * scale;
+            const fs = (o.size ?? DEFAULT_SIZE) * scale;
+            const on = o.key === activeKey;
             return (
               <div
                 key={o.key}
-                style={{ left, top }}
-                className="pointer-events-none absolute -translate-y-full"
+                onPointerDown={(e) => startDrag(e, o.key)}
+                style={{ left, top: baseTop }}
+                className="absolute cursor-move select-none"
+                title="드래그해서 위치 이동"
               >
-                <div className="flex items-center gap-1">
-                  <span className="size-2 rounded-full bg-primary ring-2 ring-white" />
-                  <span className="whitespace-nowrap rounded bg-primary/90 px-1 py-0.5 text-[10px] font-medium text-primary-foreground">
-                    {labelOf(o.key)}
-                  </span>
-                </div>
+                {/* baseline 기준점 */}
+                <span
+                  className={`absolute size-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full ring-1 ring-white ${
+                    on ? "bg-amber-500" : "bg-primary"
+                  }`}
+                />
+                {/* 그려질 텍스트(샘플=항목명) — baseline 위, 칸 너비(maxWidth)로 제한 */}
+                <span
+                  style={{
+                    fontSize: fs,
+                    lineHeight: 1,
+                    maxWidth: o.maxWidth ? o.maxWidth * scale : undefined,
+                  }}
+                  className={`absolute bottom-0 left-0 inline-block overflow-hidden whitespace-nowrap font-medium ${
+                    on
+                      ? "text-amber-700 [text-shadow:0_0_2px_white]"
+                      : "text-sky-700 [text-shadow:0_0_2px_white]"
+                  }`}
+                >
+                  {labelOf(o.key)}
+                </span>
               </div>
             );
           })}
