@@ -39,8 +39,14 @@ export default async function StudentDataPage({
     id
   );
 
-  // 첨부파일(파일 타입)은 '서류 등록' 탭으로 이동 → 여기선 제외
-  const nonFile = dataTypes.filter((d) => d.input_type !== "file");
+  // 첨부파일(파일 타입)은 '서류 등록' 탭으로 이동 → 여기선 제외.
+  // 단, 양식에 직접 박히는 이미지(증명사진 등)는 정보 입력에서 올릴 수 있게 포함.
+  const isFormImage = (d: { key: string; label_ko: string; input_type: string }) =>
+    d.input_type === "file" &&
+    /사진|photo|증명|이미지|image/i.test(`${d.key} ${d.label_ko}`);
+  const nonFile = dataTypes.filter(
+    (d) => d.input_type !== "file" || isFormImage(d)
+  );
   const nonFileKeys = new Set(nonFile.map((d) => d.key));
 
   return (
