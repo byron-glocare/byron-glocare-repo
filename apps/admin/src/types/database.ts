@@ -528,6 +528,11 @@ export type Database = {
           interim_date: string | null;
           balance_amount: number;
           balance_date: string | null;
+          installment4_amount: number;
+          installment4_date: string | null;
+          installment5_amount: number;
+          installment5_date: string | null;
+          notes: string | null;
           sales_reported: boolean;
           sales_reported_date: string | null;
           created_at: string;
@@ -545,6 +550,11 @@ export type Database = {
           interim_date?: string | null;
           balance_amount?: number;
           balance_date?: string | null;
+          installment4_amount?: number;
+          installment4_date?: string | null;
+          installment5_amount?: number;
+          installment5_date?: string | null;
+          notes?: string | null;
           sales_reported?: boolean;
           sales_reported_date?: string | null;
           created_at?: string;

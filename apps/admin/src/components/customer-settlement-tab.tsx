@@ -16,6 +16,8 @@ import {
   X,
 } from "lucide-react";
 
+import { Textarea } from "@/components/ui/textarea";
+
 import {
   createReservationPayment,
   updateReservationPayment,
@@ -843,6 +845,26 @@ function WelcomePackPaymentCard({
   const [balanceDate, setBalanceDate] = useState<string>(
     payment?.balance_date ?? ""
   );
+  const [installment4, setInstallment4] = useState<number>(
+    payment?.installment4_amount ?? 0
+  );
+  const [installment4Date, setInstallment4Date] = useState<string>(
+    payment?.installment4_date ?? ""
+  );
+  const [installment5, setInstallment5] = useState<number>(
+    payment?.installment5_amount ?? 0
+  );
+  const [installment5Date, setInstallment5Date] = useState<string>(
+    payment?.installment5_date ?? ""
+  );
+  // 4·5회차 표시 여부 — 기존 데이터가 있거나 사용자가 "추가" 누른 경우 표시
+  const [show4, setShow4] = useState<boolean>(
+    !!(payment?.installment4_amount || payment?.installment4_date)
+  );
+  const [show5, setShow5] = useState<boolean>(
+    !!(payment?.installment5_amount || payment?.installment5_date)
+  );
+  const [notes, setNotes] = useState<string>(payment?.notes ?? "");
   const [salesReported, setSalesReported] = useState<boolean>(
     payment?.sales_reported ?? false
   );
@@ -867,6 +889,12 @@ function WelcomePackPaymentCard({
         interim_date: interimDate || null,
         balance_amount: balance || calculatedBalance,
         balance_date: balanceDate || null,
+        // 표시 안 된 회차는 0/null 로 저장 (사용자가 추가 안 한 상태)
+        installment4_amount: show4 ? installment4 : 0,
+        installment4_date: show4 ? installment4Date || null : null,
+        installment5_amount: show5 ? installment5 : 0,
+        installment5_date: show5 ? installment5Date || null : null,
+        notes: notes.trim() || null,
         sales_reported: salesReported,
         sales_reported_date: salesReportedDate || null,
       });
@@ -884,7 +912,7 @@ function WelcomePackPaymentCard({
       <CardHeader>
         <CardTitle className="text-base flex items-center gap-2">
           <Package className="size-4" />
-          웰컴팩 결제 (3회차 분할)
+          웰컴팩 결제 (분할 회차)
         </CardTitle>
         <CardDescription>
           {isWelcomePackTarget
@@ -1024,8 +1052,121 @@ function WelcomePackPaymentCard({
                   />
                 </TableCell>
               </TableRow>
+              {show4 && (
+                <TableRow>
+                  <TableCell className="font-medium">
+                    4회차
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShow4(false);
+                        setShow5(false);
+                        setInstallment4(0);
+                        setInstallment4Date("");
+                        setInstallment5(0);
+                        setInstallment5Date("");
+                      }}
+                      className="ml-2 text-xs text-muted-foreground hover:text-destructive"
+                    >
+                      제거
+                    </button>
+                  </TableCell>
+                  <TableCell>
+                    <Input
+                      type="number"
+                      value={installment4}
+                      onChange={(e) =>
+                        setInstallment4(Number(e.target.value) || 0)
+                      }
+                      min={0}
+                      className="h-8"
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Input
+                      type="date"
+                      value={installment4Date}
+                      onChange={(e) => setInstallment4Date(e.target.value)}
+                      className="h-8"
+                    />
+                  </TableCell>
+                </TableRow>
+              )}
+              {show5 && (
+                <TableRow>
+                  <TableCell className="font-medium">
+                    5회차
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShow5(false);
+                        setInstallment5(0);
+                        setInstallment5Date("");
+                      }}
+                      className="ml-2 text-xs text-muted-foreground hover:text-destructive"
+                    >
+                      제거
+                    </button>
+                  </TableCell>
+                  <TableCell>
+                    <Input
+                      type="number"
+                      value={installment5}
+                      onChange={(e) =>
+                        setInstallment5(Number(e.target.value) || 0)
+                      }
+                      min={0}
+                      className="h-8"
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Input
+                      type="date"
+                      value={installment5Date}
+                      onChange={(e) => setInstallment5Date(e.target.value)}
+                      className="h-8"
+                    />
+                  </TableCell>
+                </TableRow>
+              )}
+              {(!show4 || (show4 && !show5)) && (
+                <TableRow>
+                  <TableCell colSpan={3} className="py-2">
+                    {!show4 ? (
+                      <button
+                        type="button"
+                        onClick={() => setShow4(true)}
+                        className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+                      >
+                        <Plus className="size-3" />
+                        4회차 추가
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setShow5(true)}
+                        className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+                      >
+                        <Plus className="size-3" />
+                        5회차 추가
+                      </button>
+                    )}
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
+        </div>
+
+        {/* 메모 */}
+        <div>
+          <Label className="text-xs">메모 (정산 협의·환불 사유 등)</Label>
+          <Textarea
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            rows={2}
+            placeholder="예: 4회차는 6월 카드, 5회차는 7월 현금 약속 등"
+          />
         </div>
 
         {/* 매출 보고 */}

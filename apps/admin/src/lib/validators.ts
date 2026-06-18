@@ -392,6 +392,11 @@ export const welcomePackPaymentSchema = z.object({
   interim_date: optionalDate,
   balance_amount: positiveInt.default(0),
   balance_date: optionalDate,
+  installment4_amount: positiveInt.default(0),
+  installment4_date: optionalDate,
+  installment5_amount: positiveInt.default(0),
+  installment5_date: optionalDate,
+  notes: optionalString,
   sales_reported: z.boolean().default(false),
   sales_reported_date: optionalDate,
 });
