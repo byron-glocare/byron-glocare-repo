@@ -153,7 +153,7 @@ export function ConsultationForm(props: Props) {
         if (analysis && hasAnySuggestion(analysis)) {
           setReview({ customerId, analysis });
         } else {
-          navigateBackOrTo(router, `/customers/${customerId}?tab=consultations`);
+          navigateBackOrTo(router, `/customers/${customerId}`);
         }
       } else {
         if (!customer) return;
@@ -170,7 +170,7 @@ export function ConsultationForm(props: Props) {
         if (analysis && hasAnySuggestion(analysis)) {
           setReview({ customerId: customer.id, analysis });
         } else {
-          navigateBackOrTo(router, `/customers/${customer.id}?tab=consultations`);
+          navigateBackOrTo(router, `/customers/${customer.id}`);
         }
       }
     });
@@ -183,7 +183,7 @@ export function ConsultationForm(props: Props) {
       if (applied) {
         toast.success("AI 제안이 고객 정보에 반영됐습니다.");
       }
-      navigateBackOrTo(router, `/customers/${customerId}?tab=consultations`);
+      navigateBackOrTo(router, `/customers/${customerId}`);
     }
   }
 
