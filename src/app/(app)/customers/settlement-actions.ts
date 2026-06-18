@@ -299,6 +299,11 @@ export async function upsertWelcomePackPayment(
     interim_date: parsed.data.interim_date,
     balance_amount: parsed.data.balance_amount || balanceAmount,
     balance_date: parsed.data.balance_date,
+    installment4_amount: parsed.data.installment4_amount,
+    installment4_date: parsed.data.installment4_date,
+    installment5_amount: parsed.data.installment5_amount,
+    installment5_date: parsed.data.installment5_date,
+    notes: parsed.data.notes,
     sales_reported: parsed.data.sales_reported,
     sales_reported_date: parsed.data.sales_reported_date,
   };

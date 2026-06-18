@@ -392,6 +392,11 @@ export const welcomePackPaymentSchema = z.object({
   interim_date: optionalDate,
   balance_amount: positiveInt.default(0),
   balance_date: optionalDate,
+  installment4_amount: positiveInt.default(0),
+  installment4_date: optionalDate,
+  installment5_amount: positiveInt.default(0),
+  installment5_date: optionalDate,
+  notes: optionalString,
   sales_reported: z.boolean().default(false),
   sales_reported_date: optionalDate,
 });
@@ -453,6 +458,11 @@ export const universitySchema = z.object({
   dormitory: z.boolean().default(false),
   dormitory_desc_ko: optionalString,
   dormitory_desc_vi: optionalString,
+  // 홈페이지 노출 특징/강점 (4종 고정 체크)
+  feature_transport: z.boolean().default(false),
+  feature_parttime: z.boolean().default(false),
+  feature_housing: z.boolean().default(false),
+  feature_dormitory: z.boolean().default(false),
   strengths: optionalString,
   tags_ko: optionalString,
   tags_vi: optionalString,
@@ -491,6 +501,7 @@ export const departmentSchema = z.object({
   badge: optionalString,
   case_ids: optionalString,
   course: optionalString, // 'direct' | 'language' | etc
+  study_period: optionalString, // 과정 = 수학기간 (예: '2년', '4년')
   sort_order: z
     .union([z.string().trim(), z.number()])
     .transform((v) => {

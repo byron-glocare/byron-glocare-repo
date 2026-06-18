@@ -528,6 +528,11 @@ export type Database = {
           interim_date: string | null;
           balance_amount: number;
           balance_date: string | null;
+          installment4_amount: number;
+          installment4_date: string | null;
+          installment5_amount: number;
+          installment5_date: string | null;
+          notes: string | null;
           sales_reported: boolean;
           sales_reported_date: string | null;
           created_at: string;
@@ -545,6 +550,11 @@ export type Database = {
           interim_date?: string | null;
           balance_amount?: number;
           balance_date?: string | null;
+          installment4_amount?: number;
+          installment4_date?: string | null;
+          installment5_amount?: number;
+          installment5_date?: string | null;
+          notes?: string | null;
           sales_reported?: boolean;
           sales_reported_date?: string | null;
           created_at?: string;
@@ -681,6 +691,10 @@ export type Database = {
           dormitory: boolean;
           dormitory_desc_ko: string | null;
           dormitory_desc_vi: string | null;
+          feature_transport: boolean;
+          feature_parttime: boolean;
+          feature_housing: boolean;
+          feature_dormitory: boolean;
           strengths: string | null;
           tags_ko: string | null;
           tags_vi: string | null;
@@ -711,6 +725,10 @@ export type Database = {
           dormitory?: boolean;
           dormitory_desc_ko?: string | null;
           dormitory_desc_vi?: string | null;
+          feature_transport?: boolean;
+          feature_parttime?: boolean;
+          feature_housing?: boolean;
+          feature_dormitory?: boolean;
           strengths?: string | null;
           tags_ko?: string | null;
           tags_vi?: string | null;
@@ -741,6 +759,7 @@ export type Database = {
           badge: string | null;
           case_ids: string | null;
           course: string | null;
+          study_period: string | null;
           sort_order: number;
           created_at: string;
           updated_at: string;
@@ -762,6 +781,7 @@ export type Database = {
           badge?: string | null;
           case_ids?: string | null;
           course?: string | null;
+          study_period?: string | null;
           sort_order?: number;
           created_at?: string;
           updated_at?: string;
@@ -1151,7 +1171,8 @@ export type Database = {
             | "select"
             | "multi_select"
             | "file"
-            | "boolean";
+            | "boolean"
+            | "signature";
           options: Array<{ value: string; label_ko: string; label_vi: string }> | null;
           hint_ko: string | null;
           hint_vi: string | null;
@@ -1159,6 +1180,15 @@ export type Database = {
           is_default_required: boolean;
           sort_order: number;
           is_active: boolean;
+          scope: "university_info" | "document_fill";
+          aliases: string[];
+          /** 연결성: 독립 | 동일(대표키 read-through) | 참조(선택 기반 파생) */
+          link_type: "independent" | "same" | "reference";
+          /** link_type='same' 일 때 값을 가져올 대표 데이터 key */
+          same_as_key: string | null;
+          is_derived: boolean;
+          derived_role: string | null;
+          derived_from: { selector: string; map: Record<string, string> } | null;
           created_at: string;
           updated_at: string;
         };
@@ -1186,7 +1216,8 @@ export type Database = {
             | "select"
             | "multi_select"
             | "file"
-            | "boolean";
+            | "boolean"
+            | "signature";
           options?: Array<{ value: string; label_ko: string; label_vi: string }> | null;
           hint_ko?: string | null;
           hint_vi?: string | null;
@@ -1194,11 +1225,46 @@ export type Database = {
           is_default_required?: boolean;
           sort_order?: number;
           is_active?: boolean;
+          scope?: "university_info" | "document_fill";
+          aliases?: string[];
+          link_type?: "independent" | "same" | "reference";
+          same_as_key?: string | null;
+          is_derived?: boolean;
+          derived_role?: string | null;
+          derived_from?: { selector: string; map: Record<string, string> } | null;
           created_at?: string;
           updated_at?: string;
         };
         Update: Partial<
           Database["public"]["Tables"]["study_student_data_types"]["Insert"]
+        >;
+        Relationships: [];
+      };
+
+      // ---------------------------------------------------------------------
+      // 학생별 표준데이터 값 (B4-4) — 삭제 안전장치 집계용
+      // ---------------------------------------------------------------------
+      study_student_data_values: {
+        Row: {
+          id: string;
+          student_id: string;
+          data_type_key: string;
+          value: unknown;
+          filled_by: string | null;
+          filled_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          student_id: string;
+          data_type_key: string;
+          value: unknown;
+          filled_by?: string | null;
+          filled_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["study_student_data_values"]["Insert"]
         >;
         Relationships: [];
       };
@@ -1289,6 +1355,8 @@ export type Database = {
           uploaded_at: string;
           notes: string | null;
           required_data_type_keys: string[];
+          applies_to_terms: string[];
+          applies_to_department_ids: number[];
           essay_questions: Array<{
             question_ko: string;
             question_vi?: string;
@@ -1300,6 +1368,22 @@ export type Database = {
               hint_vi?: string;
               data_type_key?: string;
             }>;
+          }>;
+          field_overlays: Array<{
+            key: string;
+            page: number;
+            x: number;
+            y: number;
+            w?: number;
+            h?: number;
+            size?: number;
+            maxWidth?: number;
+            kind?: "text" | "image" | "signature" | "check";
+            source?: "student" | "input";
+            dataKey?: string;
+            inputLabel?: string;
+            inputType?: "date" | "text";
+            matchValue?: string;
           }>;
           created_at: string;
           updated_at: string;
@@ -1329,6 +1413,8 @@ export type Database = {
           uploaded_at?: string;
           notes?: string | null;
           required_data_type_keys?: string[];
+          applies_to_terms?: string[];
+          applies_to_department_ids?: number[];
           essay_questions?: Array<{
             question_ko: string;
             question_vi?: string;
@@ -1341,6 +1427,22 @@ export type Database = {
               data_type_key?: string;
             }>;
           }>;
+          field_overlays?: Array<{
+            key: string;
+            page: number;
+            x: number;
+            y: number;
+            w?: number;
+            h?: number;
+            size?: number;
+            maxWidth?: number;
+            kind?: "text" | "image" | "signature" | "check";
+            source?: "student" | "input";
+            dataKey?: string;
+            inputLabel?: string;
+            inputType?: "date" | "text";
+            matchValue?: string;
+          }>;
           created_at?: string;
           updated_at?: string;
         };
@@ -1352,6 +1454,152 @@ export type Database = {
             foreignKeyName: "study_admission_form_files_university_id_fkey";
             columns: ["university_id"];
             referencedRelation: "universities";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+
+      // ---------------------------------------------------------------------
+      // 직접제출 서류 (B5) — 글로케어가 샘플이미지+발급요건 관리
+      // ---------------------------------------------------------------------
+      // ---------------------------------------------------------------------
+      // 모집 (C1) — 큐레이션 단위: 대학 × 학과 × 학기 + 학기별 모집수
+      // ---------------------------------------------------------------------
+      study_offerings: {
+        Row: {
+          id: string;
+          university_id: number;
+          department_id: number;
+          term: string;
+          intake_quota: number | null; // published 시 필수
+          available_languages: ("korean" | "english" | "other")[];
+          location_options: ("domestic" | "overseas")[];
+          status: "draft" | "published" | "closed" | "archived";
+          source_spec_id: string | null;
+          sort_order: number;
+          notes: string | null;
+          created_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          university_id: number;
+          department_id: number;
+          term: string;
+          intake_quota?: number | null;
+          available_languages?: ("korean" | "english" | "other")[];
+          location_options?: ("domestic" | "overseas")[];
+          status?: "draft" | "published" | "closed" | "archived";
+          source_spec_id?: string | null;
+          sort_order?: number;
+          notes?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["study_offerings"]["Insert"]
+        >;
+        Relationships: [
+          {
+            foreignKeyName: "study_offerings_university_id_fkey";
+            columns: ["university_id"];
+            referencedRelation: "universities";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "study_offerings_department_id_fkey";
+            columns: ["department_id"];
+            referencedRelation: "departments";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "study_offerings_source_spec_id_fkey";
+            columns: ["source_spec_id"];
+            referencedRelation: "study_admission_specs";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+
+      study_required_submissions: {
+        Row: {
+          id: string;
+          university_id: number | null; // NULL = 공용(전체 대학 공통)
+          base_submission_id: string | null; // 대학별 세부 = 공용 마스터 참조
+          department_id: number | null;
+          name_ko: string;
+          name_vi: string | null;
+          std_key: string | null; // 표준 문서 카탈로그(study_student_data_types.key, category=document) 정본 키
+          target_person: "self" | "father" | "mother" | "other" | null;
+          target_person_note: string | null;
+          sample_image_url: string | null;
+          issuance_requirements: {
+            issuer?: string;
+            validity_days?: number;
+            lead_time_days?: number;
+            needs_notarization?: boolean;
+            needs_translation?: boolean;
+            notes?: string;
+          };
+          required_data_type_keys: string[];
+          aliases: string[];
+          applies_to_languages: ("korean" | "english" | "other")[];
+          applies_to_locations: ("domestic" | "overseas")[];
+          sort_order: number;
+          is_active: boolean;
+          status: "draft" | "approved" | "archived";
+          source_spec_id: string | null;
+          created_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          university_id?: number | null;
+          base_submission_id?: string | null;
+          department_id?: number | null;
+          name_ko: string;
+          name_vi?: string | null;
+          std_key?: string | null;
+          applies_to_languages?: ("korean" | "english" | "other")[];
+          applies_to_locations?: ("domestic" | "overseas")[];
+          target_person?: "self" | "father" | "mother" | "other" | null;
+          target_person_note?: string | null;
+          sample_image_url?: string | null;
+          issuance_requirements?: {
+            issuer?: string;
+            validity_days?: number;
+            lead_time_days?: number;
+            needs_notarization?: boolean;
+            needs_translation?: boolean;
+            notes?: string;
+          };
+          required_data_type_keys?: string[];
+          aliases?: string[];
+          sort_order?: number;
+          is_active?: boolean;
+          status?: "draft" | "approved" | "archived";
+          source_spec_id?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["study_required_submissions"]["Insert"]
+        >;
+        Relationships: [
+          {
+            foreignKeyName: "study_required_submissions_university_id_fkey";
+            columns: ["university_id"];
+            referencedRelation: "universities";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "study_required_submissions_department_id_fkey";
+            columns: ["department_id"];
+            referencedRelation: "departments";
             referencedColumns: ["id"];
           }
         ];
@@ -1388,6 +1636,10 @@ export type Database = {
           scholarships: unknown;
           /** JSONB — Metadata */
           metadata: unknown;
+          // 온라인 접수 (양식 작성 대신 가이드+제출서류)
+          is_online_submission: boolean;
+          online_guide_url: string | null;
+          online_form_url: string | null;
           approved_by: string | null;
           approved_at: string | null;
           created_at: string;
@@ -1398,6 +1650,9 @@ export type Database = {
           university_id: number;
           term: string;
           admission_category?: string | null;
+          is_online_submission?: boolean;
+          online_guide_url?: string | null;
+          online_form_url?: string | null;
           program_type:
             | "language_program"
             | "associate_2yr"
@@ -1431,7 +1686,21 @@ export type Database = {
         ];
       };
     };
-    Views: { [_ in never]: never };
+    Views: {
+      // 입학서류 통합 뷰 (B5) — specs + form_files + required_submissions UNION
+      study_documents: {
+        Row: {
+          id: string;
+          doc_type: "guideline" | "form" | "submission";
+          university_id: number;
+          department_label: string | null;
+          name: string;
+          status: string;
+          updated_at: string;
+        };
+        Relationships: [];
+      };
+    };
     Functions: { [_ in never]: never };
     Enums: { [_ in never]: never };
     CompositeTypes: { [_ in never]: never };
