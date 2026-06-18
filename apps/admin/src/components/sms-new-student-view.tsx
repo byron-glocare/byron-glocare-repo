@@ -3,7 +3,14 @@
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Eye, Loader2, Send } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronRight,
+  Eye,
+  Loader2,
+  Search,
+  Send,
+} from "lucide-react";
 
 import { sendNewStudentSms } from "@/app/(app)/sms/actions";
 import { setClassIntakeSmsSent } from "@/app/(app)/customers/actions";
@@ -17,6 +24,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
@@ -93,6 +101,8 @@ export function SmsNewStudentView({
   );
   const classMap = useMemo(() => new Map(classes.map((c) => [c.id, c])), [classes]);
 
+  const [q, setQ] = useState("");
+
   // 교육원별로 그룹핑 (미발송 고객 위주로 표시)
   const groups = useMemo(() => {
     const byCenter = new Map<string, Customer[]>();
@@ -113,14 +123,48 @@ export function SmsNewStudentView({
       .sort((a, b) => b.pending.length - a.pending.length);
   }, [centers, customers, sentSet]);
 
+  const filteredGroups = useMemo(() => {
+    const needle = q.trim().toLowerCase();
+    if (!needle) return groups;
+    return groups.filter((g) => {
+      const hay = [g.center.name, g.center.region, g.center.director_name]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+      return hay.includes(needle);
+    });
+  }, [groups, q]);
+
   return (
     <div className="space-y-6">
-      {groups.length === 0 ? (
+      <div className="flex flex-wrap items-end gap-2">
+        <div className="flex-1 min-w-60 max-w-md">
+          <label className="text-xs text-muted-foreground block mb-1">
+            교육원 검색 (이름 · 지역 · 원장)
+          </label>
+          <div className="relative">
+            <Search className="size-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+            <Input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="검색..."
+              className="pl-8"
+            />
+          </div>
+        </div>
+        <div className="text-xs text-muted-foreground pb-2">
+          {filteredGroups.length} / {groups.length} 교육원
+        </div>
+      </div>
+
+      {filteredGroups.length === 0 ? (
         <Card className="p-12 text-center text-sm text-muted-foreground">
-          매칭된 교육생이 있는 교육원이 없습니다.
+          {q.trim()
+            ? "조건에 맞는 교육원이 없습니다."
+            : "매칭된 교육생이 있는 교육원이 없습니다."}
         </Card>
       ) : (
-        groups.map(({ center, all, pending }) => (
+        filteredGroups.map(({ center, all, pending }) => (
           <CenterGroupCard
             key={center.id}
             center={center}
@@ -157,6 +201,8 @@ function CenterGroupCard({
   reservationAmountByCustomer: Record<string, number>;
   onSent: () => void;
 }) {
+  // default collapsed — 정산 예정 카드와 동일한 UX
+  const [expanded, setExpanded] = useState(false);
   // 0022: default 체크 = 현재 단계가 '강의 접수 메시지 발송 대기' 인 학생만
   const [selectedIds, setSelectedIds] = useState<string[]>(
     pendingStudents.filter((p) => readySet.has(p.id)).map((p) => p.id)
@@ -343,27 +389,46 @@ function CenterGroupCard({
   return (
     <Card>
       <CardHeader className="flex-row items-start justify-between gap-4">
-        <div className="min-w-0">
-          <CardTitle className="text-base flex items-center gap-2 flex-wrap">
-            {center.name}
-            {center.region && (
-              <Badge variant="outline">{center.region}</Badge>
+        <button
+          type="button"
+          onClick={() => setExpanded((v) => !v)}
+          className="flex items-start gap-2 min-w-0 text-left hover:text-primary"
+          aria-expanded={expanded}
+        >
+          <span className="shrink-0 mt-0.5">
+            {expanded ? (
+              <ChevronDown className="size-4" />
+            ) : (
+              <ChevronRight className="size-4" />
             )}
-          </CardTitle>
-          <CardDescription>
-            원장 {center.director_name ?? "—"} ·{" "}
-            {center.phone ?? (
-              <span className="text-destructive">전화번호 없음</span>
-            )}{" "}
-            · 전체 {allStudents.length}명 · 미발송{" "}
-            <span className="text-warning font-medium">{pendingStudents.length}명</span>
-          </CardDescription>
-        </div>
+          </span>
+          <div className="min-w-0">
+            <CardTitle className="text-base flex items-center gap-2 flex-wrap">
+              {center.name}
+              {center.region && (
+                <Badge variant="outline">{center.region}</Badge>
+              )}
+            </CardTitle>
+            <CardDescription>
+              원장 {center.director_name ?? "—"} ·{" "}
+              {center.phone ?? (
+                <span className="text-destructive">전화번호 없음</span>
+              )}{" "}
+              · 전체 {allStudents.length}명 · 미발송{" "}
+              <span className="text-warning font-medium">
+                {pendingStudents.length}명
+              </span>
+            </CardDescription>
+          </div>
+        </button>
         <div className="flex gap-2 shrink-0">
           <Button
             type="button"
             size="sm"
-            onClick={() => setPreviewOpen(true)}
+            onClick={() => {
+              if (!expanded) setExpanded(true);
+              setPreviewOpen(true);
+            }}
             disabled={selectedStudents.length === 0}
           >
             <Eye className="size-3" />
@@ -371,7 +436,7 @@ function CenterGroupCard({
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className={expanded ? "space-y-4" : "hidden"}>
         {/* 학생 체크리스트 + 학생별 특이사항 */}
         {pendingStudents.length === 0 ? (
           <p className="text-sm text-muted-foreground py-4 text-center border border-dashed border-border rounded-md">
