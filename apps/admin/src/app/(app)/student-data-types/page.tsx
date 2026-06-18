@@ -170,25 +170,34 @@ export default async function StudentDataTypesPage() {
                         </TableCell>
                         <TableCell>
                           <div
-                            className="flex items-center gap-1.5 truncate"
+                            className="flex flex-col gap-1"
                             title={t.hint_ko ? `💡 ${t.hint_ko}` : undefined}
                           >
-                            <span className="font-medium">{t.label_ko}</span>
-                            <span className="text-xs text-muted-foreground">
-                              {t.label_vi}
-                            </span>
-                            {(t.link_type ?? (t.is_derived ? "reference" : "independent")) === "reference" ? (
-                              <Badge variant="secondary" className="text-[10px]">
-                                참조
-                              </Badge>
-                            ) : null}
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span className="font-medium">{t.label_ko}</span>
+                              <span className="text-xs text-muted-foreground">
+                                {t.label_vi}
+                              </span>
+                              {(t.link_type ?? (t.is_derived ? "reference" : "independent")) === "reference" ? (
+                                <Badge variant="secondary" className="text-[10px]">
+                                  참조
+                                </Badge>
+                              ) : null}
+                              {t.hint_ko ? (
+                                <span className="text-muted-foreground/70">💡</span>
+                              ) : null}
+                            </div>
                             {t.aliases && t.aliases.length > 0 ? (
-                              <Badge variant="outline" className="text-[10px]">
-                                별칭 {t.aliases.length}
-                              </Badge>
-                            ) : null}
-                            {t.hint_ko ? (
-                              <span className="text-muted-foreground/70">💡</span>
+                              <div className="flex flex-wrap gap-1">
+                                {t.aliases.map((a) => (
+                                  <span
+                                    key={a}
+                                    className="inline-flex items-center rounded border border-border bg-muted/40 px-1.5 py-px text-[10px] text-muted-foreground"
+                                  >
+                                    {a}
+                                  </span>
+                                ))}
+                              </div>
                             ) : null}
                           </div>
                         </TableCell>

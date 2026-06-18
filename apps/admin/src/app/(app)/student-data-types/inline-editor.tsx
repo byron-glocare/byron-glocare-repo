@@ -137,6 +137,9 @@ export function InlineDataTypeEditor({
                 {keysInCat.map((t) => (
                   <option key={t.id} value={t.key}>
                     {t.label_ko} ({t.key})
+                    {t.aliases && t.aliases.length > 0
+                      ? ` — ${t.aliases.join(", ")}`
+                      : ""}
                   </option>
                 ))}
               </select>
