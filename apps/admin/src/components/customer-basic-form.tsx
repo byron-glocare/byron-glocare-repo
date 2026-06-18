@@ -881,9 +881,9 @@ export function CustomerBasicForm({
 
         {/* 대기 상태 / 종료 사유는 진행 단계 탭에서 관리 (2026-04-23 이동) */}
 
-        {/* 액션 — embedded 모드에서는 페이지 레벨에서 통합 처리 */}
+        {/* 액션 — embedded 모드에서는 페이지 레벨에서 통합 처리. standalone 일 때 sticky bottom. */}
         {!embedded && (
-          <div className="flex items-center justify-between">
+          <div className="sticky bottom-0 -mx-6 mt-8 border-t border-border bg-background/95 backdrop-blur px-6 py-3 flex items-center justify-between gap-2">
             {mode === "edit" && customerId ? (
               <Dialog>
                 <DialogTrigger
