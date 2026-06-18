@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AlertTriangle, Check, Loader2, Plus, Power, Trash2 } from "lucide-react";
 
@@ -109,9 +109,16 @@ export type DataTypeRef = {
 export function DataTypeForm({
   dataType,
   allTypes = [],
+  inline = false,
+  onSaved,
+  onCancel,
 }: {
   dataType?: EditableDataType;
   allTypes?: DataTypeRef[];
+  /** 인라인 모드: 저장 후 화면 이동 없이 onSaved 콜백 호출 */
+  inline?: boolean;
+  onSaved?: () => void;
+  onCancel?: () => void;
 }) {
   const isEdit = !!dataType;
   const boundAction = isEdit
@@ -121,6 +128,11 @@ export function DataTypeForm({
     boundAction,
     undefined
   );
+
+  // 인라인 저장 성공 시 → 화면 이동 없이 콜백
+  useEffect(() => {
+    if (inline && state?.ok) onSaved?.();
+  }, [inline, state, onSaved]);
 
   const [inputType, setInputType] = useState<string>(
     dataType?.input_type ?? "text"
@@ -270,18 +282,41 @@ export function DataTypeForm({
             </select>
           </Field>
 
-          <Field label="표시 순서">
-            <input
-              type="number"
-              name="sort_order"
-              min="0"
-              max="9999"
-              defaultValue={dataType?.sort_order ?? 0}
-              className="rounded-md border border-input bg-background px-3 py-2 text-sm"
-            />
-          </Field>
+        </div>
 
-          <Field label="입력 안내 (한국어)" full>
+        {/* 체크박스 3개 — 분류와 입력 안내 사이 */}
+        <div className="flex flex-wrap items-center gap-4">
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              name="is_essay_basis"
+              defaultChecked={dataType?.is_essay_basis ?? false}
+            />
+            <span>
+              <strong>작문 기초 데이터</strong> — 서술형 답변 생성 시 AI 가 참조
+            </span>
+          </label>
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              name="is_default_required"
+              defaultChecked={dataType?.is_default_required ?? false}
+            />
+            <span>기본 필수</span>
+          </label>
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              name="is_active"
+              defaultChecked={dataType?.is_active ?? true}
+            />
+            <span>활성</span>
+          </label>
+        </div>
+
+        {/* 입력 안내 (한/베) — 반반 한 줄 */}
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <Field label="입력 안내 (한국어)">
             <textarea
               name="hint_ko"
               rows={2}
@@ -290,8 +325,7 @@ export function DataTypeForm({
               className="rounded-md border border-input bg-background px-3 py-2 text-sm"
             />
           </Field>
-
-          <Field label="입력 안내 (베트남어)" full>
+          <Field label="입력 안내 (베트남어)">
             <textarea
               name="hint_vi"
               rows={2}
@@ -389,11 +423,13 @@ export function DataTypeForm({
           </div>
         ) : null}
 
+        {/* 별칭 + 연결성 — 반반 한 줄 */}
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 items-start">
         {/* 별칭 (AI 매칭용 동의어) */}
         <div className="rounded-md border border-dashed bg-muted/30 p-4 space-y-2">
           <div className="text-sm font-medium">
             별칭 (AI 매칭용 동의어)
-            <span className="ml-2 text-xs font-normal text-muted-foreground">
+            <span className="ml-2 block text-xs font-normal text-muted-foreground">
               서류마다 다른 이름(예: 보호자 성명 · Guardian name)으로 적혀 있어도 이 항목으로 매칭됩니다.
             </span>
           </div>
@@ -601,35 +637,23 @@ export function DataTypeForm({
           />
           <input type="hidden" name="derived_from" value={derivedFromValue} />
         </div>
-
-        <div className="flex flex-wrap items-center gap-4">
-          <label className="flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              name="is_essay_basis"
-              defaultChecked={dataType?.is_essay_basis ?? false}
-            />
-            <span>
-              <strong>작문 기초 데이터</strong> — 서술형 답변 생성 시 AI 가 참조
-            </span>
-          </label>
-          <label className="flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              name="is_default_required"
-              defaultChecked={dataType?.is_default_required ?? false}
-            />
-            <span>기본 필수</span>
-          </label>
-          <label className="flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              name="is_active"
-              defaultChecked={dataType?.is_active ?? true}
-            />
-            <span>활성</span>
-          </label>
         </div>
+
+        {/* 표시 순서 — 가장 마지막 */}
+        <div className="max-w-[220px]">
+          <Field label="표시 순서">
+            <input
+              type="number"
+              name="sort_order"
+              min="0"
+              max="9999"
+              defaultValue={dataType?.sort_order ?? 0}
+              className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+            />
+          </Field>
+        </div>
+
+        {inline ? <input type="hidden" name="__inline" value="1" /> : null}
 
         {state?.error ? (
           <div className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
@@ -652,12 +676,25 @@ export function DataTypeForm({
                 </>
               )}
             </Button>
-            <a
-              href="/student-data-types"
-              className={buttonVariants({ variant: "outline" })}
-            >
-              취소
-            </a>
+            {inline ? (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onCancel?.()}
+              >
+                닫기
+              </Button>
+            ) : (
+              <a
+                href="/student-data-types"
+                className={buttonVariants({ variant: "outline" })}
+              >
+                취소
+              </a>
+            )}
+            {inline && state?.ok ? (
+              <span className="text-sm text-emerald-600">저장됨</span>
+            ) : null}
           </div>
           {isEdit ? <DeleteButton id={dataType!.id} keyName={dataType!.key} /> : null}
         </div>

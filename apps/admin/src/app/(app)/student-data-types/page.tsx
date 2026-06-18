@@ -21,6 +21,8 @@ import {
 } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
 import { reactivateDataTypeAction } from "./actions";
+import { InlineDataTypeEditor } from "./inline-editor";
+import type { EditableDataType, DataTypeRef } from "./type-form";
 
 export const dynamic = "force-dynamic";
 
@@ -78,6 +80,37 @@ export default async function StudentDataTypesPage() {
     byCategory.get(t.category)!.push(t);
   }
 
+  // 인라인 편집기용 데이터 (전체 카탈로그)
+  const editableTypes: EditableDataType[] = (types ?? []).map((t) => ({
+    id: t.id,
+    key: t.key,
+    label_ko: t.label_ko,
+    label_vi: t.label_vi,
+    category: t.category,
+    input_type: t.input_type,
+    options: t.options,
+    hint_ko: t.hint_ko,
+    hint_vi: t.hint_vi,
+    is_essay_basis: t.is_essay_basis,
+    is_default_required: t.is_default_required,
+    sort_order: t.sort_order,
+    is_active: t.is_active,
+    scope: t.scope,
+    aliases: t.aliases ?? [],
+    link_type: t.link_type ?? (t.is_derived ? "reference" : "independent"),
+    same_as_key: t.same_as_key ?? null,
+    is_derived: t.is_derived ?? false,
+    derived_role: t.derived_role,
+    derived_from: t.derived_from,
+  }));
+  const allTypeRefs: DataTypeRef[] = (types ?? []).map((t) => ({
+    id: t.id,
+    key: t.key,
+    label_ko: t.label_ko,
+    input_type: t.input_type,
+    options: t.options,
+  }));
+
   return (
     <>
       <PageHeader
@@ -92,6 +125,9 @@ export default async function StudentDataTypesPage() {
         }
       />
       <div className="p-6 space-y-4">
+        {!error && types && types.length > 0 ? (
+          <InlineDataTypeEditor types={editableTypes} allTypes={allTypeRefs} />
+        ) : null}
         {error ? (
           <Card className="p-6 text-sm text-destructive">
             데이터를 불러오지 못했습니다: {error.message}

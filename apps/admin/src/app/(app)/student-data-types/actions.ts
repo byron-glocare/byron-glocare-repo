@@ -68,6 +68,8 @@ export type SaveDataTypeState =
   | {
       error?: string;
       fieldErrors?: Record<string, string>;
+      /** 인라인 저장 성공 (화면 이동 없이) */
+      ok?: boolean;
     }
   | undefined;
 
@@ -265,6 +267,8 @@ export async function saveDataTypeAction(
   }
 
   revalidatePath("/student-data-types");
+  // 인라인 모드: 화면 이동 없이 성공만 반환
+  if (formData.get("__inline") === "1") return { ok: true };
   redirect("/student-data-types");
 }
 
