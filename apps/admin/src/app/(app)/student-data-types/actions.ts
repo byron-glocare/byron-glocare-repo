@@ -36,7 +36,7 @@ const INPUT_TYPES = [
 ] as const;
 
 const SCOPES = ["university_info", "document_fill"] as const;
-const LINK_TYPES = ["independent", "same", "reference"] as const;
+const LINK_TYPES = ["independent", "reference"] as const;
 
 const optionSchema = z.object({
   value: z.string().min(1),
@@ -156,18 +156,6 @@ export async function saveDataTypeAction(
   // 연결성 파싱 — link_type 이 진실의 원천. is_derived 는 reference 와 동기화.
   const linkType = data.link_type;
 
-  // 동일(same): 대표키 검증
-  let sameAsKey: string | null = null;
-  if (linkType === "same") {
-    sameAsKey = emptyToNull(formData.get("same_as_key"));
-    if (!sameAsKey) {
-      return { fieldErrors: { same_as_key: "대표 항목을 선택하세요." } };
-    }
-    if (sameAsKey === data.key) {
-      return { fieldErrors: { same_as_key: "자기 자신을 대표로 지정할 수 없습니다." } };
-    }
-  }
-
   // 참조(reference) = 기존 파생 메커니즘
   const isDerived = linkType === "reference";
   const derivedRole = isDerived ? emptyToNull(formData.get("derived_role")) : null;
@@ -222,7 +210,6 @@ export async function saveDataTypeAction(
       scope: data.scope,
       aliases,
       link_type: linkType,
-      same_as_key: sameAsKey,
       is_derived: isDerived,
       derived_role: derivedRole,
       derived_from: derivedFrom,
@@ -250,7 +237,6 @@ export async function saveDataTypeAction(
       scope: data.scope,
       aliases,
       link_type: linkType,
-      same_as_key: sameAsKey,
       is_derived: isDerived,
       derived_role: derivedRole,
       derived_from: derivedFrom,
@@ -335,17 +321,13 @@ export async function getDataTypeUsageAction(
       .contains("required_data_type_keys", [key]),
     admin
       .from("study_student_data_types")
-      .select("key, label_ko, derived_from, same_as_key, link_type")
-      .or("is_derived.eq.true,link_type.eq.same"),
+      .select("key, label_ko, derived_from")
+      .eq("is_derived", true),
   ]);
 
-  // 파생/동일 참조 — selector·map·same_as_key 가 이 key 를 가리키는 항목
+  // 파생 참조 — selector·map 이 이 key 를 가리키는 항목
   const derivedRefs: string[] = [];
   for (const t of derivedRes.data ?? []) {
-    if (t.same_as_key === key) {
-      derivedRefs.push(`${t.label_ko} (${t.key}) [동일]`);
-      continue;
-    }
     const df = t.derived_from as
       | { selector?: string; map?: Record<string, string> }
       | null;

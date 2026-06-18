@@ -112,50 +112,24 @@ export async function GET(
   }
   const dataKeysArr = Array.from(dataKeys);
 
-  // 1) 바인딩 키들의 타입·연결성 조회 (동일 멤버 → 대표키 파악)
-  const { data: types } =
-    dataKeysArr.length > 0
-      ? await supabase
-          .from("study_student_data_types")
-          .select("key, input_type, link_type, same_as_key")
-          .in("key", dataKeysArr)
-      : {
-          data: [] as Array<{
-            key: string;
-            input_type: string;
-            link_type: string | null;
-            same_as_key: string | null;
-          }>,
-        };
-
-  // 동일(same) 멤버 → 대표키 치환 맵
-  const sameMap = new Map<string, string>();
-  for (const t of types ?? []) {
-    if (t.link_type === "same" && t.same_as_key) sameMap.set(t.key, t.same_as_key);
-  }
-  const canonicalKeys = Array.from(new Set(sameMap.values()));
-  // 실제 값을 읽을 키 = 바인딩 키 + 대표키
-  const valueKeys = Array.from(new Set([...dataKeysArr, ...canonicalKeys]));
-
-  // 2) 값 + 대표키 타입 + 작문초안 조회
-  const [{ data: values }, { data: canonTypes }, { data: drafts }] =
+  const [{ data: types }, { data: values }, { data: drafts }] =
     await Promise.all([
-      valueKeys.length > 0
+      dataKeysArr.length > 0
+        ? supabase
+            .from("study_student_data_types")
+            .select("key, input_type")
+            .in("key", dataKeysArr)
+        : Promise.resolve({
+            data: [] as Array<{ key: string; input_type: string }>,
+          }),
+      dataKeysArr.length > 0
         ? supabase
             .from("study_student_data_values")
             .select("data_type_key, value")
             .eq("student_id", id)
-            .in("data_type_key", valueKeys)
+            .in("data_type_key", dataKeysArr)
         : Promise.resolve({
             data: [] as Array<{ data_type_key: string; value: Json }>,
-          }),
-      canonicalKeys.length > 0
-        ? supabase
-            .from("study_student_data_types")
-            .select("key, input_type")
-            .in("key", canonicalKeys)
-        : Promise.resolve({
-            data: [] as Array<{ key: string; input_type: string }>,
           }),
       essayIdx.size > 0
         ? supabase
@@ -172,13 +146,8 @@ export async function GET(
           }),
     ]);
 
-  const inputTypeMap = new Map<string, string>();
-  for (const t of types ?? []) inputTypeMap.set(t.key, t.input_type);
-  for (const t of canonTypes ?? [])
-    if (!inputTypeMap.has(t.key)) inputTypeMap.set(t.key, t.input_type);
+  const inputTypeMap = new Map((types ?? []).map((t) => [t.key, t.input_type]));
   const valueMap = new Map((values ?? []).map((v) => [v.data_type_key, v.value]));
-  // 동일 멤버는 대표키 값으로 read-through
-  const srcKey = (bk: string) => sameMap.get(bk) ?? bk;
   const draftMap = new Map(
     (drafts ?? []).map((d) => [
       d.question_index,
@@ -201,8 +170,7 @@ export async function GET(
       const n = Number(bk.slice("essay:".length));
       return draftMap.get(n) ?? "";
     }
-    const sk = srcKey(bk);
-    return formatValue(valueMap.get(sk), inputTypeMap.get(sk) ?? "text");
+    return formatValue(valueMap.get(bk), inputTypeMap.get(bk) ?? "text");
   };
 
   const norm = (s: unknown) => String(s ?? "").trim().toLowerCase();
@@ -280,15 +248,14 @@ export async function GET(
   for (const ov of overlays) {
     const kind = ov.kind ?? "text";
     const bk = bindKey(ov);
-    const sk = srcKey(bk);
-    const it = inputTypeMap.get(sk) ?? "text";
+    const it = inputTypeMap.get(bk) ?? "text";
     // 종류가 이미지/사인 이거나, 연결된 데이터가 파일류면 이미지로 렌더
     const asImage =
       kind === "image" || kind === "signature" || FILE_TYPES.has(it);
     if (kind === "check") {
-      checks.set(ov.key, isChecked(valueMap.get(sk), ov.matchValue));
+      checks.set(ov.key, isChecked(valueMap.get(bk), ov.matchValue));
     } else if (asImage) {
-      const val = valueMap.get(sk);
+      const val = valueMap.get(bk);
       imageJobs.push(
         imageFromValue(val).then((img) => {
           if (img) images.set(ov.key, img);

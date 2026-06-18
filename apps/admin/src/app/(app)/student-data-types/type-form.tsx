@@ -72,8 +72,7 @@ export type EditableDataType = {
   is_active: boolean;
   scope: string;
   aliases: string[];
-  link_type: "independent" | "same" | "reference";
-  same_as_key: string | null;
+  link_type: "independent" | "reference";
   is_derived: boolean;
   derived_role: string | null;
   derived_from: DerivedFrom | null;
@@ -84,11 +83,6 @@ const LINK_TYPE_OPTIONS = [
     value: "independent",
     label: "독립",
     desc: "단독 값. 학생이 직접 입력합니다. (대부분의 항목)",
-  },
-  {
-    value: "same",
-    label: "동일",
-    desc: "다른 항목과 개념상 같은 값. 대표 항목에만 입력하고 이 항목은 그 값을 그대로 가져옵니다. (예: 본국 주소 = 베트남 거주 주소)",
   },
   {
     value: "reference",
@@ -150,12 +144,9 @@ export function DataTypeForm({
   }
 
   // 연결성 설정
-  const [linkType, setLinkType] = useState<"independent" | "same" | "reference">(
+  const [linkType, setLinkType] = useState<"independent" | "reference">(
     dataType?.link_type ??
       (dataType?.is_derived ? "reference" : "independent")
-  );
-  const [sameAsKey, setSameAsKey] = useState<string>(
-    dataType?.same_as_key ?? ""
   );
   const isDerived = linkType === "reference";
   const [derivedRole, setDerivedRole] = useState<string>(
@@ -166,11 +157,6 @@ export function DataTypeForm({
   );
   const [derivedMap, setDerivedMap] = useState<Record<string, string>>(
     dataType?.derived_from?.map ?? {}
-  );
-
-  // 동일(same) 대표 후보 = 자기 자신·다른 동일/참조 항목이 아닌 항목
-  const sameCandidates = allTypes.filter(
-    (t) => t.key !== dataType?.key
   );
 
   // 선택자 후보 = select 타입이면서 자기 자신이 아닌 항목
@@ -505,30 +491,6 @@ export function DataTypeForm({
             ))}
           </div>
 
-          {/* 동일: 대표 항목 선택 */}
-          {linkType === "same" ? (
-            <div className="border-l-2 border-primary/30 pl-4">
-              <Field label="대표 항목 (이 키의 값을 가져옴)">
-                <select
-                  value={sameAsKey}
-                  onChange={(e) => setSameAsKey(e.target.value)}
-                  className="rounded-md border border-input bg-background px-3 py-2 text-sm"
-                >
-                  <option value="">— 대표 항목 선택 —</option>
-                  {sameCandidates.map((t) => (
-                    <option key={t.id} value={t.key}>
-                      {t.label_ko} ({t.key})
-                    </option>
-                  ))}
-                </select>
-                <span className="text-xs text-muted-foreground">
-                  학생은 대표 항목에만 입력하고, 이 항목은 그 값을 그대로
-                  사용합니다.
-                </span>
-              </Field>
-            </div>
-          ) : null}
-
           {/* 참조: 선택 기준 + 매핑 */}
           {linkType === "reference" ? (
             <div className="space-y-3 border-l-2 border-primary/30 pl-4">
@@ -624,11 +586,6 @@ export function DataTypeForm({
           ) : null}
 
           <input type="hidden" name="link_type" value={linkType} />
-          <input
-            type="hidden"
-            name="same_as_key"
-            value={linkType === "same" ? sameAsKey : ""}
-          />
           <input type="hidden" name="is_derived" value={isDerived ? "on" : ""} />
           <input
             type="hidden"

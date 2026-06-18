@@ -22,8 +22,7 @@ export type StudentDataTypeRow = {
   hint_ko: string | null;
   hint_vi: string | null;
   is_essay_basis: boolean;
-  link_type: "independent" | "same" | "reference" | null;
-  same_as_key: string | null;
+  link_type: "independent" | "reference" | null;
   is_derived: boolean | null;
   derived_from: { selector: string; map: Record<string, string> } | null;
 };

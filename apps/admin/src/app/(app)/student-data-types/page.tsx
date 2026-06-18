@@ -98,7 +98,6 @@ export default async function StudentDataTypesPage() {
     scope: t.scope,
     aliases: t.aliases ?? [],
     link_type: t.link_type ?? (t.is_derived ? "reference" : "independent"),
-    same_as_key: t.same_as_key ?? null,
     is_derived: t.is_derived ?? false,
     derived_role: t.derived_role,
     derived_from: t.derived_from,
@@ -178,11 +177,6 @@ export default async function StudentDataTypesPage() {
                             <span className="text-xs text-muted-foreground">
                               {t.label_vi}
                             </span>
-                            {(t.link_type ?? (t.is_derived ? "reference" : "independent")) === "same" ? (
-                              <Badge variant="secondary" className="text-[10px]">
-                                동일 → {t.same_as_key}
-                              </Badge>
-                            ) : null}
                             {(t.link_type ?? (t.is_derived ? "reference" : "independent")) === "reference" ? (
                               <Badge variant="secondary" className="text-[10px]">
                                 참조
