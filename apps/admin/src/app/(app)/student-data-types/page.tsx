@@ -170,8 +170,14 @@ export default async function StudentDataTypesPage() {
                           {t.key}
                         </TableCell>
                         <TableCell>
-                          <div className="flex items-center gap-1.5">
+                          <div
+                            className="flex items-center gap-1.5 truncate"
+                            title={t.hint_ko ? `💡 ${t.hint_ko}` : undefined}
+                          >
                             <span className="font-medium">{t.label_ko}</span>
+                            <span className="text-xs text-muted-foreground">
+                              {t.label_vi}
+                            </span>
                             {(t.link_type ?? (t.is_derived ? "reference" : "independent")) === "same" ? (
                               <Badge variant="secondary" className="text-[10px]">
                                 동일 → {t.same_as_key}
@@ -187,15 +193,10 @@ export default async function StudentDataTypesPage() {
                                 별칭 {t.aliases.length}
                               </Badge>
                             ) : null}
+                            {t.hint_ko ? (
+                              <span className="text-muted-foreground/70">💡</span>
+                            ) : null}
                           </div>
-                          <div className="text-xs text-muted-foreground">
-                            {t.label_vi}
-                          </div>
-                          {t.hint_ko ? (
-                            <div className="mt-1 text-xs text-muted-foreground line-clamp-2">
-                              💡 {t.hint_ko}
-                            </div>
-                          ) : null}
                         </TableCell>
                         <TableCell>
                           <Badge variant="outline" className="text-xs">
