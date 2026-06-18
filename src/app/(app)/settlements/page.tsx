@@ -24,11 +24,15 @@ import { computeSettlementSummary } from "@/lib/settlement";
 import { computeCustomerStatus } from "@/lib/customer-status";
 import { SettlementHistoryRow } from "@/components/settlement-history-row";
 import { SettlementByCustomerView } from "@/components/settlement-by-customer-view";
+import {
+  SettlementReservationListView,
+  type ReservationListRow,
+} from "@/components/settlement-reservation-list-view";
 import { PendingTabClient } from "@/components/pending-tab-client";
 
 export const dynamic = "force-dynamic";
 
-const VALID_TABS = ["pending", "history", "customers"] as const;
+const VALID_TABS = ["pending", "history", "customers", "reservations"] as const;
 type TabKey = (typeof VALID_TABS)[number];
 
 type SearchParams = Promise<{
@@ -378,6 +382,7 @@ export default async function SettlementsPage({
   // server 가 어느 탭이든 모든 데이터를 계산해야 사용자가 [교육생별 정산] 탭 눌렀을 때
   // 즉시 표시됨. (URL 변경 없이 client 토글만으로 동작)
   let byCustomerRows: ByCustomerRow[] = [];
+  let reservationListRows: ReservationListRow[] = [];
   {
     const [
       { data: allCustomers },
@@ -514,6 +519,68 @@ export default async function SettlementsPage({
         "ko"
       )
     );
+
+    // 예약금 조회 — 교육예약금 (reservation_payments) + 웰컴팩 예약금
+    // (welcome_pack_payments.reservation_*) 통합 시간순.
+    const customerMini = new Map(
+      (allCustomers ?? []).map((c) => [c.id, c])
+    );
+    const educationItems: ReservationListRow[] = (allReservations ?? []).map(
+      (r) => {
+        const c = customerMini.get(r.customer_id);
+        const center = c?.training_center_id
+          ? allCenterMap.get(c.training_center_id) ?? null
+          : null;
+        return {
+          key: `edu:${r.id}`,
+          date: r.payment_date ?? null,
+          type: "교육" as const,
+          customerId: r.customer_id,
+          customerName: c
+            ? c.name_kr || c.name_vi || "(이름 없음)"
+            : "(이름 없음)",
+          customerCode: c?.code ?? "—",
+          centerName: center?.name ?? null,
+          amount: r.amount,
+          refundAmount: r.refund_amount ?? 0,
+          refundDate: r.refund_date ?? null,
+          refundReason: r.refund_reason ?? null,
+        };
+      }
+    );
+    const welcomeItems: ReservationListRow[] = (allWelcomePack ?? [])
+      // 예약금 미입력 (amount=0 && date=null) 은 의미 없는 row 라 제외
+      .filter(
+        (w) => (w.reservation_amount ?? 0) > 0 || w.reservation_date
+      )
+      .map((w) => {
+        const c = customerMini.get(w.customer_id);
+        const center = c?.training_center_id
+          ? allCenterMap.get(c.training_center_id) ?? null
+          : null;
+        return {
+          key: `wp:${w.id}`,
+          date: w.reservation_date ?? null,
+          type: "웰컴팩" as const,
+          customerId: w.customer_id,
+          customerName: c
+            ? c.name_kr || c.name_vi || "(이름 없음)"
+            : "(이름 없음)",
+          customerCode: c?.code ?? "—",
+          centerName: center?.name ?? null,
+          amount: w.reservation_amount ?? 0,
+          refundAmount: 0,
+          refundDate: null,
+          refundReason: null,
+        };
+      });
+    reservationListRows = [...educationItems, ...welcomeItems].sort((a, b) => {
+      // 시간순 내림차순. date null 은 맨 뒤.
+      if (!a.date && !b.date) return 0;
+      if (!a.date) return 1;
+      if (!b.date) return -1;
+      return b.date.localeCompare(a.date);
+    });
   }
 
   return (
@@ -525,7 +592,7 @@ export default async function SettlementsPage({
       />
       <div className="p-6">
         <Tabs defaultValue={tab} className="w-full">
-          <TabsList className="grid grid-cols-3 w-full h-10">
+          <TabsList className="grid grid-cols-4 w-full h-10">
             <TabsTrigger
               value="pending"
               className="text-sm data-active:bg-primary data-active:text-primary-foreground data-active:font-semibold"
@@ -546,6 +613,15 @@ export default async function SettlementsPage({
               className="text-sm data-active:bg-primary data-active:text-primary-foreground data-active:font-semibold"
             >
               교육생별 정산
+            </TabsTrigger>
+            <TabsTrigger
+              value="reservations"
+              className="text-sm data-active:bg-primary data-active:text-primary-foreground data-active:font-semibold"
+            >
+              예약금 조회{" "}
+              <Badge variant="secondary" className="ml-1.5">
+                {reservationListRows.length}건
+              </Badge>
             </TabsTrigger>
           </TabsList>
 
@@ -617,6 +693,10 @@ export default async function SettlementsPage({
 
           <TabsContent value="customers" className="mt-6 space-y-4">
             <SettlementByCustomerView rows={byCustomerRows} />
+          </TabsContent>
+
+          <TabsContent value="reservations" className="mt-6 space-y-4">
+            <SettlementReservationListView rows={reservationListRows} />
           </TabsContent>
         </Tabs>
       </div>
