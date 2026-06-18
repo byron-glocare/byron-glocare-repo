@@ -1,23 +1,12 @@
 "use client";
 
 /**
- * [시안] '한눈에 보기' 5번째 탭 — 4개 탭 (진행 단계 / 기본 정보 / 상담 / 정산)
- * 의 모든 폼을 한 페이지의 영역별 collapsible 카드로 통합. 평균 4개월 동안
- * 자주 들어오는 관리자가 한 화면에서 흐름 파악 + 편집까지 가능.
- *
- * 4개 탭은 그대로 유지 — 이 탭은 시안. 자체 ref / 자체 저장 사용해서 다른
- * 탭과 ref 충돌 없음. (같은 customer 데이터의 별개 인스턴스라 양쪽 탭에서
- * 동시 편집은 권장 X — 한쪽 저장 후 새로고침 필요.)
+ * '한눈에 보기' — 4개 영역 (진행 단계 / 기본 정보 / 상담 / 정산) 의 모든 폼을
+ * 한 페이지의 collapsible 카드로 통합. dirty 추적과 저장은 parent
+ * (CustomerEditTabs) 의 sticky [저장 / 취소 / 삭제] 세트 버튼이 담당.
  */
 
-import {
-  useEffect,
-  useRef,
-  useState,
-  useTransition,
-} from "react";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { useState, type Ref } from "react";
 import {
   BookOpen,
   Briefcase,
@@ -26,11 +15,9 @@ import {
   ChevronRight,
   ClipboardList,
   GraduationCap,
-  Loader2,
   MessageCircle,
   Phone,
   Receipt,
-  Save,
   Sparkles,
   User,
 } from "lucide-react";
@@ -55,7 +42,6 @@ import type {
 } from "@/types/database";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
 import {
@@ -106,6 +92,13 @@ type Props = {
   reminders: CustomerReminder[];
   careHomeLocked: boolean;
   settings: Record<string, Json | undefined>;
+  /** parent (CustomerEditTabs) 의 sticky 저장 버튼이 호출할 ref */
+  basicRef: Ref<CustomerBasicFormHandle | null>;
+  progressRef: Ref<CustomerProgressTabHandle | null>;
+  basicDirty: boolean;
+  progressDirty: boolean;
+  onBasicDirtyChange: (dirty: boolean) => void;
+  onProgressDirtyChange: (dirty: boolean) => void;
 };
 
 export function CustomerOverviewTab({
@@ -123,57 +116,18 @@ export function CustomerOverviewTab({
   reminders,
   careHomeLocked,
   settings,
+  basicRef,
+  progressRef,
+  basicDirty,
+  progressDirty,
+  onBasicDirtyChange,
+  onProgressDirtyChange,
 }: Props) {
-  const router = useRouter();
   const summary = computeCustomerStatus(progressInputs);
-
-  // 시안 자체 ref / dirty — 4탭과 분리 (ref 객체 자체가 다름)
-  const basicRef = useRef<CustomerBasicFormHandle | null>(null);
-  const progressRef = useRef<CustomerProgressTabHandle | null>(null);
-  const [basicDirty, setBasicDirty] = useState(false);
-  const [progressDirty, setProgressDirty] = useState(false);
-  const dirty = basicDirty || progressDirty;
-
-  const [pending, startTransition] = useTransition();
-
-  useEffect(() => {
-    if (!dirty) return;
-    const handler = (e: BeforeUnloadEvent) => {
-      e.preventDefault();
-      e.returnValue = "";
-    };
-    window.addEventListener("beforeunload", handler);
-    return () => window.removeEventListener("beforeunload", handler);
-  }, [dirty]);
-
-  function handleSave() {
-    if (!dirty) return;
-    startTransition(async () => {
-      const tasks: Array<Promise<{ ok: boolean; error?: string }>> = [];
-      if (basicDirty && basicRef.current) {
-        tasks.push(basicRef.current.submit());
-      }
-      if (progressDirty && progressRef.current) {
-        tasks.push(progressRef.current.submit());
-      }
-      const results = await Promise.all(tasks);
-      const errors = results.filter((r) => !r.ok);
-      if (errors.length > 0) {
-        toast.error("저장 실패", {
-          description: errors
-            .map((e) => e.error ?? "알 수 없는 오류")
-            .join(" / "),
-        });
-        return;
-      }
-      toast.success("저장되었습니다.");
-      router.refresh();
-    });
-  }
 
   return (
     <div className="space-y-4">
-      {/* === 헤더: 한 줄 요약 + 저장 버튼 === */}
+      {/* === 헤더: 한 줄 요약 === */}
       <Card className="p-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="space-y-1.5">
@@ -231,37 +185,6 @@ export function CustomerOverviewTab({
         <StageTrail summary={summary} />
       </Card>
 
-      {/* === 시안 안내 + 저장 카드 === */}
-      <Card className="p-3 bg-info/5 border-info/30">
-        <div className="flex items-center justify-between gap-3">
-          <div className="text-xs text-muted-foreground">
-            진행 단계와 기본 정보 영역에서 편집한 변경사항은 우측 저장 버튼을
-            눌러야 반영됩니다. 다른 탭에서 같은 항목을 동시 편집하면 충돌
-            가능 — 한쪽에서만 작업해주세요.
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-muted-foreground">
-              {dirty
-                ? "저장하지 않은 변경사항"
-                : "변경사항 없음"}
-            </span>
-            <Button
-              type="button"
-              size="sm"
-              onClick={handleSave}
-              disabled={!dirty || pending}
-            >
-              {pending ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : (
-                <Save className="size-4" />
-              )}
-              저장
-            </Button>
-          </div>
-        </div>
-      </Card>
-
       {/* === 영역별 collapsible === */}
       <SectionCard
         icon={<ClipboardList className="size-4" />}
@@ -275,7 +198,7 @@ export function CustomerOverviewTab({
           reminders={reminders}
           embedded
           ref={progressRef}
-          onDirtyChange={setProgressDirty}
+          onDirtyChange={onProgressDirtyChange}
         />
       </SectionCard>
 
@@ -295,7 +218,7 @@ export function CustomerOverviewTab({
           careHomeLocked={careHomeLocked}
           embedded
           ref={basicRef}
-          onDirtyChange={setBasicDirty}
+          onDirtyChange={onBasicDirtyChange}
         />
       </SectionCard>
 

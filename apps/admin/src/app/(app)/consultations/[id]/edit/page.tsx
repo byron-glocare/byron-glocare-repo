@@ -46,7 +46,7 @@ export default async function EditConsultationPage({
         breadcrumbs={[
           { href: "/customers", label: "교육생" },
           {
-            href: `/customers/${customer.id}?tab=consultations`,
+            href: `/customers/${customer.id}`,
             label: customer.name_vi || customer.name_kr || customer.code,
           },
           { label: "상담 일지 수정" },
