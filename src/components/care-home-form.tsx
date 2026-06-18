@@ -326,7 +326,7 @@ export function CareHomeForm({ mode, homeId, defaultValues }: Props) {
           </CardContent>
         </Card>
 
-        <div className="flex items-center justify-between">
+        <div className="sticky bottom-0 -mx-6 mt-8 border-t border-border bg-background/95 backdrop-blur px-6 py-3 flex items-center justify-between gap-2">
           {mode === "edit" && homeId ? (
             <Dialog>
               <DialogTrigger
