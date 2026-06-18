@@ -136,9 +136,14 @@ export default async function StudentDataTypesPage() {
                         <TableCell>
                           <div className="flex items-center gap-1.5">
                             <span className="font-medium">{t.label_ko}</span>
-                            {t.is_derived ? (
+                            {(t.link_type ?? (t.is_derived ? "reference" : "independent")) === "same" ? (
                               <Badge variant="secondary" className="text-[10px]">
-                                택1·파생
+                                동일 → {t.same_as_key}
+                              </Badge>
+                            ) : null}
+                            {(t.link_type ?? (t.is_derived ? "reference" : "independent")) === "reference" ? (
+                              <Badge variant="secondary" className="text-[10px]">
+                                참조
                               </Badge>
                             ) : null}
                             {t.aliases && t.aliases.length > 0 ? (

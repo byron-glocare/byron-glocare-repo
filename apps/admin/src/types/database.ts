@@ -1172,6 +1172,10 @@ export type Database = {
           is_active: boolean;
           scope: "university_info" | "document_fill";
           aliases: string[];
+          /** 연결성: 독립 | 동일(대표키 read-through) | 참조(선택 기반 파생) */
+          link_type: "independent" | "same" | "reference";
+          /** link_type='same' 일 때 값을 가져올 대표 데이터 key */
+          same_as_key: string | null;
           is_derived: boolean;
           derived_role: string | null;
           derived_from: { selector: string; map: Record<string, string> } | null;
@@ -1213,6 +1217,8 @@ export type Database = {
           is_active?: boolean;
           scope?: "university_info" | "document_fill";
           aliases?: string[];
+          link_type?: "independent" | "same" | "reference";
+          same_as_key?: string | null;
           is_derived?: boolean;
           derived_role?: string | null;
           derived_from?: { selector: string; map: Record<string, string> } | null;

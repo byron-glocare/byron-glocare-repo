@@ -6,9 +6,9 @@ type InputField = { key: string; label: string; type: string };
 
 /**
  * 작성서류 한 행의 액션 영역.
- *   - 데이터 시트(.docx): 항상 제공. 양식의 필요 표준데이터 + 학생 값을 정리한 문서(위치 무관, 100% 정확).
- *   - 원본양식 PDF: 좌표(field_overlays)가 셋업된 양식만. 원본 위에 값을 채운 PDF + 인라인 미리보기.
+ *   - 좌표 채움 PDF(본선): 좌표(field_overlays)가 셋업된 양식이면 주 버튼 + 인라인 미리보기.
  *     · inputFields(생성 시 입력칸: 날짜 등)가 있으면 입력값을 inputs 쿼리로 전달.
+ *   - 데이터 시트(.docx): 좌표가 없는 양식의 폴백. 좌표가 있으면 작은 보조 링크로만 노출.
  */
 export function WriteRowActions({
   docxUrl,
@@ -72,31 +72,39 @@ export function WriteRowActions({
       ) : null}
 
       <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
-        {/* 데이터 시트 — 항상 (기본) */}
-        <a
-          href={docxUrl}
-          className="rounded-md bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-800"
-        >
-          {sheetLabel}
-        </a>
-        {/* 원본양식 PDF — 좌표 셋업된 양식만 */}
-        {pdfPreview ? (
-          <button
-            type="button"
-            onClick={() => setOpen((v) => !v)}
-            className="rounded-md border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100"
-          >
-            {open ? closeLabel : previewLabel}
-          </button>
-        ) : null}
         {pdfDownload ? (
+          <>
+            {/* 좌표 채움 PDF — 본선 (주 버튼) */}
+            <a
+              href={pdfDownload}
+              className="rounded-md bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-800"
+            >
+              {pdfLabel}
+            </a>
+            <button
+              type="button"
+              onClick={() => setOpen((v) => !v)}
+              className="rounded-md border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100"
+            >
+              {open ? closeLabel : previewLabel}
+            </button>
+            {/* 데이터 시트 — 보조(폴백). 좌표 없는 양식 대비용. */}
+            <a
+              href={docxUrl}
+              className="text-xs text-slate-400 underline underline-offset-2 hover:text-slate-600"
+            >
+              {sheetLabel}
+            </a>
+          </>
+        ) : (
+          /* 좌표 미설정 양식 — 데이터 시트가 유일한 출력 */
           <a
-            href={pdfDownload}
-            className="rounded-md border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100"
+            href={docxUrl}
+            className="rounded-md bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-800"
           >
-            {pdfLabel}
+            {sheetLabel}
           </a>
-        ) : null}
+        )}
       </div>
       {open && pdfPreview ? (
         <iframe

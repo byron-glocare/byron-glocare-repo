@@ -341,6 +341,9 @@ export type StudyStudentDataType = {
   // B5 — 표준데이터 재설계 컬럼
   scope: StudentDataScope;
   aliases: string[] | null;
+  // 연결성(독립/동일/참조) — 0030
+  link_type: "independent" | "same" | "reference" | null;
+  same_as_key: string | null;
   is_derived: boolean;
   derived_role: string | null;
   derived_from: StudentDataDerivedFrom | null;

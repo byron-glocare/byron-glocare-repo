@@ -44,8 +44,11 @@ export default async function StudentDataPage({
   const isFormImage = (d: { key: string; label_ko: string; input_type: string }) =>
     d.input_type === "file" &&
     /사진|photo|증명|이미지|image/i.test(`${d.key} ${d.label_ko}`);
+  // 동일(same) 멤버는 대표 항목에서 값을 가져오므로 입력칸을 노출하지 않는다.
   const nonFile = dataTypes.filter(
-    (d) => d.input_type !== "file" || isFormImage(d)
+    (d) =>
+      d.link_type !== "same" &&
+      (d.input_type !== "file" || isFormImage(d))
   );
   const nonFileKeys = new Set(nonFile.map((d) => d.key));
 

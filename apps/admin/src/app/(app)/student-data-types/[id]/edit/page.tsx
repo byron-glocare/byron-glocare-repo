@@ -57,6 +57,8 @@ export default async function EditDataTypePage({
     is_active: t.is_active,
     scope: t.scope,
     aliases: t.aliases ?? [],
+    link_type: t.link_type ?? (t.is_derived ? "reference" : "independent"),
+    same_as_key: t.same_as_key ?? null,
     is_derived: t.is_derived ?? false,
     derived_role: t.derived_role,
     derived_from: t.derived_from,
