@@ -183,7 +183,73 @@ npx vitest run            # test
 1. `npx tsc --noEmit` 통과 확인
 2. `npx vitest run` 통과 확인
 3. 관련 마이그레이션 만들었으면 `supabase/migrations/00NN_xxx.sql` 추가 + 사용자에게 SQL 알림
-4. commit 은 자동 (사용자 글로벌 규칙). push 는 사용자 명시 요청 시에만.
+4. commit 은 자동 (사용자 글로벌 규칙). prod 까지 가야 하면 [[prod_sync_clone]] 흐름.
+
+---
+
+## 📋 다음 채팅 우선순위 작업 (2026-06-16 정리)
+
+### 🔥 묶음 B — 큰 작업, fresh 컨텍스트로 시작 권장
+
+#### B-1: 교육생 상세 탭 시스템 폐기 → "한눈에 보기" 단일 화면 통합
+
+**현재**: `/customers/[id]` 가 4개 탭 (기본정보 / 진행단계 / 상담 / 정산) + 5번째 모아보기 (한눈에 보기) 탭
+
+**변경**:
+- 4개 탭 모두 제거, "한눈에 보기" 만 남김 (탭바 자체 제거)
+- 모아보기 전용 저장 버튼 제거
+- 다른 탭에서 쓰던 [저장 / 삭제 / 취소] 세트로 통일 (한 곳에 한 세트만)
+
+**영향 파일** (확인 필요):
+- `apps/admin/src/components/customer-edit-tabs.tsx` — 탭 컨테이너
+- `apps/admin/src/components/customer-basic-form.tsx`
+- `apps/admin/src/components/customer-progress-tab.tsx`
+- `apps/admin/src/components/customer-consultations-tab.tsx`
+- `apps/admin/src/components/customer-settlement-tab.tsx`
+- `apps/admin/src/components/customer-overview-tab.tsx` (= 한눈에 보기)
+- `apps/admin/src/app/(app)/customers/[id]/page.tsx` — 페이지
+
+**회귀 risk 큼** — 각 탭의 server action / state / form 패턴 일치하는지 분석 후 통합. 단순 코드 복붙 아님.
+
+#### B-2: "요양보호" 모든 메뉴의 저장/삭제/취소 버튼 위치 → 최하단
+
+**의미**: 사이드바 "요양보호사" 그룹의 모든 페이지 (교육생/교육원/요양원/상담/정산/알림발송/설정/대시보드?) 의 폼 페이지에서 [저장·삭제·취소] 세트 버튼이 중간에 있는 경우 → 최하단으로 일관 이동.
+
+**접근**:
+1. 먼저 사이드바 nav.ts 의 "요양보호사" 그룹 확인 → 대상 페이지 list-up
+2. 각 페이지의 button 위치 확인 (이미 최하단이면 skip)
+3. 패턴 통일
+
+광범위 변경. 한 페이지씩 하면서 사용자 검증 받기 권장.
+
+---
+
+### 🟢 묶음 A — 다음 채팅에서 *먼저* 처리할 작은-중간 작업
+
+#### A-1: 정산 메뉴에 "예약금 조회" 탭 추가
+- 4번째 탭 추가 (현재 정산예정/완료내역/교육생별정산)
+- 교육예약금 (reservation_payments) + 웰컴팩 예약금 (welcome_pack_payments) 통합 시간순
+- 타입 컬럼으로 구분 ("교육" / "웰컴팩")
+- 기존 표 스타일 그대로
+
+#### A-2: 알림 발송 → 신규 교육생 — 검색 + 카드 default 닫힘
+- `apps/admin/src/components/sms-new-student-view.tsx` 또는 `apps/admin/src/app/(app)/sms/new-student/page.tsx`
+- 상단에 교육원 검색창 추가
+- 교육원 카드 default 닫힘 (지금은 다 open) → 정산 예정 카드처럼 expand/collapse
+
+#### A-3: 웰컴팩 결제 — 회차 추가 + 메모
+- `apps/admin/src/components/customer-settlement-tab.tsx` 의 `WelcomePackPaymentCard`
+- 현재 예약/중도/잔금 3분할 고정
+- 변경: 추가 버튼으로 4,5회차 동적 추가 (DB 컬럼 추가 필요할 수도 — 마이그레이션)
+- 메모 필드 추가 (welcome_pack_payments 에 `notes` 컬럼)
+
+---
+
+## 📁 작업 환경 빠른 참조
+
+- **현재 작업 위치**: `C:\dev\glocare\apps\admin` (모노레포)
+- **prod sync push 채널**: `C:\dev\repos\admin-prod` (별도 clone — [[prod_sync_clone]])
+- **빌드/테스트**: `cd C:\dev\glocare\apps\admin && npx tsc --noEmit && npx vitest run`
 
 ---
 

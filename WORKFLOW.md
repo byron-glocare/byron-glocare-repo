@@ -73,9 +73,8 @@ npx vitest run          # tests
 
 ### Push
 - **push 는 사용자 명시 요청 시에만** (글로벌 규칙)
-- monorepo 의 git 은 cutover 전까지 push 흐름이 미정 → push 명령 받으면 사용자에게 어디로 push 할지 확인:
-  - 일반 작업 commit → `git push origin <branch>` (어떤 브랜치든 main 제외)
-  - cutover 가야 prod 자동 배포
+- monorepo 의 git 은 cutover 전이라 main push 흐름이 막혀있음 (다른 채팅창 hold 정책 보호)
+- **cutover 전 prod 배포는 별도 clone 통한 sync push 흐름 사용** — 아래 Section 4-A 참고
 
 ---
 
@@ -89,12 +88,54 @@ npx vitest run          # tests
 - **monorepo `main` 브랜치로 push 시 → Vercel 자동 prod 배포 (3개 앱 모두)**
 - 자세한 cutover 절차: [`DEPLOYMENT_CUTOVER.md`](./DEPLOYMENT_CUTOVER.md)
 
-### 그럼 지금은 어떻게 prod 가나?
-- 사용자가 "이 작업을 prod 보내자" 명시 시:
-  - **admin** 변경 → 사용자가 작업 위치를 옛 standalone repo (또는 그 worktree) 로 옮겨서 다시 작업 + push, 또는 cutover 결단
-  - **abroad / caregiver** 변경 → 동일
-- 즉 **cutover 전까지는 모노레포 작업이 자연스럽게 prod 안 감** (이게 의도된 hold)
-- 사용자가 prod 가야 한다고 결단하면 → [`DEPLOYMENT_CUTOVER.md`](./DEPLOYMENT_CUTOVER.md) 진행
+## 4-A. cutover 전 임시 prod 배포 흐름 (admin 전용)
+
+**2026-06-15 셋업** — 사용자가 monorepo 에서 작업해도 prod 까지 가야 할 때:
+
+### 1회 셋업 (이미 완료)
+```powershell
+git clone https://github.com/byron-glocare/byron-glocare-repo.git C:\dev\repos\admin-prod
+cd C:\dev\repos\admin-prod
+git config user.name "Glocare Admin"
+git config user.email "kajkaj202@gmail.com"
+```
+
+→ `C:\dev\repos\admin-prod` 가 byron-glocare-repo 의 *옛 standalone 구조 그대로* (root에 src/) 인 워크트리. push 채널 전용.
+
+### 매 admin 작업의 push 절차
+```powershell
+# 1. monorepo apps/admin 에서 코드 변경
+# 2. tsc + vitest 검증 통과 후
+# 3. monorepo local commit (push X — main 보호)
+cd C:\dev\glocare
+git add apps/admin/src/<changed-files>
+git commit -F <msg-file>   # PowerShell here-string 은 -m 파싱 에러 — 임시 파일 필수
+
+# 4. clone 으로 sync — apps/admin/<path> → clone/<같은 path>
+cd C:\dev\repos\admin-prod
+git fetch origin && git pull --ff-only origin main
+# Copy-Item "C:\dev\glocare\apps\admin\<file>" ".\<file>" -Force
+
+# 5. clone 에서 commit + push → Vercel 자동 prod 배포
+git add <files>
+git commit -F <msg-file>
+git push origin main
+```
+
+### 핵심 주의
+- **abroad / caregiver 는 이 흐름 적용 안 됨** — 그쪽 prod 가 필요하면 사용자가 명시
+- monorepo `main` HEAD 는 다른 채팅창의 hold 작업 포함 — *절대 byron-glocare-repo main 으로 force push 하지 말 것*
+- commit 메시지: PowerShell 의 `git commit -m "$msg"` 는 multiline 파싱 에러. 임시 파일 + `-F` 필수
+- 파일이 다수면 `apps/admin/src/X` → `src/X` 처럼 prefix 만 다르므로 path 변환 주의
+
+### cutover 완료 후
+이 흐름 폐기 — `C:\dev\glocare` 에서 직접 `git push origin main` 으로 prod. [`DEPLOYMENT_CUTOVER.md`](./DEPLOYMENT_CUTOVER.md) 참고.
+
+---
+
+## 4-B. prod 안 가도 되는 작업
+- 사용자가 명시적으로 "prod 안 가도 됨" / "dev 만" / "hold" 등 표현하면 monorepo 에 local commit 만 (push X)
+- 일반 default: 명시 없으면 *prod 까지 가야 한다* 고 가정 (사용자 의도가 "개발=배포 동시")
 
 ---
 
