@@ -156,8 +156,8 @@ export default async function StudentDataTypesPage() {
                       <TableHead className="w-48">key</TableHead>
                       <TableHead>한국어 / 베트남어</TableHead>
                       <TableHead className="w-24">입력</TableHead>
-                      <TableHead className="w-20 text-center">작문기초</TableHead>
-                      <TableHead className="w-16 text-center">기본필수</TableHead>
+                      <TableHead className="w-16 text-center">필수</TableHead>
+                      <TableHead className="w-24 text-center">작문용 데이터</TableHead>
                       <TableHead className="w-16 text-center">활성</TableHead>
                       <TableHead className="w-16 text-right"></TableHead>
                     </TableRow>
@@ -207,10 +207,10 @@ export default async function StudentDataTypesPage() {
                           </Badge>
                         </TableCell>
                         <TableCell className="text-center">
-                          {t.is_essay_basis ? "✓" : "—"}
+                          {t.is_default_required ? "✓" : "—"}
                         </TableCell>
                         <TableCell className="text-center">
-                          {t.is_default_required ? "✓" : "—"}
+                          {t.is_essay_basis ? "✓" : "—"}
                         </TableCell>
                         <TableCell className="text-center">
                           {t.is_active ? (
