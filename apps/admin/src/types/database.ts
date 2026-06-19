@@ -1376,10 +1376,12 @@ export type Database = {
             size?: number;
             maxWidth?: number;
             kind?: "text" | "image" | "signature" | "check";
-            source?: "student" | "input";
+            source?: "student" | "input" | "static";
             dataKey?: string;
             inputLabel?: string;
             inputType?: "date" | "text";
+            staticText?: string;
+            datePart?: "year" | "month" | "day";
             matchValue?: string;
           }>;
           created_at: string;
@@ -1434,10 +1436,12 @@ export type Database = {
             size?: number;
             maxWidth?: number;
             kind?: "text" | "image" | "signature" | "check";
-            source?: "student" | "input";
+            source?: "student" | "input" | "static";
             dataKey?: string;
             inputLabel?: string;
             inputType?: "date" | "text";
+            staticText?: string;
+            datePart?: "year" | "month" | "day";
             matchValue?: string;
           }>;
           created_at?: string;

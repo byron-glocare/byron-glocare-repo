@@ -126,10 +126,12 @@ export type Overlay = {
   size?: number; // 최대 글자 크기 (박스보다 크면 자동 축소)
   maxWidth?: number; // 레거시
   kind?: OverlayKind; // 박스 종류 (기본 text)
-  source?: "student" | "input"; // text 출처
+  source?: "student" | "input" | "static"; // text 출처
   dataKey?: string; // 연결 키 (학생데이터/이미지/체크)
   inputLabel?: string; // 생성 시 입력 라벨
   inputType?: "date" | "text"; // 생성 시 입력 형식
+  staticText?: string; // source=static: 관리자 고정 텍스트
+  datePart?: "year" | "month" | "day"; // input·date: 년/월/일 분리 출력
   matchValue?: string; // check 일치값
 };
 
@@ -144,10 +146,12 @@ export type RawOverlay = {
   size?: number;
   maxWidth?: number;
   kind?: OverlayKind;
-  source?: "student" | "input";
+  source?: "student" | "input" | "static";
   dataKey?: string;
   inputLabel?: string;
   inputType?: "date" | "text";
+  staticText?: string;
+  datePart?: "year" | "month" | "day";
   matchValue?: string;
 };
 
@@ -196,6 +200,8 @@ function toBox(o: RawOverlay): Overlay {
     dataKey: o.dataKey ?? (kind === "text" && o.source === "input" ? undefined : o.key),
     inputLabel: o.inputLabel,
     inputType: o.inputType,
+    staticText: o.staticText,
+    datePart: o.datePart,
     matchValue: o.matchValue,
   };
   if (o.w && o.h) {
@@ -252,7 +258,7 @@ export function OverlayPicker({
       choices[0]?.key ??
       ""
   );
-  const [defaultSize, setDefaultSize] = useState(DEFAULT_SIZE);
+  const defaultSize = DEFAULT_SIZE;
   const [saving, setSaving] = useState(false);
   const [autoBusy, setAutoBusy] = useState(false);
 
@@ -354,6 +360,70 @@ export function OverlayPicker({
     setActiveKey(key);
   }
 
+  const uid = () =>
+    typeof crypto !== "undefined" && crypto.randomUUID
+      ? crypto.randomUUID()
+      : `box-${Math.round(performance.now())}-${Math.round(Math.random() * 1e6)}`;
+
+  // 고정 텍스트 박스 — 관리자가 미리 적어두는 값(예: "✓", "해당", 도장 대체).
+  function addStaticBox() {
+    const page0 = pageNum - 1;
+    const cx = (canvasRef.current?.width ?? 400) / scale / 2;
+    const cy = (canvasRef.current?.height ?? 600) / scale / 2;
+    const h = Math.round(defaultSize * 1.6);
+    const key = uid();
+    setOverlays((cur) => [
+      ...cur,
+      {
+        key,
+        page: page0,
+        x: Math.max(0, cx - 30),
+        y: Math.max(0, cy - h / 2),
+        w: 60,
+        h,
+        size: defaultSize,
+        kind: "text",
+        source: "static",
+        staticText: "",
+      },
+    ]);
+    setActiveKey(key);
+  }
+
+  // 작성일 년/월/일 — 생성 시 정하는 날짜를 부분만 출력하는 3개 박스 (라벨 공유).
+  function addDateParts() {
+    const page0 = pageNum - 1;
+    const cx = (canvasRef.current?.width ?? 400) / scale / 2;
+    const cy = (canvasRef.current?.height ?? 600) / scale / 2;
+    const h = Math.round(defaultSize * 1.6);
+    const parts: Array<{ datePart: "year" | "month" | "day"; w: number }> = [
+      { datePart: "year", w: 44 },
+      { datePart: "month", w: 28 },
+      { datePart: "day", w: 28 },
+    ];
+    let x = Math.max(0, cx - 60);
+    const boxes: Overlay[] = parts.map((p) => {
+      const box: Overlay = {
+        key: uid(),
+        page: page0,
+        x,
+        y: Math.max(0, cy - h / 2),
+        w: p.w,
+        h,
+        size: defaultSize,
+        kind: "text",
+        source: "input",
+        inputType: "date",
+        inputLabel: "작성일",
+        datePart: p.datePart,
+      };
+      x += p.w + 22; // 인쇄된 "년 월 일" 글자 자리만큼 띄움
+      return box;
+    });
+    setOverlays((cur) => [...cur, ...boxes]);
+    if (boxes[0]) setActiveKey(boxes[0].key);
+  }
+
   // 빈 곳 클릭 → 선택 박스를 그 자리(좌상단)로 이동, 없으면 학생데이터 텍스트 박스 생성
   function handleCanvasClick(e: React.MouseEvent<HTMLCanvasElement>) {
     if (!activeKey) {
@@ -410,8 +480,20 @@ export function OverlayPicker({
       return o.dataKey ? `[이미지] ${labelOf(o.dataKey)}` : "[이미지] 연결필요";
     if (kind === "signature")
       return o.dataKey ? `[사인] ${labelOf(o.dataKey)}` : "[사인] 연결필요";
-    if (o.source === "input")
-      return o.inputLabel ? `[입력] ${o.inputLabel}` : "[입력] 라벨필요";
+    if (o.source === "static")
+      return o.staticText ? `[고정] ${o.staticText}` : "[고정] 텍스트입력";
+    if (o.source === "input") {
+      const part =
+        o.datePart === "year"
+          ? "(년)"
+          : o.datePart === "month"
+            ? "(월)"
+            : o.datePart === "day"
+              ? "(일)"
+              : "";
+      if (!o.inputLabel && !o.datePart) return "[입력] 라벨필요";
+      return `[입력] ${o.inputLabel || "작성일"}${part}`;
+    }
     return o.dataKey ? labelOf(o.dataKey) : `${labelOf(o.key)} (연결필요)`;
   }
 
@@ -420,7 +502,9 @@ export function OverlayPicker({
     const kind = o.kind ?? "text";
     if (kind === "image" || kind === "signature" || kind === "check")
       return !o.dataKey;
-    if (kind === "text" && o.source === "input") return !o.inputLabel;
+    if (kind === "text" && o.source === "static") return !o.staticText;
+    if (kind === "text" && o.source === "input")
+      return !o.inputLabel && !o.datePart;
     return !o.dataKey; // text/student
   }
 
@@ -922,7 +1006,10 @@ export function OverlayPicker({
         </div>
       ) : null}
 
-      {/* 항목 선택 + 기본 글자크기 */}
+      {/* 좌: 배치할 항목·박스추가 / 우: 양식 캔버스 */}
+      <div className="flex flex-col gap-4 lg:flex-row">
+        <div className="space-y-3 lg:w-72 lg:shrink-0">
+      {/* 배치할 항목 */}
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-xs font-medium">배치할 항목:</span>
         {choices.length === 0 ? (
@@ -1008,23 +1095,33 @@ export function OverlayPicker({
         >
           + 사인
         </Button>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          disabled={!ready}
+          onClick={addStaticBox}
+        >
+          + 고정 텍스트
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          disabled={!ready}
+          onClick={addDateParts}
+        >
+          + 작성일 년/월/일
+        </Button>
         <span className="text-[11px] text-muted-foreground">
-          추가 후 표에서 연결·설정하고, 캔버스에서 드래그로 위치 지정
+          추가 후 표에서 연결·설정하고, 캔버스에서 드래그로 위치 지정.
+          “고정 텍스트”는 관리자가 직접 적는 값(✓·도장 대체 등).
         </span>
       </div>
 
-      <label className="flex items-center gap-2 text-xs">
-        기본 글자 크기(pt):
-        <input
-          type="number"
-          min={6}
-          max={40}
-          value={defaultSize}
-          onChange={(e) => setDefaultSize(Number(e.target.value) || DEFAULT_SIZE)}
-          className="h-7 w-16 rounded-md border border-input bg-background px-2"
-        />
-      </label>
-
+        </div>
+        {/* ── 오른쪽: 양식 캔버스 ── */}
+        <div className="min-w-0 flex-1 space-y-3">
       {/* 페이지 네비 */}
       {numPages > 1 ? (
         <div className="flex items-center gap-2 text-sm">
@@ -1132,6 +1229,9 @@ export function OverlayPicker({
           })}
         </div>
       </div>
+        </div>
+      </div>
+      {/* ── 2단 레이아웃 끝 ── */}
 
       {/* 배치 목록 (종류·연결·크기·삭제) */}
       {overlays.length > 0 ? (
@@ -1142,7 +1242,6 @@ export function OverlayPicker({
                 <th className="px-3 py-1.5 text-left">종류</th>
                 <th className="px-3 py-1.5 text-left">연결 · 설정</th>
                 <th className="px-3 py-1.5 text-left">P</th>
-                <th className="px-3 py-1.5 text-left">글자</th>
                 <th className="px-3 py-1.5 text-left">박스</th>
                 <th className="px-3 py-1.5"></th>
               </tr>
@@ -1158,7 +1257,9 @@ export function OverlayPicker({
                   kind === "text"
                     ? o.source === "input"
                       ? "text:input"
-                      : "text:student"
+                      : o.source === "static"
+                        ? "text:static"
+                        : "text:student"
                     : kind;
                 const dataSelect = (
                   <select
@@ -1189,6 +1290,8 @@ export function OverlayPicker({
                               source: "input",
                               inputType: o.inputType ?? "date",
                             });
+                          else if (v === "text:static")
+                            patch({ kind: "text", source: "static" });
                           else
                             patch({
                               kind: v as OverlayKind,
@@ -1199,13 +1302,21 @@ export function OverlayPicker({
                       >
                         <option value="text:student">텍스트(학생)</option>
                         <option value="text:input">텍스트(입력)</option>
+                        <option value="text:static">텍스트(고정)</option>
                         <option value="check">체크</option>
                         <option value="image">이미지</option>
                         <option value="signature">사인</option>
                       </select>
                     </td>
                     <td className="px-3 py-1.5">
-                      {kind === "text" && o.source === "input" ? (
+                      {kind === "text" && o.source === "static" ? (
+                        <input
+                          value={o.staticText ?? ""}
+                          onChange={(e) => patch({ staticText: e.target.value })}
+                          placeholder="고정 텍스트 (예: ✓ · 해당)"
+                          className="h-7 w-44 rounded-md border border-input bg-background px-2 text-xs"
+                        />
+                      ) : kind === "text" && o.source === "input" ? (
                         <div className="flex flex-wrap items-center gap-1">
                           <input
                             value={o.inputLabel ?? ""}
@@ -1223,6 +1334,27 @@ export function OverlayPicker({
                             <option value="date">날짜</option>
                             <option value="text">텍스트</option>
                           </select>
+                          {o.inputType !== "text" ? (
+                            <select
+                              value={o.datePart ?? ""}
+                              onChange={(e) =>
+                                patch({
+                                  datePart:
+                                    (e.target.value as
+                                      | "year"
+                                      | "month"
+                                      | "day") || undefined,
+                                })
+                              }
+                              className="h-7 rounded-md border border-input bg-background px-1 text-xs"
+                              title="날짜 일부만 출력 (년/월/일 분리 칸)"
+                            >
+                              <option value="">전체</option>
+                              <option value="year">년</option>
+                              <option value="month">월</option>
+                              <option value="day">일</option>
+                            </select>
+                          ) : null}
                         </div>
                       ) : kind === "check" ? (
                         <div className="flex flex-wrap items-center gap-1">
@@ -1239,18 +1371,6 @@ export function OverlayPicker({
                       )}
                     </td>
                     <td className="px-3 py-1.5">{o.page + 1}</td>
-                    <td className="px-3 py-1.5">
-                      <input
-                        type="number"
-                        min={6}
-                        max={40}
-                        value={o.size ?? DEFAULT_SIZE}
-                        onChange={(e) =>
-                          patch({ size: Number(e.target.value) || DEFAULT_SIZE })
-                        }
-                        className="h-7 w-14 rounded-md border border-input bg-background px-2"
-                      />
-                    </td>
                     <td className="px-3 py-1.5 text-xs text-muted-foreground">
                       {Math.round(o.w)}×{Math.round(o.h)}
                     </td>

@@ -158,16 +158,26 @@ export default async function FinalPage({
             source?: string;
             inputLabel?: string;
             inputType?: string;
+            datePart?: "year" | "month" | "day";
           }>)
         : [];
-      // 생성 시 입력받을 칸 (kind=text, source=input)
-      const inputFields = overlays
-        .filter((o) => (o.kind ?? "text") === "text" && o.source === "input")
-        .map((o) => ({
-          key: o.key,
+      // 생성 시 입력받을 칸 (kind=text, source=input). 년/월/일 분리 박스는
+      // inputLabel 로 한 입력을 공유 → 날짜 한 번만 받음.
+      const seenInput = new Set<string>();
+      const inputFields: { key: string; label: string; type: string }[] = [];
+      for (const o of overlays) {
+        if ((o.kind ?? "text") !== "text" || o.source !== "input") continue;
+        const fieldKey = o.datePart
+          ? `datelabel:${o.inputLabel || "작성일"}`
+          : o.key;
+        if (seenInput.has(fieldKey)) continue;
+        seenInput.add(fieldKey);
+        inputFields.push({
+          key: fieldKey,
           label: o.inputLabel || "입력",
-          type: o.inputType === "text" ? "text" : "date",
-        }));
+          type: o.datePart ? "date" : o.inputType === "text" ? "text" : "date",
+        });
+      }
       const isPdf = file
         ? (file.mime_type ?? "").toLowerCase().includes("pdf") ||
           file.file_name.toLowerCase().endsWith(".pdf") ||

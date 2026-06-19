@@ -617,8 +617,9 @@ export type SaveFieldOverlaysResult =
   | { ok: false; error: string };
 
 type OverlayKind = "text" | "image" | "signature" | "check";
-type OverlaySource = "student" | "input";
+type OverlaySource = "student" | "input" | "static";
 type OverlayInputType = "date" | "text";
+type OverlayDatePart = "year" | "month" | "day";
 
 export async function saveFieldOverlaysAction(
   formFileId: string,
@@ -636,6 +637,8 @@ export async function saveFieldOverlaysAction(
     dataKey?: string;
     inputLabel?: string;
     inputType?: OverlayInputType;
+    staticText?: string;
+    datePart?: OverlayDatePart;
     matchValue?: string;
   }>
 ): Promise<SaveFieldOverlaysResult> {
@@ -664,6 +667,8 @@ export async function saveFieldOverlaysAction(
         dataKey?: string;
         inputLabel?: string;
         inputType?: OverlayInputType;
+        staticText?: string;
+        datePart?: OverlayDatePart;
         matchValue?: string;
       } = {
         key: o.key,
@@ -677,12 +682,16 @@ export async function saveFieldOverlaysAction(
       if (Number.isFinite(o.maxWidth) && (o.maxWidth ?? 0) > 0)
         out.maxWidth = Number(o.maxWidth);
       if (o.kind && o.kind !== "text") out.kind = o.kind;
-      if (o.source === "input") out.source = "input";
+      if (o.source === "input" || o.source === "static") out.source = o.source;
       if (typeof o.dataKey === "string" && o.dataKey) out.dataKey = o.dataKey;
       if (typeof o.inputLabel === "string" && o.inputLabel.trim())
         out.inputLabel = o.inputLabel.trim();
       if (o.inputType === "date" || o.inputType === "text")
         out.inputType = o.inputType;
+      if (typeof o.staticText === "string" && o.staticText.trim())
+        out.staticText = o.staticText;
+      if (o.datePart === "year" || o.datePart === "month" || o.datePart === "day")
+        out.datePart = o.datePart;
       if (typeof o.matchValue === "string" && o.matchValue.trim())
         out.matchValue = o.matchValue.trim();
       return out;

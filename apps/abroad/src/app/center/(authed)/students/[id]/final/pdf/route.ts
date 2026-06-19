@@ -261,9 +261,25 @@ export async function GET(
           if (img) images.set(ov.key, img);
         })
       );
+    } else if (ov.source === "static") {
+      // 관리자가 미리 적어둔 고정 텍스트
+      valuesForFill.set(ov.key, ov.staticText ?? "");
     } else if (ov.source === "input") {
-      const v = inputVals[ov.key] ?? "";
-      valuesForFill.set(ov.key, v || (ov.inputType === "date" ? today : ""));
+      // 날짜 부분(년/월/일) 박스는 inputLabel 로 한 값을 공유
+      const fieldKey = ov.datePart
+        ? `datelabel:${ov.inputLabel || "작성일"}`
+        : ov.key;
+      let v = inputVals[fieldKey] ?? "";
+      if (!v && (ov.inputType === "date" || ov.datePart)) v = today;
+      if (ov.datePart && /^\d{4}-\d{2}-\d{2}/.test(v)) {
+        v =
+          ov.datePart === "year"
+            ? v.slice(0, 4)
+            : ov.datePart === "month"
+              ? v.slice(5, 7)
+              : v.slice(8, 10);
+      }
+      valuesForFill.set(ov.key, v);
     } else {
       valuesForFill.set(ov.key, resolveStudentText(bk));
     }

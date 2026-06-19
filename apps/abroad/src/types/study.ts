@@ -277,14 +277,18 @@ export type FormFieldOverlay = {
 
   /** 박스 종류 (없으면 text). */
   kind?: "text" | "image" | "signature" | "check";
-  /** text 출처: student=학생데이터 / input=생성 시 입력. (없으면 student) */
-  source?: "student" | "input";
+  /** text 출처: student=학생데이터 / input=생성 시 입력 / static=관리자 고정 텍스트. (없으면 student) */
+  source?: "student" | "input" | "static";
   /** 학생 데이터/이미지/체크의 연결 키 (data_type_key 또는 "essay:N"). */
   dataKey?: string;
   /** source=input: 생성 화면에 보일 라벨 (예: "작성일"). */
   inputLabel?: string;
   /** source=input: 입력 형식. */
   inputType?: "date" | "text";
+  /** source=static: 관리자가 미리 적어둔 고정 텍스트(예: "✓", "해당"). */
+  staticText?: string;
+  /** source=input·inputType=date: 날짜의 일부만 출력 (년/월/일 분리 칸용). */
+  datePart?: "year" | "month" | "day";
   /** kind=check: 학생 값이 이 값과 같으면 체크 (예: 성별 "male"). 빈값=truthy면 체크. */
   matchValue?: string;
 };
