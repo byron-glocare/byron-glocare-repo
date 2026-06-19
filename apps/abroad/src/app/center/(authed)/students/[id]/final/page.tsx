@@ -86,6 +86,12 @@ export default async function FinalPage({
   const filledKeys = new Set((vals ?? []).map((v) => v.data_type_key));
   const uploadedSubs = new Set((files ?? []).map((f) => f.submission_id));
 
+  // 부족 항목 라벨용 — 표준데이터 key → 라벨
+  const { data: dtRows } = await supabase
+    .from("study_student_data_types")
+    .select("key, label_ko");
+  const labelMap = new Map((dtRows ?? []).map((d) => [d.key, d.label_ko]));
+
   const uniIds = Array.from(new Set((specs ?? []).map((s) => s.university_id)));
   const [{ data: unis }, { data: forms }, { data: subs }] = await Promise.all([
     uniIds.length > 0
@@ -147,9 +153,12 @@ export default async function FinalPage({
     const writeRows = docForms.map((doc) => {
       const file =
         byKey.get(doc.key) ?? byName.get(normFormName(doc.name_ko)) ?? null;
-      const ready = file
-        ? (file.required_data_type_keys ?? []).every((k) => filledKeys.has(k))
-        : false;
+      const missing = file
+        ? (file.required_data_type_keys ?? [])
+            .filter((k) => !filledKeys.has(k))
+            .map((k) => ({ key: k, label: labelMap.get(k) ?? k }))
+        : [];
+      const ready = file ? missing.length === 0 : false;
       // 좌표 오버레이가 있는 PDF 양식 → 원본에 채운 PDF 생성 (미리보기 가능)
       const overlays = Array.isArray(file?.field_overlays)
         ? (file!.field_overlays as Array<{
@@ -184,7 +193,14 @@ export default async function FinalPage({
           file.file_url.toLowerCase().includes(".pdf")
         : false;
       const canFill = !!file && isPdf && overlays.length > 0;
-      return { doc, file, ready, canFill, inputFields: canFill ? inputFields : [] };
+      return {
+        doc,
+        file,
+        ready,
+        missing,
+        canFill,
+        inputFields: canFill ? inputFields : [],
+      };
     });
 
     const submitDocs = (subs ?? []).filter((s) => {
@@ -250,49 +266,70 @@ export default async function FinalPage({
                 </p>
               ) : (
                 <ul className="space-y-1.5">
-                  {writeRows.map(({ doc, file, ready, canFill, inputFields }) => (
+                  {writeRows.map(({ doc, file, ready, missing, canFill, inputFields }) => (
                     <li
                       key={doc.key + doc.name_ko}
                       className="flex flex-wrap items-start justify-between gap-2 rounded-md border border-slate-100 bg-slate-50/50 px-3 py-2"
                     >
-                      <div className="flex items-center gap-2 pt-1">
-                        <span className="text-sm font-medium text-slate-800">
-                          {doc.name_ko}
-                        </span>
-                        {!file ? (
-                          <span className="rounded-full bg-slate-200 px-2 py-0.5 text-[11px] text-slate-600">
-                            {tr(locale, "양식 미등록", "Chưa có mẫu")}
+                      <div className="space-y-1 pt-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="text-sm font-medium text-slate-800">
+                            {doc.name_ko}
                           </span>
-                        ) : ready ? (
-                          <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] text-emerald-700">
-                            {tr(locale, "정보 충분", "Đủ thông tin")}
-                          </span>
-                        ) : (
-                          <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] text-amber-700">
-                            {tr(locale, "정보 부족", "Thiếu thông tin")}
-                          </span>
-                        )}
-                        {canFill ? (
-                          <span className="rounded-full bg-sky-100 px-2 py-0.5 text-[11px] text-sky-700">
-                            {tr(locale, "원본양식 채움", "Điền vào mẫu gốc")}
-                          </span>
+                          {!file ? (
+                            <span className="rounded-full bg-slate-200 px-2 py-0.5 text-[11px] text-slate-600">
+                              {tr(locale, "양식 미등록", "Chưa có mẫu")}
+                            </span>
+                          ) : ready ? (
+                            <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] text-emerald-700">
+                              {tr(locale, "정보 충분", "Đủ thông tin")}
+                            </span>
+                          ) : (
+                            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] text-amber-700">
+                              {tr(locale, "정보 부족", "Thiếu thông tin")}
+                            </span>
+                          )}
+                          {canFill ? (
+                            <span className="rounded-full bg-sky-100 px-2 py-0.5 text-[11px] text-sky-700">
+                              {tr(locale, "원본양식 채움", "Điền vào mẫu gốc")}
+                            </span>
+                          ) : null}
+                        </div>
+                        {file && !ready && missing.length > 0 ? (
+                          <div className="flex flex-wrap items-center gap-1">
+                            <span className="text-[11px] text-amber-700">
+                              {tr(locale, "부족 (클릭→입력):", "Thiếu (bấm→nhập):")}
+                            </span>
+                            {missing.map((m) => (
+                              <Link
+                                key={m.key}
+                                href={`${base}/data#field-${m.key}`}
+                                className="rounded border border-amber-300 bg-amber-50 px-1.5 py-0.5 text-[11px] text-amber-800 hover:bg-amber-100"
+                              >
+                                {m.label}
+                              </Link>
+                            ))}
+                          </div>
                         ) : null}
                       </div>
                       {file ? (
                         <div className="min-w-[180px] flex-1">
                           <WriteRowActions
-                            docxUrl={`${base}/final/docx?form=${file.id}&app=${app.id}`}
                             pdfBaseUrl={
                               canFill
                                 ? `${base}/final/pdf?form=${file.id}&app=${app.id}`
                                 : null
                             }
                             inputFields={inputFields}
-                            sheetLabel={tr(locale, "데이터 시트", "Bảng dữ liệu")}
                             pdfLabel={tr(locale, "원본양식 PDF", "PDF mẫu gốc")}
                             previewLabel={tr(locale, "미리보기", "Xem trước")}
                             closeLabel={tr(locale, "닫기", "Đóng")}
                             inputsTitle={tr(locale, "생성 정보 입력", "Nhập thông tin tạo")}
+                            noFillLabel={tr(
+                              locale,
+                              "좌표 미설정 (글로케어에서 설정 필요)",
+                              "Chưa thiết lập tọa độ"
+                            )}
                           />
                         </div>
                       ) : (

@@ -364,7 +364,7 @@ function FieldRow({
   };
 
   return (
-    <div className="px-4 py-3">
+    <div id={`field-${dataType.key}`} className="scroll-mt-24 px-4 py-3 target:bg-amber-50">
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1">
           <label className="text-sm font-medium text-slate-900">
@@ -517,7 +517,7 @@ function DerivedFieldRow({
   }
 
   return (
-    <div className="px-4 py-3">
+    <div id={`field-${dataType.key}`} className="scroll-mt-24 px-4 py-3 target:bg-amber-50">
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1">
           <label className="text-sm font-medium text-slate-900">
