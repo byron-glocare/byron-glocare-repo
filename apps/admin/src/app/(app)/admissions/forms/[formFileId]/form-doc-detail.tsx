@@ -113,7 +113,7 @@ export function FormDocDetail({
     if (state?.success) {
       toast.success("저장되었습니다.");
       // 저장 후 대학교 상세로 복귀
-      router.push(`/admissions/${form.university_id}`);
+      router.push(`/universities/${form.university_id}`);
     } else if (state?.error) {
       toast.error("저장 실패", { description: state.error });
     }
@@ -129,7 +129,7 @@ export function FormDocDetail({
       upSubmitted.current = false;
     } else if (upState) {
       toast.success("파일을 교체했습니다.");
-      router.push(`/admissions/${form.university_id}`);
+      router.push(`/universities/${form.university_id}`);
     }
   }, [upState, router, form.university_id]);
 
