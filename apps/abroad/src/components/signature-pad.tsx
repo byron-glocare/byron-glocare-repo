@@ -112,19 +112,32 @@ export const SignaturePad = forwardRef<
   };
 
   return (
-    <canvas
-      ref={canvasRef}
-      width={CANVAS_W}
-      height={CANVAS_H}
-      onPointerDown={handleDown}
-      onPointerMove={handleMove}
-      onPointerUp={handleUp}
-      onPointerLeave={handleUp}
-      onPointerCancel={handleUp}
-      className={`w-full rounded-md border bg-white ${
-        disabled ? "cursor-not-allowed opacity-60" : "cursor-crosshair"
-      } ${className ?? ""}`}
-      style={{ touchAction: "none", aspectRatio: `${CANVAS_W} / ${CANVAS_H}` }}
-    />
+    <div className={`relative w-full ${className ?? ""}`}>
+      <canvas
+        ref={canvasRef}
+        width={CANVAS_W}
+        height={CANVAS_H}
+        onPointerDown={handleDown}
+        onPointerMove={handleMove}
+        onPointerUp={handleUp}
+        onPointerLeave={handleUp}
+        onPointerCancel={handleUp}
+        className={`w-full rounded-md border bg-white ${
+          disabled ? "cursor-not-allowed opacity-60" : "cursor-crosshair"
+        }`}
+        style={{ touchAction: "none", aspectRatio: `${CANVAS_W} / ${CANVAS_H}` }}
+      />
+      {/* 작성 가이드 — DOM 오버레이라 캔버스(PNG)에는 포함되지 않는다.
+          중심 기준 70% 영역을 점선으로 표시 + 안내. 그려지면 텍스트는 숨김. */}
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+        <div className="flex h-[70%] w-[70%] items-center justify-center rounded border border-dashed border-slate-300/80">
+          {empty ? (
+            <span className="px-2 text-center text-[11px] leading-tight text-slate-400">
+              해당 영역보다 크게 작성해주세요
+            </span>
+          ) : null}
+        </div>
+      </div>
+    </div>
   );
 });

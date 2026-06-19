@@ -110,9 +110,14 @@ export function FormDocDetail({
   const [keySearch, setKeySearch] = useState("");
 
   useEffect(() => {
-    if (state?.success) toast.success("저장되었습니다.");
-    else if (state?.error) toast.error("저장 실패", { description: state.error });
-  }, [state]);
+    if (state?.success) {
+      toast.success("저장되었습니다.");
+      // 저장 후 대학교 상세로 복귀
+      router.push(`/admissions/${form.university_id}`);
+    } else if (state?.error) {
+      toast.error("저장 실패", { description: state.error });
+    }
+  }, [state, router, form.university_id]);
 
   useEffect(() => {
     if (!upSubmitted.current) return;
@@ -124,9 +129,9 @@ export function FormDocDetail({
       upSubmitted.current = false;
     } else if (upState) {
       toast.success("파일을 교체했습니다.");
-      router.push("/admissions?tab=forms");
+      router.push(`/admissions/${form.university_id}`);
     }
-  }, [upState, router]);
+  }, [upState, router, form.university_id]);
 
   async function doReplace(withAi: boolean) {
     if (!replaceFile) return toast.error("교체할 파일을 선택하세요");
