@@ -155,6 +155,7 @@ export default async function StudentDataTypesPage() {
                     <TableRow>
                       <TableHead className="w-48">key</TableHead>
                       <TableHead>한국어 / 베트남어</TableHead>
+                      <TableHead>별칭</TableHead>
                       <TableHead className="w-24">입력</TableHead>
                       <TableHead className="w-16 text-center">필수</TableHead>
                       <TableHead className="w-24 text-center">작문용 데이터</TableHead>
@@ -170,36 +171,38 @@ export default async function StudentDataTypesPage() {
                         </TableCell>
                         <TableCell>
                           <div
-                            className="flex flex-col gap-1"
+                            className="flex items-center gap-1.5 flex-wrap"
                             title={t.hint_ko ? `💡 ${t.hint_ko}` : undefined}
                           >
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                              <span className="font-medium">{t.label_ko}</span>
-                              <span className="text-xs text-muted-foreground">
-                                {t.label_vi}
-                              </span>
-                              {(t.link_type ?? (t.is_derived ? "reference" : "independent")) === "reference" ? (
-                                <Badge variant="secondary" className="text-[10px]">
-                                  참조
-                                </Badge>
-                              ) : null}
-                              {t.hint_ko ? (
-                                <span className="text-muted-foreground/70">💡</span>
-                              ) : null}
-                            </div>
-                            {t.aliases && t.aliases.length > 0 ? (
-                              <div className="flex flex-wrap gap-1">
-                                {t.aliases.map((a) => (
-                                  <span
-                                    key={a}
-                                    className="inline-flex items-center rounded border border-border bg-muted/40 px-1.5 py-px text-[10px] text-muted-foreground"
-                                  >
-                                    {a}
-                                  </span>
-                                ))}
-                              </div>
+                            <span className="font-medium">{t.label_ko}</span>
+                            <span className="text-xs text-muted-foreground">
+                              {t.label_vi}
+                            </span>
+                            {(t.link_type ?? (t.is_derived ? "reference" : "independent")) === "reference" ? (
+                              <Badge variant="secondary" className="text-[10px]">
+                                참조
+                              </Badge>
+                            ) : null}
+                            {t.hint_ko ? (
+                              <span className="text-muted-foreground/70">💡</span>
                             ) : null}
                           </div>
+                        </TableCell>
+                        <TableCell>
+                          {t.aliases && t.aliases.length > 0 ? (
+                            <div className="flex flex-wrap gap-1">
+                              {t.aliases.map((a) => (
+                                <span
+                                  key={a}
+                                  className="inline-flex items-center rounded border border-border bg-muted/40 px-1.5 py-px text-[10px] text-muted-foreground"
+                                >
+                                  {a}
+                                </span>
+                              ))}
+                            </div>
+                          ) : (
+                            <span className="text-xs text-muted-foreground/50">—</span>
+                          )}
                         </TableCell>
                         <TableCell>
                           <Badge variant="outline" className="text-xs">
