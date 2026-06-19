@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
+import { ChevronDown, ChevronRight, Wrench } from "lucide-react";
 import type { Json } from "@/types/database";
 import { tr, type Locale } from "@/lib/i18n";
 import {
@@ -15,6 +16,7 @@ import {
   removeStudentFileAction,
 } from "./actions";
 import { AiExtractPanel } from "./ai-extract-panel";
+import { FillLinkButton } from "./fill-link-button";
 
 export type DataTypeMeta = {
   key: string;
@@ -116,6 +118,7 @@ export function StudentDataEditor({
   const requiredKeySet = new Set(Object.keys(requiredBySource));
   const canScope = requiredKeySet.size > 0;
   const [showAll, setShowAll] = useState(false);
+  const [toolsOpen, setToolsOpen] = useState(false);
   const visibleTypes =
     canScope && !showAll
       ? dataTypes.filter((d) => requiredKeySet.has(d.key))
@@ -149,17 +152,8 @@ export function StudentDataEditor({
   });
 
   return (
-    <div className="space-y-4">
-      {/* AI 추출 — 업로드 서류에서 값 제안 → 확인 적용 */}
-      <AiExtractPanel
-        locale={locale}
-        studentId={studentId}
-        onApplied={(key, value) =>
-          setValues((cur) => ({ ...cur, [key]: value }))
-        }
-      />
-
-      {/* 부족 항목 요약 */}
+    <div className="space-y-3">
+      {/* 1) 필수 상태 — 가장 중요 (지원 양식이 요구하는 항목) */}
       {requiredKeys.length > 0 ? (
         <section
           className={`rounded-lg border p-4 ${
@@ -207,7 +201,45 @@ export function StudentDataEditor({
         </section>
       )}
 
-      {/* 범위 토글 — 필요한 항목만 / 전체 */}
+      {/* 2) 보조 도구 — 외부 입력 링크 · 업로드 서류 자동채움 (접힘 기본, 가끔 사용) */}
+      <div className="rounded-lg border border-slate-200 bg-white">
+        <button
+          type="button"
+          onClick={() => setToolsOpen((v) => !v)}
+          className="flex w-full items-center justify-between px-4 py-2.5 text-left"
+        >
+          <span className="flex items-center gap-2 text-sm font-medium text-slate-700">
+            <Wrench className="size-4 text-slate-400" />
+            {tr(locale, "도구", "Công cụ")}
+            <span className="font-normal text-slate-400">
+              {tr(
+                locale,
+                "· 외부 입력 링크 · 업로드 서류로 자동 채우기",
+                "· Liên kết nhập · Tự động điền từ tệp"
+              )}
+            </span>
+          </span>
+          {toolsOpen ? (
+            <ChevronDown className="size-4 shrink-0 text-slate-400" />
+          ) : (
+            <ChevronRight className="size-4 shrink-0 text-slate-400" />
+          )}
+        </button>
+        {toolsOpen ? (
+          <div className="space-y-3 border-t border-slate-100 p-4">
+            <AiExtractPanel
+              locale={locale}
+              studentId={studentId}
+              onApplied={(key, value) =>
+                setValues((cur) => ({ ...cur, [key]: value }))
+              }
+            />
+            <FillLinkButton locale={locale} studentId={studentId} />
+          </div>
+        ) : null}
+      </div>
+
+      {/* 3) 범위 토글 — 필요한 항목만 / 전체 */}
       {canScope ? (
         <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-2.5">
           <span className="text-xs text-slate-600">
