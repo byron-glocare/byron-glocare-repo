@@ -91,9 +91,20 @@ export async function SiteFooter() {
       </div>
       <div className="foot-bot">
         <span>{t["footer.copyright"]}</span>
-        <div style={{ display: "flex", gap: "1.5rem" }}>
+        <div style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
           <span style={{ cursor: "pointer" }}>{t["footer.privacy"]}</span>
           <span style={{ cursor: "pointer" }}>{t["footer.terms"]}</span>
+          <Link
+            href="/center"
+            style={{
+              color: "inherit",
+              textDecoration: "none",
+              opacity: 0.55,
+              fontSize: "0.8em",
+            }}
+          >
+            관리자 센터
+          </Link>
         </div>
       </div>
     </footer>
