@@ -37,14 +37,15 @@ export const SignaturePad = forwardRef<
   const last = useRef<{ x: number; y: number } | null>(null);
   const [empty, setEmpty] = useState(true);
 
-  // 캔버스 초기화 (흰 배경 — 투명 PNG 가 아니라 인쇄/표시 편하도록)
+  // 캔버스 초기화 — 배경을 칠하지 않는다(투명 PNG).
+  //   원본 양식의 "(인)" 같은 글자 위에 겹쳐도 흰 박스로 가리지 않고
+  //   서명 획만 얹히도록. 편집 화면은 CSS bg-white 라 흰색으로 보인다.
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
     ctx.lineWidth = 2.5;
@@ -66,8 +67,7 @@ export const SignaturePad = forwardRef<
       const canvas = canvasRef.current;
       const ctx = canvas?.getContext("2d");
       if (canvas && ctx) {
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
       setEmptyState(true);
     },
