@@ -249,14 +249,6 @@ export function DataTypeForm({
           <label className="flex items-center gap-2 text-sm">
             <input
               type="checkbox"
-              name="is_default_required"
-              defaultChecked={dataType?.is_default_required ?? false}
-            />
-            <span>기본 필수</span>
-          </label>
-          <label className="flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
               name="is_active"
               defaultChecked={dataType?.is_active ?? true}
             />

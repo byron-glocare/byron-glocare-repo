@@ -153,7 +153,6 @@ export default async function StudentDataTypesPage() {
                       <TableHead>한국어 / 베트남어</TableHead>
                       <TableHead>별칭</TableHead>
                       <TableHead className="w-24">입력</TableHead>
-                      <TableHead className="w-16 text-center">필수</TableHead>
                       <TableHead className="w-24 text-center">작문용 데이터</TableHead>
                       <TableHead className="w-16 text-center">활성</TableHead>
                       <TableHead className="w-16 text-right"></TableHead>
@@ -199,9 +198,6 @@ export default async function StudentDataTypesPage() {
                           <Badge variant="outline" className="text-xs">
                             {INPUT_TYPE_LABEL[t.input_type] ?? t.input_type}
                           </Badge>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          {t.is_default_required ? "✓" : "—"}
                         </TableCell>
                         <TableCell className="text-center">
                           {t.is_essay_basis ? "✓" : "—"}

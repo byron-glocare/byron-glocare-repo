@@ -234,6 +234,10 @@ export type StudyAdmissionFormFile = {
   uploaded_at: string;
   notes: string | null;
   required_data_type_keys: string[];
+  /** 적용 학기 (빈 배열 = 전체 학기) */
+  applies_to_terms: string[];
+  /** 적용 학과 id (빈 배열 = 전체 학과) */
+  applies_to_department_ids: number[];
   essay_questions: Array<{
     question_ko: string;
     question_vi?: string;

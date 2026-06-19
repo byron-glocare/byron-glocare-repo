@@ -63,17 +63,22 @@ export async function loadStudentDataContext(
   if (specIds.length > 0) {
     const { data: specs } = await supabase
       .from("study_admission_specs")
-      .select("id, university_id")
+      .select("id, university_id, term")
       .in("id", specIds);
     const specToUni = new Map<string, number>(
       (specs ?? []).map((s) => [s.id, s.university_id])
+    );
+    const specToTerm = new Map<string, string>(
+      (specs ?? []).map((s) => [s.id, s.term])
     );
     const universityIds = Array.from(new Set((specs ?? []).map((s) => s.university_id)));
 
     if (universityIds.length > 0) {
       const { data: forms } = await supabase
         .from("study_admission_form_files")
-        .select("university_id, department_name, name_ko, required_data_type_keys")
+        .select(
+          "university_id, department_name, name_ko, required_data_type_keys, applies_to_terms"
+        )
         .in("university_id", universityIds)
         .eq("is_current", true);
 
@@ -86,12 +91,17 @@ export async function loadStudentDataContext(
       for (const app of apps ?? []) {
         const uniId = specToUni.get(app.admission_spec_id);
         if (uniId == null) continue;
-        const applicable = (formsByUni.get(uniId) ?? []).filter(
-          (f) =>
+        const term = specToTerm.get(app.admission_spec_id);
+        // 적용 양식 = (학과: 전체 or 일치) AND (학기: 전체 or 일치)
+        const applicable = (formsByUni.get(uniId) ?? []).filter((f) => {
+          const deptOk =
             f.department_name === null ||
-            (app.target_department_label &&
-              f.department_name === app.target_department_label)
-        );
+            (!!app.target_department_label &&
+              f.department_name === app.target_department_label);
+          const terms = (f.applies_to_terms ?? []) as string[];
+          const termOk = terms.length === 0 || (!!term && terms.includes(term));
+          return deptOk && termOk;
+        });
         for (const f of applicable) {
           const sourceLabel = `${f.name_ko}${
             app.target_department_label ? ` · ${app.target_department_label}` : ""
@@ -125,8 +135,9 @@ export function toEditorDataType(d: StudentDataTypeRow) {
     hint_ko: d.hint_ko,
     hint_vi: d.hint_vi,
     is_essay_basis: d.is_essay_basis,
-    is_derived: d.is_derived ?? false,
-    derived_from: d.derived_from,
+    // 연결(참조/파생) 기능 폐지 — 모든 항목을 일반 입력으로. (보호자 이름 등도 직접 입력)
+    is_derived: false,
+    derived_from: null,
   };
 }
 
