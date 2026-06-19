@@ -89,25 +89,17 @@ export default async function FormDocDetailPage({
     ext === "pdf" ||
     (form.mime_type ?? "").toLowerCase().includes("pdf") ||
     form.file_url.toLowerCase().includes(".pdf");
-  const catalogByKey = new Map(
-    (catalogRows ?? []).map((c) => [
-      c.key,
-      { label_ko: c.label_ko, aliases: (c.aliases as string[] | null) ?? [] },
-    ])
-  );
   const essayQs = Array.isArray(form.essay_questions)
     ? (form.essay_questions as Array<{ question_ko?: string }>)
     : [];
+  // 연결 후보 = 전체 활성 표준데이터(카탈로그) + 양식의 서술형 질문.
+  //   (필요 표준데이터를 미리 체크할 필요 없이, 박스를 어디든 연결 가능)
   const overlayChoices: FieldChoice[] = [
-    ...(form.required_data_type_keys ?? []).map((k) => {
-      const c = catalogByKey.get(k);
-      return {
-        key: k,
-        label: c?.label_ko ?? k,
-        // 매칭용 별칭: 라벨 + 카탈로그 별칭 (양식의 다양한 표기 흡수)
-        aliases: [c?.label_ko ?? k, ...(c?.aliases ?? [])],
-      };
-    }),
+    ...(catalogRows ?? []).map((c) => ({
+      key: c.key,
+      label: c.label_ko,
+      aliases: [c.label_ko, ...((c.aliases as string[] | null) ?? [])],
+    })),
     ...essayQs.map((q, i) => ({
       key: `essay:${i}`,
       label: `[서술형] ${q.question_ko ?? `질문 ${i + 1}`}`,
@@ -151,11 +143,6 @@ export default async function FormDocDetailPage({
             active: d.active,
           }))}
           docNameOptions={docNameOptions}
-          catalog={(catalogRows ?? []).map((c) => ({
-            key: c.key,
-            label_ko: c.label_ko,
-            category: c.category,
-          }))}
         />
 
         {isPdf ? (

@@ -567,9 +567,6 @@ export async function updateFormFileDetailAction(
   const name_ko = String(formData.get("name_ko") ?? "").trim();
   if (!name_ko) return { error: "서류명을 입력하세요" };
 
-  let key = String(formData.get("key") ?? "other");
-  if (!(FORM_KEYS as readonly string[]).includes(key)) key = "other";
-
   const notesRaw = String(formData.get("notes") ?? "").trim();
   const notes = notesRaw || null;
 
@@ -584,19 +581,18 @@ export async function updateFormFileDetailAction(
     }
   };
 
-  const required_data_type_keys = parseStrArr("required_data_type_keys");
   const applies_to_terms = parseStrArr("applies_to_terms");
   const applies_to_department_ids = parseStrArr("applies_to_department_ids")
     .map(Number)
     .filter((n) => Number.isFinite(n));
 
+  // 양식 종류(key)·필요 표준데이터(required_data_type_keys)는 여기서 건드리지 않는다.
+  //   key=생성 시 고정 / reqKeys=문서 자동화 설정의 좌표 저장에서 자동 도출.
   const { error } = await supabase
     .from("study_admission_form_files")
     .update({
       name_ko,
-      key: key as (typeof FORM_KEYS)[number],
       notes,
-      required_data_type_keys,
       applies_to_terms,
       applies_to_department_ids,
     })
@@ -697,9 +693,19 @@ export async function saveFieldOverlaysAction(
       return out;
     });
 
+  // 연결된 박스에서 필요 표준데이터(reqKeys) 자동 도출 (essay: 제외).
+  //   → 별도 '필요 표준데이터' 체크 단계 없이, 배치·연결한 박스가 곧 필요 데이터.
+  const reqKeys = Array.from(
+    new Set(
+      clean
+        .map((o) => o.dataKey)
+        .filter((k): k is string => !!k && !k.startsWith("essay:"))
+    )
+  );
+
   const { error } = await supabase
     .from("study_admission_form_files")
-    .update({ field_overlays: clean })
+    .update({ field_overlays: clean, required_data_type_keys: reqKeys })
     .eq("id", formFileId);
   if (error) return { ok: false, error: `저장 실패: ${error.message}` };
 

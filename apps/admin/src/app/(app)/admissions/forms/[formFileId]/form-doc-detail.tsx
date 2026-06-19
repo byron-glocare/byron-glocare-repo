@@ -4,7 +4,6 @@ import {
   startTransition,
   useActionState,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from "react";
@@ -22,20 +21,6 @@ import {
   type UpdateFormDetailState,
   type UploadFormFileState,
 } from "@/app/(app)/universities/[id]/forms/actions";
-
-// 양식 종류 라벨
-const KEY_LABELS: Record<string, string> = {
-  application_form: "입학 지원서",
-  self_intro: "자기소개서",
-  study_plan: "학업계획서",
-  financial_pledge_form: "재정보증서",
-  privacy_consent: "개인정보 동의서",
-  academic_record_release: "성적 제공 동의서",
-  recommendation_letter: "추천서",
-  health_certificate: "건강진단서(양식)",
-  other: "기타",
-};
-const KEY_OPTIONS = Object.entries(KEY_LABELS);
 
 // 적용학기 후보: 2026~2030 × 4분기 (어학당 4학기 / 일반 봄·가을)
 const QUARTERS: Array<{ q: string; ko: string }> = [
@@ -71,18 +56,15 @@ type FormDoc = {
 };
 
 type Dept = { id: number; name_ko: string; active: boolean };
-type Catalog = { key: string; label_ko: string; category: string };
 
 export function FormDocDetail({
   form,
   departments,
   docNameOptions,
-  catalog,
 }: {
   form: FormDoc;
   departments: Dept[];
   docNameOptions: string[];
-  catalog: Catalog[];
 }) {
   const router = useRouter();
   const [state, action, pending] = useActionState<UpdateFormDetailState, FormData>(
@@ -101,13 +83,10 @@ export function FormDocDetail({
   const upSubmitted = useRef(false);
 
   const [nameKo, setNameKo] = useState(form.name_ko);
-  const [key, setKey] = useState(form.key);
   const [notes, setNotes] = useState(form.notes ?? "");
   const [allDepts, setAllDepts] = useState(form.applies_to_department_ids.length === 0);
   const [deptIds, setDeptIds] = useState<number[]>(form.applies_to_department_ids);
   const [terms, setTerms] = useState<string[]>(form.applies_to_terms);
-  const [reqKeys, setReqKeys] = useState<string[]>(form.required_data_type_keys);
-  const [keySearch, setKeySearch] = useState("");
 
   useEffect(() => {
     if (state?.success) {
@@ -153,7 +132,7 @@ export function FormDocDetail({
     fd.set("file_size", String(replaceFile.size));
     fd.set("mime_type", replaceFile.type || "application/octet-stream");
     // 파일만 교체 = 기존 필요데이터 유지·AI 미실행 / 함께 교체 = AI 재분석
-    fd.set("required_data_type_keys", JSON.stringify(reqKeys));
+    fd.set("required_data_type_keys", JSON.stringify(form.required_data_type_keys));
     fd.set("auto_analyze", withAi ? "on" : "off");
     upSubmitted.current = true;
     startTransition(() => upAction(fd));
@@ -162,29 +141,13 @@ export function FormDocDetail({
   const toggle = <T,>(arr: T[], v: T): T[] =>
     arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v];
 
-  const catalogByCat = useMemo(() => {
-    const m = new Map<string, Catalog[]>();
-    const f = keySearch.trim().toLowerCase();
-    for (const c of catalog) {
-      if (f && !(`${c.label_ko} ${c.key}`.toLowerCase().includes(f))) continue;
-      if (!m.has(c.category)) m.set(c.category, []);
-      m.get(c.category)!.push(c);
-    }
-    return Array.from(m.entries());
-  }, [catalog, keySearch]);
-
-  const labelOf = (k: string) =>
-    catalog.find((c) => c.key === k)?.label_ko ?? k;
-
   return (
     <form
       action={(fd) => {
         fd.set("form_file_id", form.id);
         fd.set("university_id", String(form.university_id));
         fd.set("name_ko", nameKo);
-        fd.set("key", key);
         fd.set("notes", notes);
-        fd.set("required_data_type_keys", JSON.stringify(reqKeys));
         fd.set("applies_to_terms", JSON.stringify(terms));
         fd.set(
           "applies_to_department_ids",
@@ -385,71 +348,13 @@ export function FormDocDetail({
         </div>
       </Card>
 
-      {/* 상세 정보 */}
+      {/* 메모 */}
       <Card className="p-6 space-y-4">
-        <h2 className="text-base font-semibold">상세 정보</h2>
-
-        <label className="flex flex-col gap-1.5 md:max-w-xs">
-          <span className="text-xs font-medium">양식 종류</span>
-          <select
-            value={key}
-            onChange={(e) => setKey(e.target.value)}
-            className="h-9 rounded-md border border-input bg-background px-3 text-sm"
-          >
-            {KEY_OPTIONS.map(([v, label]) => (
-              <option key={v} value={v}>
-                {label}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <div className="flex flex-col gap-1.5">
-          <span className="text-xs font-medium">
-            작성에 필요한 표준데이터{" "}
-            <span className="font-normal text-muted-foreground">
-              ({reqKeys.length}개 선택)
-            </span>
-          </span>
-          <Input
-            value={keySearch}
-            onChange={(e) => setKeySearch(e.target.value)}
-            placeholder="항목 검색…"
-            className="md:max-w-xs"
-          />
-          <div className="max-h-72 space-y-3 overflow-y-auto rounded-md border border-input p-3">
-            {catalogByCat.length === 0 ? (
-              <p className="text-xs text-muted-foreground">검색 결과 없음</p>
-            ) : (
-              catalogByCat.map(([cat, items]) => (
-                <div key={cat}>
-                  <div className="mb-1 text-[11px] font-semibold uppercase text-muted-foreground">
-                    {cat}
-                  </div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {items.map((c) => {
-                      const on = reqKeys.includes(c.key);
-                      return (
-                        <button
-                          type="button"
-                          key={c.key}
-                          onClick={() => setReqKeys((cur) => toggle(cur, c.key))}
-                          className={`rounded-md border px-2 py-1 text-xs ${
-                            on
-                              ? "border-primary bg-primary/10 text-primary"
-                              : "border-input hover:bg-muted"
-                          }`}
-                        >
-                          {c.label_ko}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
+        <h2 className="text-base font-semibold">메모</h2>
+        <p className="-mt-2 text-xs text-muted-foreground">
+          양식 종류·필요 표준데이터는 아래 “문서 자동화 설정”에서 박스를 배치·연결하면
+          자동으로 정해집니다.
+        </p>
 
         <label className="flex flex-col gap-1.5">
           <span className="text-xs font-medium">메모</span>

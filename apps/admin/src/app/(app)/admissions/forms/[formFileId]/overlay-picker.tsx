@@ -8,7 +8,7 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Loader2, Save, Trash2, Crosshair, Sparkles, X } from "lucide-react";
+import { Loader2, Save, Trash2, Sparkles, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -266,11 +266,6 @@ export function OverlayPicker({
     (k: string) => choices.find((c) => c.key === k)?.label ?? k,
     [choices]
   );
-  // 항목이 배치됐는지 — 박스 key 또는 dataKey(연결) 어느 쪽이든
-  const isPlaced = useCallback(
-    (k: string) => overlays.some((o) => o.key === k || o.dataKey === k),
-    [overlays]
-  );
 
   // pdfjs 로드 + 문서 열기 (클라이언트 전용)
   useEffect(() => {
@@ -324,39 +319,27 @@ export function OverlayPicker({
     };
   }, [ready, pageNum]);
 
-  function nextId(kind: OverlayKind): string {
-    let n = 1;
-    while (overlays.some((o) => o.key === `${kind}-${n}`)) n++;
-    return `${kind}-${n}`;
-  }
-
-  // 종류별 박스 추가 (페이지 가운데 근처에 생성 후 선택 → 드래그·바인딩)
-  function addTypedBox(kind: OverlayKind) {
+  // 일반 박스 — 기본 텍스트(학생데이터). 추가 후 '선택 박스 설정'에서 종류·연결 지정.
+  function addGeneralBox() {
     const page0 = pageNum - 1;
     const cx = (canvasRef.current?.width ?? 400) / scale / 2;
     const cy = (canvasRef.current?.height ?? 600) / scale / 2;
-    const dims =
-      kind === "check"
-        ? { w: 14, h: 14 }
-        : kind === "image"
-          ? { w: 90, h: 110 }
-          : kind === "signature"
-            ? { w: 120, h: 40 }
-            : { w: DEFAULT_W, h: Math.round(defaultSize * 1.6) };
-    const key = nextId(kind);
-    const box: Overlay = {
-      key,
-      page: page0,
-      x: Math.max(0, cx - dims.w / 2),
-      y: Math.max(0, cy - dims.h / 2),
-      ...dims,
-      size: defaultSize,
-      kind,
-      ...(kind === "text"
-        ? { source: "input", inputType: "date", inputLabel: "" }
-        : {}),
-    };
-    setOverlays((cur) => [...cur, box]);
+    const h = Math.round(defaultSize * 1.6);
+    const key = uid();
+    setOverlays((cur) => [
+      ...cur,
+      {
+        key,
+        page: page0,
+        x: Math.max(0, cx - DEFAULT_W / 2),
+        y: Math.max(0, cy - h / 2),
+        w: DEFAULT_W,
+        h,
+        size: defaultSize,
+        kind: "text",
+        source: "student",
+      },
+    ]);
     setActiveKey(key);
   }
 
@@ -440,35 +423,12 @@ export function OverlayPicker({
     const page0 = pageNum - 1;
     const existing = overlays.find((o) => o.key === activeKey);
     if (existing) {
-      // 기존 박스 이동 (종류·바인딩 유지)
+      // 선택된 박스를 클릭 위치로 이동 (종류·연결 유지)
       const y = Math.max(0, topPt - existing.h);
       setOverlays((cur) =>
         cur.map((o) => (o.key === activeKey ? { ...o, page: page0, x, y } : o))
       );
-      return;
     }
-    // 학생데이터 텍스트 박스 신규 생성 (chip 으로 선택된 data_type_key)
-    const h = defaultSize * 1.6;
-    const y = Math.max(0, topPt - h);
-    setOverlays((cur) => [
-      ...cur,
-      {
-        key: activeKey,
-        page: page0,
-        x,
-        y,
-        w: DEFAULT_W,
-        h,
-        size: defaultSize,
-        kind: "text",
-        source: "student",
-        dataKey: activeKey,
-      },
-    ]);
-    const remaining = choices.find(
-      (c) => c.key !== activeKey && !isPlaced(c.key)
-    );
-    if (remaining) setActiveKey(remaining.key);
   }
 
   // 박스 표시 라벨 (연결된 표준데이터를 보여줌 — 연결 안 되면 "연결필요")
@@ -944,21 +904,15 @@ export function OverlayPicker({
   }
 
   const placedCount = overlays.length;
-  const totalCount = choices.length;
 
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-base font-semibold">채움 영역(박스) 지정</h2>
+          <h2 className="text-base font-semibold">문서 자동화 설정</h2>
           <p className="text-xs text-muted-foreground">
             <strong>자동 배치</strong>로 한번에 잡고, 박스를 드래그·크기조절해 보정하세요.
-            ({placedCount}/{totalCount} 배치됨)
-            {placedCount > 0 ? (
-              <>
-                {" "}· <strong>전체 지우기</strong> 후 다시 누르면 새 규칙으로 재배치됩니다.
-              </>
-            ) : null}
+            (박스 {placedCount}개)
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -1006,117 +960,219 @@ export function OverlayPicker({
         </div>
       ) : null}
 
-      {/* 좌: 배치할 항목·박스추가 / 우: 양식 캔버스 */}
+      {/* 좌: 박스추가·선택설정·배치할박스 / 우: 양식 캔버스 */}
       <div className="flex flex-col gap-4 lg:flex-row">
-        <div className="space-y-3 lg:w-72 lg:shrink-0">
-      {/* 배치할 항목 */}
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="text-xs font-medium">배치할 항목:</span>
-        {choices.length === 0 ? (
-          <span className="text-xs text-muted-foreground">
-            먼저 위 “작성에 필요한 표준데이터”에서 항목을 선택하세요.
-          </span>
-        ) : (
-          choices.map((c) => {
-            const placed = isPlaced(c.key);
-            const on = activeKey === c.key;
-            return (
-              <button
-                type="button"
-                key={c.key}
-                onClick={() => {
-                  // 선택된 이미지/사인/체크 박스가 있으면 그 박스에 이 항목을 연결
-                  const ab = overlays.find((o) => o.key === activeKey);
-                  const k = ab?.kind ?? "text";
-                  if (ab && (k === "image" || k === "signature" || k === "check")) {
-                    setOverlays((cur) =>
-                      cur.map((o) =>
-                        o.key === ab.key ? { ...o, dataKey: c.key } : o
-                      )
-                    );
-                    toast.success(`연결: ${c.label}`);
-                    return;
-                  }
-                  setActiveKey(c.key);
-                }}
-                className={`inline-flex items-center gap-1 rounded-md border px-2 py-1 text-xs ${
-                  on
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : placed
-                      ? "border-emerald-300 bg-emerald-50 text-emerald-700"
-                      : "border-input hover:bg-muted"
-                }`}
-              >
-                {on ? <Crosshair className="size-3" /> : null}
-                {c.label}
-                {placed ? " ✓" : ""}
-              </button>
-            );
-          })
-        )}
+        <div className="space-y-4 lg:w-80 lg:shrink-0">
+      {/* 박스 추가 */}
+      <div className="space-y-1.5">
+        <span className="text-xs font-medium">박스 추가</span>
+        <div className="flex flex-wrap gap-2">
+          <Button type="button" variant="outline" size="sm" disabled={!ready} onClick={addGeneralBox}>
+            + 일반
+          </Button>
+          <Button type="button" variant="outline" size="sm" disabled={!ready} onClick={addStaticBox}>
+            + 고정텍스트
+          </Button>
+          <Button type="button" variant="outline" size="sm" disabled={!ready} onClick={addDateParts}>
+            + 작성일
+          </Button>
+        </div>
+        <p className="text-[11px] text-muted-foreground">
+          추가하면 화면 가운데 생깁니다. 드래그로 위치, 우하단 모서리로 크기 조절.
+          “일반”은 아래 설정에서 종류·연결을 정하세요.
+        </p>
       </div>
 
-      {/* 종류별 박스 추가 */}
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="text-xs font-medium">박스 추가:</span>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          disabled={!ready}
-          onClick={() => addTypedBox("text")}
-        >
-          + 입력칸(날짜 등)
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          disabled={!ready}
-          onClick={() => addTypedBox("check")}
-        >
-          + 체크
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          disabled={!ready}
-          onClick={() => addTypedBox("image")}
-        >
-          + 이미지
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          disabled={!ready}
-          onClick={() => addTypedBox("signature")}
-        >
-          + 사인
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          disabled={!ready}
-          onClick={addStaticBox}
-        >
-          + 고정 텍스트
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          disabled={!ready}
-          onClick={addDateParts}
-        >
-          + 작성일 년/월/일
-        </Button>
-        <span className="text-[11px] text-muted-foreground">
-          추가 후 표에서 연결·설정하고, 캔버스에서 드래그로 위치 지정.
-          “고정 텍스트”는 관리자가 직접 적는 값(✓·도장 대체 등).
-        </span>
+      {/* 선택 박스 설정 (선택된 박스 1개) */}
+      <div className="rounded-md border bg-muted/20 p-3 text-xs">
+        {(() => {
+          const i = overlays.findIndex((o) => o.key === activeKey);
+          const o = i >= 0 ? overlays[i] : null;
+          if (!o)
+            return (
+              <p className="text-muted-foreground">
+                박스를 선택하면 여기서 종류·연결·값을 설정합니다.
+              </p>
+            );
+          const patch = (p: Partial<Overlay>) =>
+            setOverlays((cur) => cur.map((x, j) => (j === i ? { ...x, ...p } : x)));
+          const kind = o.kind ?? "text";
+          const kindSel =
+            kind === "text"
+              ? o.source === "input"
+                ? "text:input"
+                : o.source === "static"
+                  ? "text:static"
+                  : "text:student"
+              : kind;
+          const dataSelect = (
+            <select
+              value={o.dataKey ?? ""}
+              onChange={(e) => patch({ dataKey: e.target.value || undefined })}
+              className="mt-0.5 h-7 w-full rounded-md border border-input bg-background px-1 text-xs"
+            >
+              <option value="">(연결할 표준데이터 선택)</option>
+              {choices.map((c) => (
+                <option key={c.key} value={c.key}>
+                  {c.label}
+                </option>
+              ))}
+            </select>
+          );
+          return (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="font-medium">박스 #{i + 1} 설정</span>
+                <button
+                  type="button"
+                  onClick={() => setOverlays((cur) => cur.filter((_, j) => j !== i))}
+                  className="text-muted-foreground hover:text-destructive"
+                  title="삭제"
+                >
+                  <Trash2 className="size-4" />
+                </button>
+              </div>
+              <label className="block text-[11px] text-muted-foreground">
+                종류
+                <select
+                  value={kindSel}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    if (v === "text:student") patch({ kind: "text", source: "student" });
+                    else if (v === "text:input")
+                      patch({ kind: "text", source: "input", inputType: o.inputType ?? "date" });
+                    else if (v === "text:static") patch({ kind: "text", source: "static" });
+                    else patch({ kind: v as OverlayKind, source: undefined });
+                  }}
+                  className="mt-0.5 h-7 w-full rounded-md border border-input bg-background px-1 text-xs"
+                >
+                  <option value="text:student">텍스트(학생데이터)</option>
+                  <option value="text:input">텍스트(생성 시 입력)</option>
+                  <option value="text:static">텍스트(고정)</option>
+                  <option value="check">체크</option>
+                  <option value="image">이미지</option>
+                  <option value="signature">사인</option>
+                </select>
+              </label>
+
+              {kind === "text" && o.source === "static" ? (
+                <label className="block text-[11px] text-muted-foreground">
+                  고정 텍스트
+                  <input
+                    value={o.staticText ?? ""}
+                    onChange={(e) => patch({ staticText: e.target.value })}
+                    placeholder="예: ✓ · 해당"
+                    className="mt-0.5 h-7 w-full rounded-md border border-input bg-background px-2 text-xs"
+                  />
+                </label>
+              ) : kind === "text" && o.source === "input" ? (
+                <div className="space-y-1">
+                  <label className="block text-[11px] text-muted-foreground">
+                    입력 라벨
+                    <input
+                      value={o.inputLabel ?? ""}
+                      onChange={(e) => patch({ inputLabel: e.target.value })}
+                      placeholder="예: 작성일"
+                      className="mt-0.5 h-7 w-full rounded-md border border-input bg-background px-2 text-xs"
+                    />
+                  </label>
+                  <div className="flex gap-1">
+                    <select
+                      value={o.inputType ?? "date"}
+                      onChange={(e) => patch({ inputType: e.target.value as "date" | "text" })}
+                      className="h-7 flex-1 rounded-md border border-input bg-background px-1 text-xs"
+                    >
+                      <option value="date">날짜</option>
+                      <option value="text">텍스트</option>
+                    </select>
+                    {o.inputType !== "text" ? (
+                      <select
+                        value={o.datePart ?? ""}
+                        onChange={(e) =>
+                          patch({
+                            datePart:
+                              (e.target.value as "year" | "month" | "day") || undefined,
+                          })
+                        }
+                        className="h-7 flex-1 rounded-md border border-input bg-background px-1 text-xs"
+                        title="날짜 일부만 (년/월/일 분리 칸)"
+                      >
+                        <option value="">전체</option>
+                        <option value="year">년</option>
+                        <option value="month">월</option>
+                        <option value="day">일</option>
+                      </select>
+                    ) : null}
+                  </div>
+                </div>
+              ) : kind === "check" ? (
+                <div className="space-y-1">
+                  <label className="block text-[11px] text-muted-foreground">
+                    연결 표준데이터{dataSelect}
+                  </label>
+                  <label className="block text-[11px] text-muted-foreground">
+                    일치값
+                    <input
+                      value={o.matchValue ?? ""}
+                      onChange={(e) => patch({ matchValue: e.target.value })}
+                      placeholder="예: male"
+                      className="mt-0.5 h-7 w-full rounded-md border border-input bg-background px-2 text-xs"
+                    />
+                  </label>
+                </div>
+              ) : (
+                <label className="block text-[11px] text-muted-foreground">
+                  연결 표준데이터{dataSelect}
+                </label>
+              )}
+
+              <p className="text-[10px] text-muted-foreground">
+                박스 {Math.round(o.w)}×{Math.round(o.h)} · 페이지 {o.page + 1}
+              </p>
+            </div>
+          );
+        })()}
+      </div>
+
+      {/* 배치할 박스 (번호 목록) */}
+      <div className="space-y-1.5">
+        <span className="text-xs font-medium">배치할 박스 ({overlays.length})</span>
+        {overlays.length === 0 ? (
+          <p className="text-xs text-muted-foreground">
+            아직 없음. 위 “박스 추가”로 만드세요.
+          </p>
+        ) : (
+          <div className="flex flex-col gap-1">
+            {overlays.map((o, i) => {
+              const on = o.key === activeKey;
+              return (
+                <button
+                  type="button"
+                  key={o.key}
+                  onClick={() => {
+                    setActiveKey(o.key);
+                    setPageNum(o.page + 1);
+                  }}
+                  className={`flex items-center gap-2 rounded-md border px-2 py-1 text-left text-xs ${
+                    on
+                      ? "border-amber-500 bg-amber-50 text-amber-800"
+                      : boxIncomplete(o)
+                        ? "border-red-300 bg-red-50/40"
+                        : "border-input hover:bg-muted"
+                  }`}
+                >
+                  <span className="inline-flex size-4 shrink-0 items-center justify-center rounded-full bg-slate-700 text-[10px] font-medium text-white">
+                    {i + 1}
+                  </span>
+                  <span className="truncate">{boxLabel(o)}</span>
+                  <span className="ml-auto shrink-0 text-[10px] text-muted-foreground">
+                    P{o.page + 1}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
         </div>
@@ -1150,9 +1206,9 @@ export function OverlayPicker({
       ) : null}
 
       <p className="text-xs text-muted-foreground">
-        파란 박스 = 채움 영역(글자가 길면 박스 안에서 자동 축소·줄바꿈). 박스를{" "}
-        <strong>드래그</strong>해 이동, <strong>우하단 모서리</strong>로 크기 조절.
-        빈 곳을 클릭하면 선택 항목 박스가 그 자리에 생깁니다.
+        파란 박스 = 채움 영역. 박스를 <strong>드래그</strong>해 이동,{" "}
+        <strong>우하단 모서리</strong>로 크기 조절. 선택한 박스는 빈 곳을 클릭해도
+        그 자리로 옮겨집니다. 왼쪽 위 숫자 = 박스 번호.
       </p>
 
       {/* 캔버스 + 박스 오버레이 */}
@@ -1177,6 +1233,7 @@ export function OverlayPicker({
             const top = canvasH - (o.y + o.h) * scale;
             const on = o.key === activeKey;
             const fs = (o.size ?? DEFAULT_SIZE) * scale;
+            const num = overlays.indexOf(o) + 1;
             return (
               <div
                 key={o.key}
@@ -1196,6 +1253,14 @@ export function OverlayPicker({
                 }`}
                 title="드래그=이동 · 우하단 모서리=크기조절 · ×=삭제"
               >
+                {/* 박스 번호 (좌상단) */}
+                <span
+                  className={`pointer-events-none absolute -left-2 -top-2 z-10 flex size-4 items-center justify-center rounded-full text-[9px] font-bold text-white ${
+                    on ? "bg-amber-600" : "bg-slate-700"
+                  }`}
+                >
+                  {num}
+                </span>
                 <span
                   style={{ fontSize: Math.max(7, Math.min(fs, 13)), lineHeight: 1.1 }}
                   className={`pointer-events-none flex h-full w-full items-center overflow-hidden whitespace-nowrap px-0.5 font-medium ${
@@ -1233,165 +1298,6 @@ export function OverlayPicker({
       </div>
       {/* ── 2단 레이아웃 끝 ── */}
 
-      {/* 배치 목록 (종류·연결·크기·삭제) */}
-      {overlays.length > 0 ? (
-        <div className="overflow-x-auto rounded-md border">
-          <table className="w-full text-sm">
-            <thead className="border-b bg-muted/40 text-xs text-muted-foreground">
-              <tr>
-                <th className="px-3 py-1.5 text-left">종류</th>
-                <th className="px-3 py-1.5 text-left">연결 · 설정</th>
-                <th className="px-3 py-1.5 text-left">P</th>
-                <th className="px-3 py-1.5 text-left">박스</th>
-                <th className="px-3 py-1.5"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {overlays.map((o, i) => {
-                const patch = (p: Partial<Overlay>) =>
-                  setOverlays((cur) =>
-                    cur.map((x, j) => (j === i ? { ...x, ...p } : x))
-                  );
-                const kind = o.kind ?? "text";
-                const kindSel =
-                  kind === "text"
-                    ? o.source === "input"
-                      ? "text:input"
-                      : o.source === "static"
-                        ? "text:static"
-                        : "text:student"
-                    : kind;
-                const dataSelect = (
-                  <select
-                    value={o.dataKey ?? ""}
-                    onChange={(e) => patch({ dataKey: e.target.value || undefined })}
-                    className="h-7 max-w-[180px] rounded-md border border-input bg-background px-1 text-xs"
-                  >
-                    <option value="">(연결 선택)</option>
-                    {choices.map((c) => (
-                      <option key={c.key} value={c.key}>
-                        {c.label}
-                      </option>
-                    ))}
-                  </select>
-                );
-                return (
-                  <tr key={o.key} className="border-b last:border-0 align-top">
-                    <td className="px-3 py-1.5">
-                      <select
-                        value={kindSel}
-                        onChange={(e) => {
-                          const v = e.target.value;
-                          if (v === "text:student")
-                            patch({ kind: "text", source: "student" });
-                          else if (v === "text:input")
-                            patch({
-                              kind: "text",
-                              source: "input",
-                              inputType: o.inputType ?? "date",
-                            });
-                          else if (v === "text:static")
-                            patch({ kind: "text", source: "static" });
-                          else
-                            patch({
-                              kind: v as OverlayKind,
-                              source: undefined,
-                            });
-                        }}
-                        className="h-7 rounded-md border border-input bg-background px-1 text-xs"
-                      >
-                        <option value="text:student">텍스트(학생)</option>
-                        <option value="text:input">텍스트(입력)</option>
-                        <option value="text:static">텍스트(고정)</option>
-                        <option value="check">체크</option>
-                        <option value="image">이미지</option>
-                        <option value="signature">사인</option>
-                      </select>
-                    </td>
-                    <td className="px-3 py-1.5">
-                      {kind === "text" && o.source === "static" ? (
-                        <input
-                          value={o.staticText ?? ""}
-                          onChange={(e) => patch({ staticText: e.target.value })}
-                          placeholder="고정 텍스트 (예: ✓ · 해당)"
-                          className="h-7 w-44 rounded-md border border-input bg-background px-2 text-xs"
-                        />
-                      ) : kind === "text" && o.source === "input" ? (
-                        <div className="flex flex-wrap items-center gap-1">
-                          <input
-                            value={o.inputLabel ?? ""}
-                            onChange={(e) => patch({ inputLabel: e.target.value })}
-                            placeholder="라벨 예: 작성일"
-                            className="h-7 w-28 rounded-md border border-input bg-background px-2 text-xs"
-                          />
-                          <select
-                            value={o.inputType ?? "date"}
-                            onChange={(e) =>
-                              patch({ inputType: e.target.value as "date" | "text" })
-                            }
-                            className="h-7 rounded-md border border-input bg-background px-1 text-xs"
-                          >
-                            <option value="date">날짜</option>
-                            <option value="text">텍스트</option>
-                          </select>
-                          {o.inputType !== "text" ? (
-                            <select
-                              value={o.datePart ?? ""}
-                              onChange={(e) =>
-                                patch({
-                                  datePart:
-                                    (e.target.value as
-                                      | "year"
-                                      | "month"
-                                      | "day") || undefined,
-                                })
-                              }
-                              className="h-7 rounded-md border border-input bg-background px-1 text-xs"
-                              title="날짜 일부만 출력 (년/월/일 분리 칸)"
-                            >
-                              <option value="">전체</option>
-                              <option value="year">년</option>
-                              <option value="month">월</option>
-                              <option value="day">일</option>
-                            </select>
-                          ) : null}
-                        </div>
-                      ) : kind === "check" ? (
-                        <div className="flex flex-wrap items-center gap-1">
-                          {dataSelect}
-                          <input
-                            value={o.matchValue ?? ""}
-                            onChange={(e) => patch({ matchValue: e.target.value })}
-                            placeholder="일치값(예: male)"
-                            className="h-7 w-28 rounded-md border border-input bg-background px-2 text-xs"
-                          />
-                        </div>
-                      ) : (
-                        dataSelect
-                      )}
-                    </td>
-                    <td className="px-3 py-1.5">{o.page + 1}</td>
-                    <td className="px-3 py-1.5 text-xs text-muted-foreground">
-                      {Math.round(o.w)}×{Math.round(o.h)}
-                    </td>
-                    <td className="px-3 py-1.5 text-right">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setOverlays((cur) => cur.filter((_, j) => j !== i))
-                        }
-                        className="text-muted-foreground hover:text-destructive"
-                      >
-                        <Trash2 className="size-4" />
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      ) : null}
     </div>
   );
 }
