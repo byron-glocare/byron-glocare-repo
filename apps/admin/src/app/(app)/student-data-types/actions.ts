@@ -36,7 +36,6 @@ const INPUT_TYPES = [
 ] as const;
 
 const SCOPES = ["university_info", "document_fill"] as const;
-const LINK_TYPES = ["independent", "reference"] as const;
 
 const optionSchema = z.object({
   value: z.string().min(1),
@@ -55,7 +54,6 @@ const schema = z.object({
   category: z.enum(CATEGORIES),
   input_type: z.enum(INPUT_TYPES),
   scope: z.enum(SCOPES),
-  link_type: z.enum(LINK_TYPES),
   hint_ko: z.string().max(2000).nullable(),
   hint_vi: z.string().max(2000).nullable(),
   is_essay_basis: z.boolean(),
@@ -97,7 +95,6 @@ export async function saveDataTypeAction(
     category: formData.get("category"),
     input_type: formData.get("input_type"),
     scope: formData.get("scope") || "document_fill",
-    link_type: formData.get("link_type") || "independent",
     hint_ko: emptyToNull(formData.get("hint_ko")),
     hint_vi: emptyToNull(formData.get("hint_vi")),
     is_essay_basis: formData.get("is_essay_basis") === "on",
@@ -153,49 +150,18 @@ export async function saveDataTypeAction(
     }
   }
 
-  // 연결성 파싱 — link_type 이 진실의 원천. is_derived 는 reference 와 동기화.
-  const linkType = data.link_type;
-
-  // 참조(reference) = 기존 파생 메커니즘
-  const isDerived = linkType === "reference";
-  const derivedRole = isDerived ? emptyToNull(formData.get("derived_role")) : null;
-  let derivedFrom: { selector: string; map: Record<string, string> } | null =
-    null;
-  if (isDerived) {
-    const dfRaw = formData.get("derived_from");
-    if (typeof dfRaw === "string" && dfRaw.trim() !== "") {
-      try {
-        const parsedDf = JSON.parse(dfRaw);
-        const selector =
-          parsedDf && typeof parsedDf.selector === "string"
-            ? parsedDf.selector.trim()
-            : "";
-        const mapObj =
-          parsedDf && parsedDf.map && typeof parsedDf.map === "object"
-            ? (parsedDf.map as Record<string, unknown>)
-            : {};
-        const map: Record<string, string> = {};
-        for (const [k, v] of Object.entries(mapObj)) {
-          const vs = String(v ?? "").trim();
-          if (vs) map[k] = vs;
-        }
-        if (selector) derivedFrom = { selector, map };
-      } catch {
-        return {
-          fieldErrors: { derived_from: "파생 매핑 파싱에 실패했습니다." },
-        };
-      }
-    }
-    if (!derivedFrom) {
-      return {
-        fieldErrors: { derived_from: "파생 항목은 선택 기준 항목이 필요합니다." },
-      };
-    }
-  }
+  // 연결성(참조/파생) 제거됨 — 모든 항목은 독립값. 기존 컬럼은 중립값으로 고정.
+  const NEUTRAL_LINK = {
+    link_type: "independent" as const,
+    is_derived: false,
+    derived_role: null,
+    derived_from: null,
+  };
 
   if (id) {
-    // UPDATE
+    // UPDATE (key 변경 허용 — 클라이언트에서 경고 후 제출)
     const patch: StudyStudentDataTypeUpdate = {
+      key: data.key,
       label_ko: data.label_ko,
       label_vi: data.label_vi,
       category: data.category,
@@ -209,16 +175,18 @@ export async function saveDataTypeAction(
       sort_order: data.sort_order,
       scope: data.scope,
       aliases,
-      link_type: linkType,
-      is_derived: isDerived,
-      derived_role: derivedRole,
-      derived_from: derivedFrom,
+      ...NEUTRAL_LINK,
     };
     const { error } = await supabase
       .from("study_student_data_types")
       .update(patch)
       .eq("id", id);
-    if (error) return { error: `DB UPDATE 실패: ${error.message}` };
+    if (error) {
+      if (error.code === "23505") {
+        return { fieldErrors: { key: "이미 사용 중인 key 입니다" } };
+      }
+      return { error: `DB UPDATE 실패: ${error.message}` };
+    }
   } else {
     // INSERT
     const ins: StudyStudentDataTypeInsert = {
@@ -236,10 +204,7 @@ export async function saveDataTypeAction(
       sort_order: data.sort_order,
       scope: data.scope,
       aliases,
-      link_type: linkType,
-      is_derived: isDerived,
-      derived_role: derivedRole,
-      derived_from: derivedFrom,
+      ...NEUTRAL_LINK,
     };
     const { error } = await supabase
       .from("study_student_data_types")
@@ -306,7 +271,7 @@ export async function getDataTypeUsageAction(
   if (!row) return { ...empty, error: "항목을 찾을 수 없습니다" };
   const key = row.key;
 
-  const [valuesRes, formsRes, subsRes, derivedRes] = await Promise.all([
+  const [valuesRes, formsRes, subsRes] = await Promise.all([
     admin
       .from("study_student_data_values")
       .select("id", { count: "exact", head: true })
@@ -319,23 +284,10 @@ export async function getDataTypeUsageAction(
       .from("study_required_submissions")
       .select("id", { count: "exact", head: true })
       .contains("required_data_type_keys", [key]),
-    admin
-      .from("study_student_data_types")
-      .select("key, label_ko, derived_from")
-      .eq("is_derived", true),
   ]);
 
-  // 파생 참조 — selector·map 이 이 key 를 가리키는 항목
+  // 참조(파생) 기능 제거됨 → 파생 참조 없음.
   const derivedRefs: string[] = [];
-  for (const t of derivedRes.data ?? []) {
-    const df = t.derived_from as
-      | { selector?: string; map?: Record<string, string> }
-      | null;
-    if (!df) continue;
-    const inSelector = df.selector === key;
-    const inMap = df.map ? Object.values(df.map).includes(key) : false;
-    if (inSelector || inMap) derivedRefs.push(`${t.label_ko} (${t.key})`);
-  }
 
   const valueCount = valuesRes.count ?? 0;
   const formCount = formsRes.count ?? 0;

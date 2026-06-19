@@ -97,10 +97,6 @@ export default async function StudentDataTypesPage() {
     is_active: t.is_active,
     scope: t.scope,
     aliases: t.aliases ?? [],
-    link_type: t.link_type ?? (t.is_derived ? "reference" : "independent"),
-    is_derived: t.is_derived ?? false,
-    derived_role: t.derived_role,
-    derived_from: t.derived_from,
   }));
   const allTypeRefs: DataTypeRef[] = (types ?? []).map((t) => ({
     id: t.id,
@@ -178,11 +174,6 @@ export default async function StudentDataTypesPage() {
                             <span className="text-xs text-muted-foreground">
                               {t.label_vi}
                             </span>
-                            {(t.link_type ?? (t.is_derived ? "reference" : "independent")) === "reference" ? (
-                              <Badge variant="secondary" className="text-[10px]">
-                                참조
-                              </Badge>
-                            ) : null}
                             {t.hint_ko ? (
                               <span className="text-muted-foreground/70">💡</span>
                             ) : null}
