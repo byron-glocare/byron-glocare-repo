@@ -87,19 +87,51 @@ export function WriteRowActions({
         </a>
         <button
           type="button"
-          onClick={() => setOpen((v) => !v)}
+          onClick={() => setOpen(true)}
           className="rounded-md border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100"
         >
-          {open ? closeLabel : previewLabel}
+          {previewLabel}
         </button>
       </div>
+
+      {/* 미리보기 — 큰 모달(화면 중앙)로 독립 표시 */}
       {open && pdfPreview ? (
-        <iframe
-          key={pdfPreview}
-          src={pdfPreview}
-          className="h-[600px] w-full rounded-md border border-slate-200 bg-white"
-          title="preview"
-        />
+        <div
+          className="fixed inset-0 z-50 flex flex-col bg-black/60 p-3 sm:p-6"
+          onClick={() => setOpen(false)}
+        >
+          <div
+            className="mx-auto flex h-full w-full max-w-5xl flex-col overflow-hidden rounded-lg bg-white shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-slate-200 px-4 py-2.5">
+              <span className="text-sm font-semibold text-slate-800">
+                {previewLabel}
+              </span>
+              <div className="flex items-center gap-2">
+                <a
+                  href={pdfDownload}
+                  className="rounded-md bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-800"
+                >
+                  {pdfLabel}
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setOpen(false)}
+                  className="rounded-md border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100"
+                >
+                  {closeLabel}
+                </button>
+              </div>
+            </div>
+            <iframe
+              key={pdfPreview}
+              src={pdfPreview}
+              className="min-h-0 flex-1 w-full bg-white"
+              title="preview"
+            />
+          </div>
+        </div>
       ) : null}
     </div>
   );
