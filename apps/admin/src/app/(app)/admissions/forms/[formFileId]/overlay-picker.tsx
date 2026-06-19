@@ -261,11 +261,58 @@ export function OverlayPicker({
   const defaultSize = DEFAULT_SIZE;
   const [saving, setSaving] = useState(false);
   const [autoBusy, setAutoBusy] = useState(false);
+  // 정렬 가이드선 (axis x=세로선, y=가로선; PDF pt). 편집 보조용 — 저장 안 함.
+  const [guides, setGuides] = useState<
+    { id: string; axis: "x" | "y"; pos: number }[]
+  >([]);
+  const [showGuides, setShowGuides] = useState(true);
 
   const labelOf = useCallback(
     (k: string) => choices.find((c) => c.key === k)?.label ?? k,
     [choices]
   );
+
+  // 가이드선 근처면 스냅 (PDF pt, 임계 5pt). 맞는 값 없으면 null.
+  const snapTo = (val: number, axis: "x" | "y"): number | null => {
+    let best: number | null = null;
+    let bestD = 5;
+    for (const g of guides) {
+      if (g.axis !== axis) continue;
+      const d = Math.abs(val - g.pos);
+      if (d < bestD) {
+        bestD = d;
+        best = g.pos;
+      }
+    }
+    return best;
+  };
+
+  // 키보드 화살표 → 선택 박스 1pt(shift=10pt) 이동
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (!activeKey) return;
+      const t = e.target as HTMLElement | null;
+      if (t && /^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName)) return;
+      const step = e.shiftKey ? 10 : 1;
+      let dx = 0;
+      let dy = 0;
+      if (e.key === "ArrowLeft") dx = -step;
+      else if (e.key === "ArrowRight") dx = step;
+      else if (e.key === "ArrowUp") dy = step; // pt: 위로 = y 증가
+      else if (e.key === "ArrowDown") dy = -step;
+      else return;
+      e.preventDefault();
+      setOverlays((cur) =>
+        cur.map((o) =>
+          o.key === activeKey
+            ? { ...o, x: Math.max(0, o.x + dx), y: Math.max(0, o.y + dy) }
+            : o
+        )
+      );
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [activeKey]);
 
   // pdfjs 로드 + 문서 열기 (클라이언트 전용)
   useEffect(() => {
@@ -348,31 +395,6 @@ export function OverlayPicker({
       ? crypto.randomUUID()
       : `box-${Math.round(performance.now())}-${Math.round(Math.random() * 1e6)}`;
 
-  // 고정 텍스트 박스 — 관리자가 미리 적어두는 값(예: "✓", "해당", 도장 대체).
-  function addStaticBox() {
-    const page0 = pageNum - 1;
-    const cx = (canvasRef.current?.width ?? 400) / scale / 2;
-    const cy = (canvasRef.current?.height ?? 600) / scale / 2;
-    const h = Math.round(defaultSize * 1.6);
-    const key = uid();
-    setOverlays((cur) => [
-      ...cur,
-      {
-        key,
-        page: page0,
-        x: Math.max(0, cx - 30),
-        y: Math.max(0, cy - h / 2),
-        w: 60,
-        h,
-        size: defaultSize,
-        kind: "text",
-        source: "static",
-        staticText: "",
-      },
-    ]);
-    setActiveKey(key);
-  }
-
   // 작성일 년/월/일 — 생성 시 정하는 날짜를 부분만 출력하는 3개 박스 (라벨 공유).
   function addDateParts() {
     const page0 = pageNum - 1;
@@ -405,6 +427,41 @@ export function OverlayPicker({
     });
     setOverlays((cur) => [...cur, ...boxes]);
     if (boxes[0]) setActiveKey(boxes[0].key);
+  }
+
+  // 가이드선 추가 (화면 가운데)
+  function addGuide(axis: "x" | "y") {
+    const canvas = canvasRef.current;
+    const pos =
+      axis === "x"
+        ? Math.round((canvas ? canvas.width : 400) / scale / 2)
+        : Math.round((canvas ? canvas.height : 600) / scale / 2);
+    setGuides((g) => [...g, { id: uid(), axis, pos }]);
+    setShowGuides(true);
+  }
+
+  // 가이드선 드래그 이동
+  function startGuideDrag(e: React.PointerEvent, id: string, axis: "x" | "y") {
+    e.preventDefault();
+    e.stopPropagation();
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const move = (ev: PointerEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      const pos =
+        axis === "x"
+          ? Math.max(0, (ev.clientX - rect.left) / scale)
+          : Math.max(0, (canvas.height - (ev.clientY - rect.top)) / scale);
+      setGuides((g) =>
+        g.map((x) => (x.id === id ? { ...x, pos: Math.round(pos) } : x))
+      );
+    };
+    const up = () => {
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+    };
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", up);
   }
 
   // 빈 곳 클릭 → 선택 박스를 그 자리(좌상단)로 이동, 없으면 학생데이터 텍스트 박스 생성
@@ -489,15 +546,30 @@ export function OverlayPicker({
         cur.map((o) => {
           if (o.key !== key) return o;
           if (mode === "move") {
-            return {
-              ...o,
-              x: Math.max(0, orig.x + dxPt),
-              y: Math.max(0, orig.y - dyPt),
-            };
+            let nx = Math.max(0, orig.x + dxPt);
+            let ny = Math.max(0, orig.y - dyPt);
+            // 가이드 스냅: 왼/오른쪽 모서리 → 세로선, 아래/위 모서리 → 가로선
+            const sl = snapTo(nx, "x");
+            if (sl != null) nx = sl;
+            else {
+              const sr = snapTo(nx + orig.w, "x");
+              if (sr != null) nx = Math.max(0, sr - orig.w);
+            }
+            const sb = snapTo(ny, "y");
+            if (sb != null) ny = sb;
+            else {
+              const st = snapTo(ny + orig.h, "y");
+              if (st != null) ny = Math.max(0, st - orig.h);
+            }
+            return { ...o, x: nx, y: ny };
           }
-          // resize: 좌상단 고정, 우하단을 끌어 너비·높이 변경
-          const w = Math.max(20, orig.w + dxPt);
-          const h = Math.max(8, orig.h + dyPt);
+          // resize: 좌상단 고정, 우하단을 끌어 너비·높이 변경 (+ 가이드 스냅)
+          let w = Math.max(20, orig.w + dxPt);
+          let h = Math.max(8, orig.h + dyPt);
+          const sr = snapTo(orig.x + w, "x");
+          if (sr != null) w = Math.max(20, sr - orig.x);
+          const sb = snapTo(top - h, "y");
+          if (sb != null) h = Math.max(8, top - sb);
           return { ...o, w, h, y: Math.max(0, top - h) };
         })
       );
@@ -963,23 +1035,26 @@ export function OverlayPicker({
       {/* 좌: 박스추가·선택설정·배치할박스 / 우: 양식 캔버스 */}
       <div className="flex flex-col gap-4 lg:flex-row">
         <div className="space-y-4 lg:w-80 lg:shrink-0">
-      {/* 박스 추가 */}
+      {/* 박스 추가 + 자동완성 */}
       <div className="space-y-1.5">
-        <span className="text-xs font-medium">박스 추가</span>
-        <div className="flex flex-wrap gap-2">
-          <Button type="button" variant="outline" size="sm" disabled={!ready} onClick={addGeneralBox}>
-            + 일반
+        <div className="flex flex-wrap items-center gap-2">
+          <Button type="button" size="sm" disabled={!ready} onClick={addGeneralBox}>
+            + 박스 추가
           </Button>
-          <Button type="button" variant="outline" size="sm" disabled={!ready} onClick={addStaticBox}>
-            + 고정텍스트
-          </Button>
-          <Button type="button" variant="outline" size="sm" disabled={!ready} onClick={addDateParts}>
-            + 작성일
+          <span className="text-[11px] text-muted-foreground">자동완성</span>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={!ready}
+            onClick={addDateParts}
+          >
+            작성일(년·월·일)
           </Button>
         </div>
         <p className="text-[11px] text-muted-foreground">
-          추가하면 화면 가운데 생깁니다. 드래그로 위치, 우하단 모서리로 크기 조절.
-          “일반”은 아래 설정에서 종류·연결을 정하세요.
+          박스를 추가하면 화면 가운데 생깁니다(기본=학생 정보). 드래그로 위치,
+          우하단 모서리로 크기 조절. 종류·연결은 아래 “선택 박스 설정”에서.
         </p>
       </div>
 
@@ -1046,9 +1121,9 @@ export function OverlayPicker({
                   }}
                   className="mt-0.5 h-7 w-full rounded-md border border-input bg-background px-1 text-xs"
                 >
-                  <option value="text:student">텍스트(학생데이터)</option>
-                  <option value="text:input">텍스트(생성 시 입력)</option>
-                  <option value="text:static">텍스트(고정)</option>
+                  <option value="text:student">학생 정보로 자동 완성</option>
+                  <option value="text:input">문서 생성할 때 작성</option>
+                  <option value="text:static">고정된 텍스트</option>
                   <option value="check">체크</option>
                   <option value="image">이미지</option>
                   <option value="signature">사인</option>
@@ -1205,10 +1280,39 @@ export function OverlayPicker({
         </div>
       ) : null}
 
+      {/* 정렬 가이드선 */}
+      <div className="flex flex-wrap items-center gap-2 text-xs">
+        <span className="font-medium">가이드선</span>
+        <Button type="button" variant="outline" size="sm" onClick={() => addGuide("y")}>
+          + 가로선
+        </Button>
+        <Button type="button" variant="outline" size="sm" onClick={() => addGuide("x")}>
+          + 세로선
+        </Button>
+        <label className="flex items-center gap-1">
+          <input
+            type="checkbox"
+            checked={showGuides}
+            onChange={(e) => setShowGuides(e.target.checked)}
+          />
+          표시
+        </label>
+        {guides.length > 0 ? (
+          <button
+            type="button"
+            onClick={() => setGuides([])}
+            className="text-muted-foreground underline hover:text-destructive"
+          >
+            전체 삭제
+          </button>
+        ) : null}
+      </div>
+
       <p className="text-xs text-muted-foreground">
-        파란 박스 = 채움 영역. 박스를 <strong>드래그</strong>해 이동,{" "}
-        <strong>우하단 모서리</strong>로 크기 조절. 선택한 박스는 빈 곳을 클릭해도
-        그 자리로 옮겨집니다. 왼쪽 위 숫자 = 박스 번호.
+        파란 박스 = 채움 영역. <strong>드래그</strong>로 이동,{" "}
+        <strong>우하단 모서리</strong>로 크기 조절. 선택 후 <strong>화살표키</strong>로
+        1pt(Shift=10pt) 미세 이동. 분홍 가이드선 근처에선 자동으로 붙습니다. 왼쪽 위
+        숫자 = 박스 번호.
       </p>
 
       {/* 캔버스 + 박스 오버레이 */}
@@ -1227,6 +1331,56 @@ export function OverlayPicker({
             onClick={handleCanvasClick}
             className="cursor-crosshair"
           />
+          {/* 정렬 가이드선 (분홍). 핸들로 이동, ×로 삭제. */}
+          {showGuides
+            ? guides.map((g) =>
+                g.axis === "x" ? (
+                  <div
+                    key={g.id}
+                    style={{ left: g.pos * scale }}
+                    className="pointer-events-none absolute top-0 z-20 h-full w-px bg-fuchsia-500/70"
+                  >
+                    <span
+                      onPointerDown={(e) => startGuideDrag(e, g.id, "x")}
+                      className="pointer-events-auto absolute top-1 -left-1 size-2.5 cursor-ew-resize rounded-full bg-fuchsia-500"
+                      title="가이드 이동"
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setGuides((arr) => arr.filter((x) => x.id !== g.id))
+                      }
+                      className="pointer-events-auto absolute top-5 -left-2 flex size-4 items-center justify-center rounded-full bg-fuchsia-500 text-[9px] text-white"
+                      title="가이드 삭제"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ) : (
+                  <div
+                    key={g.id}
+                    style={{ top: canvasH - g.pos * scale }}
+                    className="pointer-events-none absolute left-0 z-20 h-px w-full bg-fuchsia-500/70"
+                  >
+                    <span
+                      onPointerDown={(e) => startGuideDrag(e, g.id, "y")}
+                      className="pointer-events-auto absolute left-1 -top-1 size-2.5 cursor-ns-resize rounded-full bg-fuchsia-500"
+                      title="가이드 이동"
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setGuides((arr) => arr.filter((x) => x.id !== g.id))
+                      }
+                      className="pointer-events-auto absolute left-5 -top-2 flex size-4 items-center justify-center rounded-full bg-fuchsia-500 text-[9px] text-white"
+                      title="가이드 삭제"
+                    >
+                      ×
+                    </button>
+                  </div>
+                )
+              )
+            : null}
           {/* 현재 페이지 채움 박스 */}
           {pageOverlays.map((o) => {
             const left = o.x * scale;
