@@ -239,6 +239,7 @@ export type Database = {
           termination_reason: TerminationReason | null;
           bank_name: string | null;
           bank_account: string | null;
+          auth_user_id: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -276,6 +277,7 @@ export type Database = {
           termination_reason?: TerminationReason | null;
           bank_name?: string | null;
           bank_account?: string | null;
+          auth_user_id?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -1056,6 +1058,42 @@ export type Database = {
             foreignKeyName: "study_center_orgs_pricing_plan_id_fkey";
             columns: ["pricing_plan_id"];
             referencedRelation: "study_pricing_plans";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+
+      study_center_users: {
+        Row: {
+          id: string;
+          org_id: string;
+          auth_user_id: string;
+          email: string;
+          name: string;
+          role: "admin" | "user";
+          status: "active" | "suspended";
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          org_id: string;
+          auth_user_id: string;
+          email: string;
+          name: string;
+          role?: "admin" | "user";
+          status?: "active" | "suspended";
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["study_center_users"]["Insert"]
+        >;
+        Relationships: [
+          {
+            foreignKeyName: "study_center_users_org_id_fkey";
+            columns: ["org_id"];
+            referencedRelation: "study_center_orgs";
             referencedColumns: ["id"];
           }
         ];

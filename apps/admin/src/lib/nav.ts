@@ -16,6 +16,7 @@ import {
   Receipt,
   School,
   Settings,
+  ShieldCheck,
   Users,
   type LucideIcon,
 } from "lucide-react";
@@ -73,6 +74,9 @@ export const NAV_GROUPS: NavGroup[] = [
   },
   {
     label: "",
-    items: [{ href: "/settings", label: "설정", icon: Settings }],
+    items: [
+      { href: "/accounts", label: "계정 관리", icon: ShieldCheck },
+      { href: "/settings", label: "설정", icon: Settings },
+    ],
   },
 ];
