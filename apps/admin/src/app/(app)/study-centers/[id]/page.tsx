@@ -1,8 +1,9 @@
 import { notFound } from "next/navigation";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/page-header";
 import { StudyCenterForm } from "@/components/study-center-form";
+import { StudyCenterSettlement } from "@/components/study-center-settlement";
 import type { StudyCenterInput } from "@/lib/validators";
 
 export const dynamic = "force-dynamic";
@@ -24,6 +25,26 @@ export default async function StudyCenterEditPage({
     .single();
 
   if (error || !row) notFound();
+
+  // 정산(1:1 org) + 가격 플랜 + 이 센터의 로그인 계정 로드 (service role)
+  const admin = createAdminClient();
+  const [{ data: org }, { data: plans }] = await Promise.all([
+    admin
+      .from("study_center_orgs")
+      .select("id, pricing_plan_id, settlement_currency, status")
+      .eq("study_center_id", numericId)
+      .limit(1)
+      .maybeSingle(),
+    admin.from("study_pricing_plans").select("id, name, model").order("name"),
+  ]);
+
+  const { data: centerUsers } = org?.id
+    ? await admin
+        .from("study_center_users")
+        .select("email, role, status")
+        .eq("org_id", org.id)
+        .order("created_at")
+    : { data: [] };
 
   const defaultValues: Partial<StudyCenterInput> = {
     active: row.active,
@@ -53,11 +74,25 @@ export default async function StudyCenterEditPage({
           { label: row.name_vi },
         ]}
       />
-      <div className="p-6">
+      <div className="space-y-6 p-6">
         <StudyCenterForm
           mode="edit"
           centerId={numericId}
           defaultValues={defaultValues}
+        />
+        <StudyCenterSettlement
+          studyCenterId={numericId}
+          plans={plans ?? []}
+          current={
+            org
+              ? {
+                  pricingPlanId: org.pricing_plan_id,
+                  currency: org.settlement_currency,
+                  status: org.status,
+                }
+              : null
+          }
+          accounts={centerUsers ?? []}
         />
       </div>
     </>
