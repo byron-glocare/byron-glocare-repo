@@ -51,27 +51,25 @@ export const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
-    label: "유학",
+    label: "대학",
     items: [
-      { href: "/students", label: "유학생", icon: Plane },
       { href: "/universities", label: "대학교", icon: School },
       { href: "/departments", label: "학과", icon: BookOpen },
       { href: "/offerings", label: "모집", icon: Megaphone },
       { href: "/admissions", label: "입학서류", icon: ClipboardList },
       { href: "/student-data-types", label: "데이터", icon: Database },
-      { href: "/study-centers", label: "유학센터", icon: Building2 },
-      { href: "/study-cases", label: "사례", icon: Film },
-      { href: "/study-channels", label: "SNS 채널", icon: Radio },
     ],
   },
   {
-    label: "유학 B2B 정산",
+    label: "유학",
     items: [
-      { href: "/pricing-plans", label: "가격 플랜", icon: DollarSign },
-      // "유학센터 회사"(center-orgs) 메뉴 제거 — 관리 단위를 유학센터(study_centers)로
-      // 통일. org 는 유학센터당 1:1 정산 백킹으로 자동 생성·연결되어 뒤에서만 존재.
-      // (라우트는 유지 — 정산 플랜 지정 등 필요 시 직접 접근 가능)
+      { href: "/students", label: "유학생", icon: Plane },
+      { href: "/study-centers", label: "유학센터", icon: Building2 },
+      { href: "/study-cases", label: "사례", icon: Film },
+      { href: "/study-channels", label: "SNS", icon: Radio },
       { href: "/study-invoices", label: "정산", icon: FileText },
+      { href: "/pricing-plans", label: "유학센터 상품", icon: DollarSign },
+      // "유학센터 회사"(center-orgs) 메뉴는 유학센터(study_centers)로 통합되어 제거됨.
     ],
   },
   {

@@ -208,6 +208,37 @@ export async function updateEventPayment(
   return { ok: true, data: null };
 }
 
+/**
+ * 이벤트 보상 지급 완료 토글 (정산 > 이벤트 보상 탭에서 사용).
+ *   given=true  → gift_given=true + gift_given_date=오늘(KST)
+ *   given=false → gift_given=false + gift_given_date=null
+ */
+export async function setEventGiftGiven(
+  paymentId: string,
+  given: boolean
+): Promise<ActionResult> {
+  let supabase;
+  try {
+    ({ supabase } = await requireAuth());
+  } catch {
+    return { ok: false, error: "Unauthorized" };
+  }
+  const todayKst = new Date(Date.now() + 9 * 3600 * 1000)
+    .toISOString()
+    .slice(0, 10);
+  const { error } = await supabase
+    .from("event_payments")
+    .update({
+      gift_given: given,
+      gift_given_date: given ? todayKst : null,
+    })
+    .eq("id", paymentId);
+  if (error) return { ok: false, error: error.message };
+
+  revalidatePath("/settlements");
+  return { ok: true, data: null };
+}
+
 export async function deleteEventPayment(
   paymentId: string,
   customerId: string

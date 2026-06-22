@@ -28,11 +28,21 @@ import {
   SettlementReservationListView,
   type ReservationListRow,
 } from "@/components/settlement-reservation-list-view";
+import {
+  SettlementEventRewardView,
+  type EventRewardRow,
+} from "@/components/settlement-event-reward-view";
 import { PendingTabClient } from "@/components/pending-tab-client";
 
 export const dynamic = "force-dynamic";
 
-const VALID_TABS = ["pending", "history", "customers", "reservations"] as const;
+const VALID_TABS = [
+  "pending",
+  "history",
+  "customers",
+  "reservations",
+  "events",
+] as const;
 type TabKey = (typeof VALID_TABS)[number];
 
 type SearchParams = Promise<{
@@ -583,6 +593,42 @@ export default async function SettlementsPage({
     });
   }
 
+  // =============================================================================
+  // tab='events' — 이벤트 보상 대상 (event_payments) + 지급완료 체크
+  // =============================================================================
+  const [{ data: eventRowsRaw }, { data: eventCustomers }] = await Promise.all([
+    supabase
+      .from("event_payments")
+      .select(
+        "id, customer_id, event_type, amount, gift_type, friend_customer_id, gift_given, gift_given_date, created_at"
+      )
+      .order("created_at", { ascending: false }),
+    supabase.from("customers").select("id, code, name_kr, name_vi"),
+  ]);
+  const eventCustMap = new Map(
+    (eventCustomers ?? []).map((c) => [c.id, c])
+  );
+  const eventRewardRows: EventRewardRow[] = (eventRowsRaw ?? []).map((e) => {
+    const c = eventCustMap.get(e.customer_id);
+    const f = e.friend_customer_id
+      ? eventCustMap.get(e.friend_customer_id)
+      : null;
+    return {
+      id: e.id,
+      customerId: e.customer_id,
+      customerName: c ? c.name_kr || c.name_vi || "(이름 없음)" : "(이름 없음)",
+      customerCode: c?.code ?? "—",
+      eventType: e.event_type,
+      amount: e.amount,
+      giftType: e.gift_type,
+      friendName: f ? f.name_kr || f.name_vi || null : null,
+      giftGiven: e.gift_given,
+      giftGivenDate: e.gift_given_date,
+      createdAt: e.created_at,
+    };
+  });
+  const eventUnpaidCount = eventRewardRows.filter((r) => !r.giftGiven).length;
+
   return (
     <>
       <PageHeader
@@ -592,7 +638,7 @@ export default async function SettlementsPage({
       />
       <div className="p-6">
         <Tabs defaultValue={tab} className="w-full">
-          <TabsList className="grid grid-cols-4 w-full h-10">
+          <TabsList className="grid grid-cols-5 w-full h-10">
             <TabsTrigger
               value="pending"
               className="text-sm data-active:bg-primary data-active:text-primary-foreground data-active:font-semibold"
@@ -621,6 +667,15 @@ export default async function SettlementsPage({
               예약금 조회{" "}
               <Badge variant="secondary" className="ml-1.5">
                 {reservationListRows.length}건
+              </Badge>
+            </TabsTrigger>
+            <TabsTrigger
+              value="events"
+              className="text-sm data-active:bg-primary data-active:text-primary-foreground data-active:font-semibold"
+            >
+              이벤트 보상{" "}
+              <Badge variant="secondary" className="ml-1.5">
+                {eventUnpaidCount}건
               </Badge>
             </TabsTrigger>
           </TabsList>
@@ -697,6 +752,10 @@ export default async function SettlementsPage({
 
           <TabsContent value="reservations" className="mt-6 space-y-4">
             <SettlementReservationListView rows={reservationListRows} />
+          </TabsContent>
+
+          <TabsContent value="events" className="mt-6 space-y-4">
+            <SettlementEventRewardView rows={eventRewardRows} />
           </TabsContent>
         </Tabs>
       </div>
