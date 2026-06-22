@@ -31,19 +31,19 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-type Org = {
-  id: string;
+type Center = {
+  id: number;
   name_vi: string;
   name_ko: string | null;
-  status: string;
+  active: boolean;
 };
 
 export function CenterAccounts({
   accounts,
-  orgs,
+  centers,
 }: {
   accounts: AccountRow[];
-  orgs: Org[];
+  centers: Center[];
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -56,14 +56,14 @@ export function CenterAccounts({
   function onCreate(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
-    const orgId = String(form.get("orgId") || "");
+    const studyCenterId = Number(form.get("studyCenterId") || 0);
     const name = String(form.get("name") || "").trim();
     const email = String(form.get("email") || "").trim();
     const password = String(form.get("password") || "");
     const role = (String(form.get("role") || "user") as "admin" | "user");
     const el = e.currentTarget;
     startTransition(async () => {
-      const r = await createCenterUser({ orgId, name, email, password, role });
+      const r = await createCenterUser({ studyCenterId, name, email, password, role });
       if (r.ok) {
         toast.success(`${email} 유학센터 계정을 생성했습니다.`);
         setShowCreate(false);
@@ -103,7 +103,7 @@ export function CenterAccounts({
     });
   }
 
-  const orgLabel = (o: Org) => o.name_ko || o.name_vi;
+  const centerLabel = (c: Center) => c.name_ko || c.name_vi;
 
   return (
     <Card>
@@ -112,23 +112,23 @@ export function CenterAccounts({
           <CardTitle className="text-base">유학센터 계정</CardTitle>
           <CardDescription>
             youstudyinkorea.com/center 로그인 계정 {centerAccounts.length}명 ·
-            센터(회사) 등록은 “유학센터 회사” 메뉴에서
+            센터 등록은 “유학센터” 메뉴에서
           </CardDescription>
         </div>
         <Button
           type="button"
           size="sm"
           onClick={() => setShowCreate((v) => !v)}
-          disabled={orgs.length === 0}
+          disabled={centers.length === 0}
         >
           <UserPlus className="size-3" />
           센터 계정 생성
         </Button>
       </CardHeader>
       <CardContent className="space-y-4">
-        {orgs.length === 0 && (
+        {centers.length === 0 && (
           <p className="text-sm text-muted-foreground">
-            먼저 “유학센터 회사” 메뉴에서 센터(회사)를 등록하세요.
+            먼저 “유학센터” 메뉴에서 센터를 등록하세요.
           </p>
         )}
 
@@ -138,17 +138,17 @@ export function CenterAccounts({
             className="grid items-end gap-3 rounded-md border border-border bg-muted/30 p-3 sm:grid-cols-2 lg:grid-cols-6"
           >
             <div className="lg:col-span-2">
-              <Label className="text-xs">센터(회사)</Label>
+              <Label className="text-xs">유학센터</Label>
               <select
-                name="orgId"
+                name="studyCenterId"
                 required
                 className="h-9 w-full rounded-md border border-input bg-background px-2 text-sm"
               >
                 <option value="">— 선택 —</option>
-                {orgs.map((o) => (
-                  <option key={o.id} value={o.id}>
-                    {orgLabel(o)}
-                    {o.status !== "active" ? ` (${o.status})` : ""}
+                {centers.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {centerLabel(c)}
+                    {!c.active ? " (숨김)" : ""}
                   </option>
                 ))}
               </select>

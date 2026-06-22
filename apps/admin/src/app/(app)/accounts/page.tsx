@@ -12,13 +12,13 @@ export const dynamic = "force-dynamic";
 export default async function AccountsPage() {
   const supabase = await createClient();
 
-  const [accountsResult, { data: orgs }, {
+  const [accountsResult, { data: centers }, {
     data: { user: currentUser },
   }] = await Promise.all([
     listAccounts(),
     supabase
-      .from("study_center_orgs")
-      .select("id, name_vi, name_ko, status")
+      .from("study_centers")
+      .select("id, name_vi, name_ko, active")
       .order("name_vi"),
     supabase.auth.getUser(),
   ]);
@@ -40,7 +40,7 @@ export default async function AccountsPage() {
             />
             <CenterAccounts
               accounts={accountsResult.data}
-              orgs={orgs ?? []}
+              centers={centers ?? []}
             />
           </>
         ) : (

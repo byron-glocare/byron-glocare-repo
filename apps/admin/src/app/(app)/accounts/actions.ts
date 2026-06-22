@@ -286,8 +286,13 @@ export async function updateOwnPassword(
 // 유학센터 계정 (auth.users + study_center_users 동시 생성)
 // =============================================================================
 
+/**
+ * 유학센터(study_centers, master 목록) 에 묶이는 로그인 계정 생성.
+ * 로그인은 study_center_orgs(uuid) 에만 FK 이므로, 선택한 study_center 에
+ * 대응하는 org 를 찾거나(없으면 자동 생성) 그 org 에 study_center_users 를 만든다.
+ */
 export async function createCenterUser(input: {
-  orgId: string;
+  studyCenterId: number;
   name: string;
   email: string;
   password: string;
@@ -297,7 +302,8 @@ export async function createCenterUser(input: {
   if (!guard.ok) return guard;
   const email = input.email.trim();
   const name = input.name.trim();
-  if (!input.orgId) return { ok: false, error: "센터(회사)를 선택하세요." };
+  if (!input.studyCenterId)
+    return { ok: false, error: "유학센터를 선택하세요." };
   if (!name) return { ok: false, error: "담당자 이름은 필수입니다." };
   if (!email) return { ok: false, error: "이메일은 필수입니다." };
   if (input.password.length < 6)
@@ -305,22 +311,24 @@ export async function createCenterUser(input: {
 
   const admin = createAdminClient();
 
-  // 1) auth.users 생성 (어드민 역할 없음)
+  // 1) study_center 에 대응하는 org 확보 (없으면 생성)
+  const orgResult = await resolveOrgForStudyCenter(input.studyCenterId);
+  if (!orgResult.ok) return orgResult;
+  const orgId = orgResult.data;
+
+  // 2) auth.users 생성 (어드민 역할 없음)
   const { data: created, error: authErr } = await admin.auth.admin.createUser({
     email,
     password: input.password,
     email_confirm: true,
   });
   if (authErr || !created?.user) {
-    return {
-      ok: false,
-      error: authErr?.message ?? "Auth 계정 생성 실패",
-    };
+    return { ok: false, error: authErr?.message ?? "Auth 계정 생성 실패" };
   }
 
-  // 2) study_center_users 매핑 (실패 시 auth 계정 롤백)
+  // 3) study_center_users 매핑 (실패 시 auth 계정 롤백)
   const { error: mapErr } = await admin.from("study_center_users").insert({
-    org_id: input.orgId,
+    org_id: orgId,
     auth_user_id: created.user.id,
     email,
     name,
@@ -334,6 +342,46 @@ export async function createCenterUser(input: {
 
   revalidatePath("/accounts");
   return { ok: true, data: null };
+}
+
+/** study_center_id 로 org 를 찾고, 없으면 study_center 정보로 새 org 생성. */
+async function resolveOrgForStudyCenter(
+  studyCenterId: number
+): Promise<ActionResult<string>> {
+  const admin = createAdminClient();
+
+  const { data: existing } = await admin
+    .from("study_center_orgs")
+    .select("id")
+    .eq("study_center_id", studyCenterId)
+    .limit(1)
+    .maybeSingle();
+  if (existing?.id) return { ok: true, data: existing.id };
+
+  const { data: center, error: cErr } = await admin
+    .from("study_centers")
+    .select("name_vi, name_ko")
+    .eq("id", studyCenterId)
+    .maybeSingle();
+  if (cErr || !center)
+    return { ok: false, error: "유학센터를 찾을 수 없습니다." };
+
+  const { data: org, error: oErr } = await admin
+    .from("study_center_orgs")
+    .insert({
+      name_vi: center.name_vi,
+      name_ko: center.name_ko,
+      country: "VN",
+      status: "active",
+      settlement_currency: "KRW",
+      study_center_id: studyCenterId,
+      activated_at: new Date().toISOString(),
+    })
+    .select("id")
+    .single();
+  if (oErr || !org)
+    return { ok: false, error: `회사(org) 생성 실패: ${oErr?.message}` };
+  return { ok: true, data: org.id };
 }
 
 /** 유학센터 계정 활성/정지 (study_center_users.status) */

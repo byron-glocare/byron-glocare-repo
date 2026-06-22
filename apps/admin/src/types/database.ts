@@ -1030,6 +1030,7 @@ export type Database = {
           pricing_plan_id: string | null;
           settlement_currency: string;
           contact_info: unknown | null;
+          study_center_id: number | null;
           created_at: string;
           updated_at: string;
           activated_at: string | null;
@@ -1045,6 +1046,7 @@ export type Database = {
           pricing_plan_id?: string | null;
           settlement_currency?: string;
           contact_info?: unknown | null;
+          study_center_id?: number | null;
           created_at?: string;
           updated_at?: string;
           activated_at?: string | null;
