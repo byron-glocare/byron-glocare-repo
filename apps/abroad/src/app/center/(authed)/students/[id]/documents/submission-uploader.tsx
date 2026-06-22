@@ -26,20 +26,33 @@ export function SubmissionUploader({
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const [pending, startTransition] = useTransition();
+  const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
   async function onPick(file: File) {
     setErr(null);
-    const fd = new FormData();
-    fd.set("studentId", studentId);
-    fd.set("docKey", docKey);
-    fd.set("file", file);
-    const res = await uploadSubmissionFileAction(fd);
-    if (!res.ok) {
-      setErr(res.error);
-      return;
+    setBusy(true);
+    try {
+      const fd = new FormData();
+      fd.set("studentId", studentId);
+      fd.set("docKey", docKey);
+      fd.set("file", file);
+      const res = await uploadSubmissionFileAction(fd);
+      if (!res.ok) {
+        setErr(res.error);
+        return;
+      }
+      startTransition(() => router.refresh());
+    } catch (e) {
+      // 액션이 throw 하면(용량 초과·서버 오류·환경변수 누락 등) 조용히 죽지 않게 표시
+      setErr(
+        e instanceof Error
+          ? `업로드 실패: ${e.message}`
+          : "업로드 실패 — 파일 용량(최대 20MB)이나 네트워크/서버 상태를 확인하세요."
+      );
+    } finally {
+      setBusy(false);
     }
-    startTransition(() => router.refresh());
   }
 
   async function onView() {
@@ -97,11 +110,11 @@ export function SubmissionUploader({
           <button
             type="button"
             onClick={() => inputRef.current?.click()}
-            disabled={pending}
+            disabled={pending || busy}
             className="rounded-md border border-slate-300 p-1.5 text-slate-600 hover:bg-slate-50"
             title={tr(locale, "교체", "Thay")}
           >
-            {pending ? (
+            {pending || busy ? (
               <Loader2 className="size-3.5 animate-spin" />
             ) : (
               <RefreshCw className="size-3.5" />
@@ -121,10 +134,10 @@ export function SubmissionUploader({
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
-          disabled={pending}
+          disabled={pending || busy}
           className="inline-flex items-center gap-1.5 rounded-md bg-slate-900 px-3 py-1.5 text-xs font-medium text-white hover:bg-slate-800 disabled:opacity-60"
         >
-          {pending ? (
+          {pending || busy ? (
             <Loader2 className="size-3.5 animate-spin" />
           ) : (
             <Upload className="size-3.5" />
