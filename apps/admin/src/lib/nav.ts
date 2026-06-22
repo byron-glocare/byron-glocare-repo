@@ -73,7 +73,7 @@ export const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
-    label: "",
+    label: "시스템",
     items: [
       { href: "/accounts", label: "계정 관리", icon: ShieldCheck },
       { href: "/settings", label: "설정", icon: Settings },
