@@ -1195,7 +1195,57 @@ export type Database = {
       };
     };
     Views: { [_ in never]: never };
-    Functions: { [_ in never]: never };
+    Functions: {
+      create_self_customer: {
+        Args: {
+          p_name_kr?: string | null;
+          p_name_vi?: string | null;
+          p_phone?: string | null;
+        };
+        Returns: string;
+      };
+      submit_application: {
+        Args: {
+          p_name_kr?: string | null;
+          p_name_vi?: string | null;
+          p_phone?: string | null;
+          p_birth_year?: number | null;
+          p_address?: string | null;
+          p_desired_region?: string | null;
+          p_topik_level?: string | null;
+          p_visa_type?: string | null;
+        };
+        Returns: undefined;
+      };
+      confirm_enrollment: {
+        Args: Record<PropertyKey, never>;
+        Returns: undefined;
+      };
+      set_kakao_consent: {
+        Args: { p_consent: boolean };
+        Returns: undefined;
+      };
+      create_payment_intent: {
+        Args: { p_kind: string };
+        Returns: { order_id: string; amount: number }[];
+      };
+      record_payment_paid: {
+        Args: {
+          p_order_id: string;
+          p_payment_key: string;
+          p_method: string;
+        };
+        Returns: undefined;
+      };
+      mark_payment_va_waiting: {
+        Args: {
+          p_order_id: string;
+          p_payment_key: string;
+          p_due: string;
+        };
+        Returns: undefined;
+      };
+    };
     Enums: { [_ in never]: never };
     CompositeTypes: { [_ in never]: never };
   };
