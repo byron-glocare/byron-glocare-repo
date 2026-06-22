@@ -68,7 +68,9 @@ export const NAV_GROUPS: NavGroup[] = [
     label: "유학 B2B 정산",
     items: [
       { href: "/pricing-plans", label: "가격 플랜", icon: DollarSign },
-      { href: "/center-orgs", label: "유학센터 회사", icon: Building2 },
+      // "유학센터 회사"(center-orgs) 메뉴 제거 — 관리 단위를 유학센터(study_centers)로
+      // 통일. org 는 유학센터당 1:1 정산 백킹으로 자동 생성·연결되어 뒤에서만 존재.
+      // (라우트는 유지 — 정산 플랜 지정 등 필요 시 직접 접근 가능)
       { href: "/study-invoices", label: "정산", icon: FileText },
     ],
   },
