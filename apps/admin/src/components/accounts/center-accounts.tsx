@@ -49,7 +49,9 @@ export function CenterAccounts({
   const [pending, startTransition] = useTransition();
   const [showCreate, setShowCreate] = useState(false);
 
-  const centerAccounts = accounts.filter((a) => a.kind === "center");
+  // center 매핑(study_center_users)이 있으면 표시 — 어드민 역할을 겸한
+  // 계정(테스트용 등)도 유학센터 목록에 함께 보이게 한다.
+  const centerAccounts = accounts.filter((a) => a.centerUserId);
 
   function onCreate(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
