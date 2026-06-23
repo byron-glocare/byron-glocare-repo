@@ -10,31 +10,31 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { formatDateTime } from "@/lib/format";
+import { SmsHistoryView } from "@/components/sms/sms-history-view";
 
 export const dynamic = "force-dynamic";
 
 export default async function SmsPage() {
   const supabase = await createClient();
   // 발송 1건 = (교육원 요약행 1 + 학생별 N행). 이력 화면은 요약행만 보여
-  // 발송당 1행이 되게 한다. (학생별 행은 정산 매칭용이라 DB 엔 유지)
-  const { data: recent } = await supabase
-    .from("sms_messages")
-    .select(
-      "id, message_type, target_customer_id, target_center_id, content, sent_at"
-    )
-    .is("target_customer_id", null)
-    .order("sent_at", { ascending: false })
-    .limit(20);
+  // 발송당 1행이 되게 하고, 학생별 행은 팝업의 "수신 학생 목록"으로 활용한다.
+  const [{ data: recent }, { data: recipientRows }] = await Promise.all([
+    supabase
+      .from("sms_messages")
+      .select(
+        "id, message_type, target_customer_id, target_center_id, content, sent_at"
+      )
+      .is("target_customer_id", null)
+      .order("sent_at", { ascending: false })
+      .limit(20),
+    supabase
+      .from("sms_messages")
+      .select("target_customer_id, target_center_id, sent_at")
+      .not("target_customer_id", "is", null)
+      .order("sent_at", { ascending: false })
+      .limit(500),
+  ]);
 
   const { data: centers } = await supabase
     .from("training_centers")
@@ -49,6 +49,29 @@ export default async function SmsPage() {
       `${c.code} · ${c.name_kr || c.name_vi || "?"}`,
     ])
   );
+
+  // 같은 발송(같은 sent_at + 교육원)의 학생 수신자 묶기
+  const recipientsByKey = new Map<string, string[]>();
+  for (const r of recipientRows ?? []) {
+    if (!r.target_customer_id) continue;
+    const key = `${r.sent_at}::${r.target_center_id ?? ""}`;
+    const arr = recipientsByKey.get(key) ?? [];
+    arr.push(customerMap.get(r.target_customer_id) ?? "?");
+    recipientsByKey.set(key, arr);
+  }
+
+  const historyRows = (recent ?? []).map((m) => ({
+    id: m.id,
+    sentAt: formatDateTime(m.sent_at),
+    type: m.message_type,
+    target: m.target_center_id
+      ? `교육원: ${centerMap.get(m.target_center_id) ?? "?"}`
+      : m.target_customer_id
+        ? customerMap.get(m.target_customer_id) ?? "?"
+        : "—",
+    content: m.content,
+    recipients: recipientsByKey.get(`${m.sent_at}::${m.target_center_id ?? ""}`) ?? [],
+  }));
 
   return (
     <>
@@ -112,47 +135,12 @@ export default async function SmsPage() {
             <CardDescription>최근 20건</CardDescription>
           </CardHeader>
           <CardContent>
-            {!recent || recent.length === 0 ? (
+            {historyRows.length === 0 ? (
               <p className="text-sm text-muted-foreground py-6 text-center border border-dashed border-border rounded-md">
                 발송 이력이 없습니다.
               </p>
             ) : (
-              <div className="overflow-hidden rounded-md border border-border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-40">발송일시</TableHead>
-                      <TableHead className="w-36">타입</TableHead>
-                      <TableHead className="w-52">대상</TableHead>
-                      <TableHead>미리보기</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {recent.map((m) => (
-                      <TableRow key={m.id}>
-                        <TableCell className="text-sm">
-                          {formatDateTime(m.sent_at)}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline">{m.message_type}</Badge>
-                        </TableCell>
-                        <TableCell className="text-sm">
-                          {m.target_center_id
-                            ? `교육원: ${centerMap.get(m.target_center_id) ?? "?"}`
-                            : m.target_customer_id
-                              ? customerMap.get(m.target_customer_id) ?? "?"
-                              : "—"}
-                        </TableCell>
-                        <TableCell className="text-xs text-muted-foreground">
-                          <div className="max-h-48 max-w-2xl overflow-y-auto whitespace-pre-wrap break-words leading-relaxed">
-                            {m.content}
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+              <SmsHistoryView rows={historyRows} />
             )}
           </CardContent>
         </Card>
