@@ -603,7 +603,7 @@ export default async function SettlementsPage({
         "id, customer_id, event_type, amount, gift_type, friend_customer_id, gift_given, gift_given_date, created_at"
       )
       .order("created_at", { ascending: false }),
-    supabase.from("customers").select("id, code, name_kr, name_vi"),
+    supabase.from("customers").select("id, code, name_kr, name_vi, phone"),
   ]);
   const eventCustMap = new Map(
     (eventCustomers ?? []).map((c) => [c.id, c])
@@ -618,11 +618,13 @@ export default async function SettlementsPage({
       customerId: e.customer_id,
       customerName: c ? c.name_kr || c.name_vi || "(이름 없음)" : "(이름 없음)",
       customerCode: c?.code ?? "—",
+      customerPhone: c?.phone ?? null,
       eventType: e.event_type,
       amount: e.amount,
       giftType: e.gift_type,
       friendCustomerId: e.friend_customer_id,
       friendName: f ? f.name_kr || f.name_vi || null : null,
+      friendPhone: f?.phone ?? null,
       giftGiven: e.gift_given,
       giftGivenDate: e.gift_given_date,
       createdAt: e.created_at,

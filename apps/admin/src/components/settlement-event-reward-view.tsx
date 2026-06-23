@@ -36,11 +36,13 @@ export type EventRewardRow = {
   customerId: string;
   customerName: string;
   customerCode: string;
+  customerPhone: string | null;
   eventType: string;
   amount: number;
   giftType: string | null;
   friendCustomerId: string | null;
   friendName: string | null;
+  friendPhone: string | null;
   giftGiven: boolean;
   giftGivenDate: string | null;
   createdAt: string;
@@ -205,6 +207,11 @@ export function SettlementEventRewardView({
                       >
                         {row.customerName}
                       </Link>
+                      {row.customerPhone && (
+                        <div className="text-xs text-muted-foreground font-mono">
+                          {row.customerPhone}
+                        </div>
+                      )}
                     </TableCell>
                     <TableCell className="text-sm">{row.eventType}</TableCell>
                     <TableCell>
@@ -241,36 +248,43 @@ export function SettlementEventRewardView({
                     </TableCell>
                     <TableCell>
                       {row.eventType === "친구 소개" ? (
-                        <Select
-                          value={row.friendCustomerId ?? "__none__"}
-                          onValueChange={(v) =>
-                            onUpdateFriend(row, v === "__none__" ? null : v)
-                          }
-                          disabled={pending && isBusy}
-                        >
-                          <SelectTrigger className="h-8">
-                            <SelectValueMap
-                              map={{
-                                __none__: "—",
-                                ...Object.fromEntries(
-                                  customerOptions.map((c) => [
-                                    c.id,
-                                    c.name_kr || c.name_vi || "(이름 없음)",
-                                  ])
-                                ),
-                              }}
-                              placeholder="선택"
-                            />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="__none__">—</SelectItem>
-                            {customerOptions.map((c) => (
-                              <SelectItem key={c.id} value={c.id}>
-                                {c.name_kr || c.name_vi || "(이름 없음)"}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        <div className="space-y-1">
+                          <Select
+                            value={row.friendCustomerId ?? "__none__"}
+                            onValueChange={(v) =>
+                              onUpdateFriend(row, v === "__none__" ? null : v)
+                            }
+                            disabled={pending && isBusy}
+                          >
+                            <SelectTrigger className="h-8">
+                              <SelectValueMap
+                                map={{
+                                  __none__: "—",
+                                  ...Object.fromEntries(
+                                    customerOptions.map((c) => [
+                                      c.id,
+                                      c.name_kr || c.name_vi || "(이름 없음)",
+                                    ])
+                                  ),
+                                }}
+                                placeholder="선택"
+                              />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="__none__">—</SelectItem>
+                              {customerOptions.map((c) => (
+                                <SelectItem key={c.id} value={c.id}>
+                                  {c.name_kr || c.name_vi || "(이름 없음)"}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          {row.friendPhone && (
+                            <div className="text-xs text-muted-foreground font-mono">
+                              {row.friendPhone}
+                            </div>
+                          )}
+                        </div>
                       ) : (
                         <span className="text-sm text-muted-foreground">—</span>
                       )}
