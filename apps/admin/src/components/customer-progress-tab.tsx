@@ -32,12 +32,7 @@ import { CustomerRemindersPanel } from "@/components/customer-reminders-panel";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -399,14 +394,14 @@ export function CustomerProgressTab({
         )}
       </div>
 
-      {/* 단계별 상세 */}
-      <div className="grid gap-4 lg:grid-cols-2">
-        <StageCard
+      {/* 단계별 상세 — 각 단계가 한 줄, 안에 항목들이 가로로 (flex-wrap) */}
+      <div className="space-y-3">
+        <StageRow
           title="접수"
           complete={summary.intake.complete}
           locked={isStageCardLocked("intake")}
         >
-          <AutoRow label="기초정보">
+          <AutoItem label="기초정보">
             <Badge
               variant="outline"
               className={
@@ -419,8 +414,8 @@ export function CustomerProgressTab({
             >
               {summary.intake.basicInfo}
             </Badge>
-          </AutoRow>
-          <IntakeDecisionRow
+          </AutoItem>
+          <IntakeDecisionItem
             confirmed={state.flags.intake_confirmed}
             abandoned={state.flags.intake_abandoned}
             yesLocked={isFlagLocked("intake_confirmed")}
@@ -430,72 +425,65 @@ export function CustomerProgressTab({
             onClear={() => setIntakeDecision("none")}
             pending={pending}
           />
-          <ManualSwitchRow
+          <ManualSwitchItem
             flag="study_abroad_consultation"
             value={state.flags.study_abroad_consultation}
             locked={isFlagLocked("study_abroad_consultation")}
             onChange={(v) => toggleFlag("study_abroad_consultation", v)}
             pending={pending}
           />
-        </StageCard>
+        </StageRow>
 
-        <StageCard
+        <StageRow
           title="교육 예약"
           complete={summary.trainingReservation.complete}
           locked={isStageCardLocked("training_reservation")}
         >
-          <ManualSwitchRow
+          <ManualSwitchItem
             flag="training_center_finding"
             value={state.flags.training_center_finding}
             locked={isFlagLocked("training_center_finding")}
             onChange={(v) => toggleFlag("training_center_finding", v)}
             pending={pending}
           />
-          <AutoRow label="교육원 매칭">
+          <AutoItem label="교육원 매칭">
             <BoolPill v={summary.trainingReservation.centerMatched} />
-          </AutoRow>
-          {/*
-            0017: 수동 토글 → 교육원 단위 derived 로 이동. 여기는 read-only
-            표시. 진짜 토글은 [교육원 상세] > '강의 일정 업데이트 필요' Switch
-            에 있음.
-          */}
-          <AutoRow label="강의 일정 업데이트 완료">
+          </AutoItem>
+          <AutoItem label="강의 일정 업데이트">
             <ScheduleStatusBadge
               needsUpdate={
                 summary.trainingReservation.classScheduleConfirmationNeeded
               }
             />
-          </AutoRow>
-          <AutoRow label="강의일정 확정">
+          </AutoItem>
+          <AutoItem label="강의일정 확정">
             <BoolPill v={summary.trainingReservation.classMatched} />
-          </AutoRow>
-          <AutoRow label="예약금 입금">
+          </AutoItem>
+          <AutoItem label="예약금 입금">
             <BoolPill v={summary.trainingReservation.reservationPaid} />
-          </AutoRow>
-          <MilestoneRow
+          </AutoItem>
+          <MilestoneItem
             flag="class_intake_sms_sent"
             value={state.flags.class_intake_sms_sent}
             locked={isFlagLocked("class_intake_sms_sent")}
             onChange={(v) => toggleFlag("class_intake_sms_sent", v)}
             pending={pending}
           />
-          <ManualSwitchRow
+          <ManualSwitchItem
             flag="training_reservation_abandoned"
             value={state.flags.training_reservation_abandoned}
             locked={isFlagLocked("training_reservation_abandoned")}
             onChange={(v) => toggleFlag("training_reservation_abandoned", v)}
             pending={pending}
           />
-        </StageCard>
+        </StageRow>
 
-        <StageCard
+        <StageRow
           title="교육"
           complete={summary.training.complete}
           locked={isStageCardLocked("training")}
         >
-          {/* 메시지 발송은 교육 예약 단계의 "강의 접수 메시지 발송" 과 동일
-              (둘 다 new_student SMS 기준) — 중복 표시 제거 */}
-          <AutoRow label="교육 전/중/완료">
+          <AutoItem label="교육 전/중/완료">
             {summary.training.phase ? (
               <Badge variant="outline">{summary.training.phase}</Badge>
             ) : (
@@ -503,53 +491,53 @@ export function CustomerProgressTab({
                 강의일정 필요
               </span>
             )}
-          </AutoRow>
-          <MilestoneRow
+          </AutoItem>
+          <MilestoneItem
             flag="certificate_acquired"
             value={state.flags.certificate_acquired}
             locked={isFlagLocked("certificate_acquired")}
             onChange={(v) => toggleFlag("certificate_acquired", v)}
             pending={pending}
           />
-          <ManualSwitchRow
+          <ManualSwitchItem
             flag="training_dropped"
             value={state.flags.training_dropped}
             locked={isFlagLocked("training_dropped")}
             onChange={(v) => toggleFlag("training_dropped", v)}
             pending={pending}
           />
-        </StageCard>
+        </StageRow>
 
-        <StageCard
+        <StageRow
           title="취업"
           complete={summary.employment.complete}
           locked={isStageCardLocked("employment")}
         >
-          <MilestoneRow
+          <MilestoneItem
             flag="health_check_completed"
             value={state.flags.health_check_completed}
             locked={isFlagLocked("health_check_completed")}
             onChange={(v) => toggleFlag("health_check_completed", v)}
             pending={pending}
           />
-          <ManualSwitchRow
+          <ManualSwitchItem
             flag="care_home_finding"
             value={state.flags.care_home_finding}
             locked={isFlagLocked("care_home_finding")}
             onChange={(v) => toggleFlag("care_home_finding", v)}
             pending={pending}
           />
-          <AutoRow label="요양원 매칭">
+          <AutoItem label="요양원 매칭">
             <BoolPill v={summary.employment.careHomeMatched} />
-          </AutoRow>
-          <MilestoneRow
+          </AutoItem>
+          <MilestoneItem
             flag="resume_sent"
             value={state.flags.resume_sent}
             locked={isFlagLocked("resume_sent")}
             onChange={(v) => toggleFlag("resume_sent", v)}
             pending={pending}
           />
-          <AutoRow label="면접 전/후">
+          <AutoItem label="면접 전/후">
             {summary.employment.interviewPhase ? (
               <Badge variant="outline">
                 {summary.employment.interviewPhase}
@@ -557,32 +545,32 @@ export function CustomerProgressTab({
             ) : (
               <span className="text-xs text-muted-foreground">면접일 필요</span>
             )}
-          </AutoRow>
-          <MilestoneRow
+          </AutoItem>
+          <MilestoneItem
             flag="interview_passed"
             value={state.flags.interview_passed}
             locked={isFlagLocked("interview_passed")}
             onChange={(v) => toggleFlag("interview_passed", v)}
             pending={pending}
           />
-          <AutoRow label="웰컴팩 예약금 입금">
+          <AutoItem label="웰컴팩 예약금 입금">
             <BoolPill v={summary.employment.welcomePackReservationPaid} />
-          </AutoRow>
-          <ManualSwitchRow
+          </AutoItem>
+          <ManualSwitchItem
             flag="welcome_pack_abandoned"
             value={state.flags.welcome_pack_abandoned}
             locked={isFlagLocked("welcome_pack_abandoned")}
             onChange={(v) => toggleFlag("welcome_pack_abandoned", v)}
             pending={pending}
           />
-        </StageCard>
+        </StageRow>
 
-        <StageCard
+        <StageRow
           title="근무"
           complete={summary.work.workPhase === "종료"}
           locked={isWorkCardLocked}
         >
-          <AutoRow label="근무 전/중/종료">
+          <AutoItem label="근무 전/중/종료">
             {summary.work.workPhase ? (
               <Badge variant="outline">{summary.work.workPhase}</Badge>
             ) : (
@@ -590,8 +578,8 @@ export function CustomerProgressTab({
                 근무 시작일 필요
               </span>
             )}
-          </AutoRow>
-          <AutoRow label="비자변경">
+          </AutoItem>
+          <AutoItem label="비자변경">
             {summary.work.visaChangePhase ? (
               <Badge
                 variant="outline"
@@ -610,14 +598,8 @@ export function CustomerProgressTab({
                 {summary.work.workPhase ? "—" : "근무 시작일 필요"}
               </span>
             )}
-          </AutoRow>
-          <div className="flex items-start justify-between gap-3">
-            <div className="min-w-0">
-              <Label className="text-sm">근무 종료</Label>
-              <p className="text-xs text-muted-foreground">
-                체크 시 이 고객은 "종료" 로 분류됩니다.
-              </p>
-            </div>
+          </AutoItem>
+          <ItemBox label="근무 종료">
             <Select
               value={state.termination_reason ?? NONE_VALUE}
               onValueChange={(v) =>
@@ -629,7 +611,7 @@ export function CustomerProgressTab({
               }
               disabled={pending}
             >
-              <SelectTrigger className="w-44 shrink-0">
+              <SelectTrigger className="h-8 w-44">
                 <SelectValueMap
                   map={{
                     [NONE_VALUE]: "해당없음",
@@ -649,42 +631,30 @@ export function CustomerProgressTab({
                 <SelectItem value="연락두절">연락두절</SelectItem>
               </SelectContent>
             </Select>
-          </div>
-        </StageCard>
+          </ItemBox>
+        </StageRow>
 
         {/* 대기 섹션 — 맨 마지막 */}
-        <StageCard title="대기" complete={false} locked={waitingLocked}>
-          <div className="flex items-start justify-between gap-3">
-            <div className="min-w-0">
-              <Label className="text-sm">대기중</Label>
-              <p className="text-xs text-muted-foreground">
-                단계 무관, 일시 홀딩 시 사용.
-              </p>
-            </div>
+        <StageRow title="대기" complete={false} locked={waitingLocked}>
+          <ItemBox label="대기중" hint="단계 무관, 일시 홀딩 시 사용">
             <Switch
               checked={state.is_waiting}
               onCheckedChange={setWaiting}
               disabled={pending || waitingLocked}
-              className="shrink-0"
             />
-          </div>
+          </ItemBox>
           {state.is_waiting && (
             <>
-              <div>
-                <Label className="text-xs text-muted-foreground">
-                  재연락일
-                </Label>
+              <ItemBox label="재연락일">
                 <Input
                   type="date"
                   value={state.recontact_date ?? ""}
                   onChange={(e) => setRecontactDate(e.target.value)}
                   disabled={pending || waitingLocked}
+                  className="h-8 w-44"
                 />
-              </div>
-              <div>
-                <Label className="text-xs text-muted-foreground">
-                  메모 <span className="text-[11px]">(최대 500자)</span>
-                </Label>
+              </ItemBox>
+              <ItemBox label="메모" hint="최대 500자" grow>
                 <Textarea
                   value={state.waiting_memo ?? ""}
                   onChange={(e) => setWaitingMemo(e.target.value)}
@@ -692,10 +662,10 @@ export function CustomerProgressTab({
                   maxLength={500}
                   disabled={pending || waitingLocked}
                 />
-              </div>
+              </ItemBox>
             </>
           )}
-        </StageCard>
+        </StageRow>
       </div>
 
       {/* 챙길 일정 — 대기중과 별개. 자체 즉시 저장. */}
@@ -713,7 +683,10 @@ export function CustomerProgressTab({
 
 const NONE_VALUE = "__none__";
 
-function StageCard({
+/**
+ * 단계 한 줄. 좌측에 title + complete/locked badge, 우측에 children (mini-box 들 flex-wrap).
+ */
+function StageRow({
   title,
   complete,
   locked,
@@ -728,7 +701,7 @@ function StageCard({
   return (
     <Card
       className={cn(
-        "transition-colors",
+        "transition-colors p-3",
         locked
           ? "bg-muted/40 border-border/50 opacity-70"
           : complete
@@ -736,39 +709,80 @@ function StageCard({
             : ""
       )}
     >
-      <CardHeader className="flex-row items-center justify-between">
-        <CardTitle
-          className={cn(
-            "text-base",
-            locked && "text-muted-foreground"
-          )}
-        >
-          {title}
-        </CardTitle>
-        {locked ? (
-          <Badge
-            variant="outline"
-            className="bg-muted text-muted-foreground border-border"
+      <div className="flex items-start gap-3 flex-wrap">
+        <div className="flex items-center gap-2 min-w-[110px] shrink-0 pt-1">
+          <CardTitle
+            className={cn(
+              "text-base",
+              locked && "text-muted-foreground"
+            )}
           >
-            <Lock className="size-3" />
-            잠김
-          </Badge>
-        ) : (
-          complete && (
-            <Badge className="bg-success/10 text-success border-success/20">
-              <Check className="size-3" />
-              완료
+            {title}
+          </CardTitle>
+          {locked ? (
+            <Badge
+              variant="outline"
+              className="bg-muted text-muted-foreground border-border"
+            >
+              <Lock className="size-3" />
+              잠김
             </Badge>
-          )
-        )}
-      </CardHeader>
-      <CardContent className="space-y-3">{children}</CardContent>
+          ) : (
+            complete && (
+              <Badge className="bg-success/10 text-success border-success/20">
+                <Check className="size-3" />
+                완료
+              </Badge>
+            )
+          )}
+        </div>
+        <div className="flex-1 flex flex-wrap gap-2 min-w-0">{children}</div>
+      </div>
     </Card>
   );
 }
 
-/** 완전 자동 행 (읽기 전용). 잠금 아이콘은 텍스트 끝으로. */
-function AutoRow({
+/**
+ * 항목 mini-box. label (+ optional hint) 이 위, control/state 가 아래.
+ * grow=true 면 남은 폭을 채움 (메모 등 긴 입력용).
+ */
+function ItemBox({
+  label,
+  hint,
+  locked,
+  grow,
+  children,
+}: {
+  label: string;
+  hint?: string;
+  /** 자동 (읽기 전용) 항목은 자물쇠 아이콘 표시 */
+  locked?: boolean;
+  grow?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      className={cn(
+        "flex flex-col gap-1.5 rounded-md border border-border bg-background/60 px-2.5 py-2 min-w-[120px]",
+        grow && "flex-1"
+      )}
+    >
+      <div className="flex items-center gap-1 text-xs text-muted-foreground">
+        <span className="font-medium text-foreground">{label}</span>
+        {locked && <Lock className="size-3" />}
+      </div>
+      {hint && (
+        <p className="text-[10px] text-muted-foreground leading-tight">
+          {hint}
+        </p>
+      )}
+      <div className="mt-0.5">{children}</div>
+    </div>
+  );
+}
+
+/** 자동 항목 (읽기 전용). */
+function AutoItem({
   label,
   children,
 }: {
@@ -776,18 +790,14 @@ function AutoRow({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex items-center justify-between gap-3 text-sm">
-      <div className="flex items-center gap-1.5 text-muted-foreground">
-        <span>{label}</span>
-        <Lock className="size-3" />
-      </div>
+    <ItemBox label={label} locked>
       {children}
-    </div>
+    </ItemBox>
   );
 }
 
-/** 수동 스위치 행 — blocker / terminal 구분은 스위치 thumb 색으로. */
-function ManualSwitchRow({
+/** 수동 스위치 항목 — blocker / terminal 구분은 스위치 thumb 색으로. */
+function ManualSwitchItem({
   flag,
   value,
   locked,
@@ -801,7 +811,6 @@ function ManualSwitchRow({
   pending: boolean;
 }) {
   const category = CATEGORY[flag];
-  // 색상 토큰: blocker=amber(warning), terminal=red(destructive)
   const onClass =
     category === "blocker"
       ? "data-[state=checked]:bg-warning"
@@ -809,28 +818,19 @@ function ManualSwitchRow({
         ? "data-[state=checked]:bg-destructive"
         : "";
   return (
-    <div className="flex items-start justify-between gap-3">
-      <div className="min-w-0">
-        <Label className="text-sm">{FLAG_LABELS[flag]}</Label>
-        {FLAG_HINTS[flag] && (
-          <p className="text-xs text-muted-foreground">{FLAG_HINTS[flag]}</p>
-        )}
-      </div>
+    <ItemBox label={FLAG_LABELS[flag]} hint={FLAG_HINTS[flag]}>
       <Switch
         checked={value}
         onCheckedChange={onChange}
         disabled={pending || locked}
-        className={cn("shrink-0", onClass)}
+        className={cn(onClass)}
       />
-    </div>
+    </ItemBox>
   );
 }
 
-/**
- * 마일스톤 행 — X / O 쌍이 나란히 보이고 활성 상태만 컬러. 클릭으로 토글.
- * 자동 읽기 전용 필드와 시각적 일관성 유지를 위해 BoolPill 과 유사한 스타일.
- */
-function MilestoneRow({
+/** 마일스톤 항목 — X / O 쌍이 나란히. 클릭으로 토글. */
+function MilestoneItem({
   flag,
   value,
   locked,
@@ -845,21 +845,15 @@ function MilestoneRow({
 }) {
   const disabled = pending || locked;
   return (
-    <div className="flex items-start justify-between gap-3">
-      <div className="min-w-0">
-        <Label className="text-sm">{FLAG_LABELS[flag]}</Label>
-        {FLAG_HINTS[flag] && (
-          <p className="text-xs text-muted-foreground">{FLAG_HINTS[flag]}</p>
-        )}
-      </div>
-      <div className="inline-flex rounded-md overflow-hidden border border-border shrink-0">
+    <ItemBox label={FLAG_LABELS[flag]} hint={FLAG_HINTS[flag]}>
+      <div className="inline-flex rounded-md overflow-hidden border border-border">
         <button
           type="button"
           onClick={() => !disabled && value !== false && onChange(false)}
           disabled={disabled}
           aria-pressed={!value}
           className={cn(
-            "inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium transition-colors",
+            "inline-flex items-center gap-1 px-2 py-1 text-xs font-medium transition-colors",
             !value
               ? "bg-destructive/10 text-destructive"
               : "bg-transparent text-muted-foreground/60 hover:bg-muted",
@@ -875,7 +869,7 @@ function MilestoneRow({
           disabled={disabled}
           aria-pressed={value}
           className={cn(
-            "inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium transition-colors border-l border-border",
+            "inline-flex items-center gap-1 px-2 py-1 text-xs font-medium transition-colors border-l border-border",
             value
               ? "bg-success/10 text-success"
               : "bg-transparent text-muted-foreground/60 hover:bg-muted",
@@ -885,16 +879,15 @@ function MilestoneRow({
           <Check className="size-3" />예
         </button>
       </div>
-    </div>
+    </ItemBox>
   );
 }
 
 /**
  * 접수 "등록" 결정 — 3-state (예/아니오/미선택). 활성 옵션을 다시 누르면
- * 미선택으로 toggle off. yesLocked / noLocked 는 각각의 잠금 (단, 활성된 옵션은
- * 항상 클릭 가능 — toggle off 위해).
+ * 미선택으로 toggle off.
  */
-function IntakeDecisionRow({
+function IntakeDecisionItem({
   confirmed,
   abandoned,
   yesLocked,
@@ -916,14 +909,11 @@ function IntakeDecisionRow({
   const noDisabled = pending || (!abandoned && noLocked);
   const yesDisabled = pending || (!confirmed && yesLocked);
   return (
-    <div className="flex items-start justify-between gap-3">
-      <div className="min-w-0">
-        <Label className="text-sm">{FLAG_LABELS.intake_confirmed}</Label>
-        <p className="text-xs text-muted-foreground">
-          예 = 다음 단계로 진행 / 아니오 = 접수 포기 (종료)
-        </p>
-      </div>
-      <div className="inline-flex rounded-md overflow-hidden border border-border shrink-0">
+    <ItemBox
+      label={FLAG_LABELS.intake_confirmed}
+      hint="예 = 진행 / 아니오 = 포기"
+    >
+      <div className="inline-flex rounded-md overflow-hidden border border-border">
         <button
           type="button"
           onClick={() => {
@@ -934,7 +924,7 @@ function IntakeDecisionRow({
           disabled={noDisabled}
           aria-pressed={abandoned}
           className={cn(
-            "inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium transition-colors",
+            "inline-flex items-center gap-1 px-2 py-1 text-xs font-medium transition-colors",
             abandoned
               ? "bg-destructive/10 text-destructive"
               : "bg-transparent text-muted-foreground/60 hover:bg-muted",
@@ -942,7 +932,7 @@ function IntakeDecisionRow({
           )}
         >
           <X className="size-3" />
-          아니오 (포기)
+          아니오
         </button>
         <button
           type="button"
@@ -954,18 +944,17 @@ function IntakeDecisionRow({
           disabled={yesDisabled}
           aria-pressed={confirmed}
           className={cn(
-            "inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium transition-colors border-l border-border",
+            "inline-flex items-center gap-1 px-2 py-1 text-xs font-medium transition-colors border-l border-border",
             confirmed
               ? "bg-success/10 text-success"
               : "bg-transparent text-muted-foreground/60 hover:bg-muted",
             yesDisabled && "opacity-60 cursor-not-allowed"
           )}
         >
-          <Check className="size-3" />
-          예 (진행)
+          <Check className="size-3" />예
         </button>
       </div>
-    </div>
+    </ItemBox>
   );
 }
 
