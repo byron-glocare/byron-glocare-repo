@@ -763,20 +763,20 @@ function ItemBox({
   return (
     <div
       className={cn(
-        "flex flex-col gap-1.5 rounded-md border border-border bg-background/60 px-2.5 py-2 min-w-[120px]",
+        "flex flex-col gap-1 rounded-md border border-border bg-background/60 px-2.5 py-2 min-w-[130px]",
         grow && "flex-1"
       )}
     >
-      <div className="flex items-center gap-1 text-xs text-muted-foreground">
+      <div className="flex items-center gap-1 text-xs">
         <span className="font-medium text-foreground">{label}</span>
-        {locked && <Lock className="size-3" />}
+        {locked && <Lock className="size-3 text-muted-foreground" />}
       </div>
       {hint && (
         <p className="text-[10px] text-muted-foreground leading-tight">
           {hint}
         </p>
       )}
-      <div className="mt-0.5">{children}</div>
+      <div className="mt-auto pt-1">{children}</div>
     </div>
   );
 }
