@@ -171,7 +171,6 @@ export function CustomerSettlementTab({
         payments={reservationPayments}
         defaultAmount={trainingReservationFee}
         productType={customer.product_type}
-        welcomePackReservationPaid={!!welcomePackPayment?.reservation_date}
       />
 
       {/* 소개비 정산 — customer 단위 완료/포기/되돌리기 (0019) */}
@@ -257,26 +256,19 @@ function ReservationPaymentsCard({
   payments,
   defaultAmount,
   productType,
-  welcomePackReservationPaid,
 }: {
   customerId: string;
   payments: ReservationPayment[];
   defaultAmount: number;
   productType: Customer["product_type"];
-  welcomePackReservationPaid: boolean;
 }) {
-  // 교육 예약금 활성 조건:
-  //  - product_type 이 "교육" 또는 "교육+웰컴팩" (웰컴팩 only 는 비활성)
-  //  - 웰컴팩 예약금 미납 (납부했으면 교육 예약금 면제)
+  // 교육 예약금 활성 조건: 상품이 교육 포함 ("교육" / "교육+웰컴팩")
   const productAllowsEducation =
     productType === "교육" || productType === "교육+웰컴팩";
-  const exemptByWelcomePack = welcomePackReservationPaid;
-  const addDisabled = !productAllowsEducation || exemptByWelcomePack;
+  const addDisabled = !productAllowsEducation;
   const disabledReason = !productAllowsEducation
     ? `상품 '${productType ?? "없음"}' — 교육 예약금 대상 아님`
-    : exemptByWelcomePack
-      ? "웰컴팩 예약금 납부로 교육 예약금 면제"
-      : null;
+    : null;
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [showAdd, setShowAdd] = useState(false);
