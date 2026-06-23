@@ -47,7 +47,7 @@ export default async function ManagedStudentDetailPage({
     .maybeSingle();
   if (!student) notFound();
 
-  const [{ data: org }, { data: files }] = await Promise.all([
+  const [{ data: org }, { data: files }, { data: finals }] = await Promise.all([
     admin
       .from("study_center_orgs")
       .select("name_ko, name_vi")
@@ -58,11 +58,24 @@ export default async function ManagedStudentDetailPage({
       .select("id, doc_key, file_path, file_name, size_bytes, created_at")
       .eq("student_id", id)
       .order("created_at", { ascending: false }),
+    admin
+      .from("study_student_final_docs")
+      .select("id, doc_name, file_path, file_name, size_bytes, finalized_at")
+      .eq("student_id", id)
+      .order("finalized_at", { ascending: false }),
   ]);
 
   // 업로드 서류 다운로드용 서명 URL (1시간)
   const signed = await Promise.all(
     (files ?? []).map(async (f) => {
+      const { data } = await admin.storage
+        .from(STUDENT_FILES_BUCKET)
+        .createSignedUrl(f.file_path, 60 * 60);
+      return { ...f, url: data?.signedUrl ?? null };
+    })
+  );
+  const signedFinals = await Promise.all(
+    (finals ?? []).map(async (f) => {
       const { data } = await admin.storage
         .from(STUDENT_FILES_BUCKET)
         .createSignedUrl(f.file_path, 60 * 60);
@@ -192,15 +205,52 @@ export default async function ManagedStudentDetailPage({
           </CardContent>
         </Card>
 
-        {/* 확정된 작성서류 — Phase 2 에서 추가 */}
+        {/* 확정된 작성서류 */}
         <Card>
           <CardHeader>
             <CardTitle className="text-base">확정 작성서류</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="py-6 text-center text-sm text-muted-foreground">
-              유학센터에서 ‘확정’한 작성서류가 여기에 표시됩니다. (준비 중)
-            </p>
+            {signedFinals.length === 0 ? (
+              <p className="py-6 text-center text-sm text-muted-foreground">
+                유학센터에서 ‘확정’한 작성서류가 아직 없습니다.
+              </p>
+            ) : (
+              <div className="divide-y divide-border rounded-md border border-border">
+                {signedFinals.map((f) => (
+                  <div
+                    key={f.id}
+                    className="flex items-center justify-between gap-3 p-3"
+                  >
+                    <div className="flex min-w-0 items-center gap-2">
+                      <FileText className="size-4 shrink-0 text-emerald-600" />
+                      <div className="min-w-0">
+                        <div className="truncate text-sm font-medium">
+                          {f.doc_name}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {bytes(f.size_bytes)} · 확정 {formatDate(f.finalized_at)}
+                        </div>
+                      </div>
+                    </div>
+                    {f.url ? (
+                      <a
+                        href={f.url}
+                        className={buttonVariants({
+                          variant: "outline",
+                          size: "sm",
+                        })}
+                      >
+                        <Download className="size-3.5" />
+                        다운로드
+                      </a>
+                    ) : (
+                      <span className="text-xs text-destructive">링크 오류</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
 

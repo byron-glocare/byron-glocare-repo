@@ -945,6 +945,20 @@ export type Database = {
         ];
       };
 
+      study_student_final_docs: {
+        Row: import("./study").StudyStudentFinalDoc;
+        Insert: Partial<import("./study").StudyStudentFinalDoc>;
+        Update: Partial<import("./study").StudyStudentFinalDoc>;
+        Relationships: [
+          {
+            foreignKeyName: "study_student_final_docs_student_id_fkey";
+            columns: ["student_id"];
+            referencedRelation: "study_managed_students";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+
       study_admission_specs: {
         Row: import("./study").StudyAdmissionSpec;
         Insert: Partial<import("./study").StudyAdmissionSpec>;

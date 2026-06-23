@@ -92,6 +92,18 @@ export default async function FinalPage({
     .select("key, label_ko");
   const labelMap = new Map((dtRows ?? []).map((d) => [d.key, d.label_ko]));
 
+  // 확정된 작성서류 — (form_file_id::application_id) → {path, finalizedAt}
+  const { data: finalDocs } = await supabase
+    .from("study_student_final_docs")
+    .select("form_file_id, application_id, file_path, finalized_at")
+    .eq("student_id", id);
+  const finalMap = new Map(
+    (finalDocs ?? []).map((d) => [
+      `${d.form_file_id}::${d.application_id}`,
+      { path: d.file_path, finalizedAt: d.finalized_at },
+    ])
+  );
+
   const uniIds = Array.from(new Set((specs ?? []).map((s) => s.university_id)));
   const [{ data: unis }, { data: forms }, { data: subs }] = await Promise.all([
     uniIds.length > 0
@@ -311,20 +323,34 @@ export default async function FinalPage({
                             ))}
                           </div>
                         ) : null}
+                        {file ? (
+                          <a
+                            href={file.file_url}
+                            target="_blank"
+                            rel="noopener"
+                            className="inline-block text-[11px] text-slate-500 underline-offset-2 hover:text-slate-700 hover:underline"
+                          >
+                            {tr(locale, "빈 양식 다운로드", "Tải mẫu trống")}
+                          </a>
+                        ) : null}
                       </div>
                       {file ? (
-                        <div className="min-w-[180px] flex-1">
+                        <div className="min-w-[200px] flex-1">
                           <WriteRowActions
+                            locale={locale}
+                            studentId={id}
+                            formFileId={file.id}
+                            appId={app.id}
+                            docName={doc.name_ko}
                             pdfBaseUrl={
                               canFill
                                 ? `${base}/final/pdf?form=${file.id}&app=${app.id}`
                                 : null
                             }
                             inputFields={inputFields}
-                            pdfLabel={tr(locale, "원본양식 PDF", "PDF mẫu gốc")}
-                            previewLabel={tr(locale, "미리보기", "Xem trước")}
-                            closeLabel={tr(locale, "닫기", "Đóng")}
-                            inputsTitle={tr(locale, "생성 정보 입력", "Nhập thông tin tạo")}
+                            finalized={
+                              finalMap.get(`${file.id}::${app.id}`) ?? null
+                            }
                             noFillLabel={tr(
                               locale,
                               "좌표 미설정 (글로케어에서 설정 필요)",

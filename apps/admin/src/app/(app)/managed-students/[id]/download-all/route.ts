@@ -38,13 +38,34 @@ export async function GET(
     .maybeSingle();
   if (!student) return new NextResponse("Not found", { status: 404 });
 
-  const { data: files } = await admin
-    .from("study_student_submission_files")
-    .select("doc_key, file_path, file_name")
-    .eq("student_id", id)
-    .order("created_at", { ascending: true });
+  const [{ data: files }, { data: finals }] = await Promise.all([
+    admin
+      .from("study_student_submission_files")
+      .select("doc_key, file_path, file_name")
+      .eq("student_id", id)
+      .order("created_at", { ascending: true }),
+    admin
+      .from("study_student_final_docs")
+      .select("file_path, file_name")
+      .eq("student_id", id)
+      .order("finalized_at", { ascending: true }),
+  ]);
 
-  if (!files || files.length === 0) {
+  // 업로드 제출서류 + 확정 작성서류를 폴더로 구분해 한 번에 묶음
+  const items: { folder: string; path: string; name: string }[] = [
+    ...(files ?? []).map((f) => ({
+      folder: f.doc_key ? `제출서류/${safe(f.doc_key)}` : "제출서류",
+      path: f.file_path,
+      name: f.file_name,
+    })),
+    ...(finals ?? []).map((f) => ({
+      folder: "확정작성서류",
+      path: f.file_path,
+      name: f.file_name,
+    })),
+  ];
+
+  if (items.length === 0) {
     return new NextResponse("서류 없음", { status: 404 });
   }
 
@@ -52,16 +73,14 @@ export async function GET(
   const used = new Set<string>();
   let added = 0;
 
-  for (const f of files) {
+  for (const f of items) {
     const { data: blob, error } = await admin.storage
       .from(STUDENT_FILES_BUCKET)
-      .download(f.file_path);
+      .download(f.path);
     if (error || !blob) continue;
     const buf = Buffer.from(await blob.arrayBuffer());
 
-    let entry = f.doc_key
-      ? `${safe(f.doc_key)}/${f.file_name}`
-      : f.file_name;
+    let entry = `${f.folder}/${f.name}`;
     // 파일명 중복 방지
     if (used.has(entry)) {
       const dot = entry.lastIndexOf(".");

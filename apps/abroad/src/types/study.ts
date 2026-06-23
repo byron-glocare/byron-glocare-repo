@@ -139,6 +139,22 @@ export type StudyManagedStudent = {
   updated_at: string;
 };
 
+// 확정 작성서류 (study_student_final_docs) — 확정 시 채운 PDF 를 스토리지에 저장
+export type StudyStudentFinalDoc = {
+  id: string;
+  student_id: string;
+  form_file_id: string;
+  application_id: string;
+  doc_name: string;
+  file_path: string;
+  file_name: string;
+  size_bytes: number | null;
+  finalized_by: string | null;
+  finalized_at: string;
+  created_at: string;
+  updated_at: string;
+};
+
 // =============================================================================
 // 5. study_admission_specs
 //    spec_data 7 JSONB 의 내부 구조는 src/lib/admission/spec-schema.ts (zod)

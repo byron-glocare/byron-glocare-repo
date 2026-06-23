@@ -1185,6 +1185,48 @@ export type Database = {
         ];
       };
 
+      study_student_final_docs: {
+        Row: {
+          id: string;
+          student_id: string;
+          form_file_id: string;
+          application_id: string;
+          doc_name: string;
+          file_path: string;
+          file_name: string;
+          size_bytes: number | null;
+          finalized_by: string | null;
+          finalized_at: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          student_id: string;
+          form_file_id: string;
+          application_id: string;
+          doc_name: string;
+          file_path: string;
+          file_name: string;
+          size_bytes?: number | null;
+          finalized_by?: string | null;
+          finalized_at?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["study_student_final_docs"]["Insert"]
+        >;
+        Relationships: [
+          {
+            foreignKeyName: "study_student_final_docs_student_id_fkey";
+            columns: ["student_id"];
+            referencedRelation: "study_managed_students";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+
       study_invoices: {
         Row: {
           id: string;
