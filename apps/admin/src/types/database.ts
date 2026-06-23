@@ -1101,6 +1101,90 @@ export type Database = {
         ];
       };
 
+      study_managed_students: {
+        Row: {
+          id: string;
+          org_id: string;
+          name: string;
+          dob: string | null;
+          passport_no_encrypted: string | null;
+          phone: string | null;
+          email: string | null;
+          topik_level: string | null;
+          current_visa: string | null;
+          location: string | null;
+          notes: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          org_id: string;
+          name: string;
+          dob?: string | null;
+          passport_no_encrypted?: string | null;
+          phone?: string | null;
+          email?: string | null;
+          topik_level?: string | null;
+          current_visa?: string | null;
+          location?: string | null;
+          notes?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["study_managed_students"]["Insert"]
+        >;
+        Relationships: [
+          {
+            foreignKeyName: "study_managed_students_org_id_fkey";
+            columns: ["org_id"];
+            referencedRelation: "study_center_orgs";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+
+      study_student_submission_files: {
+        Row: {
+          id: string;
+          student_id: string;
+          submission_id: string | null;
+          doc_key: string | null;
+          file_path: string;
+          file_name: string;
+          size_bytes: number | null;
+          mime_type: string | null;
+          uploaded_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          student_id: string;
+          submission_id?: string | null;
+          doc_key?: string | null;
+          file_path: string;
+          file_name: string;
+          size_bytes?: number | null;
+          mime_type?: string | null;
+          uploaded_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["study_student_submission_files"]["Insert"]
+        >;
+        Relationships: [
+          {
+            foreignKeyName: "study_student_submission_files_student_id_fkey";
+            columns: ["student_id"];
+            referencedRelation: "study_managed_students";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+
       study_invoices: {
         Row: {
           id: string;

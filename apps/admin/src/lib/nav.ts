@@ -8,6 +8,7 @@ import {
   Film,
   GraduationCap,
   Hospital,
+  Inbox,
   LayoutDashboard,
   Megaphone,
   MessageSquare,
@@ -53,7 +54,8 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     label: "유학",
     items: [
-      { href: "/students", label: "유학생", icon: Plane },
+      { href: "/managed-students", label: "유학생", icon: Plane },
+      { href: "/students", label: "상담", icon: Inbox },
       { href: "/study-centers", label: "유학센터", icon: Building2 },
       { href: "/study-cases", label: "사례", icon: Film },
       { href: "/study-channels", label: "SNS", icon: Radio },
