@@ -111,16 +111,15 @@ const FLAG_LABELS: Record<FlagKey, string> = {
 };
 
 const FLAG_HINTS: Partial<Record<FlagKey, string>> = {
-  training_center_finding: "교육원 매칭하면 자동으로 해제됩니다.",
-  class_schedule_confirmation_needed:
-    "강의 일정 정보가 없어 교육원에 확인이 필요합니다.",
-  care_home_finding: "요양원 매칭하면 자동으로 해제됩니다.",
-  intake_abandoned: "체크 시 이후 모든 단계 판정이 중지됩니다.",
-  study_abroad_consultation: "유학으로 전환 → 이후 단계 중지.",
-  training_reservation_abandoned: "체크 시 이후 단계 중지.",
-  training_dropped: "교육 중 이탈 → 이후 단계 중지.",
-  welcome_pack_abandoned: "체크 시 취업 단계 종결.",
-  resume_sent: "요양원에 이력서를 보냈으면 ON.",
+  training_center_finding: "매칭 시 자동 해제",
+  class_schedule_confirmation_needed: "교육원 확인 필요",
+  care_home_finding: "매칭 시 자동 해제",
+  intake_abandoned: "이후 단계 잠금",
+  study_abroad_consultation: "유학 전환",
+  training_reservation_abandoned: "이후 단계 잠금",
+  training_dropped: "교육 중 이탈",
+  welcome_pack_abandoned: "취업 종결",
+  resume_sent: "요양원 이력서",
 };
 
 /**
@@ -599,7 +598,7 @@ export function CustomerProgressTab({
               </span>
             )}
           </AutoItem>
-          <ItemBox label="근무 종료">
+          <ItemBox label="근무 종료" align="end">
             <Select
               value={state.termination_reason ?? NONE_VALUE}
               onValueChange={(v) =>
@@ -743,14 +742,16 @@ function StageRow({
 }
 
 /**
- * 항목 mini-box. label (+ optional hint) 이 위, control/state 가 아래.
- * grow=true 면 남은 폭을 채움 (메모 등 긴 입력용).
+ * 항목 mini-box. label + hint 가 같은 줄, control/state 가 아래.
+ * - grow=true: 남은 폭을 채움 (메모 등)
+ * - align="end": flex-wrap row 에서 오른쪽 끝으로 밀림 (terminal/포기 항목)
  */
 function ItemBox({
   label,
   hint,
   locked,
   grow,
+  align,
   children,
 }: {
   label: string;
@@ -758,24 +759,24 @@ function ItemBox({
   /** 자동 (읽기 전용) 항목은 자물쇠 아이콘 표시 */
   locked?: boolean;
   grow?: boolean;
+  align?: "end";
   children: React.ReactNode;
 }) {
   return (
     <div
       className={cn(
         "flex flex-col gap-1 rounded-md border border-border bg-background/60 px-2.5 py-2 min-w-[130px]",
-        grow && "flex-1"
+        grow && "flex-1",
+        align === "end" && "ml-auto"
       )}
     >
-      <div className="flex items-center gap-1 text-xs">
+      <div className="flex items-center gap-1.5 text-xs">
         <span className="font-medium text-foreground">{label}</span>
+        {hint && (
+          <span className="text-[10px] text-muted-foreground">{hint}</span>
+        )}
         {locked && <Lock className="size-3 text-muted-foreground" />}
       </div>
-      {hint && (
-        <p className="text-[10px] text-muted-foreground leading-tight">
-          {hint}
-        </p>
-      )}
       <div className="mt-auto pt-1">{children}</div>
     </div>
   );
@@ -796,7 +797,7 @@ function AutoItem({
   );
 }
 
-/** 수동 스위치 항목 — blocker / terminal 구분은 스위치 thumb 색으로. */
+/** 수동 스위치 항목 — blocker / terminal 구분은 스위치 thumb 색으로. terminal 은 우측 끝 정렬. */
 function ManualSwitchItem({
   flag,
   value,
@@ -818,7 +819,11 @@ function ManualSwitchItem({
         ? "data-[state=checked]:bg-destructive"
         : "";
   return (
-    <ItemBox label={FLAG_LABELS[flag]} hint={FLAG_HINTS[flag]}>
+    <ItemBox
+      label={FLAG_LABELS[flag]}
+      hint={FLAG_HINTS[flag]}
+      align={category === "terminal" ? "end" : undefined}
+    >
       <Switch
         checked={value}
         onCheckedChange={onChange}
