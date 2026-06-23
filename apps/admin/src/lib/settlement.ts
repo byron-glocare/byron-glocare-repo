@@ -70,12 +70,13 @@ export function computeSettlementSummary(inputs: {
     Customer,
     "product_type" | "class_start_date" | "visa_change_date"
   >;
-  /** 접수/교육 예약 포기 판정용 */
+  /** 접수/교육 예약/교육 단계 포기·드랍 판정용 */
   status?: Pick<
     CustomerStatus,
     | "intake_abandoned"
     | "study_abroad_consultation"
     | "training_reservation_abandoned"
+    | "training_dropped"
   > | null;
   /** 강의 일정 — class_type 으로 정산 기한 계산 (주간 2개월, 야간 3개월) */
   trainingClass?: Pick<TrainingClass, "class_type"> | null;
@@ -114,8 +115,9 @@ export function computeSettlementSummary(inputs: {
   // 소개비 (확장):
   //   - 대상아님:
   //       (a) product_type 이 '교육' / '교육+웰컴팩' 가 아님 (웰컴팩 단독 / null)
-  //       (b) 접수/교육 예약 단계에서 포기 (intake_abandoned /
-  //           study_abroad_consultation / training_reservation_abandoned)
+  //       (b) 접수/교육 예약/교육 단계에서 포기·드랍 (intake_abandoned /
+  //           study_abroad_consultation / training_reservation_abandoned /
+  //           training_dropped) — 소개비 정산 자동 포기
   //   - 완료: commission_payments row 존재
   //   - 정산 전 / 지연: class_start_date + (주간 2개월 / 야간 3개월) 기준 — today
   //     와 비교 (정보 부족 시 '미완료' fallback)
@@ -127,7 +129,8 @@ export function computeSettlementSummary(inputs: {
     !!status &&
     (status.intake_abandoned ||
       status.study_abroad_consultation ||
-      status.training_reservation_abandoned);
+      status.training_reservation_abandoned ||
+      status.training_dropped);
   if (!commissionTarget || abandonedEarly) {
     commission = "대상아님";
   } else if (commissionPayments.length > 0) {

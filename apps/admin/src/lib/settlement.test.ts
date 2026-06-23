@@ -162,6 +162,7 @@ describe("computeSettlementSummary — §5.2", () => {
         intake_abandoned: true,
         study_abroad_consultation: false,
         training_reservation_abandoned: false,
+        training_dropped: false,
       },
       trainingClass: { class_type: "weekday" },
       reservationPayments: [],
@@ -187,6 +188,29 @@ describe("computeSettlementSummary — §5.2", () => {
       today: "2026-05-01", // 2026-04-01 + 2m = 2026-06-01 → 정산 전
     });
     expect(r.commission).toBe("정산 전");
+  });
+
+  it("소개비 — 교육 드랍 → '대상아님' (자동 포기)", () => {
+    const r = computeSettlementSummary({
+      customer: {
+        product_type: "교육+웰컴팩",
+        class_start_date: "2026-04-01",
+        visa_change_date: null,
+      },
+      status: {
+        intake_abandoned: false,
+        study_abroad_consultation: false,
+        training_reservation_abandoned: false,
+        training_dropped: true,
+      },
+      trainingClass: { class_type: "weekday" },
+      reservationPayments: [],
+      commissionPayments: [],
+      eventPayments: [],
+      welcomePackPayment: null,
+      today: "2026-08-01",
+    });
+    expect(r.commission).toBe("대상아님");
   });
 
   it("소개비 — 야간 + 강의시작 이후 3개월 후 → '정산 지연'", () => {
