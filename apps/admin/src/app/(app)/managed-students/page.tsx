@@ -57,7 +57,7 @@ export default async function ManagedStudentsPage() {
     <>
       <PageHeader
         title="유학생"
-        description="유학센터(youstudyinkorea.com/center)에서 등록한 전체 유학생 — 조회 전용"
+        description="유학센터에서 등록한 전체 유학생 — 조회 및 다운로드"
         breadcrumbs={[{ label: "유학생" }]}
       />
       <div className="p-6 space-y-4">

@@ -131,8 +131,17 @@ export default async function ManagedStudentDetailPage({
         </Card>
 
         <Card>
-          <CardHeader>
+          <CardHeader className="flex-row items-center justify-between gap-3">
             <CardTitle className="text-base">업로드한 제출서류</CardTitle>
+            {signed.length > 0 ? (
+              <a
+                href={`/managed-students/${id}/download-all`}
+                className={buttonVariants({ variant: "default", size: "sm" })}
+              >
+                <Download className="size-3.5" />
+                전체 다운로드 (zip)
+              </a>
+            ) : null}
           </CardHeader>
           <CardContent>
             {signed.length === 0 ? (
