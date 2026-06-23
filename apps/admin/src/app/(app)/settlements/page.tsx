@@ -621,12 +621,28 @@ export default async function SettlementsPage({
       eventType: e.event_type,
       amount: e.amount,
       giftType: e.gift_type,
+      friendCustomerId: e.friend_customer_id,
       friendName: f ? f.name_kr || f.name_vi || null : null,
       giftGiven: e.gift_given,
       giftGivenDate: e.gift_given_date,
       createdAt: e.created_at,
     };
   });
+
+  // 이벤트 보상 view 에서 사용할 옵션 — gift_types(상품권) + customers(친구 선택)
+  const eventGiftTypes =
+    Array.isArray(settingsMap.get("gift_types")) &&
+    (settingsMap.get("gift_types") as unknown[]).every(
+      (x) => typeof x === "string"
+    )
+      ? (settingsMap.get("gift_types") as string[])
+      : ["문화상품권", "스타벅스", "현금"];
+  const eventCustomerOptions = (eventCustomers ?? []).map((c) => ({
+    id: c.id,
+    code: c.code,
+    name_kr: c.name_kr,
+    name_vi: c.name_vi,
+  }));
   const eventUnpaidCount = eventRewardRows.filter((r) => !r.giftGiven).length;
 
   return (
@@ -755,7 +771,11 @@ export default async function SettlementsPage({
           </TabsContent>
 
           <TabsContent value="events" className="mt-6 space-y-4">
-            <SettlementEventRewardView rows={eventRewardRows} />
+            <SettlementEventRewardView
+              rows={eventRewardRows}
+              giftTypes={eventGiftTypes}
+              customerOptions={eventCustomerOptions}
+            />
           </TabsContent>
         </Tabs>
       </div>

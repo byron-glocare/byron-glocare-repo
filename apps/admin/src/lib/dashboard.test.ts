@@ -46,6 +46,7 @@ function makeCustomer(overrides?: Partial<Customer>): Customer {
     termination_reason: null,
     bank_name: null,
     bank_account: null,
+    auth_user_id: null,
     created_at: "2026-04-22T00:00:00Z",
     updated_at: "2026-04-22T00:00:00Z",
     ...overrides,

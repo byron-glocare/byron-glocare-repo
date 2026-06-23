@@ -23,6 +23,7 @@ import {
   updateReservationPayment,
   deleteReservationPayment,
   createEventPayment,
+  updateEventPayment,
   deleteEventPayment,
   toggleEventGift,
   upsertWelcomePackPayment,
@@ -604,6 +605,35 @@ function EventPaymentsCard({
     });
   }
 
+  function onUpdateRow(
+    p: EventPayment,
+    patch: {
+      gift_type?: string | null;
+      friend_customer_id?: string | null;
+    }
+  ) {
+    startTransition(async () => {
+      const result = await updateEventPayment(p.id, customerId, {
+        event_type: p.event_type,
+        amount: p.amount,
+        gift_type:
+          patch.gift_type !== undefined ? patch.gift_type : p.gift_type,
+        friend_customer_id:
+          patch.friend_customer_id !== undefined
+            ? patch.friend_customer_id
+            : p.friend_customer_id,
+        gift_given: p.gift_given,
+        gift_given_date: p.gift_given_date,
+      });
+      if (result.ok) {
+        toast.success("저장되었습니다.");
+        router.refresh();
+      } else {
+        toast.error("저장 실패", { description: result.error });
+      }
+    });
+  }
+
   return (
     <Card>
       <CardHeader className="flex-row items-center justify-between">
@@ -736,13 +766,74 @@ function EventPaymentsCard({
                     <TableCell className="text-right">
                       {formatCurrency(p.amount)}
                     </TableCell>
-                    <TableCell>{p.gift_type ?? "—"}</TableCell>
+                    <TableCell>
+                      <Select
+                        value={p.gift_type ?? "__none__"}
+                        onValueChange={(v) =>
+                          onUpdateRow(p, {
+                            gift_type: v === "__none__" ? null : v,
+                          })
+                        }
+                        disabled={pending}
+                      >
+                        <SelectTrigger className="h-8">
+                          <SelectValueMap
+                            map={{
+                              __none__: "—",
+                              ...Object.fromEntries(
+                                giftTypes.map((g) => [g, g])
+                              ),
+                            }}
+                            placeholder="선택"
+                          />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="__none__">—</SelectItem>
+                          {giftTypes.map((g) => (
+                            <SelectItem key={g} value={g}>
+                              {g}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </TableCell>
                     <TableCell className="text-sm">
-                      {p.friend_customer_id
-                        ? customerOptions.find(
-                            (c) => c.id === p.friend_customer_id
-                          )?.code ?? "—"
-                        : "—"}
+                      {p.event_type === "친구 소개" ? (
+                        <Select
+                          value={p.friend_customer_id ?? "__none__"}
+                          onValueChange={(v) =>
+                            onUpdateRow(p, {
+                              friend_customer_id: v === "__none__" ? null : v,
+                            })
+                          }
+                          disabled={pending}
+                        >
+                          <SelectTrigger className="h-8">
+                            <SelectValueMap
+                              map={{
+                                __none__: "—",
+                                ...Object.fromEntries(
+                                  customerOptions.map((c) => [
+                                    c.id,
+                                    `${c.code} · ${c.name_kr || c.name_vi || "(이름 없음)"}`,
+                                  ])
+                                ),
+                              }}
+                              placeholder="선택"
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="__none__">—</SelectItem>
+                            {customerOptions.map((c) => (
+                              <SelectItem key={c.id} value={c.id}>
+                                {c.code} · {c.name_kr || c.name_vi || "(이름 없음)"}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      ) : (
+                        <span className="text-muted-foreground">—</span>
+                      )}
                     </TableCell>
                     <TableCell className="text-center">
                       <button
