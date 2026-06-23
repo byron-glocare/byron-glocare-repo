@@ -25,11 +25,14 @@ export const dynamic = "force-dynamic";
 
 export default async function SmsPage() {
   const supabase = await createClient();
+  // 발송 1건 = (교육원 요약행 1 + 학생별 N행). 이력 화면은 요약행만 보여
+  // 발송당 1행이 되게 한다. (학생별 행은 정산 매칭용이라 DB 엔 유지)
   const { data: recent } = await supabase
     .from("sms_messages")
     .select(
       "id, message_type, target_customer_id, target_center_id, content, sent_at"
     )
+    .is("target_customer_id", null)
     .order("sent_at", { ascending: false })
     .limit(20);
 
@@ -140,8 +143,10 @@ export default async function SmsPage() {
                               ? customerMap.get(m.target_customer_id) ?? "?"
                               : "—"}
                         </TableCell>
-                        <TableCell className="text-xs text-muted-foreground max-w-lg truncate">
-                          {m.content.split("\n")[0]}
+                        <TableCell className="text-xs text-muted-foreground">
+                          <div className="max-h-48 max-w-2xl overflow-y-auto whitespace-pre-wrap break-words leading-relaxed">
+                            {m.content}
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}
