@@ -12,7 +12,8 @@ export function DocxTestClient() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
-  const [detected, setDetected] = useState<string[] | null>(null);
+  const [matched, setMatched] = useState<string[] | null>(null);
+  const [unmatched, setUnmatched] = useState<string[]>([]);
 
   async function onSubmit() {
     const file = inputRef.current?.files?.[0];
@@ -21,7 +22,8 @@ export function DocxTestClient() {
       return;
     }
     setBusy(true);
-    setDetected(null);
+    setMatched(null);
+    setUnmatched([]);
     try {
       const fd = new FormData();
       fd.set("file", file);
@@ -31,13 +33,17 @@ export function DocxTestClient() {
         toast.error("실패", { description: msg });
         return;
       }
-      // 감지 필드
-      try {
-        const raw = res.headers.get("X-Detected");
-        if (raw) setDetected(JSON.parse(decodeURIComponent(raw)) as string[]);
-      } catch {
-        /* ignore */
-      }
+      // 매칭/미매칭
+      const parseHdr = (name: string): string[] => {
+        try {
+          const raw = res.headers.get(name);
+          return raw ? (JSON.parse(decodeURIComponent(raw)) as string[]) : [];
+        } catch {
+          return [];
+        }
+      };
+      setMatched(parseHdr("X-Matched"));
+      setUnmatched(parseHdr("X-Unmatched"));
       // 다운로드
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
@@ -82,26 +88,51 @@ export function DocxTestClient() {
           <p className="text-xs text-muted-foreground">선택: {fileName}</p>
         ) : null}
 
-        {detected ? (
-          <div className="rounded-md border border-border bg-muted/30 p-3">
-            <div className="mb-2 flex items-center gap-1.5 text-sm font-medium">
-              <Download className="size-3.5" />
-              감지·채움된 항목 {detected.length}개
-            </div>
-            {detected.length === 0 ? (
-              <p className="text-xs text-muted-foreground">
-                감지된 항목이 없습니다. (표 라벨이 사전과 다르거나 표가 아닐 수
-                있어요)
-              </p>
-            ) : (
-              <div className="flex flex-wrap gap-1.5">
-                {detected.map((d, i) => (
-                  <Badge key={i} variant="secondary" className="text-xs">
-                    {d}
-                  </Badge>
-                ))}
+        {matched ? (
+          <div className="space-y-3">
+            <div className="rounded-md border border-success/20 bg-success/5 p-3">
+              <div className="mb-2 flex items-center gap-1.5 text-sm font-medium text-foreground">
+                <Download className="size-3.5" />
+                채움된 항목 {matched.length}개 (표준데이터 매칭)
               </div>
-            )}
+              {matched.length === 0 ? (
+                <p className="text-xs text-muted-foreground">
+                  매칭된 항목이 없습니다. 아래 “미매칭”을 데이터 메뉴에서 별칭으로
+                  추가하면 잡힙니다.
+                </p>
+              ) : (
+                <div className="flex flex-wrap gap-1.5">
+                  {matched.map((d, i) => (
+                    <Badge
+                      key={i}
+                      className="border-success/20 bg-success/10 text-success"
+                    >
+                      {d}
+                    </Badge>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {unmatched.length > 0 ? (
+              <div className="rounded-md border border-amber-300/40 bg-amber-50/50 p-3">
+                <div className="mb-2 text-sm font-medium text-amber-800">
+                  미매칭 후보 {unmatched.length}개 — 데이터 메뉴에서 별칭으로
+                  추가하면 자동 채움됩니다
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {unmatched.map((d, i) => (
+                    <Badge
+                      key={i}
+                      variant="outline"
+                      className="border-amber-300 text-amber-800"
+                    >
+                      {d}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            ) : null}
           </div>
         ) : null}
       </CardContent>
