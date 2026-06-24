@@ -42,6 +42,8 @@ export async function updateSession(request: NextRequest) {
     pathname.startsWith("/_next") ||
     pathname.startsWith("/favicon") ||
     pathname === "/glocare_logo.png";
+  // /r/[token] = 학생용 공개 이력서 작성 폼 (token 자체가 인증)
+  const isPublicResumeRoute = pathname.startsWith("/r/");
 
   // 미로그인 + API 라우트 → 401 JSON (리다이렉트 대신)
   if (!user && isApiRoute) {
@@ -49,7 +51,7 @@ export async function updateSession(request: NextRequest) {
   }
 
   // 미로그인 + 보호 라우트 → /login
-  if (!user && !isAuthRoute && !isPublicAsset) {
+  if (!user && !isAuthRoute && !isPublicAsset && !isPublicResumeRoute) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     url.searchParams.set("redirect", pathname);

@@ -92,6 +92,13 @@ type Props = {
   reminders: CustomerReminder[];
   careHomeLocked: boolean;
   settings: Record<string, Json | undefined>;
+  /** 이력서 작성 draft — 기본 정보 카드 안의 ResumeCard 에서 사용 */
+  resumeDraft: {
+    id: string;
+    token: string;
+    expires_at: string;
+    submitted_at: string | null;
+  } | null;
   /** parent (CustomerEditTabs) 의 sticky 저장 버튼이 호출할 ref */
   basicRef: Ref<CustomerBasicFormHandle | null>;
   progressRef: Ref<CustomerProgressTabHandle | null>;
@@ -116,6 +123,7 @@ export function CustomerOverviewTab({
   reminders,
   careHomeLocked,
   settings,
+  resumeDraft,
   basicRef,
   progressRef,
   basicDirty,
@@ -216,6 +224,7 @@ export function CustomerOverviewTab({
           trainingClasses={trainingClasses}
           careHomes={careHomes}
           careHomeLocked={careHomeLocked}
+          resumeDraft={resumeDraft}
           embedded
           ref={basicRef}
           onDirtyChange={onBasicDirtyChange}

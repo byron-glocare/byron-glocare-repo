@@ -402,6 +402,70 @@ export const welcomePackPaymentSchema = z.object({
 });
 
 export type WelcomePackPaymentInput = z.input<typeof welcomePackPaymentSchema>;
+
+// =============================================================================
+// 이력서 작성 (공개 폼 — token 기반)
+// =============================================================================
+
+const trimStr = z.string().trim().default("");
+
+const resumeEducationItem = z.object({
+  school: trimStr,
+  major: trimStr,
+  period: trimStr,
+  status: trimStr,
+});
+
+const resumeCareerItem = z.object({
+  workplace: trimStr,
+  period: trimStr,
+  role: trimStr,
+  detail: trimStr,
+  status: trimStr,
+});
+
+const resumeCertificationItem = z.object({
+  name: trimStr,
+  issuer: trimStr,
+  date: trimStr,
+});
+
+const resumeSkillItem = z.object({
+  name: trimStr,
+  detail: trimStr,
+  level: trimStr,
+});
+
+const resumeActivityItem = z.object({
+  name: trimStr,
+  period: trimStr,
+  org: trimStr,
+  detail: trimStr,
+});
+
+export const resumeDraftDataSchema = z.object({
+  // 헤더
+  name_vi: trimStr,
+  name_kr: trimStr,
+  birth_date: trimStr,
+  phone: trimStr,
+  email: trimStr,
+  address: trimStr,
+  one_liner: trimStr,
+  // 본문
+  narrative_raw: trimStr,
+  /** AI 다듬기 후 결과 (Phase 2) — 빈 값이면 raw 그대로 docx 에 들어감 */
+  narrative_polished: trimStr,
+  // 표
+  educations: z.array(resumeEducationItem).default([]),
+  careers: z.array(resumeCareerItem).default([]),
+  certifications: z.array(resumeCertificationItem).default([]),
+  skills: z.array(resumeSkillItem).default([]),
+  activities: z.array(resumeActivityItem).default([]),
+});
+
+export type ResumeDraftData = z.output<typeof resumeDraftDataSchema>;
+export type ResumeDraftDataInput = z.input<typeof resumeDraftDataSchema>;
 export type WelcomePackPaymentOutput = z.output<typeof welcomePackPaymentSchema>;
 
 // =============================================================================

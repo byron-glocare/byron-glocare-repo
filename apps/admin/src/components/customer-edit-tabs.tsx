@@ -84,6 +84,12 @@ type Props = {
   reminders: CustomerReminder[];
   careHomeLocked: boolean;
   settings: Record<string, Json | undefined>;
+  resumeDraft: {
+    id: string;
+    token: string;
+    expires_at: string;
+    submitted_at: string | null;
+  } | null;
 };
 
 export function CustomerEditTabs({
@@ -101,6 +107,7 @@ export function CustomerEditTabs({
   reminders,
   careHomeLocked,
   settings,
+  resumeDraft,
 }: Props) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -186,6 +193,7 @@ export function CustomerEditTabs({
         reminders={reminders}
         careHomeLocked={careHomeLocked}
         settings={settings}
+        resumeDraft={resumeDraft}
         basicRef={basicRef}
         progressRef={progressRef}
         basicDirty={basicDirty}

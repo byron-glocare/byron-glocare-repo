@@ -55,6 +55,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { CustomerResumeCard } from "@/components/customer-resume-card";
 
 /** embedded 모드에서 부모(페이지)가 호출하는 imperative API */
 export type CustomerBasicFormHandle = {
@@ -92,6 +93,13 @@ type Props = {
    * - dirty 변경 시 onDirtyChange 콜백
    */
   embedded?: boolean;
+  /** 이력서 작성 draft (edit 모드 + 웰컴팩 대상자만 노출) */
+  resumeDraft?: {
+    id: string;
+    token: string;
+    expires_at: string;
+    submitted_at: string | null;
+  } | null;
   ref?: Ref<CustomerBasicFormHandle>;
   onDirtyChange?: (dirty: boolean) => void;
 };
@@ -140,6 +148,7 @@ export function CustomerBasicForm({
   careHomes,
   careHomeLocked = false,
   embedded = false,
+  resumeDraft = null,
   ref,
   onDirtyChange,
 }: Props) {
@@ -729,6 +738,21 @@ export function CustomerBasicForm({
             />
           </CardContent>
         </Card>
+
+        {/* 이력서 작성 — 웰컴팩 대상자만 (edit 모드) */}
+        {mode === "edit" && customerId && (
+          <CustomerResumeCard
+            customerId={customerId}
+            productType={
+              (form.watch("product_type") as
+                | "교육"
+                | "웰컴팩"
+                | "교육+웰컴팩"
+                | "") || null
+            }
+            draft={resumeDraft}
+          />
+        )}
 
         {/* 요양원 · 취업 / 근무 */}
         <Card>

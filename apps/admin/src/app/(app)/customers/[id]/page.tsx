@@ -107,6 +107,15 @@ export default async function CustomerDetailPage({
       .order("remind_date", { ascending: true }),
   ]);
 
+  // 이력서 작성 draft (가장 최근 1개) — 기본 정보 카드의 ResumeCard 에서 사용
+  const { data: resumeDraft } = await supabase
+    .from("resume_drafts")
+    .select("id, token, expires_at, submitted_at")
+    .eq("customer_id", id)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
   const reservationPayments = reservationPaymentsFull ?? [];
   const welcomePackPayment = welcomePackPaymentFull ?? null;
   const reminders = remindersFull ?? [];
@@ -236,6 +245,7 @@ export default async function CustomerDetailPage({
           reminders={reminders}
           careHomeLocked={careHomeLocked}
           settings={settings}
+          resumeDraft={resumeDraft ?? null}
         />
       </div>
     </>

@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Vercel serverless 번들에 templates/*.docx 포함 (이력서 양식)
+  outputFileTracingIncludes: {
+    "/api/customers/[id]/resume/route": ["./templates/**/*.docx"],
+  },
   experimental: {
     // Node 24 + 이 Next dev 의 jest-worker child_process 가 스폰 직후 죽어
     // 동적 [id] 라우트의 static-paths 생성/서버액션 재렌더가 WorkerError 로 500.

@@ -611,6 +611,43 @@ export type Database = {
       };
 
       // -----------------------------------------------------------------------
+      resume_drafts: {
+        Row: {
+          id: string;
+          customer_id: string;
+          token: string;
+          expires_at: string;
+          submitted_at: string | null;
+          data: Json;
+          photo_path: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          customer_id: string;
+          token: string;
+          expires_at: string;
+          submitted_at?: string | null;
+          data?: Json;
+          photo_path?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["resume_drafts"]["Insert"]
+        >;
+        Relationships: [
+          {
+            foreignKeyName: "resume_drafts_customer_id_fkey";
+            columns: ["customer_id"];
+            referencedRelation: "customers";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+
+      // -----------------------------------------------------------------------
       sms_messages: {
         Row: {
           id: string;
@@ -1898,6 +1935,9 @@ export type CommissionPayment = Tables<"commission_payments">;
 export type EventPayment = Tables<"event_payments">;
 export type WelcomePackPayment = Tables<"welcome_pack_payments">;
 export type CustomerReminder = Tables<"customer_reminders">;
+export type ResumeDraft = Tables<"resume_drafts">;
+export type ResumeDraftInsert = TablesInsert<"resume_drafts">;
+export type ResumeDraftUpdate = TablesUpdate<"resume_drafts">;
 export type SmsMessage = Tables<"sms_messages">;
 export type SystemSetting = Tables<"system_settings">;
 export type StatusOption = Tables<"status_options">;

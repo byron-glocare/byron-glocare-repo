@@ -73,7 +73,12 @@ function looksLikeLabel(t: string): boolean {
 function injectTokens(
   xml: string,
   match: (normalizedLabel: string) => LabelMatch | null
-): { xml: string; matched: { label: string }[]; unmatched: string[] } {
+): {
+  xml: string;
+  matched: { label: string }[];
+  unmatched: string[];
+  values: Record<string, string>;
+} {
   const cells: { raw: string; start: number; end: number }[] = [];
   const re = /<w:tc>[\s\S]*?<\/w:tc>/g;
   let m: RegExpExecArray | null;
