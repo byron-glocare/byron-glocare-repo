@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { generateResumeDocx } from "@/lib/docx/generate-resume";
 
+// 매 요청마다 최신 draft 데이터로 docx 생성 — 캐싱 금지
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function GET(
   _req: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -67,6 +71,7 @@ export async function GET(
       "Content-Type":
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "Content-Disposition": `attachment; filename="${asciiFallback}"; filename*=UTF-8''${encodeURIComponent(filename)}`,
+      "Cache-Control": "no-store, max-age=0",
     },
   });
 }

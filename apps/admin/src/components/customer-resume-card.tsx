@@ -100,7 +100,11 @@ export function CustomerResumeCard({ customerId, productType, draft }: Props) {
   }
 
   function handleDownload() {
-    window.open(`/api/customers/${customerId}/resume`, "_blank");
+    // timestamp = 브라우저 캐시 버스터. 같은 URL 재요청 시 옛 docx 받지 않게.
+    window.open(
+      `/api/customers/${customerId}/resume?t=${Date.now()}`,
+      "_blank"
+    );
   }
 
   function handleRepolish() {
