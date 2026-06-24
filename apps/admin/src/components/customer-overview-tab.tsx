@@ -98,6 +98,8 @@ type Props = {
     token: string;
     expires_at: string;
     submitted_at: string | null;
+    data: Json;
+    photo_path: string | null;
   } | null;
   /** parent (CustomerEditTabs) 의 sticky 저장 버튼이 호출할 ref */
   basicRef: Ref<CustomerBasicFormHandle | null>;

@@ -43,8 +43,9 @@ def main():
     # [0,0] = 사진 자리 (이미지는 docxtemplater image module 로 추후 채움 — Phase 2)
     # [0,1] = 이름·생년월일·전화·이메일·주소·한 줄 자기소개
     h = tables[0]
-    # [0,0] PII 제거 (사진은 Phase 2 에서)
-    replace_cell_text(h.rows[0].cells[0], "")
+    # [0,0] PII 제거. 사진 자리는 docxtemplater-image-module 의 `{%photo}` 토큰.
+    # 사진 없으면 빈 칸으로 렌더 (nullGetter 가 빈 문자열 반환).
+    replace_cell_text(h.rows[0].cells[0], "{%photo}")
     replace_cell_text(
         h.rows[0].cells[1],
         "{name_vi} / {name_kr} | {birth_date}\n{phone} | {email}\n{address}\n{one_liner}",

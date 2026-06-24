@@ -11,9 +11,13 @@ import {
   Link2,
   Loader2,
   RotateCcw,
+  Sparkles,
 } from "lucide-react";
 
-import { createResumeDraft } from "@/app/(app)/customers/resume-actions";
+import {
+  createResumeDraft,
+  regenerateResumePolish,
+} from "@/app/(app)/customers/resume-actions";
 import {
   Card,
   CardContent,
@@ -24,15 +28,20 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/format";
-import type { Customer, ResumeDraft } from "@/types/database";
+import { resumeDraftDataSchema } from "@/lib/validators";
+import type { Customer, Json } from "@/types/database";
 
 type Props = {
   customerId: string;
   productType: Customer["product_type"];
-  draft: Pick<
-    ResumeDraft,
-    "id" | "token" | "expires_at" | "submitted_at"
-  > | null;
+  draft: {
+    id: string;
+    token: string;
+    expires_at: string;
+    submitted_at: string | null;
+    data: Json;
+    photo_path: string | null;
+  } | null;
 };
 
 export function CustomerResumeCard({ customerId, productType, draft }: Props) {
@@ -92,6 +101,29 @@ export function CustomerResumeCard({ customerId, productType, draft }: Props) {
   function handleDownload() {
     window.open(`/api/customers/${customerId}/resume`, "_blank");
   }
+
+  function handleRepolish() {
+    if (!draft) return;
+    startTransition(async () => {
+      const r = await regenerateResumePolish(customerId, draft.id);
+      if (r.ok) {
+        toast.success("AI 다듬기 재실행 완료");
+        router.refresh();
+      } else {
+        toast.error("재다듬기 실패", { description: r.error });
+      }
+    });
+  }
+
+  // submitted 시 narrative 미리보기 (polished, 없으면 raw)
+  const parsedData = draft?.data
+    ? resumeDraftDataSchema.safeParse(draft.data)
+    : null;
+  const narrativePolished =
+    parsedData?.success ? parsedData.data.narrative_polished : "";
+  const narrativeRaw =
+    parsedData?.success ? parsedData.data.narrative_raw : "";
+  const narrativeForPreview = narrativePolished || narrativeRaw;
 
   return (
     <Card>
@@ -194,16 +226,40 @@ export function CustomerResumeCard({ customerId, productType, draft }: Props) {
             </Button>
           )}
           {submitted && (
-            <Button
-              type="button"
-              size="sm"
-              onClick={handleDownload}
-            >
-              <Download className="size-4" />
-              이력서 다운로드 (.docx)
-            </Button>
+            <>
+              <Button type="button" size="sm" onClick={handleDownload}>
+                <Download className="size-4" />
+                이력서 다운로드 (.docx)
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={handleRepolish}
+                disabled={pending}
+              >
+                {pending ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <Sparkles className="size-4" />
+                )}
+                AI 다듬기 재실행
+              </Button>
+            </>
           )}
         </div>
+
+        {/* 제출된 narrative 미리보기 */}
+        {submitted && narrativeForPreview && (
+          <details className="text-xs">
+            <summary className="cursor-pointer text-muted-foreground hover:text-foreground">
+              자기소개 본문 미리보기 ({narrativePolished ? "AI 다듬기 후" : "원본"})
+            </summary>
+            <pre className="mt-2 whitespace-pre-wrap font-sans text-foreground bg-muted/40 rounded-md p-3 max-h-60 overflow-y-auto">
+              {narrativeForPreview}
+            </pre>
+          </details>
+        )}
       </CardContent>
     </Card>
   );

@@ -16,7 +16,7 @@ export default async function PublicResumePage({
 
   const { data: draft } = await supabase
     .from("resume_drafts")
-    .select("id, token, expires_at, submitted_at, data")
+    .select("id, token, expires_at, submitted_at, data, photo_path")
     .eq("token", token)
     .maybeSingle();
 
@@ -71,7 +71,11 @@ export default async function PublicResumePage({
           링크 만료 / Hạn dùng: {expiresAtLabel}
         </p>
       </header>
-      <ResumeForm token={token} initial={initialData} />
+      <ResumeForm
+        token={token}
+        initial={initialData}
+        hasPhoto={!!draft.photo_path}
+      />
     </Wrapper>
   );
 }

@@ -99,6 +99,8 @@ type Props = {
     token: string;
     expires_at: string;
     submitted_at: string | null;
+    data: import("@/types/database").Json;
+    photo_path: string | null;
   } | null;
   ref?: Ref<CustomerBasicFormHandle>;
   onDirtyChange?: (dirty: boolean) => void;

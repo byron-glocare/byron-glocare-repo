@@ -89,6 +89,8 @@ type Props = {
     token: string;
     expires_at: string;
     submitted_at: string | null;
+    data: Json;
+    photo_path: string | null;
   } | null;
 };
 

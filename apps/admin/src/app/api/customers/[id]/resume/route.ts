@@ -12,7 +12,7 @@ export async function GET(
   // 가장 최근 submitted draft 로
   const { data: draft, error } = await supabase
     .from("resume_drafts")
-    .select("data, customer_id")
+    .select("data, customer_id, photo_path")
     .eq("customer_id", customerId)
     .not("submitted_at", "is", null)
     .order("submitted_at", { ascending: false })
@@ -40,9 +40,20 @@ export async function GET(
   const filename = `이력서_${baseName}.docx`;
   const asciiFallback = `resume_${customer?.code ?? "unknown"}.docx`;
 
+  // 사진 다운로드 (있는 경우만)
+  let photoBuffer: Buffer | null = null;
+  if (draft.photo_path) {
+    const { data: photoBlob } = await supabase.storage
+      .from("resume-photos")
+      .download(draft.photo_path);
+    if (photoBlob) {
+      photoBuffer = Buffer.from(await photoBlob.arrayBuffer());
+    }
+  }
+
   let buf: Buffer;
   try {
-    buf = await generateResumeDocx(draft.data);
+    buf = await generateResumeDocx(draft.data, photoBuffer);
   } catch (e) {
     return NextResponse.json(
       { error: e instanceof Error ? e.message : "docx 생성 실패" },

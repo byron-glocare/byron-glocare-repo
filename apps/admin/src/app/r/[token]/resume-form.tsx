@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { submitResumeDraft } from "./actions";
+import { submitResumeDraft, uploadResumePhoto } from "./actions";
 import type { ResumeDraftDataInput } from "@/lib/validators";
 
 type EduRow = { school: string; major: string; period: string; status: string };
@@ -31,9 +31,11 @@ const emptyAct: ActRow = { name: "", period: "", org: "", detail: "" };
 export function ResumeForm({
   token,
   initial,
+  hasPhoto: hasPhotoInitial,
 }: {
   token: string;
   initial: ResumeDraftDataInput;
+  hasPhoto: boolean;
 }) {
   const [name_vi, setNameVi] = useState(initial.name_vi ?? "");
   const [name_kr, setNameKr] = useState(initial.name_kr ?? "");
@@ -64,11 +66,39 @@ export function ResumeForm({
       : [{ ...emptyAct }]
   );
   const [narrative_raw, setNarrative] = useState(initial.narrative_raw ?? "");
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [hasPhoto, setHasPhoto] = useState(hasPhotoInitial);
+  const [photoBusy, setPhotoBusy] = useState(false);
 
   const [pending, startTransition] = useTransition();
   const [result, setResult] = useState<
     null | { ok: true } | { ok: false; error: string }
   >(null);
+
+  function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      alert("사진 크기가 5MB를 초과합니다 / Ảnh quá 5MB");
+      e.target.value = "";
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const dataUrl = reader.result as string;
+      setPhotoPreview(dataUrl);
+      setPhotoBusy(true);
+      const r = await uploadResumePhoto(token, dataUrl);
+      setPhotoBusy(false);
+      if (r.ok) {
+        setHasPhoto(true);
+      } else {
+        alert(`사진 업로드 실패 / Upload thất bại: ${r.error}`);
+        setPhotoPreview(null);
+      }
+    };
+    reader.readAsDataURL(file);
+  }
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -149,6 +179,48 @@ export function ResumeForm({
           </li>
         </ul>
       </div>
+
+      <Section title="증명사진 / Ảnh thẻ">
+        <p className="text-xs text-muted-foreground">
+          JPEG / PNG / WebP, 최대 5MB. 이력서 좌측 상단에 들어갑니다.
+          <br />
+          JPEG / PNG / WebP, tối đa 5MB. Sẽ được đặt ở góc trên bên trái của
+          CV.
+        </p>
+        <div className="flex items-start gap-3">
+          {(photoPreview || hasPhoto) && (
+            <div className="size-28 rounded-md border border-border bg-muted overflow-hidden flex items-center justify-center">
+              {photoPreview ? (
+                <img
+                  src={photoPreview}
+                  alt="preview"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="text-xs text-muted-foreground">
+                  업로드됨
+                </span>
+              )}
+            </div>
+          )}
+          <label className="cursor-pointer">
+            <span className="inline-flex items-center gap-1 h-9 rounded-md border border-input bg-background px-3 text-sm hover:bg-muted/30">
+              {photoBusy
+                ? "업로드 중... / Đang tải..."
+                : hasPhoto || photoPreview
+                  ? "사진 변경 / Đổi ảnh"
+                  : "사진 선택 / Chọn ảnh"}
+            </span>
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={handlePhotoChange}
+              disabled={photoBusy}
+              className="hidden"
+            />
+          </label>
+        </div>
+      </Section>
 
       <Section title="개인 정보 / Thông tin cá nhân">
         <Field
