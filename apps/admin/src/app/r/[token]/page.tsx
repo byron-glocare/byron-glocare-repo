@@ -23,9 +23,9 @@ export default async function PublicResumePage({
   if (!draft) notFound();
 
   const expired = new Date(draft.expires_at).getTime() < Date.now();
-  const submitted = !!draft.submitted_at;
+  const alreadySubmitted = !!draft.submitted_at;
 
-  // 안내 페이지 (만료 / 이미 제출)
+  // 만료된 링크만 차단. 제출된 상태에서도 7일 안엔 수정 가능.
   if (expired) {
     return (
       <Wrapper>
@@ -34,19 +34,6 @@ export default async function PublicResumePage({
           titleVi="Đường link đã hết hạn"
           body="이 링크의 유효기간이 지났습니다. 담당자에게 새 링크를 요청해주세요."
           bodyVi="Link này đã hết hạn. Vui lòng yêu cầu link mới từ người phụ trách."
-        />
-      </Wrapper>
-    );
-  }
-
-  if (submitted) {
-    return (
-      <Wrapper>
-        <Notice
-          title="이미 제출되었습니다"
-          titleVi="Đã gửi thành công"
-          body="작성하신 내용이 잘 접수됐습니다. 감사합니다."
-          bodyVi="Nội dung bạn điền đã được tiếp nhận. Cảm ơn bạn."
         />
       </Wrapper>
     );
@@ -75,6 +62,7 @@ export default async function PublicResumePage({
         token={token}
         initial={initialData}
         hasPhoto={!!draft.photo_path}
+        alreadySubmitted={alreadySubmitted}
       />
     </Wrapper>
   );

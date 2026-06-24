@@ -1,7 +1,11 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { submitResumeDraft, uploadResumePhoto } from "./actions";
+import {
+  saveResumeDraft,
+  submitResumeDraft,
+  uploadResumePhoto,
+} from "./actions";
 import type { ResumeDraftDataInput } from "@/lib/validators";
 
 type EduRow = {
@@ -44,10 +48,12 @@ export function ResumeForm({
   token,
   initial,
   hasPhoto: hasPhotoInitial,
+  alreadySubmitted,
 }: {
   token: string;
   initial: ResumeDraftDataInput;
   hasPhoto: boolean;
+  alreadySubmitted: boolean;
 }) {
   const [name_vi, setNameVi] = useState(initial.name_vi ?? "");
   const [name_kr, setNameKr] = useState(initial.name_kr ?? "");
@@ -91,9 +97,12 @@ export function ResumeForm({
   const [photoBusy, setPhotoBusy] = useState(false);
 
   const [pending, startTransition] = useTransition();
-  const [result, setResult] = useState<
-    null | { ok: true } | { ok: false; error: string }
-  >(null);
+  type Result =
+    | null
+    | { kind: "save" | "submit"; ok: true }
+    | { kind: "save" | "submit"; ok: false; error: string };
+  const [result, setResult] = useState<Result>(null);
+  const [hasSubmitted, setHasSubmitted] = useState(alreadySubmitted);
 
   function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -118,6 +127,40 @@ export function ResumeForm({
       }
     };
     reader.readAsDataURL(file);
+  }
+
+  function buildPayload(): ResumeDraftDataInput {
+    return {
+      name_vi,
+      name_kr,
+      birth_date,
+      phone,
+      email,
+      address,
+      one_liner,
+      narrative_raw,
+      narrative_polished: initial.narrative_polished ?? "",
+      educations: educations.filter(
+        (r) => r.school || r.major || r.start_year || r.end_year
+      ),
+      careers: careers.filter((r) => r.workplace || r.role || r.detail),
+      certifications: certifications.filter((r) => r.name),
+      skills: skills.filter((r) => r.name || r.detail),
+      activities: activities.filter((r) => r.name || r.detail),
+    };
+  }
+
+  function handleSave() {
+    if (pending) return;
+    startTransition(async () => {
+      const r = await saveResumeDraft(token, buildPayload());
+      if (r.ok) {
+        setResult({ kind: "save", ok: true });
+      } else {
+        setResult({ kind: "save", ok: false, error: r.error });
+      }
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
   }
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -147,54 +190,55 @@ export function ResumeForm({
         return;
     }
     startTransition(async () => {
-      const payload: ResumeDraftDataInput = {
-        name_vi,
-        name_kr,
-        birth_date,
-        phone,
-        email,
-        address,
-        one_liner,
-        narrative_raw,
-        narrative_polished: initial.narrative_polished ?? "",
-        educations: educations.filter(
-          (r) => r.school || r.major || r.start_year || r.end_year
-        ),
-        careers: careers.filter((r) => r.workplace || r.role || r.detail),
-        certifications: certifications.filter((r) => r.name),
-        skills: skills.filter((r) => r.name || r.detail),
-        activities: activities.filter((r) => r.name || r.detail),
-      };
-      const r = await submitResumeDraft(token, payload);
-      setResult(r);
+      const r = await submitResumeDraft(token, buildPayload());
       if (r.ok) {
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        setResult({ kind: "submit", ok: true });
+        setHasSubmitted(true);
+      } else {
+        setResult({ kind: "submit", ok: false, error: r.error });
       }
+      window.scrollTo({ top: 0, behavior: "smooth" });
     });
-  }
-
-  if (result?.ok) {
-    return (
-      <div className="bg-card rounded-lg border border-success/30 bg-success/5 p-8 text-center space-y-2">
-        <h2 className="text-xl font-semibold text-success">제출 완료</h2>
-        <p className="text-sm text-muted-foreground">
-          작성하신 내용이 잘 접수됐습니다. 감사합니다.
-        </p>
-        <p className="text-sm text-muted-foreground">
-          Nội dung bạn điền đã được tiếp nhận. Cảm ơn bạn.
-        </p>
-      </div>
-    );
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
+      {/* 결과 banner */}
+      {result?.ok && (
+        <div className="bg-success/5 border border-success/30 rounded-lg p-3 text-sm">
+          <p className="font-medium text-success">
+            {result.kind === "submit" ? "제출 완료 / Đã gửi" : "임시 저장 완료 / Đã lưu"}
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            {result.kind === "submit"
+              ? "내용이 접수되었습니다. 링크 유효기간(7일) 안에는 계속 수정·재제출할 수 있습니다. / Nội dung đã được tiếp nhận. Trong vòng 7 ngày, bạn vẫn có thể chỉnh sửa và gửi lại."
+              : "지금까지 작성한 내용이 저장되었습니다. 나중에 같은 링크로 돌아와서 이어 작성할 수 있습니다. / Nội dung đã được lưu. Bạn có thể quay lại link này sau để tiếp tục."}
+          </p>
+        </div>
+      )}
+
+      {hasSubmitted && !result && (
+        <div className="bg-info/5 border border-info/30 rounded-lg p-3 text-sm">
+          <p className="font-medium">이미 한 번 제출하셨어요 / Bạn đã từng gửi</p>
+          <p className="text-xs text-muted-foreground mt-1">
+            수정 후 다시 제출하시면 가장 최근 내용으로 반영됩니다. / Sau khi
+            chỉnh sửa và gửi lại, nội dung mới nhất sẽ được áp dụng.
+          </p>
+        </div>
+      )}
+
       {/* 가이드 */}
       <div className="bg-info/5 border border-info/30 rounded-lg p-4 text-sm space-y-2">
         <p className="font-medium">작성 안내 / Hướng dẫn điền</p>
         <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
           <li>
             대부분 한국어로 작성해주세요. / Vui lòng điền chủ yếu bằng tiếng Hàn.
+          </li>
+          <li>
+            중간에 <span className="font-medium">&quot;임시 저장&quot;</span>을
+            누르면 나중에 같은 링크로 이어 작성 가능. 링크는 7일간 유효. /
+            Nhấn <span className="font-medium">&quot;Lưu tạm&quot;</span> để có
+            thể quay lại link sau (link có hiệu lực 7 ngày).
           </li>
           <li>
             마지막 &quot;자기소개 및 포부&quot;는 베트남어로 편하게 써주셔도 됩니다.
@@ -212,6 +256,7 @@ export function ResumeForm({
           </li>
         </ul>
       </div>
+
 
       <Section title="증명사진 / Ảnh thẻ">
         <p className="text-xs text-muted-foreground">
@@ -774,17 +819,36 @@ export function ResumeForm({
 
       {result && !result.ok && (
         <div className="bg-destructive/5 border border-destructive/30 rounded-md p-3 text-sm text-destructive">
-          저장 실패 / Lưu thất bại: {result.error}
+          {result.kind === "submit" ? "제출 실패 / Gửi thất bại" : "저장 실패 / Lưu thất bại"}: {result.error}
         </div>
       )}
 
-      <button
-        type="submit"
-        disabled={pending}
-        className="w-full h-12 rounded-md bg-primary text-primary-foreground font-semibold text-base disabled:opacity-60"
-      >
-        {pending ? "제출 중... / Đang gửi..." : "제출 / Gửi"}
-      </button>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <button
+          type="button"
+          onClick={handleSave}
+          disabled={pending}
+          className="h-12 rounded-md border border-input bg-background font-medium text-sm disabled:opacity-60 hover:bg-muted/30"
+        >
+          {pending ? "..." : "임시 저장 / Lưu tạm"}
+        </button>
+        <button
+          type="submit"
+          disabled={pending}
+          className="h-12 rounded-md bg-primary text-primary-foreground font-semibold text-base disabled:opacity-60"
+        >
+          {pending
+            ? "제출 중... / Đang gửi..."
+            : hasSubmitted
+              ? "다시 제출 / Gửi lại"
+              : "제출 / Gửi"}
+        </button>
+      </div>
+      <p className="text-xs text-muted-foreground text-center">
+        링크는 7일간 유효합니다. 그 전까지는 임시 저장 + 재제출이 가능합니다. /
+        Link có hiệu lực 7 ngày. Trong thời gian đó bạn có thể lưu tạm và gửi
+        lại nhiều lần.
+      </p>
     </form>
   );
 }

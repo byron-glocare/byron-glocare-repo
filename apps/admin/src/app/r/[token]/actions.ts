@@ -42,14 +42,26 @@ export async function submitResumeDraft(
   }
 
   // AI 다듬기 — 학생 raw 텍스트 → 한국어 어색한 외국인 톤. 실패해도 raw 그대로 저장.
+  // 재제출 시 raw 가 이전과 다르면 다시 호출, 같으면 기존 polished 보존 (비용 절약).
   let polished = parsed.data.narrative_polished;
   if (parsed.data.narrative_raw.trim().length >= 20) {
-    const r = await polishResumeNarrative({
-      rawText: parsed.data.narrative_raw,
-      studentName: parsed.data.name_kr || parsed.data.name_vi,
-    });
-    if (r.ok) polished = r.polished;
-    // 실패 시 polished 는 기존 값 또는 빈 문자열 — docx 생성 시 raw 로 fallback
+    // 기존 draft 의 raw 와 비교
+    const { data: existingDraft } = await supabase
+      .from("resume_drafts")
+      .select("data")
+      .eq("id", draft.id)
+      .single();
+    const existingRaw =
+      (existingDraft?.data as { narrative_raw?: string } | null)?.narrative_raw ?? "";
+    const rawChanged = existingRaw.trim() !== parsed.data.narrative_raw.trim();
+
+    if (rawChanged || !polished.trim()) {
+      const r = await polishResumeNarrative({
+        rawText: parsed.data.narrative_raw,
+        studentName: parsed.data.name_kr || parsed.data.name_vi,
+      });
+      if (r.ok) polished = r.polished;
+    }
   }
 
   const { error } = await supabase
@@ -57,6 +69,52 @@ export async function submitResumeDraft(
     .update({
       data: { ...parsed.data, narrative_polished: polished },
       submitted_at: new Date().toISOString(),
+    })
+    .eq("id", draft.id);
+  if (error) return { ok: false, error: error.message };
+
+  return { ok: true };
+}
+
+/**
+ * 임시 저장 — submitted_at 갱신 X, AI 다듬기 X. 학생이 작성 도중 저장하고
+ * 나중에 와서 이어 작성할 수 있게.
+ */
+export async function saveResumeDraft(
+  token: string,
+  data: ResumeDraftDataInput
+): Promise<SubmitResult> {
+  if (!token || token.length < 8) {
+    return { ok: false, error: "잘못된 링크입니다." };
+  }
+  const parsed = resumeDraftDataSchema.safeParse(data);
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.issues[0].message };
+  }
+
+  const supabase = createAdminClient();
+
+  const { data: draft, error: fetchErr } = await supabase
+    .from("resume_drafts")
+    .select("id, expires_at, data")
+    .eq("token", token)
+    .maybeSingle();
+  if (fetchErr) return { ok: false, error: fetchErr.message };
+  if (!draft) return { ok: false, error: "링크가 만료되었거나 존재하지 않습니다." };
+  if (new Date(draft.expires_at).getTime() < Date.now()) {
+    return { ok: false, error: "링크 유효기간이 지났습니다." };
+  }
+
+  // 기존 polished 는 보존 (제출 시에만 갱신)
+  const existingPolished =
+    (draft.data as { narrative_polished?: string } | null)?.narrative_polished ??
+    "";
+
+  const { error } = await supabase
+    .from("resume_drafts")
+    .update({
+      data: { ...parsed.data, narrative_polished: existingPolished },
+      // submitted_at 은 그대로 — 재제출 시 갱신
     })
     .eq("id", draft.id);
   if (error) return { ok: false, error: error.message };
