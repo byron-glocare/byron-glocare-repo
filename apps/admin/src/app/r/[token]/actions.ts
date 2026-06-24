@@ -1,11 +1,24 @@
 "use server";
 
-import { createAdminClient } from "@/lib/supabase/server";
+import { createAdminClient, createClient } from "@/lib/supabase/server";
 import {
   resumeDraftDataSchema,
   type ResumeDraftDataInput,
 } from "@/lib/validators";
 import { polishResumeNarrative } from "@/lib/resume/polish";
+
+/** 현재 요청이 admin 로그인 상태인지 검사. expired 우회 결정에 사용. */
+async function isAdminAuthenticated(): Promise<boolean> {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    return !!user;
+  } catch {
+    return false;
+  }
+}
 
 export type SubmitResult =
   | { ok: true }
@@ -38,7 +51,12 @@ export async function submitResumeDraft(
   if (fetchErr) return { ok: false, error: fetchErr.message };
   if (!draft) return { ok: false, error: "링크가 만료되었거나 존재하지 않습니다." };
   if (new Date(draft.expires_at).getTime() < Date.now()) {
-    return { ok: false, error: "링크 유효기간이 지났습니다. 관리자에게 재발급 요청하세요." };
+    if (!(await isAdminAuthenticated())) {
+      return {
+        ok: false,
+        error: "링크 유효기간이 지났습니다. 관리자에게 재발급 요청하세요.",
+      };
+    }
   }
 
   // AI 다듬기 — 학생 raw 텍스트 → 한국어 어색한 외국인 톤. 실패해도 raw 그대로 저장.
@@ -102,7 +120,9 @@ export async function saveResumeDraft(
   if (fetchErr) return { ok: false, error: fetchErr.message };
   if (!draft) return { ok: false, error: "링크가 만료되었거나 존재하지 않습니다." };
   if (new Date(draft.expires_at).getTime() < Date.now()) {
-    return { ok: false, error: "링크 유효기간이 지났습니다." };
+    if (!(await isAdminAuthenticated())) {
+      return { ok: false, error: "링크 유효기간이 지났습니다." };
+    }
   }
 
   // 기존 polished 는 보존 (제출 시에만 갱신)
@@ -156,7 +176,9 @@ export async function uploadResumePhoto(
   if (fetchErr) return { ok: false, error: fetchErr.message };
   if (!draft) return { ok: false, error: "링크가 만료되었거나 존재하지 않습니다." };
   if (new Date(draft.expires_at).getTime() < Date.now()) {
-    return { ok: false, error: "링크 유효기간이 지났습니다." };
+    if (!(await isAdminAuthenticated())) {
+      return { ok: false, error: "링크 유효기간이 지났습니다." };
+    }
   }
 
   const ext = mime === "image/png" ? "png" : mime === "image/webp" ? "webp" : "jpg";

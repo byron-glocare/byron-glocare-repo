@@ -7,6 +7,7 @@ import {
   Check,
   Copy,
   Download,
+  ExternalLink,
   FileText,
   Link2,
   Loader2,
@@ -164,8 +165,8 @@ export function CustomerResumeCard({ customerId, productType, draft }: Props) {
           )}
         </div>
 
-        {/* 링크 영역 */}
-        {draft && !submitted && !expired && link && (
+        {/* 링크 영역 — submitted/expired 무관 항상 표시 (admin 도 수정 가능) */}
+        {draft && link && (
           <div className="flex items-center gap-2">
             <input
               readOnly
@@ -186,6 +187,16 @@ export function CustomerResumeCard({ customerId, productType, draft }: Props) {
               )}
               {copied ? "복사됨" : "복사"}
             </Button>
+            <a
+              href={link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 h-9 px-3 rounded-md border border-input bg-background text-xs font-medium hover:bg-muted/30"
+              title="관리자 모드로 학생 폼을 열어 직접 수정할 수 있습니다."
+            >
+              <ExternalLink className="size-4" />
+              관리자 수정
+            </a>
           </div>
         )}
 

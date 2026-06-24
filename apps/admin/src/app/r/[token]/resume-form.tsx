@@ -309,6 +309,7 @@ export function ResumeForm({
             onChange={(e) => setNameVi(e.target.value.toUpperCase())}
             className={inputCls}
             placeholder="NGUYEN THI VAN ANH"
+            maxLength={60}
           />
         </Field>
         <Field
@@ -321,6 +322,7 @@ export function ResumeForm({
             onChange={(e) => setNameKr(e.target.value)}
             className={inputCls}
             placeholder="응우옌 티 반 안"
+            maxLength={30}
           />
         </Field>
         <Field
@@ -333,6 +335,7 @@ export function ResumeForm({
             onChange={(e) => setBirthDate(e.target.value)}
             className={inputCls}
             placeholder="2002년 11월 3일"
+            maxLength={30}
           />
         </Field>
         <Field
@@ -345,6 +348,7 @@ export function ResumeForm({
             onChange={(e) => setPhone(e.target.value)}
             className={inputCls}
             placeholder="010-1234-5678"
+            maxLength={30}
           />
         </Field>
         <Field
@@ -358,6 +362,7 @@ export function ResumeForm({
             className={inputCls}
             placeholder="example@gmail.com"
             type="email"
+            maxLength={100}
           />
         </Field>
         <Field
@@ -370,6 +375,7 @@ export function ResumeForm({
             onChange={(e) => setAddress(e.target.value)}
             className={inputCls}
             placeholder="서울시 광진구 능동로 120, 창의관 202호 (근무처 근처로 이사가능합니다)"
+            maxLength={200}
           />
         </Field>
         <Field
@@ -382,6 +388,7 @@ export function ResumeForm({
             onChange={(e) => setOneLiner(e.target.value)}
             className={inputCls}
             placeholder="어르신을 따뜻한 마음으로 돌보는 요양보호사가 되고 싶습니다."
+            maxLength={120}
           />
         </Field>
       </Section>
@@ -544,6 +551,7 @@ export function ResumeForm({
                 rows={2}
                 className={textareaCls}
                 placeholder="계산, 진열, 재고 관리 등"
+                maxLength={500}
               />
             </SubField>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -767,6 +775,7 @@ export function ResumeForm({
                 rows={2}
                 className={textareaCls}
                 placeholder="매주 일요일 어르신 식사 보조 및 청소 등"
+                maxLength={500}
               />
             </SubField>
             <SubField label="기간" labelVi="Thời gian">
@@ -811,9 +820,10 @@ export function ResumeForm({
           rows={12}
           className={textareaCls + " font-normal"}
           placeholder="자유롭게 작성해주세요. / Hãy viết tự do."
+          maxLength={3000}
         />
         <p className="text-xs text-muted-foreground text-right">
-          {narrative_raw.length} 자
+          {narrative_raw.length} / 3000 자 (권장 500–1500 / Khuyên dùng 500–1500)
         </p>
       </Section>
 

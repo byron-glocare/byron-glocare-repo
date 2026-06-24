@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { createAdminClient } from "@/lib/supabase/server";
+import { createAdminClient, createClient } from "@/lib/supabase/server";
 import { ResumeForm } from "./resume-form";
 import type { ResumeDraftDataInput } from "@/lib/validators";
 
@@ -22,11 +22,18 @@ export default async function PublicResumePage({
 
   if (!draft) notFound();
 
+  // admin 으로 로그인한 사용자는 만료 무시하고 편집 가능
+  const sessionClient = await createClient();
+  const {
+    data: { user: adminUser },
+  } = await sessionClient.auth.getUser();
+  const isAdmin = !!adminUser;
+
   const expired = new Date(draft.expires_at).getTime() < Date.now();
   const alreadySubmitted = !!draft.submitted_at;
 
-  // 만료된 링크만 차단. 제출된 상태에서도 7일 안엔 수정 가능.
-  if (expired) {
+  // 만료된 링크만 차단 (admin 은 우회). 제출된 상태에서도 7일 안엔 수정 가능.
+  if (expired && !isAdmin) {
     return (
       <Wrapper>
         <Notice
@@ -58,6 +65,12 @@ export default async function PublicResumePage({
           링크 만료 / Hạn dùng: {expiresAtLabel}
         </p>
       </header>
+      {isAdmin && (
+        <div className="bg-warning/5 border border-warning/30 rounded-md p-3 text-xs">
+          <span className="font-medium text-warning">관리자 편집 모드</span> —
+          로그인된 admin 으로 학생 폼을 보고 있습니다. 수정·저장·제출 모두 가능.
+        </div>
+      )}
       <ResumeForm
         token={token}
         initial={initialData}
