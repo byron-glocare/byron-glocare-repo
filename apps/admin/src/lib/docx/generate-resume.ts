@@ -44,6 +44,28 @@ export async function generateResumeDocx(
 
   const narrative = data.narrative_polished?.trim() || data.narrative_raw || "";
 
+  // 양식의 column 구조에 맞춰 schema 필드명 변환
+  const educations = data.educations.map((e) => ({
+    school: e.school,
+    major: e.major,
+    period:
+      e.start_year && e.end_year
+        ? `${e.start_year} ~ ${e.end_year}`
+        : e.start_year || e.end_year,
+    status: e.status,
+  }));
+  const certifications = data.certifications.map((c) => ({
+    name: c.name,
+    issuer: c.detail, // 양식의 "발급기관" 자리에 우리는 "상세" 표시
+    date: c.date,
+  }));
+  const activities = data.activities.map((a) => ({
+    name: a.name,
+    period: a.period,
+    org: "", // 양식에 "기관" 컬럼이 있지만 새 schema 엔 없음 — 빈 칸
+    detail: a.detail,
+  }));
+
   doc.render({
     name_vi: data.name_vi,
     name_kr: data.name_kr,
@@ -53,11 +75,11 @@ export async function generateResumeDocx(
     address: data.address,
     one_liner: data.one_liner,
     narrative,
-    educations: data.educations,
+    educations,
     careers: data.careers,
-    certifications: data.certifications,
+    certifications,
     skills: data.skills,
-    activities: data.activities,
+    activities,
     // 사진 토큰. photo 자체는 image module 의 getImage 로 처리되므로 값 무관.
     photo: photoBuffer && photoBuffer.length > 0 ? "photo" : "",
   });

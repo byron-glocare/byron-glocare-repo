@@ -4,29 +4,41 @@ import { useState, useTransition } from "react";
 import { submitResumeDraft, uploadResumePhoto } from "./actions";
 import type { ResumeDraftDataInput } from "@/lib/validators";
 
-type EduRow = { school: string; major: string; period: string; status: string };
-type CarRow = {
-  workplace: string;
-  period: string;
-  role: string;
-  detail: string;
+type EduRow = {
+  school: string;
+  major: string;
+  start_year: string;
+  end_year: string;
   status: string;
 };
-type CertRow = { name: string; issuer: string; date: string };
+type CarRow = {
+  workplace: string;
+  role: string;
+  detail: string;
+  period: string;
+  status: string;
+};
+type CertRow = { name: string; date: string; detail: string };
 type SkillRow = { name: string; detail: string; level: string };
-type ActRow = { name: string; period: string; org: string; detail: string };
+type ActRow = { name: string; detail: string; period: string };
 
-const emptyEdu: EduRow = { school: "", major: "", period: "", status: "" };
-const emptyCar: CarRow = {
-  workplace: "",
-  period: "",
-  role: "",
-  detail: "",
+const emptyEdu: EduRow = {
+  school: "",
+  major: "",
+  start_year: "",
+  end_year: "",
   status: "",
 };
-const emptyCert: CertRow = { name: "", issuer: "", date: "" };
+const emptyCar: CarRow = {
+  workplace: "",
+  role: "",
+  detail: "",
+  period: "",
+  status: "",
+};
+const emptyCert: CertRow = { name: "", date: "", detail: "" };
 const emptySkill: SkillRow = { name: "", detail: "", level: "" };
-const emptyAct: ActRow = { name: "", period: "", org: "", detail: "" };
+const emptyAct: ActRow = { name: "", detail: "", period: "" };
 
 export function ResumeForm({
   token,
@@ -55,10 +67,18 @@ export function ResumeForm({
   const [certifications, setCertifications] = useState<CertRow[]>(
     initial.certifications?.length
       ? (initial.certifications as CertRow[])
-      : [{ ...emptyCert }]
+      : [
+          { name: "요양보호사 자격증", date: "", detail: "" },
+          { name: "TOPIK", date: "", detail: "" },
+        ]
   );
   const [skills, setSkills] = useState<SkillRow[]>(
-    initial.skills?.length ? (initial.skills as SkillRow[]) : [{ ...emptySkill }]
+    initial.skills?.length
+      ? (initial.skills as SkillRow[])
+      : [
+          { name: "베트남어", detail: "모국어", level: "모국어" },
+          { name: "한국어", detail: "", level: "" },
+        ]
   );
   const [activities, setActivities] = useState<ActRow[]>(
     initial.activities?.length
@@ -93,7 +113,7 @@ export function ResumeForm({
       if (r.ok) {
         setHasPhoto(true);
       } else {
-        alert(`사진 업로드 실패 / Upload thất bại: ${r.error}`);
+        alert(`사진 업로드 실패 / Tải ảnh thất bại: ${r.error}`);
         setPhotoPreview(null);
       }
     };
@@ -105,6 +125,17 @@ export function ResumeForm({
     if (pending) return;
     if (!name_kr.trim() && !name_vi.trim()) {
       alert("이름을 입력해주세요 / Vui lòng nhập tên");
+      return;
+    }
+    // 필수 검증 — 학력 1개 이상, 자격증 1개 이상
+    const hasEdu = educations.some((r) => r.school || r.major);
+    const hasCert = certifications.some((r) => r.name);
+    if (!hasEdu) {
+      alert("학력은 최소 1개 입력해주세요 / Học vấn cần ít nhất 1 mục");
+      return;
+    }
+    if (!hasCert) {
+      alert("자격증은 최소 1개 입력해주세요 / Chứng chỉ cần ít nhất 1 mục");
       return;
     }
     if (!narrative_raw.trim() || narrative_raw.trim().length < 50) {
@@ -126,11 +157,13 @@ export function ResumeForm({
         one_liner,
         narrative_raw,
         narrative_polished: initial.narrative_polished ?? "",
-        educations: educations.filter((r) => r.school || r.major || r.period),
+        educations: educations.filter(
+          (r) => r.school || r.major || r.start_year || r.end_year
+        ),
         careers: careers.filter((r) => r.workplace || r.role || r.detail),
-        certifications: certifications.filter((r) => r.name || r.issuer),
+        certifications: certifications.filter((r) => r.name),
         skills: skills.filter((r) => r.name || r.detail),
-        activities: activities.filter((r) => r.name || r.org || r.detail),
+        activities: activities.filter((r) => r.name || r.detail),
       };
       const r = await submitResumeDraft(token, payload);
       setResult(r);
@@ -161,21 +194,21 @@ export function ResumeForm({
         <p className="font-medium">작성 안내 / Hướng dẫn điền</p>
         <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
           <li>
-            대부분 한국어로 작성해주세요. / Vui lòng điền chủ yếu bằng tiếng
-            Hàn.
+            대부분 한국어로 작성해주세요. / Vui lòng điền chủ yếu bằng tiếng Hàn.
           </li>
           <li>
-            마지막 "자기소개 및 포부" 만 베트남어로 편하게 써주셔도 됩니다. /
-            Phần "Tự giới thiệu" cuối có thể viết bằng tiếng Việt.
+            마지막 &quot;자기소개 및 포부&quot;는 베트남어로 편하게 써주셔도 됩니다.
+            / Phần &quot;Tự giới thiệu&quot; cuối có thể viết bằng tiếng Việt.
           </li>
           <li>
-            "+추가" 버튼으로 학력·경력·자격증을 여러 개 등록할 수 있습니다. /
-            Có thể thêm nhiều mục bằng nút "+추가".
+            <span className="text-destructive font-medium">학력·자격증</span>은
+            필수입니다. 나머지는 선택. / Học vấn và Chứng chỉ là{" "}
+            <span className="text-destructive font-medium">bắt buộc</span>. Các
+            mục khác tuỳ chọn.
           </li>
           <li>
-            7일 안에 작성해주세요. 중간 저장은 없습니다 — 한 번에 끝까지 작성
-            후 제출 / Vui lòng hoàn thành trong 7 ngày. Không có lưu giữa
-            chừng.
+            &quot;+추가&quot; 버튼으로 여러 항목을 등록할 수 있습니다. / Có thể
+            thêm nhiều mục bằng nút &quot;+추가&quot;.
           </li>
         </ul>
       </div>
@@ -184,27 +217,25 @@ export function ResumeForm({
         <p className="text-xs text-muted-foreground">
           JPEG / PNG / WebP, 최대 5MB. 이력서 좌측 상단에 들어갑니다.
           <br />
-          JPEG / PNG / WebP, tối đa 5MB. Sẽ được đặt ở góc trên bên trái của
-          CV.
+          JPEG / PNG / WebP, tối đa 5MB. Sẽ được đặt ở góc trên bên trái của CV.
         </p>
         <div className="flex items-start gap-3">
           {(photoPreview || hasPhoto) && (
-            <div className="size-28 rounded-md border border-border bg-muted overflow-hidden flex items-center justify-center">
+            <div className="size-28 rounded-md border border-border bg-muted overflow-hidden flex items-center justify-center shrink-0">
               {photoPreview ? (
+                /* eslint-disable-next-line @next/next/no-img-element */
                 <img
                   src={photoPreview}
                   alt="preview"
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <span className="text-xs text-muted-foreground">
-                  업로드됨
-                </span>
+                <span className="text-xs text-muted-foreground">업로드됨</span>
               )}
             </div>
           )}
           <label className="cursor-pointer">
-            <span className="inline-flex items-center gap-1 h-9 rounded-md border border-input bg-background px-3 text-sm hover:bg-muted/30">
+            <span className="inline-flex items-center gap-1 h-11 rounded-md border border-input bg-background px-4 text-sm hover:bg-muted/30">
               {photoBusy
                 ? "업로드 중... / Đang tải..."
                 : hasPhoto || photoPreview
@@ -226,7 +257,7 @@ export function ResumeForm({
         <Field
           label="베트남 이름 (영문 대문자)"
           labelVi="Tên tiếng Việt (chữ in hoa)"
-          hint="예: NGUYEN THI VAN ANH"
+          hint="예 / Ví dụ: NGUYEN THI VAN ANH"
         >
           <input
             value={name_vi}
@@ -238,7 +269,7 @@ export function ResumeForm({
         <Field
           label="한글 이름"
           labelVi="Tên tiếng Hàn"
-          hint="예: 응우옌 티 반 안"
+          hint="예 / Ví dụ: 응우옌 티 반 안"
         >
           <input
             value={name_kr}
@@ -250,7 +281,7 @@ export function ResumeForm({
         <Field
           label="생년월일"
           labelVi="Ngày sinh"
-          hint="예: 2002년 11월 3일 / 2002-11-03"
+          hint="예 / Ví dụ: 2002년 11월 3일 / 2002-11-03"
         >
           <input
             value={birth_date}
@@ -262,7 +293,7 @@ export function ResumeForm({
         <Field
           label="한국 전화번호"
           labelVi="Số điện thoại Hàn Quốc"
-          hint="예: 010-1234-5678"
+          hint="예 / Ví dụ: 010-1234-5678"
         >
           <input
             value={phone}
@@ -271,7 +302,11 @@ export function ResumeForm({
             placeholder="010-1234-5678"
           />
         </Field>
-        <Field label="이메일" labelVi="Email" hint="예: example@gmail.com">
+        <Field
+          label="이메일"
+          labelVi="Email"
+          hint="예 / Ví dụ: example@gmail.com"
+        >
           <input
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -283,7 +318,7 @@ export function ResumeForm({
         <Field
           label="한국 내 주소"
           labelVi="Địa chỉ ở Hàn Quốc"
-          hint="예: 서울시 광진구 능동로 120, 창의관 202호 / Nếu có thể chuyển nhà gần nơi làm: thêm '(근무처 근처로 이사가능합니다)'"
+          hint="이사 가능하다면 끝에 '(근무처 근처로 이사가능합니다)' 추가 / Nếu có thể chuyển nhà gần nơi làm thì thêm cụm '(근무처 근처로 이사가능합니다)' ở cuối"
         >
           <input
             value={address}
@@ -295,7 +330,7 @@ export function ResumeForm({
         <Field
           label="한 줄 자기소개"
           labelVi="Một câu giới thiệu bản thân"
-          hint="이력서 맨 위에 들어가는 한 줄. 예: 어르신을 따뜻한 마음으로 돌보는 요양보호사가 되고 싶습니다."
+          hint="이력서 맨 위에 들어갑니다 / Sẽ hiển thị ở đầu CV"
         >
           <input
             value={one_liner}
@@ -306,205 +341,274 @@ export function ResumeForm({
         </Field>
       </Section>
 
-      <Section title="학력 / Học vấn">
+      <Section
+        title="학력 / Học vấn"
+        required
+      >
         <ListGuide>
-          한국대학교 / 경영학과 / 2023년 졸업 처럼 학교명·전공·기간·졸업여부
-          순으로
+          학교명 / 전공 / 입학년도 / 졸업년도 / 졸업여부 순으로 작성해주세요. / Điền theo
+          thứ tự: Trường / Chuyên ngành / Năm nhập học / Năm tốt nghiệp / Tình trạng.
         </ListGuide>
         {educations.map((row, i) => (
-          <div key={i} className="grid grid-cols-1 sm:grid-cols-4 gap-2">
-            <input
-              value={row.school}
-              onChange={(e) =>
-                setEducations((prev) =>
-                  prev.map((r, j) =>
-                    j === i ? { ...r, school: e.target.value } : r
-                  )
-                )
-              }
-              className={inputCls}
-              placeholder="학교명 / Trường"
-            />
-            <input
-              value={row.major}
-              onChange={(e) =>
-                setEducations((prev) =>
-                  prev.map((r, j) =>
-                    j === i ? { ...r, major: e.target.value } : r
-                  )
-                )
-              }
-              className={inputCls}
-              placeholder="전공 / Chuyên ngành"
-            />
-            <input
-              value={row.period}
-              onChange={(e) =>
-                setEducations((prev) =>
-                  prev.map((r, j) =>
-                    j === i ? { ...r, period: e.target.value } : r
-                  )
-                )
-              }
-              className={inputCls}
-              placeholder="기간 / Thời gian"
-            />
-            <div className="flex gap-1">
-              <input
-                value={row.status}
-                onChange={(e) =>
-                  setEducations((prev) =>
-                    prev.map((r, j) =>
-                      j === i ? { ...r, status: e.target.value } : r
+          <RowBox
+            key={i}
+            onRemove={
+              educations.length > 1
+                ? () =>
+                    setEducations((prev) => prev.filter((_, j) => j !== i))
+                : undefined
+            }
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <SubField label="학교명" labelVi="Trường">
+                <input
+                  value={row.school}
+                  onChange={(e) =>
+                    setEducations((prev) =>
+                      prev.map((r, j) =>
+                        j === i ? { ...r, school: e.target.value } : r
+                      )
                     )
-                  )
-                }
-                className={inputCls + " flex-1"}
-                placeholder="졸업/재학 / Tốt nghiệp"
-              />
-              <RemoveBtn
-                onClick={() =>
-                  setEducations((prev) => prev.filter((_, j) => j !== i))
-                }
-              />
+                  }
+                  className={inputCls}
+                  placeholder="한국대학교"
+                />
+              </SubField>
+              <SubField label="전공" labelVi="Chuyên ngành">
+                <input
+                  value={row.major}
+                  onChange={(e) =>
+                    setEducations((prev) =>
+                      prev.map((r, j) =>
+                        j === i ? { ...r, major: e.target.value } : r
+                      )
+                    )
+                  }
+                  className={inputCls}
+                  placeholder="경영학과"
+                />
+              </SubField>
             </div>
-          </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <SubField label="입학년도" labelVi="Năm nhập học">
+                <input
+                  value={row.start_year}
+                  onChange={(e) =>
+                    setEducations((prev) =>
+                      prev.map((r, j) =>
+                        j === i ? { ...r, start_year: e.target.value } : r
+                      )
+                    )
+                  }
+                  className={inputCls}
+                  placeholder="2020"
+                />
+              </SubField>
+              <SubField label="졸업년도" labelVi="Năm tốt nghiệp">
+                <input
+                  value={row.end_year}
+                  onChange={(e) =>
+                    setEducations((prev) =>
+                      prev.map((r, j) =>
+                        j === i ? { ...r, end_year: e.target.value } : r
+                      )
+                    )
+                  }
+                  className={inputCls}
+                  placeholder="2024"
+                />
+              </SubField>
+              <SubField label="상태" labelVi="Tình trạng">
+                <select
+                  value={row.status}
+                  onChange={(e) =>
+                    setEducations((prev) =>
+                      prev.map((r, j) =>
+                        j === i ? { ...r, status: e.target.value } : r
+                      )
+                    )
+                  }
+                  className={inputCls}
+                >
+                  <option value="">선택 / Chọn</option>
+                  <option value="졸업">졸업 / Đã tốt nghiệp</option>
+                  <option value="졸업예정">
+                    졸업예정 / Sắp tốt nghiệp
+                  </option>
+                  <option value="재학중">재학중 / Đang học</option>
+                </select>
+              </SubField>
+            </div>
+          </RowBox>
         ))}
         <AddBtn onClick={() => setEducations((p) => [...p, { ...emptyEdu }])} />
       </Section>
 
       <Section title="경력 (선택) / Kinh nghiệm (Tuỳ chọn)">
         <ListGuide>
-          편의점·식당·공장 등 모든 알바 / 경력도 포함해서 적어주세요.
-          <br />
-          Lưu ý: ngay cả việc làm thêm quán ăn, công xưởng... cũng điền vào
-          đây, tránh để trống.
+          편의점·식당·공장 등 모든 알바 / 경력도 포함해서 적어주세요. / Hãy điền tất
+          cả: kể cả việc làm thêm tại cửa hàng tiện lợi, quán ăn, công xưởng...
         </ListGuide>
         {careers.map((row, i) => (
-          <div key={i} className="grid grid-cols-1 sm:grid-cols-5 gap-2">
-            <input
-              value={row.workplace}
-              onChange={(e) =>
-                setCareers((p) =>
-                  p.map((r, j) =>
-                    j === i ? { ...r, workplace: e.target.value } : r
-                  )
-                )
-              }
-              className={inputCls}
-              placeholder="근무처 / Nơi làm"
-            />
-            <input
-              value={row.period}
-              onChange={(e) =>
-                setCareers((p) =>
-                  p.map((r, j) =>
-                    j === i ? { ...r, period: e.target.value } : r
-                  )
-                )
-              }
-              className={inputCls}
-              placeholder="기간 / Thời gian"
-            />
-            <input
-              value={row.role}
-              onChange={(e) =>
-                setCareers((p) =>
-                  p.map((r, j) =>
-                    j === i ? { ...r, role: e.target.value } : r
-                  )
-                )
-              }
-              className={inputCls}
-              placeholder="직책 / Vị trí"
-            />
-            <input
-              value={row.detail}
-              onChange={(e) =>
-                setCareers((p) =>
-                  p.map((r, j) =>
-                    j === i ? { ...r, detail: e.target.value } : r
-                  )
-                )
-              }
-              className={inputCls}
-              placeholder="업무 상세 / Mô tả"
-            />
-            <div className="flex gap-1">
-              <input
-                value={row.status}
+          <RowBox
+            key={i}
+            onRemove={() =>
+              setCareers((prev) => prev.filter((_, j) => j !== i))
+            }
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <SubField label="근무처" labelVi="Nơi làm">
+                <input
+                  value={row.workplace}
+                  onChange={(e) =>
+                    setCareers((p) =>
+                      p.map((r, j) =>
+                        j === i ? { ...r, workplace: e.target.value } : r
+                      )
+                    )
+                  }
+                  className={inputCls}
+                  placeholder="CU 편의점"
+                />
+              </SubField>
+              <SubField label="직책" labelVi="Vị trí">
+                <input
+                  value={row.role}
+                  onChange={(e) =>
+                    setCareers((p) =>
+                      p.map((r, j) =>
+                        j === i ? { ...r, role: e.target.value } : r
+                      )
+                    )
+                  }
+                  className={inputCls}
+                  placeholder="주간 아르바이트"
+                />
+              </SubField>
+            </div>
+            <SubField label="업무 상세" labelVi="Mô tả công việc">
+              <textarea
+                value={row.detail}
                 onChange={(e) =>
                   setCareers((p) =>
                     p.map((r, j) =>
-                      j === i ? { ...r, status: e.target.value } : r
+                      j === i ? { ...r, detail: e.target.value } : r
                     )
                   )
                 }
-                className={inputCls + " flex-1"}
-                placeholder="재직/퇴사"
+                rows={2}
+                className={textareaCls}
+                placeholder="계산, 진열, 재고 관리 등"
               />
-              <RemoveBtn
-                onClick={() =>
-                  setCareers((p) => p.filter((_, j) => j !== i))
-                }
-              />
+            </SubField>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <SubField label="근무기간 (년월)" labelVi="Thời gian (năm/tháng)">
+                <input
+                  value={row.period}
+                  onChange={(e) =>
+                    setCareers((p) =>
+                      p.map((r, j) =>
+                        j === i ? { ...r, period: e.target.value } : r
+                      )
+                    )
+                  }
+                  className={inputCls}
+                  placeholder="2022년 3월 ~ 현재"
+                />
+              </SubField>
+              <SubField label="상태" labelVi="Tình trạng">
+                <select
+                  value={row.status}
+                  onChange={(e) =>
+                    setCareers((p) =>
+                      p.map((r, j) =>
+                        j === i ? { ...r, status: e.target.value } : r
+                      )
+                    )
+                  }
+                  className={inputCls}
+                >
+                  <option value="">선택 / Chọn</option>
+                  <option value="재직">재직 / Đang làm</option>
+                  <option value="퇴사">퇴사 / Đã nghỉ</option>
+                </select>
+              </SubField>
             </div>
-          </div>
+          </RowBox>
         ))}
         <AddBtn onClick={() => setCareers((p) => [...p, { ...emptyCar }])} />
       </Section>
 
-      <Section title="자격증 · 수상 (선택) / Chứng chỉ · Giải thưởng">
+      <Section title="자격증 / Chứng chỉ" required>
         <ListGuide>
-          요양보호사 자격증 / 한국보건의료인국가시험원 / 25년 8월 처럼 명칭 /
-          발급기관 / 취득일 순으로. 봉사활동·헌혈도 좋아요.
+          <strong>요양보호사 자격증과 TOPIK은 필수로 들어갑니다.</strong>{" "}
+          발급일/상세도 채워주세요. /{" "}
+          <strong>
+            Chứng chỉ Điều dưỡng và TOPIK là bắt buộc.
+          </strong>{" "}
+          Vui lòng điền cả ngày cấp và chi tiết.
         </ListGuide>
         {certifications.map((row, i) => (
-          <div key={i} className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-            <input
-              value={row.name}
-              onChange={(e) =>
-                setCertifications((p) =>
-                  p.map((r, j) =>
-                    j === i ? { ...r, name: e.target.value } : r
-                  )
-                )
-              }
-              className={inputCls}
-              placeholder="명칭 / Tên"
-            />
-            <input
-              value={row.issuer}
-              onChange={(e) =>
-                setCertifications((p) =>
-                  p.map((r, j) =>
-                    j === i ? { ...r, issuer: e.target.value } : r
-                  )
-                )
-              }
-              className={inputCls}
-              placeholder="발급기관 / Cơ quan cấp"
-            />
-            <div className="flex gap-1">
+          <RowBox
+            key={i}
+            onRemove={
+              certifications.length > 1
+                ? () =>
+                    setCertifications((prev) =>
+                      prev.filter((_, j) => j !== i)
+                    )
+                : undefined
+            }
+          >
+            <SubField label="자격증 이름" labelVi="Tên chứng chỉ">
               <input
-                value={row.date}
+                value={row.name}
                 onChange={(e) =>
                   setCertifications((p) =>
                     p.map((r, j) =>
-                      j === i ? { ...r, date: e.target.value } : r
+                      j === i ? { ...r, name: e.target.value } : r
                     )
                   )
                 }
-                className={inputCls + " flex-1"}
-                placeholder="취득일 / Ngày cấp"
+                className={inputCls}
+                placeholder="요양보호사 자격증 / TOPIK 4급 등"
               />
-              <RemoveBtn
-                onClick={() =>
-                  setCertifications((p) => p.filter((_, j) => j !== i))
-                }
-              />
+            </SubField>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <SubField label="발급일" labelVi="Ngày cấp">
+                <input
+                  value={row.date}
+                  onChange={(e) =>
+                    setCertifications((p) =>
+                      p.map((r, j) =>
+                        j === i ? { ...r, date: e.target.value } : r
+                      )
+                    )
+                  }
+                  className={inputCls}
+                  placeholder="2025년 8월"
+                />
+              </SubField>
+              <SubField
+                label="상세"
+                labelVi="Chi tiết"
+                hint="발급기관 등 / Cơ quan cấp..."
+              >
+                <input
+                  value={row.detail}
+                  onChange={(e) =>
+                    setCertifications((p) =>
+                      p.map((r, j) =>
+                        j === i ? { ...r, detail: e.target.value } : r
+                      )
+                    )
+                  }
+                  className={inputCls}
+                  placeholder="한국보건의료인국가시험원"
+                />
+              </SubField>
             </div>
-          </div>
+          </RowBox>
         ))}
         <AddBtn
           onClick={() =>
@@ -513,102 +617,100 @@ export function ResumeForm({
         />
       </Section>
 
-      <Section title="기술 · 어학 / Kỹ năng · Ngoại ngữ">
+      <Section title="기술 · 어학 (선택) / Kỹ năng · Ngoại ngữ (Tuỳ chọn)">
         <ListGuide>
-          한국어 / 일상대화 가능, 베트남어 / 모국어, MS Word·Excel / 중급 처럼
+          <strong>베트남어와 한국어는 기본으로 들어갑니다.</strong> 다른 기술도
+          있으면 추가해주세요. /{" "}
+          <strong>Tiếng Việt và tiếng Hàn được điền sẵn.</strong> Hãy thêm các
+          kỹ năng khác nếu có.
         </ListGuide>
         {skills.map((row, i) => (
-          <div key={i} className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-            <input
-              value={row.name}
-              onChange={(e) =>
-                setSkills((p) =>
-                  p.map((r, j) =>
-                    j === i ? { ...r, name: e.target.value } : r
-                  )
-                )
-              }
-              className={inputCls}
-              placeholder="명칭 / Tên"
-            />
-            <input
-              value={row.detail}
-              onChange={(e) =>
-                setSkills((p) =>
-                  p.map((r, j) =>
-                    j === i ? { ...r, detail: e.target.value } : r
-                  )
-                )
-              }
-              className={inputCls}
-              placeholder="상세 / Chi tiết"
-            />
-            <div className="flex gap-1">
-              <input
-                value={row.level}
-                onChange={(e) =>
-                  setSkills((p) =>
-                    p.map((r, j) =>
-                      j === i ? { ...r, level: e.target.value } : r
+          <RowBox
+            key={i}
+            onRemove={
+              skills.length > 1
+                ? () => setSkills((prev) => prev.filter((_, j) => j !== i))
+                : undefined
+            }
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <SubField label="명칭" labelVi="Tên">
+                <input
+                  value={row.name}
+                  onChange={(e) =>
+                    setSkills((p) =>
+                      p.map((r, j) =>
+                        j === i ? { ...r, name: e.target.value } : r
+                      )
                     )
-                  )
-                }
-                className={inputCls + " flex-1"}
-                placeholder="수준 / Mức độ"
-              />
-              <RemoveBtn
-                onClick={() => setSkills((p) => p.filter((_, j) => j !== i))}
-              />
+                  }
+                  className={inputCls}
+                  placeholder="한국어"
+                />
+              </SubField>
+              <SubField label="상세" labelVi="Chi tiết">
+                <input
+                  value={row.detail}
+                  onChange={(e) =>
+                    setSkills((p) =>
+                      p.map((r, j) =>
+                        j === i ? { ...r, detail: e.target.value } : r
+                      )
+                    )
+                  }
+                  className={inputCls}
+                  placeholder="일상대화 가능"
+                />
+              </SubField>
+              <SubField label="수준" labelVi="Mức độ">
+                <input
+                  value={row.level}
+                  onChange={(e) =>
+                    setSkills((p) =>
+                      p.map((r, j) =>
+                        j === i ? { ...r, level: e.target.value } : r
+                      )
+                    )
+                  }
+                  className={inputCls}
+                  placeholder="중급 / 능숙 / 모국어"
+                />
+              </SubField>
             </div>
-          </div>
+          </RowBox>
         ))}
         <AddBtn onClick={() => setSkills((p) => [...p, { ...emptySkill }])} />
       </Section>
 
-      <Section title="기타 활동 (선택) / Hoạt động khác">
+      <Section title="기타 활동 (선택) / Hoạt động khác (Tuỳ chọn)">
         <ListGuide>
-          요양원 봉사·학우회 등. 활동명 / 기간 / 기관 / 상세
+          봉사·동아리·학우회 등. 활동명 / 상세 / 기간 순으로 작성해주세요. /
+          Tình nguyện, câu lạc bộ, hội sinh viên... Điền theo thứ tự: Tên / Chi
+          tiết / Thời gian.
         </ListGuide>
         {activities.map((row, i) => (
-          <div key={i} className="grid grid-cols-1 sm:grid-cols-4 gap-2">
-            <input
-              value={row.name}
-              onChange={(e) =>
-                setActivities((p) =>
-                  p.map((r, j) =>
-                    j === i ? { ...r, name: e.target.value } : r
-                  )
-                )
-              }
-              className={inputCls}
-              placeholder="활동명 / Tên hoạt động"
-            />
-            <input
-              value={row.period}
-              onChange={(e) =>
-                setActivities((p) =>
-                  p.map((r, j) =>
-                    j === i ? { ...r, period: e.target.value } : r
-                  )
-                )
-              }
-              className={inputCls}
-              placeholder="기간 / Thời gian"
-            />
-            <input
-              value={row.org}
-              onChange={(e) =>
-                setActivities((p) =>
-                  p.map((r, j) =>
-                    j === i ? { ...r, org: e.target.value } : r
-                  )
-                )
-              }
-              className={inputCls}
-              placeholder="기관 / Tổ chức"
-            />
-            <div className="flex gap-1">
+          <RowBox
+            key={i}
+            onRemove={() =>
+              setActivities((prev) => prev.filter((_, j) => j !== i))
+            }
+          >
+            <SubField label="활동명" labelVi="Tên hoạt động">
               <input
+                value={row.name}
+                onChange={(e) =>
+                  setActivities((p) =>
+                    p.map((r, j) =>
+                      j === i ? { ...r, name: e.target.value } : r
+                    )
+                  )
+                }
+                className={inputCls}
+                placeholder="요양원 봉사활동"
+              />
+            </SubField>
+            <SubField label="상세" labelVi="Chi tiết">
+              <textarea
                 value={row.detail}
                 onChange={(e) =>
                   setActivities((p) =>
@@ -617,20 +719,28 @@ export function ResumeForm({
                     )
                   )
                 }
-                className={inputCls + " flex-1"}
-                placeholder="상세 / Mô tả"
+                rows={2}
+                className={textareaCls}
+                placeholder="매주 일요일 어르신 식사 보조 및 청소 등"
               />
-              <RemoveBtn
-                onClick={() =>
-                  setActivities((p) => p.filter((_, j) => j !== i))
+            </SubField>
+            <SubField label="기간" labelVi="Thời gian">
+              <input
+                value={row.period}
+                onChange={(e) =>
+                  setActivities((p) =>
+                    p.map((r, j) =>
+                      j === i ? { ...r, period: e.target.value } : r
+                    )
+                  )
                 }
+                className={inputCls}
+                placeholder="2025년 1월 ~ 2026년 3월"
               />
-            </div>
-          </div>
+            </SubField>
+          </RowBox>
         ))}
-        <AddBtn
-          onClick={() => setActivities((p) => [...p, { ...emptyAct }])}
-        />
+        <AddBtn onClick={() => setActivities((p) => [...p, { ...emptyAct }])} />
       </Section>
 
       <Section title="자기소개 및 포부 / Tự giới thiệu và mục tiêu">
@@ -640,23 +750,21 @@ export function ResumeForm({
             번역·정리는 우리가 합니다.
           </p>
           <p className="text-muted-foreground">
-            <strong>Phần này bạn có thể viết bằng tiếng Việt.</strong> Chúng
-            tôi sẽ dịch và chỉnh sửa.
+            <strong>Phần này bạn có thể viết bằng tiếng Việt.</strong> Chúng tôi
+            sẽ dịch và chỉnh sửa.
           </p>
           <p className="text-muted-foreground mt-2">
-            예시 / Ví dụ: 요양보호사가 되고 싶은 이유, 본인의 강점, 가족
-            중 어르신을 돌봤던 경험, 교육·실습 중 인상 깊었던 일 등.
-            <br />
-            Ví dụ: Lý do muốn trở thành điều dưỡng viên, điểm mạnh của bản
-            thân, kinh nghiệm chăm sóc người lớn tuổi trong gia đình, kỷ
-            niệm trong quá trình học·thực tập.
+            예시 / Ví dụ: 요양보호사가 되고 싶은 이유, 본인의 강점, 가족 중
+            어르신을 돌봤던 경험, 교육·실습 중 인상 깊었던 일 등. / Lý do muốn
+            trở thành điều dưỡng viên, điểm mạnh của bản thân, kinh nghiệm chăm
+            sóc người lớn tuổi, kỷ niệm trong quá trình học·thực tập.
           </p>
         </div>
         <textarea
           value={narrative_raw}
           onChange={(e) => setNarrative(e.target.value)}
-          rows={10}
-          className={inputCls + " font-normal"}
+          rows={12}
+          className={textareaCls + " font-normal"}
           placeholder="자유롭게 작성해주세요. / Hãy viết tự do."
         />
         <p className="text-xs text-muted-foreground text-right">
@@ -666,7 +774,7 @@ export function ResumeForm({
 
       {result && !result.ok && (
         <div className="bg-destructive/5 border border-destructive/30 rounded-md p-3 text-sm text-destructive">
-          저장 실패: {result.error}
+          저장 실패 / Lưu thất bại: {result.error}
         </div>
       )}
 
@@ -686,18 +794,30 @@ export function ResumeForm({
 // =============================================================================
 
 const inputCls =
-  "w-full h-10 rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring";
+  "w-full h-11 rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring";
+
+const textareaCls =
+  "w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring";
 
 function Section({
   title,
+  required,
   children,
 }: {
   title: string;
+  required?: boolean;
   children: React.ReactNode;
 }) {
   return (
     <section className="bg-card rounded-lg border border-border p-4 space-y-3">
-      <h2 className="text-base font-semibold">{title}</h2>
+      <h2 className="text-base font-semibold flex items-center gap-2">
+        {title}
+        {required && (
+          <span className="text-xs font-medium text-destructive">
+            * 필수 / Bắt buộc
+          </span>
+        )}
+      </h2>
       {children}
     </section>
   );
@@ -728,9 +848,57 @@ function Field({
   );
 }
 
+function SubField({
+  label,
+  labelVi,
+  hint,
+  children,
+}: {
+  label: string;
+  labelVi: string;
+  hint?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="space-y-1">
+      <label className="text-xs font-medium block text-muted-foreground">
+        <span className="text-foreground">{label}</span>
+        <span className="ml-1.5">{labelVi}</span>
+      </label>
+      {hint && <p className="text-[10px] text-muted-foreground">{hint}</p>}
+      {children}
+    </div>
+  );
+}
+
+function RowBox({
+  children,
+  onRemove,
+}: {
+  children: React.ReactNode;
+  onRemove?: () => void;
+}) {
+  return (
+    <div className="rounded-md border border-border bg-muted/20 p-3 space-y-3 relative">
+      {children}
+      {onRemove && (
+        <button
+          type="button"
+          onClick={onRemove}
+          className="absolute top-2 right-2 size-7 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/5 inline-flex items-center justify-center text-sm"
+          title="삭제 / Xoá"
+          aria-label="삭제 / Xoá"
+        >
+          ✕
+        </button>
+      )}
+    </div>
+  );
+}
+
 function ListGuide({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-[11px] text-muted-foreground bg-muted/40 rounded-md px-3 py-2">
+    <p className="text-[11px] text-muted-foreground bg-muted/40 rounded-md px-3 py-2 leading-relaxed">
       {children}
     </p>
   );
@@ -741,22 +909,9 @@ function AddBtn({ onClick }: { onClick: () => void }) {
     <button
       type="button"
       onClick={onClick}
-      className="text-xs text-primary hover:underline"
+      className="inline-flex items-center gap-1 h-9 px-3 rounded-md border border-dashed border-input text-xs text-primary hover:bg-primary/5"
     >
       + 추가 / Thêm
-    </button>
-  );
-}
-
-function RemoveBtn({ onClick }: { onClick: () => void }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="px-2 rounded-md border border-input text-muted-foreground hover:text-destructive hover:border-destructive/40"
-      title="삭제"
-    >
-      ✕
     </button>
   );
 }

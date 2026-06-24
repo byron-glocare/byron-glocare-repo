@@ -412,22 +412,23 @@ const trimStr = z.string().trim().default("");
 const resumeEducationItem = z.object({
   school: trimStr,
   major: trimStr,
-  period: trimStr,
-  status: trimStr,
+  start_year: trimStr, // 입학년도
+  end_year: trimStr,   // 졸업년도
+  status: trimStr,     // 졸업 / 졸업예정 / 재학중
 });
 
 const resumeCareerItem = z.object({
   workplace: trimStr,
-  period: trimStr,
   role: trimStr,
   detail: trimStr,
-  status: trimStr,
+  period: trimStr, // 근무기간 (년월 ~ 년월)
+  status: trimStr, // 재직 / 퇴사
 });
 
 const resumeCertificationItem = z.object({
   name: trimStr,
-  issuer: trimStr,
-  date: trimStr,
+  date: trimStr,   // 발급일
+  detail: trimStr, // 상세 (발급기관 등)
 });
 
 const resumeSkillItem = z.object({
@@ -438,9 +439,8 @@ const resumeSkillItem = z.object({
 
 const resumeActivityItem = z.object({
   name: trimStr,
-  period: trimStr,
-  org: trimStr,
   detail: trimStr,
+  period: trimStr,
 });
 
 export const resumeDraftDataSchema = z.object({
