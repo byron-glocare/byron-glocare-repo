@@ -6,6 +6,7 @@ import {
   DollarSign,
   FileText,
   Film,
+  FileType,
   GraduationCap,
   Hospital,
   Inbox,
@@ -72,6 +73,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { href: "/offerings", label: "모집", icon: Megaphone },
       { href: "/admissions", label: "입학서류", icon: ClipboardList },
       { href: "/student-data-types", label: "데이터", icon: Database },
+      { href: "/docx-test", label: "양식 테스트", icon: FileType },
     ],
   },
   {
