@@ -68,6 +68,16 @@ function transformValueCell(raw: string, tokenKey: string): string {
 
 type Detected = { label: string; tokenKey: string; dummy: string };
 
+/** 라벨로 인정할지 — 짧은 텍스트 + 체크박스/안내문/숫자만 등은 제외 */
+function looksLikeLabel(t: string): boolean {
+  if (!t) return false;
+  if (t.length > 15) return false;
+  if (/[□☑✓※]/.test(t)) return false; // 체크박스/주석
+  if (/^[\d\s\-.,()]+$/.test(t)) return false; // 숫자·기호만
+  if (/^\(.*\)$/.test(t)) return false; // (대학에서기재) 같은 안내
+  return true;
+}
+
 /** 표 라벨 → 오른쪽 첫 빈칸에 토큰 주입. 감지 목록 + 토큰화 xml 반환. */
 function injectTokens(xml: string): { xml: string; detected: Detected[] } {
   const cells: { raw: string; start: number; end: number }[] = [];
@@ -82,17 +92,19 @@ function injectTokens(xml: string): { xml: string; detected: Detected[] } {
   let n = 0;
   for (let i = 0; i < cells.length; i++) {
     const label = cellText(cells[i].raw);
-    if (!label || label.length > 20) continue;
-    // 라벨로 인정: 사전에 있거나, 끝이 ▢ 빈칸이 따라오는 짧은 한글 텍스트
-    const known = label in LABEL_DUMMY;
-    if (!known) continue; // v1 테스트: 사전 라벨만 (오탐 방지)
+    // 사전 없이도 일반 감지: 라벨처럼 보이는 셀 → 오른쪽 첫 빈칸
+    if (!looksLikeLabel(label)) continue;
     for (let j = i + 1; j < cells.length; j++) {
       if (used.has(j)) continue;
       if (cellText(cells[j].raw) === "") {
         const key = `f${n++}`;
         plan.set(j, { key, label });
         used.add(j);
-        detected.push({ label, tokenKey: key, dummy: LABEL_DUMMY[label] ?? `[${label}]` });
+        detected.push({
+          label,
+          tokenKey: key,
+          dummy: LABEL_DUMMY[label] ?? `[${label}]`,
+        });
         break;
       }
     }
