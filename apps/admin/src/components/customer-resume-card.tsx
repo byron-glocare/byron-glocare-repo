@@ -115,15 +115,12 @@ export function CustomerResumeCard({ customerId, productType, draft }: Props) {
     });
   }
 
-  // submitted 시 narrative 미리보기 (polished, 없으면 raw)
+  // submitted 시 학생 입력 전체 미리보기
   const parsedData = draft?.data
     ? resumeDraftDataSchema.safeParse(draft.data)
     : null;
-  const narrativePolished =
-    parsedData?.success ? parsedData.data.narrative_polished : "";
-  const narrativeRaw =
-    parsedData?.success ? parsedData.data.narrative_raw : "";
-  const narrativeForPreview = narrativePolished || narrativeRaw;
+  const studentData = parsedData?.success ? parsedData.data : null;
+  const hasPhoto = !!draft?.photo_path;
 
   return (
     <Card>
@@ -237,30 +234,184 @@ export function CustomerResumeCard({ customerId, productType, draft }: Props) {
                 variant="outline"
                 onClick={handleRepolish}
                 disabled={pending}
+                title="학생이 쓴 원본 텍스트로 AI 가 다시 한국어 자기소개 본문을 작성합니다."
               >
                 {pending ? (
                   <Loader2 className="size-4 animate-spin" />
                 ) : (
                   <Sparkles className="size-4" />
                 )}
-                AI 다듬기 재실행
+                자기소개 다시 다듬기 (AI)
               </Button>
             </>
           )}
         </div>
 
-        {/* 제출된 narrative 미리보기 */}
-        {submitted && narrativeForPreview && (
-          <details className="text-xs">
-            <summary className="cursor-pointer text-muted-foreground hover:text-foreground">
-              자기소개 본문 미리보기 ({narrativePolished ? "AI 다듬기 후" : "원본"})
+        {/* 사진 표시 */}
+        {submitted && (
+          <div className="flex items-center gap-2 text-xs">
+            <span className="text-muted-foreground">사진:</span>
+            {hasPhoto ? (
+              <Badge className="bg-success/10 text-success border-success/20">
+                <Check className="size-3" />
+                업로드됨
+              </Badge>
+            ) : (
+              <Badge variant="outline" className="text-muted-foreground">
+                없음
+              </Badge>
+            )}
+          </div>
+        )}
+
+        {/* 학생 입력 전체 미리보기 */}
+        {submitted && studentData && (
+          <details className="text-xs" open>
+            <summary className="cursor-pointer font-medium text-foreground hover:text-primary">
+              학생 입력 내용 보기
             </summary>
-            <pre className="mt-2 whitespace-pre-wrap font-sans text-foreground bg-muted/40 rounded-md p-3 max-h-60 overflow-y-auto">
-              {narrativeForPreview}
-            </pre>
+            <div className="mt-2 space-y-3 bg-muted/40 rounded-md p-3">
+              <PreviewSection title="개인 정보">
+                <PreviewRow label="이름 (베)" value={studentData.name_vi} />
+                <PreviewRow label="이름 (한)" value={studentData.name_kr} />
+                <PreviewRow label="생년월일" value={studentData.birth_date} />
+                <PreviewRow label="전화" value={studentData.phone} />
+                <PreviewRow label="이메일" value={studentData.email} />
+                <PreviewRow label="주소" value={studentData.address} />
+                <PreviewRow label="한 줄 자기소개" value={studentData.one_liner} />
+              </PreviewSection>
+
+              {studentData.educations.length > 0 && (
+                <PreviewList
+                  title={`학력 (${studentData.educations.length})`}
+                  rows={studentData.educations.map((e) => ({
+                    head: `${e.school || "—"} · ${e.major || "—"}`,
+                    sub: `${e.start_year || "?"} ~ ${e.end_year || "?"} · ${e.status || "—"}`,
+                  }))}
+                />
+              )}
+              {studentData.careers.length > 0 && (
+                <PreviewList
+                  title={`경력 (${studentData.careers.length})`}
+                  rows={studentData.careers.map((c) => ({
+                    head: `${c.workplace || "—"} · ${c.role || "—"}`,
+                    sub: `${c.period || "—"} · ${c.status || "—"}`,
+                    detail: c.detail,
+                  }))}
+                />
+              )}
+              {studentData.certifications.length > 0 && (
+                <PreviewList
+                  title={`자격증 (${studentData.certifications.length})`}
+                  rows={studentData.certifications.map((c) => ({
+                    head: c.name || "—",
+                    sub: `${c.date || "—"} · ${c.detail || "—"}`,
+                  }))}
+                />
+              )}
+              {studentData.skills.length > 0 && (
+                <PreviewList
+                  title={`기술·어학 (${studentData.skills.length})`}
+                  rows={studentData.skills.map((s) => ({
+                    head: s.name || "—",
+                    sub: `${s.detail || "—"} · ${s.level || "—"}`,
+                  }))}
+                />
+              )}
+              {studentData.activities.length > 0 && (
+                <PreviewList
+                  title={`기타 활동 (${studentData.activities.length})`}
+                  rows={studentData.activities.map((a) => ({
+                    head: a.name || "—",
+                    sub: a.period,
+                    detail: a.detail,
+                  }))}
+                />
+              )}
+
+              {studentData.narrative_polished && (
+                <PreviewSection title="자기소개 본문 (AI 다듬기 후 — docx 에 들어가는 텍스트)">
+                  <pre className="whitespace-pre-wrap font-sans text-foreground bg-background rounded-md p-3 max-h-60 overflow-y-auto border border-border">
+                    {studentData.narrative_polished}
+                  </pre>
+                </PreviewSection>
+              )}
+              {studentData.narrative_raw && (
+                <PreviewSection title="자기소개 본문 (학생 원본)">
+                  <pre className="whitespace-pre-wrap font-sans text-muted-foreground bg-background rounded-md p-3 max-h-40 overflow-y-auto border border-border">
+                    {studentData.narrative_raw}
+                  </pre>
+                </PreviewSection>
+              )}
+            </div>
           </details>
         )}
       </CardContent>
     </Card>
+  );
+}
+
+// =============================================================================
+// 미리보기 sub-components
+// =============================================================================
+
+function PreviewSection({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="space-y-1">
+      <div className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">
+        {title}
+      </div>
+      <div className="space-y-1">{children}</div>
+    </div>
+  );
+}
+
+function PreviewRow({
+  label,
+  value,
+}: {
+  label: string;
+  value: string | null | undefined;
+}) {
+  return (
+    <div className="flex gap-2">
+      <span className="text-muted-foreground w-24 shrink-0">{label}</span>
+      <span className="text-foreground">{value || "—"}</span>
+    </div>
+  );
+}
+
+function PreviewList({
+  title,
+  rows,
+}: {
+  title: string;
+  rows: { head: string; sub?: string; detail?: string }[];
+}) {
+  return (
+    <PreviewSection title={title}>
+      <ul className="space-y-1.5">
+        {rows.map((r, i) => (
+          <li
+            key={i}
+            className="border-l-2 border-border pl-2 space-y-0.5"
+          >
+            <div className="text-foreground font-medium">{r.head}</div>
+            {r.sub && <div className="text-muted-foreground">{r.sub}</div>}
+            {r.detail && (
+              <div className="text-muted-foreground whitespace-pre-wrap">
+                {r.detail}
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
+    </PreviewSection>
   );
 }
