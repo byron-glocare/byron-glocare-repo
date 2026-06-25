@@ -19,6 +19,8 @@ import {
   type RawOverlay,
   type FieldChoice,
 } from "./overlay-picker";
+import { DocxMapper } from "./docx-mapper";
+import { detectDocxFields } from "@/lib/docx/fill";
 
 export const dynamic = "force-dynamic";
 
@@ -40,7 +42,7 @@ export default async function FormDocDetailPage({
   const { data: form } = await supabase
     .from("study_admission_form_files")
     .select(
-      "id, university_id, key, name_ko, file_url, file_name, mime_type, notes, uploaded_at, is_current, department_name, required_data_type_keys, applies_to_terms, applies_to_department_ids, essay_questions, field_overlays"
+      "id, university_id, key, name_ko, file_url, file_name, mime_type, notes, uploaded_at, is_current, department_name, required_data_type_keys, applies_to_terms, applies_to_department_ids, essay_questions, field_overlays, label_mapping"
     )
     .eq("id", formFileId)
     .maybeSingle();
@@ -89,6 +91,25 @@ export default async function FormDocDetailPage({
     ext === "pdf" ||
     (form.mime_type ?? "").toLowerCase().includes("pdf") ||
     form.file_url.toLowerCase().includes(".pdf");
+  const isDocx =
+    ext === "docx" ||
+    (form.mime_type ?? "").toLowerCase().includes("word") ||
+    form.file_url.toLowerCase().includes(".docx");
+
+  // docx 양식이면 채움 가능한 칸(라벨) 감지
+  let docxFields: string[] = [];
+  if (isDocx) {
+    try {
+      const r = await fetch(form.file_url);
+      if (r.ok) docxFields = detectDocxFields(Buffer.from(await r.arrayBuffer()));
+    } catch {
+      docxFields = [];
+    }
+  }
+  const savedMapping =
+    form.label_mapping && typeof form.label_mapping === "object"
+      ? (form.label_mapping as Record<string, string>)
+      : {};
   const essayQs = Array.isArray(form.essay_questions)
     ? (form.essay_questions as Array<{ question_ko?: string }>)
     : [];
@@ -145,7 +166,16 @@ export default async function FormDocDetailPage({
           docNameOptions={docNameOptions}
         />
 
-        {isPdf ? (
+        {isDocx ? (
+          <Card className="mt-6 p-6">
+            <DocxMapper
+              formFileId={form.id}
+              fields={docxFields}
+              choices={overlayChoices}
+              saved={savedMapping}
+            />
+          </Card>
+        ) : isPdf ? (
           <Card className="mt-6 p-6">
             <OverlayPicker
               formFileId={form.id}
@@ -156,10 +186,11 @@ export default async function FormDocDetailPage({
           </Card>
         ) : (
           <Card className="mt-6 p-6">
-            <h2 className="text-base font-semibold">좌표 채움 위치 지정</h2>
+            <h2 className="text-base font-semibold">채움 설정</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              좌표 채움은 <strong>PDF</strong> 양식만 지원합니다. 위 “파일 교체”에서
-              PDF 로 교체하면 이 영역에서 위치를 지정할 수 있습니다.
+              자동 채움은 <strong>DOCX</strong>(권장) 또는 <strong>PDF</strong> 양식만
+              지원합니다. 위 “파일 교체”에서 .docx 로 올리면 이 영역에서 라벨↔표준데이터
+              매핑을 지정할 수 있습니다.
             </p>
           </Card>
         )}

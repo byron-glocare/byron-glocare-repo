@@ -81,7 +81,7 @@ export async function GET(
       .maybeSingle(),
     supabase
       .from("study_admission_form_files")
-      .select("id, name_ko, file_name, file_url, mime_type")
+      .select("id, name_ko, file_name, file_url, mime_type, label_mapping")
       .eq("id", formFileId)
       .maybeSingle(),
   ]);
@@ -121,8 +121,19 @@ export async function GET(
     rawValMap.set(dv.data_type_key, dv.value);
   }
 
+  // 양식별 저장 매핑(관리자 확정) 우선, 없으면 카탈로그 자동매칭 폴백
+  const savedMap =
+    form.label_mapping && typeof form.label_mapping === "object"
+      ? (form.label_mapping as Record<string, string>)
+      : {};
   const match = (n: string): LabelMatch | null => {
-    const key = catMap.get(n);
+    let key: string | undefined;
+    if (n in savedMap) {
+      key = savedMap[n];
+      if (!key) return null; // 명시적으로 "채우지 않음"
+    } else {
+      key = catMap.get(n);
+    }
     if (!key) return null;
     return { value: valMap.get(key) ?? "" };
   };

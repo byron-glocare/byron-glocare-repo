@@ -1587,6 +1587,7 @@ export type Database = {
             datePart?: "year" | "month" | "day";
             matchValue?: string;
           }>;
+          label_mapping: Record<string, string>;
           created_at: string;
           updated_at: string;
         };
@@ -1647,6 +1648,7 @@ export type Database = {
             datePart?: "year" | "month" | "day";
             matchValue?: string;
           }>;
+          label_mapping?: Record<string, string>;
           created_at?: string;
           updated_at?: string;
         };

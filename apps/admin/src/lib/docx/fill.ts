@@ -80,6 +80,44 @@ function plausibleFieldLabel(t: string): boolean {
 }
 
 /**
+ * docx 에서 "채울 수 있는 라벨 칸"(라벨 → 오른쪽 빈칸)을 감지. 매핑 UI 용.
+ * @returns 중복 제거된 라벨 목록(문서 순서)
+ */
+export function detectDocxFields(srcBuf: Buffer): string[] {
+  const zip = new PizZip(srcBuf);
+  const docXml = zip.file("word/document.xml");
+  if (!docXml) return [];
+  const xml = docXml.asText();
+  const texts: string[] = [];
+  const re = /<w:tc>[\s\S]*?<\/w:tc>/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(xml))) texts.push(cellText(m[0]));
+
+  const used = new Set<number>();
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (let i = 0; i < texts.length; i++) {
+    const label = texts[i];
+    if (!looksLikeLabel(label)) continue;
+    let valueIdx = -1;
+    for (let j = i + 1; j < texts.length; j++) {
+      if (used.has(j)) continue;
+      if (texts[j] === "") {
+        valueIdx = j;
+        break;
+      }
+    }
+    if (valueIdx < 0) continue;
+    used.add(valueIdx);
+    if (!seen.has(label)) {
+      seen.add(label);
+      out.push(label);
+    }
+  }
+  return out;
+}
+
+/**
  * 표 라벨 → 오른쪽 첫 빈칸. 표준데이터 매칭만 토큰 주입.
  * @returns 토큰화 xml + 매칭/미매칭 라벨 목록
  */

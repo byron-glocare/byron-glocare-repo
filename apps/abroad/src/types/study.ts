@@ -268,6 +268,8 @@ export type StudyAdmissionFormFile = {
   }>;
   /** 원본 PDF 좌표 오버레이 — 학생 데이터 채움 위치 (0028). 빈 배열=미지정. */
   field_overlays: FormFieldOverlay[];
+  /** docx 토큰 채움용 라벨→표준데이터 key 매핑 (0038). {정규화라벨: key}. */
+  label_mapping: Record<string, string>;
   created_at: string;
   updated_at: string;
 };
