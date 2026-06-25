@@ -66,6 +66,19 @@ function looksLikeLabel(t: string): boolean {
   return true;
 }
 
+// 옵션·헤더·기관명 등 "학생 변수 필드가 아닌" 라벨 키워드
+const NOT_A_FIELD =
+  /전형|학과|대학|졸업|출신|선발|균형|기회|외국인|새터민|농어촌|수료|동의|협회|정보원|어플라이|금융|구분|정원|장애|만학도|재외|특별|일반|기타|특기|고교|검정|모집|지원자|해당|대상|연계|학부|전공|과정/;
+
+/** 미매칭 후보로 보여줄 만한가 — 노이즈(긴 문구·옵션·기관명) 제거 */
+function plausibleFieldLabel(t: string): boolean {
+  if (/\s/.test(t)) return false; // 공백 포함 = 문구/옵션
+  if (t.length < 2 || t.length > 8) return false;
+  if (/[()]/.test(t)) return false;
+  if (NOT_A_FIELD.test(t)) return false;
+  return true;
+}
+
 /**
  * 표 라벨 → 오른쪽 첫 빈칸. 표준데이터 매칭만 토큰 주입.
  * @returns 토큰화 xml + 매칭/미매칭 라벨 목록
@@ -109,8 +122,8 @@ function injectTokens(
       plan.set(valueIdx, { key, dummy: mm.dummy });
       used.add(valueIdx);
       matched.push({ label });
-    } else {
-      unmatchedSet.add(label); // 빈칸은 있는데 표준데이터에 없음 → 별칭 후보
+    } else if (plausibleFieldLabel(label)) {
+      unmatchedSet.add(label); // 빈칸은 있는데 표준데이터에 없음 → 별칭 후보(노이즈 제외)
     }
   }
   const values: Record<string, string> = {};
