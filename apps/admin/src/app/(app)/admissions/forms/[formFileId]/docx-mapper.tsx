@@ -3,11 +3,11 @@
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Loader2, Save, Sparkles } from "lucide-react";
+import { Eye, Loader2, Save, Sparkles, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { saveDocxMappingAction } from "./docx-actions";
+import { saveDocxMappingAction, previewDocxAction } from "./docx-actions";
 
 export type MapChoice = { key: string; label: string; aliases?: string[] };
 
@@ -50,9 +50,28 @@ export function DocxMapper({
 
   const matchedCount = Object.values(sel).filter((v) => v).length;
 
-  function onSave() {
+  const [previewBusy, setPreviewBusy] = useState(false);
+  const [previewHtml, setPreviewHtml] = useState<string | null>(null);
+
+  function buildMapping(): Record<string, string> {
     const mapping: Record<string, string> = {};
     for (const label of fields) mapping[norm(label)] = sel[label] ?? "";
+    return mapping;
+  }
+
+  async function onPreview() {
+    setPreviewBusy(true);
+    try {
+      const r = await previewDocxAction(formFileId, buildMapping());
+      if (r.ok) setPreviewHtml(r.html);
+      else toast.error("미리보기 실패", { description: r.error });
+    } finally {
+      setPreviewBusy(false);
+    }
+  }
+
+  function onSave() {
+    const mapping = buildMapping();
     startTransition(async () => {
       const r = await saveDocxMappingAction(formFileId, mapping);
       if (r.ok) {
@@ -86,10 +105,24 @@ export function DocxMapper({
             불필요(표가 위치를 정함)
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Button type="button" variant="outline" size="sm" onClick={autoFillAll}>
             <Sparkles className="size-3.5" />
             자동 추천 채우기
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={onPreview}
+            disabled={previewBusy || fields.length === 0}
+          >
+            {previewBusy ? (
+              <Loader2 className="size-3.5 animate-spin" />
+            ) : (
+              <Eye className="size-3.5" />
+            )}
+            미리보기
           </Button>
           <Button type="button" size="sm" onClick={onSave} disabled={pending}>
             {pending ? (
@@ -155,6 +188,46 @@ export function DocxMapper({
           </table>
         </div>
       )}
+
+      {previewHtml !== null ? (
+        <div
+          className="fixed inset-0 z-50 flex flex-col bg-black/50 p-3 sm:p-6"
+          onClick={() => setPreviewHtml(null)}
+        >
+          <div
+            className="mx-auto flex h-full w-full max-w-4xl flex-col overflow-hidden rounded-lg bg-white shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
+              <span className="text-sm font-semibold">
+                미리보기 (더미 학생값 · 레이아웃 근사)
+              </span>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setPreviewHtml(null)}
+              >
+                <X className="size-3.5" />
+                닫기
+              </Button>
+            </div>
+            <div className="min-h-0 flex-1 overflow-y-auto p-6">
+              <div
+                className="docx-preview text-sm"
+                dangerouslySetInnerHTML={{ __html: previewHtml }}
+              />
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      <style>{`
+        .docx-preview table { border-collapse: collapse; width: 100%; margin: 0.5rem 0; }
+        .docx-preview td, .docx-preview th { border: 1px solid #cbd5e1; padding: 4px 8px; vertical-align: middle; }
+        .docx-preview p { margin: 0.25rem 0; }
+        .docx-preview img { max-width: 120px; height: auto; }
+      `}</style>
     </div>
   );
 }
