@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Eye, Loader2, Save, Sparkles, X } from "lucide-react";
@@ -51,7 +51,9 @@ export function DocxMapper({
   const matchedCount = Object.values(sel).filter((v) => v).length;
 
   const [previewBusy, setPreviewBusy] = useState(false);
-  const [previewHtml, setPreviewHtml] = useState<string | null>(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const previewBytesRef = useRef<Uint8Array | null>(null);
+  const previewContainerRef = useRef<HTMLDivElement | null>(null);
 
   function buildMapping(): Record<string, string> {
     const mapping: Record<string, string> = {};
@@ -63,12 +65,58 @@ export function DocxMapper({
     setPreviewBusy(true);
     try {
       const r = await previewDocxAction(formFileId, buildMapping());
-      if (r.ok) setPreviewHtml(r.html);
-      else toast.error("미리보기 실패", { description: r.error });
+      if (!r.ok) {
+        toast.error("미리보기 실패", { description: r.error });
+        return;
+      }
+      const bin = atob(r.base64);
+      const bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      previewBytesRef.current = bytes;
+      setPreviewOpen(true);
+    } catch (e) {
+      toast.error("미리보기 실패", {
+        description: e instanceof Error ? e.message : String(e),
+      });
     } finally {
       setPreviewBusy(false);
     }
   }
+
+  // 모달이 열리면 docx-preview 로 채운 docx 를 렌더 (Word 에 가까운 레이아웃)
+  useEffect(() => {
+    if (!previewOpen) return;
+    const container = previewContainerRef.current;
+    const bytes = previewBytesRef.current;
+    if (!container || !bytes) return;
+    let cancelled = false;
+    container.innerHTML = "";
+    (async () => {
+      try {
+        const { renderAsync } = await import("docx-preview");
+        if (cancelled) return;
+        const blob = new Blob([bytes as BlobPart], {
+          type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        });
+        await renderAsync(blob, container, undefined, {
+          className: "docx",
+          inWrapper: true,
+          ignoreWidth: false,
+          ignoreHeight: false,
+          breakPages: true,
+          experimental: true,
+        });
+      } catch (e) {
+        if (!cancelled)
+          container.innerHTML = `<p style="color:#dc2626;font-size:13px;padding:1rem">미리보기 렌더 실패: ${
+            e instanceof Error ? e.message : String(e)
+          }</p>`;
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [previewOpen]);
 
   function onSave() {
     const mapping = buildMapping();
@@ -189,44 +237,41 @@ export function DocxMapper({
         </div>
       )}
 
-      {previewHtml !== null ? (
+      {previewOpen ? (
         <div
           className="fixed inset-0 z-50 flex flex-col bg-black/50 p-3 sm:p-6"
-          onClick={() => setPreviewHtml(null)}
+          onClick={() => setPreviewOpen(false)}
         >
           <div
-            className="mx-auto flex h-full w-full max-w-4xl flex-col overflow-hidden rounded-lg bg-white shadow-2xl"
+            className="mx-auto flex h-full w-full max-w-5xl flex-col overflow-hidden rounded-lg bg-white shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
               <span className="text-sm font-semibold">
-                미리보기 (더미 학생값 · 레이아웃 근사)
+                미리보기 (더미 학생값 · Word 레이아웃)
               </span>
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => setPreviewHtml(null)}
+                onClick={() => setPreviewOpen(false)}
               >
                 <X className="size-3.5" />
                 닫기
               </Button>
             </div>
-            <div className="min-h-0 flex-1 overflow-y-auto p-6">
-              <div
-                className="docx-preview text-sm"
-                dangerouslySetInnerHTML={{ __html: previewHtml }}
-              />
+            <div className="docx-preview-host min-h-0 flex-1 overflow-auto bg-neutral-200 p-4">
+              <div ref={previewContainerRef} />
             </div>
           </div>
         </div>
       ) : null}
 
       <style>{`
-        .docx-preview table { border-collapse: collapse; width: 100%; margin: 0.5rem 0; }
-        .docx-preview td, .docx-preview th { border: 1px solid #cbd5e1; padding: 4px 8px; vertical-align: middle; }
-        .docx-preview p { margin: 0.25rem 0; }
-        .docx-preview img { max-width: 120px; height: auto; }
+        .docx-preview-host .docx-wrapper { background: transparent; padding: 0; }
+        .docx-preview-host .docx-wrapper > section.docx {
+          margin: 0 auto 1rem; box-shadow: 0 1px 6px rgba(0,0,0,0.2); background: #fff;
+        }
       `}</style>
     </div>
   );

@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import mammoth from "mammoth";
 
 import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { isGlocareAdmin } from "@/lib/admin-guard";
@@ -56,13 +55,14 @@ export async function saveDocxMappingAction(
 }
 
 /**
- * 현재 매핑으로 더미값을 채운 docx 를 HTML 로 변환해 미리보기 반환.
+ * 현재 매핑으로 더미값을 채운 docx 를 base64 로 반환.
+ *   클라이언트가 docx-preview(renderAsync)로 Word 에 가깝게 렌더.
  *   mapping: { 정규화라벨: std_key }
  */
 export async function previewDocxAction(
   formFileId: string,
   mapping: Record<string, string>
-): Promise<{ ok: true; html: string } | { ok: false; error: string }> {
+): Promise<{ ok: true; base64: string } | { ok: false; error: string }> {
   const supabase = await createClient();
   const {
     data: { user },
@@ -93,8 +93,7 @@ export async function previewDocxAction(
       if (!key) return null;
       return { dummy: sampleForKey(key) };
     }).filled;
-    const { value: html } = await mammoth.convertToHtml({ buffer: filled });
-    return { ok: true, html };
+    return { ok: true, base64: filled.toString("base64") };
   } catch (e) {
     return {
       ok: false,

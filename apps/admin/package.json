@@ -22,6 +22,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "docx-preview": "^0.3.7",
     "docxtemplater": "^3.69.0",
     "docxtemplater-image-module-free": "^1.1.1",
     "image-size": "^1.2.1",
