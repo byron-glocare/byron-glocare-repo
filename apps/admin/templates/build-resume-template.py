@@ -17,7 +17,29 @@ placeholder 로 치환한 template 을 생성한다.
 import sys
 import os
 from docx import Document
+from docx.shared import Cm
+from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
+
+
+def set_column_widths(table, widths_cm):
+    """table 의 각 column 의 너비를 cm 단위로 설정. fixed layout 강제.
+    word 가 cell 내용 따라 자동 조정하지 않게 → 우리 분배 그대로 사용.
+    """
+    table.autofit = False
+    # tblLayout type=fixed 추가/교체
+    tbl_pr = table._element.find(qn("w:tblPr"))
+    if tbl_pr is not None:
+        for existing in tbl_pr.findall(qn("w:tblLayout")):
+            tbl_pr.remove(existing)
+        layout = OxmlElement("w:tblLayout")
+        layout.set(qn("w:type"), "fixed")
+        tbl_pr.append(layout)
+    # 모든 row 의 cell 너비 설정 (가장 호환성 좋은 방식)
+    for row in table.rows:
+        for i, w_cm in enumerate(widths_cm):
+            if i < len(row.cells):
+                row.cells[i].width = Cm(w_cm)
 
 
 def clear_runs_keep_style(paragraph, new_text):
@@ -115,6 +137,8 @@ def main():
     clear_runs_keep_style(row.cells[3].paragraphs[0], "{status}{/educations}")
     for c in row.cells:
         remove_extra_paragraphs(c, 1)
+    # 학교명 / 전공 / 기간 / 상태
+    set_column_widths(edu, [5.5, 4.0, 4.0, 3.5])
 
     # ===== 경력 (table 4) =====
     car = tables[4]
@@ -127,6 +151,8 @@ def main():
     clear_runs_keep_style(row.cells[4].paragraphs[0], "{status}{/careers}")
     for c in row.cells:
         remove_extra_paragraphs(c, 1)
+    # 근무처 / 기간 / 직책 / 업무 상세(가장 길게) / 상태
+    set_column_widths(car, [3.5, 2.5, 2.5, 6.5, 2.0])
 
     # ===== 자격증·수상 (table 6) =====
     cert = tables[6]
@@ -137,6 +163,8 @@ def main():
     clear_runs_keep_style(row.cells[2].paragraphs[0], "{date}{/certifications}")
     for c in row.cells:
         remove_extra_paragraphs(c, 1)
+    # 명칭 / 발급기관(상세) / 취득일
+    set_column_widths(cert, [6.5, 6.0, 4.5])
 
     # ===== 기술·어학 (table 8) =====
     skill = tables[8]
@@ -147,6 +175,8 @@ def main():
     clear_runs_keep_style(row.cells[2].paragraphs[0], "{level}{/skills}")
     for c in row.cells:
         remove_extra_paragraphs(c, 1)
+    # 명칭 / 상세(가장 넓게) / 수준
+    set_column_widths(skill, [4.5, 8.5, 4.0])
 
     # ===== 기타 활동 (table 10) =====
     other = tables[10]
@@ -158,6 +188,8 @@ def main():
     clear_runs_keep_style(row.cells[3].paragraphs[0], "{detail}{/activities}")
     for c in row.cells:
         remove_extra_paragraphs(c, 1)
+    # 활동명 / 기간 / 기관(빈칸) / 상세(넓게)
+    set_column_widths(other, [4.0, 3.5, 3.0, 6.5])
 
     # ===== 자기소개 본문 (table 12) =====
     intro = tables[12]
