@@ -204,14 +204,22 @@ export default async function FinalPage({
           file.file_name.toLowerCase().endsWith(".pdf") ||
           file.file_url.toLowerCase().includes(".pdf")
         : false;
-      const canFill = !!file && isPdf && overlays.length > 0;
+      const isDocx = file
+        ? (file.mime_type ?? "").toLowerCase().includes("word") ||
+          file.file_name.toLowerCase().endsWith(".docx") ||
+          file.file_url.toLowerCase().includes(".docx")
+        : false;
+      const engine: "pdf" | "docx" = isPdf ? "pdf" : "docx";
+      // PDF: 좌표 오버레이 필요 / DOCX: 토큰 자동채움(오버레이 불필요)
+      const canFill = !!file && ((isPdf && overlays.length > 0) || isDocx);
       return {
         doc,
         file,
         ready,
         missing,
         canFill,
-        inputFields: canFill ? inputFields : [],
+        engine,
+        inputFields: canFill && isPdf ? inputFields : [],
       };
     });
 
@@ -278,7 +286,7 @@ export default async function FinalPage({
                 </p>
               ) : (
                 <ul className="space-y-1.5">
-                  {writeRows.map(({ doc, file, ready, missing, canFill, inputFields }) => (
+                  {writeRows.map(({ doc, file, ready, missing, canFill, engine, inputFields }) => (
                     <li
                       key={doc.key + doc.name_ko}
                       className="flex flex-wrap items-start justify-between gap-2 rounded-md border border-slate-100 bg-slate-50/50 px-3 py-2"
@@ -342,9 +350,12 @@ export default async function FinalPage({
                             formFileId={file.id}
                             appId={app.id}
                             docName={doc.name_ko}
+                            engine={engine}
                             pdfBaseUrl={
                               canFill
-                                ? `${base}/final/pdf?form=${file.id}&app=${app.id}`
+                                ? engine === "pdf"
+                                  ? `${base}/final/pdf?form=${file.id}&app=${app.id}`
+                                  : `${base}/final/docx-fill?form=${file.id}&app=${app.id}`
                                 : null
                             }
                             inputFields={inputFields}

@@ -30,6 +30,7 @@ export function WriteRowActions({
   formFileId,
   appId,
   docName,
+  engine,
   pdfBaseUrl,
   inputFields,
   finalized,
@@ -40,6 +41,7 @@ export function WriteRowActions({
   formFileId: string;
   appId: string;
   docName: string;
+  engine: "pdf" | "docx";
   pdfBaseUrl: string | null;
   inputFields: InputField[];
   finalized: { path: string; finalizedAt: string } | null;
@@ -80,6 +82,7 @@ export function WriteRowActions({
         formFileId,
         appId,
         docName,
+        engine,
         inputs: inputFields.length > 0 ? values : undefined,
       });
       if (!r.ok) {
@@ -140,14 +143,21 @@ export function WriteRowActions({
               <Download className="size-3.5" />
               {tr(locale, "확정본 다운로드", "Tải bản xác nhận")}
             </button>
-            <button
-              type="button"
-              onClick={() => setOpen(true)}
-              className={BTN_OUTLINE}
-            >
-              <Eye className="size-3.5" />
-              {tr(locale, "미리보기", "Xem trước")}
-            </button>
+            {engine === "pdf" ? (
+              <button
+                type="button"
+                onClick={() => setOpen(true)}
+                className={BTN_OUTLINE}
+              >
+                <Eye className="size-3.5" />
+                {tr(locale, "미리보기", "Xem trước")}
+              </button>
+            ) : pdfBaseUrl ? (
+              <a href={pdfBaseUrl + inputsParam} className={BTN_OUTLINE}>
+                <Download className="size-3.5" />
+                {tr(locale, "생성·다운로드", "Tạo & tải")}
+              </a>
+            ) : null}
             <button
               type="button"
               onClick={onFinalize}
@@ -165,14 +175,21 @@ export function WriteRowActions({
         </div>
       ) : (
         <div className="flex flex-wrap items-center justify-end gap-2">
-          <button
-            type="button"
-            onClick={() => setOpen(true)}
-            className={BTN_OUTLINE}
-          >
-            <Eye className="size-3.5" />
-            {tr(locale, "미리보기", "Xem trước")}
-          </button>
+          {engine === "pdf" ? (
+            <button
+              type="button"
+              onClick={() => setOpen(true)}
+              className={BTN_OUTLINE}
+            >
+              <Eye className="size-3.5" />
+              {tr(locale, "미리보기", "Xem trước")}
+            </button>
+          ) : pdfBaseUrl ? (
+            <a href={pdfBaseUrl + inputsParam} className={BTN_OUTLINE}>
+              <Download className="size-3.5" />
+              {tr(locale, "생성·다운로드", "Tạo & tải")}
+            </a>
+          ) : null}
           <button
             type="button"
             onClick={onFinalize}

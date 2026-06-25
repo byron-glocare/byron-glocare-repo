@@ -23,8 +23,15 @@ export async function finalizeFormDocAction(input: {
   formFileId: string;
   appId: string;
   docName: string;
+  engine?: "pdf" | "docx";
   inputs?: Record<string, string>;
 }): Promise<FinalizeResult> {
+  const engine = input.engine ?? "pdf";
+  const ext = engine === "docx" ? "docx" : "pdf";
+  const contentType =
+    engine === "docx"
+      ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      : "application/pdf";
   const session = await verifyCenterSession();
 
   const rls = await createCenterClient();
@@ -45,7 +52,11 @@ export async function finalizeFormDocAction(input: {
     input.inputs && Object.keys(input.inputs).length > 0
       ? `&inputs=${encodeURIComponent(JSON.stringify(input.inputs))}`
       : "";
-  const url = `${origin}/center/students/${input.studentId}/final/pdf?form=${input.formFileId}&app=${input.appId}${inputsParam}`;
+  const base = `${origin}/center/students/${input.studentId}/final`;
+  const url =
+    engine === "docx"
+      ? `${base}/docx-fill?form=${input.formFileId}`
+      : `${base}/pdf?form=${input.formFileId}&app=${input.appId}${inputsParam}`;
 
   let buf: Buffer;
   try {
@@ -55,26 +66,26 @@ export async function finalizeFormDocAction(input: {
     });
     if (!res.ok) {
       const t = await res.text().catch(() => "");
-      return { ok: false, error: `PDF 생성 실패: ${t || `HTTP ${res.status}`}` };
+      return { ok: false, error: `생성 실패: ${t || `HTTP ${res.status}`}` };
     }
     buf = Buffer.from(await res.arrayBuffer());
   } catch (e) {
     return {
       ok: false,
-      error: `PDF 생성 호출 실패: ${e instanceof Error ? e.message : String(e)}`,
+      error: `생성 호출 실패: ${e instanceof Error ? e.message : String(e)}`,
     };
   }
 
   // 2) 스토리지 저장 (재확정 시 덮어쓰기)
-  const path = `${student.org_id}/${input.studentId}/final/${input.formFileId}_${input.appId}.pdf`;
+  const path = `${student.org_id}/${input.studentId}/final/${input.formFileId}_${input.appId}.${ext}`;
   const svc = createServiceClient();
   const { error: upErr } = await svc.storage
     .from(STUDENT_FILES_BUCKET)
-    .upload(path, buf, { contentType: "application/pdf", upsert: true });
+    .upload(path, buf, { contentType, upsert: true });
   if (upErr) return { ok: false, error: `저장 실패: ${upErr.message}` };
 
   // 3) DB 기록 (upsert)
-  const fileName = `${input.docName}_${student.name}.pdf`.replace(/\s+/g, "_");
+  const fileName = `${input.docName}_${student.name}.${ext}`.replace(/\s+/g, "_");
   const { error: dbErr } = await rls.from("study_student_final_docs").upsert(
     {
       student_id: input.studentId,

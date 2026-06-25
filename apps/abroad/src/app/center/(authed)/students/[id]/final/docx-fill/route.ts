@@ -1,0 +1,120 @@
+/**
+ * GET /center/students/[id]/final/docx-fill?form=<formFileId>[&preview=1]
+ *   업로드된 .docx 원본 양식을 학생의 실제 표준데이터로 채워 반환.
+ *   - 표 라벨을 데이터 메뉴(label_ko/label_vi/aliases)와 매칭해 그 칸만 채움.
+ *   - 양식이 .docx 일 때만 동작 (PDF 좌표 양식은 /final/pdf).
+ */
+
+import { type NextRequest } from "next/server";
+
+import { verifyCenterSession } from "@/lib/center/dal";
+import { createCenterClient } from "@/lib/supabase/center";
+import { fillDocx, normLabel, type LabelMatch } from "@/lib/docx/fill";
+import type { Json } from "@/types/database";
+
+export const runtime = "nodejs";
+
+function fmt(v: Json | undefined): string {
+  if (v === null || v === undefined) return "";
+  if (typeof v === "object")
+    return Array.isArray(v) ? v.map(String).join(", ") : "";
+  if (typeof v === "boolean") return v ? "예" : "";
+  return String(v);
+}
+
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  await verifyCenterSession();
+  const { id } = await params;
+  const formFileId = req.nextUrl.searchParams.get("form") ?? "";
+  const isPreview = req.nextUrl.searchParams.get("preview") === "1";
+  const supabase = await createCenterClient();
+
+  const [{ data: student }, { data: form }] = await Promise.all([
+    supabase
+      .from("study_managed_students")
+      .select("id, name")
+      .eq("id", id)
+      .maybeSingle(),
+    supabase
+      .from("study_admission_form_files")
+      .select("id, name_ko, file_name, file_url, mime_type")
+      .eq("id", formFileId)
+      .maybeSingle(),
+  ]);
+  if (!student || !form) return new Response("Not Found", { status: 404 });
+
+  const isDocx =
+    (form.mime_type ?? "").includes("word") ||
+    form.file_name.toLowerCase().endsWith(".docx") ||
+    form.file_url.toLowerCase().includes(".docx");
+  if (!isDocx)
+    return new Response("이 양식은 .docx 가 아닙니다.", { status: 400 });
+
+  const [{ data: types }, { data: values }] = await Promise.all([
+    supabase
+      .from("study_student_data_types")
+      .select("key, label_ko, label_vi, aliases"),
+    supabase
+      .from("study_student_data_values")
+      .select("data_type_key, value")
+      .eq("student_id", id),
+  ]);
+
+  const catMap = new Map<string, string>();
+  for (const t of types ?? []) {
+    const add = (s: string | null | undefined) => {
+      if (s && s.trim()) catMap.set(normLabel(s), t.key);
+    };
+    add(t.label_ko);
+    add(t.label_vi);
+    const aliases = Array.isArray(t.aliases) ? (t.aliases as string[]) : [];
+    for (const a of aliases) add(a);
+  }
+  const valMap = new Map<string, string>();
+  for (const dv of values ?? []) valMap.set(dv.data_type_key, fmt(dv.value));
+
+  const match = (n: string): LabelMatch | null => {
+    const key = catMap.get(n);
+    if (!key) return null;
+    return { value: valMap.get(key) ?? "" };
+  };
+
+  let buf: Buffer;
+  try {
+    const res = await fetch(form.file_url);
+    if (!res.ok) throw new Error(`원본 다운로드 실패 (${res.status})`);
+    buf = Buffer.from(await res.arrayBuffer());
+  } catch (e) {
+    return new Response(
+      `원본 양식을 불러오지 못했습니다: ${e instanceof Error ? e.message : e}`,
+      { status: 502 }
+    );
+  }
+
+  let filled: Buffer;
+  try {
+    filled = fillDocx(buf, match).filled;
+  } catch (e) {
+    return new Response(
+      `채움 실패: ${e instanceof Error ? e.message : String(e)}`,
+      { status: 500 }
+    );
+  }
+
+  const fileName = `${form.name_ko}_${student.name}.docx`.replace(/\s+/g, "_");
+  const encoded = encodeURIComponent(fileName);
+  const disposition = isPreview ? "inline" : "attachment";
+
+  return new Response(filled as unknown as BodyInit, {
+    status: 200,
+    headers: {
+      "Content-Type":
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "Content-Disposition": `${disposition}; filename="document.docx"; filename*=UTF-8''${encoded}`,
+      "Cache-Control": "private, no-store",
+    },
+  });
+}
