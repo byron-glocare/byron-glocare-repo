@@ -13,8 +13,14 @@ const TEMPLATE_PATH = path.join(
   "resume-template.docx"
 );
 
-/** EMU 단위 — 사진 크기 (가로 × 세로). 약 3 × 4 cm. */
-const PHOTO_SIZE: [number, number] = [113, 151];
+/** pixels — 사진 크기 (가로 × 세로). 약 3.5 × 4.5 cm (abroad demo 패턴). */
+const PHOTO_SIZE: [number, number] = [128, 165];
+
+/** 1x1 투명 PNG — photo 없을 때 placeholder 자리 채움 (image module 항상 활성). */
+const EMPTY_PNG = Buffer.from(
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+  "base64"
+);
 
 /**
  * 이력서 docx 생성 — template (placeholder) 에 학생 입력 + 사진 채워 Buffer 반환.
@@ -28,18 +34,21 @@ export async function generateResumeDocx(
   const content = await fs.readFile(TEMPLATE_PATH);
   const zip = new PizZip(content);
 
-  // 이미지 모듈 — `{%photo}` 토큰 자리에 사진 삽입. 사진 없으면 빈 칸.
+  const hasPhoto = !!(photoBuffer && photoBuffer.length > 0);
+
+  // 이미지 모듈 — `{%photo}` 토큰 자리에 사진 삽입. 항상 활성 (없으면 1x1 투명 png).
   const imageModule = new ImageModule({
-    centered: false,
-    getImage: () => photoBuffer ?? Buffer.alloc(0),
-    getSize: () => PHOTO_SIZE,
+    centered: true,
+    getImage: () => (hasPhoto ? (photoBuffer as Buffer) : EMPTY_PNG),
+    getSize: (_img, _tag, name) =>
+      name === "photo" && hasPhoto ? PHOTO_SIZE : [1, 1],
   });
 
   const doc = new Docxtemplater(zip, {
     paragraphLoop: true,
     linebreaks: true,
     nullGetter: () => "",
-    modules: photoBuffer && photoBuffer.length > 0 ? [imageModule] : [],
+    modules: [imageModule],
   });
 
   const narrative = data.narrative_polished?.trim() || data.narrative_raw || "";
@@ -80,8 +89,9 @@ export async function generateResumeDocx(
     certifications,
     skills: data.skills,
     activities,
-    // 사진 토큰. photo 자체는 image module 의 getImage 로 처리되므로 값 무관.
-    photo: photoBuffer && photoBuffer.length > 0 ? "photo" : "",
+    // 사진 토큰. 값은 image module 의 getImage 에서 무시되지만 모든 케이스에서
+    // 같은 키 전달 → 항상 image module 가 `{%photo}` placeholder 처리.
+    photo: "photo",
   });
 
   const out = doc.getZip().generate({ type: "nodebuffer", compression: "DEFLATE" });
