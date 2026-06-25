@@ -20,7 +20,7 @@ import {
   type FieldChoice,
 } from "./overlay-picker";
 import { DocxMapper } from "./docx-mapper";
-import { detectDocxFields } from "@/lib/docx/fill";
+import { detectDocxFields, type DocxFieldCandidate } from "@/lib/docx/fill";
 
 export const dynamic = "force-dynamic";
 
@@ -97,7 +97,7 @@ export default async function FormDocDetailPage({
     form.file_url.toLowerCase().includes(".docx");
 
   // docx 양식이면 채움 가능한 칸(라벨) 감지
-  let docxFields: string[] = [];
+  let docxFields: DocxFieldCandidate[] = [];
   if (isDocx) {
     try {
       const r = await fetch(form.file_url);

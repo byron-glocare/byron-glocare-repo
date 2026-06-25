@@ -3,13 +3,22 @@
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Eye, Loader2, Save, Sparkles, X } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronRight,
+  Eye,
+  Loader2,
+  Save,
+  Sparkles,
+  X,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { saveDocxMappingAction, previewDocxAction } from "./docx-actions";
 
 export type MapChoice = { key: string; label: string; aliases?: string[] };
+export type FieldItem = { label: string; strong: boolean };
 
 const norm = (s: string) => s.replace(/\s+/g, "").toLowerCase();
 
@@ -20,12 +29,16 @@ export function DocxMapper({
   saved,
 }: {
   formFileId: string;
-  fields: string[];
+  fields: FieldItem[];
   choices: MapChoice[];
   saved: Record<string, string>;
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
+
+  const labels = useMemo(() => fields.map((f) => f.label), [fields]);
+  const strongFields = useMemo(() => fields.filter((f) => f.strong), [fields]);
+  const weakFields = useMemo(() => fields.filter((f) => !f.strong), [fields]);
 
   // 정규화 별칭 → key (자동 추천용)
   const aliasIndex = useMemo(() => {
@@ -37,18 +50,21 @@ export function DocxMapper({
     return m;
   }, [choices]);
 
-  // 초기 선택: 저장값 우선 → 자동추천 → ""
+  // 초기 선택: 저장값 우선 → 자동추천(강한 후보만) → ""
   const [sel, setSel] = useState<Record<string, string>>(() => {
     const init: Record<string, string> = {};
-    for (const label of fields) {
-      const nl = norm(label);
-      if (nl in saved) init[label] = saved[nl];
-      else init[label] = aliasIndex.get(nl) ?? "";
+    for (const f of fields) {
+      const nl = norm(f.label);
+      if (nl in saved) init[f.label] = saved[nl];
+      else if (f.strong) init[f.label] = aliasIndex.get(nl) ?? "";
+      else init[f.label] = "";
     }
     return init;
   });
 
   const matchedCount = Object.values(sel).filter((v) => v).length;
+  const weakMapped = weakFields.filter((f) => sel[f.label]).length;
+  const [showWeak, setShowWeak] = useState(weakMapped > 0);
 
   const [previewBusy, setPreviewBusy] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -57,7 +73,7 @@ export function DocxMapper({
 
   function buildMapping(): Record<string, string> {
     const mapping: Record<string, string> = {};
-    for (const label of fields) mapping[norm(label)] = sel[label] ?? "";
+    for (const label of labels) mapping[norm(label)] = sel[label] ?? "";
     return mapping;
   }
 
@@ -134,12 +150,47 @@ export function DocxMapper({
   function autoFillAll() {
     setSel((prev) => {
       const next = { ...prev };
-      for (const label of fields) {
+      for (const label of labels) {
         const nl = norm(label);
         if (!next[label]) next[label] = aliasIndex.get(nl) ?? "";
       }
       return next;
     });
+  }
+
+  function renderRow(f: FieldItem) {
+    const label = f.label;
+    const nl = norm(label);
+    const isAuto = !(nl in saved) && !!aliasIndex.get(nl);
+    return (
+      <tr key={label} className="border-b border-border last:border-0">
+        <td className="px-3 py-2">
+          <span className="font-medium">{label}</span>
+          {isAuto && sel[label] ? (
+            <Badge
+              variant="outline"
+              className="ml-1.5 border-info/30 text-[10px] text-info"
+            >
+              자동추천
+            </Badge>
+          ) : null}
+        </td>
+        <td className="px-3 py-2">
+          <select
+            value={sel[label] ?? ""}
+            onChange={(e) => setSel((v) => ({ ...v, [label]: e.target.value }))}
+            className="h-8 w-full max-w-md rounded-md border border-input bg-background px-2 text-sm"
+          >
+            <option value="">— 채우지 않음 —</option>
+            {choices.map((c) => (
+              <option key={c.key} value={c.key}>
+                {c.label}
+              </option>
+            ))}
+          </select>
+        </td>
+      </tr>
+    );
   }
 
   return (
@@ -148,8 +199,8 @@ export function DocxMapper({
         <div>
           <h2 className="text-base font-semibold">DOCX 채움 매핑</h2>
           <p className="mt-0.5 text-sm text-muted-foreground">
-            감지된 칸 {fields.length}개 · 매핑됨{" "}
-            <Badge variant="secondary">{matchedCount}</Badge> · 좌표 지정
+            자동 감지 {strongFields.length}개 · 그 외 칸 {weakFields.length}개 ·
+            매핑됨 <Badge variant="secondary">{matchedCount}</Badge> · 좌표 지정
             불필요(표가 위치를 정함)
           </p>
         </div>
@@ -185,56 +236,53 @@ export function DocxMapper({
 
       {fields.length === 0 ? (
         <p className="rounded-md border border-dashed border-border py-8 text-center text-sm text-muted-foreground">
-          감지된 입력 칸이 없습니다. (표 라벨 옆/아래 빈칸이 있어야 감지됨)
+          채울 수 있는 칸이 없습니다. (표 라벨 오른쪽에 빈칸이 있어야 채워집니다)
         </p>
       ) : (
-        <div className="overflow-hidden rounded-md border border-border">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-border bg-muted/40 text-left">
-                <th className="px-3 py-2 font-medium">양식 라벨 (감지)</th>
-                <th className="px-3 py-2 font-medium">표준데이터 연결</th>
-              </tr>
-            </thead>
-            <tbody>
-              {fields.map((label) => {
-                const nl = norm(label);
-                const isAuto = !(nl in saved) && !!aliasIndex.get(nl);
-                return (
-                  <tr key={label} className="border-b border-border last:border-0">
-                    <td className="px-3 py-2">
-                      <span className="font-medium">{label}</span>
-                      {isAuto && sel[label] ? (
-                        <Badge
-                          variant="outline"
-                          className="ml-1.5 border-info/30 text-[10px] text-info"
-                        >
-                          자동추천
-                        </Badge>
-                      ) : null}
-                    </td>
-                    <td className="px-3 py-2">
-                      <select
-                        value={sel[label] ?? ""}
-                        onChange={(e) =>
-                          setSel((v) => ({ ...v, [label]: e.target.value }))
-                        }
-                        className="h-8 w-full max-w-md rounded-md border border-input bg-background px-2 text-sm"
-                      >
-                        <option value="">— 채우지 않음 —</option>
-                        {choices.map((c) => (
-                          <option key={c.key} value={c.key}>
-                            {c.label}
-                          </option>
-                        ))}
-                      </select>
-                    </td>
+        <>
+          {strongFields.length > 0 ? (
+            <div className="overflow-hidden rounded-md border border-border">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border bg-muted/40 text-left">
+                    <th className="px-3 py-2 font-medium">양식 라벨 (자동 감지)</th>
+                    <th className="px-3 py-2 font-medium">표준데이터 연결</th>
                   </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                </thead>
+                <tbody>{strongFields.map(renderRow)}</tbody>
+              </table>
+            </div>
+          ) : null}
+
+          {weakFields.length > 0 ? (
+            <div className="rounded-md border border-dashed border-border">
+              <button
+                type="button"
+                onClick={() => setShowWeak((s) => !s)}
+                className="flex w-full items-center gap-1.5 px-3 py-2 text-left text-sm font-medium text-muted-foreground hover:text-foreground"
+              >
+                {showWeak ? (
+                  <ChevronDown className="size-4" />
+                ) : (
+                  <ChevronRight className="size-4" />
+                )}
+                감지에서 빠진 칸 직접 매핑 ({weakFields.length}개
+                {weakMapped > 0 ? `, ${weakMapped}개 연결됨` : ""})
+              </button>
+              {showWeak ? (
+                <div className="border-t border-border">
+                  <p className="px-3 py-2 text-xs text-muted-foreground">
+                    라벨다워 보이지 않아 자동 감지에서 제외된 칸입니다. 오른쪽에
+                    빈칸이 있어, 표준데이터를 연결하면 그 빈칸이 채워집니다.
+                  </p>
+                  <table className="w-full text-sm">
+                    <tbody>{weakFields.map(renderRow)}</tbody>
+                  </table>
+                </div>
+              ) : null}
+            </div>
+          ) : null}
+        </>
       )}
 
       {previewOpen ? (

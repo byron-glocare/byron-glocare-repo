@@ -79,11 +79,17 @@ function plausibleFieldLabel(t: string): boolean {
   return true;
 }
 
+/** 감지된 채움 후보 칸. strong=노이즈필터 통과(자동추천 대상), false=수동 매핑용으로만 노출. */
+export type DocxFieldCandidate = { label: string; strong: boolean };
+
 /**
  * docx 에서 "채울 수 있는 라벨 칸"(라벨 → 오른쪽 빈칸)을 감지. 매핑 UI 용.
- * @returns 중복 제거된 라벨 목록(문서 순서)
+ *   - 빈칸이 오른쪽에 있는 **모든 셀**을 후보로 반환 (관리자가 수동 매핑할 수 있도록).
+ *   - strong=true 는 라벨다운 칸(이전엔 이것만 노출). strong=false 는 필터에 걸렸지만
+ *     빈칸이 있어 수동 매핑이 가능한 칸 → UI 에서 "그 외 칸"으로 노출.
+ * @returns 중복 제거된 후보 목록(문서 순서)
  */
-export function detectDocxFields(srcBuf: Buffer): string[] {
+export function detectDocxFields(srcBuf: Buffer): DocxFieldCandidate[] {
   const zip = new PizZip(srcBuf);
   const docXml = zip.file("word/document.xml");
   if (!docXml) return [];
@@ -94,11 +100,11 @@ export function detectDocxFields(srcBuf: Buffer): string[] {
   while ((m = re.exec(xml))) texts.push(cellText(m[0]));
 
   const used = new Set<number>();
-  const seen = new Set<string>();
-  const out: string[] = [];
+  const seen = new Map<string, boolean>(); // label → strong
+  const order: string[] = [];
   for (let i = 0; i < texts.length; i++) {
     const label = texts[i];
-    if (!looksLikeLabel(label)) continue;
+    if (!label) continue; // 빈 셀은 라벨 아님
     let valueIdx = -1;
     for (let j = i + 1; j < texts.length; j++) {
       if (used.has(j)) continue;
@@ -107,14 +113,17 @@ export function detectDocxFields(srcBuf: Buffer): string[] {
         break;
       }
     }
-    if (valueIdx < 0) continue;
+    if (valueIdx < 0) continue; // 빈칸 없으면 채울 수 없음
     used.add(valueIdx);
+    const strong = looksLikeLabel(label);
     if (!seen.has(label)) {
-      seen.add(label);
-      out.push(label);
+      seen.set(label, strong);
+      order.push(label);
+    } else if (strong && !seen.get(label)) {
+      seen.set(label, true);
     }
   }
-  return out;
+  return order.map((label) => ({ label, strong: seen.get(label) ?? false }));
 }
 
 /**
@@ -143,7 +152,7 @@ function injectTokens(
   let n = 0;
   for (let i = 0; i < cells.length; i++) {
     const label = cellText(cells[i].raw);
-    if (!looksLikeLabel(label)) continue;
+    if (!label) continue; // 빈 셀은 라벨 아님
     // 오른쪽 첫 빈칸 찾기
     let valueIdx = -1;
     for (let j = i + 1; j < cells.length; j++) {
@@ -154,13 +163,14 @@ function injectTokens(
       }
     }
     if (valueIdx < 0) continue; // 빈칸 없으면 입력칸 아님
+    // 매핑되면(관리자 수동 매핑 포함) looksLikeLabel 필터를 우회해 채운다.
     const mm = match(normLabel(label));
     if (mm) {
       const key = `f${n++}`;
       plan.set(valueIdx, { key, dummy: mm.dummy });
       used.add(valueIdx);
       matched.push({ label });
-    } else if (plausibleFieldLabel(label)) {
+    } else if (looksLikeLabel(label) && plausibleFieldLabel(label)) {
       unmatchedSet.add(label); // 빈칸은 있는데 표준데이터에 없음 → 별칭 후보(노이즈 제외)
     }
   }

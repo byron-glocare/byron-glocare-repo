@@ -53,15 +53,6 @@ function transformValueCell(raw: string, tokenKey: string): string {
   return r;
 }
 
-function looksLikeLabel(t: string): boolean {
-  if (!t) return false;
-  if (t.length > 15) return false;
-  if (/[□☑✓※]/.test(t)) return false;
-  if (/^[\d\s\-.,()]+$/.test(t)) return false;
-  if (/^\(.*\)$/.test(t)) return false;
-  return true;
-}
-
 function injectTokens(
   xml: string,
   match: (normalizedLabel: string) => LabelMatch | null
@@ -77,7 +68,7 @@ function injectTokens(
   let n = 0;
   for (let i = 0; i < cells.length; i++) {
     const label = cellText(cells[i].raw);
-    if (!looksLikeLabel(label)) continue;
+    if (!label) continue; // 빈 셀은 라벨 아님
     let valueIdx = -1;
     for (let j = i + 1; j < cells.length; j++) {
       if (used.has(j)) continue;
@@ -87,6 +78,7 @@ function injectTokens(
       }
     }
     if (valueIdx < 0) continue;
+    // 매핑되면(관리자 수동 매핑 포함) looksLikeLabel 필터를 우회해 채운다.
     const mm = match(normLabel(label));
     if (mm) {
       const key = `f${n++}`;
