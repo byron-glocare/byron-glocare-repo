@@ -105,6 +105,50 @@ function injectTokens(
   return { xml: out, values, matchedCount: plan.size };
 }
 
+/**
+ * 양식 안의 "태그된 이미지"(대체텍스트/이름 = 사진·서명 등)를 학생 이미지로 교체.
+ *   - 앵커/크기/z-order(운영자가 Word 에서 잡은 레이아웃)는 그대로 두고 media 바이트만 교체.
+ *   - resolve(태그) → 학생 이미지 바이트 / null.
+ *   @returns 교체된 이미지 수
+ */
+export async function swapImagesByTag(
+  zip: PizZip,
+  resolve: (tag: string) => Promise<Buffer | null>
+): Promise<number> {
+  const docXmlFile = zip.file("word/document.xml");
+  if (!docXmlFile) return 0;
+  const xml = docXmlFile.asText();
+
+  const relsFile = zip.file("word/_rels/document.xml.rels");
+  const rels = relsFile ? relsFile.asText() : "";
+  const relMap = new Map<string, string>();
+  for (const m of rels.matchAll(
+    /<Relationship Id="([^"]+)"[^>]*Target="([^"]+)"/g
+  ))
+    relMap.set(m[1], m[2]);
+
+  let swapped = 0;
+  const drawings = xml.match(/<w:drawing>[\s\S]*?<\/w:drawing>/g) || [];
+  for (const d of drawings) {
+    const tag =
+      (d.match(/<wp:docPr[^>]*descr="([^"]*)"/) || [])[1] ||
+      (d.match(/<wp:docPr[^>]*name="([^"]*)"/) || [])[1] ||
+      "";
+    if (!tag) continue;
+    const bytes = await resolve(tag);
+    if (!bytes) continue;
+    const rId = (d.match(/<a:blip[^>]*r:embed="([^"]+)"/) || [])[1];
+    if (!rId) continue;
+    let target = relMap.get(rId);
+    if (!target) continue;
+    if (!target.startsWith("word/"))
+      target = "word/" + target.replace(/^\.?\//, "");
+    zip.file(target, bytes);
+    swapped++;
+  }
+  return swapped;
+}
+
 /** docx 버퍼 → 표준데이터 매칭 라벨에 학생 실제값 치환. */
 export function fillDocx(
   srcBuf: Buffer,

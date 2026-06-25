@@ -6,10 +6,20 @@
  */
 
 import { type NextRequest } from "next/server";
+import PizZip from "pizzip";
 
 import { verifyCenterSession } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
-import { fillDocx, normLabel, type LabelMatch } from "@/lib/docx/fill";
+import {
+  createServiceClient,
+  STUDENT_FILES_BUCKET,
+} from "@/lib/supabase/service";
+import {
+  fillDocx,
+  swapImagesByTag,
+  normLabel,
+  type LabelMatch,
+} from "@/lib/docx/fill";
 import type { Json } from "@/types/database";
 
 export const runtime = "nodejs";
@@ -20,6 +30,37 @@ function fmt(v: Json | undefined): string {
     return Array.isArray(v) ? v.map(String).join(", ") : "";
   if (typeof v === "boolean") return v ? "예" : "";
   return String(v);
+}
+
+/** 파일/이미지 값({url}|{path}|https) → 바이트 */
+async function imageBytes(v: Json | undefined): Promise<Buffer | null> {
+  const tryFetch = async (url: string): Promise<Buffer | null> => {
+    try {
+      const r = await fetch(url);
+      if (!r.ok) return null;
+      return Buffer.from(await r.arrayBuffer());
+    } catch {
+      return null;
+    }
+  };
+  if (typeof v === "string" && /^https?:\/\//.test(v)) return tryFetch(v);
+  if (v && typeof v === "object" && !Array.isArray(v)) {
+    const o = v as { url?: string; path?: string };
+    if (o.url) return tryFetch(o.url);
+    if (o.path) {
+      try {
+        const svc = createServiceClient();
+        const { data } = await svc.storage
+          .from(STUDENT_FILES_BUCKET)
+          .download(o.path);
+        if (!data) return null;
+        return Buffer.from(await data.arrayBuffer());
+      } catch {
+        return null;
+      }
+    }
+  }
+  return null;
 }
 
 export async function GET(
@@ -74,7 +115,11 @@ export async function GET(
     for (const a of aliases) add(a);
   }
   const valMap = new Map<string, string>();
-  for (const dv of values ?? []) valMap.set(dv.data_type_key, fmt(dv.value));
+  const rawValMap = new Map<string, Json>();
+  for (const dv of values ?? []) {
+    valMap.set(dv.data_type_key, fmt(dv.value));
+    rawValMap.set(dv.data_type_key, dv.value);
+  }
 
   const match = (n: string): LabelMatch | null => {
     const key = catMap.get(n);
@@ -96,7 +141,16 @@ export async function GET(
 
   let filled: Buffer;
   try {
-    filled = fillDocx(buf, match).filled;
+    // 1) 태그된 더미 이미지(사진·서명 등)를 학생 이미지로 교체
+    const zip = new PizZip(buf);
+    await swapImagesByTag(zip, async (tag) => {
+      const key = catMap.get(normLabel(tag));
+      if (!key) return null;
+      return imageBytes(rawValMap.get(key));
+    });
+    const swapped = zip.generate({ type: "nodebuffer" }) as Buffer;
+    // 2) 텍스트 토큰 채움
+    filled = fillDocx(swapped, match).filled;
   } catch (e) {
     return new Response(
       `채움 실패: ${e instanceof Error ? e.message : String(e)}`,
