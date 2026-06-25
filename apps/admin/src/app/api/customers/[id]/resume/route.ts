@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient, createClient } from "@/lib/supabase/server";
 import { generateResumeDocx } from "@/lib/docx/generate-resume";
 
 // 매 요청마다 최신 draft 데이터로 docx 생성 — 캐싱 금지
@@ -11,7 +11,19 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id: customerId } = await params;
-  const supabase = await createClient();
+
+  // admin 인증 검사 (storage RLS 우회 전에 권한 확인)
+  const sessionClient = await createClient();
+  const {
+    data: { user },
+  } = await sessionClient.auth.getUser();
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // resume_drafts 조회 + storage download 는 service_role 로 — RLS 우회.
+  // 사진 bucket 이 private 라 anon/authenticated 모두 storage RLS 막힘.
+  const supabase = createAdminClient();
 
   // 가장 최근 submitted draft 로
   const { data: draft, error } = await supabase
@@ -44,13 +56,15 @@ export async function GET(
   const filename = `이력서_${baseName}.docx`;
   const asciiFallback = `resume_${customer?.code ?? "unknown"}.docx`;
 
-  // 사진 다운로드 (있는 경우만)
+  // 사진 다운로드 (있는 경우만) — service_role 로 RLS 우회
   let photoBuffer: Buffer | null = null;
   if (draft.photo_path) {
-    const { data: photoBlob } = await supabase.storage
+    const { data: photoBlob, error: photoErr } = await supabase.storage
       .from("resume-photos")
       .download(draft.photo_path);
-    if (photoBlob) {
+    if (photoErr) {
+      console.error("[resume] photo download failed:", photoErr, draft.photo_path);
+    } else if (photoBlob) {
       photoBuffer = Buffer.from(await photoBlob.arrayBuffer());
     }
   }
