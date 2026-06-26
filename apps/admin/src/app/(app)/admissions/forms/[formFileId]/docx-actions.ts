@@ -84,25 +84,6 @@ async function fetchFormBuffer(
 }
 
 /**
- * 라벨→표준데이터 매핑 저장 (라벨 표 UI 용, 폴백).
- *   mapping: { 정규화라벨: std_key } (값 "" = 채우지 않음)
- */
-export async function saveDocxMappingAction(
-  formFileId: string,
-  mapping: Record<string, string>
-): Promise<ActionResult> {
-  if (!(await requireAdmin())) return { ok: false, error: "권한이 없습니다." };
-  const admin = createAdminClient();
-  const { error } = await admin
-    .from("study_admission_form_files")
-    .update({ label_mapping: mapping })
-    .eq("id", formFileId);
-  if (error) return { ok: false, error: error.message };
-  revalidatePath(`/admissions/forms/${formFileId}`);
-  return { ok: true };
-}
-
-/**
  * 빈칸(슬롯)→표준데이터 배치 매핑 저장 (미리보기 클릭 배치 UI 용).
  *   mapping: { "빈칸인덱스": std_key } (값 "" = 채우지 않음)
  */
