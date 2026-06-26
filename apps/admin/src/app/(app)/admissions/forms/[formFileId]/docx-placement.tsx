@@ -438,10 +438,14 @@ export function DocxPlacement({
         .docx-edit-host .docx-wrapper > section.docx, .docx-preview-host .docx-wrapper > section.docx {
           margin: 0 auto 1rem; box-shadow: 0 1px 6px rgba(0,0,0,0.2); background: #fff;
         }
-        /* Word 원본이 고정 너비 표 → docx-preview 가 퍼지지 않게 강제 고정 + 칸 넘침 클립 */
-        .docx-edit-host table, .docx-preview-host table { table-layout: fixed; }
-        .docx-edit-host td, .docx-edit-host th, .docx-preview-host td, .docx-preview-host th {
-          overflow: hidden; word-break: break-word;
+        /* Word 원본이 고정 너비 표 → docx-preview auto 레이아웃을 강제 고정(칩이 칸을 못 늘림).
+           docx-preview 가 나중에 주입하는 스타일/인라인보다 우선하도록 !important. */
+        .docx-edit-host .docx-wrapper table, .docx-preview-host .docx-wrapper table {
+          table-layout: fixed !important;
+        }
+        .docx-edit-host .docx-wrapper td, .docx-edit-host .docx-wrapper th,
+        .docx-preview-host .docx-wrapper td, .docx-preview-host .docx-wrapper th {
+          overflow: hidden !important; word-break: break-word;
         }
         .slot-chip {
           display: inline-block; max-width: 100%; min-width: 1.25rem; padding: 0 5px; margin: 0 1px;

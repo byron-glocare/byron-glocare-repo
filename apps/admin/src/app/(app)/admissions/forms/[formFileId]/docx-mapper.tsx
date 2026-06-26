@@ -322,8 +322,10 @@ export function DocxMapper({
         .docx-preview-host .docx-wrapper > section.docx {
           margin: 0 auto 1rem; box-shadow: 0 1px 6px rgba(0,0,0,0.2); background: #fff;
         }
-        .docx-preview-host table { table-layout: fixed; }
-        .docx-preview-host td, .docx-preview-host th { overflow: hidden; word-break: break-word; }
+        .docx-preview-host .docx-wrapper table { table-layout: fixed !important; }
+        .docx-preview-host .docx-wrapper td, .docx-preview-host .docx-wrapper th {
+          overflow: hidden !important; word-break: break-word;
+        }
       `}</style>
     </div>
   );
