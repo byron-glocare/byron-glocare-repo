@@ -437,11 +437,16 @@ export function DocxPlacement({
         .docx-edit-host .docx-wrapper > section.docx, .docx-preview-host .docx-wrapper > section.docx {
           margin: 0 auto 1rem; box-shadow: 0 1px 6px rgba(0,0,0,0.2); background: #fff;
         }
-        /* 채움 미리보기(실제 텍스트)는 Word 처럼 칸 고정 */
-        .docx-preview-host .docx-wrapper table { table-layout: fixed !important; }
+        /* docx-preview 가 표 칸 너비(dxa→px) 합이 모달보다 커 옆으로 퍼지는 것 방지:
+           표를 컨테이너 폭(100%)에 묶고 고정 레이아웃 → 칸은 비율대로 축소되어 들어맞음. */
+        .docx-edit-host .docx-wrapper table, .docx-preview-host .docx-wrapper table {
+          table-layout: fixed !important; width: 100% !important; max-width: 100% !important;
+        }
+        .docx-edit-host .docx-wrapper td, .docx-edit-host .docx-wrapper th,
         .docx-preview-host .docx-wrapper td, .docx-preview-host .docx-wrapper th {
           overflow: hidden !important; word-break: break-word;
         }
+        .docx-edit-host .docx-wrapper, .docx-preview-host .docx-wrapper { overflow-x: hidden; }
         /* 편집기 칩: 칸 위에 absolute 로 띄워 레이아웃에서 제외 → 표가 안 늘어남.
            빈 양식 그대로 렌더되고 칩만 오버레이. */
         .slot-chip {
