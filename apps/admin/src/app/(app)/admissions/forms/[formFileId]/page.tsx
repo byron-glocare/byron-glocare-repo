@@ -121,6 +121,8 @@ export default async function FormDocDetailPage({
   // 연결 후보 = 전체 활성 표준데이터(카탈로그) + 양식의 서술형 질문.
   //   (필요 표준데이터를 미리 체크할 필요 없이, 박스를 어디든 연결 가능)
   const overlayChoices: FieldChoice[] = [
+    // 특수: 학생 데이터가 아닌 생성 시 자동값 (날짜 등). aliases 비움 = 라벨 자동매칭 안 함.
+    { key: "__today__", label: "📅 오늘 날짜(생성일)", aliases: [] },
     ...(catalogRows ?? []).map((c) => ({
       key: c.key,
       label: c.label_ko,

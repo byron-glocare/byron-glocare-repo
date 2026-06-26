@@ -123,6 +123,41 @@ export async function GET(
     rawValMap.set(dv.data_type_key, dv.value);
   }
 
+  // 이미지(사진·서명) 값 미리 받기 — 슬롯/라벨이 이미지 키로 풀리면 그 칸에 그림 삽입
+  const isImageVal = (key: string, v: Json | undefined): boolean => {
+    if (!(v && typeof v === "object" && !Array.isArray(v))) return false;
+    const o = v as { url?: string; path?: string };
+    const s = o.path || o.url || "";
+    if (/\.(png|jpe?g|gif|webp)$/i.test(s)) return true;
+    return /photo|사진|signature|서명|sign/i.test(key); // 확장자 없어도 사진/서명 키
+  };
+  const extOf = (v: Json | undefined): string => {
+    if (v && typeof v === "object" && !Array.isArray(v)) {
+      const o = v as { url?: string; path?: string };
+      const m = (o.path || o.url || "").match(/\.(png|jpe?g|gif|webp)$/i);
+      if (m) return m[1].toLowerCase() === "jpg" ? "jpg" : m[1].toLowerCase();
+    }
+    return "png";
+  };
+  const sizeFor = (key: string): { wEmu: number; hEmu: number } => {
+    if (/sign|서명/i.test(key)) return { wEmu: 1_440_000, hEmu: 540_000 }; // 40×15mm
+    if (/photo|사진/i.test(key)) return { wEmu: 1_080_000, hEmu: 1_440_000 }; // 30×40mm
+    return { wEmu: 1_080_000, hEmu: 1_080_000 }; // 30×30mm
+  };
+  const imageByKey = new Map<
+    string,
+    { bytes: Buffer; ext: string; wEmu: number; hEmu: number }
+  >();
+  for (const [key, raw] of rawValMap) {
+    if (!isImageVal(key, raw)) continue;
+    const bytes = await imageBytes(raw);
+    if (!bytes) continue;
+    imageByKey.set(key, { bytes, ext: extOf(raw), ...sizeFor(key) });
+  }
+
+  const now = new Date();
+  const todayStr = `${now.getFullYear()}. ${now.getMonth() + 1}. ${now.getDate()}.`;
+
   // 슬롯 매핑(빈칸 직접 배치) 우선 → 라벨 매핑 → 카탈로그 자동매칭 폴백
   const savedMap =
     form.label_mapping && typeof form.label_mapping === "object"
@@ -132,12 +167,15 @@ export async function GET(
     form.slot_mapping && typeof form.slot_mapping === "object"
       ? (form.slot_mapping as Record<string, string>)
       : {};
-  const resolve: SlotResolve = ({ slot, labelNorm }) => {
+  const resolveKey = (
+    slot: number,
+    labelNorm: string | null
+  ): { key: string; viaLabel: boolean } | null => {
     const sk = String(slot);
     if (sk in slotMap) {
       const k = slotMap[sk];
       if (!k) return null; // 명시적으로 "채우지 않음"
-      return { value: valMap.get(k) ?? "", viaLabel: false };
+      return { key: k, viaLabel: false };
     }
     if (labelNorm) {
       let key: string | undefined;
@@ -147,9 +185,27 @@ export async function GET(
       } else {
         key = catMap.get(labelNorm);
       }
-      if (key) return { value: valMap.get(key) ?? "", viaLabel: true };
+      if (key) return { key, viaLabel: true };
     }
     return null;
+  };
+  const resolve: SlotResolve = ({ slot, labelNorm }) => {
+    const rk = resolveKey(slot, labelNorm);
+    if (!rk) return null;
+    const { key, viaLabel } = rk;
+    if (key === "__today__")
+      return { kind: "text", value: todayStr, viaLabel };
+    const img = imageByKey.get(key);
+    if (img)
+      return {
+        kind: "image",
+        bytes: img.bytes,
+        ext: img.ext,
+        wEmu: img.wEmu,
+        hEmu: img.hEmu,
+        viaLabel,
+      };
+    return { kind: "text", value: valMap.get(key) ?? "", viaLabel };
   };
 
   let buf: Buffer;

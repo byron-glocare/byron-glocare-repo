@@ -3,27 +3,31 @@ import Docxtemplater from "docxtemplater";
 
 /**
  * DOCX 양식 자동 채움 엔진 (center, 실제 학생값).
- *   - 표에서 라벨 셀 인식 → 오른쪽 첫 빈칸을 값 자리로 보고 토큰 자동 주입
- *   - 표준데이터(데이터 메뉴) 매칭되는 라벨만 채움 (헤더·체크박스·고정문구 제외)
- *   - 값 셀만 가로·세로 가운데 정렬
- *   - docxtemplater 로 학생 실제값 치환
- *
- * match(정규화라벨) → {value} 이면 매칭(채움), null 이면 미매칭.
+ *   - 빈 셀(값 슬롯)을 문서순 번호. 슬롯 매핑/라벨 추론으로 값 결정.
+ *   - 텍스트는 토큰 치환, 이미지(사진·서명)는 그 칸에 그림 삽입.
+ *   - 값 셀만 가로·세로 가운데 정렬. docxtemplater 로 텍스트 치환.
  */
 
 export const normLabel = (s: string): string =>
   s.replace(/\s+/g, "").toLowerCase();
 
-export type LabelMatch = { value: string };
+/** 슬롯 채움 결과. text=토큰 치환, image=그 칸에 그림 삽입. */
+export type SlotFill =
+  | { kind: "text"; value: string; viaLabel: boolean }
+  | {
+      kind: "image";
+      bytes: Buffer;
+      ext: string;
+      wEmu: number;
+      hEmu: number;
+      viaLabel: boolean;
+    };
 
-/**
- * 슬롯 값 해석기. slot=빈칸 번호(문서순), labelNorm=추론된 앞 라벨(없으면 null).
- *   viaLabel=true 면 라벨 폴백 매칭(라벨 1개=값 1개 규칙에 사용).
- */
+/** 슬롯 값 해석기. slot=빈칸 번호(문서순), labelNorm=추론된 앞 라벨(없으면 null). */
 export type SlotResolve = (ctx: {
   slot: number;
   labelNorm: string | null;
-}) => { value: string; viaLabel: boolean } | null;
+}) => SlotFill | null;
 
 const cellText = (tc: string): string =>
   (tc.match(/<w:t[ >][\s\S]*?<\/w:t>/g) || [])
@@ -32,7 +36,20 @@ const cellText = (tc: string): string =>
     .replace(/&amp;/g, "&")
     .trim();
 
-function transformValueCell(raw: string, tokenKey: string): string {
+function readCells(xml: string): {
+  cells: { raw: string; start: number; end: number }[];
+  texts: string[];
+} {
+  const cells: { raw: string; start: number; end: number }[] = [];
+  const re = /<w:tc>[\s\S]*?<\/w:tc>/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(xml)))
+    cells.push({ raw: m[0], start: m.index, end: m.index + m[0].length });
+  return { cells, texts: cells.map((c) => cellText(c.raw)) };
+}
+
+/** 값 셀: vAlign center + 첫 문단 jc center + innerRun 주입 (이 셀만) */
+function fillCell(raw: string, innerRun: string): string {
   let r = raw;
   if (/<w:tcPr>/.test(r))
     r = r.replace(
@@ -56,63 +73,60 @@ function transformValueCell(raw: string, tokenKey: string): string {
             `<w:pPr>${pi.replace(/<w:jc[^>]*\/>/g, "")}<w:jc w:val="center"/></w:pPr>`
         );
       else body = `<w:pPr><w:jc w:val="center"/></w:pPr>` + body;
-      return po + body + `<w:r><w:t xml:space="preserve">{{${tokenKey}}}</w:t></w:r>` + pc;
+      return po + body + innerRun + pc;
     }
   );
   return r;
 }
 
-/** 슬롯(빈 셀)을 순서대로 돌며 resolve 로 값 결정 → 토큰 주입. (admin fill.ts 와 동일 규칙) */
-function injectTokens(
-  xml: string,
-  resolve: SlotResolve
-): { xml: string; values: Record<string, string>; matchedCount: number } {
-  const cells: { raw: string; start: number; end: number }[] = [];
-  const re = /<w:tc>[\s\S]*?<\/w:tc>/g;
-  let m: RegExpExecArray | null;
-  while ((m = re.exec(xml)))
-    cells.push({ raw: m[0], start: m.index, end: m.index + m[0].length });
-  const texts = cells.map((c) => cellText(c.raw));
+const tokenRun = (tokenKey: string): string =>
+  `<w:r><w:t xml:space="preserve">{{${tokenKey}}}</w:t></w:r>`;
 
-  const plan = new Map<number, { key: string; value: string }>();
-  const usedLabel = new Set<number>();
-  let n = 0;
-  let slot = -1;
-  for (let i = 0; i < cells.length; i++) {
-    if (texts[i] !== "") continue; // 값 슬롯 = 빈 셀만
-    slot++;
-    let labelIdx = -1;
-    for (let j = i - 1; j >= 0; j--) {
-      if (texts[j] !== "") {
-        labelIdx = j;
-        break;
-      }
-    }
-    const labelNorm =
-      labelIdx >= 0 && !usedLabel.has(labelIdx) ? normLabel(texts[labelIdx]) : null;
-    const res = resolve({ slot, labelNorm });
-    if (res) {
-      const key = `f${n++}`;
-      plan.set(i, { key, value: res.value });
-      if (res.viaLabel && labelIdx >= 0) usedLabel.add(labelIdx);
-    }
-  }
+/** 인라인 이미지 그림 run (네임스페이스 인라인 선언 — 루트 미선언이어도 안전) */
+function drawingRun(
+  rId: string,
+  id: number,
+  wEmu: number,
+  hEmu: number
+): string {
+  return (
+    `<w:r><w:drawing>` +
+    `<wp:inline xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" distT="0" distB="0" distL="0" distR="0">` +
+    `<wp:extent cx="${wEmu}" cy="${hEmu}"/>` +
+    `<wp:effectExtent l="0" t="0" r="0" b="0"/>` +
+    `<wp:docPr id="${id}" name="img${id}"/>` +
+    `<a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">` +
+    `<a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture">` +
+    `<pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">` +
+    `<pic:nvPicPr><pic:cNvPr id="${id}" name="img${id}"/><pic:cNvPicPr/></pic:nvPicPr>` +
+    `<pic:blipFill><a:blip xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" r:embed="${rId}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill>` +
+    `<pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${wEmu}" cy="${hEmu}"/></a:xfrm>` +
+    `<a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr>` +
+    `</pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>`
+  );
+}
 
-  const values: Record<string, string> = {};
-  let out = xml;
-  for (const [idx, info] of [...plan.entries()].sort((a, b) => b[0] - a[0])) {
-    const c = cells[idx];
-    out = out.slice(0, c.start) + transformValueCell(c.raw, info.key) + out.slice(c.end);
-    values[info.key] = info.value;
+/** png/jpeg/gif 가 [Content_Types].xml 에 없으면 추가 */
+function ensureImageContentTypes(zip: PizZip, exts: Set<string>): void {
+  const ctPath = "[Content_Types].xml";
+  let ct = zip.file(ctPath)?.asText();
+  if (!ct) return;
+  for (const ext of exts) {
+    const ctype =
+      ext === "jpg" || ext === "jpeg"
+        ? "image/jpeg"
+        : ext === "gif"
+          ? "image/gif"
+          : "image/png";
+    if (!new RegExp(`Extension="${ext}"`, "i").test(ct))
+      ct = ct.replace("</Types>", `<Default Extension="${ext}" ContentType="${ctype}"/></Types>`);
   }
-  return { xml: out, values, matchedCount: plan.size };
+  zip.file(ctPath, ct);
 }
 
 /**
  * 양식 안의 "태그된 이미지"(대체텍스트/이름 = 사진·서명 등)를 학생 이미지로 교체.
- *   - 앵커/크기/z-order(운영자가 Word 에서 잡은 레이아웃)는 그대로 두고 media 바이트만 교체.
- *   - resolve(태그) → 학생 이미지 바이트 / null.
- *   @returns 교체된 이미지 수
+ *   (운영자가 미리 더미 이미지를 넣어둔 경우용. 슬롯 클릭 배치와 별개.)
  */
 export async function swapImagesByTag(
   zip: PizZip,
@@ -125,9 +139,7 @@ export async function swapImagesByTag(
   const relsFile = zip.file("word/_rels/document.xml.rels");
   const rels = relsFile ? relsFile.asText() : "";
   const relMap = new Map<string, string>();
-  for (const m of rels.matchAll(
-    /<Relationship Id="([^"]+)"[^>]*Target="([^"]+)"/g
-  ))
+  for (const m of rels.matchAll(/<Relationship Id="([^"]+)"[^>]*Target="([^"]+)"/g))
     relMap.set(m[1], m[2]);
 
   let swapped = 0;
@@ -144,15 +156,14 @@ export async function swapImagesByTag(
     if (!rId) continue;
     let target = relMap.get(rId);
     if (!target) continue;
-    if (!target.startsWith("word/"))
-      target = "word/" + target.replace(/^\.?\//, "");
+    if (!target.startsWith("word/")) target = "word/" + target.replace(/^\.?\//, "");
     zip.file(target, bytes);
     swapped++;
   }
   return swapped;
 }
 
-/** docx 버퍼 → 슬롯 해석기로 학생 실제값 치환. */
+/** docx 버퍼 → 슬롯 해석기로 텍스트 치환 + 이미지 삽입. */
 export function fillDocx(
   srcBuf: Buffer,
   resolve: SlotResolve
@@ -160,15 +171,104 @@ export function fillDocx(
   const zip = new PizZip(srcBuf);
   const docXml = zip.file("word/document.xml");
   if (!docXml) throw new Error("올바른 .docx 가 아닙니다.");
+  const xml = docXml.asText();
+  const { cells, texts } = readCells(xml);
 
-  const { xml, values, matchedCount } = injectTokens(docXml.asText(), resolve);
-  zip.file("word/document.xml", xml);
+  const textPlan = new Map<number, { key: string; value: string }>();
+  const imagePlan: {
+    cellIdx: number;
+    bytes: Buffer;
+    ext: string;
+    wEmu: number;
+    hEmu: number;
+  }[] = [];
+  const usedLabel = new Set<number>();
+  let n = 0;
+  let slot = -1;
+  for (let i = 0; i < cells.length; i++) {
+    if (texts[i] !== "") continue;
+    slot++;
+    let labelIdx = -1;
+    for (let j = i - 1; j >= 0; j--) {
+      if (texts[j] !== "") {
+        labelIdx = j;
+        break;
+      }
+    }
+    const labelNorm =
+      labelIdx >= 0 && !usedLabel.has(labelIdx) ? normLabel(texts[labelIdx]) : null;
+    const res = resolve({ slot, labelNorm });
+    if (!res) continue;
+    if (res.viaLabel && labelIdx >= 0) usedLabel.add(labelIdx);
+    if (res.kind === "text") textPlan.set(i, { key: `f${n++}`, value: res.value });
+    else
+      imagePlan.push({
+        cellIdx: i,
+        bytes: res.bytes,
+        ext: res.ext,
+        wEmu: res.wEmu,
+        hEmu: res.hEmu,
+      });
+  }
 
+  // 이미지: media + rels + content types
+  const imageRun = new Map<number, string>();
+  if (imagePlan.length) {
+    const relsPath = "word/_rels/document.xml.rels";
+    let rels =
+      zip.file(relsPath)?.asText() ??
+      `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"></Relationships>`;
+    let maxId = 0;
+    for (const m of rels.matchAll(/Id="rId(\d+)"/g))
+      maxId = Math.max(maxId, Number(m[1]));
+    const exts = new Set<string>();
+    let imgN = 0;
+    let docPrId = 9001;
+    for (const im of imagePlan) {
+      maxId++;
+      imgN++;
+      const rId = `rId${maxId}`;
+      const ext = (im.ext || "png").toLowerCase();
+      exts.add(ext);
+      const mediaName = `slotimg${imgN}.${ext}`;
+      zip.file(`word/media/${mediaName}`, im.bytes);
+      rels = rels.replace(
+        "</Relationships>",
+        `<Relationship Id="${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/${mediaName}"/></Relationships>`
+      );
+      imageRun.set(im.cellIdx, drawingRun(rId, docPrId++, im.wEmu, im.hEmu));
+    }
+    zip.file(relsPath, rels);
+    ensureImageContentTypes(zip, exts);
+  }
+
+  // 셀 편집 (뒤에서부터 splice)
+  const edits: { start: number; end: number; raw: string }[] = [];
+  for (const [idx, info] of textPlan)
+    edits.push({
+      start: cells[idx].start,
+      end: cells[idx].end,
+      raw: fillCell(cells[idx].raw, tokenRun(info.key)),
+    });
+  for (const im of imagePlan)
+    edits.push({
+      start: cells[im.cellIdx].start,
+      end: cells[im.cellIdx].end,
+      raw: fillCell(cells[im.cellIdx].raw, imageRun.get(im.cellIdx) ?? ""),
+    });
+  let out = xml;
+  for (const e of edits.sort((a, b) => b.start - a.start))
+    out = out.slice(0, e.start) + e.raw + out.slice(e.end);
+  zip.file("word/document.xml", out);
+
+  // 텍스트 토큰 치환
+  const values: Record<string, string> = {};
+  for (const [, info] of textPlan) values[info.key] = info.value;
   const doc = new Docxtemplater(zip, {
     delimiters: { start: "{{", end: "}}" },
     nullGetter: () => "",
   });
   doc.render(values);
   const filled = doc.getZip().generate({ type: "nodebuffer" }) as Buffer;
-  return { filled, matchedCount };
+  return { filled, matchedCount: textPlan.size + imagePlan.length };
 }

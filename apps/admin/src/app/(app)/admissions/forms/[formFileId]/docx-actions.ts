@@ -186,12 +186,21 @@ export async function previewDocxAction(
     return { ok: false, error: e instanceof Error ? e.message : "다운로드 실패" };
   }
 
+  const now = new Date();
+  const todayStr = `${now.getFullYear()}. ${now.getMonth() + 1}. ${now.getDate()}.`;
+  // 미리보기는 텍스트 전용 — 이미지(사진·서명)는 자리 표시만, 날짜는 오늘.
+  const sampleFor = (k: string): string => {
+    if (k === "__today__") return todayStr;
+    if (/photo|사진/i.test(k)) return "[사진]";
+    if (/signature|서명|sign/i.test(k)) return "[서명]";
+    return sampleForKey(k);
+  };
   const resolve: SlotResolve = ({ slot, labelNorm }) => {
     const sk = String(slot);
     if (sk in slotMapping) {
       const k = slotMapping[sk];
       if (!k) return null;
-      return { value: sampleForKey(k), viaLabel: false };
+      return { value: sampleFor(k), viaLabel: false };
     }
     if (labelNorm) {
       let k: string | undefined;
@@ -201,7 +210,7 @@ export async function previewDocxAction(
       } else {
         k = catMap.get(labelNorm);
       }
-      if (k) return { value: sampleForKey(k), viaLabel: true };
+      if (k) return { value: sampleFor(k), viaLabel: true };
     }
     return null;
   };
