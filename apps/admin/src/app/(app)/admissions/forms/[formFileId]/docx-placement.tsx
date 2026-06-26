@@ -505,14 +505,18 @@ export function DocxPlacement({
           white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
           border: 1px dashed #94a3b8; background: #f1f5f9; color: #475569;
         }
-        /* 내용 있는 칸: 모서리에 작게, 평소 흐릿 → hover/지정시 선명 (내용 안 가림) */
+        /* 내용 있는 칸: 모서리에 작게(내용 안 가림). 보이게 유지 → hover/지정시 강조 */
         .slot-chip[data-empty="0"] {
-          left: auto; right: 1px; top: 1px; max-width: 70%;
-          padding: 0 3px; font-size: 10px; opacity: 0.35;
+          left: auto; right: 1px; top: 1px; max-width: 80%;
+          padding: 0 4px; font-size: 10px; opacity: 0.85;
+          background: #fef9c3; border-color: #ca8a04; color: #854d0e;
         }
         .slot-chip[data-empty="0"]:hover,
         .slot-chip[data-empty="0"][data-state="set"],
         .slot-chip[data-empty="0"][data-state="skip"] { opacity: 1; }
+        .slot-chip[data-empty="0"][data-state="set"] {
+          background: #dbeafe; border-color: #2563eb; color: #1d4ed8;
+        }
         .slot-chip[data-state="auto"] { border-style: solid; border-color: #cbd5e1; background: #e2e8f0; color: #334155; }
         .slot-chip[data-state="set"]  { border-style: solid; border-color: #2563eb; background: #dbeafe; color: #1d4ed8; font-weight: 600; }
         .slot-chip[data-state="skip"] { border-color: #fca5a5; background: #fef2f2; color: #b91c1c; }
