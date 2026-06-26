@@ -106,6 +106,14 @@ export function DocxPlacement({
       el.textContent = text;
       el.dataset.state = state;
       el.dataset.active = active ? "1" : "0";
+      const hint = hintOf(slot);
+      el.title =
+        (hint ? `${hint} → ` : "") +
+        (state === "empty"
+          ? "미지정"
+          : state === "skip"
+            ? "채우지 않음"
+            : text);
     }
   }, [effectiveKey, labelOf]);
 
@@ -430,9 +438,15 @@ export function DocxPlacement({
         .docx-edit-host .docx-wrapper > section.docx, .docx-preview-host .docx-wrapper > section.docx {
           margin: 0 auto 1rem; box-shadow: 0 1px 6px rgba(0,0,0,0.2); background: #fff;
         }
+        /* Word 원본이 고정 너비 표 → docx-preview 가 퍼지지 않게 강제 고정 + 칸 넘침 클립 */
+        .docx-edit-host table, .docx-preview-host table { table-layout: fixed; }
+        .docx-edit-host td, .docx-edit-host th, .docx-preview-host td, .docx-preview-host th {
+          overflow: hidden; word-break: break-word;
+        }
         .slot-chip {
-          display: inline-block; min-width: 1.5rem; padding: 0 6px; margin: 0 1px;
-          font-size: 12px; line-height: 1.5; border-radius: 4px; cursor: pointer;
+          display: inline-block; max-width: 100%; min-width: 1.25rem; padding: 0 5px; margin: 0 1px;
+          font-size: 11px; line-height: 1.5; border-radius: 4px; cursor: pointer;
+          vertical-align: bottom; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
           border: 1px dashed #94a3b8; background: #f1f5f9; color: #475569;
         }
         .slot-chip[data-state="auto"] { border-style: solid; border-color: #cbd5e1; background: #e2e8f0; color: #334155; }
