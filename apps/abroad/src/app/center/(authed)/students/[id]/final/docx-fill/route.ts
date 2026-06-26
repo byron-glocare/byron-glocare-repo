@@ -168,14 +168,20 @@ export async function GET(
       ? (form.slot_mapping as Record<string, string>)
       : {};
   const resolveKey = (
-    slot: number,
+    allIndex: number,
+    emptyIndex: number | null,
     labelNorm: string | null
-  ): { key: string; viaLabel: boolean } | null => {
-    const sk = String(slot);
-    if (sk in slotMap) {
-      const k = slotMap[sk];
+  ): { key: string; viaLabel: boolean; overwrite: boolean } | null => {
+    const ak = `a${allIndex}`;
+    if (ak in slotMap) {
+      const k = slotMap[ak];
       if (!k) return null; // 명시적으로 "채우지 않음"
-      return { key: k, viaLabel: false };
+      return { key: k, viaLabel: false, overwrite: true };
+    }
+    if (emptyIndex !== null && String(emptyIndex) in slotMap) {
+      const k = slotMap[String(emptyIndex)];
+      if (!k) return null;
+      return { key: k, viaLabel: false, overwrite: false };
     }
     if (labelNorm) {
       let key: string | undefined;
@@ -185,16 +191,16 @@ export async function GET(
       } else {
         key = catMap.get(labelNorm);
       }
-      if (key) return { key, viaLabel: true };
+      if (key) return { key, viaLabel: true, overwrite: false };
     }
     return null;
   };
-  const resolve: SlotResolve = ({ slot, labelNorm }) => {
-    const rk = resolveKey(slot, labelNorm);
+  const resolve: SlotResolve = ({ allIndex, emptyIndex, labelNorm }) => {
+    const rk = resolveKey(allIndex, emptyIndex, labelNorm);
     if (!rk) return null;
-    const { key, viaLabel } = rk;
+    const { key, viaLabel, overwrite } = rk;
     if (key === "__today__")
-      return { kind: "text", value: todayStr, viaLabel };
+      return { kind: "text", value: todayStr, viaLabel, overwrite };
     const img = imageByKey.get(key);
     if (img)
       return {
@@ -204,8 +210,9 @@ export async function GET(
         wEmu: img.wEmu,
         hEmu: img.hEmu,
         viaLabel,
+        overwrite,
       };
-    return { kind: "text", value: valMap.get(key) ?? "", viaLabel };
+    return { kind: "text", value: valMap.get(key) ?? "", viaLabel, overwrite };
   };
 
   let buf: Buffer;

@@ -11,9 +11,9 @@ import Docxtemplater from "docxtemplater";
 export const normLabel = (s: string): string =>
   s.replace(/\s+/g, "").toLowerCase();
 
-/** 슬롯 채움 결과. text=토큰 치환, image=그 칸에 그림 삽입. */
+/** 슬롯 채움 결과. text=토큰 치환, image=그 칸에 그림 삽입. overwrite=칸 기존내용 덮어쓰기. */
 export type SlotFill =
-  | { kind: "text"; value: string; viaLabel: boolean }
+  | { kind: "text"; value: string; viaLabel: boolean; overwrite: boolean }
   | {
       kind: "image";
       bytes: Buffer;
@@ -21,11 +21,16 @@ export type SlotFill =
       wEmu: number;
       hEmu: number;
       viaLabel: boolean;
+      overwrite: boolean;
     };
 
-/** 슬롯 값 해석기. slot=빈칸 번호(문서순), labelNorm=추론된 앞 라벨(없으면 null). */
+/**
+ * 슬롯 값 해석기.
+ *   allIndex=전체 셀 번호, emptyIndex=빈칸이면 빈칸 번호(아니면 null), labelNorm=추론 앞 라벨.
+ */
 export type SlotResolve = (ctx: {
-  slot: number;
+  allIndex: number;
+  emptyIndex: number | null;
   labelNorm: string | null;
 }) => SlotFill | null;
 
@@ -48,8 +53,8 @@ function readCells(xml: string): {
   return { cells, texts: cells.map((c) => cellText(c.raw)) };
 }
 
-/** 값 셀: vAlign center + 첫 문단 jc center + innerRun 주입 (이 셀만) */
-function fillCell(raw: string, innerRun: string): string {
+/** 값 셀: vAlign center + 첫 문단 jc center + innerRun 주입. overwrite=기존 run 제거 후 주입. */
+function putCell(raw: string, innerRun: string, overwrite: boolean): string {
   let r = raw;
   if (/<w:tcPr>/.test(r))
     r = r.replace(
@@ -65,15 +70,22 @@ function fillCell(raw: string, innerRun: string): string {
     (m, po: string, inner: string, pc: string) => {
       if (done) return m;
       done = true;
-      let body = inner;
-      if (/<w:pPr>/.test(body))
-        body = body.replace(
+      let pPr = "";
+      let rest = inner;
+      const pm = inner.match(/^(<w:pPr>[\s\S]*?<\/w:pPr>)([\s\S]*)$/);
+      if (pm) {
+        pPr = pm[1];
+        rest = pm[2];
+      }
+      if (pPr)
+        pPr = pPr.replace(
           /<w:pPr>([\s\S]*?)<\/w:pPr>/,
           (_x, pi: string) =>
             `<w:pPr>${pi.replace(/<w:jc[^>]*\/>/g, "")}<w:jc w:val="center"/></w:pPr>`
         );
-      else body = `<w:pPr><w:jc w:val="center"/></w:pPr>` + body;
-      return po + body + innerRun + pc;
+      else pPr = `<w:pPr><w:jc w:val="center"/></w:pPr>`;
+      const keep = overwrite ? "" : rest;
+      return po + pPr + keep + innerRun + pc;
     }
   );
   return r;
@@ -174,33 +186,37 @@ export function fillDocx(
   const xml = docXml.asText();
   const { cells, texts } = readCells(xml);
 
-  const textPlan = new Map<number, { key: string; value: string }>();
+  const textPlan = new Map<number, { key: string; value: string; overwrite: boolean }>();
   const imagePlan: {
     cellIdx: number;
     bytes: Buffer;
     ext: string;
     wEmu: number;
     hEmu: number;
+    overwrite: boolean;
   }[] = [];
   const usedLabel = new Set<number>();
   let n = 0;
-  let slot = -1;
+  let emptyIndex = -1;
   for (let i = 0; i < cells.length; i++) {
-    if (texts[i] !== "") continue;
-    slot++;
+    const empty = texts[i] === "";
+    if (empty) emptyIndex++;
     let labelIdx = -1;
-    for (let j = i - 1; j >= 0; j--) {
-      if (texts[j] !== "") {
-        labelIdx = j;
-        break;
+    let labelNorm: string | null = null;
+    if (empty) {
+      for (let j = i - 1; j >= 0; j--) {
+        if (texts[j] !== "") {
+          labelIdx = j;
+          break;
+        }
       }
+      if (labelIdx >= 0 && !usedLabel.has(labelIdx)) labelNorm = normLabel(texts[labelIdx]);
     }
-    const labelNorm =
-      labelIdx >= 0 && !usedLabel.has(labelIdx) ? normLabel(texts[labelIdx]) : null;
-    const res = resolve({ slot, labelNorm });
+    const res = resolve({ allIndex: i, emptyIndex: empty ? emptyIndex : null, labelNorm });
     if (!res) continue;
     if (res.viaLabel && labelIdx >= 0) usedLabel.add(labelIdx);
-    if (res.kind === "text") textPlan.set(i, { key: `f${n++}`, value: res.value });
+    if (res.kind === "text")
+      textPlan.set(i, { key: `f${n++}`, value: res.value, overwrite: res.overwrite });
     else
       imagePlan.push({
         cellIdx: i,
@@ -208,6 +224,7 @@ export function fillDocx(
         ext: res.ext,
         wEmu: res.wEmu,
         hEmu: res.hEmu,
+        overwrite: res.overwrite,
       });
   }
 
@@ -248,13 +265,13 @@ export function fillDocx(
     edits.push({
       start: cells[idx].start,
       end: cells[idx].end,
-      raw: fillCell(cells[idx].raw, tokenRun(info.key)),
+      raw: putCell(cells[idx].raw, tokenRun(info.key), info.overwrite),
     });
   for (const im of imagePlan)
     edits.push({
       start: cells[im.cellIdx].start,
       end: cells[im.cellIdx].end,
-      raw: fillCell(cells[im.cellIdx].raw, imageRun.get(im.cellIdx) ?? ""),
+      raw: putCell(cells[im.cellIdx].raw, imageRun.get(im.cellIdx) ?? "", im.overwrite),
     });
   let out = xml;
   for (const e of edits.sort((a, b) => b.start - a.start))

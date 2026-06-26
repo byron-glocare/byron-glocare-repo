@@ -195,12 +195,17 @@ export async function previewDocxAction(
     if (/signature|서명|sign/i.test(k)) return "[서명]";
     return sampleForKey(k);
   };
-  const resolve: SlotResolve = ({ slot, labelNorm }) => {
-    const sk = String(slot);
-    if (sk in slotMapping) {
-      const k = slotMapping[sk];
+  const resolve: SlotResolve = ({ allIndex, emptyIndex, labelNorm }) => {
+    const ak = `a${allIndex}`;
+    if (ak in slotMapping) {
+      const k = slotMapping[ak];
       if (!k) return null;
-      return { value: sampleFor(k), viaLabel: false };
+      return { value: sampleFor(k), viaLabel: false, overwrite: true };
+    }
+    if (emptyIndex !== null && String(emptyIndex) in slotMapping) {
+      const k = slotMapping[String(emptyIndex)];
+      if (!k) return null;
+      return { value: sampleFor(k), viaLabel: false, overwrite: false };
     }
     if (labelNorm) {
       let k: string | undefined;
@@ -210,7 +215,7 @@ export async function previewDocxAction(
       } else {
         k = catMap.get(labelNorm);
       }
-      if (k) return { value: sampleFor(k), viaLabel: true };
+      if (k) return { value: sampleFor(k), viaLabel: true, overwrite: false };
     }
     return null;
   };

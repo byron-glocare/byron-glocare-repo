@@ -63,7 +63,7 @@ export async function POST(req: Request) {
     result = tokenizeAndFillDocx(buf, ({ labelNorm }) => {
       if (!labelNorm) return null;
       const mm = matchMap.get(labelNorm);
-      return mm ? { value: mm.dummy, viaLabel: true } : null;
+      return mm ? { value: mm.dummy, viaLabel: true, overwrite: false } : null;
     });
   } catch (e) {
     return new NextResponse(e instanceof Error ? e.message : "처리 실패", {
@@ -81,8 +81,6 @@ export async function POST(req: Request) {
       "Content-Type":
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "Content-Disposition": `attachment; filename*=UTF-8''${fname}`,
-      "X-Matched": encodeURIComponent(JSON.stringify(result.matched)),
-      "X-Unmatched": encodeURIComponent(JSON.stringify(result.unmatched)),
       "Cache-Control": "no-store",
     },
   });

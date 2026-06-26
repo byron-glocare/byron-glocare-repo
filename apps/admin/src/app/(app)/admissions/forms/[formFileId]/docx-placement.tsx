@@ -22,7 +22,12 @@ import {
 } from "./docx-actions";
 
 export type MapChoice = { key: string; label: string; aliases?: string[] };
-type SlotInfo = { slot: number; hint: string };
+type SlotInfo = {
+  slot: number;
+  emptyIndex: number | null;
+  empty: boolean;
+  hint: string;
+};
 
 const norm = (s: string) => s.replace(/\s+/g, "").toLowerCase();
 
@@ -72,31 +77,53 @@ export function DocxPlacement({
   const activeRef = useRef<number | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const hintOf = (slot: number) =>
-    slotsRef.current.find((s) => s.slot === slot)?.hint ?? "";
+  const infoOf = (slot: number) =>
+    slotsRef.current.find((s) => s.slot === slot);
+  const hintOf = (slot: number) => infoOf(slot)?.hint ?? "";
+  const isEmpty = (slot: number) => infoOf(slot)?.empty ?? true;
 
-  // 슬롯의 "유효 키": 명시 매핑 우선, 없으면 힌트 자동추천
+  // 슬롯 매핑은 a{전체셀번호} 우선, 빈칸이면 레거시 {빈칸번호}, 없으면 힌트 자동추천.
+  const explicitState = (
+    slot: number
+  ): { key: string } | { skip: true } | null => {
+    const ak = `a${slot}`;
+    if (ak in mappingRef.current) {
+      const k = mappingRef.current[ak];
+      return k ? { key: k } : { skip: true };
+    }
+    const si = infoOf(slot);
+    if (si?.empty && si.emptyIndex !== null) {
+      const lk = String(si.emptyIndex);
+      if (lk in mappingRef.current) {
+        const k = mappingRef.current[lk];
+        return k ? { key: k } : { skip: true };
+      }
+    }
+    return null;
+  };
+  // 칩에 표시할 유효 키 (명시 / 자동추천 / 없음)
   const effectiveKey = useCallback(
     (slot: number): { key: string; explicit: boolean } | null => {
-      const sk = String(slot);
-      if (sk in mappingRef.current) {
-        const k = mappingRef.current[sk];
-        return k ? { key: k, explicit: true } : null; // "" = 명시적 비움
+      const ex = explicitState(slot);
+      if (ex) return "skip" in ex ? null : { key: ex.key, explicit: true };
+      if (isEmpty(slot)) {
+        const auto = aliasIndex.get(norm(hintOf(slot)));
+        if (auto) return { key: auto, explicit: false };
       }
-      const auto = aliasIndex.get(norm(hintOf(slot)));
-      return auto ? { key: auto, explicit: false } : null;
+      return null;
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [aliasIndex]
   );
 
   const repaint = useCallback(() => {
     for (const [slot, el] of chipEls.current) {
+      const ex = explicitState(slot);
       const eff = effectiveKey(slot);
       const active = activeRef.current === slot;
       let text = "＋";
       let state = "empty";
-      const sk = String(slot);
-      if (sk in mappingRef.current && !mappingRef.current[sk]) {
+      if (ex && "skip" in ex) {
         text = "✕ 비움";
         state = "skip";
       } else if (eff) {
@@ -106,15 +133,17 @@ export function DocxPlacement({
       el.textContent = text;
       el.dataset.state = state;
       el.dataset.active = active ? "1" : "0";
+      el.dataset.empty = isEmpty(slot) ? "1" : "0";
       const hint = hintOf(slot);
       el.title =
         (hint ? `${hint} → ` : "") +
         (state === "empty"
-          ? "미지정"
+          ? "미지정 (클릭해 값 지정)"
           : state === "skip"
             ? "채우지 않음"
             : text);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [effectiveKey, labelOf]);
 
   const buildChips = useCallback(() => {
@@ -205,14 +234,20 @@ export function DocxPlacement({
     t.scrollIntoView({ block: "center", behavior: "smooth" });
   };
 
+  // 항상 a{전체셀번호} 키로 저장. 빈칸의 레거시 키는 정리(중복 방지·마이그레이션).
   function assign(slot: number, key: string) {
-    mappingRef.current = { ...mappingRef.current, [String(slot)]: key };
+    const next = { ...mappingRef.current, [`a${slot}`]: key };
+    const si = infoOf(slot);
+    if (si?.empty && si.emptyIndex !== null) delete next[String(si.emptyIndex)];
+    mappingRef.current = next;
     repaint();
     force();
   }
   function clearExplicit(slot: number) {
     const next = { ...mappingRef.current };
-    delete next[String(slot)];
+    delete next[`a${slot}`];
+    const si = infoOf(slot);
+    if (si?.empty && si.emptyIndex !== null) delete next[String(si.emptyIndex)];
     mappingRef.current = next;
     repaint();
     force();
@@ -354,29 +389,42 @@ export function DocxPlacement({
               {activeSlot === null ? (
                 <p className="text-sm text-muted-foreground">
                   <Sparkles className="mr-1 inline size-3.5" />
-                  문서에서 <strong>빈칸(＋)</strong>을 클릭 → 표준데이터·
+                  <strong>빈칸(＋)</strong> 또는 내용 있는 칸의{" "}
+                  <strong>모서리 점</strong>을 클릭 → 표준데이터·
                   <strong>사진·서명·오늘 날짜</strong> 중 선택. (회색=자동매칭 /
-                  파랑=직접지정)
+                  파랑=직접지정 · 내용칸은 덮어씀)
                 </p>
               ) : (
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="text-sm">
-                    빈칸 <Badge variant="outline">#{activeSlot}</Badge>
+                    {isEmpty(activeSlot) ? "빈칸" : "칸"}{" "}
                     {hintOf(activeSlot) ? (
-                      <span className="ml-1.5 text-muted-foreground">
-                        (앞 라벨: {hintOf(activeSlot)})
+                      <span className="ml-0.5 text-muted-foreground">
+                        ({isEmpty(activeSlot) ? "앞 라벨" : "내용"}:{" "}
+                        {hintOf(activeSlot)})
                       </span>
+                    ) : null}
+                    {!isEmpty(activeSlot) ? (
+                      <span className="ml-1 text-[11px] text-amber-600">· 덮어씀</span>
                     ) : null}
                   </span>
                   <select
-                    value={mappingRef.current[String(activeSlot)] ?? "__auto__"}
+                    value={(() => {
+                      const ex = explicitState(activeSlot);
+                      if (ex) return "skip" in ex ? "" : ex.key;
+                      return "__auto__";
+                    })()}
                     onChange={(e) => {
                       if (e.target.value === "__auto__") clearExplicit(activeSlot);
                       else assign(activeSlot, e.target.value);
                     }}
                     className="h-8 min-w-[14rem] rounded-md border border-input bg-background px-2 text-sm"
                   >
-                    <option value="__auto__">— 자동(라벨매칭)에 맡김 —</option>
+                    {isEmpty(activeSlot) ? (
+                      <option value="__auto__">— 자동(라벨매칭)에 맡김 —</option>
+                    ) : (
+                      <option value="__auto__">— 지정 안 함 —</option>
+                    )}
                     <option value="">✕ 채우지 않음</option>
                     {choices.map((c) => (
                       <option key={c.key} value={c.key}>
@@ -457,6 +505,14 @@ export function DocxPlacement({
           white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
           border: 1px dashed #94a3b8; background: #f1f5f9; color: #475569;
         }
+        /* 내용 있는 칸: 모서리에 작게, 평소 흐릿 → hover/지정시 선명 (내용 안 가림) */
+        .slot-chip[data-empty="0"] {
+          left: auto; right: 1px; top: 1px; max-width: 70%;
+          padding: 0 3px; font-size: 10px; opacity: 0.35;
+        }
+        .slot-chip[data-empty="0"]:hover,
+        .slot-chip[data-empty="0"][data-state="set"],
+        .slot-chip[data-empty="0"][data-state="skip"] { opacity: 1; }
         .slot-chip[data-state="auto"] { border-style: solid; border-color: #cbd5e1; background: #e2e8f0; color: #334155; }
         .slot-chip[data-state="set"]  { border-style: solid; border-color: #2563eb; background: #dbeafe; color: #1d4ed8; font-weight: 600; }
         .slot-chip[data-state="skip"] { border-color: #fca5a5; background: #fef2f2; color: #b91c1c; }
