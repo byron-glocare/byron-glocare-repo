@@ -127,25 +127,24 @@ export function DocxPlacement({
     while ((node = walker.nextNode()))
       if (/⟦S\d+⟧/.test(node.nodeValue || "")) targets.push(node as Text);
     for (const textNode of targets) {
-      const parent = textNode.parentNode;
-      if (!parent) continue;
-      const parts = (textNode.nodeValue || "").split(/(⟦S\d+⟧)/);
-      const frag = document.createDocumentFragment();
-      for (const part of parts) {
-        const mm = part.match(/^⟦S(\d+)⟧$/);
-        if (mm) {
-          const slot = Number(mm[1]);
-          const btn = document.createElement("button");
-          btn.type = "button";
-          btn.className = "slot-chip";
-          btn.dataset.slot = String(slot);
-          frag.appendChild(btn);
-          chipEls.current.set(slot, btn);
-        } else if (part) {
-          frag.appendChild(document.createTextNode(part));
-        }
-      }
-      parent.replaceChild(frag, textNode);
+      const mm = (textNode.nodeValue || "").match(/⟦S(\d+)⟧/);
+      if (!mm) continue;
+      const slot = Number(mm[1]);
+      // 마커 텍스트는 제거(흐름에서 빼야 칸이 안 늘어남)
+      textNode.nodeValue = (textNode.nodeValue || "").replace(/⟦S\d+⟧/g, "");
+      // 칩을 담을 칸(td/th) 찾기 → relative 로 만들고 absolute 칩을 띄움
+      let host: HTMLElement | null = textNode.parentElement;
+      while (host && host.tagName !== "TD" && host.tagName !== "TH")
+        host = host.parentElement;
+      const anchor = host ?? textNode.parentElement;
+      if (!anchor) continue;
+      anchor.style.position = "relative";
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "slot-chip";
+      btn.dataset.slot = String(slot);
+      anchor.appendChild(btn);
+      chipEls.current.set(slot, btn);
     }
     repaint();
   }, [repaint]);
@@ -438,19 +437,18 @@ export function DocxPlacement({
         .docx-edit-host .docx-wrapper > section.docx, .docx-preview-host .docx-wrapper > section.docx {
           margin: 0 auto 1rem; box-shadow: 0 1px 6px rgba(0,0,0,0.2); background: #fff;
         }
-        /* Word 원본이 고정 너비 표 → docx-preview auto 레이아웃을 강제 고정(칩이 칸을 못 늘림).
-           docx-preview 가 나중에 주입하는 스타일/인라인보다 우선하도록 !important. */
-        .docx-edit-host .docx-wrapper table, .docx-preview-host .docx-wrapper table {
-          table-layout: fixed !important;
-        }
-        .docx-edit-host .docx-wrapper td, .docx-edit-host .docx-wrapper th,
+        /* 채움 미리보기(실제 텍스트)는 Word 처럼 칸 고정 */
+        .docx-preview-host .docx-wrapper table { table-layout: fixed !important; }
         .docx-preview-host .docx-wrapper td, .docx-preview-host .docx-wrapper th {
           overflow: hidden !important; word-break: break-word;
         }
+        /* 편집기 칩: 칸 위에 absolute 로 띄워 레이아웃에서 제외 → 표가 안 늘어남.
+           빈 양식 그대로 렌더되고 칩만 오버레이. */
         .slot-chip {
-          display: inline-block; max-width: 100%; min-width: 1.25rem; padding: 0 5px; margin: 0 1px;
-          font-size: 11px; line-height: 1.5; border-radius: 4px; cursor: pointer;
-          vertical-align: bottom; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+          position: absolute; left: 1px; top: 1px; z-index: 3;
+          max-width: calc(100% - 2px); padding: 0 4px;
+          font-size: 11px; line-height: 1.4; border-radius: 4px; cursor: pointer;
+          white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
           border: 1px dashed #94a3b8; background: #f1f5f9; color: #475569;
         }
         .slot-chip[data-state="auto"] { border-style: solid; border-color: #cbd5e1; background: #e2e8f0; color: #334155; }
