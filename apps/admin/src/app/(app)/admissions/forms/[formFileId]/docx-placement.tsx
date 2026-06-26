@@ -354,8 +354,9 @@ export function DocxPlacement({
               {activeSlot === null ? (
                 <p className="text-sm text-muted-foreground">
                   <Sparkles className="mr-1 inline size-3.5" />
-                  문서에서 <strong>＋</strong> 또는 값이 표시된 빈칸을 클릭하세요.
-                  (회색=자동매칭 / 파랑=직접지정)
+                  문서에서 <strong>빈칸(＋)</strong>을 클릭 → 표준데이터·
+                  <strong>사진·서명·오늘 날짜</strong> 중 선택. (회색=자동매칭 /
+                  파랑=직접지정)
                 </p>
               ) : (
                 <div className="flex flex-wrap items-center gap-2">

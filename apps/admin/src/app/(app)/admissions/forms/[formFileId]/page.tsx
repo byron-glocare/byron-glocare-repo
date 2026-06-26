@@ -19,9 +19,7 @@ import {
   type RawOverlay,
   type FieldChoice,
 } from "./overlay-picker";
-import { DocxMapper } from "./docx-mapper";
 import { DocxPlacement } from "./docx-placement";
-import { detectDocxFields, type DocxFieldCandidate } from "@/lib/docx/fill";
 
 export const dynamic = "force-dynamic";
 
@@ -97,20 +95,6 @@ export default async function FormDocDetailPage({
     (form.mime_type ?? "").toLowerCase().includes("word") ||
     form.file_url.toLowerCase().includes(".docx");
 
-  // docx 양식이면 채움 가능한 칸(라벨) 감지
-  let docxFields: DocxFieldCandidate[] = [];
-  if (isDocx) {
-    try {
-      const r = await fetch(form.file_url);
-      if (r.ok) docxFields = detectDocxFields(Buffer.from(await r.arrayBuffer()));
-    } catch {
-      docxFields = [];
-    }
-  }
-  const savedMapping =
-    form.label_mapping && typeof form.label_mapping === "object"
-      ? (form.label_mapping as Record<string, string>)
-      : {};
   const savedSlots =
     form.slot_mapping && typeof form.slot_mapping === "object"
       ? (form.slot_mapping as Record<string, string>)
@@ -120,14 +104,21 @@ export default async function FormDocDetailPage({
     : [];
   // 연결 후보 = 전체 활성 표준데이터(카탈로그) + 양식의 서술형 질문.
   //   (필요 표준데이터를 미리 체크할 필요 없이, 박스를 어디든 연결 가능)
+  const catChoices: FieldChoice[] = (catalogRows ?? []).map((c) => ({
+    key: c.key,
+    label: c.label_ko,
+    aliases: [c.label_ko, ...((c.aliases as string[] | null) ?? [])],
+  }));
+  // 사진·서명은 드롭다운 맨 위로 빼서 잘 보이게 (이미지 배치)
+  const isImageChoice = (c: FieldChoice) =>
+    /photo|사진|signature|서명|sign/i.test(c.key) || /사진|서명/.test(c.label);
+  const imageChoices = catChoices.filter(isImageChoice);
+  const restChoices = catChoices.filter((c) => !isImageChoice(c));
   const overlayChoices: FieldChoice[] = [
-    // 특수: 학생 데이터가 아닌 생성 시 자동값 (날짜 등). aliases 비움 = 라벨 자동매칭 안 함.
+    // 빠른 선택: 생성 시 자동값(오늘 날짜) + 이미지(사진·서명). aliases 비움 = 라벨 자동매칭 안 함.
     { key: "__today__", label: "📅 오늘 날짜(생성일)", aliases: [] },
-    ...(catalogRows ?? []).map((c) => ({
-      key: c.key,
-      label: c.label_ko,
-      aliases: [c.label_ko, ...((c.aliases as string[] | null) ?? [])],
-    })),
+    ...imageChoices,
+    ...restChoices,
     ...essayQs.map((q, i) => ({
       key: `essay:${i}`,
       label: `[서술형] ${q.question_ko ?? `질문 ${i + 1}`}`,
@@ -174,23 +165,13 @@ export default async function FormDocDetailPage({
         />
 
         {isDocx ? (
-          <>
-            <Card className="mt-6 p-6">
-              <DocxPlacement
-                formFileId={form.id}
-                choices={overlayChoices}
-                savedSlots={savedSlots}
-              />
-            </Card>
-            <Card className="mt-6 p-6">
-              <DocxMapper
-                formFileId={form.id}
-                fields={docxFields}
-                choices={overlayChoices}
-                saved={savedMapping}
-              />
-            </Card>
-          </>
+          <Card className="mt-6 p-6">
+            <DocxPlacement
+              formFileId={form.id}
+              choices={overlayChoices}
+              savedSlots={savedSlots}
+            />
+          </Card>
         ) : isPdf ? (
           <Card className="mt-6 p-6">
             <OverlayPicker
