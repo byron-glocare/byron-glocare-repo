@@ -59,7 +59,7 @@ export default async function FinalPage({
     new Set(applications.map((a) => a.admission_spec_id))
   );
 
-  const [{ data: specs }, { data: vals }, { data: files }] = await Promise.all([
+  const [{ data: specs }, { data: files }] = await Promise.all([
     specIds.length > 0
       ? supabase
           .from("study_admission_specs")
@@ -74,23 +74,12 @@ export default async function FinalPage({
           }>,
         }),
     supabase
-      .from("study_student_data_values")
-      .select("data_type_key")
-      .eq("student_id", id),
-    supabase
       .from("study_student_submission_files")
       .select("submission_id")
       .eq("student_id", id),
   ]);
   const specMap = new Map((specs ?? []).map((s) => [s.id, s]));
-  const filledKeys = new Set((vals ?? []).map((v) => v.data_type_key));
   const uploadedSubs = new Set((files ?? []).map((f) => f.submission_id));
-
-  // 부족 항목 라벨용 — 표준데이터 key → 라벨
-  const { data: dtRows } = await supabase
-    .from("study_student_data_types")
-    .select("key, label_ko");
-  const labelMap = new Map((dtRows ?? []).map((d) => [d.key, d.label_ko]));
 
   // 확정된 작성서류 — (form_file_id::application_id) → {path, finalizedAt}
   const { data: finalDocs } = await supabase
@@ -165,40 +154,9 @@ export default async function FinalPage({
     const writeRows = docForms.map((doc) => {
       const file =
         byKey.get(doc.key) ?? byName.get(normFormName(doc.name_ko)) ?? null;
-      const missing = file
-        ? (file.required_data_type_keys ?? [])
-            .filter((k) => !filledKeys.has(k))
-            .map((k) => ({ key: k, label: labelMap.get(k) ?? k }))
-        : [];
-      const ready = file ? missing.length === 0 : false;
-      // 좌표 오버레이가 있는 PDF 양식 → 원본에 채운 PDF 생성 (미리보기 가능)
-      const overlays = Array.isArray(file?.field_overlays)
-        ? (file!.field_overlays as Array<{
-            key: string;
-            kind?: string;
-            source?: string;
-            inputLabel?: string;
-            inputType?: string;
-            datePart?: "year" | "month" | "day";
-          }>)
-        : [];
-      // 생성 시 입력받을 칸 (kind=text, source=input). 년/월/일 분리 박스는
-      // inputLabel 로 한 입력을 공유 → 날짜 한 번만 받음.
-      const seenInput = new Set<string>();
-      const inputFields: { key: string; label: string; type: string }[] = [];
-      for (const o of overlays) {
-        if ((o.kind ?? "text") !== "text" || o.source !== "input") continue;
-        const fieldKey = o.datePart
-          ? `datelabel:${o.inputLabel || "작성일"}`
-          : o.key;
-        if (seenInput.has(fieldKey)) continue;
-        seenInput.add(fieldKey);
-        inputFields.push({
-          key: fieldKey,
-          label: o.inputLabel || "입력",
-          type: o.datePart ? "date" : o.inputType === "text" ? "text" : "date",
-        });
-      }
+      const overlayCount = Array.isArray(file?.field_overlays)
+        ? (file!.field_overlays as unknown[]).length
+        : 0;
       const isPdf = file
         ? (file.mime_type ?? "").toLowerCase().includes("pdf") ||
           file.file_name.toLowerCase().endsWith(".pdf") ||
@@ -211,16 +169,8 @@ export default async function FinalPage({
         : false;
       const engine: "pdf" | "docx" = isPdf ? "pdf" : "docx";
       // PDF: 좌표 오버레이 필요 / DOCX: 토큰 자동채움(오버레이 불필요)
-      const canFill = !!file && ((isPdf && overlays.length > 0) || isDocx);
-      return {
-        doc,
-        file,
-        ready,
-        missing,
-        canFill,
-        engine,
-        inputFields: canFill && isPdf ? inputFields : [],
-      };
+      const canFill = !!file && ((isPdf && overlayCount > 0) || isDocx);
+      return { doc, file, canFill, engine };
     });
 
     const submitDocs = (subs ?? []).filter((s) => {
@@ -286,7 +236,7 @@ export default async function FinalPage({
                 </p>
               ) : (
                 <ul className="space-y-1.5">
-                  {writeRows.map(({ doc, file, ready, missing, canFill, engine, inputFields }) => (
+                  {writeRows.map(({ doc, file, canFill, engine }) => (
                     <li
                       key={doc.key + doc.name_ko}
                       className="flex flex-wrap items-start justify-between gap-2 rounded-md border border-slate-100 bg-slate-50/50 px-3 py-2"
@@ -300,37 +250,13 @@ export default async function FinalPage({
                             <span className="rounded-full bg-slate-200 px-2 py-0.5 text-[11px] text-slate-600">
                               {tr(locale, "양식 미등록", "Chưa có mẫu")}
                             </span>
-                          ) : ready ? (
-                            <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] text-emerald-700">
-                              {tr(locale, "정보 충분", "Đủ thông tin")}
-                            </span>
-                          ) : (
-                            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] text-amber-700">
-                              {tr(locale, "정보 부족", "Thiếu thông tin")}
-                            </span>
-                          )}
+                          ) : null}
                           {canFill ? (
                             <span className="rounded-full bg-sky-100 px-2 py-0.5 text-[11px] text-sky-700">
                               {tr(locale, "원본양식 채움", "Điền vào mẫu gốc")}
                             </span>
                           ) : null}
                         </div>
-                        {file && !ready && missing.length > 0 ? (
-                          <div className="flex flex-wrap items-center gap-1">
-                            <span className="text-[11px] text-amber-700">
-                              {tr(locale, "부족 (클릭→입력):", "Thiếu (bấm→nhập):")}
-                            </span>
-                            {missing.map((m) => (
-                              <Link
-                                key={m.key}
-                                href={`${base}/data#field-${m.key}`}
-                                className="rounded border border-amber-300 bg-amber-50 px-1.5 py-0.5 text-[11px] text-amber-800 hover:bg-amber-100"
-                              >
-                                {m.label}
-                              </Link>
-                            ))}
-                          </div>
-                        ) : null}
                         {file ? (
                           <a
                             href={file.file_url}
@@ -358,7 +284,6 @@ export default async function FinalPage({
                                   : `${base}/final/docx-fill?form=${file.id}&app=${app.id}`
                                 : null
                             }
-                            inputFields={inputFields}
                             finalized={
                               finalMap.get(`${file.id}::${app.id}`) ?? null
                             }
