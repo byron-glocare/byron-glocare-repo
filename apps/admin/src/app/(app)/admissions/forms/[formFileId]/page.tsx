@@ -20,6 +20,7 @@ import {
   type FieldChoice,
 } from "./overlay-picker";
 import { DocxMapper } from "./docx-mapper";
+import { DocxPlacement } from "./docx-placement";
 import { detectDocxFields, type DocxFieldCandidate } from "@/lib/docx/fill";
 
 export const dynamic = "force-dynamic";
@@ -42,7 +43,7 @@ export default async function FormDocDetailPage({
   const { data: form } = await supabase
     .from("study_admission_form_files")
     .select(
-      "id, university_id, key, name_ko, file_url, file_name, mime_type, notes, uploaded_at, is_current, department_name, required_data_type_keys, applies_to_terms, applies_to_department_ids, essay_questions, field_overlays, label_mapping"
+      "id, university_id, key, name_ko, file_url, file_name, mime_type, notes, uploaded_at, is_current, department_name, required_data_type_keys, applies_to_terms, applies_to_department_ids, essay_questions, field_overlays, label_mapping, slot_mapping"
     )
     .eq("id", formFileId)
     .maybeSingle();
@@ -110,6 +111,10 @@ export default async function FormDocDetailPage({
     form.label_mapping && typeof form.label_mapping === "object"
       ? (form.label_mapping as Record<string, string>)
       : {};
+  const savedSlots =
+    form.slot_mapping && typeof form.slot_mapping === "object"
+      ? (form.slot_mapping as Record<string, string>)
+      : {};
   const essayQs = Array.isArray(form.essay_questions)
     ? (form.essay_questions as Array<{ question_ko?: string }>)
     : [];
@@ -167,14 +172,23 @@ export default async function FormDocDetailPage({
         />
 
         {isDocx ? (
-          <Card className="mt-6 p-6">
-            <DocxMapper
-              formFileId={form.id}
-              fields={docxFields}
-              choices={overlayChoices}
-              saved={savedMapping}
-            />
-          </Card>
+          <>
+            <Card className="mt-6 p-6">
+              <DocxPlacement
+                formFileId={form.id}
+                choices={overlayChoices}
+                savedSlots={savedSlots}
+              />
+            </Card>
+            <Card className="mt-6 p-6">
+              <DocxMapper
+                formFileId={form.id}
+                fields={docxFields}
+                choices={overlayChoices}
+                saved={savedMapping}
+              />
+            </Card>
+          </>
         ) : isPdf ? (
           <Card className="mt-6 p-6">
             <OverlayPicker

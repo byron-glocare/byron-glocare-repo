@@ -60,7 +60,11 @@ export async function POST(req: Request) {
   const buf = Buffer.from(await file.arrayBuffer());
   let result: ReturnType<typeof tokenizeAndFillDocx>;
   try {
-    result = tokenizeAndFillDocx(buf, (n) => matchMap.get(n) ?? null);
+    result = tokenizeAndFillDocx(buf, ({ labelNorm }) => {
+      if (!labelNorm) return null;
+      const mm = matchMap.get(labelNorm);
+      return mm ? { value: mm.dummy, viaLabel: true } : null;
+    });
   } catch (e) {
     return new NextResponse(e instanceof Error ? e.message : "처리 실패", {
       status: 500,

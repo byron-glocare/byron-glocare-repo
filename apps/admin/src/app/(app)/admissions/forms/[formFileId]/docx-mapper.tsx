@@ -80,7 +80,9 @@ export function DocxMapper({
   async function onPreview() {
     setPreviewBusy(true);
     try {
-      const r = await previewDocxAction(formFileId, buildMapping());
+      const r = await previewDocxAction(formFileId, {
+        labelOverride: buildMapping(),
+      });
       if (!r.ok) {
         toast.error("미리보기 실패", { description: r.error });
         return;

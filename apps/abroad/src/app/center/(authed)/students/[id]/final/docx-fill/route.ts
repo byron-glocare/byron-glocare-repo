@@ -18,7 +18,7 @@ import {
   fillDocx,
   swapImagesByTag,
   normLabel,
-  type LabelMatch,
+  type SlotResolve,
 } from "@/lib/docx/fill";
 import type { Json } from "@/types/database";
 
@@ -81,7 +81,9 @@ export async function GET(
       .maybeSingle(),
     supabase
       .from("study_admission_form_files")
-      .select("id, name_ko, file_name, file_url, mime_type, label_mapping")
+      .select(
+        "id, name_ko, file_name, file_url, mime_type, label_mapping, slot_mapping"
+      )
       .eq("id", formFileId)
       .maybeSingle(),
   ]);
@@ -121,21 +123,33 @@ export async function GET(
     rawValMap.set(dv.data_type_key, dv.value);
   }
 
-  // 양식별 저장 매핑(관리자 확정) 우선, 없으면 카탈로그 자동매칭 폴백
+  // 슬롯 매핑(빈칸 직접 배치) 우선 → 라벨 매핑 → 카탈로그 자동매칭 폴백
   const savedMap =
     form.label_mapping && typeof form.label_mapping === "object"
       ? (form.label_mapping as Record<string, string>)
       : {};
-  const match = (n: string): LabelMatch | null => {
-    let key: string | undefined;
-    if (n in savedMap) {
-      key = savedMap[n];
-      if (!key) return null; // 명시적으로 "채우지 않음"
-    } else {
-      key = catMap.get(n);
+  const slotMap =
+    form.slot_mapping && typeof form.slot_mapping === "object"
+      ? (form.slot_mapping as Record<string, string>)
+      : {};
+  const resolve: SlotResolve = ({ slot, labelNorm }) => {
+    const sk = String(slot);
+    if (sk in slotMap) {
+      const k = slotMap[sk];
+      if (!k) return null; // 명시적으로 "채우지 않음"
+      return { value: valMap.get(k) ?? "", viaLabel: false };
     }
-    if (!key) return null;
-    return { value: valMap.get(key) ?? "" };
+    if (labelNorm) {
+      let key: string | undefined;
+      if (labelNorm in savedMap) {
+        key = savedMap[labelNorm];
+        if (!key) return null;
+      } else {
+        key = catMap.get(labelNorm);
+      }
+      if (key) return { value: valMap.get(key) ?? "", viaLabel: true };
+    }
+    return null;
   };
 
   let buf: Buffer;
@@ -161,7 +175,7 @@ export async function GET(
     });
     const swapped = zip.generate({ type: "nodebuffer" }) as Buffer;
     // 2) 텍스트 토큰 채움
-    filled = fillDocx(swapped, match).filled;
+    filled = fillDocx(swapped, resolve).filled;
   } catch (e) {
     return new Response(
       `채움 실패: ${e instanceof Error ? e.message : String(e)}`,

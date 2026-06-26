@@ -4,7 +4,13 @@ import { revalidatePath } from "next/cache";
 
 import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { isGlocareAdmin } from "@/lib/admin-guard";
-import { tokenizeAndFillDocx } from "@/lib/docx/fill";
+import {
+  tokenizeAndFillDocx,
+  injectSlotMarkers,
+  normLabel,
+  type SlotResolve,
+  type SlotInfo,
+} from "@/lib/docx/fill";
 
 export type ActionResult = { ok: true } | { ok: false; error: string };
 
@@ -28,55 +34,148 @@ function sampleForKey(key: string): string {
   return key;
 }
 
+async function requireAdmin() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user || !isGlocareAdmin(user)) return null;
+  return user;
+}
+
+/** 양식의 라벨→표준데이터 자동매칭 맵(정규화라벨 → key) 로드 */
+async function loadCatalogMap(
+  admin: ReturnType<typeof createAdminClient>
+): Promise<Map<string, string>> {
+  const { data: types } = await admin
+    .from("study_student_data_types")
+    .select("key, label_ko, label_vi, aliases")
+    .eq("is_active", true);
+  const cat = new Map<string, string>();
+  for (const t of types ?? []) {
+    const add = (s: string | null | undefined) => {
+      if (s && s.trim() && !cat.has(normLabel(s))) cat.set(normLabel(s), t.key);
+    };
+    add(t.label_ko);
+    add(t.label_vi);
+    const aliases = Array.isArray(t.aliases) ? (t.aliases as string[]) : [];
+    for (const a of aliases) add(a);
+  }
+  return cat;
+}
+
+async function fetchFormBuffer(
+  admin: ReturnType<typeof createAdminClient>,
+  formFileId: string
+): Promise<{ buf: Buffer } | { error: string }> {
+  const { data: form } = await admin
+    .from("study_admission_form_files")
+    .select("file_url")
+    .eq("id", formFileId)
+    .maybeSingle();
+  if (!form) return { error: "양식을 찾을 수 없습니다." };
+  try {
+    const r = await fetch(form.file_url);
+    if (!r.ok) throw new Error(`원본 다운로드 실패 (${r.status})`);
+    return { buf: Buffer.from(await r.arrayBuffer()) };
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : "다운로드 실패" };
+  }
+}
+
 /**
- * docx 작성서류 양식의 라벨 매핑 저장.
- *   mapping: { 정규화라벨: std_key }  (값 "" = 채우지 않음)
+ * 라벨→표준데이터 매핑 저장 (라벨 표 UI 용, 폴백).
+ *   mapping: { 정규화라벨: std_key } (값 "" = 채우지 않음)
  */
 export async function saveDocxMappingAction(
   formFileId: string,
   mapping: Record<string, string>
 ): Promise<ActionResult> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user || !isGlocareAdmin(user))
-    return { ok: false, error: "권한이 없습니다." };
-
+  if (!(await requireAdmin())) return { ok: false, error: "권한이 없습니다." };
   const admin = createAdminClient();
   const { error } = await admin
     .from("study_admission_form_files")
     .update({ label_mapping: mapping })
     .eq("id", formFileId);
   if (error) return { ok: false, error: error.message };
-
   revalidatePath(`/admissions/forms/${formFileId}`);
   return { ok: true };
 }
 
 /**
- * 현재 매핑으로 더미값을 채운 docx 를 base64 로 반환.
- *   클라이언트가 docx-preview(renderAsync)로 Word 에 가깝게 렌더.
- *   mapping: { 정규화라벨: std_key }
+ * 빈칸(슬롯)→표준데이터 배치 매핑 저장 (미리보기 클릭 배치 UI 용).
+ *   mapping: { "빈칸인덱스": std_key } (값 "" = 채우지 않음)
+ */
+export async function saveSlotMappingAction(
+  formFileId: string,
+  mapping: Record<string, string>
+): Promise<ActionResult> {
+  if (!(await requireAdmin())) return { ok: false, error: "권한이 없습니다." };
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("study_admission_form_files")
+    .update({ slot_mapping: mapping })
+    .eq("id", formFileId);
+  if (error) return { ok: false, error: error.message };
+  revalidatePath(`/admissions/forms/${formFileId}`);
+  return { ok: true };
+}
+
+/**
+ * 배치 편집기용 — 모든 빈칸에 슬롯 마커(⟦S0⟧…)를 박은 docx 를 base64 로 반환.
+ *   클라이언트가 docx-preview 로 렌더 → 마커를 클릭 가능한 칩으로 치환.
+ */
+export async function placementDocxAction(
+  formFileId: string
+): Promise<
+  { ok: true; base64: string; slots: SlotInfo[] } | { ok: false; error: string }
+> {
+  if (!(await requireAdmin())) return { ok: false, error: "권한이 없습니다." };
+  const admin = createAdminClient();
+  const r = await fetchFormBuffer(admin, formFileId);
+  if ("error" in r) return { ok: false, error: r.error };
+  try {
+    const { buf, slots } = injectSlotMarkers(r.buf);
+    return { ok: true, base64: buf.toString("base64"), slots };
+  } catch (e) {
+    return {
+      ok: false,
+      error: `배치 편집 준비 실패: ${e instanceof Error ? e.message : String(e)}`,
+    };
+  }
+}
+
+/**
+ * 현재 매핑(슬롯 + 라벨 폴백 + 카탈로그)으로 더미값을 채운 docx 를 base64 로 반환.
+ *   slotMapping: 편집 중인(미저장) 슬롯 매핑.
+ *   labelOverride: 라벨 표에서 편집 중인(미저장) 라벨 매핑(있으면 DB 값 대신 사용).
  */
 export async function previewDocxAction(
   formFileId: string,
-  mapping: Record<string, string>
+  opts: {
+    slotMapping?: Record<string, string>;
+    labelOverride?: Record<string, string>;
+  } = {}
 ): Promise<{ ok: true; base64: string } | { ok: false; error: string }> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user || !isGlocareAdmin(user))
-    return { ok: false, error: "권한이 없습니다." };
-
+  if (!(await requireAdmin())) return { ok: false, error: "권한이 없습니다." };
   const admin = createAdminClient();
-  const { data: form } = await admin
-    .from("study_admission_form_files")
-    .select("file_url")
-    .eq("id", formFileId)
-    .maybeSingle();
+  const slotMapping = opts.slotMapping ?? {};
+
+  const [{ data: form }, catMap] = await Promise.all([
+    admin
+      .from("study_admission_form_files")
+      .select("file_url, label_mapping")
+      .eq("id", formFileId)
+      .maybeSingle(),
+    loadCatalogMap(admin),
+  ]);
   if (!form) return { ok: false, error: "양식을 찾을 수 없습니다." };
+
+  const labelMap =
+    opts.labelOverride ??
+    (form.label_mapping && typeof form.label_mapping === "object"
+      ? (form.label_mapping as Record<string, string>)
+      : {});
 
   let buf: Buffer;
   try {
@@ -87,12 +186,28 @@ export async function previewDocxAction(
     return { ok: false, error: e instanceof Error ? e.message : "다운로드 실패" };
   }
 
+  const resolve: SlotResolve = ({ slot, labelNorm }) => {
+    const sk = String(slot);
+    if (sk in slotMapping) {
+      const k = slotMapping[sk];
+      if (!k) return null;
+      return { value: sampleForKey(k), viaLabel: false };
+    }
+    if (labelNorm) {
+      let k: string | undefined;
+      if (labelNorm in labelMap) {
+        k = labelMap[labelNorm];
+        if (!k) return null;
+      } else {
+        k = catMap.get(labelNorm);
+      }
+      if (k) return { value: sampleForKey(k), viaLabel: true };
+    }
+    return null;
+  };
+
   try {
-    const filled = tokenizeAndFillDocx(buf, (n) => {
-      const key = mapping[n];
-      if (!key) return null;
-      return { dummy: sampleForKey(key) };
-    }).filled;
+    const filled = tokenizeAndFillDocx(buf, resolve).filled;
     return { ok: true, base64: filled.toString("base64") };
   } catch (e) {
     return {

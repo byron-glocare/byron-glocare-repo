@@ -16,6 +16,15 @@ export const normLabel = (s: string): string =>
 
 export type LabelMatch = { value: string };
 
+/**
+ * 슬롯 값 해석기. slot=빈칸 번호(문서순), labelNorm=추론된 앞 라벨(없으면 null).
+ *   viaLabel=true 면 라벨 폴백 매칭(라벨 1개=값 1개 규칙에 사용).
+ */
+export type SlotResolve = (ctx: {
+  slot: number;
+  labelNorm: string | null;
+}) => { value: string; viaLabel: boolean } | null;
+
 const cellText = (tc: string): string =>
   (tc.match(/<w:t[ >][\s\S]*?<\/w:t>/g) || [])
     .map((t) => t.replace(/<[^>]+>/g, ""))
@@ -53,37 +62,39 @@ function transformValueCell(raw: string, tokenKey: string): string {
   return r;
 }
 
+/** 슬롯(빈 셀)을 순서대로 돌며 resolve 로 값 결정 → 토큰 주입. (admin fill.ts 와 동일 규칙) */
 function injectTokens(
   xml: string,
-  match: (normalizedLabel: string) => LabelMatch | null
+  resolve: SlotResolve
 ): { xml: string; values: Record<string, string>; matchedCount: number } {
   const cells: { raw: string; start: number; end: number }[] = [];
   const re = /<w:tc>[\s\S]*?<\/w:tc>/g;
   let m: RegExpExecArray | null;
   while ((m = re.exec(xml)))
     cells.push({ raw: m[0], start: m.index, end: m.index + m[0].length });
+  const texts = cells.map((c) => cellText(c.raw));
 
   const plan = new Map<number, { key: string; value: string }>();
-  const used = new Set<number>();
+  const usedLabel = new Set<number>();
   let n = 0;
+  let slot = -1;
   for (let i = 0; i < cells.length; i++) {
-    const label = cellText(cells[i].raw);
-    if (!label) continue; // 빈 셀은 라벨 아님
-    let valueIdx = -1;
-    for (let j = i + 1; j < cells.length; j++) {
-      if (used.has(j)) continue;
-      if (cellText(cells[j].raw) === "") {
-        valueIdx = j;
+    if (texts[i] !== "") continue; // 값 슬롯 = 빈 셀만
+    slot++;
+    let labelIdx = -1;
+    for (let j = i - 1; j >= 0; j--) {
+      if (texts[j] !== "") {
+        labelIdx = j;
         break;
       }
     }
-    if (valueIdx < 0) continue;
-    // 매핑되면(관리자 수동 매핑 포함) looksLikeLabel 필터를 우회해 채운다.
-    const mm = match(normLabel(label));
-    if (mm) {
+    const labelNorm =
+      labelIdx >= 0 && !usedLabel.has(labelIdx) ? normLabel(texts[labelIdx]) : null;
+    const res = resolve({ slot, labelNorm });
+    if (res) {
       const key = `f${n++}`;
-      plan.set(valueIdx, { key, value: mm.value });
-      used.add(valueIdx);
+      plan.set(i, { key, value: res.value });
+      if (res.viaLabel && labelIdx >= 0) usedLabel.add(labelIdx);
     }
   }
 
@@ -141,16 +152,16 @@ export async function swapImagesByTag(
   return swapped;
 }
 
-/** docx 버퍼 → 표준데이터 매칭 라벨에 학생 실제값 치환. */
+/** docx 버퍼 → 슬롯 해석기로 학생 실제값 치환. */
 export function fillDocx(
   srcBuf: Buffer,
-  match: (normalizedLabel: string) => LabelMatch | null
+  resolve: SlotResolve
 ): { filled: Buffer; matchedCount: number } {
   const zip = new PizZip(srcBuf);
   const docXml = zip.file("word/document.xml");
   if (!docXml) throw new Error("올바른 .docx 가 아닙니다.");
 
-  const { xml, values, matchedCount } = injectTokens(docXml.asText(), match);
+  const { xml, values, matchedCount } = injectTokens(docXml.asText(), resolve);
   zip.file("word/document.xml", xml);
 
   const doc = new Docxtemplater(zip, {

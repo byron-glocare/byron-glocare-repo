@@ -270,6 +270,8 @@ export type StudyAdmissionFormFile = {
   field_overlays: FormFieldOverlay[];
   /** docx 토큰 채움용 라벨→표준데이터 key 매핑 (0038). {정규화라벨: key}. */
   label_mapping: Record<string, string>;
+  /** docx 빈칸(슬롯)→표준데이터 key 매핑 (0040). {빈칸인덱스: key}. "어디에" 명시. */
+  slot_mapping: Record<string, string>;
   created_at: string;
   updated_at: string;
 };
