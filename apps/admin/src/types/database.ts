@@ -1589,6 +1589,13 @@ export type Database = {
           }>;
           label_mapping: Record<string, string>;
           slot_mapping: Record<string, string>;
+          is_essay: boolean;
+          essay_sections: Array<{
+            id: string;
+            label: string;
+            prompt: string;
+            basis_keys: string[];
+          }>;
           created_at: string;
           updated_at: string;
         };
@@ -1651,6 +1658,13 @@ export type Database = {
           }>;
           label_mapping?: Record<string, string>;
           slot_mapping?: Record<string, string>;
+          is_essay?: boolean;
+          essay_sections?: Array<{
+            id: string;
+            label: string;
+            prompt: string;
+            basis_keys: string[];
+          }>;
           created_at?: string;
           updated_at?: string;
         };

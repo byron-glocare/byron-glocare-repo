@@ -20,6 +20,8 @@ import {
   type FieldChoice,
 } from "./overlay-picker";
 import { DocxPlacement } from "./docx-placement";
+import { EssayConfig } from "./essay-config";
+import type { EssaySection } from "./docx-actions";
 
 export const dynamic = "force-dynamic";
 
@@ -41,7 +43,7 @@ export default async function FormDocDetailPage({
   const { data: form } = await supabase
     .from("study_admission_form_files")
     .select(
-      "id, university_id, key, name_ko, file_url, file_name, mime_type, notes, uploaded_at, is_current, department_name, required_data_type_keys, applies_to_terms, applies_to_department_ids, essay_questions, field_overlays, label_mapping, slot_mapping"
+      "id, university_id, key, name_ko, file_url, file_name, mime_type, notes, uploaded_at, is_current, department_name, required_data_type_keys, applies_to_terms, applies_to_department_ids, essay_questions, field_overlays, label_mapping, slot_mapping, is_essay, essay_sections"
     )
     .eq("id", formFileId)
     .maybeSingle();
@@ -99,11 +101,11 @@ export default async function FormDocDetailPage({
     form.slot_mapping && typeof form.slot_mapping === "object"
       ? (form.slot_mapping as Record<string, string>)
       : {};
-  const essayQs = Array.isArray(form.essay_questions)
-    ? (form.essay_questions as Array<{ question_ko?: string }>)
+  const isEssay = form.is_essay === true;
+  const essaySections = Array.isArray(form.essay_sections)
+    ? (form.essay_sections as EssaySection[])
     : [];
-  // 연결 후보 = 전체 활성 표준데이터(카탈로그) + 양식의 서술형 질문.
-  //   (필요 표준데이터를 미리 체크할 필요 없이, 박스를 어디든 연결 가능)
+  // 연결 후보 = 전체 활성 표준데이터(카탈로그) + 서술형 문항(답변 칸 매핑용).
   const catChoices: FieldChoice[] = (catalogRows ?? []).map((c) => ({
     key: c.key,
     label: c.label_ko,
@@ -114,16 +116,18 @@ export default async function FormDocDetailPage({
     /photo|사진|signature|서명|sign/i.test(c.key) || /사진|서명/.test(c.label);
   const imageChoices = catChoices.filter(isImageChoice);
   const restChoices = catChoices.filter((c) => !isImageChoice(c));
+  // 서술형 기반에 쓸 표준데이터 선택지(파일·이미지 제외한 입력 항목)
+  const basisChoices = catChoices.map((c) => ({ key: c.key, label: c.label }));
   const overlayChoices: FieldChoice[] = [
     // 빠른 선택: 생성 시 자동값(오늘 날짜) + 이미지(사진·서명). aliases 비움 = 라벨 자동매칭 안 함.
     { key: "__today__", label: "📅 오늘 날짜(생성일)", aliases: [] },
+    ...essaySections.map((s, i) => ({
+      key: `essay:${i}`,
+      label: `[서술형] ${s.label || `문항 ${i + 1}`}`,
+      aliases: [],
+    })),
     ...imageChoices,
     ...restChoices,
-    ...essayQs.map((q, i) => ({
-      key: `essay:${i}`,
-      label: `[서술형] ${q.question_ko ?? `질문 ${i + 1}`}`,
-      aliases: q.question_ko ? [q.question_ko] : [],
-    })),
   ];
   const initialOverlays: RawOverlay[] = Array.isArray(form.field_overlays)
     ? (form.field_overlays as RawOverlay[])
@@ -163,6 +167,15 @@ export default async function FormDocDetailPage({
           }))}
           docNameOptions={docNameOptions}
         />
+
+        <Card className="mt-6 p-6">
+          <EssayConfig
+            formFileId={form.id}
+            initialIsEssay={isEssay}
+            initialSections={essaySections}
+            basisChoices={basisChoices}
+          />
+        </Card>
 
         {isDocx ? (
           <Card className="mt-6 p-6">

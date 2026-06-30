@@ -96,15 +96,25 @@ export async function GET(
   if (!isDocx)
     return new Response("이 양식은 .docx 가 아닙니다.", { status: 400 });
 
-  const [{ data: types }, { data: values }] = await Promise.all([
-    supabase
-      .from("study_student_data_types")
-      .select("key, label_ko, label_vi, aliases"),
-    supabase
-      .from("study_student_data_values")
-      .select("data_type_key, value")
-      .eq("student_id", id),
-  ]);
+  const [{ data: types }, { data: values }, { data: essayDrafts }] =
+    await Promise.all([
+      supabase
+        .from("study_student_data_types")
+        .select("key, label_ko, label_vi, aliases"),
+      supabase
+        .from("study_student_data_values")
+        .select("data_type_key, value")
+        .eq("student_id", id),
+      supabase
+        .from("study_student_essay_drafts")
+        .select("question_index, generated_text, edited_text")
+        .eq("student_id", id)
+        .eq("form_file_id", formFileId),
+    ]);
+  // 서술형 답변: 섹션 인덱스 → 최종 텍스트(편집본 우선)
+  const essayMap = new Map<number, string>();
+  for (const d of essayDrafts ?? [])
+    essayMap.set(d.question_index, (d.edited_text ?? d.generated_text ?? "").trim());
 
   const catMap = new Map<string, string>();
   for (const t of types ?? []) {
@@ -201,6 +211,14 @@ export async function GET(
     const { key, viaLabel, overwrite } = rk;
     if (key === "__today__")
       return { kind: "text", value: todayStr, viaLabel, overwrite };
+    const em = key.match(/^essay:(\d+)$/);
+    if (em)
+      return {
+        kind: "text",
+        value: essayMap.get(Number(em[1])) ?? "",
+        viaLabel,
+        overwrite,
+      };
     const img = imageByKey.get(key);
     if (img)
       return {

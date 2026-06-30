@@ -12,7 +12,7 @@ import { verifyCenterSession } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
 import { getLocale, tr } from "@/lib/i18n";
 import { EssaysClient } from "./essays-client";
-import type { EssayQuestion } from "@/types/study";
+import type { EssaySection } from "@/types/study";
 
 export default async function StudentEssaysPage({
   params,
@@ -43,7 +43,7 @@ export default async function StudentEssaysPage({
     department_name: string | null;
     university_id: number;
     university_name_ko: string;
-    essay_questions: EssayQuestion[];
+    essay_sections: EssaySection[];
     /** 어떤 application 들로 인해 이 양식이 필요한가 */
     application_labels: string[];
   };
@@ -73,7 +73,7 @@ export default async function StudentEssaysPage({
         supabase
           .from("study_admission_form_files")
           .select(
-            "id, university_id, department_name, name_ko, essay_questions"
+            "id, university_id, department_name, name_ko, is_essay, essay_sections"
           )
           .in("university_id", universityIds)
           .eq("is_current", true),
@@ -90,8 +90,8 @@ export default async function StudentEssaysPage({
         if (uniId == null) continue;
         const applicable = (formRows ?? []).filter((f) => {
           if (f.university_id !== uniId) return false;
-          const qs = (f.essay_questions ?? []) as EssayQuestion[];
-          if (qs.length === 0) return false; // 작문 질문 없는 양식은 제외
+          const secs = (f.essay_sections ?? []) as EssaySection[];
+          if (!f.is_essay || secs.length === 0) return false; // 서술형 문서만
           if (f.department_name === null) return true;
           return (
             app.target_department_label &&
@@ -112,7 +112,7 @@ export default async function StudentEssaysPage({
               department_name: f.department_name,
               university_id: f.university_id,
               university_name_ko: uniNameMap.get(f.university_id) ?? "?",
-              essay_questions: (f.essay_questions ?? []) as EssayQuestion[],
+              essay_sections: (f.essay_sections ?? []) as EssaySection[],
               application_labels: [app.target_department_label ?? "(전체)"],
             });
           }

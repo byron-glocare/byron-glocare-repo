@@ -284,6 +284,7 @@ export function fillDocx(
   const doc = new Docxtemplater(zip, {
     delimiters: { start: "{{", end: "}}" },
     nullGetter: () => "",
+    linebreaks: true, // 서술형 등 \n 을 줄바꿈으로 렌더
   });
   doc.render(values);
   const filled = doc.getZip().generate({ type: "nodebuffer" }) as Buffer;

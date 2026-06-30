@@ -5,14 +5,15 @@ import { revalidatePath } from "next/cache";
 import { verifyCenterSession } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
 import { generateEssayDraft } from "@/lib/admission/generate-essay";
-import type { EssayQuestion } from "@/types/study";
+import type { EssaySection } from "@/types/study";
 
 export type GenerateEssayResult =
   | { ok: true; generated_text: string }
   | { ok: false; error: string };
 
 /**
- * 특정 학생·양식·질문에 대한 AI 작문 생성 후 저장.
+ * 특정 학생·양식·서술형 섹션에 대한 AI 초안 생성 후 저장.
+ *   섹션(essay_sections[index])의 작성지침(prompt)+기반데이터(basis_keys)로 작성.
  */
 export async function generateEssayAction(input: {
   studentId: string;
@@ -20,6 +21,7 @@ export async function generateEssayAction(input: {
   questionIndex: number;
 }): Promise<GenerateEssayResult> {
   const session = await verifyCenterSession();
+  void session;
   const supabase = await createCenterClient();
 
   // 1. 학생 확인 (RLS)
@@ -30,20 +32,20 @@ export async function generateEssayAction(input: {
     .maybeSingle();
   if (!student) return { ok: false, error: "학생을 찾을 수 없습니다" };
 
-  // 2. 양식 + 질문
+  // 2. 양식 + 서술형 섹션
   const { data: form } = await supabase
     .from("study_admission_form_files")
-    .select("id, essay_questions, name_ko")
+    .select("id, essay_sections, name_ko")
     .eq("id", input.formFileId)
     .maybeSingle();
   if (!form) return { ok: false, error: "양식을 찾을 수 없습니다" };
 
-  const questions = (form.essay_questions ?? []) as EssayQuestion[];
-  const q = questions[input.questionIndex];
-  if (!q) return { ok: false, error: "질문 인덱스가 유효하지 않습니다" };
+  const sections = (form.essay_sections ?? []) as EssaySection[];
+  const sec = sections[input.questionIndex];
+  if (!sec) return { ok: false, error: "서술형 문항을 찾을 수 없습니다" };
 
   // 3. 학생의 basis 데이터 수집
-  const basisKeys = q.basis_data_type_keys ?? [];
+  const basisKeys = sec.basis_keys ?? [];
   let basisFacts: Array<{ label_ko: string; value: string }> = [];
 
   if (basisKeys.length > 0) {
@@ -75,11 +77,9 @@ export async function generateEssayAction(input: {
       .filter((f) => f.value.trim() !== "");
   }
 
-  // 4. Claude 호출
+  // 4. Claude 호출 (작성지침을 질문으로 전달)
   const result = await generateEssayDraft({
-    questionKo: q.question_ko,
-    questionVi: q.question_vi,
-    maxChars: q.max_chars,
+    questionKo: sec.prompt?.trim() || sec.label || "서술형 답변",
     basisFacts,
     studentName: student.name,
   });
@@ -95,7 +95,7 @@ export async function generateEssayAction(input: {
         student_id: input.studentId,
         form_file_id: input.formFileId,
         question_index: input.questionIndex,
-        question_ko: q.question_ko,
+        question_ko: sec.label || sec.prompt || "서술형",
         basis_data_keys: basisKeys,
         generated_text: result.generated_text,
         generated_at: nowIso,

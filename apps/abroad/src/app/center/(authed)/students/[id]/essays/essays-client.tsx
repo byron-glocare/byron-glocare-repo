@@ -5,7 +5,7 @@ import { useState, useTransition } from "react";
 import { tr, type Locale } from "@/lib/i18n";
 
 import { generateEssayAction, saveEssayEditAction } from "./actions";
-import type { EssayQuestion } from "@/types/study";
+import type { EssaySection } from "@/types/study";
 
 export type FormWithQuestions = {
   form_file_id: string;
@@ -13,7 +13,7 @@ export type FormWithQuestions = {
   department_name: string | null;
   university_id: number;
   university_name_ko: string;
-  essay_questions: EssayQuestion[];
+  essay_sections: EssaySection[];
   application_labels: string[];
 };
 
@@ -64,7 +64,7 @@ export function EssaysClient({
             </p>
           </header>
           <div className="divide-y divide-slate-100">
-            {form.essay_questions.map((q, idx) => {
+            {form.essay_sections.map((s, idx) => {
               const key = `${form.form_file_id}::${idx}`;
               const draft = draftMap.get(key);
               return (
@@ -74,7 +74,7 @@ export function EssaysClient({
                   studentId={studentId}
                   formFileId={form.form_file_id}
                   questionIndex={idx}
-                  question={q}
+                  section={s}
                   draft={draft}
                   onUpdate={(d) =>
                     setDraftMap((cur) => {
@@ -98,7 +98,7 @@ function QuestionRow({
   studentId,
   formFileId,
   questionIndex,
-  question,
+  section,
   draft,
   onUpdate,
 }: {
@@ -106,7 +106,7 @@ function QuestionRow({
   studentId: string;
   formFileId: string;
   questionIndex: number;
-  question: EssayQuestion;
+  section: EssaySection;
   draft: DraftSnapshot | undefined;
   onUpdate: (d: DraftSnapshot) => void;
 }) {
@@ -177,35 +177,28 @@ function QuestionRow({
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1">
             <div className="text-sm font-medium text-slate-900">
-              {locale === "ko"
-                ? question.question_ko
-                : (question.question_vi ?? question.question_ko)}
+              {section.label || tr(locale, "서술형 답변", "Bài luận")}
             </div>
-            {(locale === "ko" ? question.question_vi : question.question_ko) ? (
+            {section.prompt ? (
               <div className="mt-0.5 text-xs text-slate-500">
-                {locale === "ko" ? question.question_vi : question.question_ko}
+                {section.prompt}
               </div>
             ) : null}
             <div className="mt-1 flex items-center gap-2 text-xs text-slate-500">
-              {question.max_chars ? (
-                <span>
-                  ≤ {tr(locale, `${question.max_chars}자`, `${question.max_chars} ký tự`)}
-                </span>
-              ) : null}
-              {question.basis_data_type_keys.length > 0 ? (
+              {section.basis_keys.length > 0 ? (
                 <span>
                   {tr(
                     locale,
-                    `AI 참조 데이터: ${question.basis_data_type_keys.length}개`,
-                    `Dữ liệu AI tham chiếu: ${question.basis_data_type_keys.length} mục`
+                    `AI 참조 데이터: ${section.basis_keys.length}개 (정보 입력에서 채움)`,
+                    `Dữ liệu AI tham chiếu: ${section.basis_keys.length} mục`
                   )}
                 </span>
               ) : (
                 <span className="text-amber-600">
                   {tr(
                     locale,
-                    "⚠ 참조 데이터 키 미지정 — 작문 품질 낮음",
-                    "⚠ Chưa chỉ định khóa dữ liệu tham chiếu — chất lượng bài viết thấp"
+                    "⚠ 기반 데이터 미지정 — 글로케어 설정 필요",
+                    "⚠ Chưa chỉ định dữ liệu cơ sở"
                   )}
                 </span>
               )}

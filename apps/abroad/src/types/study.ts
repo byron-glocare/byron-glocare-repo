@@ -272,8 +272,20 @@ export type StudyAdmissionFormFile = {
   label_mapping: Record<string, string>;
   /** docx 빈칸(슬롯)→표준데이터 key 매핑 (0040). {빈칸인덱스: key}. "어디에" 명시. */
   slot_mapping: Record<string, string>;
+  /** 서술형(자기소개서 등) 문서 여부 (0041). */
+  is_essay: boolean;
+  /** 서술형 섹션 목록 (0041). 각 섹션 = 한 서술형 답변(AI 작성). */
+  essay_sections: EssaySection[];
   created_at: string;
   updated_at: string;
+};
+
+/** 서술형 섹션 — label(문항명)·prompt(작성지침)·basis_keys(AI 작성 기반 표준데이터). */
+export type EssaySection = {
+  id: string;
+  label: string;
+  prompt: string;
+  basis_keys: string[];
 };
 
 /**
