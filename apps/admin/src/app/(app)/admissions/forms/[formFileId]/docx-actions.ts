@@ -1,9 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import PizZip from "pizzip";
 
 import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { isGlocareAdmin } from "@/lib/admin-guard";
+import { detectEssay, type DetectedSection } from "@/lib/admission/detect-essay";
 import {
   tokenizeAndFillDocx,
   injectSlotMarkers,
@@ -170,6 +172,48 @@ export async function saveEssayConfigAction(
   await recomputeRequired(admin, formFileId);
   revalidatePath(`/admissions/forms/${formFileId}`);
   return { ok: true };
+}
+
+/** docx 문단 텍스트 추출 (문단마다 줄바꿈) */
+function docxPlainText(buf: Buffer): string {
+  const xml = new PizZip(buf).file("word/document.xml")?.asText() ?? "";
+  const paras = xml.match(/<w:p\b[\s\S]*?<\/w:p>/g) ?? [];
+  return paras
+    .map((p) =>
+      (p.match(/<w:t[ >][\s\S]*?<\/w:t>/g) ?? [])
+        .map((t) => t.replace(/<[^>]+>/g, ""))
+        .join("")
+        .replace(/&amp;/g, "&")
+    )
+    .filter((s) => s.trim())
+    .join("\n");
+}
+
+/**
+ * AI 분석: 이 양식이 서술형 문서인지 판별 + 문항(label/지침/기반데이터) 추출.
+ *   결과는 저장하지 않고 반환 → 관리자가 서술형 설정 카드에서 검수 후 저장.
+ */
+export async function analyzeEssayAction(
+  formFileId: string
+): Promise<
+  | { ok: true; is_essay: boolean; sections: DetectedSection[] }
+  | { ok: false; error: string }
+> {
+  if (!(await requireAdmin())) return { ok: false, error: "권한이 없습니다." };
+  const admin = createAdminClient();
+  const r = await fetchFormBuffer(admin, formFileId);
+  if ("error" in r) return { ok: false, error: r.error };
+  const text = docxPlainText(r.buf);
+  if (!text.trim())
+    return { ok: false, error: "문서 텍스트를 읽지 못했습니다 (.docx 가 아닐 수 있음)." };
+  const { data: types } = await admin
+    .from("study_student_data_types")
+    .select("key, label_ko")
+    .eq("is_active", true);
+  return detectEssay({
+    text,
+    catalog: (types ?? []).map((t) => ({ key: t.key, label_ko: t.label_ko })),
+  });
 }
 
 /**

@@ -3,11 +3,15 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Loader2, Plus, Save, Sparkles, X } from "lucide-react";
+import { Loader2, Plus, Save, Sparkles, Wand2, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { saveEssayConfigAction, type EssaySection } from "./docx-actions";
+import {
+  analyzeEssayAction,
+  saveEssayConfigAction,
+  type EssaySection,
+} from "./docx-actions";
 
 type BasisChoice = { key: string; label: string };
 
@@ -62,6 +66,30 @@ export function EssayConfig({
     );
   }
 
+  const [analyzing, setAnalyzing] = useState(false);
+  async function onAnalyze() {
+    setAnalyzing(true);
+    try {
+      const r = await analyzeEssayAction(formFileId);
+      if (!r.ok) {
+        toast.error("AI 분석 실패", { description: r.error });
+        return;
+      }
+      setIsEssay(r.is_essay);
+      if (r.sections.length > 0)
+        setSections(
+          r.sections.map((s) => ({ ...newSection(), ...s }))
+        );
+      toast.success(
+        r.is_essay
+          ? `서술형 문서로 분석됨 · 문항 ${r.sections.length}개 추출`
+          : "서술형 문서가 아닌 것으로 분석됨"
+      );
+    } finally {
+      setAnalyzing(false);
+    }
+  }
+
   function onSave() {
     const clean = sections
       .map((s) => ({ ...s, label: s.label.trim(), prompt: s.prompt.trim() }))
@@ -88,14 +116,30 @@ export function EssayConfig({
             고르면 학생이 입력 → 그 값으로 AI가 초안을 작성합니다.
           </p>
         </div>
-        <Button type="button" size="sm" onClick={onSave} disabled={pending}>
-          {pending ? (
-            <Loader2 className="size-3.5 animate-spin" />
-          ) : (
-            <Save className="size-3.5" />
-          )}
-          저장
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={onAnalyze}
+            disabled={analyzing}
+          >
+            {analyzing ? (
+              <Loader2 className="size-3.5 animate-spin" />
+            ) : (
+              <Wand2 className="size-3.5" />
+            )}
+            AI로 분석
+          </Button>
+          <Button type="button" size="sm" onClick={onSave} disabled={pending}>
+            {pending ? (
+              <Loader2 className="size-3.5 animate-spin" />
+            ) : (
+              <Save className="size-3.5" />
+            )}
+            저장
+          </Button>
+        </div>
       </div>
 
       <label className="flex items-center gap-2 text-sm">
