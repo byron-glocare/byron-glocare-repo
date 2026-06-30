@@ -156,6 +156,13 @@ export default async function DocumentsPage({
             "Danh sách giấy tờ theo hồ sơ tuyển sinh đã đăng ký."
           )}
         </p>
+        <p className="mt-1.5 inline-flex items-center gap-1 rounded-md bg-slate-100 px-2 py-1 text-xs text-slate-600">
+          {tr(
+            locale,
+            "업로드 형식: PDF · 이미지(JPG·PNG·HEIC) / 최대 20MB",
+            "Định dạng: PDF · ảnh (JPG·PNG·HEIC) / tối đa 20MB"
+          )}
+        </p>
       </header>
 
       {!hasAnyDoc ? (

@@ -10,6 +10,17 @@ import {
 } from "@/lib/supabase/service";
 
 const MAX_FILE_BYTES = 20 * 1024 * 1024; // 20MB
+/** 허용 형식: PDF + 이미지(휴대폰 HEIC 포함) */
+const ALLOWED_EXT = new Set([
+  "pdf",
+  "jpg",
+  "jpeg",
+  "png",
+  "gif",
+  "webp",
+  "heic",
+  "heif",
+]);
 
 export type UploadSubmissionResult =
   | { ok: true }
@@ -36,6 +47,12 @@ export async function uploadSubmissionFileAction(
     return { ok: false, error: "파일이 올바르지 않습니다." };
   if (file.size > MAX_FILE_BYTES)
     return { ok: false, error: "파일이 너무 큽니다 (최대 20MB)." };
+  const ext = (file.name.split(".").pop() ?? "").toLowerCase();
+  if (!ALLOWED_EXT.has(ext))
+    return {
+      ok: false,
+      error: "지원하지 않는 형식입니다. PDF 또는 이미지(JPG·PNG·HEIC)만 올릴 수 있습니다.",
+    };
 
   const rls = await createCenterClient();
   const { data: student } = await rls

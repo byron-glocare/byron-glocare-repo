@@ -87,6 +87,7 @@ export function SubmissionUploader({
       <input
         ref={inputRef}
         type="file"
+        accept=".pdf,.jpg,.jpeg,.png,.gif,.webp,.heic,.heif,application/pdf,image/*"
         className="hidden"
         onChange={(e) => {
           const f = e.target.files?.[0];
