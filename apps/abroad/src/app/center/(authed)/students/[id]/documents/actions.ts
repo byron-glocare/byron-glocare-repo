@@ -26,33 +26,39 @@ export type UploadSubmissionResult =
   | { ok: true }
   | { ok: false; error: string };
 
-/**
- * 제출서류 파일 업로드 — 학생별 제출서류 슬롯.
- *   1. 세션 + 학생 org 검증(RLS)
- *   2. service-role 로 비공개 버킷 업로드 (org/student/submissions/submissionId/ts-name)
- *   3. study_student_submission_files upsert (student_id+submission_id 유일, 교체)
- */
-export async function uploadSubmissionFileAction(
-  formData: FormData
-): Promise<UploadSubmissionResult> {
-  const session = await verifyCenterSession();
-
-  const studentId = String(formData.get("studentId") ?? "");
-  const docKey = String(formData.get("docKey") ?? "");
-  const file = formData.get("file");
-
-  if (!studentId || !docKey)
-    return { ok: false, error: "정보가 부족합니다." };
-  if (!(file instanceof File) || file.size === 0)
-    return { ok: false, error: "파일이 올바르지 않습니다." };
-  if (file.size > MAX_FILE_BYTES)
-    return { ok: false, error: "파일이 너무 큽니다 (최대 20MB)." };
-  const ext = (file.name.split(".").pop() ?? "").toLowerCase();
+function validateUpload(
+  studentId: string,
+  docKey: string,
+  fileName: string,
+  sizeBytes: number
+): string | null {
+  if (!studentId || !docKey) return "정보가 부족합니다.";
+  if (!sizeBytes || sizeBytes <= 0) return "파일이 올바르지 않습니다.";
+  if (sizeBytes > MAX_FILE_BYTES) return "파일이 너무 큽니다 (최대 20MB).";
+  const ext = (fileName.split(".").pop() ?? "").toLowerCase();
   if (!ALLOWED_EXT.has(ext))
-    return {
-      ok: false,
-      error: "지원하지 않는 형식입니다. PDF 또는 이미지(JPG·PNG·HEIC)만 올릴 수 있습니다.",
-    };
+    return "지원하지 않는 형식입니다. PDF 또는 이미지(JPG·PNG·HEIC)만 올릴 수 있습니다.";
+  return null;
+}
+
+/**
+ * 제출서류 업로드 1단계 — 서명 업로드 URL 발급.
+ *   Vercel 함수 본문 4.5MB 한계 때문에 파일을 서버로 보내지 않고,
+ *   브라우저가 이 토큰으로 Supabase 에 **직접** 업로드한다.
+ */
+export async function createSubmissionUploadAction(input: {
+  studentId: string;
+  docKey: string;
+  fileName: string;
+  sizeBytes: number;
+}): Promise<
+  | { ok: true; bucket: string; path: string; token: string }
+  | { ok: false; error: string }
+> {
+  const session = await verifyCenterSession();
+  const { studentId, docKey, fileName, sizeBytes } = input;
+  const invalid = validateUpload(studentId, docKey, fileName, sizeBytes);
+  if (invalid) return { ok: false, error: invalid };
 
   const rls = await createCenterClient();
   const { data: student } = await rls
@@ -62,28 +68,49 @@ export async function uploadSubmissionFileAction(
     .maybeSingle();
   if (!student) return { ok: false, error: "권한이 없습니다." };
 
-  // 기존 파일 path (교체 시 삭제용)
+  const safeKey = docKey.replace(/[^\w.\-]+/g, "_").slice(0, 80);
+  const safeName = fileName.replace(/[^\w.\-]+/g, "_").slice(-120);
+  const path = `${session.org.id}/${studentId}/submissions/${safeKey}/${Date.now()}-${safeName}`;
+
+  const svc = createServiceClient();
+  const { data, error } = await svc.storage
+    .from(STUDENT_FILES_BUCKET)
+    .createSignedUploadUrl(path);
+  if (error || !data)
+    return { ok: false, error: error?.message ?? "업로드 URL 생성 실패." };
+  return { ok: true, bucket: STUDENT_FILES_BUCKET, path: data.path, token: data.token };
+}
+
+/**
+ * 제출서류 업로드 2단계 — 직접 업로드 완료 후 DB 기록(교체 시 기존 파일 제거).
+ */
+export async function finalizeSubmissionUploadAction(input: {
+  studentId: string;
+  docKey: string;
+  path: string;
+  fileName: string;
+  sizeBytes: number;
+  mime: string | null;
+}): Promise<UploadSubmissionResult> {
+  const session = await verifyCenterSession();
+  const { studentId, docKey, path, fileName, sizeBytes, mime } = input;
+  if (!path.startsWith(`${session.org.id}/${studentId}/submissions/`))
+    return { ok: false, error: "권한이 없습니다." };
+
+  const rls = await createCenterClient();
+  const { data: student } = await rls
+    .from("study_managed_students")
+    .select("id")
+    .eq("id", studentId)
+    .maybeSingle();
+  if (!student) return { ok: false, error: "권한이 없습니다." };
+
   const { data: existing } = await rls
     .from("study_student_submission_files")
     .select("file_path")
     .eq("student_id", studentId)
     .eq("doc_key", docKey)
     .maybeSingle();
-
-  // doc_key 를 경로 안전 문자열로
-  const safeKey = docKey.replace(/[^\w.\-]+/g, "_").slice(0, 80);
-  const safeName = file.name.replace(/[^\w.\-]+/g, "_").slice(-120);
-  const path = `${session.org.id}/${studentId}/submissions/${safeKey}/${Date.now()}-${safeName}`;
-
-  const svc = createServiceClient();
-  const buffer = Buffer.from(await file.arrayBuffer());
-  const { error: upErr } = await svc.storage
-    .from(STUDENT_FILES_BUCKET)
-    .upload(path, buffer, {
-      contentType: file.type || "application/octet-stream",
-      upsert: false,
-    });
-  if (upErr) return { ok: false, error: upErr.message };
 
   const { error: dbErr } = await rls
     .from("study_student_submission_files")
@@ -92,22 +119,20 @@ export async function uploadSubmissionFileAction(
         student_id: studentId,
         doc_key: docKey,
         file_path: path,
-        file_name: file.name,
-        size_bytes: file.size,
-        mime_type: file.type || null,
+        file_name: fileName,
+        size_bytes: sizeBytes,
+        mime_type: mime,
         uploaded_by: session.authUserId,
       },
       { onConflict: "student_id,doc_key" }
     );
+  const svc = createServiceClient();
   if (dbErr) {
     await svc.storage.from(STUDENT_FILES_BUCKET).remove([path]);
     return { ok: false, error: dbErr.message };
   }
-
-  // 교체면 기존 파일 제거 (best-effort)
-  if (existing?.file_path && existing.file_path !== path) {
+  if (existing?.file_path && existing.file_path !== path)
     await svc.storage.from(STUDENT_FILES_BUCKET).remove([existing.file_path]);
-  }
 
   revalidatePath(`/center/students/${studentId}/documents`);
   return { ok: true };

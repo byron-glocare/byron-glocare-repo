@@ -5,9 +5,11 @@ import { useRouter } from "next/navigation";
 import { Loader2, Upload, Eye, Trash2, RefreshCw } from "lucide-react";
 
 import { tr, type Locale } from "@/lib/i18n";
+import { createClient } from "@/lib/supabase/client";
 
 import {
-  uploadSubmissionFileAction,
+  createSubmissionUploadAction,
+  finalizeSubmissionUploadAction,
   getSubmissionFileSignedUrlAction,
   removeSubmissionFileAction,
 } from "./actions";
@@ -33,22 +35,47 @@ export function SubmissionUploader({
     setErr(null);
     setBusy(true);
     try {
-      const fd = new FormData();
-      fd.set("studentId", studentId);
-      fd.set("docKey", docKey);
-      fd.set("file", file);
-      const res = await uploadSubmissionFileAction(fd);
-      if (!res.ok) {
-        setErr(res.error);
+      // 1) 서명 업로드 URL 발급 (작은 요청)
+      const created = await createSubmissionUploadAction({
+        studentId,
+        docKey,
+        fileName: file.name,
+        sizeBytes: file.size,
+      });
+      if (!created.ok) {
+        setErr(created.error);
+        return;
+      }
+      // 2) 브라우저 → Supabase 직접 업로드 (Vercel 4.5MB 한계 우회)
+      const sb = createClient();
+      const { error: upErr } = await sb.storage
+        .from(created.bucket)
+        .uploadToSignedUrl(created.path, created.token, file, {
+          contentType: file.type || undefined,
+        });
+      if (upErr) {
+        setErr(`업로드 실패: ${upErr.message}`);
+        return;
+      }
+      // 3) 완료 기록
+      const fin = await finalizeSubmissionUploadAction({
+        studentId,
+        docKey,
+        path: created.path,
+        fileName: file.name,
+        sizeBytes: file.size,
+        mime: file.type || null,
+      });
+      if (!fin.ok) {
+        setErr(fin.error);
         return;
       }
       startTransition(() => router.refresh());
     } catch (e) {
-      // 액션이 throw 하면(용량 초과·서버 오류·환경변수 누락 등) 조용히 죽지 않게 표시
       setErr(
         e instanceof Error
           ? `업로드 실패: ${e.message}`
-          : "업로드 실패 — 파일 용량(최대 20MB)이나 네트워크/서버 상태를 확인하세요."
+          : "업로드 실패 — 네트워크/서버 상태를 확인하세요."
       );
     } finally {
       setBusy(false);
