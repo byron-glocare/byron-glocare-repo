@@ -86,6 +86,8 @@ async function fetchFormBuffer(
 /**
  * 빈칸(슬롯)→표준데이터 배치 매핑 저장 (미리보기 클릭 배치 UI 용).
  *   mapping: { "빈칸인덱스": std_key } (값 "" = 채우지 않음)
+ *   + 이 양식이 필요로 하는 표준데이터(required_data_type_keys)를 슬롯/라벨 매핑에서
+ *     자동 재계산 → 유학센터 '정보 입력'의 필수 표시가 양식 변경에 맞춰 자동 동기화.
  */
 export async function saveSlotMappingAction(
   formFileId: string,
@@ -93,9 +95,31 @@ export async function saveSlotMappingAction(
 ): Promise<ActionResult> {
   if (!(await requireAdmin())) return { ok: false, error: "권한이 없습니다." };
   const admin = createAdminClient();
+
+  // 필요 표준데이터 = (슬롯 + 라벨) 매핑이 가리키는 실제 카탈로그 키 (__today__·서술형 제외)
+  const [{ data: form }, { data: types }] = await Promise.all([
+    admin
+      .from("study_admission_form_files")
+      .select("label_mapping")
+      .eq("id", formFileId)
+      .maybeSingle(),
+    admin.from("study_student_data_types").select("key").eq("is_active", true),
+  ]);
+  const catKeys = new Set((types ?? []).map((t) => t.key));
+  const labelMap =
+    form?.label_mapping && typeof form.label_mapping === "object"
+      ? (form.label_mapping as Record<string, string>)
+      : {};
+  const required = new Set<string>();
+  for (const v of [...Object.values(mapping), ...Object.values(labelMap)])
+    if (v && v !== "__today__" && catKeys.has(v)) required.add(v);
+
   const { error } = await admin
     .from("study_admission_form_files")
-    .update({ slot_mapping: mapping })
+    .update({
+      slot_mapping: mapping,
+      required_data_type_keys: [...required],
+    })
     .eq("id", formFileId);
   if (error) return { ok: false, error: error.message };
   revalidatePath(`/admissions/forms/${formFileId}`);
