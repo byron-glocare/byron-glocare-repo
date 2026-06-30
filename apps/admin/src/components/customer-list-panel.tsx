@@ -82,6 +82,11 @@ export type CustomerListFilters = {
   cumulative?: string;
   /** 자가가입(홈페이지)만 보기 — "1" 이면 활성 */
   self?: string;
+  /**
+   * 희망 지역 필터. desired_region 의 1단계 prefix.
+   * 현재 노출 카테고리: "서울" | "부산" | "경북".
+   */
+  region?: string;
 };
 
 export type CustomerListProps = {
@@ -140,6 +145,7 @@ export async function CustomerListPanel({
       : "active";
   const bucketFilter = filters.bucket?.trim() ?? "";
   const selfOnly = (filters.self ?? "").trim() === "1";
+  const regionFilter = filters.region?.trim() ?? "";
   const page = Math.max(1, parseInt(filters.page ?? "1", 10) || 1);
 
   const supabase = await createClient();
@@ -394,6 +400,15 @@ export async function CustomerListPanel({
     filtered = filtered.filter((x) => selfSet.has(x.customer.id));
   }
 
+  if (regionFilter) {
+    filtered = filtered.filter((x) => {
+      const r = x.customer.desired_region;
+      if (!r) return false;
+      const trimmed = r.trim();
+      return trimmed === regionFilter || trimmed.startsWith(regionFilter + " ");
+    });
+  }
+
   const count = filtered.length;
   const totalPages = Math.max(1, Math.ceil(count / PAGE_SIZE));
   const pageStart = (page - 1) * PAGE_SIZE;
@@ -410,6 +425,7 @@ export async function CustomerListPanel({
     view !== "active" ||
     bucketFilter ||
     selfOnly ||
+    regionFilter ||
     (filters.center && !hiddenCenter) ||
     (filters.care && !hiddenCare)
   );
@@ -606,6 +622,21 @@ export async function CustomerListPanel({
               )}
             </div>
           </details>
+        </div>
+        <div>
+          <label className="text-xs text-muted-foreground block mb-1">
+            희망 지역
+          </label>
+          <select
+            name="region"
+            defaultValue={regionFilter}
+            className="h-8 rounded-md border border-input bg-background px-2 text-sm min-w-24"
+          >
+            <option value="">전체</option>
+            <option value="서울">서울</option>
+            <option value="부산">부산</option>
+            <option value="경북">경북</option>
+          </select>
         </div>
         <div>
           <label className="text-xs text-muted-foreground block mb-1">
@@ -866,6 +897,7 @@ export async function CustomerListPanel({
                   view: view === "active" ? "" : view,
                   bucket: bucketFilter,
                   self: selfOnly ? "1" : "",
+                  region: regionFilter,
                   ...(hiddenCenter ? {} : { center: filters.center ?? "" }),
                   ...(hiddenCare ? {} : { care: filters.care ?? "" }),
                   page: String(page - 1),
@@ -885,6 +917,7 @@ export async function CustomerListPanel({
                   view: view === "active" ? "" : view,
                   bucket: bucketFilter,
                   self: selfOnly ? "1" : "",
+                  region: regionFilter,
                   ...(hiddenCenter ? {} : { center: filters.center ?? "" }),
                   ...(hiddenCare ? {} : { care: filters.care ?? "" }),
                   page: String(page + 1),
