@@ -193,6 +193,7 @@ export async function previewDocxAction(
 
   const now = new Date();
   const todayStr = `${now.getFullYear()}. ${now.getMonth() + 1}. ${now.getDate()}.`;
+  const isImageKey = (k: string) => /photo|사진|signature|서명|sign/i.test(k);
   // 미리보기는 텍스트 전용 — 이미지(사진·서명)는 자리 표시만, 날짜는 오늘.
   const sampleFor = (k: string): string => {
     if (k === "__today__") return todayStr;
@@ -205,7 +206,8 @@ export async function previewDocxAction(
     if (ak in slotMapping) {
       const k = slotMapping[ak];
       if (!k) return null;
-      return { value: sampleFor(k), viaLabel: false, overwrite: true };
+      // 이미지는 글자 뒤에 덧붙임(덮어쓰기 X), 텍스트는 칸 덮어쓰기
+      return { value: sampleFor(k), viaLabel: false, overwrite: !isImageKey(k) };
     }
     if (emptyIndex !== null && String(emptyIndex) in slotMapping) {
       const k = slotMapping[String(emptyIndex)];

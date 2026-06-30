@@ -210,7 +210,8 @@ export async function GET(
         wEmu: img.wEmu,
         hEmu: img.hEmu,
         viaLabel,
-        overwrite,
+        // 이미지(서명·사진)는 칸 글자를 덮지 않고 글자 뒤에 덧붙임
+        overwrite: false,
       };
     return { kind: "text", value: valMap.get(key) ?? "", viaLabel, overwrite };
   };
