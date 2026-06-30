@@ -40,32 +40,31 @@ export default async function StudentLayout({
 
   return (
     <div className="mx-auto max-w-4xl">
-      {/* 고정 헤더 + 탭 */}
-      <div className="sticky top-[3.25rem] z-10 -mx-6 border-b border-slate-200 bg-slate-50/95 px-6 pb-3 pt-2 backdrop-blur lg:-mx-8 lg:px-8">
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex min-w-0 items-center gap-3">
-            <Link
-              href="/center/students"
-              className="shrink-0 text-sm text-slate-500 hover:underline"
-            >
-              {tr(locale, "← 목록", "← Danh sách")}
-            </Link>
-            <h1 className="truncate text-lg font-bold text-slate-900">
-              {student.name}
-            </h1>
-          </div>
-          <DeleteStudentButton
-            locale={locale}
-            studentId={id}
-            studentName={student.name}
-            applicationCount={appCount ?? 0}
-            small
-          />
+      {/* 이름·삭제 — 일반 흐름(스크롤 시 위로 사라짐) */}
+      <div className="flex items-center justify-between gap-3 pb-2 pt-2">
+        <div className="flex min-w-0 items-center gap-3">
+          <Link
+            href="/center/students"
+            className="shrink-0 text-sm text-slate-500 hover:underline"
+          >
+            {tr(locale, "← 목록", "← Danh sách")}
+          </Link>
+          <h1 className="truncate text-lg font-bold text-slate-900">
+            {student.name}
+          </h1>
         </div>
+        <DeleteStudentButton
+          locale={locale}
+          studentId={id}
+          studentName={student.name}
+          applicationCount={appCount ?? 0}
+          small
+        />
+      </div>
 
-        <div className="mt-3">
-          <StudentTabs studentId={id} locale={locale} />
-        </div>
+      {/* 단계 탭 — 스크롤 시 상단 고정(불투명 배경으로 내용 비침 없음) */}
+      <div className="sticky top-[3.25rem] z-10 -mx-6 border-b border-slate-200 bg-slate-50 px-6 py-2 shadow-[0_1px_0_rgba(0,0,0,0.04)] lg:-mx-8 lg:px-8">
+        <StudentTabs studentId={id} locale={locale} />
       </div>
 
       <div className="py-6">{children}</div>
