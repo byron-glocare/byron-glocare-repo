@@ -90,13 +90,13 @@ export function FormDocDetail({
 
   useEffect(() => {
     if (state?.success) {
-      toast.success("저장되었습니다.");
-      // 저장 후 대학교 상세로 복귀
-      router.push(`/universities/${form.university_id}`);
+      toast.success("기본정보를 저장했습니다.");
+      // 페이지에 머문다 — 서술형·빈칸 배치 등 다른 카드의 미저장 입력이 날아가지 않도록.
+      router.refresh();
     } else if (state?.error) {
       toast.error("저장 실패", { description: state.error });
     }
-  }, [state, router, form.university_id]);
+  }, [state, router]);
 
   useEffect(() => {
     if (!upSubmitted.current) return;
