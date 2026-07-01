@@ -276,26 +276,16 @@ export default async function FinalPage({
                             </span>
                           ) : null}
                         </div>
-                        {file ? (
-                          <a
-                            href={file.file_url}
-                            target="_blank"
-                            rel="noopener"
-                            className="inline-block text-[11px] text-slate-500 underline-offset-2 hover:text-slate-700 hover:underline"
-                          >
-                            {tr(locale, "빈 양식 다운로드", "Tải mẫu trống")}
-                          </a>
-                        ) : null}
                       </div>
                       {file ? (
-                        <div className="min-w-[200px] flex-1">
+                        <div className="flex-1">
                           <WriteRowActions
                             locale={locale}
                             studentId={id}
                             formFileId={file.id}
                             appId={app.id}
                             docName={doc.name_ko}
-                            engine={engine}
+                            blankFormUrl={file.file_url}
                             pdfBaseUrl={
                               canFill
                                 ? engine === "pdf"

@@ -5,13 +5,12 @@ import { useRouter } from "next/navigation";
 import {
   Check,
   Download,
-  Eye,
+  FileDown,
   Loader2,
   Send,
   Upload,
   RefreshCw,
   Undo2,
-  X,
 } from "lucide-react";
 
 import { tr, type Locale } from "@/lib/i18n";
@@ -31,10 +30,9 @@ const BTN_OUTLINE = `${BTN_BASE} border border-slate-300 text-slate-700 hover:bg
 const BTN_PRIMARY = `${BTN_BASE} bg-emerald-600 text-white hover:bg-emerald-700`;
 
 /**
- * 작성서류 한 행의 액션 — 새 플로우:
- *   1) 초안 생성·다운로드 (기본정보 채운 파일, 서버 저장 안 함)
- *   2) 수정본 업로드 (사람이 서명·보정한 최종 파일)
- *   3) 최종 제출하기 (submitted_at 세팅 → 어드민 노출) / 제출 취소
+ * 작성서류 한 행의 액션 — 우측 한 줄 배치:
+ *   [빈 양식 다운로드] [초안 생성·다운로드] [수정본 업로드/교체] [최종 제출(수정본 있을 때만)]
+ *   최종 제출 후: [최종 제출됨] [제출본 다운로드] [제출 취소]
  */
 export function WriteRowActions({
   locale,
@@ -42,7 +40,7 @@ export function WriteRowActions({
   formFileId,
   appId,
   docName,
-  engine,
+  blankFormUrl,
   pdfBaseUrl,
   uploaded,
   submittedAt,
@@ -53,7 +51,7 @@ export function WriteRowActions({
   formFileId: string;
   appId: string;
   docName: string;
-  engine: "pdf" | "docx";
+  blankFormUrl: string | null;
   pdfBaseUrl: string | null;
   uploaded: { path: string; fileName: string; uploadedAt: string } | null;
   submittedAt: string | null;
@@ -61,11 +59,8 @@ export function WriteRowActions({
 }) {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
-  const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
-
-  const pdfPreview = pdfBaseUrl ? `${pdfBaseUrl}&preview=1` : null;
 
   async function onPick(file: File) {
     setErr(null);
@@ -107,9 +102,7 @@ export function WriteRowActions({
       }
       router.refresh();
     } catch (e) {
-      setErr(
-        e instanceof Error ? `업로드 실패: ${e.message}` : "업로드 실패"
-      );
+      setErr(e instanceof Error ? `업로드 실패: ${e.message}` : "업로드 실패");
     } finally {
       setBusy(false);
     }
@@ -159,7 +152,7 @@ export function WriteRowActions({
   const submitted = !!submittedAt;
 
   return (
-    <div className="flex w-full flex-col items-end gap-2">
+    <div className="flex w-full flex-col items-end gap-1">
       <input
         ref={inputRef}
         type="file"
@@ -172,46 +165,39 @@ export function WriteRowActions({
         }}
       />
 
-      {/* 1) 초안 생성·다운로드 */}
       <div className="flex flex-wrap items-center justify-end gap-2">
-        {pdfBaseUrl ? (
-          engine === "pdf" ? (
-            <>
-              <button
-                type="button"
-                onClick={() => setOpen(true)}
-                className={BTN_OUTLINE}
-              >
-                <Eye className="size-3.5" />
-                {tr(locale, "초안 미리보기", "Xem nháp")}
-              </button>
-              <a href={pdfBaseUrl} className={BTN_OUTLINE}>
-                <Download className="size-3.5" />
-                {tr(locale, "초안 생성·다운로드", "Tạo & tải nháp")}
-              </a>
-            </>
-          ) : (
-            <a href={pdfBaseUrl} className={BTN_OUTLINE}>
-              <Download className="size-3.5" />
-              {tr(locale, "초안 생성·다운로드", "Tạo & tải nháp")}
-            </a>
-          )
-        ) : (
-          <span className="pt-1 text-[11px] text-slate-400">{noFillLabel}</span>
-        )}
-      </div>
+        {/* 빈 양식 다운로드 */}
+        {blankFormUrl ? (
+          <a
+            href={blankFormUrl}
+            target="_blank"
+            rel="noopener"
+            className={BTN_OUTLINE}
+          >
+            <FileDown className="size-3.5" />
+            {tr(locale, "빈 양식", "Mẫu trống")}
+          </a>
+        ) : null}
 
-      {/* 2·3) 수정본 업로드 → 최종 제출 */}
-      {submitted ? (
-        <div className="flex w-full flex-col items-end gap-1.5">
-          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-medium text-emerald-700">
-            <Check className="size-3" />
-            {tr(locale, "최종 제출됨", "Đã nộp")} · {submittedAt!.slice(0, 10)}
-          </span>
-          <div className="flex flex-wrap items-center justify-end gap-2">
+        {/* 초안 생성·다운로드 */}
+        {pdfBaseUrl ? (
+          <a href={pdfBaseUrl} className={BTN_OUTLINE}>
+            <Download className="size-3.5" />
+            {tr(locale, "초안 다운로드", "Tải nháp")}
+          </a>
+        ) : (
+          <span className="text-[11px] text-slate-400">{noFillLabel}</span>
+        )}
+
+        {submitted ? (
+          <>
+            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-medium text-emerald-700">
+              <Check className="size-3" />
+              {tr(locale, "최종 제출됨", "Đã nộp")} · {submittedAt!.slice(0, 10)}
+            </span>
             <button type="button" onClick={onDownload} className={BTN_DARK}>
               <Download className="size-3.5" />
-              {tr(locale, "제출본 다운로드", "Tải bản nộp")}
+              {tr(locale, "제출본", "Bản nộp")}
             </button>
             <button
               type="button"
@@ -226,88 +212,49 @@ export function WriteRowActions({
               )}
               {tr(locale, "제출 취소", "Hủy nộp")}
             </button>
-          </div>
-        </div>
-      ) : uploaded ? (
-        <div className="flex w-full flex-col items-end gap-1.5">
-          <span className="inline-flex max-w-[14rem] items-center gap-1 truncate rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-medium text-amber-700">
-            <Upload className="size-3" />
-            {tr(locale, "수정본 업로드됨", "Đã tải bản sửa")}
-          </span>
-          <div className="flex flex-wrap items-center justify-end gap-2">
-            <button type="button" onClick={onSubmit} disabled={busy} className={BTN_PRIMARY}>
-              {busy ? (
-                <Loader2 className="size-3.5 animate-spin" />
-              ) : (
-                <Send className="size-3.5" />
-              )}
-              {tr(locale, "최종 제출하기", "Nộp cuối")}
-            </button>
-            <button type="button" onClick={onDownload} className={BTN_OUTLINE}>
-              <Download className="size-3.5" />
-              {tr(locale, "확인", "Xem")}
-            </button>
+          </>
+        ) : (
+          <>
+            {/* 수정본 업로드 / 교체 */}
             <button
               type="button"
               onClick={() => inputRef.current?.click()}
               disabled={busy}
-              className={BTN_OUTLINE}
+              className={uploaded ? BTN_OUTLINE : BTN_DARK}
             >
-              <RefreshCw className="size-3.5" />
-              {tr(locale, "교체", "Thay")}
+              {busy ? (
+                <Loader2 className="size-3.5 animate-spin" />
+              ) : uploaded ? (
+                <RefreshCw className="size-3.5" />
+              ) : (
+                <Upload className="size-3.5" />
+              )}
+              {uploaded
+                ? tr(locale, "수정본 교체", "Thay bản sửa")
+                : tr(locale, "수정본 업로드", "Tải bản sửa")}
             </button>
-          </div>
-        </div>
-      ) : (
-        <button
-          type="button"
-          onClick={() => inputRef.current?.click()}
-          disabled={busy}
-          className={BTN_DARK}
-        >
-          {busy ? (
-            <Loader2 className="size-3.5 animate-spin" />
-          ) : (
-            <Upload className="size-3.5" />
-          )}
-          {tr(locale, "수정본 업로드", "Tải bản sửa")}
-        </button>
-      )}
 
-      {err ? <span className="text-[11px] text-red-600">{err}</span> : null}
-
-      {/* 초안 미리보기 모달 (PDF) */}
-      {open && pdfPreview ? (
-        <div
-          className="fixed inset-0 z-50 flex flex-col bg-black/60 p-3 sm:p-6"
-          onClick={() => setOpen(false)}
-        >
-          <div
-            className="mx-auto flex h-full w-full max-w-5xl flex-col overflow-hidden rounded-lg bg-white shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between border-b border-slate-200 px-4 py-2.5">
-              <span className="text-sm font-semibold text-slate-800">
-                {tr(locale, "초안 미리보기", "Xem nháp")} · {docName}
-              </span>
+            {/* 최종 제출 (수정본 있을 때만) */}
+            {uploaded ? (
               <button
                 type="button"
-                onClick={() => setOpen(false)}
-                className={BTN_OUTLINE}
+                onClick={onSubmit}
+                disabled={busy}
+                className={BTN_PRIMARY}
               >
-                <X className="size-3.5" />
-                {tr(locale, "닫기", "Đóng")}
+                {busy ? (
+                  <Loader2 className="size-3.5 animate-spin" />
+                ) : (
+                  <Send className="size-3.5" />
+                )}
+                {tr(locale, "최종 제출", "Nộp cuối")}
               </button>
-            </div>
-            <iframe
-              key={pdfPreview}
-              src={pdfPreview}
-              className="min-h-0 w-full flex-1 bg-white"
-              title="preview"
-            />
-          </div>
-        </div>
-      ) : null}
+            ) : null}
+          </>
+        )}
+      </div>
+
+      {err ? <span className="text-[11px] text-red-600">{err}</span> : null}
     </div>
   );
 }
