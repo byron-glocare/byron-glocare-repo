@@ -38,7 +38,7 @@ function validate(fileName: string, sizeBytes: number): string | null {
 }
 
 /**
- * 수정본 업로드 1단계 — 서명 업로드 URL 발급.
+ * 완성본 업로드 1단계 — 서명 업로드 URL 발급.
  *   초안을 사람이 서명·보정한 뒤 편집한 최종 파일을 올린다.
  *   Vercel 4.5MB 한계 → 브라우저가 이 토큰으로 Supabase 에 직접 업로드.
  */
@@ -82,8 +82,8 @@ export async function createFinalUploadAction(input: {
 }
 
 /**
- * 수정본 업로드 2단계 — 업로드 완료 후 DB 기록.
- *   study_student_final_docs 에 업로드한 수정본을 기록. 아직 최종 제출은 아님
+ * 완성본 업로드 2단계 — 업로드 완료 후 DB 기록.
+ *   study_student_final_docs 에 업로드한 완성본을 기록. 아직 최종 제출은 아님
  *   (submitted_at = NULL). 재업로드 시 이전 파일 제거 + 제출 상태 초기화.
  */
 export async function recordFinalUploadAction(input: {
@@ -146,7 +146,7 @@ export async function recordFinalUploadAction(input: {
   return { ok: true };
 }
 
-/** 최종 제출하기 — submitted_at 세팅 (수정본이 있어야 함). 어드민 노출 시작. */
+/** 최종 제출하기 — submitted_at 세팅 (완성본이 있어야 함). 어드민 노출 시작. */
 export async function submitFinalDocAction(input: {
   studentId: string;
   formFileId: string;
@@ -163,7 +163,7 @@ export async function submitFinalDocAction(input: {
     .eq("application_id", input.appId)
     .maybeSingle();
   if (!row?.file_path)
-    return { ok: false, error: "먼저 수정본을 업로드해야 최종 제출할 수 있습니다." };
+    return { ok: false, error: "먼저 완성본을 업로드해야 최종 제출할 수 있습니다." };
 
   const { error } = await rls
     .from("study_student_final_docs")
@@ -197,7 +197,7 @@ export async function unsubmitFinalDocAction(input: {
   return { ok: true };
 }
 
-/** 지원별 일괄 최종 제출 — 수정본이 올라온(=file_path 있는) 미제출 서류를 모두 제출. */
+/** 지원별 일괄 최종 제출 — 완성본이 올라온(=file_path 있는) 미제출 서류를 모두 제출. */
 export async function submitAllForAppAction(input: {
   studentId: string;
   appId: string;
@@ -213,7 +213,7 @@ export async function submitAllForAppAction(input: {
 
   const ready = (rows ?? []).filter((r) => r.file_path && !r.submitted_at);
   if (ready.length === 0)
-    return { ok: false, error: "제출할 수정본이 없습니다. 먼저 수정본을 업로드하세요." };
+    return { ok: false, error: "제출할 완성본이 없습니다. 먼저 완성본을 업로드하세요." };
 
   const now = new Date().toISOString();
   const { error } = await rls
@@ -229,7 +229,7 @@ export async function submitAllForAppAction(input: {
   return { ok: true, count: ready.length };
 }
 
-/** 수정본/제출본 다운로드용 서명 URL (10분) */
+/** 완성본/제출본 다운로드용 서명 URL (10분) */
 export async function getFinalDocSignedUrlAction(
   path: string
 ): Promise<{ ok: true; url: string } | { ok: false; error: string }> {

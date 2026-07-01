@@ -82,7 +82,7 @@ export default async function FinalPage({
   const specMap = new Map((specs ?? []).map((s) => [s.id, s]));
   const uploadedSubs = new Set((files ?? []).map((f) => f.submission_id));
 
-  // 작성서류 수정본/제출 상태 — (form_file_id::application_id) → {path, fileName, uploadedAt, submittedAt}
+  // 작성서류 완성본/제출 상태 — (form_file_id::application_id) → {path, fileName, uploadedAt, submittedAt}
   const { data: finalDocs } = await supabase
     .from("study_student_final_docs")
     .select("form_file_id, application_id, file_path, file_name, finalized_at, submitted_at")
@@ -179,7 +179,7 @@ export default async function FinalPage({
       const final = file ? finalMap.get(`${file.id}::${a.id}`) ?? null : null;
       return { doc, file, canFill, engine, final };
     });
-    // 수정본은 올라왔지만 아직 최종 제출 안 된 작성서류 수 (일괄 제출용)
+    // 완성본은 올라왔지만 아직 최종 제출 안 된 작성서류 수 (일괄 제출용)
     const readyCount = writeRows.filter(
       (r) => r.final && r.final.path && !r.final.submittedAt
     ).length;
@@ -208,8 +208,8 @@ export default async function FinalPage({
         <p className="mt-1 text-sm text-slate-600">
           {tr(
             locale,
-            "지원별 최종 제출 서류입니다. 작성서류는 초안을 내려받아 서명·보정한 뒤 수정본을 올리고 [최종 제출]해야 완료됩니다.",
-            "Hồ sơ cuối theo từng nguyện vọng. Với hồ sơ soạn: tải bản nháp, ký & chỉnh sửa, rồi tải bản sửa lên và [Nộp cuối]."
+            "지원별 최종 제출 서류입니다. 작성서류는 초안을 내려받아 서명·보정한 뒤 완성본을 올리고 [최종 제출]해야 완료됩니다.",
+            "Hồ sơ cuối theo từng nguyện vọng. Với hồ sơ soạn: tải bản nháp, ký & chỉnh sửa, rồi tải bản hoàn chỉnh lên và [Nộp cuối]."
           )}
         </p>
       </header>
@@ -217,8 +217,8 @@ export default async function FinalPage({
       <div className="rounded-lg border border-sky-200 bg-sky-50/60 px-4 py-3 text-xs leading-relaxed text-sky-800">
         {tr(
           locale,
-          "작성서류 진행 순서: ① [초안 생성·다운로드]로 기본정보 채운 파일을 받아 → ② 서명·수기 보정 → ③ [수정본 업로드] → ④ [최종 제출하기]. 최종 제출한 서류만 글로케어(본사)에서 확인합니다.",
-          "Quy trình: ① Tải bản nháp đã điền thông tin → ② Ký & chỉnh sửa tay → ③ Tải bản sửa lên → ④ Nộp cuối. Chỉ hồ sơ đã nộp cuối mới hiển thị cho GLOCARE."
+          "작성서류 진행 순서: ① [초안 생성·다운로드]로 기본정보 채운 파일을 받아 → ② 서명·수기 보정 → ③ [완성본 업로드] → ④ [최종 제출하기]. 최종 제출한 서류만 글로케어(본사)에서 확인합니다.",
+          "Quy trình: ① Tải bản nháp đã điền thông tin → ② Ký & chỉnh sửa tay → ③ Tải bản hoàn chỉnh lên → ④ Nộp cuối. Chỉ hồ sơ đã nộp cuối mới hiển thị cho GLOCARE."
         )}
       </div>
 
@@ -247,7 +247,7 @@ export default async function FinalPage({
             {/* 작성서류 */}
             <div className="mb-4">
               <h3 className="mb-1.5 text-sm font-medium text-slate-700">
-                {tr(locale, "작성서류 (초안 → 수정본 → 제출)", "Hồ sơ soạn (nháp → sửa → nộp)")}
+                {tr(locale, "작성서류 (초안 → 완성본 → 제출)", "Hồ sơ soạn (nháp → sửa → nộp)")}
               </h3>
               {writeRows.length === 0 ? (
                 <p className="pl-1 text-xs text-slate-400">

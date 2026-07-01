@@ -9,7 +9,7 @@ import { submitAllForAppAction } from "./finalize-actions";
 
 /**
  * 지원(대학)별 일괄 최종 제출 바.
- *   readyCount = 수정본이 올라왔지만 아직 최종 제출 안 된 작성서류 수.
+ *   readyCount = 완성본이 올라왔지만 아직 최종 제출 안 된 작성서류 수.
  */
 export function AppSubmitBar({
   locale,
@@ -33,7 +33,7 @@ export function AppSubmitBar({
       !window.confirm(
         tr(
           locale,
-          `업로드된 수정본 ${readyCount}건을 모두 최종 제출할까요?`,
+          `업로드된 완성본 ${readyCount}건을 모두 최종 제출할까요?`,
           `Nộp cuối tất cả ${readyCount} hồ sơ đã tải?`
         )
       )

@@ -256,8 +256,8 @@ export default async function DocumentsPage({
             <div className="mb-3 mt-1 rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
               {tr(
                 locale,
-                "이 서류들은 '정보 입력'을 채우면 시스템이 만들어 줍니다. 여기서는 목록만 확인하세요. 작성 완료된 서류가 있다면 '최종 서류' 탭에서 초안을 받아 수정 후 업로드해 주세요.",
-                "Các giấy tờ này được hệ thống tạo khi bạn điền 'Nhập thông tin'. Ở đây chỉ xem danh sách. Nếu đã hoàn tất, hãy tải lên ở tab 'Hồ sơ cuối'."
+                "이 서류들은 '정보 입력'을 채우면 시스템이 초안을 만들어 줍니다. 여기서는 목록만 확인하세요. '최종 서류' 탭에서 초안을 받아 서명·보정한 완성본을 업로드해 주세요.",
+                "Các giấy tờ này được hệ thống tạo bản nháp khi bạn điền 'Nhập thông tin'. Ở đây chỉ xem danh sách. Hãy tải bản hoàn chỉnh lên ở tab 'Hồ sơ cuối'."
               )}
             </div>
             {forms.length === 0 ? (

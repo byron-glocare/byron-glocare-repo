@@ -31,7 +31,7 @@ const BTN_PRIMARY = `${BTN_BASE} bg-emerald-600 text-white hover:bg-emerald-700`
 
 /**
  * 작성서류 한 행의 액션 — 우측 한 줄 배치:
- *   [빈 양식 다운로드] [초안 생성·다운로드] [수정본 업로드/교체] [최종 제출(수정본 있을 때만)]
+ *   [빈 양식 다운로드] [초안 생성·다운로드] [완성본 업로드/교체] [최종 제출(완성본 있을 때만)]
  *   최종 제출 후: [최종 제출됨] [제출본 다운로드] [제출 취소]
  */
 export function WriteRowActions({
@@ -197,7 +197,7 @@ export function WriteRowActions({
             </span>
             <button type="button" onClick={onDownload} className={BTN_DARK}>
               <Download className="size-3.5" />
-              {tr(locale, "제출본", "Bản nộp")}
+              {tr(locale, "완성본 다운로드", "Tải bản hoàn chỉnh")}
             </button>
             <button
               type="button"
@@ -215,7 +215,7 @@ export function WriteRowActions({
           </>
         ) : (
           <>
-            {/* 수정본 업로드 / 교체 */}
+            {/* 완성본 업로드 / 교체 */}
             <button
               type="button"
               onClick={() => inputRef.current?.click()}
@@ -230,25 +230,31 @@ export function WriteRowActions({
                 <Upload className="size-3.5" />
               )}
               {uploaded
-                ? tr(locale, "수정본 교체", "Thay bản sửa")
-                : tr(locale, "수정본 업로드", "Tải bản sửa")}
+                ? tr(locale, "완성본 교체", "Thay bản hoàn chỉnh")
+                : tr(locale, "완성본 업로드", "Tải bản hoàn chỉnh")}
             </button>
 
-            {/* 최종 제출 (수정본 있을 때만) */}
+            {/* 완성본 다운로드 + 최종 제출 (완성본 있을 때만) */}
             {uploaded ? (
-              <button
-                type="button"
-                onClick={onSubmit}
-                disabled={busy}
-                className={BTN_PRIMARY}
-              >
-                {busy ? (
-                  <Loader2 className="size-3.5 animate-spin" />
-                ) : (
-                  <Send className="size-3.5" />
-                )}
-                {tr(locale, "최종 제출", "Nộp cuối")}
-              </button>
+              <>
+                <button type="button" onClick={onDownload} className={BTN_OUTLINE}>
+                  <Download className="size-3.5" />
+                  {tr(locale, "완성본 다운로드", "Tải bản hoàn chỉnh")}
+                </button>
+                <button
+                  type="button"
+                  onClick={onSubmit}
+                  disabled={busy}
+                  className={BTN_PRIMARY}
+                >
+                  {busy ? (
+                    <Loader2 className="size-3.5 animate-spin" />
+                  ) : (
+                    <Send className="size-3.5" />
+                  )}
+                  {tr(locale, "최종 제출", "Nộp cuối")}
+                </button>
+              </>
             ) : null}
           </>
         )}
