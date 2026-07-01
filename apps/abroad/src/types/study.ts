@@ -139,7 +139,8 @@ export type StudyManagedStudent = {
   updated_at: string;
 };
 
-// 확정 작성서류 (study_student_final_docs) — 확정 시 채운 PDF 를 스토리지에 저장
+// 작성서류 최종본 (study_student_final_docs) — 사람이 수정한 수정본을 저장.
+//   finalized_at/by = 수정본 업로드 시각/사람. submitted_at = 최종 제출(어드민 노출) 시각.
 export type StudyStudentFinalDoc = {
   id: string;
   student_id: string;
@@ -151,6 +152,8 @@ export type StudyStudentFinalDoc = {
   size_bytes: number | null;
   finalized_by: string | null;
   finalized_at: string;
+  submitted_by: string | null;
+  submitted_at: string | null;
   created_at: string;
   updated_at: string;
 };

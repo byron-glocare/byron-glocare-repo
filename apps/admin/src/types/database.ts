@@ -1234,6 +1234,8 @@ export type Database = {
           size_bytes: number | null;
           finalized_by: string | null;
           finalized_at: string;
+          submitted_by: string | null;
+          submitted_at: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -1248,6 +1250,8 @@ export type Database = {
           size_bytes?: number | null;
           finalized_by?: string | null;
           finalized_at?: string;
+          submitted_by?: string | null;
+          submitted_at?: string | null;
           created_at?: string;
           updated_at?: string;
         };

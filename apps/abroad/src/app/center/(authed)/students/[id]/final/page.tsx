@@ -17,6 +17,7 @@ import {
 } from "@/lib/admission/classify-documents";
 import { getLocale, tr } from "@/lib/i18n";
 import { WriteRowActions } from "./write-row-actions";
+import { AppSubmitBar } from "./app-submit-bar";
 
 /** 양식 매칭용 이름 정규화 (앞 번호 "2." 제거 + 공백/대소문자 무시) */
 function normFormName(s: string): string {
@@ -81,15 +82,20 @@ export default async function FinalPage({
   const specMap = new Map((specs ?? []).map((s) => [s.id, s]));
   const uploadedSubs = new Set((files ?? []).map((f) => f.submission_id));
 
-  // 확정된 작성서류 — (form_file_id::application_id) → {path, finalizedAt}
+  // 작성서류 수정본/제출 상태 — (form_file_id::application_id) → {path, fileName, uploadedAt, submittedAt}
   const { data: finalDocs } = await supabase
     .from("study_student_final_docs")
-    .select("form_file_id, application_id, file_path, finalized_at")
+    .select("form_file_id, application_id, file_path, file_name, finalized_at, submitted_at")
     .eq("student_id", id);
   const finalMap = new Map(
     (finalDocs ?? []).map((d) => [
       `${d.form_file_id}::${d.application_id}`,
-      { path: d.file_path, finalizedAt: d.finalized_at },
+      {
+        path: d.file_path,
+        fileName: d.file_name,
+        uploadedAt: d.finalized_at,
+        submittedAt: d.submitted_at as string | null,
+      },
     ])
   );
 
@@ -170,8 +176,13 @@ export default async function FinalPage({
       const engine: "pdf" | "docx" = isPdf ? "pdf" : "docx";
       // PDF: 좌표 오버레이 필요 / DOCX: 토큰 자동채움(오버레이 불필요)
       const canFill = !!file && ((isPdf && overlayCount > 0) || isDocx);
-      return { doc, file, canFill, engine };
+      const final = file ? finalMap.get(`${file.id}::${a.id}`) ?? null : null;
+      return { doc, file, canFill, engine, final };
     });
+    // 수정본은 올라왔지만 아직 최종 제출 안 된 작성서류 수 (일괄 제출용)
+    const readyCount = writeRows.filter(
+      (r) => r.final && r.final.path && !r.final.submittedAt
+    ).length;
 
     const submitDocs = (subs ?? []).filter((s) => {
       const uniMatch = s.university_id == null || s.university_id === uni;
@@ -185,7 +196,7 @@ export default async function FinalPage({
       const locOk = locs.length === 0 || locs.includes(residence);
       return uniMatch && deptMatch && langOk && locOk;
     });
-    return { app: a, spec, writeRows, submitDocs };
+    return { app: a, spec, writeRows, submitDocs, readyCount };
   });
 
   return (
@@ -197,11 +208,19 @@ export default async function FinalPage({
         <p className="mt-1 text-sm text-slate-600">
           {tr(
             locale,
-            "지원별 최종 제출 서류입니다. 작성서류는 생성·다운로드, 제출서류는 업로드 파일을 규칙 파일명으로 내려받습니다.",
-            "Hồ sơ cuối theo từng nguyện vọng. Hồ sơ soạn: tạo & tải; hồ sơ nộp: tải tệp đã upload với tên chuẩn."
+            "지원별 최종 제출 서류입니다. 작성서류는 초안을 내려받아 서명·보정한 뒤 수정본을 올리고 [최종 제출]해야 완료됩니다.",
+            "Hồ sơ cuối theo từng nguyện vọng. Với hồ sơ soạn: tải bản nháp, ký & chỉnh sửa, rồi tải bản sửa lên và [Nộp cuối]."
           )}
         </p>
       </header>
+
+      <div className="rounded-lg border border-sky-200 bg-sky-50/60 px-4 py-3 text-xs leading-relaxed text-sky-800">
+        {tr(
+          locale,
+          "작성서류 진행 순서: ① [초안 생성·다운로드]로 기본정보 채운 파일을 받아 → ② 서명·수기 보정 → ③ [수정본 업로드] → ④ [최종 제출하기]. 최종 제출한 서류만 글로케어(본사)에서 확인합니다.",
+          "Quy trình: ① Tải bản nháp đã điền thông tin → ② Ký & chỉnh sửa tay → ③ Tải bản sửa lên → ④ Nộp cuối. Chỉ hồ sơ đã nộp cuối mới hiển thị cho GLOCARE."
+        )}
+      </div>
 
       {groups.length === 0 ? (
         <div className="rounded-lg border border-dashed border-slate-300 bg-white p-12 text-center text-sm text-slate-500">
@@ -212,7 +231,7 @@ export default async function FinalPage({
           )}
         </div>
       ) : (
-        groups.map(({ app, spec, writeRows, submitDocs }) => (
+        groups.map(({ app, spec, writeRows, submitDocs, readyCount }) => (
           <section
             key={app.id}
             className="rounded-lg border border-slate-200 bg-white p-6"
@@ -228,7 +247,7 @@ export default async function FinalPage({
             {/* 작성서류 */}
             <div className="mb-4">
               <h3 className="mb-1.5 text-sm font-medium text-slate-700">
-                {tr(locale, "작성서류 (생성)", "Hồ sơ soạn")}
+                {tr(locale, "작성서류 (초안 → 수정본 → 제출)", "Hồ sơ soạn (nháp → sửa → nộp)")}
               </h3>
               {writeRows.length === 0 ? (
                 <p className="pl-1 text-xs text-slate-400">
@@ -236,7 +255,7 @@ export default async function FinalPage({
                 </p>
               ) : (
                 <ul className="space-y-1.5">
-                  {writeRows.map(({ doc, file, canFill, engine }) => (
+                  {writeRows.map(({ doc, file, canFill, engine, final }) => (
                     <li
                       key={doc.key + doc.name_ko}
                       className="flex flex-wrap items-start justify-between gap-2 rounded-md border border-slate-100 bg-slate-50/50 px-3 py-2"
@@ -284,13 +303,20 @@ export default async function FinalPage({
                                   : `${base}/final/docx-fill?form=${file.id}&app=${app.id}`
                                 : null
                             }
-                            finalized={
-                              finalMap.get(`${file.id}::${app.id}`) ?? null
+                            uploaded={
+                              final && final.path
+                                ? {
+                                    path: final.path,
+                                    fileName: final.fileName,
+                                    uploadedAt: final.uploadedAt,
+                                  }
+                                : null
                             }
+                            submittedAt={final?.submittedAt ?? null}
                             noFillLabel={tr(
                               locale,
-                              "좌표 미설정 (글로케어에서 설정 필요)",
-                              "Chưa thiết lập tọa độ"
+                              "초안 자동생성 불가 — 빈 양식 받아 직접 작성 후 업로드",
+                              "Không tạo được nháp — tải mẫu trống, điền tay rồi tải lên"
                             )}
                           />
                         </div>
@@ -303,6 +329,12 @@ export default async function FinalPage({
                   ))}
                 </ul>
               )}
+              <AppSubmitBar
+                locale={locale}
+                studentId={id}
+                appId={app.id}
+                readyCount={readyCount}
+              />
             </div>
 
             {/* 제출서류 */}

@@ -60,9 +60,10 @@ export default async function ManagedStudentDetailPage({
       .order("created_at", { ascending: false }),
     admin
       .from("study_student_final_docs")
-      .select("id, doc_name, file_path, file_name, size_bytes, finalized_at")
+      .select("id, doc_name, file_path, file_name, size_bytes, submitted_at")
       .eq("student_id", id)
-      .order("finalized_at", { ascending: false }),
+      .not("submitted_at", "is", null)
+      .order("submitted_at", { ascending: false }),
   ]);
 
   // 업로드 서류 다운로드용 서명 URL (1시간)
@@ -205,15 +206,15 @@ export default async function ManagedStudentDetailPage({
           </CardContent>
         </Card>
 
-        {/* 확정된 작성서류 */}
+        {/* 최종 제출된 작성서류 (수정본 업로드 + 최종 제출 완료) */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">확정 작성서류</CardTitle>
+            <CardTitle className="text-base">최종 제출 서류</CardTitle>
           </CardHeader>
           <CardContent>
             {signedFinals.length === 0 ? (
               <p className="py-6 text-center text-sm text-muted-foreground">
-                유학센터에서 ‘확정’한 작성서류가 아직 없습니다.
+                유학센터에서 ‘최종 제출’한 작성서류가 아직 없습니다.
               </p>
             ) : (
               <div className="divide-y divide-border rounded-md border border-border">
@@ -229,7 +230,7 @@ export default async function ManagedStudentDetailPage({
                           {f.doc_name}
                         </div>
                         <div className="text-xs text-muted-foreground">
-                          {bytes(f.size_bytes)} · 확정 {formatDate(f.finalized_at)}
+                          {bytes(f.size_bytes)} · 제출 {formatDate(f.submitted_at)}
                         </div>
                       </div>
                     </div>
