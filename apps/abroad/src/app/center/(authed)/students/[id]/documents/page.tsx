@@ -6,6 +6,7 @@
  *   업로드는 문서 key(doc_key) 로 식별 (발급서류 별도 등록 없이도 가능).
  */
 
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { verifyCenterSession } from "@/lib/center/dal";
@@ -143,6 +144,31 @@ export default async function DocumentsPage({
     );
   };
 
+  // 직접작성 서류 — 목록만 (업로드는 '최종 서류' 탭에서). 오른쪽 업로더 없음.
+  const renderFormDoc = (d: ClassifiedDoc) => {
+    const nota = notarizationLabel(locale, d.notarization);
+    return (
+      <li key={docUploadKey(d)} className="py-3 first:pt-0">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="font-medium text-slate-900">{d.name_ko}</span>
+          {d.name_vi ? (
+            <span className="text-xs text-slate-500">{d.name_vi}</span>
+          ) : null}
+        </div>
+        {nota ? (
+          <div className="mt-1 text-xs text-amber-700">
+            {tr(locale, "인증", "Chứng thực")}: {nota}
+          </div>
+        ) : null}
+        {d.notes ? (
+          <p className="mt-1 whitespace-pre-wrap text-xs text-slate-400">
+            {d.notes}
+          </p>
+        ) : null}
+      </li>
+    );
+  };
+
   return (
     <div className="space-y-5">
       <header>
@@ -214,14 +240,24 @@ export default async function DocumentsPage({
 
           {/* 2) 직접작성 서류 — 정보입력으로 작성 가능, 업로드 선택 */}
           <section className="rounded-lg border border-slate-200 bg-white p-6">
-            <h2 className="text-base font-semibold text-slate-900">
-              {tr(locale, "직접작성 서류 (학교 양식)", "Giấy tờ tự điền (mẫu trường)")}
-            </h2>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h2 className="text-base font-semibold text-slate-900">
+                {tr(locale, "직접작성 서류 (학교 양식)", "Giấy tờ tự điền (mẫu trường)")}
+              </h2>
+              {forms.length > 0 ? (
+                <Link
+                  href={`/center/students/${id}/final`}
+                  className="shrink-0 rounded-md bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-800"
+                >
+                  {tr(locale, "최종 서류로 이동 →", "Đến 'Hồ sơ cuối' →")}
+                </Link>
+              ) : null}
+            </div>
             <div className="mb-3 mt-1 rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
               {tr(
                 locale,
-                "이 서류들은 '정보 입력'을 채우면 시스템이 자동으로 만들어 줍니다. 업로드는 선택이며 필수가 아닙니다.",
-                "Các giấy tờ này sẽ được hệ thống tạo tự động khi bạn điền 'Nhập thông tin'. Tải lên là tùy chọn, không bắt buộc."
+                "이 서류들은 '정보 입력'을 채우면 시스템이 만들어 줍니다. 여기서는 목록만 확인하세요. 작성 완료된 서류가 있다면 '최종 서류' 탭에서 초안을 받아 수정 후 업로드해 주세요.",
+                "Các giấy tờ này được hệ thống tạo khi bạn điền 'Nhập thông tin'. Ở đây chỉ xem danh sách. Nếu đã hoàn tất, hãy tải lên ở tab 'Hồ sơ cuối'."
               )}
             </div>
             {forms.length === 0 ? (
@@ -229,7 +265,9 @@ export default async function DocumentsPage({
                 {tr(locale, "직접작성 서류가 없습니다.", "Không có giấy tờ tự điền.")}
               </p>
             ) : (
-              <ul className="divide-y divide-slate-100">{forms.map(renderDoc)}</ul>
+              <ul className="divide-y divide-slate-100">
+                {forms.map(renderFormDoc)}
+              </ul>
             )}
           </section>
         </>
