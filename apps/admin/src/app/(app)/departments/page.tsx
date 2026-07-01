@@ -35,9 +35,11 @@ export default async function DepartmentsPage({
     (uniFilter
       ? supabase
           .from("departments")
-          .select("*")
+          .select("id, university_id, active, icon, name_ko, name_vi, course, badge, sort_order")
           .eq("university_id", uniFilter)
-      : supabase.from("departments").select("*")
+      : supabase
+          .from("departments")
+          .select("id, university_id, active, icon, name_ko, name_vi, course, badge, sort_order")
     ).order("university_id").order("sort_order"),
   ]);
 
