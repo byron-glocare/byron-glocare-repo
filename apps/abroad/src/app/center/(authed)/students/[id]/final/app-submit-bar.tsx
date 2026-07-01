@@ -33,8 +33,8 @@ export function AppSubmitBar({
       !window.confirm(
         tr(
           locale,
-          `업로드된 완성본 ${readyCount}건을 모두 최종 제출할까요?`,
-          `Nộp cuối tất cả ${readyCount} hồ sơ đã tải?`
+          `업로드된 완성본 ${readyCount}건을 모두 제출할까요?`,
+          `Nộp tất cả ${readyCount} hồ sơ đã tải?`
         )
       )
     )

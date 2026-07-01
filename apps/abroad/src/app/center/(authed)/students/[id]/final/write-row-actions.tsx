@@ -125,8 +125,8 @@ export function WriteRowActions({
       !window.confirm(
         tr(
           locale,
-          "최종 제출을 취소할까요? 어드민에서 다시 숨겨집니다.",
-          "Hủy nộp cuối? Hồ sơ sẽ bị ẩn khỏi quản trị."
+          "제출을 취소할까요? 어드민에서 다시 숨겨집니다.",
+          "Hủy nộp? Hồ sơ sẽ bị ẩn khỏi quản trị."
         )
       )
     )
@@ -193,7 +193,7 @@ export function WriteRowActions({
           <>
             <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-medium text-emerald-700">
               <Check className="size-3" />
-              {tr(locale, "최종 제출됨", "Đã nộp")} · {submittedAt!.slice(0, 10)}
+              {tr(locale, "제출됨", "Đã nộp")} · {submittedAt!.slice(0, 10)}
             </span>
             <button type="button" onClick={onDownload} className={BTN_DARK}>
               <Download className="size-3.5" />
@@ -252,7 +252,7 @@ export function WriteRowActions({
                   ) : (
                     <Send className="size-3.5" />
                   )}
-                  {tr(locale, "최종 제출", "Nộp cuối")}
+                  {tr(locale, "제출", "Nộp")}
                 </button>
               </>
             ) : null}

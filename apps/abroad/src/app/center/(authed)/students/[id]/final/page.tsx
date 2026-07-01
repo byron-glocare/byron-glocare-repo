@@ -208,8 +208,8 @@ export default async function FinalPage({
         <p className="mt-1 text-sm text-slate-600">
           {tr(
             locale,
-            "지원별 최종 제출 서류입니다. 작성서류는 초안을 내려받아 서명·보정한 뒤 완성본을 올리고 [최종 제출]해야 완료됩니다.",
-            "Hồ sơ cuối theo từng nguyện vọng. Với hồ sơ soạn: tải bản nháp, ký & chỉnh sửa, rồi tải bản hoàn chỉnh lên và [Nộp cuối]."
+            "지원별 제출 서류입니다. 작성서류는 초안을 내려받아 서명·보정한 뒤 완성본을 올리고 [제출]해야 완료됩니다.",
+            "Hồ sơ theo từng nguyện vọng. Với hồ sơ soạn: tải bản nháp, ký & chỉnh sửa, rồi tải bản hoàn chỉnh lên và [Nộp]."
           )}
         </p>
       </header>
@@ -217,8 +217,8 @@ export default async function FinalPage({
       <div className="rounded-lg border border-sky-200 bg-sky-50/60 px-4 py-3 text-xs leading-relaxed text-sky-800">
         {tr(
           locale,
-          "작성서류 진행 순서: ① [초안 생성·다운로드]로 기본정보 채운 파일을 받아 → ② 서명·수기 보정 → ③ [완성본 업로드] → ④ [최종 제출하기]. 최종 제출한 서류만 글로케어(본사)에서 확인합니다.",
-          "Quy trình: ① Tải bản nháp đã điền thông tin → ② Ký & chỉnh sửa tay → ③ Tải bản hoàn chỉnh lên → ④ Nộp cuối. Chỉ hồ sơ đã nộp cuối mới hiển thị cho GLOCARE."
+          "작성서류 진행 순서: ① [초안 생성·다운로드]로 기본정보 채운 파일을 받아 → ② 서명·수기 보정 → ③ [완성본 업로드] → ④ [제출]. 제출한 서류만 글로케어(본사)에서 확인합니다.",
+          "Quy trình: ① Tải bản nháp đã điền thông tin → ② Ký & chỉnh sửa tay → ③ Tải bản hoàn chỉnh lên → ④ Nộp. Chỉ hồ sơ đã nộp mới hiển thị cho GLOCARE."
         )}
       </div>
 
