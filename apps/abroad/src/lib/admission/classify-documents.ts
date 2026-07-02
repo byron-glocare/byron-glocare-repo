@@ -35,6 +35,8 @@ export type ClassifiedDoc = {
   notarization: string | null;
   required: boolean;
   kind: "form" | "issued";
+  /** 공용 표준 연결 (있으면 대학 간 같은 서류로 취급 가능) */
+  std_key: string | null;
 };
 
 const FORM_NOTE_RE = /(본교\s*양식|학교\s*양식|소정\s*양식|본교양식)/;
@@ -77,6 +79,7 @@ export function classifyRequiredDocs(docs: RequiredDoc[] | null | undefined): {
       notarization: d.notarization ?? null,
       required: d.required !== false,
       kind: isFormDoc(d) ? "form" : "issued",
+      std_key: (d.std_key ?? "").trim() || null,
     };
     (item.kind === "form" ? forms : issued).push(item);
   }
@@ -91,4 +94,23 @@ export function classifyRequiredDocs(docs: RequiredDoc[] | null | undefined): {
 export function docUploadKey(d: { key: string; name_ko: string }): string {
   const name = d.name_ko.trim().replace(/\s+/g, " ").toLowerCase();
   return `${d.key}::${name}`;
+}
+
+/**
+ * 대학 간 공유 업로드 키.
+ *   공용 표준(std_key)에 연결된 발급 서류는 대학이 달라도 같은 서류 —
+ *   단 인증(공증·아포스티유 등) 요건이 다르면 다른 파일이어야 하므로 키에 포함.
+ *   std 연결이 없으면 기존 key::name 키 그대로 (이름·키가 같아야만 공유).
+ */
+export function docShareKey(d: {
+  key: string;
+  name_ko: string;
+  std_key: string | null;
+  notarization: string | null;
+}): string {
+  if (d.std_key) {
+    const sig = (d.notarization ?? "").trim() || "none";
+    return `std::${d.std_key}::${sig}`;
+  }
+  return docUploadKey(d);
 }

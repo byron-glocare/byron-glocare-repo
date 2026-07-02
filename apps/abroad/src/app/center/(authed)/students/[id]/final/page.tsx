@@ -108,7 +108,7 @@ export default async function FinalPage({
       ? supabase
           .from("study_admission_form_files")
           .select(
-            "id, university_id, department_name, name_ko, key, required_data_type_keys, field_overlays, mime_type, file_name, file_url"
+            "id, university_id, department_name, name_ko, key, required_data_type_keys, field_overlays, mime_type, file_name, file_url, is_essay, essay_sections"
           )
           .in("university_id", uniIds)
           .eq("is_current", true)
@@ -124,6 +124,8 @@ export default async function FinalPage({
             mime_type: string | null;
             file_name: string;
             file_url: string;
+            is_essay: boolean | null;
+            essay_sections: unknown;
           }>,
         }),
     supabase
@@ -177,7 +179,12 @@ export default async function FinalPage({
       // PDF: 좌표 오버레이 필요 / DOCX: 토큰 자동채움(오버레이 불필요)
       const canFill = !!file && ((isPdf && overlayCount > 0) || isDocx);
       const final = file ? finalMap.get(`${file.id}::${a.id}`) ?? null : null;
-      return { doc, file, canFill, engine, final };
+      // 서술형(자기소개서 등) 문항이 있는 양식 → AI 자기소개서 진입 버튼 노출
+      const hasEssay =
+        !!file?.is_essay &&
+        Array.isArray(file.essay_sections) &&
+        (file.essay_sections as unknown[]).length > 0;
+      return { doc, file, canFill, engine, final, hasEssay };
     });
     // 완성본은 올라왔지만 아직 최종 제출 안 된 작성서류 수 (일괄 제출용)
     const readyCount = writeRows.filter(
@@ -255,7 +262,7 @@ export default async function FinalPage({
                 </p>
               ) : (
                 <ul className="space-y-1.5">
-                  {writeRows.map(({ doc, file, canFill, engine, final }) => (
+                  {writeRows.map(({ doc, file, canFill, engine, final, hasEssay }) => (
                     <li
                       key={doc.key + doc.name_ko}
                       className="flex flex-wrap items-start justify-between gap-2 rounded-md border border-slate-100 bg-slate-50/50 px-3 py-2"
@@ -274,6 +281,14 @@ export default async function FinalPage({
                             <span className="rounded-full bg-sky-100 px-2 py-0.5 text-[11px] text-sky-700">
                               {tr(locale, "원본양식 채움", "Điền vào mẫu gốc")}
                             </span>
+                          ) : null}
+                          {hasEssay ? (
+                            <Link
+                              href={`${base}/essays`}
+                              className="rounded-full border border-violet-200 bg-violet-50 px-2 py-0.5 text-[11px] font-medium text-violet-700 hover:bg-violet-100"
+                            >
+                              ✍️ {tr(locale, "AI 자기소개서 작성 →", "Soạn bài luận AI →")}
+                            </Link>
                           ) : null}
                         </div>
                       </div>

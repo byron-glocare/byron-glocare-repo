@@ -123,6 +123,24 @@ export async function loadStudentDataContext(
   };
 }
 
+/**
+ * 파일 타입 중 "양식에 직접 박히는 이미지"(증명사진·서명 등) 판별.
+ *   이런 항목만 '정보 입력'에 남기고, 나머지 파일(졸업증명서 등 발급서류)은
+ *   '서류 등록' 탭에서 처리한다.
+ *   주의: "증명"을 매칭하면 졸업/성적/잔고**증명서**가 전부 걸리므로 금지 —
+ *   사진·서명 계열 단어만 본다. (증명사진은 '사진'으로 매칭됨)
+ */
+export function isFormImageDataType(d: {
+  key: string;
+  label_ko: string;
+  input_type: string;
+}): boolean {
+  return (
+    d.input_type === "file" &&
+    /사진|photo|서명|signature|도장|stamp/i.test(`${d.key} ${d.label_ko}`)
+  );
+}
+
 /** editor 가 기대하는 DataTypeMeta 형태로 변환 */
 export function toEditorDataType(d: StudentDataTypeRow) {
   return {

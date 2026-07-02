@@ -138,6 +138,82 @@ export async function finalizeSubmissionUploadAction(input: {
   return { ok: true };
 }
 
+/**
+ * 다른 지원(대학)에 올려둔 같은 서류의 파일을 이 서류로 복사 등록.
+ *   같은 표준 서류인데 대학별 세부요건(인증 등)이 달라 키가 분리된 경우,
+ *   파일 자체는 같아도 무방할 수 있으므로 스토리지 복사 + 새 doc_key 로 기록.
+ */
+export async function importSubmissionFileAction(input: {
+  studentId: string;
+  fromDocKey: string;
+  toDocKey: string;
+}): Promise<UploadSubmissionResult> {
+  const session = await verifyCenterSession();
+  const { studentId, fromDocKey, toDocKey } = input;
+  if (!studentId || !fromDocKey || !toDocKey || fromDocKey === toDocKey)
+    return { ok: false, error: "정보가 부족합니다." };
+
+  const rls = await createCenterClient();
+  const { data: student } = await rls
+    .from("study_managed_students")
+    .select("id")
+    .eq("id", studentId)
+    .maybeSingle();
+  if (!student) return { ok: false, error: "권한이 없습니다." };
+
+  const { data: src } = await rls
+    .from("study_student_submission_files")
+    .select("file_path, file_name, size_bytes, mime_type")
+    .eq("student_id", studentId)
+    .eq("doc_key", fromDocKey)
+    .maybeSingle();
+  if (!src?.file_path)
+    return { ok: false, error: "가져올 파일이 없습니다." };
+  if (!src.file_path.startsWith(`${session.org.id}/`))
+    return { ok: false, error: "권한이 없습니다." };
+
+  const safeKey = toDocKey.replace(/[^\w.\-]+/g, "_").slice(0, 80);
+  const safeName = src.file_name.replace(/[^\w.\-]+/g, "_").slice(-120);
+  const dest = `${session.org.id}/${studentId}/submissions/${safeKey}/${Date.now()}-${safeName}`;
+
+  const svc = createServiceClient();
+  const { error: cpErr } = await svc.storage
+    .from(STUDENT_FILES_BUCKET)
+    .copy(src.file_path, dest);
+  if (cpErr) return { ok: false, error: `파일 복사 실패: ${cpErr.message}` };
+
+  const { data: existing } = await rls
+    .from("study_student_submission_files")
+    .select("file_path")
+    .eq("student_id", studentId)
+    .eq("doc_key", toDocKey)
+    .maybeSingle();
+
+  const { error: dbErr } = await rls
+    .from("study_student_submission_files")
+    .upsert(
+      {
+        student_id: studentId,
+        doc_key: toDocKey,
+        file_path: dest,
+        file_name: src.file_name,
+        size_bytes: src.size_bytes,
+        mime_type: src.mime_type,
+        uploaded_by: session.authUserId,
+      },
+      { onConflict: "student_id,doc_key" }
+    );
+  if (dbErr) {
+    await svc.storage.from(STUDENT_FILES_BUCKET).remove([dest]);
+    return { ok: false, error: dbErr.message };
+  }
+  if (existing?.file_path && existing.file_path !== dest)
+    await svc.storage.from(STUDENT_FILES_BUCKET).remove([existing.file_path]);
+
+  revalidatePath(`/center/students/${studentId}/documents`);
+  return { ok: true };
+}
+
 /** 제출서류 파일 보기 (서명 URL 10분) */
 export async function getSubmissionFileSignedUrlAction(
   path: string

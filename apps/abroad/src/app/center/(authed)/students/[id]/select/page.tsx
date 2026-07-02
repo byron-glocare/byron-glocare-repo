@@ -26,10 +26,38 @@ export default async function SelectPage({
   const { data: applications } = await supabase
     .from("study_applications")
     .select(
-      "id, status, next_action, next_deadline, target_department_label, created_at"
+      "id, status, next_action, next_deadline, target_department_label, admission_spec_id, created_at"
     )
     .eq("student_id", id)
     .order("created_at", { ascending: false });
+
+  // 대학 이름·학기 (지원 → 모집요강 → 대학)
+  const specIds = Array.from(
+    new Set((applications ?? []).map((a) => a.admission_spec_id).filter(Boolean))
+  );
+  const { data: specs } = specIds.length
+    ? await supabase
+        .from("study_admission_specs")
+        .select("id, university_id, term")
+        .in("id", specIds)
+    : { data: [] as Array<{ id: string; university_id: number; term: string }> };
+  const uniIds = Array.from(new Set((specs ?? []).map((s) => s.university_id)));
+  const { data: unis } = uniIds.length
+    ? await supabase
+        .from("universities")
+        .select("id, name_ko, name_vi")
+        .in("id", uniIds)
+    : { data: [] as Array<{ id: number; name_ko: string; name_vi: string | null }> };
+  const specMap = new Map((specs ?? []).map((s) => [s.id, s]));
+  const uniMap = new Map((unis ?? []).map((u) => [u.id, u]));
+  const uniNameOf = (specId: string | null) => {
+    const spec = specId ? specMap.get(specId) : undefined;
+    if (!spec) return null;
+    const u = uniMap.get(spec.university_id);
+    return (locale === "ko" ? u?.name_ko : u?.name_vi) ?? u?.name_ko ?? null;
+  };
+  const termOf = (specId: string | null) =>
+    (specId ? specMap.get(specId)?.term : null) ?? null;
 
   return (
     <section className="rounded-lg border border-slate-200 bg-white p-6">
@@ -75,9 +103,18 @@ export default async function SelectPage({
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
                   <div className="font-medium text-slate-900">
+                    {uniNameOf(app.admission_spec_id) ? (
+                      <>
+                        {uniNameOf(app.admission_spec_id)}
+                        <span className="text-slate-400"> · </span>
+                      </>
+                    ) : null}
                     {app.target_department_label ?? "—"}
                   </div>
                   <div className="mt-0.5 text-xs text-slate-500">
+                    {termOf(app.admission_spec_id) ? (
+                      <span className="mr-2">{termOf(app.admission_spec_id)}</span>
+                    ) : null}
                     {app.next_deadline
                       ? tr(
                           locale,

@@ -134,10 +134,10 @@ export default async function StudentOverviewPage({
       uniIds.length > 0
         ? supabase
             .from("study_admission_form_files")
-            .select("id, university_id, department_name, name_ko, required_data_type_keys, essay_questions")
+            .select("id, university_id, department_name, name_ko, required_data_type_keys, is_essay, essay_sections")
             .in("university_id", uniIds)
             .eq("is_current", true)
-        : Promise.resolve({ data: [] as Array<{ id: string; university_id: number; department_name: string | null; name_ko: string; required_data_type_keys: string[] | null; essay_questions: unknown }> }),
+        : Promise.resolve({ data: [] as Array<{ id: string; university_id: number; department_name: string | null; name_ko: string; required_data_type_keys: string[] | null; is_essay: boolean | null; essay_sections: unknown }> }),
       uniIds.length > 0
         ? supabase
             .from("study_required_submissions")
@@ -186,8 +186,12 @@ export default async function StudentOverviewPage({
   const hasOnlineSubmission = applications.some(
     (a) => specMap.get(a.admission_spec_id)?.is_online_submission === true
   );
+  // (구 essay_questions 폐기 — is_essay + essay_sections 기준)
   const hasEssayQuestions = applicableForms.some(
-    (f) => Array.isArray(f.essay_questions) && f.essay_questions.length > 0
+    (f) =>
+      f.is_essay === true &&
+      Array.isArray(f.essay_sections) &&
+      f.essay_sections.length > 0
   );
 
   // 상세정보 완성도 = 필요 데이터 키 중 채워진 비율
