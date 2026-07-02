@@ -34,6 +34,7 @@ import {
   customerScheduleStatus,
 } from "@/lib/training-class-schedule";
 import { X } from "lucide-react";
+import { REGION1_OPTIONS } from "@/lib/region-options";
 
 const PAGE_SIZE = 50;
 
@@ -83,8 +84,7 @@ export type CustomerListFilters = {
   /** 자가가입(홈페이지)만 보기 — "1" 이면 활성 */
   self?: string;
   /**
-   * 희망 지역 필터. desired_region 의 1단계 prefix.
-   * 현재 노출 카테고리: "서울" | "부산" | "경북".
+   * 희망 지역 필터. desired_region 의 1단계 prefix (예: "서울", "경기", "경북").
    */
   region?: string;
 };
@@ -633,9 +633,11 @@ export async function CustomerListPanel({
             className="h-8 rounded-md border border-input bg-background px-2 text-sm min-w-24"
           >
             <option value="">전체</option>
-            <option value="서울">서울</option>
-            <option value="부산">부산</option>
-            <option value="경북">경북</option>
+            {REGION1_OPTIONS.map((r1) => (
+              <option key={r1} value={r1}>
+                {r1}
+              </option>
+            ))}
           </select>
         </div>
         <div>
