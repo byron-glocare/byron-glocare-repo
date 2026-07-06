@@ -4,7 +4,8 @@
 
 import "server-only";
 
-const DEFAULT_URL = "https://youstudyinkorea.com/api/admission/analyze-form";
+// apex 는 www 로 307 리다이렉트됨 → 인증 헤더/본문 유실 방지 위해 www 로 직접 호출.
+const DEFAULT_URL = "https://www.youstudyinkorea.com/api/admission/analyze-form";
 
 function endpointUrl(): string {
   // EXTRACTION_API_URL 의 base 를 재사용 (같은 도메인)

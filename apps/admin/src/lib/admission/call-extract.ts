@@ -7,7 +7,9 @@
 
 import "server-only";
 
-const DEFAULT_URL = "https://youstudyinkorea.com/api/admission/extract";
+// apex(youstudyinkorea.com) 는 www 로 307 리다이렉트되며, 리다이렉트 시
+// multipart 본문이 유실되어 400 이 난다. 반드시 www 로 직접 호출.
+const DEFAULT_URL = "https://www.youstudyinkorea.com/api/admission/extract";
 
 /** glocare_homepage_abroad API endpoint URL. env 우선, 없으면 production */
 function endpointUrl(): string {
