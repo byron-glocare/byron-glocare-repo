@@ -16,6 +16,7 @@ import { Eye, Loader2, MousePointerClick, Save, Sparkles, X } from "lucide-react
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
+  aiMapSlotsAction,
   placementDocxAction,
   previewDocxAction,
   saveSlotMappingAction,
@@ -284,23 +285,43 @@ export function DocxPlacement({
     force();
   }
 
-  // 자동 배치 실행 → 제안 계산(아직 미적용). mode:
+  // AI 자동 배치 실행(30~60초) → 제안 계산(아직 미적용). mode:
   //   fill      = 이미 지정된 칸은 그대로 두고 빈칸만 자동 매핑(기존 유지)
   //   overwrite = 기존 매핑 전부 버리고 처음부터 자동 매핑(전체 덮어쓰기)
+  const [autoBusy, setAutoBusy] = useState(false);
   function runAutoMap(mode: "fill" | "overwrite") {
-    const proposed: Record<string, string> =
-      mode === "overwrite" ? {} : { ...mappingRef.current };
-    let n = 0;
-    for (const si of slotsRef.current) {
-      if (!si.empty) continue; // 앞 라벨이 있는 빈칸만 대상
-      if (mode === "fill" && explicitState(si.slot)) continue; // 이미 지정된 칸 유지
-      const key = bestMatch(si.hint);
-      if (!key) continue;
-      proposed[`a${si.slot}`] = key;
-      if (si.emptyIndex !== null) delete proposed[String(si.emptyIndex)];
-      n++;
-    }
-    setPendingAuto({ mapping: proposed, count: n, mode });
+    if (autoBusy) return;
+    setPendingAuto(null);
+    setAutoBusy(true);
+    (async () => {
+      try {
+        const r = await aiMapSlotsAction(formFileId);
+        if (!r.ok) {
+          toast.error("AI 자동 배치 실패", { description: r.error });
+          return;
+        }
+        const aiMap = r.mapping;
+        const proposed: Record<string, string> =
+          mode === "overwrite" ? {} : { ...mappingRef.current };
+        let n = 0;
+        for (const si of slotsRef.current) {
+          if (!si.empty) continue; // 앞 라벨이 있는 빈칸만 대상
+          if (mode === "fill" && explicitState(si.slot)) continue; // 이미 지정된 칸 유지
+          const key = aiMap[String(si.slot)];
+          if (!key) continue;
+          proposed[`a${si.slot}`] = key;
+          if (si.emptyIndex !== null) delete proposed[String(si.emptyIndex)];
+          n++;
+        }
+        if (n === 0) {
+          toast.info("AI가 매핑할 수 있는 빈칸을 찾지 못했습니다.");
+          return;
+        }
+        setPendingAuto({ mapping: proposed, count: n, mode });
+      } finally {
+        setAutoBusy(false);
+      }
+    })();
   }
 
   function applyPendingAuto() {
@@ -379,8 +400,8 @@ export function DocxPlacement({
           <h2 className="text-base font-semibold">빈칸 클릭 배치 (정밀)</h2>
           <p className="mt-0.5 text-sm text-muted-foreground">
             미리보기에서 빈칸을 클릭해 <strong>어느 칸에 어떤 값</strong>을 넣을지
-            직접 지정합니다. 편집기 상단의 <strong>[자동 배치]</strong>로 빈칸을 라벨
-            기준 한 번에 매핑할 수 있습니다(빈칸만 / 전체 덮어쓰기).
+            직접 지정합니다. 편집기 상단의 <strong>[AI 자동 배치]</strong>로 AI가 빈칸을
+            읽어 표준데이터에 한 번에 매핑할 수 있습니다(빈칸만 / 전체 덮어쓰기).
             {assignedCount > 0 ? (
               <>
                 {" "}
@@ -408,20 +429,30 @@ export function DocxPlacement({
                   variant="outline"
                   size="sm"
                   onClick={() => runAutoMap("fill")}
-                  title="이미 지정한 칸은 그대로 두고, 빈칸만 라벨로 자동 매핑"
+                  disabled={autoBusy}
+                  title="AI가 빈칸을 읽어 표준데이터로 매핑. 이미 지정한 칸은 유지."
                 >
-                  <Sparkles className="size-3.5" />
-                  자동 배치 · 빈칸만
+                  {autoBusy ? (
+                    <Loader2 className="size-3.5 animate-spin" />
+                  ) : (
+                    <Sparkles className="size-3.5" />
+                  )}
+                  AI 자동 배치 · 빈칸만
                 </Button>
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
                   onClick={() => runAutoMap("overwrite")}
-                  title="기존 매핑을 모두 버리고 처음부터 자동 매핑"
+                  disabled={autoBusy}
+                  title="기존 매핑을 모두 버리고 AI가 처음부터 매핑"
                 >
-                  <Sparkles className="size-3.5" />
-                  전체 덮어쓰기
+                  {autoBusy ? (
+                    <Loader2 className="size-3.5 animate-spin" />
+                  ) : (
+                    <Sparkles className="size-3.5" />
+                  )}
+                  AI 전체 덮어쓰기
                 </Button>
                 <Button
                   type="button"
@@ -456,6 +487,13 @@ export function DocxPlacement({
                 </Button>
               </div>
             </div>
+
+            {autoBusy ? (
+              <div className="flex items-center gap-2 border-b border-blue-200 bg-blue-50 px-4 py-2 text-sm text-blue-700">
+                <Loader2 className="size-4 animate-spin" />
+                AI가 양식을 읽어 빈칸을 매핑하는 중… (30~60초)
+              </div>
+            ) : null}
 
             {pendingAuto ? (
               <div className="flex flex-wrap items-center gap-2 border-b border-amber-300 bg-amber-50 px-4 py-2 text-sm">

@@ -6,6 +6,7 @@ import PizZip from "pizzip";
 import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { isGlocareAdmin } from "@/lib/admin-guard";
 import { detectEssay, type DetectedSection } from "@/lib/admission/detect-essay";
+import { callMapSlots } from "@/lib/admission/call-map-slots";
 import {
   tokenizeAndFillDocx,
   injectSlotMarkers,
@@ -238,6 +239,73 @@ export async function placementDocxAction(
       error: `배치 편집 준비 실패: ${e instanceof Error ? e.message : String(e)}`,
     };
   }
+}
+
+/**
+ * [빈칸 클릭 배치] AI 자동 매핑 — 원본 docx 의 빈칸(⟦S{n}⟧)을 표준데이터에 매핑.
+ *   문서에 슬롯 마커를 박아 텍스트로 추출 → abroad LLM 엔드포인트로 보내
+ *   { slot번호: 카탈로그키 } 를 받는다. 저장은 하지 않고 반환(클라이언트가 적용/미적용 결정).
+ */
+export type AiMapSlotsResult =
+  | { ok: true; mapping: Record<string, string>; count: number }
+  | { ok: false; error: string };
+
+export async function aiMapSlotsAction(
+  formFileId: string
+): Promise<AiMapSlotsResult> {
+  if (!(await requireAdmin())) return { ok: false, error: "권한이 없습니다." };
+  const admin = createAdminClient();
+  const r = await fetchFormBuffer(admin, formFileId);
+  if ("error" in r) return { ok: false, error: r.error };
+
+  let markedText: string;
+  let slots: SlotInfo[];
+  try {
+    const injected = injectSlotMarkers(r.buf);
+    slots = injected.slots;
+    markedText = docxPlainText(injected.buf);
+  } catch (e) {
+    return {
+      ok: false,
+      error: `문서 분석 준비 실패: ${e instanceof Error ? e.message : String(e)}`,
+    };
+  }
+  if (!markedText.trim()) {
+    return { ok: false, error: "문서 텍스트를 읽지 못했습니다 (.docx 가 아닐 수 있음)." };
+  }
+
+  // 매핑 대상 = 앞 라벨이 있는 빈칸만 (내용칸은 제외).
+  const targetSlots = slots
+    .filter((s) => s.empty && s.hint.trim())
+    .map((s) => ({ index: s.slot, hint: s.hint }));
+  if (targetSlots.length === 0) {
+    return { ok: true, mapping: {}, count: 0 };
+  }
+
+  const { data: types } = await admin
+    .from("study_student_data_types")
+    .select("key, label_ko, category, aliases")
+    .eq("is_active", true)
+    .order("category")
+    .order("sort_order");
+
+  const result = await callMapSlots({
+    markedText,
+    slots: targetSlots,
+    availableDataTypes: (types ?? []).map((t) => ({
+      key: t.key,
+      label_ko: t.label_ko,
+      category: t.category,
+      aliases: (t.aliases as string[] | null) ?? [],
+    })),
+  });
+  if (!result.ok) return { ok: false, error: result.error };
+
+  return {
+    ok: true,
+    mapping: result.mapping,
+    count: Object.keys(result.mapping).length,
+  };
 }
 
 /**
