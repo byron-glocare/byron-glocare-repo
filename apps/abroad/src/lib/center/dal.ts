@@ -20,6 +20,9 @@ export type VerifiedCenterSession = {
   email: string;
   member: StudyCenterUser;
   org: StudyCenterOrg;
+  /** 글로케어(본사) 계정 여부 = auth app_metadata.role === 'glocare_admin'.
+   *  본사는 자기 org(Glocare)에 묶여 있지만, 학생은 특정 유학센터로 배정해야 한다. */
+  isGlocare: boolean;
 };
 
 /**
@@ -72,11 +75,13 @@ export const verifyCenterSession = cache(
 
     // 4. org 필드 분리
     const { org, ...member } = row;
+    const role = (user.app_metadata as { role?: string } | undefined)?.role;
     return {
       authUserId: user.id,
       email: user.email!,
       member: member as StudyCenterUser,
       org: org as StudyCenterOrg,
+      isGlocare: role === "glocare_admin",
     };
   }
 );

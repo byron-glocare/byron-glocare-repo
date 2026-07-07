@@ -6,13 +6,30 @@
 import Link from "next/link";
 
 import { verifyCenterSession } from "@/lib/center/dal";
+import { createServiceClient } from "@/lib/supabase/service";
 import { getLocale, tr } from "@/lib/i18n";
 
 import { NewStudentForm } from "./new-student-form";
 
 export default async function NewStudentPage() {
-  await verifyCenterSession(); // 인증 + org 검증
+  const session = await verifyCenterSession(); // 인증 + org 검증
   const locale = await getLocale();
+
+  // 글로케어(본사) 계정: 학생을 배정할 유학센터 목록(자기 org 제외).
+  let centerOrgs: { id: string; name: string }[] | null = null;
+  if (session.isGlocare) {
+    const svc = createServiceClient();
+    const { data } = await svc
+      .from("study_center_orgs")
+      .select("id, name_ko, name_vi, status")
+      .eq("status", "active")
+      .neq("id", session.org.id)
+      .order("name_vi");
+    centerOrgs = (data ?? []).map((o) => ({
+      id: o.id,
+      name: locale === "ko" ? o.name_ko || o.name_vi : o.name_vi || o.name_ko || "",
+    }));
+  }
 
   return (
     <div className="max-w-3xl">
@@ -36,7 +53,7 @@ export default async function NewStudentPage() {
       </header>
 
       <div className="rounded-lg border border-slate-200 bg-white p-6">
-        <NewStudentForm locale={locale} />
+        <NewStudentForm locale={locale} centerOrgs={centerOrgs} />
       </div>
     </div>
   );

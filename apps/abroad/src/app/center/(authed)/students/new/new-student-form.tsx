@@ -15,16 +15,69 @@ const requiredMarkClass = "ml-0.5 text-red-500";
 const errorTextClass = "text-xs text-red-600";
 const helpTextClass = "text-xs text-slate-500";
 
-export function NewStudentForm({ locale }: { locale: Locale }) {
+export function NewStudentForm({
+  locale,
+  centerOrgs,
+}: {
+  locale: Locale;
+  /** 글로케어(본사) 계정일 때만 전달됨 — 학생을 배정할 유학센터 목록. */
+  centerOrgs?: { id: string; name: string }[] | null;
+}) {
   const [state, action, pending] = useActionState<CreateStudentState, FormData>(
     createStudentAction,
     undefined
   );
 
   const fieldError = (name: string) => state?.fieldErrors?.[name]?.[0];
+  const isGlocare = centerOrgs != null;
 
   return (
     <form action={action} className="flex flex-col gap-5">
+      {/* 글로케어(본사) 전용 — 소속 유학센터 선택 (필수) */}
+      {isGlocare ? (
+        <label className={`${labelClass} rounded-md border border-amber-300 bg-amber-50 p-3`}>
+          <span className={labelTextClass}>
+            {tr(locale, "소속 유학센터", "Trung tâm du học phụ trách")}
+            <span className={requiredMarkClass}>*</span>
+          </span>
+          <select
+            name="target_org_id"
+            required
+            defaultValue=""
+            className={inputClass}
+          >
+            <option value="" disabled>
+              {tr(locale, "— 유학센터 선택 —", "— Chọn trung tâm —")}
+            </option>
+            {centerOrgs!.map((o) => (
+              <option key={o.id} value={o.id}>
+                {o.name}
+              </option>
+            ))}
+          </select>
+          {fieldError("target_org_id") ? (
+            <span className={errorTextClass}>{fieldError("target_org_id")}</span>
+          ) : (
+            <span className={helpTextClass}>
+              {tr(
+                locale,
+                "글로케어가 섭외한 학생을 어느 유학센터로 연결할지 선택하세요. 이후 관리는 해당 센터가 맡습니다.",
+                "Chọn trung tâm sẽ phụ trách sinh viên do Glocare giới thiệu. Sau đó trung tâm đó sẽ quản lý."
+              )}
+            </span>
+          )}
+          {centerOrgs!.length === 0 ? (
+            <span className={errorTextClass}>
+              {tr(
+                locale,
+                "배정 가능한 유학센터가 없습니다. 먼저 계정 관리에서 센터 계정을 만드세요.",
+                "Chưa có trung tâm nào. Hãy tạo tài khoản trung tâm trước."
+              )}
+            </span>
+          ) : null}
+        </label>
+      ) : null}
+
       {/* 이름 — 필수 */}
       <label className={labelClass}>
         <span className={labelTextClass}>
