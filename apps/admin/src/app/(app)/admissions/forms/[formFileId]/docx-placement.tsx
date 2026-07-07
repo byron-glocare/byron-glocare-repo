@@ -29,7 +29,13 @@ type SlotInfo = {
   hint: string;
 };
 
-const norm = (s: string) => s.replace(/\s+/g, "").toLowerCase();
+// 라벨 매칭용 정규화: 공백·괄호·구두점·별표 등 제거 후 소문자.
+//   (기존엔 공백만 제거 → 정확 일치만 잡혀 "자동 추천이 잘 안 됨". 이제 부분 일치까지.)
+const norm = (s: string) =>
+  (s || "")
+    .replace(/[\s　]+/g, "")
+    .replace(/[()[\]{}<>:：·・,.\/*\-_~"'’“”|]/g, "")
+    .toLowerCase();
 
 function b64ToBlob(b64: string): Blob {
   const bin = atob(b64);
@@ -54,6 +60,12 @@ export function DocxPlacement({
   const [loading, setLoading] = useState(false);
   const [pending, startTransition] = useTransition();
   const [, force] = useReducer((x) => x + 1, 0);
+  // 자동 배치 제안 대기(적용/미적용). null = 대기 없음.
+  const [pendingAuto, setPendingAuto] = useState<{
+    mapping: Record<string, string>;
+    count: number;
+    mode: "fill" | "overwrite";
+  } | null>(null);
 
   const labelOf = useMemo(() => {
     const m = new Map<string, string>();
@@ -61,15 +73,34 @@ export function DocxPlacement({
     return m;
   }, [choices]);
 
-  // 정규화 별칭 → key (칸 힌트 자동 추천용)
-  const aliasIndex = useMemo(() => {
-    const m = new Map<string, string>();
-    for (const c of choices) {
-      m.set(norm(c.label), c.key);
-      for (const a of c.aliases ?? []) m.set(norm(a), c.key);
-    }
-    return m;
-  }, [choices]);
+  // 매칭 후보 인덱스: key → 정규화된 이름·별칭 목록 (2자 이상)
+  const matchIndex = useMemo(
+    () =>
+      choices.map((c) => ({
+        key: c.key,
+        terms: [c.label, ...(c.aliases ?? [])]
+          .map(norm)
+          .filter((t) => t.length >= 2),
+      })),
+    [choices]
+  );
+
+  // 힌트(빈칸 앞 라벨)로 가장 잘 맞는 표준데이터 key 추정.
+  //   1) 완전 일치 → 2) 양방향 부분 포함(가장 긴 후보 우선). 없으면 null.
+  const bestMatch = useCallback(
+    (hintRaw: string): string | null => {
+      const hint = norm(hintRaw);
+      if (hint.length < 2) return null;
+      for (const c of matchIndex) if (c.terms.includes(hint)) return c.key;
+      let best: { key: string; len: number } | null = null;
+      for (const c of matchIndex)
+        for (const t of c.terms)
+          if (hint.includes(t) || t.includes(hint))
+            if (!best || t.length > best.len) best = { key: c.key, len: t.length };
+      return best?.key ?? null;
+    },
+    [matchIndex]
+  );
 
   const slotsRef = useRef<SlotInfo[]>([]);
   const mappingRef = useRef<Record<string, string>>({ ...savedSlots });
@@ -107,13 +138,13 @@ export function DocxPlacement({
       const ex = explicitState(slot);
       if (ex) return "skip" in ex ? null : { key: ex.key, explicit: true };
       if (isEmpty(slot)) {
-        const auto = aliasIndex.get(norm(hintOf(slot)));
+        const auto = bestMatch(hintOf(slot));
         if (auto) return { key: auto, explicit: false };
       }
       return null;
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [aliasIndex]
+    [bestMatch]
   );
 
   const repaint = useCallback(() => {
@@ -253,6 +284,36 @@ export function DocxPlacement({
     force();
   }
 
+  // 자동 배치 실행 → 제안 계산(아직 미적용). mode:
+  //   fill      = 이미 지정된 칸은 그대로 두고 빈칸만 자동 매핑(기존 유지)
+  //   overwrite = 기존 매핑 전부 버리고 처음부터 자동 매핑(전체 덮어쓰기)
+  function runAutoMap(mode: "fill" | "overwrite") {
+    const proposed: Record<string, string> =
+      mode === "overwrite" ? {} : { ...mappingRef.current };
+    let n = 0;
+    for (const si of slotsRef.current) {
+      if (!si.empty) continue; // 앞 라벨이 있는 빈칸만 대상
+      if (mode === "fill" && explicitState(si.slot)) continue; // 이미 지정된 칸 유지
+      const key = bestMatch(si.hint);
+      if (!key) continue;
+      proposed[`a${si.slot}`] = key;
+      if (si.emptyIndex !== null) delete proposed[String(si.emptyIndex)];
+      n++;
+    }
+    setPendingAuto({ mapping: proposed, count: n, mode });
+  }
+
+  function applyPendingAuto() {
+    if (!pendingAuto) return;
+    mappingRef.current = pendingAuto.mapping;
+    setPendingAuto(null);
+    repaint();
+    force();
+    toast.success(
+      `자동 배치 ${pendingAuto.count}칸 적용됨 — [저장]을 눌러야 반영됩니다.`
+    );
+  }
+
   function onSave() {
     // 빈 문자열(명시 비움) 포함 그대로 저장. 단, 자동추천만 있고 명시 안 한 건 저장 안 함.
     startTransition(async () => {
@@ -318,7 +379,8 @@ export function DocxPlacement({
           <h2 className="text-base font-semibold">빈칸 클릭 배치 (정밀)</h2>
           <p className="mt-0.5 text-sm text-muted-foreground">
             미리보기에서 빈칸을 클릭해 <strong>어느 칸에 어떤 값</strong>을 넣을지
-            직접 지정합니다. 지정 안 한 칸은 라벨 자동매칭으로 채워집니다.
+            직접 지정합니다. 편집기 상단의 <strong>[자동 배치]</strong>로 빈칸을 라벨
+            기준 한 번에 매핑할 수 있습니다(빈칸만 / 전체 덮어쓰기).
             {assignedCount > 0 ? (
               <>
                 {" "}
@@ -340,7 +402,27 @@ export function DocxPlacement({
               <span className="text-sm font-semibold">
                 빈칸 클릭 배치 편집 · 빈칸을 클릭 → 아래에서 값 선택
               </span>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => runAutoMap("fill")}
+                  title="이미 지정한 칸은 그대로 두고, 빈칸만 라벨로 자동 매핑"
+                >
+                  <Sparkles className="size-3.5" />
+                  자동 배치 · 빈칸만
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => runAutoMap("overwrite")}
+                  title="기존 매핑을 모두 버리고 처음부터 자동 매핑"
+                >
+                  <Sparkles className="size-3.5" />
+                  전체 덮어쓰기
+                </Button>
                 <Button
                   type="button"
                   variant="outline"
@@ -374,6 +456,35 @@ export function DocxPlacement({
                 </Button>
               </div>
             </div>
+
+            {pendingAuto ? (
+              <div className="flex flex-wrap items-center gap-2 border-b border-amber-300 bg-amber-50 px-4 py-2 text-sm">
+                <Sparkles className="size-4 shrink-0 text-amber-600" />
+                <span>
+                  {pendingAuto.mode === "overwrite"
+                    ? "전체 덮어쓰기"
+                    : "빈칸만"}{" "}
+                  자동 배치:{" "}
+                  <strong>{pendingAuto.count}칸</strong>이 매핑됩니다. 적용할까요?
+                  <span className="ml-1 text-xs text-muted-foreground">
+                    (적용 후에도 [저장]을 눌러야 실제 반영)
+                  </span>
+                </span>
+                <div className="ml-auto flex gap-2">
+                  <Button type="button" size="sm" onClick={applyPendingAuto}>
+                    적용
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setPendingAuto(null)}
+                  >
+                    미적용
+                  </Button>
+                </div>
+              </div>
+            ) : null}
 
             <div className="docx-edit-host relative min-h-0 flex-1 overflow-auto bg-neutral-200 p-4">
               {loading ? (
