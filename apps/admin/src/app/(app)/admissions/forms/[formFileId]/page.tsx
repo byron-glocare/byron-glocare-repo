@@ -21,6 +21,7 @@ import {
 } from "./overlay-picker";
 import { DocxPlacement } from "./docx-placement";
 import { EssayConfig } from "./essay-config";
+import { ReanalyzeData } from "./reanalyze-data";
 import type { EssaySection } from "./docx-actions";
 
 export const dynamic = "force-dynamic";
@@ -167,6 +168,10 @@ export default async function FormDocDetailPage({
           }))}
           docNameOptions={docNameOptions}
         />
+
+        <Card className="mt-6 p-6">
+          <ReanalyzeData formFileId={form.id} />
+        </Card>
 
         <Card className="mt-6 p-6">
           <EssayConfig

@@ -335,6 +335,118 @@ export async function addSuggestedDataTypeFromUploadAction(
 }
 
 /**
+ * [작성서류 상세] 이미 등록된 양식을 대상으로 AI 표준데이터 맵핑 재실행.
+ *   업로드 시의 auto_analyze 와 동일한 callAnalyzeForm 을 원본 파일에 다시 돌려
+ *   "필요 표준데이터" 후보 + 누락 카탈로그 + 서술형 문항 수를 반환한다.
+ *   ⚠ 결과는 저장하지 않는다 — 운영자가 검토 후 mergeRequiredKeysAction 으로 반영.
+ */
+export type ReanalyzeFormResult =
+  | {
+      ok: true;
+      suggestedKeys: Array<{ key: string; label_ko: string; already: boolean }>;
+      missingDataTypes: SuggestedMissingDataType[];
+      essayQuestionCount: number;
+      notes: string;
+    }
+  | { ok: false; error: string };
+
+export async function reanalyzeFormAction(
+  formFileId: string
+): Promise<ReanalyzeFormResult> {
+  const supabaseUser = await createClient();
+  const {
+    data: { user },
+  } = await supabaseUser.auth.getUser();
+  if (!user) return { ok: false, error: "로그인이 필요합니다" };
+
+  const supabase = createAdminClient();
+
+  const { data: form } = await supabase
+    .from("study_admission_form_files")
+    .select("file_url, file_name, required_data_type_keys")
+    .eq("id", formFileId)
+    .maybeSingle();
+  if (!form) return { ok: false, error: "양식을 찾을 수 없습니다." };
+
+  const { data: types } = await supabase
+    .from("study_student_data_types")
+    .select("key, label_ko, category, is_essay_basis, aliases, is_derived")
+    .eq("is_active", true)
+    .order("sort_order");
+
+  const result = await callAnalyzeForm({
+    fileUrl: form.file_url,
+    fileName: form.file_name,
+    availableDataTypes: (types ?? []).map((t) => ({
+      key: t.key,
+      label_ko: t.label_ko,
+      category: t.category,
+      is_essay_basis: t.is_essay_basis,
+      aliases: t.aliases ?? [],
+      is_derived: t.is_derived ?? false,
+    })),
+  });
+  if (!result.ok) return { ok: false, error: result.error };
+
+  const labelByKey = new Map((types ?? []).map((t) => [t.key, t.label_ko]));
+  const existing = new Set(form.required_data_type_keys ?? []);
+  const suggestedKeys = result.suggested_required_data_keys.map((k) => ({
+    key: k,
+    label_ko: labelByKey.get(k) ?? k,
+    already: existing.has(k),
+  }));
+
+  return {
+    ok: true,
+    suggestedKeys,
+    missingDataTypes: result.missing_data_types ?? [],
+    essayQuestionCount: result.essay_questions.length,
+    notes: result.analysis_notes || "",
+  };
+}
+
+/**
+ * [작성서류 상세] AI 재분석에서 고른 표준데이터 키를 required 에 병합(합집합) 저장.
+ *   기존 required 를 지우지 않고 추가만 한다. (기본정보 저장은 required 를 건드리지 않으므로 안전.)
+ */
+export type MergeRequiredKeysResult =
+  | { ok: true; count: number }
+  | { ok: false; error: string };
+
+export async function mergeRequiredKeysAction(
+  formFileId: string,
+  keys: string[]
+): Promise<MergeRequiredKeysResult> {
+  const supabaseUser = await createClient();
+  const {
+    data: { user },
+  } = await supabaseUser.auth.getUser();
+  if (!user) return { ok: false, error: "로그인이 필요합니다" };
+
+  const supabase = createAdminClient();
+
+  const { data: form } = await supabase
+    .from("study_admission_form_files")
+    .select("required_data_type_keys, university_id")
+    .eq("id", formFileId)
+    .maybeSingle();
+  if (!form) return { ok: false, error: "양식을 찾을 수 없습니다." };
+
+  const merged = Array.from(
+    new Set([...(form.required_data_type_keys ?? []), ...keys])
+  );
+  const { error } = await supabase
+    .from("study_admission_form_files")
+    .update({ required_data_type_keys: merged })
+    .eq("id", formFileId);
+  if (error) return { ok: false, error: error.message };
+
+  revalidatePath(`/admissions/forms/${formFileId}`);
+  revalidatePath(`/universities/${form.university_id}/forms`);
+  return { ok: true, count: merged.length };
+}
+
+/**
  * 양식 메타데이터 수정 (업로드 이후 표시명·종류·적용범위·메모·필요데이터 편집).
  *   파일 자체는 재업로드로 교체 (버전 관리). 여기서는 메타만 수정.
  *

@@ -1,0 +1,235 @@
+"use client";
+
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { Check, Loader2, Plus, Sparkles } from "lucide-react";
+import { toast } from "sonner";
+
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  reanalyzeFormAction,
+  mergeRequiredKeysAction,
+  addSuggestedDataTypeFromUploadAction,
+  type ReanalyzeFormResult,
+} from "@/app/(app)/universities/[id]/forms/actions";
+
+type Ok = Extract<ReanalyzeFormResult, { ok: true }>;
+
+/**
+ * [작성서류 상세] 이미 등록된 양식에 AI 표준데이터 맵핑을 다시 돌리는 카드.
+ *   업로드 시 auto_analyze 와 같은 분석을, 파일 교체 없이 원본에 재실행.
+ *   결과(필요 표준데이터 후보 + 누락 카탈로그)를 검토 후 '필수'에 반영.
+ */
+export function ReanalyzeData({ formFileId }: { formFileId: string }) {
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+  const [result, setResult] = useState<Ok | null>(null);
+  // 후보 키별 체크 상태 (이미 반영된 키는 기본 해제)
+  const [checks, setChecks] = useState<Record<string, boolean>>({});
+  const [added, setAdded] = useState<Set<string>>(new Set());
+  const [applying, startApply] = useTransition();
+
+  function run() {
+    setResult(null);
+    startTransition(async () => {
+      const r = await reanalyzeFormAction(formFileId);
+      if (!r.ok) {
+        toast.error("AI 분석 실패", { description: r.error });
+        return;
+      }
+      setResult(r);
+      const init: Record<string, boolean> = {};
+      for (const s of r.suggestedKeys) init[s.key] = !s.already; // 새 항목만 기본 선택
+      setChecks(init);
+      if (r.suggestedKeys.length === 0 && r.missingDataTypes.length === 0) {
+        toast.info("추가로 제안된 표준데이터가 없습니다.");
+      }
+    });
+  }
+
+  const selected = result
+    ? result.suggestedKeys.filter((s) => checks[s.key]).map((s) => s.key)
+    : [];
+
+  function apply() {
+    if (selected.length === 0) return;
+    startApply(async () => {
+      const r = await mergeRequiredKeysAction(formFileId, selected);
+      if (!r.ok) {
+        toast.error("반영 실패", { description: r.error });
+        return;
+      }
+      toast.success(`${selected.length}개 항목을 '필수'로 반영했습니다.`);
+      setResult(null);
+      router.refresh();
+    });
+  }
+
+  function addMissing(idx: number) {
+    if (!result) return;
+    const m = result.missingDataTypes[idx];
+    startApply(async () => {
+      const r = await addSuggestedDataTypeFromUploadAction(m);
+      if (!r.ok) {
+        toast.error("카탈로그 추가 실패", { description: r.error });
+        return;
+      }
+      toast.success(`카탈로그에 추가: ${m.label_ko}`);
+      setAdded((s) => new Set(s).add(m.key));
+    });
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h2 className="text-base font-semibold">AI 표준데이터 재분석</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            이미 등록된 이 양식을 AI가 다시 읽어, 필요한 표준데이터 항목을
+            제안합니다. 파일은 교체되지 않습니다. (약 30~60초)
+          </p>
+        </div>
+        <Button type="button" onClick={run} disabled={pending} className="shrink-0">
+          {pending ? (
+            <Loader2 className="size-4 animate-spin" />
+          ) : (
+            <Sparkles className="size-4" />
+          )}
+          {pending ? "분석 중…" : "AI 재분석"}
+        </Button>
+      </div>
+
+      {result ? (
+        <div className="space-y-4 rounded-md border border-input p-4">
+          {result.notes ? (
+            <p className="text-xs text-muted-foreground">{result.notes}</p>
+          ) : null}
+
+          {/* 필요 표준데이터 후보 */}
+          {result.suggestedKeys.length > 0 ? (
+            <div>
+              <div className="mb-2 text-xs font-medium text-muted-foreground">
+                필요 표준데이터 후보 — 체크한 항목을 정보입력 &apos;필수&apos;로 반영
+              </div>
+              <ul className="space-y-1.5">
+                {result.suggestedKeys.map((s) => (
+                  <li
+                    key={s.key}
+                    className="flex items-center gap-3 rounded-md border border-border px-3 py-2"
+                  >
+                    <Checkbox
+                      checked={checks[s.key] ?? false}
+                      onCheckedChange={(v) =>
+                        setChecks((c) => ({ ...c, [s.key]: v === true }))
+                      }
+                    />
+                    <div className="flex-1 min-w-0">
+                      <span className="text-sm font-medium">{s.label_ko}</span>
+                      <span className="ml-2 text-xs text-muted-foreground">
+                        {s.key}
+                      </span>
+                    </div>
+                    {s.already ? (
+                      <Badge variant="outline" className="text-[10px]">
+                        이미 반영됨
+                      </Badge>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              카탈로그에서 매칭된 필요 표준데이터가 없습니다.
+            </p>
+          )}
+
+          {/* 카탈로그 누락 항목 */}
+          {result.missingDataTypes.length > 0 ? (
+            <div className="rounded-md border border-warning/30 bg-warning/5 p-3">
+              <div className="mb-2 text-xs font-medium">
+                🆕 AI가 발견한 카탈로그 누락 항목 ({result.missingDataTypes.length}
+                개)
+              </div>
+              <p className="mb-2 text-[11px] text-muted-foreground">
+                양식이 요구하는데 표준 카탈로그에 없는 항목. &quot;카탈로그에
+                추가&quot; 후 다시 재분석하면 위 후보에 잡힙니다.
+              </p>
+              <ul className="space-y-1.5">
+                {result.missingDataTypes.map((m, i) => {
+                  const done = added.has(m.key);
+                  return (
+                    <li
+                      key={m.key}
+                      className="flex items-center gap-3 rounded-md border border-border bg-background px-3 py-2"
+                    >
+                      <div className="flex-1 min-w-0">
+                        <span className="text-sm font-medium">{m.label_ko}</span>
+                        <span className="ml-2 text-xs text-muted-foreground">
+                          {m.key} · {m.category}
+                        </span>
+                      </div>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant={done ? "outline" : "default"}
+                        disabled={applying || done}
+                        onClick={() => addMissing(i)}
+                      >
+                        {done ? (
+                          <>
+                            <Check className="size-4" />
+                            추가됨
+                          </>
+                        ) : (
+                          <>
+                            <Plus className="size-4" />
+                            카탈로그에 추가
+                          </>
+                        )}
+                      </Button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ) : null}
+
+          {result.essayQuestionCount > 0 ? (
+            <p className="text-xs text-muted-foreground">
+              ✍️ 서술형 문항 {result.essayQuestionCount}개 감지 — 아래 “서술형 문서
+              설정”의 AI 분석에서 문항을 반영하세요.
+            </p>
+          ) : null}
+
+          <div className="flex justify-end gap-2 border-t pt-3">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setResult(null)}
+              disabled={applying}
+            >
+              닫기
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              onClick={apply}
+              disabled={applying || selected.length === 0}
+            >
+              {applying ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                <Check className="size-4" />
+              )}
+              {selected.length}개 필수로 반영
+            </Button>
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+}
