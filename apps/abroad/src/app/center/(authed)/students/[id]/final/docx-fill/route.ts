@@ -245,8 +245,8 @@ export async function GET(
         wEmu: img.wEmu,
         hEmu: img.hEmu,
         viaLabel,
-        // 이미지(서명·사진)는 칸 글자를 덮지 않고 글자 뒤에 덧붙임
-        overwrite: false,
+        // 이미지도 텍스트와 동일: 기본 덮어쓰기, '이어쓰기' 선택 시 글자 뒤에 덧붙임.
+        overwrite,
         align,
       };
     return { kind: "text", value: valMap.get(key) ?? "", viaLabel, overwrite, align };

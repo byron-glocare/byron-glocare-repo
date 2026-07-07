@@ -370,11 +370,11 @@ export async function previewDocxAction(
     if (ak in slotMapping) {
       const k = slotMapping[ak];
       if (!k) return null;
-      // 이미지는 글자 뒤에 덧붙임(덮어쓰기 X). 텍스트는 기본 덮어쓰기, '이어쓰기' 선택 시 append.
+      // 텍스트·이미지 모두 기본 덮어쓰기, '이어쓰기'(m:a=append) 선택 시 글자 뒤에 붙임.
       return {
         value: sampleFor(k),
         viaLabel: false,
-        overwrite: isImageKey(k) ? false : !isAppend(allIndex),
+        overwrite: !isAppend(allIndex),
         align: alignOf(allIndex),
       };
     }
