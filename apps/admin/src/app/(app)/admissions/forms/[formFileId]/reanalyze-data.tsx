@@ -11,11 +11,14 @@ import { Checkbox } from "@/components/ui/checkbox";
 import {
   reanalyzeFormAction,
   mergeRequiredKeysAction,
+  replaceRequiredKeysAction,
   addSuggestedDataTypeFromUploadAction,
   type ReanalyzeFormResult,
 } from "@/app/(app)/universities/[id]/forms/actions";
 
 type Ok = Extract<ReanalyzeFormResult, { ok: true }>;
+/** new = 신규만 추가(합집합) / scratch = 처음부터 다시(교체) */
+type Mode = "new" | "scratch";
 
 /**
  * [작성서류 상세] 이미 등록된 양식에 AI 표준데이터 맵핑을 다시 돌리는 카드.
@@ -26,10 +29,18 @@ export function ReanalyzeData({ formFileId }: { formFileId: string }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [result, setResult] = useState<Ok | null>(null);
+  const [mode, setMode] = useState<Mode>("new");
   // 후보 키별 체크 상태 (이미 반영된 키는 기본 해제)
   const [checks, setChecks] = useState<Record<string, boolean>>({});
   const [added, setAdded] = useState<Set<string>>(new Set());
   const [applying, startApply] = useTransition();
+
+  // 모드별 기본 체크: 신규만=새 항목만 / 처음부터=전부 체크
+  function defaultChecks(r: Ok, m: Mode): Record<string, boolean> {
+    const init: Record<string, boolean> = {};
+    for (const s of r.suggestedKeys) init[s.key] = m === "scratch" ? true : !s.already;
+    return init;
+  }
 
   function run() {
     setResult(null);
@@ -40,28 +51,42 @@ export function ReanalyzeData({ formFileId }: { formFileId: string }) {
         return;
       }
       setResult(r);
-      const init: Record<string, boolean> = {};
-      for (const s of r.suggestedKeys) init[s.key] = !s.already; // 새 항목만 기본 선택
-      setChecks(init);
+      setChecks(defaultChecks(r, mode));
       if (r.suggestedKeys.length === 0 && r.missingDataTypes.length === 0) {
         toast.info("추가로 제안된 표준데이터가 없습니다.");
       }
     });
   }
 
-  const selected = result
-    ? result.suggestedKeys.filter((s) => checks[s.key]).map((s) => s.key)
+  function changeMode(m: Mode) {
+    setMode(m);
+    if (result) setChecks(defaultChecks(result, m));
+  }
+
+  // 신규만 모드에서는 이미 반영된 항목은 목록에서 숨김(+ 상태만 검증).
+  const visibleKeys = result
+    ? mode === "new"
+      ? result.suggestedKeys.filter((s) => !s.already)
+      : result.suggestedKeys
     : [];
+  const selected = visibleKeys.filter((s) => checks[s.key]).map((s) => s.key);
 
   function apply() {
-    if (selected.length === 0) return;
+    if (mode === "new" && selected.length === 0) return;
     startApply(async () => {
-      const r = await mergeRequiredKeysAction(formFileId, selected);
+      const r =
+        mode === "scratch"
+          ? await replaceRequiredKeysAction(formFileId, selected)
+          : await mergeRequiredKeysAction(formFileId, selected);
       if (!r.ok) {
         toast.error("반영 실패", { description: r.error });
         return;
       }
-      toast.success(`${selected.length}개 항목을 '필수'로 반영했습니다.`);
+      toast.success(
+        mode === "scratch"
+          ? `필수 목록을 ${selected.length}개로 새로 설정했습니다.`
+          : `${selected.length}개 항목을 '필수'로 추가했습니다.`
+      );
       setResult(null);
       router.refresh();
     });
@@ -107,14 +132,52 @@ export function ReanalyzeData({ formFileId }: { formFileId: string }) {
             <p className="text-xs text-muted-foreground">{result.notes}</p>
           ) : null}
 
+          {/* 반영 방식 선택 */}
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs font-medium text-muted-foreground">
+              반영 방식
+            </span>
+            <div className="inline-flex overflow-hidden rounded-md border border-input">
+              <button
+                type="button"
+                onClick={() => changeMode("new")}
+                className={`px-3 py-1.5 text-xs font-medium ${
+                  mode === "new"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-background hover:bg-muted"
+                }`}
+              >
+                신규만 추가
+              </button>
+              <button
+                type="button"
+                onClick={() => changeMode("scratch")}
+                className={`border-l border-input px-3 py-1.5 text-xs font-medium ${
+                  mode === "scratch"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-background hover:bg-muted"
+                }`}
+              >
+                처음부터 다시
+              </button>
+            </div>
+            <span className="text-[11px] text-muted-foreground">
+              {mode === "new"
+                ? "기존 필수는 그대로 두고, 아직 없는 항목만 추가합니다."
+                : "선택한 항목으로 필수 목록을 새로 만듭니다(기존 필수 중 체크 안 한 항목은 제외 — 사람이 넣은 것도 지워질 수 있음)."}
+            </span>
+          </div>
+
           {/* 필요 표준데이터 후보 */}
-          {result.suggestedKeys.length > 0 ? (
+          {visibleKeys.length > 0 ? (
             <div>
               <div className="mb-2 text-xs font-medium text-muted-foreground">
-                필요 표준데이터 후보 — 체크한 항목을 정보입력 &apos;필수&apos;로 반영
+                {mode === "new"
+                  ? "신규 후보 — 체크한 항목을 정보입력 '필수'에 추가"
+                  : "필요 표준데이터 — 체크한 항목만 '필수'로 남깁니다"}
               </div>
               <ul className="space-y-1.5">
-                {result.suggestedKeys.map((s) => (
+                {visibleKeys.map((s) => (
                   <li
                     key={s.key}
                     className="flex items-center gap-3 rounded-md border border-border px-3 py-2"
@@ -142,7 +205,9 @@ export function ReanalyzeData({ formFileId }: { formFileId: string }) {
             </div>
           ) : (
             <p className="text-sm text-muted-foreground">
-              카탈로그에서 매칭된 필요 표준데이터가 없습니다.
+              {mode === "new"
+                ? "새로 추가할 후보가 없습니다. (AI 제안 항목이 모두 이미 반영돼 있음)"
+                : "카탈로그에서 매칭된 필요 표준데이터가 없습니다."}
             </p>
           )}
 
@@ -225,7 +290,9 @@ export function ReanalyzeData({ formFileId }: { formFileId: string }) {
               ) : (
                 <Check className="size-4" />
               )}
-              {selected.length}개 필수로 반영
+              {mode === "scratch"
+                ? `필수 ${selected.length}개로 설정`
+                : `${selected.length}개 추가`}
             </Button>
           </div>
         </div>

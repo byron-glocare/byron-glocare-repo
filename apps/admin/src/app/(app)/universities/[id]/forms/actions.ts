@@ -447,6 +447,41 @@ export async function mergeRequiredKeysAction(
 }
 
 /**
+ * [작성서류 상세] AI 재분석 '처음부터 다시' 모드 — required 를 선택 키로 통째로 교체.
+ *   기존에 사람이 넣은 required 도 여기서 지워진다(선택한 것만 남음). merge 와 달리 합집합이 아님.
+ */
+export async function replaceRequiredKeysAction(
+  formFileId: string,
+  keys: string[]
+): Promise<MergeRequiredKeysResult> {
+  const supabaseUser = await createClient();
+  const {
+    data: { user },
+  } = await supabaseUser.auth.getUser();
+  if (!user) return { ok: false, error: "로그인이 필요합니다" };
+
+  const supabase = createAdminClient();
+
+  const { data: form } = await supabase
+    .from("study_admission_form_files")
+    .select("university_id")
+    .eq("id", formFileId)
+    .maybeSingle();
+  if (!form) return { ok: false, error: "양식을 찾을 수 없습니다." };
+
+  const unique = Array.from(new Set(keys));
+  const { error } = await supabase
+    .from("study_admission_form_files")
+    .update({ required_data_type_keys: unique })
+    .eq("id", formFileId);
+  if (error) return { ok: false, error: error.message };
+
+  revalidatePath(`/admissions/forms/${formFileId}`);
+  revalidatePath(`/universities/${form.university_id}/forms`);
+  return { ok: true, count: unique.length };
+}
+
+/**
  * 양식 메타데이터 수정 (업로드 이후 표시명·종류·적용범위·메모·필요데이터 편집).
  *   파일 자체는 재업로드로 교체 (버전 관리). 여기서는 메타만 수정.
  *
