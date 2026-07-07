@@ -13,6 +13,7 @@ import {
   normLabel,
   type SlotResolve,
   type SlotInfo,
+  type SlotAlign,
 } from "@/lib/docx/fill";
 
 export type ActionResult = { ok: true } | { ok: false; error: string };
@@ -359,13 +360,23 @@ export async function previewDocxAction(
     if (/signature|서명|sign/i.test(k)) return "[서명]";
     return sampleForKey(k);
   };
+  const alignOf = (idx: number): SlotAlign | undefined => {
+    const v = slotMapping[`j:a${idx}`];
+    return v === "left" || v === "right" || v === "center" ? v : undefined;
+  };
+  const isAppend = (idx: number): boolean => slotMapping[`m:a${idx}`] === "append";
   const resolve: SlotResolve = ({ allIndex, emptyIndex, labelNorm }) => {
     const ak = `a${allIndex}`;
     if (ak in slotMapping) {
       const k = slotMapping[ak];
       if (!k) return null;
-      // 이미지는 글자 뒤에 덧붙임(덮어쓰기 X), 텍스트는 칸 덮어쓰기
-      return { value: sampleFor(k), viaLabel: false, overwrite: !isImageKey(k) };
+      // 이미지는 글자 뒤에 덧붙임(덮어쓰기 X). 텍스트는 기본 덮어쓰기, '이어쓰기' 선택 시 append.
+      return {
+        value: sampleFor(k),
+        viaLabel: false,
+        overwrite: isImageKey(k) ? false : !isAppend(allIndex),
+        align: alignOf(allIndex),
+      };
     }
     if (emptyIndex !== null && String(emptyIndex) in slotMapping) {
       const k = slotMapping[String(emptyIndex)];

@@ -19,6 +19,7 @@ import {
   swapImagesByTag,
   normLabel,
   type SlotResolve,
+  type SlotAlign,
 } from "@/lib/docx/fill";
 import type { Json } from "@/types/database";
 
@@ -177,16 +178,31 @@ export async function GET(
     form.slot_mapping && typeof form.slot_mapping === "object"
       ? (form.slot_mapping as Record<string, string>)
       : {};
+  const alignOf = (idx: number): SlotAlign | undefined => {
+    const v = slotMap[`j:a${idx}`];
+    return v === "left" || v === "right" || v === "center" ? v : undefined;
+  };
   const resolveKey = (
     allIndex: number,
     emptyIndex: number | null,
     labelNorm: string | null
-  ): { key: string; viaLabel: boolean; overwrite: boolean } | null => {
+  ): {
+    key: string;
+    viaLabel: boolean;
+    overwrite: boolean;
+    align?: SlotAlign;
+  } | null => {
     const ak = `a${allIndex}`;
     if (ak in slotMap) {
       const k = slotMap[ak];
       if (!k) return null; // 명시적으로 "채우지 않음"
-      return { key: k, viaLabel: false, overwrite: true };
+      // 기본 덮어쓰기, '이어쓰기'(m:a=append) 선택 시 기존 글자 뒤에 붙임.
+      return {
+        key: k,
+        viaLabel: false,
+        overwrite: slotMap[`m:a${allIndex}`] !== "append",
+        align: alignOf(allIndex),
+      };
     }
     if (emptyIndex !== null && String(emptyIndex) in slotMap) {
       const k = slotMap[String(emptyIndex)];
@@ -208,9 +224,9 @@ export async function GET(
   const resolve: SlotResolve = ({ allIndex, emptyIndex, labelNorm }) => {
     const rk = resolveKey(allIndex, emptyIndex, labelNorm);
     if (!rk) return null;
-    const { key, viaLabel, overwrite } = rk;
+    const { key, viaLabel, overwrite, align } = rk;
     if (key === "__today__")
-      return { kind: "text", value: todayStr, viaLabel, overwrite };
+      return { kind: "text", value: todayStr, viaLabel, overwrite, align };
     const em = key.match(/^essay:(\d+)$/);
     if (em)
       return {
@@ -218,6 +234,7 @@ export async function GET(
         value: essayMap.get(Number(em[1])) ?? "",
         viaLabel,
         overwrite,
+        align,
       };
     const img = imageByKey.get(key);
     if (img)
@@ -230,8 +247,9 @@ export async function GET(
         viaLabel,
         // 이미지(서명·사진)는 칸 글자를 덮지 않고 글자 뒤에 덧붙임
         overwrite: false,
+        align,
       };
-    return { kind: "text", value: valMap.get(key) ?? "", viaLabel, overwrite };
+    return { kind: "text", value: valMap.get(key) ?? "", viaLabel, overwrite, align };
   };
 
   let buf: Buffer;

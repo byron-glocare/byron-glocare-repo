@@ -278,8 +278,42 @@ export function DocxPlacement({
   function clearExplicit(slot: number) {
     const next = { ...mappingRef.current };
     delete next[`a${slot}`];
+    delete next[`m:a${slot}`]; // 채움방식
+    delete next[`j:a${slot}`]; // 정렬
     const si = infoOf(slot);
     if (si?.empty && si.emptyIndex !== null) delete next[String(si.emptyIndex)];
+    mappingRef.current = next;
+    repaint();
+    force();
+  }
+
+  // 채움 방식(덮어쓰기/이어쓰기)·정렬(좌/중/우) — a{셀} 명시 매핑에만 적용.
+  const modeOf = (slot: number): "overwrite" | "append" =>
+    mappingRef.current[`m:a${slot}`] === "append" ? "append" : "overwrite";
+  const alignOf = (slot: number): "left" | "center" | "right" => {
+    const v = mappingRef.current[`j:a${slot}`];
+    return v === "left" || v === "right" ? v : "center";
+  };
+  // 자동매칭(비명시) 칸이면 현재 유효키로 명시화(그래야 m:/j: 가 반영됨).
+  function ensureExplicit(slot: number) {
+    if (explicitState(slot)) return;
+    const eff = effectiveKey(slot);
+    if (eff) assign(slot, eff.key);
+  }
+  function setMode(slot: number, mode: "overwrite" | "append") {
+    ensureExplicit(slot);
+    const next = { ...mappingRef.current };
+    if (mode === "append") next[`m:a${slot}`] = "append";
+    else delete next[`m:a${slot}`];
+    mappingRef.current = next;
+    repaint();
+    force();
+  }
+  function setAlign(slot: number, al: "left" | "center" | "right") {
+    ensureExplicit(slot);
+    const next = { ...mappingRef.current };
+    if (al === "center") delete next[`j:a${slot}`];
+    else next[`j:a${slot}`] = al;
     mappingRef.current = next;
     repaint();
     force();
@@ -581,6 +615,54 @@ export function DocxPlacement({
                       </option>
                     ))}
                   </select>
+                  {effectiveKey(activeSlot) ? (
+                    <>
+                      <div className="flex items-center gap-1 border-l pl-2">
+                        <span className="text-xs text-muted-foreground">정렬</span>
+                        {(["left", "center", "right"] as const).map((al) => (
+                          <button
+                            key={al}
+                            type="button"
+                            onClick={() => setAlign(activeSlot, al)}
+                            className={`rounded border px-1.5 py-0.5 text-xs ${
+                              alignOf(activeSlot) === al
+                                ? "border-primary bg-primary/10 text-primary"
+                                : "border-input hover:bg-muted"
+                            }`}
+                          >
+                            {al === "left" ? "좌" : al === "center" ? "중" : "우"}
+                          </button>
+                        ))}
+                      </div>
+                      {!isEmpty(activeSlot) ? (
+                        <div className="flex items-center gap-1 border-l pl-2">
+                          <span className="text-xs text-muted-foreground">채움</span>
+                          <button
+                            type="button"
+                            onClick={() => setMode(activeSlot, "overwrite")}
+                            className={`rounded border px-1.5 py-0.5 text-xs ${
+                              modeOf(activeSlot) === "overwrite"
+                                ? "border-primary bg-primary/10 text-primary"
+                                : "border-input hover:bg-muted"
+                            }`}
+                          >
+                            덮어쓰기
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setMode(activeSlot, "append")}
+                            className={`rounded border px-1.5 py-0.5 text-xs ${
+                              modeOf(activeSlot) === "append"
+                                ? "border-primary bg-primary/10 text-primary"
+                                : "border-input hover:bg-muted"
+                            }`}
+                          >
+                            이어쓰기
+                          </button>
+                        </div>
+                      ) : null}
+                    </>
+                  ) : null}
                   <Button
                     type="button"
                     variant="ghost"

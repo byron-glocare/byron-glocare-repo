@@ -18,11 +18,19 @@ export const normLabel = (s: string): string =>
  *   allIndex=전체 셀 번호, emptyIndex=빈칸이면 빈칸 번호(아니면 null), labelNorm=추론 앞 라벨.
  *   overwrite=true 면 칸 기존 내용을 지우고 값으로 덮어씀(내용 있는 칸 배치용).
  */
+/** 값 가로 정렬 (칸 안에서). 기본 center. */
+export type SlotAlign = "left" | "center" | "right";
+
 export type SlotResolve = (ctx: {
   allIndex: number;
   emptyIndex: number | null;
   labelNorm: string | null;
-}) => { value: string; viaLabel: boolean; overwrite: boolean } | null;
+}) => {
+  value: string;
+  viaLabel: boolean;
+  overwrite: boolean;
+  align?: SlotAlign;
+} | null;
 
 const cellText = (tc: string): string =>
   (tc.match(/<w:t[ >][\s\S]*?<\/w:t>/g) || [])
@@ -45,7 +53,12 @@ function readCells(xml: string): { cells: CellPos[]; texts: string[] } {
  * 값 셀: vAlign center + 첫 문단 jc center + innerRun 주입.
  *   overwrite=true 면 첫 문단 기존 run 제거 후 주입(덮어쓰기).
  */
-function putCell(raw: string, innerRun: string, overwrite: boolean): string {
+function putCell(
+  raw: string,
+  innerRun: string,
+  overwrite: boolean,
+  align: SlotAlign = "center"
+): string {
   let r = raw;
   if (/<w:tcPr>/.test(r))
     r = r.replace(
@@ -72,9 +85,9 @@ function putCell(raw: string, innerRun: string, overwrite: boolean): string {
         pPr = pPr.replace(
           /<w:pPr>([\s\S]*?)<\/w:pPr>/,
           (_x, pi: string) =>
-            `<w:pPr>${pi.replace(/<w:jc[^>]*\/>/g, "")}<w:jc w:val="center"/></w:pPr>`
+            `<w:pPr>${pi.replace(/<w:jc[^>]*\/>/g, "")}<w:jc w:val="${align}"/></w:pPr>`
         );
-      else pPr = `<w:pPr><w:jc w:val="center"/></w:pPr>`;
+      else pPr = `<w:pPr><w:jc w:val="${align}"/></w:pPr>`;
       const keep = overwrite ? "" : rest;
       return po + pPr + keep + innerRun + pc;
     }
@@ -91,7 +104,10 @@ function injectTokens(
   resolve: SlotResolve
 ): { xml: string; values: Record<string, string> } {
   const { cells, texts } = readCells(xml);
-  const plan = new Map<number, { key: string; value: string; overwrite: boolean }>();
+  const plan = new Map<
+    number,
+    { key: string; value: string; overwrite: boolean; align: SlotAlign }
+  >();
   const usedLabel = new Set<number>();
   let n = 0;
   let emptyIndex = -1;
@@ -112,7 +128,12 @@ function injectTokens(
     const res = resolve({ allIndex: i, emptyIndex: empty ? emptyIndex : null, labelNorm });
     if (!res) continue;
     if (res.viaLabel && labelIdx >= 0) usedLabel.add(labelIdx);
-    plan.set(i, { key: `f${n++}`, value: res.value, overwrite: res.overwrite });
+    plan.set(i, {
+      key: `f${n++}`,
+      value: res.value,
+      overwrite: res.overwrite,
+      align: res.align ?? "center",
+    });
   }
 
   const values: Record<string, string> = {};
@@ -121,7 +142,7 @@ function injectTokens(
     const c = cells[idx];
     out =
       out.slice(0, c.start) +
-      putCell(c.raw, tokenRun(info.key), info.overwrite) +
+      putCell(c.raw, tokenRun(info.key), info.overwrite, info.align) +
       out.slice(c.end);
     values[info.key] = info.value;
   }
