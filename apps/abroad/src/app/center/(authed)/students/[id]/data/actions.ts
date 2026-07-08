@@ -185,17 +185,29 @@ export async function removeStudentFileAction(input: {
   dataTypeKey: string;
   path: string;
 }): Promise<SaveDataValueResult> {
-  const session = await verifyCenterSession();
-  if (!input.path.startsWith(`${session.org.id}/`)) {
-    return { ok: false, error: "Không có quyền." };
+  await verifyCenterSession();
+
+  // 권한: 이 학생이 내 org 소속인지 RLS 로 확인.
+  //   (예전엔 path 가 내 org.id 로 시작하는지만 봤는데, org 이관(0035)·본사 배정 등으로
+  //    파일이 다른 org 경로에 저장돼 있으면 '다시 서명'이 권한오류로 실패했다.
+  //    학생 소유만 확인되면 그 학생의 파일은 지울 수 있어야 한다.)
+  const rls = await createCenterClient();
+  const { data: student } = await rls
+    .from("study_managed_students")
+    .select("id")
+    .eq("id", input.studentId)
+    .maybeSingle();
+  if (!student) {
+    return { ok: false, error: "Không có quyền với sinh viên này." };
   }
 
-  // 보관함 파일 삭제 (best-effort)
-  const svc = createServiceClient();
-  await svc.storage.from(STUDENT_FILES_BUCKET).remove([input.path]);
+  // 보관함 파일 삭제 (best-effort — 학생 소유 확인됐으므로 경로 무관)
+  if (input.path) {
+    const svc = createServiceClient();
+    await svc.storage.from(STUDENT_FILES_BUCKET).remove([input.path]);
+  }
 
   // 데이터 값 삭제 (RLS — 본인 org 만)
-  const rls = await createCenterClient();
   const { error } = await rls
     .from("study_student_data_values")
     .delete()

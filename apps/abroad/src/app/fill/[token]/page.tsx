@@ -111,8 +111,8 @@ export default async function FillPage({
     }
   }
 
-  // 공개 입력은 텍스트성 항목만 (파일·서명·파생 제외) + 필요한 키 범위(있으면)
-  const EXCLUDED = new Set(["file", "signature"]);
+  // 공개 입력 = 텍스트성 항목 + 서명(캔버스). 파일 업로드·파생 항목은 제외(센터 처리).
+  const EXCLUDED = new Set(["file"]);
   const fields: PublicFieldMeta[] = (dataTypes ?? [])
     .filter((d) => !EXCLUDED.has(d.input_type) && !d.is_derived)
     .filter((d) => requiredKeys.size === 0 || requiredKeys.has(d.key))

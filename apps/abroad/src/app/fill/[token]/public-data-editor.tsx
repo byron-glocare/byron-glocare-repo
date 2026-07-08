@@ -5,7 +5,14 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import type { Json } from "@/types/database";
 import { tr, type Locale } from "@/lib/i18n";
 import { MultiSelectWithOther } from "@/components/multi-select-other";
-import { savePublicValueAction, savePublicAllAction } from "./actions";
+import { SignaturePad, type SignaturePadHandle } from "@/components/signature-pad";
+import {
+  savePublicValueAction,
+  savePublicAllAction,
+  uploadPublicSignatureAction,
+  removePublicSignatureAction,
+  signedUrlPublicSignatureAction,
+} from "./actions";
 
 export type PublicFieldMeta = {
   key: string;
@@ -193,6 +200,7 @@ export function PublicDataEditor({
                   field={f}
                   value={values[f.key] ?? null}
                   onCommit={(v) => commit(f.key, v)}
+                  token={token}
                 />
               ))}
             </div>
@@ -231,11 +239,13 @@ function PublicFieldRow({
   field,
   value,
   onCommit,
+  token,
 }: {
   locale: Locale;
   field: PublicFieldMeta;
   value: Json | null;
   onCommit: (v: Json | null) => void;
+  token: string;
 }) {
   const label = locale === "ko" ? field.label_ko : field.label_vi;
   const sub = locale === "ko" ? field.label_vi : field.label_ko;
@@ -247,7 +257,13 @@ function PublicFieldRow({
       <div className="mt-0.5 text-xs text-slate-500">{sub}</div>
       {hint ? <div className="mt-1 text-xs text-slate-600">💡 {hint}</div> : null}
       <div className="mt-2">
-        <PublicInput locale={locale} field={field} value={value} onCommit={onCommit} />
+        <PublicInput
+          locale={locale}
+          field={field}
+          value={value}
+          onCommit={onCommit}
+          token={token}
+        />
       </div>
     </div>
   );
@@ -258,16 +274,28 @@ function PublicInput({
   field,
   value,
   onCommit,
+  token,
 }: {
   locale: Locale;
   field: PublicFieldMeta;
   value: Json | null;
   onCommit: (v: Json | null) => void;
+  token: string;
 }) {
   const base =
     "w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500";
 
   switch (field.input_type) {
+    case "signature":
+      return (
+        <PublicSignatureInput
+          locale={locale}
+          token={token}
+          dataTypeKey={field.key}
+          value={value}
+          onCommit={onCommit}
+        />
+      );
     case "long_text":
       return <PublicTextArea value={typeof value === "string" ? value : ""} onCommit={(v) => onCommit(v || null)} base={base} />;
     case "date":
@@ -353,5 +381,130 @@ function PublicTextArea({
       rows={4}
       className={base}
     />
+  );
+}
+
+/** 공개 링크 서명 입력 — 캔버스로 서명 → PNG 스토리지 업로드(토큰 검증). */
+function PublicSignatureInput({
+  locale,
+  token,
+  dataTypeKey,
+  value,
+  onCommit,
+}: {
+  locale: Locale;
+  token: string;
+  dataTypeKey: string;
+  value: Json | null;
+  onCommit: (v: Json | null) => void;
+}) {
+  const padRef = useRef<SignaturePadHandle>(null);
+  const [busy, setBusy] = useState(false);
+  const [opening, setOpening] = useState(false);
+  const [empty, setEmpty] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fileObj =
+    value && typeof value === "object" && !Array.isArray(value)
+      ? (value as { path?: string; file_name?: string })
+      : null;
+  const hasSignature = !!fileObj?.path;
+
+  async function handleSave() {
+    const dataUrl = padRef.current?.toDataURL();
+    if (!dataUrl) {
+      setError(tr(locale, "서명을 입력해주세요.", "Vui lòng ký tên."));
+      return;
+    }
+    setBusy(true);
+    setError(null);
+    try {
+      const res = await uploadPublicSignatureAction({ token, dataTypeKey, dataUrl });
+      if (!res.ok) {
+        setError(tr(locale, "저장 실패", "Lưu thất bại"));
+        return;
+      }
+      onCommit(res.value); // 값 저장은 상위 commit 이 처리
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleOpen() {
+    if (!fileObj?.path) return;
+    setOpening(true);
+    setError(null);
+    const res = await signedUrlPublicSignatureAction({ token, path: fileObj.path });
+    setOpening(false);
+    if (!res.ok) {
+      setError(tr(locale, "열기 실패", "Không mở được"));
+      return;
+    }
+    window.open(res.url, "_blank", "noopener,noreferrer");
+  }
+
+  async function handleReset() {
+    if (busy) return;
+    setBusy(true);
+    setError(null);
+    const res = await removePublicSignatureAction({ token, dataTypeKey });
+    setBusy(false);
+    if (!res.ok) {
+      setError(tr(locale, "다시 서명 실패", "Không thể ký lại"));
+      return;
+    }
+    onCommit(null); // 패드 다시 표시
+  }
+
+  if (hasSignature) {
+    return (
+      <div className="flex flex-wrap items-center gap-3 rounded-md border border-slate-300 bg-slate-50 px-3 py-2 text-sm">
+        <span className="flex-1">✍️ {tr(locale, "서명 완료", "Đã ký")}</span>
+        <button
+          type="button"
+          onClick={handleOpen}
+          disabled={opening}
+          className="shrink-0 font-medium text-emerald-700 hover:underline disabled:opacity-50"
+        >
+          {opening ? "..." : tr(locale, "보기", "Xem")}
+        </button>
+        <button
+          type="button"
+          onClick={handleReset}
+          disabled={busy}
+          className="shrink-0 text-rose-600 hover:underline disabled:opacity-50"
+        >
+          {busy ? "..." : tr(locale, "다시 서명", "Ký lại")}
+        </button>
+        {error ? <span className="w-full text-xs text-rose-700">{error}</span> : null}
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-2">
+      <SignaturePad ref={padRef} disabled={busy} onChange={setEmpty} />
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={handleSave}
+          disabled={busy || empty}
+          className="rounded-md bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+        >
+          {busy
+            ? tr(locale, "저장 중...", "Đang lưu...")
+            : tr(locale, "서명 저장", "Lưu chữ ký")}
+        </button>
+        <button
+          type="button"
+          onClick={() => padRef.current?.clear()}
+          disabled={busy || empty}
+          className="rounded-md border border-slate-300 px-3 py-1.5 text-sm hover:bg-slate-50 disabled:opacity-50"
+        >
+          {tr(locale, "지우기", "Xóa")}
+        </button>
+      </div>
+      {error ? <p className="text-xs text-rose-700">{error}</p> : null}
+    </div>
   );
 }
