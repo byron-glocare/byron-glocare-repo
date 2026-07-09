@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { dash, formatDate, formatDateTime } from "@/lib/format";
+import { ReassignCenter } from "./reassign-center";
 
 export const dynamic = "force-dynamic";
 
@@ -47,10 +48,11 @@ export default async function ManagedStudentDetailPage({
     .maybeSingle();
   if (!student) notFound();
 
-  const [{ data: org }, { data: files }, { data: finals }] = await Promise.all([
+  const [{ data: org }, { data: files }, { data: finals }, { data: centers }] =
+    await Promise.all([
     admin
       .from("study_center_orgs")
-      .select("name_ko, name_vi")
+      .select("name_ko, name_vi, study_center_id")
       .eq("id", student.org_id)
       .maybeSingle(),
     admin
@@ -64,7 +66,16 @@ export default async function ManagedStudentDetailPage({
       .eq("student_id", id)
       .not("submitted_at", "is", null)
       .order("submitted_at", { ascending: false }),
+    admin
+      .from("study_centers")
+      .select("id, name_ko, name_vi")
+      .eq("active", true)
+      .order("name_vi"),
   ]);
+  const centerOptions = (centers ?? []).map((c) => ({
+    id: c.id,
+    name: c.name_ko || c.name_vi,
+  }));
 
   // 업로드 서류 다운로드용 서명 URL (1시간)
   const signed = await Promise.all(
@@ -113,7 +124,7 @@ export default async function ManagedStudentDetailPage({
     <>
       <PageHeader
         title={student.name}
-        description="유학생 상세 — 조회 전용"
+        description="유학생 상세 — 서류 조회 · 유학센터 배정 변경"
         breadcrumbs={[
           { href: "/managed-students", label: "유학생" },
           { label: student.name },
@@ -121,8 +132,13 @@ export default async function ManagedStudentDetailPage({
       />
       <div className="p-6 space-y-6">
         <Card>
-          <CardHeader>
+          <CardHeader className="flex-row items-center justify-between gap-3">
             <CardTitle className="text-base">기본 정보</CardTitle>
+            <ReassignCenter
+              studentId={id}
+              currentStudyCenterId={org?.study_center_id ?? null}
+              centers={centerOptions}
+            />
           </CardHeader>
           <CardContent>
             <dl className="grid grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-4">
