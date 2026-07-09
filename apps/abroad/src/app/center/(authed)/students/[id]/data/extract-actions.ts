@@ -35,7 +35,14 @@ export type ExtractProposal = {
 };
 
 export type ExtractDataResult =
-  | { ok: true; proposals: ExtractProposal[]; scannedDocs: number; raw: string }
+  | {
+      ok: true;
+      proposals: ExtractProposal[];
+      scannedDocs: number;
+      /** 용량 예산 초과로 이번 분석에서 제외된 서류 수 */
+      skippedDocs: number;
+      raw: string;
+    }
   | { ok: false; error: string };
 
 /**
@@ -176,15 +183,27 @@ export async function extractStudentDataAction(
     .filter((r) => r.path.startsWith(`${session.org.id}/`))
     .slice(0, MAX_DOCS);
 
-  // 3) 비공개 버킷에서 다운로드 (service-role)
+  // 3) 비공개 버킷에서 다운로드 (service-role) + 요청 크기 예산 관리.
+  //    Anthropic 한 요청 크기 한계(32MB) 초과 시 413(request_too_large) → 여기서 예방.
+  //    문서를 base64 로 실어 보내므로 누적 base64 가 예산을 넘으면 그 서류는 제외한다.
+  const MAX_TOTAL_B64 = 22 * 1024 * 1024; // 안전 예산 (32MB 한계 하회)
+  const MAX_PER_DOC_B64 = 18 * 1024 * 1024; // 단일 문서 상한
   const svc = createServiceClient();
   const docs: ExtractDocInput[] = [];
+  let totalB64 = 0;
+  let skippedDocs = 0;
   for (const ref of safeRefs) {
     const { data: blob, error } = await svc.storage
       .from(STUDENT_FILES_BUCKET)
       .download(ref.path);
     if (error || !blob) continue;
     const buffer = Buffer.from(await blob.arrayBuffer());
+    const b64 = Math.ceil(buffer.length / 3) * 4; // base64 크기 추정
+    if (b64 > MAX_PER_DOC_B64 || totalB64 + b64 > MAX_TOTAL_B64) {
+      skippedDocs += 1;
+      continue;
+    }
+    totalB64 += b64;
     docs.push({
       label: ref.label,
       mime: blob.type || guessMime(ref.file_name),
@@ -193,7 +212,10 @@ export async function extractStudentDataAction(
   }
 
   if (docs.length === 0) {
-    return { ok: false, error: "다운로드 가능한 서류가 없습니다." };
+    return {
+      ok: false,
+      error: skippedDocs > 0 ? "FILES_TOO_LARGE" : "다운로드 가능한 서류가 없습니다.",
+    };
   }
 
   // 4) AI 추출
@@ -235,7 +257,13 @@ export async function extractStudentDataAction(
     return confRank[a.confidence] - confRank[b.confidence];
   });
 
-  return { ok: true, proposals, scannedDocs: docs.length, raw: res.raw };
+  return {
+    ok: true,
+    proposals,
+    scannedDocs: docs.length,
+    skippedDocs,
+    raw: res.raw,
+  };
 }
 
 function displayValue(

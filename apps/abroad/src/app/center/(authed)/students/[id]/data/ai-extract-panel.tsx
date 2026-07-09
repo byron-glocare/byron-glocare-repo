@@ -29,6 +29,7 @@ export function AiExtractPanel({
   const [error, setError] = useState<string | null>(null);
   const [proposals, setProposals] = useState<ExtractProposal[] | null>(null);
   const [scanned, setScanned] = useState(0);
+  const [skipped, setSkipped] = useState(0);
   const [checked, setChecked] = useState<Set<string>>(new Set());
   const [applying, setApplying] = useState(false);
   const [appliedCount, setAppliedCount] = useState<number | null>(null);
@@ -41,18 +42,27 @@ export function AiExtractPanel({
     const res = await extractStudentDataAction(studentId);
     setBusy(false);
     if (!res.ok) {
-      setError(
-        res.error === "NO_FILES"
+      const raw = res.error;
+      const friendly =
+        raw === "NO_FILES"
           ? tr(
               locale,
               "추출할 업로드 서류가 없습니다. '서류 등록' 탭에서 먼저 파일을 올려주세요.",
               "Chưa có giấy tờ để trích xuất. Hãy tải tệp ở tab 'Tải giấy tờ' trước."
             )
-          : res.error
-      );
+          : raw === "FILES_TOO_LARGE" ||
+              /413|request_too_large|too.?large|maximum size/i.test(raw)
+            ? tr(
+                locale,
+                "업로드 서류 용량이 커서 한 번에 분석할 수 없습니다. 파일 크기를 줄이거나(사진은 해상도를 낮춰) 서류 수를 줄여 다시 시도하세요.",
+                "Giấy tờ quá lớn để phân tích cùng lúc. Hãy giảm dung lượng tệp (hạ độ phân giải ảnh) hoặc bớt số giấy tờ rồi thử lại."
+              )
+            : raw;
+      setError(friendly);
       return;
     }
     setScanned(res.scannedDocs);
+    setSkipped(res.skippedDocs);
     setProposals(res.proposals);
     // 기본 체크 = 현재 비어있는 항목만
     setChecked(
@@ -138,6 +148,17 @@ export function AiExtractPanel({
 
       {error ? (
         <p className="mt-2 text-sm text-rose-700">{error}</p>
+      ) : null}
+
+      {proposals && skipped > 0 ? (
+        <p className="mt-2 text-xs text-amber-700">
+          ⚠{" "}
+          {tr(
+            locale,
+            `용량이 커서 ${skipped}개 서류는 이번 분석에서 제외됐습니다(한 번에 약 20MB까지). 나머지 서류로 분석했습니다.`,
+            `${skipped} giấy tờ bị bỏ qua do dung lượng lớn (tối đa ~20MB mỗi lần). Đã phân tích các giấy tờ còn lại.`
+          )}
+        </p>
       ) : null}
 
       {proposals ? (
