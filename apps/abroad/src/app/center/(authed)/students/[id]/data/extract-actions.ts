@@ -10,6 +10,7 @@ import {
   extractStudentData,
   type ExtractDocInput,
   type ExtractFieldSpec,
+  type ExtractedField,
 } from "@/lib/admission/extract-student-data";
 import type { Json } from "@/types/database";
 
@@ -183,14 +184,12 @@ export async function extractStudentDataAction(
     .filter((r) => r.path.startsWith(`${session.org.id}/`))
     .slice(0, MAX_DOCS);
 
-  // 3) 비공개 버킷에서 다운로드 (service-role) + 요청 크기 예산 관리.
-  //    Anthropic 한 요청 크기 한계(32MB) 초과 시 413(request_too_large) → 여기서 예방.
-  //    문서를 base64 로 실어 보내므로 누적 base64 가 예산을 넘으면 그 서류는 제외한다.
-  const MAX_TOTAL_B64 = 22 * 1024 * 1024; // 안전 예산 (32MB 한계 하회)
-  const MAX_PER_DOC_B64 = 18 * 1024 * 1024; // 단일 문서 상한
+  // 3) 비공개 버킷에서 다운로드 (service-role).
+  //    단일 문서가 한 배치(≈20MB)도 못 넘길 만큼 크면 제외(그 문서만).
+  const BATCH_B64 = 20 * 1024 * 1024; // 배치당 base64 예산 (Anthropic 32MB 한계 하회)
+  const b64size = (n: number) => Math.ceil(n / 3) * 4;
   const svc = createServiceClient();
-  const docs: ExtractDocInput[] = [];
-  let totalB64 = 0;
+  const downloaded: ExtractDocInput[] = [];
   let skippedDocs = 0;
   for (const ref of safeRefs) {
     const { data: blob, error } = await svc.storage
@@ -198,33 +197,69 @@ export async function extractStudentDataAction(
       .download(ref.path);
     if (error || !blob) continue;
     const buffer = Buffer.from(await blob.arrayBuffer());
-    const b64 = Math.ceil(buffer.length / 3) * 4; // base64 크기 추정
-    if (b64 > MAX_PER_DOC_B64 || totalB64 + b64 > MAX_TOTAL_B64) {
-      skippedDocs += 1;
+    if (b64size(buffer.length) > BATCH_B64) {
+      skippedDocs += 1; // 문서 하나가 배치 한도를 초과 (사진 해상도↓ 후 재업로드 필요)
       continue;
     }
-    totalB64 += b64;
-    docs.push({
+    downloaded.push({
       label: ref.label,
       mime: blob.type || guessMime(ref.file_name),
       data: buffer,
     });
   }
 
-  if (docs.length === 0) {
+  if (downloaded.length === 0) {
     return {
       ok: false,
       error: skippedDocs > 0 ? "FILES_TOO_LARGE" : "다운로드 가능한 서류가 없습니다.",
     };
   }
 
-  // 4) AI 추출
-  const res = await extractStudentData({ docs, catalog });
-  if (!res.ok) return { ok: false, error: res.error };
+  // 4) 크기 예산으로 배치 분할 → 배치별 AI 추출 → 결과 병합 (자동, 여러 번 나눠 호출).
+  const batches: ExtractDocInput[][] = [];
+  {
+    let cur: ExtractDocInput[] = [];
+    let curB64 = 0;
+    for (const d of downloaded) {
+      const b64 = b64size(d.data.length);
+      if (cur.length > 0 && curB64 + b64 > BATCH_B64) {
+        batches.push(cur);
+        cur = [];
+        curB64 = 0;
+      }
+      cur.push(d);
+      curB64 += b64;
+    }
+    if (cur.length > 0) batches.push(cur);
+  }
+
+  const confRank = { high: 0, medium: 1, low: 2 } as const;
+  const merged = new Map<string, ExtractedField>();
+  let anyOk = false;
+  let firstErr: string | null = null;
+  let rawAll = "";
+  for (const batch of batches) {
+    const res = await extractStudentData({ docs: batch, catalog });
+    if (!res.ok) {
+      firstErr = res.error;
+      continue;
+    }
+    anyOk = true;
+    rawAll += (rawAll ? "\n" : "") + res.raw;
+    for (const f of res.fields) {
+      const prev = merged.get(f.key);
+      // 같은 항목이 여러 배치에서 나오면 신뢰도 높은 값 우선
+      if (!prev || confRank[f.confidence] < confRank[prev.confidence]) {
+        merged.set(f.key, f);
+      }
+    }
+  }
+  if (!anyOk) return { ok: false, error: firstErr ?? "AI 추출 실패" };
+  const extractedFields = [...merged.values()];
 
   // 5) 제안으로 변환 (현재값 비교, 표시 라벨)
   const proposals: ExtractProposal[] = [];
-  for (const f of res.fields) {
+  for (const f of extractedFields) {
     const dt = typeByKey.get(f.key);
     if (!dt) continue;
     const proposedValue = f.value as Json;
@@ -250,8 +285,7 @@ export async function extractStudentDataAction(
     });
   }
 
-  // 비어있는 항목 먼저, 그 다음 신뢰도 순
-  const confRank = { high: 0, medium: 1, low: 2 } as const;
+  // 비어있는 항목 먼저, 그 다음 신뢰도 순 (confRank 는 위에서 선언)
   proposals.sort((a, b) => {
     if (a.isCurrentEmpty !== b.isCurrentEmpty) return a.isCurrentEmpty ? -1 : 1;
     return confRank[a.confidence] - confRank[b.confidence];
@@ -260,9 +294,9 @@ export async function extractStudentDataAction(
   return {
     ok: true,
     proposals,
-    scannedDocs: docs.length,
+    scannedDocs: downloaded.length,
     skippedDocs,
-    raw: res.raw,
+    raw: rawAll,
   };
 }
 
