@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Download, FileText, Plus } from "lucide-react";
+import { FileText, Plus } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/page-header";
@@ -17,15 +17,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { UniversityInput } from "@/lib/validators";
-import {
-  classifyRequiredDocs,
-  type RequiredDoc,
-} from "@/lib/admission/classify-documents";
-import {
-  buildSubmissionIndex,
-  matchIssuedDoc,
-} from "@/lib/admission/match-submissions";
-import { IssuedDocActions } from "./issued-doc-actions";
 
 export const dynamic = "force-dynamic";
 
@@ -58,8 +49,6 @@ export default async function UniversityEditPage({
     { data: depts },
     { data: specs },
     { data: offerings },
-    { data: formFiles },
-    { data: submissions },
   ] = await Promise.all([
       supabase.from("universities").select("*").eq("id", numericId).single(),
       supabase
@@ -78,22 +67,6 @@ export default async function UniversityEditPage({
         .from("study_offerings")
         .select("department_id, term, status")
         .eq("university_id", numericId),
-      supabase
-        .from("study_admission_form_files")
-        .select(
-          "id, name_ko, key, department_name, applies_to_terms, applies_to_department_ids, file_url, file_name, is_current, uploaded_at"
-        )
-        .eq("university_id", numericId)
-        .eq("is_current", true)
-        .order("uploaded_at", { ascending: false }),
-      supabase
-        .from("study_required_submissions")
-        .select(
-          "id, university_id, base_submission_id, department_id, name_ko, std_key, aliases, sample_image_url, status, is_active, sort_order"
-        )
-        .or(`university_id.eq.${numericId},university_id.is.null`)
-        .eq("is_active", true)
-        .order("sort_order"),
     ]);
 
   if (error || !row) notFound();
@@ -169,42 +142,6 @@ export default async function UniversityEditPage({
       })
       .sort((a, b) => b.term.localeCompare(a.term));
   })();
-
-  // 제출서류 = 최신 모집요강(승인 우선)의 required_documents 파생 + 자동분류
-  const repSpec =
-    (specs ?? []).find((s) => s.status === "approved") ?? (specs ?? [])[0];
-  const { forms: derivedForms, issued: derivedIssued } = classifyRequiredDocs(
-    (repSpec?.required_documents as RequiredDoc[]) ?? []
-  );
-  // 관리 상태 오버레이용 인덱스 — key 우선, 안 맞으면 이름으로도 매칭
-  //   (운영자가 '양식 종류'를 기타로 올려 key 가 안 맞아도 서류명이 같으면 매칭)
-  const normFormName = (s: string) =>
-    s
-      .trim()
-      .replace(/^\s*\d+[.)]\s*/, "") // 앞의 "1. " "2) " 같은 번호 제거
-      .replace(/\s+/g, "")
-      .toLowerCase();
-  const formByKey = new Map(
-    (formFiles ?? []).map((f) => [f.key as string, f] as const)
-  );
-  const formByName = new Map(
-    (formFiles ?? []).map((f) => [normFormName(f.name_ko), f] as const)
-  );
-  const formFileFor = (doc: { key: string; name_ko: string }) =>
-    formByKey.get(doc.key) ?? formByName.get(normFormName(doc.name_ko));
-  // 발급서류 매칭 인덱스 (공용 마스터 + 대학별 조정본, std_key→이름/별칭)
-  const submissionIndex = buildSubmissionIndex(
-    (submissions ?? []).map((s) => ({
-      id: s.id,
-      university_id: s.university_id,
-      base_submission_id: s.base_submission_id,
-      name_ko: s.name_ko,
-      std_key: s.std_key ?? null,
-      aliases: s.aliases ?? [],
-      sample_image_url: s.sample_image_url,
-      status: s.status,
-    }))
-  );
 
   const defaultValues: Partial<UniversityInput> = {
     active: row.active,
@@ -479,184 +416,6 @@ export default async function UniversityEditPage({
           )}
         </Card>
 
-        {/* 제출서류 — 최신 모집요강 required_documents 파생 + 자동분류(직접작성/발급) */}
-        <Card className="overflow-hidden p-0">
-          <div className="border-b p-4">
-            <h2 className="text-base font-semibold">제출서류</h2>
-            <p className="mt-0.5 text-xs text-muted-foreground">
-              {repSpec
-                ? `최신 모집요강(${repSpec.term}) 기준으로 자동 분류된 목록입니다. 각 서류를 눌러 양식 업로드·발급 조건을 관리하세요.`
-                : "모집요강을 먼저 등록하면 제출서류 목록이 표시됩니다."}
-            </p>
-          </div>
-
-          {!repSpec ? (
-            <div className="px-4 py-8 text-center text-sm text-muted-foreground">
-              등록된 모집요강이 없습니다.{" "}
-              <Link
-                href={`/admissions/new?university_id=${numericId}`}
-                className="text-primary hover:underline"
-              >
-                새학기 모집요강 추가 →
-              </Link>
-            </div>
-          ) : (
-            <>
-              {/* 1) 직접작성 서류 */}
-              <div className="border-b">
-                <div className="flex items-center gap-2 px-4 py-2.5">
-                  <h3 className="text-sm font-semibold">직접작성 서류 (학교 양식)</h3>
-                  <Badge variant="secondary">{derivedForms.length}</Badge>
-                </div>
-                {derivedForms.length === 0 ? (
-                  <div className="px-4 pb-4 text-xs text-muted-foreground">
-                    모집요강에 직접작성 양식이 없습니다.
-                  </div>
-                ) : (
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>서류명</TableHead>
-                        <TableHead className="w-24 text-center">상태</TableHead>
-                        <TableHead className="w-40">파일</TableHead>
-                        <TableHead className="w-28 text-center">관리</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {derivedForms.map((doc) => {
-                        const file = formFileFor(doc);
-                        return (
-                          <TableRow key={`form-${doc.key}-${doc.name_ko}`}>
-                            <TableCell className="font-medium">
-                              {doc.name_ko}_{row.name_ko}
-                            </TableCell>
-                            <TableCell className="text-center">
-                              {file ? (
-                                <Badge className="border-success/20 bg-success/10 text-success">
-                                  사용
-                                </Badge>
-                              ) : (
-                                <Badge variant="outline" className="text-amber-600">
-                                  미등록
-                                </Badge>
-                              )}
-                            </TableCell>
-                            <TableCell className="text-xs text-muted-foreground">
-                              {file ? (
-                                <a
-                                  href={file.file_url}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  download
-                                  className="inline-flex items-center gap-1 text-primary hover:underline"
-                                  title={file.file_name}
-                                >
-                                  <Download className="size-3.5" />
-                                  {file.file_name}
-                                </a>
-                              ) : (
-                                "—"
-                              )}
-                            </TableCell>
-                            <TableCell className="text-center">
-                              <Link
-                                href={
-                                  file
-                                    ? `/admissions/forms/${file.id}`
-                                    : `/admissions/forms/new?university_id=${numericId}`
-                                }
-                                className="text-xs text-primary hover:underline"
-                              >
-                                {file ? "편집" : "양식 업로드"} →
-                              </Link>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })}
-                    </TableBody>
-                  </Table>
-                )}
-              </div>
-
-              {/* 2) 발급 서류 */}
-              <div>
-                <div className="flex items-center gap-2 px-4 py-2.5">
-                  <h3 className="text-sm font-semibold">발급 서류</h3>
-                  <Badge variant="secondary">{derivedIssued.length}</Badge>
-                </div>
-                {derivedIssued.length === 0 ? (
-                  <div className="px-4 pb-4 text-xs text-muted-foreground">
-                    모집요강에 발급 서류가 없습니다.
-                  </div>
-                ) : (
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>서류명</TableHead>
-                        <TableHead className="w-28 text-center">구분</TableHead>
-                        <TableHead className="w-24 text-center">샘플</TableHead>
-                        <TableHead className="w-28 text-center">관리</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {derivedIssued.map((doc) => {
-                        const m = matchIssuedDoc(doc, submissionIndex);
-                        const sample =
-                          m.submission?.sample_image_url ??
-                          m.master?.sample_image_url ??
-                          null;
-                        return (
-                          <TableRow key={`issued-${doc.key}-${doc.name_ko}`}>
-                            <TableCell className="font-medium">
-                              {doc.name_ko}
-                            </TableCell>
-                            <TableCell className="text-center">
-                              {m.kind === "university" ? (
-                                m.master ? (
-                                  <Badge className="border-success/20 bg-success/10 text-success">
-                                    공용 기반(조정)
-                                  </Badge>
-                                ) : (
-                                  <Badge className="border-success/20 bg-success/10 text-success">
-                                    대학 전용
-                                  </Badge>
-                                )
-                              ) : m.kind === "shared" ? (
-                                <Badge variant="outline">공용 표준</Badge>
-                              ) : (
-                                <Badge variant="outline" className="text-amber-600">
-                                  미등록
-                                </Badge>
-                              )}
-                            </TableCell>
-                            <TableCell className="text-center">
-                              {sample ? (
-                                <Badge className="border-success/20 bg-success/10 text-success">
-                                  있음
-                                </Badge>
-                              ) : (
-                                <span className="text-xs text-muted-foreground">없음</span>
-                              )}
-                            </TableCell>
-                            <TableCell className="text-center">
-                              <IssuedDocActions
-                                kind={m.kind}
-                                universityId={numericId}
-                                submissionId={m.submission?.id ?? null}
-                                masterId={m.master?.id ?? null}
-                                docName={doc.name_ko}
-                              />
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })}
-                    </TableBody>
-                  </Table>
-                )}
-              </div>
-            </>
-          )}
-        </Card>
       </div>
     </>
   );
