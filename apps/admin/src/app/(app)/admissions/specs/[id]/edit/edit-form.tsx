@@ -88,7 +88,12 @@ export function EditSpecForm({
 }: {
   spec: EditableSpec;
   universities: UniversityOption[];
-  docTypes?: Array<{ key: string; label_ko: string }>;
+  docTypes?: Array<{
+    key: string;
+    label_ko: string;
+    label_vi?: string | null;
+    aliases?: string[] | null;
+  }>;
 }) {
   const bound = updateSpecAction.bind(null, spec.id);
   const [state, action, pending] = useActionState<UpdateSpecState, FormData>(
