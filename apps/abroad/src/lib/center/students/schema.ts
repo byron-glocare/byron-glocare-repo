@@ -62,8 +62,10 @@ export const createStudentSchema = z.object({
   notes: emptyToUndef(
     z.string().max(500, "Ghi chú tối đa 500 ký tự").optional()
   ),
-  // 글로케어(본사) 계정 전용 — 학생을 소속시킬 유학센터(org). 일반 센터 계정은 무시.
-  target_org_id: emptyToUndef(z.string().uuid().optional()),
+  // 글로케어(본사) 계정 전용 — 학생을 소속시킬 유학센터(study_centers.id). 일반 센터 계정은 무시.
+  target_study_center_id: emptyToUndef(
+    z.coerce.number().int().positive().optional()
+  ),
 });
 
 export type CreateStudentInput = z.infer<typeof createStudentSchema>;

@@ -91,6 +91,8 @@ export type StudyPricingPlan = {
 // =============================================================================
 export type StudyCenterOrg = {
   id: string;
+  /** 마스터 유학센터(study_centers, int) 와 1:1 연결 (0035). */
+  study_center_id: number | null;
   name_vi: string;
   name_ko: string | null;
   country: string;

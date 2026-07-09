@@ -15,20 +15,26 @@ export default async function NewStudentPage() {
   const session = await verifyCenterSession(); // 인증 + org 검증
   const locale = await getLocale();
 
-  // 글로케어(본사) 계정: 학생을 배정할 유학센터 목록(자기 org 제외).
-  let centerOrgs: { id: string; name: string }[] | null = null;
+  // 글로케어(본사) 계정: 학생을 배정할 유학센터 마스터 목록(study_centers, 자기 센터 제외).
+  //   org(계정) 이 아직 없는 센터도 노출 — 배정 시 org 를 찾거나 생성한다.
+  let centers: { id: number; name: string }[] | null = null;
   if (session.isGlocare) {
     const svc = createServiceClient();
     const { data } = await svc
-      .from("study_center_orgs")
-      .select("id, name_ko, name_vi, status")
-      .eq("status", "active")
-      .neq("id", session.org.id)
+      .from("study_centers")
+      .select("id, name_ko, name_vi, active")
+      .eq("active", true)
       .order("name_vi");
-    centerOrgs = (data ?? []).map((o) => ({
-      id: o.id,
-      name: locale === "ko" ? o.name_ko || o.name_vi : o.name_vi || o.name_ko || "",
-    }));
+    const ownScId = session.org.study_center_id;
+    centers = (data ?? [])
+      .filter((c) => c.id !== ownScId)
+      .map((c) => ({
+        id: c.id,
+        name:
+          locale === "ko"
+            ? c.name_ko || c.name_vi
+            : c.name_vi || c.name_ko || "",
+      }));
   }
 
   return (
@@ -53,7 +59,7 @@ export default async function NewStudentPage() {
       </header>
 
       <div className="rounded-lg border border-slate-200 bg-white p-6">
-        <NewStudentForm locale={locale} centerOrgs={centerOrgs} />
+        <NewStudentForm locale={locale} centers={centers} />
       </div>
     </div>
   );

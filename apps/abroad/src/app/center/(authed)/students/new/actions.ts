@@ -52,32 +52,27 @@ export async function createStudentAction(
   let insertError: { message: string } | null = null;
 
   if (session.isGlocare) {
-    // 글로케어(본사) 계정: 학생을 선택한 유학센터(org)로 배정.
-    //   role 을 서버에서 검증했으므로 service client 로 RLS 우회해 지정 org 에 삽입.
-    const targetOrgId = data.target_org_id;
-    if (!targetOrgId) {
+    // 글로케어(본사) 계정: 학생을 선택한 유학센터로 배정.
+    //   role 을 서버에서 검증했으므로 service client 로 RLS 우회.
+    //   선택 센터의 org 를 찾거나(없으면) 생성 후 그 org 에 삽입.
+    const scId = data.target_study_center_id;
+    if (!scId) {
       return {
         fieldErrors: {
-          target_org_id: ["Vui lòng chọn trung tâm du học (소속 유학센터를 선택하세요)"],
+          target_study_center_id: [
+            "Vui lòng chọn trung tâm du học (소속 유학센터를 선택하세요)",
+          ],
         },
       };
     }
     const svc = createServiceClient();
-    const { data: org } = await svc
-      .from("study_center_orgs")
-      .select("id, status")
-      .eq("id", targetOrgId)
-      .maybeSingle();
-    if (!org || org.status !== "active" || org.id === session.org.id) {
-      return {
-        fieldErrors: {
-          target_org_id: ["Trung tâm không hợp lệ (유효한 유학센터가 아닙니다)"],
-        },
-      };
+    const resolved = await resolveOrgForStudyCenter(svc, scId);
+    if (!resolved.ok) {
+      return { error: resolved.error };
     }
     const { error } = await svc
       .from("study_managed_students")
-      .insert({ org_id: targetOrgId, ...payload });
+      .insert({ org_id: resolved.orgId, ...payload });
     insertError = error;
   } else {
     // 일반 유학센터 계정: 자기 org 로 강제 (클라이언트 위변조 방지)
@@ -95,4 +90,52 @@ export async function createStudentAction(
   // 4. 캐시 갱신 + 목록 페이지로
   revalidatePath("/center/students");
   redirect("/center/students");
+}
+
+/**
+ * study_center_id(마스터 유학센터) → org 를 찾고, 없으면 study_center 정보로 새 org 생성.
+ *   admin `/accounts` 의 resolveOrgForStudyCenter 와 동일 로직(글로케어 학생 배정용).
+ *   이렇게 만든 org 는 이후 그 센터 계정 생성 시 자동 재사용된다.
+ */
+async function resolveOrgForStudyCenter(
+  svc: ReturnType<typeof createServiceClient>,
+  studyCenterId: number
+): Promise<{ ok: true; orgId: string } | { ok: false; error: string }> {
+  const { data: existing } = await svc
+    .from("study_center_orgs")
+    .select("id")
+    .eq("study_center_id", studyCenterId)
+    .limit(1)
+    .maybeSingle();
+  if (existing?.id) return { ok: true, orgId: existing.id };
+
+  const { data: center } = await svc
+    .from("study_centers")
+    .select("name_vi, name_ko")
+    .eq("id", studyCenterId)
+    .maybeSingle();
+  if (!center) {
+    return {
+      ok: false,
+      error: "Không tìm thấy trung tâm (유학센터를 찾을 수 없습니다)",
+    };
+  }
+
+  const { data: org, error } = await svc
+    .from("study_center_orgs")
+    .insert({
+      name_vi: center.name_vi,
+      name_ko: center.name_ko,
+      country: "VN",
+      status: "active",
+      settlement_currency: "KRW",
+      study_center_id: studyCenterId,
+      activated_at: new Date().toISOString(),
+    })
+    .select("id")
+    .single();
+  if (error || !org) {
+    return { ok: false, error: `Tạo trung tâm thất bại: ${error?.message}` };
+  }
+  return { ok: true, orgId: org.id };
 }

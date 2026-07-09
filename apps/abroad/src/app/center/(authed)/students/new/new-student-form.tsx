@@ -17,11 +17,11 @@ const helpTextClass = "text-xs text-slate-500";
 
 export function NewStudentForm({
   locale,
-  centerOrgs,
+  centers,
 }: {
   locale: Locale;
-  /** 글로케어(본사) 계정일 때만 전달됨 — 학생을 배정할 유학센터 목록. */
-  centerOrgs?: { id: string; name: string }[] | null;
+  /** 글로케어(본사) 계정일 때만 전달됨 — 학생을 배정할 유학센터 마스터 목록. */
+  centers?: { id: number; name: string }[] | null;
 }) {
   const [state, action, pending] = useActionState<CreateStudentState, FormData>(
     createStudentAction,
@@ -29,7 +29,7 @@ export function NewStudentForm({
   );
 
   const fieldError = (name: string) => state?.fieldErrors?.[name]?.[0];
-  const isGlocare = centerOrgs != null;
+  const isGlocare = centers != null;
 
   return (
     <form action={action} className="flex flex-col gap-5">
@@ -41,7 +41,7 @@ export function NewStudentForm({
             <span className={requiredMarkClass}>*</span>
           </span>
           <select
-            name="target_org_id"
+            name="target_study_center_id"
             required
             defaultValue=""
             className={inputClass}
@@ -49,14 +49,16 @@ export function NewStudentForm({
             <option value="" disabled>
               {tr(locale, "— 유학센터 선택 —", "— Chọn trung tâm —")}
             </option>
-            {centerOrgs!.map((o) => (
-              <option key={o.id} value={o.id}>
-                {o.name}
+            {centers!.map((c) => (
+              <option key={c.id} value={String(c.id)}>
+                {c.name}
               </option>
             ))}
           </select>
-          {fieldError("target_org_id") ? (
-            <span className={errorTextClass}>{fieldError("target_org_id")}</span>
+          {fieldError("target_study_center_id") ? (
+            <span className={errorTextClass}>
+              {fieldError("target_study_center_id")}
+            </span>
           ) : (
             <span className={helpTextClass}>
               {tr(
@@ -66,12 +68,12 @@ export function NewStudentForm({
               )}
             </span>
           )}
-          {centerOrgs!.length === 0 ? (
+          {centers!.length === 0 ? (
             <span className={errorTextClass}>
               {tr(
                 locale,
-                "배정 가능한 유학센터가 없습니다. 먼저 계정 관리에서 센터 계정을 만드세요.",
-                "Chưa có trung tâm nào. Hãy tạo tài khoản trung tâm trước."
+                "배정 가능한 유학센터가 없습니다.",
+                "Chưa có trung tâm nào."
               )}
             </span>
           ) : null}
