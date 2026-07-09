@@ -271,17 +271,13 @@ export async function getDataTypeUsageAction(
   if (!row) return { ...empty, error: "항목을 찾을 수 없습니다" };
   const key = row.key;
 
-  const [valuesRes, formsRes, subsRes] = await Promise.all([
+  const [valuesRes, formsRes] = await Promise.all([
     admin
       .from("study_student_data_values")
       .select("id", { count: "exact", head: true })
       .eq("data_type_key", key),
     admin
       .from("study_admission_form_files")
-      .select("id", { count: "exact", head: true })
-      .contains("required_data_type_keys", [key]),
-    admin
-      .from("study_required_submissions")
       .select("id", { count: "exact", head: true })
       .contains("required_data_type_keys", [key]),
   ]);
@@ -291,9 +287,9 @@ export async function getDataTypeUsageAction(
 
   const valueCount = valuesRes.count ?? 0;
   const formCount = formsRes.count ?? 0;
-  const submissionCount = subsRes.count ?? 0;
-  const total =
-    valueCount + formCount + submissionCount + derivedRefs.length;
+  // 발급서류 마스터 통합 삭제됨 → submission 참조 없음
+  const submissionCount = 0;
+  const total = valueCount + formCount + derivedRefs.length;
 
   return {
     ok: true,

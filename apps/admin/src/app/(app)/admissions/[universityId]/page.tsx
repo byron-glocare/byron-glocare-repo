@@ -27,11 +27,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { FormFilesManager } from "@/app/(app)/universities/[id]/forms/forms-manager";
-import {
-  RequiredSubmissionsManager,
-  type SubmissionRow,
-} from "@/components/admission/required-submissions-manager";
-import { HubGlobalOverrides } from "@/components/admission/hub-global-overrides";
 
 export const dynamic = "force-dynamic";
 
@@ -125,8 +120,6 @@ export default async function UniversityAdmissionPage({
     { data: cur },
     { data: arch },
     { data: dt },
-    { data: subRows },
-    { data: masterRows },
   ] = await Promise.all([
     supabase
       .from("study_admission_specs")
@@ -161,20 +154,6 @@ export default async function UniversityAdmissionPage({
       .eq("is_active", true)
       .order("category")
       .order("sort_order"),
-    supabase
-      .from("study_required_submissions")
-      .select("*")
-      .eq("university_id", uid)
-      .order("sort_order")
-      .order("created_at", { ascending: false }),
-    // 공용 마스터 (전체 대학 공통)
-    supabase
-      .from("study_required_submissions")
-      .select("*")
-      .is("university_id", null)
-      .is("base_submission_id", null)
-      .order("sort_order")
-      .order("created_at", { ascending: false }),
   ]);
 
   const specs = specRows ?? [];
@@ -209,36 +188,6 @@ export default async function UniversityAdmissionPage({
     category: string;
     is_essay_basis: boolean;
   }>;
-  type SubRow = NonNullable<typeof subRows>[number];
-  const toSubmissionRow = (r: SubRow): SubmissionRow => ({
-    id: r.id,
-    department_id: r.department_id,
-    base_submission_id: r.base_submission_id,
-    name_ko: r.name_ko,
-    name_vi: r.name_vi,
-    std_key: r.std_key ?? null,
-    target_person: r.target_person,
-    target_person_note: r.target_person_note,
-    sample_image_url: r.sample_image_url,
-    issuance_requirements: r.issuance_requirements ?? {},
-    required_data_type_keys: r.required_data_type_keys ?? [],
-    aliases: r.aliases ?? [],
-    applies_to_languages: r.applies_to_languages ?? [],
-    applies_to_locations: r.applies_to_locations ?? [],
-    sort_order: r.sort_order,
-    is_active: r.is_active,
-    status: r.status,
-  });
-
-  // 대학 전용 신규(base 없음) vs 오버라이드(base 있음) 분리
-  const uniRows = (subRows ?? []).map(toSubmissionRow);
-  const ownSubmissions = uniRows.filter((r) => !r.base_submission_id);
-  const overridesByBase: Record<string, SubmissionRow> = {};
-  for (const r of uniRows) {
-    if (r.base_submission_id) overridesByBase[r.base_submission_id] = r;
-  }
-  const masters = (masterRows ?? []).map(toSubmissionRow);
-
   // 대표 spec 선택: 승인 우선, 없으면 최신 갱신
   const repSpec =
     specs.find((s) => s.status === "approved") ?? specs[0] ?? null;
@@ -469,29 +418,6 @@ export default async function UniversityAdmissionPage({
           />
         </section>
 
-        {/* 4) 직접제출 서류 — 공용(전체 공통) + 대학별 세부요건 + 대학 전용 */}
-        <section className="space-y-3">
-          <h2 className="text-sm font-semibold text-foreground">
-            직접제출 서류
-          </h2>
-
-          {/* 4-1) 공용 서류 (전체 공통) + 이 대학 세부요건 오버라이드 */}
-          <HubGlobalOverrides
-            universityId={uid}
-            departments={depts}
-            dataTypes={dataTypes}
-            masters={masters}
-            overridesByBase={overridesByBase}
-          />
-
-          {/* 4-2) 대학 전용 서류 */}
-          <RequiredSubmissionsManager
-            universityId={uid}
-            departments={depts}
-            dataTypes={dataTypes}
-            submissions={ownSubmissions}
-          />
-        </section>
       </div>
     </>
   );

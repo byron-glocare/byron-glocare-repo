@@ -26,7 +26,7 @@ import { Card } from "@/components/ui/card";
 
 export const dynamic = "force-dynamic";
 
-type Tab = "forms" | "submissions" | "guidelines";
+type Tab = "forms" | "guidelines";
 
 export default async function AdmissionsPage({
   searchParams,
@@ -34,8 +34,7 @@ export default async function AdmissionsPage({
   searchParams: Promise<{ tab?: string; q?: string; uni?: string }>;
 }) {
   const sp = await searchParams;
-  const tab: Tab =
-    sp.tab === "submissions" || sp.tab === "guidelines" ? sp.tab : "forms";
+  const tab: Tab = sp.tab === "guidelines" ? "guidelines" : "forms";
   const q = (sp.q ?? "").trim().toLowerCase();
   const uniFilter = (sp.uni ?? "").trim();
 
@@ -50,7 +49,6 @@ export default async function AdmissionsPage({
   const [
     { data: universities },
     { data: forms },
-    { data: submissions },
     { data: specs },
   ] = await Promise.all([
     supabase.from("universities").select("id, name_ko").order("name_ko"),
@@ -61,11 +59,6 @@ export default async function AdmissionsPage({
       )
       .eq("is_current", true)
       .order("uploaded_at", { ascending: false }),
-    supabase
-      .from("study_required_submissions")
-      .select("id, university_id, name_ko, sample_image_url, issuance_requirements, status, is_active")
-      .eq("is_active", true)
-      .order("sort_order"),
     supabase
       .from("study_admission_specs")
       .select("id, university_id, term, source_file_url, created_at, status")
@@ -85,22 +78,17 @@ export default async function AdmissionsPage({
       uniMatch(f.university_id) &&
       (!q || `${f.name_ko} ${f.file_name}`.toLowerCase().includes(q))
   );
-  const subRows = (submissions ?? []).filter(
-    (s) => uniMatch(s.university_id) && (!q || s.name_ko.toLowerCase().includes(q))
-  );
   const specRows = (specs ?? []).filter(
     (s) => uniMatch(s.university_id) && (!q || s.term.toLowerCase().includes(q))
   );
 
   const counts = {
     forms: (forms ?? []).length,
-    submissions: (submissions ?? []).length,
     guidelines: (specs ?? []).length,
   };
 
   const tabs: Array<{ key: Tab; label: string; count: number }> = [
     { key: "forms", label: "작성 서류 양식", count: counts.forms },
-    { key: "submissions", label: "발급 서류", count: counts.submissions },
     { key: "guidelines", label: "모집요강 서류", count: counts.guidelines },
   ];
 
@@ -117,18 +105,13 @@ export default async function AdmissionsPage({
     <>
       <PageHeader
         title="입학서류"
-        description="작성 서류 양식 · 발급 서류 · 모집요강 서류"
+        description="작성 서류 양식 · 모집요강 서류"
         breadcrumbs={[{ label: "입학서류" }]}
         actions={
           tab === "forms" ? (
             <Link href="/admissions/forms/new" className={buttonVariants()}>
               <Plus className="size-4" />
               양식 추가
-            </Link>
-          ) : tab === "submissions" ? (
-            <Link href="/admissions/submissions/new" className={buttonVariants()}>
-              <Plus className="size-4" />
-              발급서류 추가
             </Link>
           ) : (
             <Link href="/admissions/new" className={buttonVariants()}>
@@ -183,7 +166,6 @@ export default async function AdmissionsPage({
               className="h-8 min-w-40 rounded-md border border-input bg-background px-2 text-sm"
             >
               <option value="">전체</option>
-              {tab !== "guidelines" ? <option value="shared">공용</option> : null}
               {(universities ?? []).map((u) => (
                 <option key={u.id} value={String(u.id)}>
                   {u.name_ko}
@@ -261,63 +243,6 @@ export default async function AdmissionsPage({
                           >
                             <Download className="size-4" />
                           </a>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            )}
-          </Card>
-        ) : null}
-
-        {tab === "submissions" ? (
-          <Card className="overflow-hidden p-0">
-            {subRows.length === 0 ? (
-              <Empty />
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>서류명</TableHead>
-                    <TableHead className="w-40">대학</TableHead>
-                    <TableHead className="w-24 text-center">이미지</TableHead>
-                    <TableHead>상세</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {subRows.map((s) => {
-                    const href = `/admissions/submissions/${s.id}`;
-                    const iss = (s.issuance_requirements ?? {}) as { notes?: string };
-                    const detail = (iss.notes ?? "").slice(0, 20);
-                    return (
-                      <TableRow key={s.id} className="cursor-pointer">
-                        <TableCell className="font-medium">
-                          <Link href={href} className="flex flex-wrap items-center gap-1.5 hover:text-primary">
-                            {s.name_ko}
-                            {s.university_id == null ? (
-                              <Badge variant="outline" className="text-[10px]">공용</Badge>
-                            ) : null}
-                          </Link>
-                        </TableCell>
-                        <TableCell className="text-sm">
-                          <Link href={href} className="block">
-                            {nameOf(s.university_id)}
-                          </Link>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <Link href={href} className="block">
-                            {s.sample_image_url ? (
-                              <Badge className="border-success/20 bg-success/10 text-success">있음</Badge>
-                            ) : (
-                              <span className="text-xs text-muted-foreground">없음</span>
-                            )}
-                          </Link>
-                        </TableCell>
-                        <TableCell className="text-xs text-muted-foreground">
-                          <Link href={href} className="block">
-                            {detail || "—"}
-                          </Link>
                         </TableCell>
                       </TableRow>
                     );

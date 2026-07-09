@@ -228,7 +228,6 @@ export async function deleteUniversity(id: number): Promise<ActionResult> {
   // 의존 데이터 정리 후 대학 삭제 (개발: 테스트 대학 cascade)
   //   학생 지원(study_applications)이 offering/spec 을 참조하면 아래 삭제가 FK 로 막히고
   //   최종 university 삭제에서 에러가 반환됨(실데이터 보호).
-  await supabase.from("study_required_submissions").delete().eq("university_id", id);
   await supabase.from("study_admission_form_files").delete().eq("university_id", id);
   await supabase.from("study_offerings").delete().eq("university_id", id);
   await supabase.from("study_admission_specs").delete().eq("university_id", id);

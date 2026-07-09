@@ -17,10 +17,6 @@ import {
   classifyRequiredDocs,
   type RequiredDoc,
 } from "./classify-documents";
-import {
-  buildSubmissionIndex,
-  matchIssuedDoc,
-} from "./match-submissions";
 
 export type ReadinessCheck = {
   key: string;
@@ -68,7 +64,7 @@ export async function assessOfferingReadiness(
     };
   }
 
-  const { forms, issued } = classifyRequiredDocs(
+  const { forms } = classifyRequiredDocs(
     (approved.required_documents as RequiredDoc[]) ?? []
   );
 
@@ -83,41 +79,9 @@ export async function assessOfferingReadiness(
   );
   const missingForms = forms.filter((f) => !formKeys.has(f.key));
 
-  // 3) 발급서류 등록/연결 여부
-  const { data: subs } = await supabase
-    .from("study_required_submissions")
-    .select("id, university_id, base_submission_id, name_ko, std_key, aliases, sample_image_url, status")
-    .or(`university_id.eq.${universityId},university_id.is.null`)
-    .eq("is_active", true);
-  const idx = buildSubmissionIndex(
-    (subs ?? []).map((s) => {
-      const r = s as {
-        id: string;
-        university_id: number | null;
-        base_submission_id: string | null;
-        name_ko: string;
-        std_key: string | null;
-        aliases: string[] | null;
-        sample_image_url: string | null;
-        status: string;
-      };
-      return {
-        id: r.id,
-        university_id: r.university_id,
-        base_submission_id: r.base_submission_id,
-        name_ko: r.name_ko,
-        std_key: r.std_key ?? null,
-        aliases: r.aliases ?? [],
-        sample_image_url: r.sample_image_url,
-        status: r.status,
-      };
-    })
-  );
-  const missingIssued = issued.filter(
-    (d) => matchIssuedDoc(d, idx).kind === "unmatched"
-  );
+  // 발급서류는 모집요강 required_documents 로 통합됨(별도 마스터 없음) — 등록 체크 제거.
 
-  // 4) 일정 / 5) 학비
+  // 3) 일정 / 4) 학비
   const schedule = (approved.schedule ?? {}) as {
     rounds?: Array<{ application_open?: string | null; document_submission_close?: string | null }>;
     semester_start?: string | null;
@@ -147,15 +111,6 @@ export async function assessOfferingReadiness(
       detail:
         missingForms.length > 0
           ? `미업로드: ${missingForms.map((f) => f.name_ko).join(", ")}`
-          : undefined,
-    },
-    {
-      key: "issued",
-      label: "발급서류 등록/연결",
-      ok: missingIssued.length === 0,
-      detail:
-        missingIssued.length > 0
-          ? `미등록: ${missingIssued.map((d) => d.name_ko).join(", ")}`
           : undefined,
     },
     { key: "schedule", label: "모집 일정 입력", ok: !!hasSchedule },
