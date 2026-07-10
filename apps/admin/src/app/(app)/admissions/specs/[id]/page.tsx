@@ -6,13 +6,17 @@
 
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Pencil } from "lucide-react";
+import { Download, FileText, Pencil, Upload } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/page-header";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
+import {
+  classifyRequiredDocs,
+  type RequiredDoc as ClassifyDoc,
+} from "@/lib/admission/classify-documents";
 import { DeleteSpecButton } from "./delete-spec-button";
 import { CloneSpecButton } from "./clone-spec-button";
 
@@ -84,15 +88,6 @@ type Dept = {
   tuition_per_semester_krw?: number | null;
 };
 
-type RequiredDoc = {
-  key?: string;
-  name_ko?: string;
-  required?: boolean;
-  notarization?: string;
-  language?: string;
-  notes?: string | null;
-};
-
 type Scholarship = {
   name?: string;
   applies_to?: string;
@@ -135,8 +130,35 @@ export default async function AdmissionDetailPage({
     .eq("id", spec.university_id)
     .maybeSingle();
 
+  // 이 대학의 현행 작성서류 양식 파일 (직접작성 서류 업로드 여부·편집 링크용)
+  const { data: formFiles } = await supabase
+    .from("study_admission_form_files")
+    .select("id, key, name_ko, file_name, file_url")
+    .eq("university_id", spec.university_id)
+    .eq("is_current", true);
+  const normFormName = (s: string) =>
+    s
+      .trim()
+      .replace(/^\s*\d+[.)]\s*/, "")
+      .replace(/\s+/g, "")
+      .toLowerCase();
+  const formByKey = new Map(
+    (formFiles ?? []).map((f) => [f.key as string, f] as const)
+  );
+  const formByName = new Map(
+    (formFiles ?? []).map((f) => [normFormName(f.name_ko), f] as const)
+  );
+  const formFileFor = (d: { key: string; name_ko: string }) =>
+    formByKey.get(d.key) ?? formByName.get(normFormName(d.name_ko));
+
+  // 제출서류 = required_documents → 직접작성/발급 분류
+  const { forms: formDocs, issued: issuedDocs } = classifyRequiredDocs(
+    (Array.isArray(spec.required_documents)
+      ? spec.required_documents
+      : []) as ClassifyDoc[]
+  );
+
   const departments = (Array.isArray(spec.departments) ? spec.departments : []) as Dept[];
-  const requiredDocs = (Array.isArray(spec.required_documents) ? spec.required_documents : []) as RequiredDoc[];
   const eligibility = (spec.eligibility ?? {}) as {
     applicant_categories?: string[];
     education_required?: string;
@@ -336,37 +358,156 @@ export default async function AdmissionDetailPage({
           )}
         </Card>
 
-        {/* 제출 서류 */}
-        <Card className="p-6">
-          <h2 className="mb-3 text-base font-semibold">제출 서류 ({requiredDocs.length})</h2>
-          {requiredDocs.length === 0 ? (
-            <p className="text-sm text-muted-foreground">없음</p>
-          ) : (
-            <ul className="space-y-2 text-sm">
-              {requiredDocs.map((doc, i) => (
-                <li key={i} className="flex items-start gap-3 rounded-md border p-3">
-                  <div className="flex-1">
-                    <div className="font-medium">
-                      {doc.name_ko ?? doc.key ?? "—"}
-                      {doc.required === false ? (
-                        <Badge variant="outline" className="ml-2 text-xs">선택</Badge>
-                      ) : (
-                        <Badge variant="secondary" className="ml-2 text-xs">필수</Badge>
-                      )}
-                    </div>
-                    {doc.notarization && doc.notarization !== "none" ? (
-                      <div className="mt-0.5 text-xs text-muted-foreground">
-                        인증: {NOTARIZATION_LABEL[doc.notarization] ?? doc.notarization}
+        {/* 제출 서류 — 직접작성(학교 양식) / 발급 서류 분류 + 양식 업로드 여부 */}
+        <Card className="p-6 space-y-5">
+          <h2 className="text-base font-semibold">
+            제출 서류 ({formDocs.length + issuedDocs.length})
+          </h2>
+
+          {/* 1) 직접작성 서류 — 입학서류 양식 매핑·업로드 여부·편집 링크 */}
+          <section>
+            <div className="mb-2 flex items-center gap-2">
+              <h3 className="text-sm font-semibold">직접작성 서류 (학교 양식)</h3>
+              <Badge variant="secondary" className="text-[10px]">
+                {formDocs.length}
+              </Badge>
+            </div>
+            {formDocs.length === 0 ? (
+              <p className="text-xs text-muted-foreground">
+                직접작성 양식이 없습니다.
+              </p>
+            ) : (
+              <ul className="space-y-2 text-sm">
+                {formDocs.map((doc, i) => {
+                  const file = formFileFor(doc);
+                  return (
+                    <li
+                      key={`form-${i}`}
+                      className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-md border p-3"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 font-medium">
+                          <FileText className="size-3.5 shrink-0 text-muted-foreground" />
+                          {doc.name_ko}
+                          {doc.required === false ? (
+                            <Badge variant="outline" className="text-[10px]">
+                              선택
+                            </Badge>
+                          ) : (
+                            <Badge variant="secondary" className="text-[10px]">
+                              필수
+                            </Badge>
+                          )}
+                        </div>
+                        {doc.notes ? (
+                          <div className="mt-1 whitespace-pre-wrap text-xs text-muted-foreground">
+                            {doc.notes}
+                          </div>
+                        ) : null}
                       </div>
-                    ) : null}
-                    {doc.notes ? (
-                      <div className="mt-1 text-xs text-muted-foreground whitespace-pre-wrap">{doc.notes}</div>
-                    ) : null}
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
+                      {file ? (
+                        <Badge className="border-success/20 bg-success/10 text-success">
+                          등록됨
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline" className="text-amber-600">
+                          미등록
+                        </Badge>
+                      )}
+                      <Link
+                        href={
+                          file
+                            ? `/admissions/forms/${file.id}`
+                            : `/admissions/forms/new?university_id=${spec.university_id}`
+                        }
+                        className={buttonVariants({ variant: "outline", size: "sm" })}
+                      >
+                        {file ? (
+                          <>
+                            <Pencil className="size-3.5" />
+                            편집
+                          </>
+                        ) : (
+                          <>
+                            <Upload className="size-3.5" />
+                            양식 업로드
+                          </>
+                        )}
+                      </Link>
+                      {file ? (
+                        <a
+                          href={file.file_url}
+                          target="_blank"
+                          rel="noreferrer"
+                          download
+                          className={buttonVariants({ variant: "ghost", size: "sm" })}
+                          title={file.file_name}
+                        >
+                          <Download className="size-3.5" />
+                        </a>
+                      ) : null}
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </section>
+
+          {/* 2) 발급 서류 — 학생이 기관에서 발급받아 제출 */}
+          <section>
+            <div className="mb-2 flex items-center gap-2">
+              <h3 className="text-sm font-semibold">발급 서류</h3>
+              <Badge variant="secondary" className="text-[10px]">
+                {issuedDocs.length}
+              </Badge>
+            </div>
+            {issuedDocs.length === 0 ? (
+              <p className="text-xs text-muted-foreground">발급 서류가 없습니다.</p>
+            ) : (
+              <ul className="space-y-2 text-sm">
+                {issuedDocs.map((doc, i) => (
+                  <li
+                    key={`issued-${i}`}
+                    className="flex items-start gap-3 rounded-md border p-3"
+                  >
+                    <div className="flex-1">
+                      <div className="font-medium">
+                        {doc.name_ko}
+                        {doc.required === false ? (
+                          <Badge variant="outline" className="ml-2 text-[10px]">
+                            선택
+                          </Badge>
+                        ) : (
+                          <Badge variant="secondary" className="ml-2 text-[10px]">
+                            필수
+                          </Badge>
+                        )}
+                        {doc.std_key ? (
+                          <Badge
+                            variant="outline"
+                            className="ml-2 text-[10px] text-primary"
+                          >
+                            표준
+                          </Badge>
+                        ) : null}
+                      </div>
+                      {doc.notarization && doc.notarization !== "none" ? (
+                        <div className="mt-0.5 text-xs text-muted-foreground">
+                          인증:{" "}
+                          {NOTARIZATION_LABEL[doc.notarization] ?? doc.notarization}
+                        </div>
+                      ) : null}
+                      {doc.notes ? (
+                        <div className="mt-1 whitespace-pre-wrap text-xs text-muted-foreground">
+                          {doc.notes}
+                        </div>
+                      ) : null}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
         </Card>
 
         {/* 자격 */}
