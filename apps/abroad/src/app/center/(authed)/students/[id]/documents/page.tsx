@@ -226,7 +226,23 @@ export default async function DocumentsPage({
     for (const it of g.issued)
       shareCount.set(it.shareKey, (shareCount.get(it.shareKey) ?? 0) + 1);
 
-  // 파일 조회 (share 키 → 없으면 legacy 키). 업로더는 파일이 있는 키를 그대로 사용.
+  const fileEntries = Array.from(fileByDocKey.entries()); // [doc_key, file]
+
+  // 이름 변경/표준 연결로 과거 업로드가 새 키(share·legacy)와 안 맞을 때 구제:
+  //   같은 "서류 종류(key)" 접두사(key::)로 올라온 파일이 정확히 하나면 그 파일로 본다.
+  //   (본인/부모 여권처럼 같은 key 가 2개 이상이면 오매칭 방지 위해 구제 안 함 — 재업로드/가져오기 유도.)
+  const healByKeyPrefix = (legacyKey: string | null) => {
+    if (!legacyKey) return null;
+    const sep = legacyKey.indexOf("::");
+    if (sep < 1) return null;
+    const prefix = legacyKey.slice(0, sep + 2); // "key::"
+    const hits = fileEntries.filter(([k]) => k.startsWith(prefix));
+    return hits.length === 1
+      ? { key: hits[0][0], file: hits[0][1] }
+      : null;
+  };
+
+  // 파일 조회 (share 키 → legacy 키 → key 접두사 구제). 업로더는 파일이 있는 키를 그대로 사용.
   const resolveFile = (it: IssuedItem) => {
     const byShare = fileByDocKey.get(it.shareKey);
     if (byShare) return { key: it.shareKey, file: byShare };
@@ -234,6 +250,8 @@ export default async function DocumentsPage({
       const byLegacy = fileByDocKey.get(it.legacyKey);
       if (byLegacy) return { key: it.legacyKey, file: byLegacy };
     }
+    const healed = healByKeyPrefix(it.legacyKey);
+    if (healed) return healed;
     return { key: it.shareKey, file: null };
   };
 

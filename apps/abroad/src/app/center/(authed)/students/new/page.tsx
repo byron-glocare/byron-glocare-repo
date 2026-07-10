@@ -15,8 +15,9 @@ export default async function NewStudentPage() {
   const session = await verifyCenterSession(); // 인증 + org 검증
   const locale = await getLocale();
 
-  // 글로케어(본사) 계정: 학생을 배정할 유학센터 마스터 목록(study_centers, 자기 센터 제외).
+  // 글로케어(본사) 계정: 학생을 배정할 유학센터 마스터 목록(study_centers).
   //   org(계정) 이 아직 없는 센터도 노출 — 배정 시 org 를 찾거나 생성한다.
+  //   맨 앞에 "글로케어(본사 직접 관리)" 옵션을 둔다 — 자기 org 로 직접 등록.
   let centers: { id: number; name: string }[] | null = null;
   if (session.isGlocare) {
     const svc = createServiceClient();
@@ -26,7 +27,7 @@ export default async function NewStudentPage() {
       .eq("active", true)
       .order("name_vi");
     const ownScId = session.org.study_center_id;
-    centers = (data ?? [])
+    const others = (data ?? [])
       .filter((c) => c.id !== ownScId)
       .map((c) => ({
         id: c.id,
@@ -35,6 +36,21 @@ export default async function NewStudentPage() {
             ? c.name_ko || c.name_vi
             : c.name_vi || c.name_ko || "",
       }));
+    // 글로케어 본사 직접 관리 옵션 (자기 study_center id 로 배정 → 자기 org 로 귀속)
+    const glocareSelf =
+      ownScId != null
+        ? [
+            {
+              id: ownScId,
+              name: tr(
+                locale,
+                "글로케어 (본사 직접 관리)",
+                "Glocare (Trụ sở trực tiếp quản lý)"
+              ),
+            },
+          ]
+        : [];
+    centers = [...glocareSelf, ...others];
   }
 
   return (
