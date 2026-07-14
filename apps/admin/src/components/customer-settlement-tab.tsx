@@ -298,9 +298,11 @@ function ReservationPaymentsCard({
     });
   }
 
-  async function onUpdateRefund(
+  async function onUpdate(
     p: ReservationPayment,
     patch: {
+      amount?: number;
+      payment_date?: string | null;
       refund_amount?: number;
       refund_date?: string | null;
       refund_reason?: ReservationPayment["refund_reason"];
@@ -308,8 +310,11 @@ function ReservationPaymentsCard({
   ) {
     startTransition(async () => {
       const result = await updateReservationPayment(p.id, customerId, {
-        amount: p.amount,
-        payment_date: p.payment_date,
+        amount: patch.amount ?? p.amount,
+        payment_date:
+          patch.payment_date !== undefined
+            ? patch.payment_date
+            : p.payment_date,
         refund_amount: patch.refund_amount ?? p.refund_amount,
         refund_date:
           patch.refund_date !== undefined ? patch.refund_date : p.refund_date,
@@ -411,15 +416,38 @@ function ReservationPaymentsCard({
               <TableBody>
                 {payments.map((p) => (
                   <TableRow key={p.id}>
-                    <TableCell className="font-medium">
-                      {formatCurrency(p.amount)}
+                    <TableCell>
+                      <Input
+                        type="number"
+                        defaultValue={p.amount}
+                        className="h-8"
+                        min={0}
+                        onBlur={(e) => {
+                          const v = Number(e.target.value) || 0;
+                          if (v !== p.amount) {
+                            onUpdate(p, { amount: v });
+                          }
+                        }}
+                      />
                     </TableCell>
-                    <TableCell>{formatDate(p.payment_date)}</TableCell>
+                    <TableCell>
+                      <Input
+                        type="date"
+                        defaultValue={p.payment_date ?? ""}
+                        className="h-8"
+                        onBlur={(e) => {
+                          const v = e.target.value || null;
+                          if (v !== p.payment_date) {
+                            onUpdate(p, { payment_date: v });
+                          }
+                        }}
+                      />
+                    </TableCell>
                     <TableCell>
                       <Select
                         value={p.refund_reason ?? "__none__"}
                         onValueChange={(v) =>
-                          onUpdateRefund(p, {
+                          onUpdate(p, {
                             refund_reason:
                               v === "__none__"
                                 ? null
@@ -465,7 +493,7 @@ function ReservationPaymentsCard({
                         onBlur={(e) => {
                           const v = Number(e.target.value) || 0;
                           if (v !== p.refund_amount) {
-                            onUpdateRefund(p, { refund_amount: v });
+                            onUpdate(p, { refund_amount: v });
                           }
                         }}
                       />
@@ -478,7 +506,7 @@ function ReservationPaymentsCard({
                         onBlur={(e) => {
                           const v = e.target.value || null;
                           if (v !== p.refund_date) {
-                            onUpdateRefund(p, { refund_date: v });
+                            onUpdate(p, { refund_date: v });
                           }
                         }}
                       />
