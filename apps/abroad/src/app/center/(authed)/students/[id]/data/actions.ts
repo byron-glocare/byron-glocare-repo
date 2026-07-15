@@ -20,11 +20,15 @@ export type SaveDataValueResult =
  * 학생의 표준 데이터 단일 항목 upsert.
  *   - RLS 가 본인 org 학생만 허용
  *   - value 가 null → 해당 row 삭제 (입력 취소)
+ *   - value       = 최종 사용값(문서 채움 등 모든 소비처가 읽는 값)
+ *   - valueInput  = 유학센터가 입력한 원문(번역 전). 넘기면 함께 저장, 없으면 건드리지 않음.
  */
 export async function saveStudentDataValueAction(input: {
   studentId: string;
   dataTypeKey: string;
   value: Json | null;
+  /** 입력 원문. undefined = 변경 안 함, null = 원문 지움(= value 와 동일 취급) */
+  valueInput?: Json | null;
 }): Promise<SaveDataValueResult> {
   const session = await verifyCenterSession();
   const supabase = await createCenterClient();
@@ -39,22 +43,46 @@ export async function saveStudentDataValueAction(input: {
     if (error) return { ok: false, error: error.message };
   } else {
     // upsert
+    const row: {
+      student_id: string;
+      data_type_key: string;
+      value: Json;
+      filled_by: string | null;
+      value_input?: Json | null;
+    } = {
+      student_id: input.studentId,
+      data_type_key: input.dataTypeKey,
+      value: input.value,
+      filled_by: session.authUserId,
+    };
+    if (input.valueInput !== undefined) row.value_input = input.valueInput;
     const { error } = await supabase
       .from("study_student_data_values")
-      .upsert(
-        {
-          student_id: input.studentId,
-          data_type_key: input.dataTypeKey,
-          value: input.value,
-          filled_by: session.authUserId,
-        },
-        { onConflict: "student_id,data_type_key" }
-      );
+      .upsert(row, { onConflict: "student_id,data_type_key" });
     if (error) return { ok: false, error: error.message };
   }
 
   revalidatePath(`/center/students/${input.studentId}/data`);
   return { ok: true };
+}
+
+export type TranslateResult =
+  | { ok: true; text: string; translated: boolean }
+  | { ok: false; error: string };
+
+/**
+ * 입력값(베트남어 등) → 최종 사용값 번역. 저장은 하지 않고 번역 결과만 반환.
+ *   호출측이 결과를 최종값으로 확정(수정 가능)한 뒤 saveStudentDataValueAction 으로 저장.
+ */
+export async function translateStudentValueAction(input: {
+  label: string;
+  text: string;
+}): Promise<TranslateResult> {
+  await verifyCenterSession();
+  const { translateStudentValue } = await import(
+    "@/lib/center/translate-value"
+  );
+  return translateStudentValue({ label: input.label, text: input.text });
 }
 
 export type CreateFillLinkResult =

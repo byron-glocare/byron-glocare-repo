@@ -33,6 +33,8 @@ export async function loadStudentDataContext(
 ): Promise<{
   dataTypes: StudentDataTypeRow[];
   valueMap: Map<string, Json>;
+  /** 입력 원문(번역 전). value_input 이 있는 항목만. */
+  inputMap: Map<string, Json>;
   requiredMap: Map<string, string[]>;
 }> {
   const [{ data: dataTypes }, { data: values }, { data: apps }] =
@@ -45,7 +47,7 @@ export async function loadStudentDataContext(
         .order("sort_order"),
       supabase
         .from("study_student_data_values")
-        .select("data_type_key, value")
+        .select("data_type_key, value, value_input")
         .eq("student_id", studentId),
       supabase
         .from("study_applications")
@@ -55,6 +57,16 @@ export async function loadStudentDataContext(
 
   const valueMap = new Map<string, Json>(
     (values ?? []).map((v) => [v.data_type_key, v.value])
+  );
+  const inputMap = new Map<string, Json>(
+    (values ?? [])
+      .filter(
+        (v) => (v as { value_input?: Json }).value_input != null
+      )
+      .map((v) => [
+        v.data_type_key,
+        (v as { value_input: Json }).value_input,
+      ])
   );
 
   // 필요 데이터 키 수집
@@ -119,6 +131,7 @@ export async function loadStudentDataContext(
   return {
     dataTypes: (dataTypes ?? []) as StudentDataTypeRow[],
     valueMap,
+    inputMap,
     requiredMap,
   };
 }

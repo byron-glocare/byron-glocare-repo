@@ -34,10 +34,8 @@ export default async function StudentDataPage({
     .maybeSingle();
   if (!student) notFound();
 
-  const { dataTypes, valueMap, requiredMap } = await loadStudentDataContext(
-    supabase,
-    id
-  );
+  const { dataTypes, valueMap, inputMap, requiredMap } =
+    await loadStudentDataContext(supabase, id);
 
   // 첨부파일(파일 타입)은 '서류 등록' 탭으로 이동 → 여기선 제외.
   // 단, 양식에 직접 박히는 이미지(증명사진·서명)는 정보 입력에 포함하되
@@ -67,6 +65,7 @@ export default async function StudentDataPage({
         studentId={id}
         dataTypes={nonFile.map(toEditorDataType)}
         existingValues={Object.fromEntries(valueMap)}
+        existingInputs={Object.fromEntries(inputMap)}
         requiredBySource={pickRequired(requiredMap, nonFileKeys)}
       />
     </div>

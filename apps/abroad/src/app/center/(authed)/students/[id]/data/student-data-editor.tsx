@@ -11,6 +11,7 @@ import {
 import { MultiSelectWithOther } from "@/components/multi-select-other";
 import {
   saveStudentDataValueAction,
+  translateStudentValueAction,
   uploadStudentFileAction,
   getStudentFileSignedUrlAction,
   removeStudentFileAction,
@@ -101,17 +102,24 @@ export function StudentDataEditor({
   studentId,
   dataTypes,
   existingValues,
+  existingInputs = {},
   requiredBySource,
 }: {
   locale: Locale;
   studentId: string;
   dataTypes: DataTypeMeta[];
   existingValues: Record<string, Json>;
+  /** 입력 원문(번역 전). value_input 이 있는 항목만. 없으면 최종값과 동일 취급. */
+  existingInputs?: Record<string, Json>;
   requiredBySource: Record<string, string[]>;
 }) {
   // 로컬 state — 즉시 UI 반영 + 서버 저장
   const [values, setValues] = useState<Record<string, Json | null>>(
     existingValues as Record<string, Json | null>
+  );
+  // 입력 원문(번역 전) — 텍스트 항목의 "입력값" 필드 프리필용
+  const [inputs, setInputs] = useState<Record<string, Json | null>>(
+    existingInputs as Record<string, Json | null>
   );
 
   // 필요한 항목만 보기 (지원 대학 직접작성서류가 요구하는 키) ↔ 전체 보기
@@ -276,6 +284,8 @@ export function StudentDataEditor({
           dataTypes={byCategory.get(cat)!}
           values={values}
           setValues={setValues}
+          inputs={inputs}
+          setInputs={setInputs}
           studentId={studentId}
           requiredBySource={requiredBySource}
           byKey={byKey}
@@ -291,6 +301,8 @@ function CategorySection({
   dataTypes,
   values,
   setValues,
+  inputs,
+  setInputs,
   studentId,
   requiredBySource,
   byKey,
@@ -300,6 +312,8 @@ function CategorySection({
   dataTypes: DataTypeMeta[];
   values: Record<string, Json | null>;
   setValues: React.Dispatch<React.SetStateAction<Record<string, Json | null>>>;
+  inputs: Record<string, Json | null>;
+  setInputs: React.Dispatch<React.SetStateAction<Record<string, Json | null>>>;
   studentId: string;
   requiredBySource: Record<string, string[]>;
   byKey: Map<string, DataTypeMeta>;
@@ -342,7 +356,12 @@ function CategorySection({
               locale={locale}
               dataType={dt}
               value={values[dt.key] ?? null}
-              onChange={(v) => setValues((cur) => ({ ...cur, [dt.key]: v }))}
+              inputValue={inputs[dt.key] ?? null}
+              onChange={(v, vi) => {
+                setValues((cur) => ({ ...cur, [dt.key]: v }));
+                if (vi !== undefined)
+                  setInputs((cur) => ({ ...cur, [dt.key]: vi }));
+              }}
               studentId={studentId}
               requiredSources={requiredBySource[dt.key] ?? []}
             />
@@ -357,6 +376,7 @@ function FieldRow({
   locale,
   dataType,
   value,
+  inputValue,
   onChange,
   studentId,
   requiredSources,
@@ -364,7 +384,8 @@ function FieldRow({
   locale: Locale;
   dataType: DataTypeMeta;
   value: Json | null;
-  onChange: (v: Json | null) => void;
+  inputValue: Json | null;
+  onChange: (v: Json | null, valueInput?: Json | null) => void;
   studentId: string;
   requiredSources: string[];
 }) {
@@ -376,7 +397,7 @@ function FieldRow({
   const isFilled =
     value !== null && value !== undefined && value !== "" && value !== false;
 
-  const save = (newValue: Json | null) => {
+  const save = (newValue: Json | null, valueInput?: Json | null) => {
     setError(null);
     setSaved(false);
     startTransition(async () => {
@@ -384,6 +405,7 @@ function FieldRow({
         studentId,
         dataTypeKey: dataType.key,
         value: newValue,
+        valueInput,
       });
       if (!res.ok) {
         setError(res.error);
@@ -447,10 +469,11 @@ function FieldRow({
           locale={locale}
           dataType={dataType}
           value={value}
+          inputValue={inputValue}
           studentId={studentId}
-          onCommit={(v) => {
-            onChange(v);
-            save(v);
+          onCommit={(v, vi) => {
+            onChange(v, vi);
+            save(v, vi);
           }}
         />
       </div>
@@ -606,14 +629,16 @@ function ValueInput({
   locale,
   dataType,
   value,
+  inputValue,
   studentId,
   onCommit,
 }: {
   locale: Locale;
   dataType: DataTypeMeta;
   value: Json | null;
+  inputValue: Json | null;
   studentId: string;
-  onCommit: (v: Json | null) => void;
+  onCommit: (v: Json | null, valueInput?: Json | null) => void;
 }) {
   const baseClass =
     "w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500";
@@ -621,10 +646,16 @@ function ValueInput({
   switch (dataType.input_type) {
     case "long_text":
       return (
-        <TextAreaInput
+        <TranslatableTextInput
+          locale={locale}
+          label={locale === "ko" ? dataType.label_ko : dataType.label_vi}
+          multiline
           value={typeof value === "string" ? value : ""}
-          onCommit={(v) => onCommit(v || null)}
+          inputValue={typeof inputValue === "string" ? inputValue : ""}
           baseClass={baseClass}
+          onCommit={(final, input) =>
+            onCommit(final || null, input || null)
+          }
         />
       );
 
@@ -717,11 +748,13 @@ function ValueInput({
     case "text":
     default:
       return (
-        <input
-          type="text"
-          defaultValue={typeof value === "string" ? value : ""}
-          onBlur={(e) => onCommit(e.target.value || null)}
-          className={baseClass}
+        <TranslatableTextInput
+          locale={locale}
+          label={locale === "ko" ? dataType.label_ko : dataType.label_vi}
+          value={typeof value === "string" ? value : ""}
+          inputValue={typeof inputValue === "string" ? inputValue : ""}
+          baseClass={baseClass}
+          onCommit={(final, input) => onCommit(final || null, input || null)}
         />
       );
   }
@@ -1044,26 +1077,176 @@ function SignatureInput({
   );
 }
 
-function TextAreaInput({
+/**
+ * 번역형 텍스트 입력 — "입력값(원문)" + "최종값(서류 사용)" 이중 관리.
+ *   - 입력값에 베트남어를 넣고 벗어나면 자동으로 한국어(+고유명사 영어)로 번역해 최종값을 채움.
+ *   - 최종값은 직접 수정 가능. [재번역] 으로 입력값에서 다시 번역.
+ *   - 저장: value=최종값, value_input=입력값 (문서는 value 만 읽음).
+ */
+function TranslatableTextInput({
+  locale,
+  label,
   value,
-  onCommit,
+  inputValue,
   baseClass,
+  multiline,
+  onCommit,
 }: {
+  locale: Locale;
+  label: string;
   value: string;
-  onCommit: (v: string) => void;
+  inputValue: string;
   baseClass: string;
+  multiline?: boolean;
+  onCommit: (final: string, input: string) => void;
 }) {
-  const [draft, setDraft] = useState(value);
+  // value_input 이 없던 기존 값은 입력==최종으로 취급
+  const initialInput = inputValue || value;
+  const [draftInput, setDraftInput] = useState(initialInput);
+  const [draftFinal, setDraftFinal] = useState(value);
+  const [committedInput, setCommittedInput] = useState(initialInput);
+  const [committedFinal, setCommittedFinal] = useState(value);
+  const [translating, setTranslating] = useState(false);
+  const [note, setNote] = useState<string | null>(null);
+
+  const commit = (final: string, input: string) => {
+    setCommittedFinal(final);
+    setCommittedInput(input);
+    onCommit(final, input);
+  };
+
+  const runTranslate = async (force: boolean) => {
+    const text = draftInput.trim();
+    if (!text) {
+      // 입력값 비움 → 최종값도 비우고 삭제
+      setDraftFinal("");
+      setNote(null);
+      commit("", "");
+      return;
+    }
+    if (!force && text === committedInput.trim()) return; // 변화 없음
+    setTranslating(true);
+    setNote(null);
+    const res = await translateStudentValueAction({ label, text });
+    setTranslating(false);
+    if (!res.ok) {
+      // 실패 시 원문을 최종값으로 유지 (값 보존)
+      setDraftFinal(text);
+      commit(text, text);
+      setNote(
+        tr(
+          locale,
+          `번역 실패 — 원문을 최종값으로 저장했습니다. (${res.error})`,
+          `Dịch lỗi — đã lưu nguyên văn. (${res.error})`
+        )
+      );
+      return;
+    }
+    setDraftFinal(res.text);
+    commit(res.text, text);
+    setNote(
+      res.translated
+        ? tr(
+            locale,
+            "자동 번역됨 — 필요하면 아래 최종값을 수정하세요.",
+            "Đã dịch tự động — sửa 'giá trị cuối' nếu cần."
+          )
+        : null
+    );
+  };
+
+  const inputCls = `${baseClass} bg-slate-50`;
+  const finalCls = `${baseClass} border-emerald-300`;
+
   return (
-    <textarea
-      value={draft}
-      onChange={(e) => setDraft(e.target.value)}
-      onBlur={() => {
-        if (draft !== value) onCommit(draft);
-      }}
-      rows={4}
-      className={baseClass}
-    />
+    <div className="space-y-1.5">
+      {/* 입력값 (원문) */}
+      <div>
+        <div className="mb-0.5 flex items-center gap-2">
+          <span className="text-[11px] font-medium text-slate-500">
+            {tr(locale, "입력값 (원문)", "Giá trị nhập (gốc)")}
+          </span>
+          {translating ? (
+            <span className="text-[11px] text-sky-600">
+              {tr(locale, "번역 중…", "Đang dịch…")}
+            </span>
+          ) : null}
+        </div>
+        {multiline ? (
+          <textarea
+            value={draftInput}
+            onChange={(e) => setDraftInput(e.target.value)}
+            onBlur={() => {
+              if (draftInput.trim() !== committedInput.trim())
+                void runTranslate(false);
+            }}
+            rows={3}
+            className={inputCls}
+            placeholder={tr(
+              locale,
+              "베트남어로 입력하면 자동 번역됩니다.",
+              "Nhập tiếng Việt — sẽ tự động dịch."
+            )}
+          />
+        ) : (
+          <input
+            type="text"
+            value={draftInput}
+            onChange={(e) => setDraftInput(e.target.value)}
+            onBlur={() => {
+              if (draftInput.trim() !== committedInput.trim())
+                void runTranslate(false);
+            }}
+            className={inputCls}
+            placeholder={tr(
+              locale,
+              "베트남어로 입력하면 자동 번역됩니다.",
+              "Nhập tiếng Việt — sẽ tự động dịch."
+            )}
+          />
+        )}
+      </div>
+
+      {/* 최종값 (서류 사용) */}
+      <div>
+        <div className="mb-0.5 flex items-center justify-between gap-2">
+          <span className="text-[11px] font-medium text-emerald-700">
+            {tr(locale, "최종값 (서류에 사용)", "Giá trị cuối (dùng cho hồ sơ)")}
+          </span>
+          <button
+            type="button"
+            onClick={() => void runTranslate(true)}
+            disabled={translating || !draftInput.trim()}
+            className="rounded border border-slate-300 px-1.5 py-0.5 text-[11px] text-slate-600 hover:bg-slate-50 disabled:opacity-40"
+          >
+            {tr(locale, "↻ 재번역", "↻ Dịch lại")}
+          </button>
+        </div>
+        {multiline ? (
+          <textarea
+            value={draftFinal}
+            onChange={(e) => setDraftFinal(e.target.value)}
+            onBlur={() => {
+              if (draftFinal !== committedFinal) commit(draftFinal, committedInput);
+            }}
+            rows={3}
+            className={finalCls}
+          />
+        ) : (
+          <input
+            type="text"
+            value={draftFinal}
+            onChange={(e) => setDraftFinal(e.target.value)}
+            onBlur={() => {
+              if (draftFinal !== committedFinal) commit(draftFinal, committedInput);
+            }}
+            className={finalCls}
+          />
+        )}
+      </div>
+
+      {note ? <p className="text-[11px] text-slate-500">{note}</p> : null}
+    </div>
   );
 }
 

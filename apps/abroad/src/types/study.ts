@@ -432,6 +432,8 @@ export type StudyStudentDataValue = {
   student_id: string;
   data_type_key: string;
   value: Json;
+  /** 유학센터 입력 원문(번역 전). null 이면 value 와 동일. 0045 */
+  value_input: Json | null;
   filled_by: string | null;
   filled_at: string;
   updated_at: string;
