@@ -6,6 +6,7 @@ import {
   DollarSign,
   FileText,
   Film,
+  FlaskConical,
   GraduationCap,
   Hospital,
   Inbox,
@@ -78,6 +79,7 @@ export const NAV_GROUPS: NavGroup[] = [
     label: "시스템",
     items: [
       { href: "/accounts", label: "계정 관리", icon: ShieldCheck },
+      { href: "/test/form-fill", label: "양식 채움 테스트", icon: FlaskConical },
       { href: "/settings", label: "설정", icon: Settings },
     ],
   },
