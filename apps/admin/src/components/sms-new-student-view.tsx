@@ -76,11 +76,11 @@ type Props = {
   customers: Customer[];
   classes: TrainingClass[];
   /**
-   * "이미 보냄" 판정 — (교육원 × 학생) 복합키 `${centerId}:${customerId}` 목록.
-   * 학생이 교육원을 옮기면 이전 교육원 발송 기록이 새 교육원에서 "이미 보냄"으로
-   * 잡히지 않도록 교육원 단위로 구분한다.
+   * "이미 보냄" 판정 — 진행 단계 '강의 접수 메시지 발송' 플래그
+   * (class_intake_sms_sent) 가 ON 인 학생 ID. 교육원 변경 시 이 플래그가
+   * 자동 리셋되므로 새 교육원에서는 다시 발송 대상이 된다.
    */
-  sentPairs: string[];
+  sentCustomerIds: string[];
   /**
    * default 체크 대상 — 현재 단계가 '강의 접수 메시지 발송 대기' 인 학생 ID.
    * (0022 — 기존엔 모든 pending 학생 체크 / 이제는 발송 대기 학생만)
@@ -94,12 +94,12 @@ export function SmsNewStudentView({
   centers,
   customers,
   classes,
-  sentPairs,
+  sentCustomerIds,
   readyToSendIds,
   reservationAmountByCustomer,
 }: Props) {
   const router = useRouter();
-  const sentSet = useMemo(() => new Set(sentPairs), [sentPairs]);
+  const sentSet = useMemo(() => new Set(sentCustomerIds), [sentCustomerIds]);
   const readySet = useMemo(
     () => new Set(readyToSendIds),
     [readyToSendIds]
@@ -121,9 +121,7 @@ export function SmsNewStudentView({
     return centers
       .map((center) => {
         const all = byCenter.get(center.id) ?? [];
-        const pending = all.filter(
-          (c) => !sentSet.has(`${center.id}:${c.id}`)
-        );
+        const pending = all.filter((c) => !sentSet.has(c.id));
         return { center, all, pending };
       })
       .filter((g) => g.all.length > 0)
@@ -501,18 +499,14 @@ function CenterGroupCard({
         )}
 
         {/* 이미 발송된 학생 (참고용) */}
-        {allStudents.filter((s) => sentSet.has(`${center.id}:${s.id}`)).length >
-          0 && (
+        {allStudents.filter((s) => sentSet.has(s.id)).length > 0 && (
           <details className="group">
             <summary className="cursor-pointer text-xs text-muted-foreground hover:text-foreground">
-              발송 완료{" "}
-              {allStudents.filter((s) => sentSet.has(`${center.id}:${s.id}`))
-                .length}
-              명 보기
+              발송 완료 {allStudents.filter((s) => sentSet.has(s.id)).length}명 보기
             </summary>
             <div className="mt-2 flex flex-wrap gap-1">
               {allStudents
-                .filter((s) => sentSet.has(`${center.id}:${s.id}`))
+                .filter((s) => sentSet.has(s.id))
                 .map((s) => (
                   <Badge key={s.id} variant="outline" className="text-xs text-muted-foreground">
                     {s.name_kr || s.name_vi || s.code}

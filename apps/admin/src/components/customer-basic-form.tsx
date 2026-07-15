@@ -204,6 +204,11 @@ export function CustomerBasicForm({
         const result = await updateCustomer(customerId, values);
         if (result.ok) {
           form.reset(form.getValues()); // dirty 초기화
+          if (result.data.classIntakeSmsReset) {
+            toast.info(
+              "교육원이 변경되어 '강의 접수 메시지 발송'이 미발송으로 초기화되었습니다."
+            );
+          }
         }
         return result.ok
           ? { ok: true }
@@ -231,6 +236,11 @@ export function CustomerBasicForm({
         const result = await updateCustomer(customerId, values);
         if (result.ok) {
           toast.success("저장되었습니다.");
+          if (result.data.classIntakeSmsReset) {
+            toast.info(
+              "교육원이 변경되어 '강의 접수 메시지 발송'이 미발송으로 초기화되었습니다."
+            );
+          }
           navigateBackOrTo(router, "/customers");
         } else {
           toast.error("저장 실패", { description: result.error });

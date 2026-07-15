@@ -12,7 +12,6 @@ export default async function SmsNewStudentPage() {
     { data: centers },
     { data: customers },
     { data: classes },
-    { data: sentMessages },
     { data: statuses },
     { data: reservationPayments },
     { data: welcomePackPayments },
@@ -28,11 +27,6 @@ export default async function SmsNewStudentPage() {
     supabase
       .from("training_classes")
       .select("id, training_center_id, year, month, class_type, start_date"),
-    supabase
-      .from("sms_messages")
-      .select("target_customer_id, target_center_id")
-      .eq("message_type", "new_student")
-      .not("target_customer_id", "is", null),
     supabase.from("customer_statuses").select("*"),
     supabase
       .from("reservation_payments")
@@ -45,13 +39,14 @@ export default async function SmsNewStudentPage() {
       .select("target_customer_id, message_type"),
   ]);
 
-  // "이미 보냄" 판정 — (학생 × 교육원) 조합.
-  // 학생이 다른 교육원으로 옮기면, 이전 교육원에서 보낸 기록은 새 교육원에서
-  // "이미 보냄"으로 잡히면 안 됨 → 복합키 `${centerId}:${customerId}`.
-  const sentPairs = new Set(
-    (sentMessages ?? [])
-      .filter((m) => m.target_customer_id && m.target_center_id)
-      .map((m) => `${m.target_center_id}:${m.target_customer_id}`)
+  // "이미 보냄" 판정 — 진행 단계의 '강의 접수 메시지 발송' 플래그
+  // (customer_statuses.class_intake_sms_sent) 단일 소스로 통일.
+  // 교육원을 변경하면 이 플래그가 자동으로 미발송(false)으로 리셋되므로,
+  // 새 교육원에서는 다시 발송 대상으로 잡힌다. (updateCustomer 참조)
+  const sentCustomerIds = new Set(
+    (statuses ?? [])
+      .filter((s) => s.class_intake_sms_sent)
+      .map((s) => s.customer_id)
   );
 
   // 0022: stage 계산 — '강의 접수 메시지 발송 대기' 인 학생만 default 체크
@@ -118,7 +113,7 @@ export default async function SmsNewStudentPage() {
           centers={centers ?? []}
           customers={customers ?? []}
           classes={classes ?? []}
-          sentPairs={Array.from(sentPairs)}
+          sentCustomerIds={Array.from(sentCustomerIds)}
           readyToSendIds={readyToSendIds}
           reservationAmountByCustomer={Object.fromEntries(
             reservationAmountByCustomer

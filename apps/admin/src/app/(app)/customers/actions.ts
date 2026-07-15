@@ -168,7 +168,7 @@ export async function createCustomer(input: CustomerInput) {
 export async function updateCustomer(
   id: string,
   input: CustomerInput
-): Promise<ActionResult> {
+): Promise<ActionResult<{ classIntakeSmsReset: boolean }>> {
   let supabase;
   try {
     ({ supabase } = await requireAuth());
@@ -194,6 +194,17 @@ export async function updateCustomer(
     };
   }
 
+  // 교육원 변경 감지 — 변경 시 '강의 접수 메시지 발송' 플래그를 미발송으로 리셋.
+  // (기존 교육원 기준으로 이미 보낸 메시지는 새 교육원에는 유효하지 않으므로.)
+  const { data: prev } = await supabase
+    .from("customers")
+    .select("training_center_id")
+    .eq("id", id)
+    .single();
+  const prevCenterId = prev?.training_center_id ?? null;
+  const nextCenterId = parsed.data.training_center_id ?? null;
+  const centerChanged = prevCenterId !== nextCenterId;
+
   const classDates = await resolveClassDates(
     supabase,
     parsed.data.training_class_id
@@ -206,11 +217,24 @@ export async function updateCustomer(
 
   if (error) return { ok: false, error: error.message };
 
-  await applyCenterFindingAutoReset(
-    supabase,
-    id,
-    parsed.data.training_center_id ?? null
-  );
+  // 교육원이 바뀐 경우에만, 현재 ON 이면 리셋. (이미 미발송이면 리셋/안내 불필요.)
+  let classIntakeSmsReset = false;
+  if (centerChanged) {
+    const { data: status } = await supabase
+      .from("customer_statuses")
+      .select("class_intake_sms_sent")
+      .eq("customer_id", id)
+      .maybeSingle();
+    if (status?.class_intake_sms_sent) {
+      const { error: flagError } = await supabase
+        .from("customer_statuses")
+        .update({ class_intake_sms_sent: false })
+        .eq("customer_id", id);
+      if (!flagError) classIntakeSmsReset = true;
+    }
+  }
+
+  await applyCenterFindingAutoReset(supabase, id, nextCenterId);
   await applyCareHomeFindingAutoReset(
     supabase,
     id,
@@ -219,7 +243,8 @@ export async function updateCustomer(
 
   revalidatePath("/customers");
   revalidatePath(`/customers/${id}`);
-  return { ok: true, data: null };
+  revalidatePath("/sms/new-student");
+  return { ok: true, data: { classIntakeSmsReset } };
 }
 
 export async function deleteCustomer(id: string): Promise<ActionResult> {
