@@ -30,7 +30,7 @@ export default async function SmsNewStudentPage() {
       .select("id, training_center_id, year, month, class_type, start_date"),
     supabase
       .from("sms_messages")
-      .select("target_customer_id")
+      .select("target_customer_id, target_center_id")
       .eq("message_type", "new_student")
       .not("target_customer_id", "is", null),
     supabase.from("customer_statuses").select("*"),
@@ -45,10 +45,13 @@ export default async function SmsNewStudentPage() {
       .select("target_customer_id, message_type"),
   ]);
 
-  const sentCustomerIds = new Set(
+  // "이미 보냄" 판정 — (학생 × 교육원) 조합.
+  // 학생이 다른 교육원으로 옮기면, 이전 교육원에서 보낸 기록은 새 교육원에서
+  // "이미 보냄"으로 잡히면 안 됨 → 복합키 `${centerId}:${customerId}`.
+  const sentPairs = new Set(
     (sentMessages ?? [])
-      .map((m) => m.target_customer_id)
-      .filter((v): v is string => !!v)
+      .filter((m) => m.target_customer_id && m.target_center_id)
+      .map((m) => `${m.target_center_id}:${m.target_customer_id}`)
   );
 
   // 0022: stage 계산 — '강의 접수 메시지 발송 대기' 인 학생만 default 체크
@@ -115,7 +118,7 @@ export default async function SmsNewStudentPage() {
           centers={centers ?? []}
           customers={customers ?? []}
           classes={classes ?? []}
-          sentCustomerIds={Array.from(sentCustomerIds)}
+          sentPairs={Array.from(sentPairs)}
           readyToSendIds={readyToSendIds}
           reservationAmountByCustomer={Object.fromEntries(
             reservationAmountByCustomer
