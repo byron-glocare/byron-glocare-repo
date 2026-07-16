@@ -501,7 +501,9 @@ export function computeCustomerStatus(inputs: StatusInputs): StageSummary {
     // 교육 예약 완료 → 교육 단계 진입. 미완료 체크포인트 순서 기반 라벨.
     currentStage = "교육중";
     if (training.phase === null) {
-      label = "강의일정 확인 필요";
+      // 교육예약중 단계의 동일 의미 라벨 (아래 classScheduleConfirmationNeeded)
+      // 과 문자열을 일치시킨다 — 다르면 리스트 필터에 중복 항목으로 노출됨.
+      label = "강의 일정 확인 필요";
     } else if (training.phase === "전") {
       label = "교육 대기";
     } else if (training.phase === "중") {
