@@ -526,8 +526,8 @@ export function computeCustomerStatus(inputs: StatusInputs): StageSummary {
       // 교육원에 배정할 강의 자체가 없음 → 교육원에 다음 기수 일정 문의 필요
       label = "교육원 일정 문의 필요";
     } else if (!trainingReservation.classMatched) {
-      // 교육원 일정은 있음 → 이 학생을 특정 강의에 배정만 하면 됨
-      label = "강의 배정 필요";
+      // 교육원 일정은 있음 → 이 학생이 들어갈 강의만 확정하면 됨
+      label = "강의 확정 필요";
     } else if (!trainingReservation.reservationPaid) {
       label = "예약금 입금 대기";
     } else if (!trainingReservation.smsSent) {
