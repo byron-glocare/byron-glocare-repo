@@ -50,6 +50,48 @@ const STAGE_ORDER_MAP: Record<StageSummary["currentStage"], number> = {
   종료: 9,
 };
 
+// 같은 stage 안에서 라벨을 실제 진행 순서(체크포인트 순서)대로 정렬하기 위한
+// 명시적 순서. lib/customer-status.ts 의 라벨 cascade 순서와 일치시킨다.
+// 여기 없는 라벨(동적 문자열 등)은 이 목록 뒤에 가나다순으로 배치된다.
+const LABEL_ORDER: string[] = [
+  // 교육 예약 (교육예약중)
+  "교육원 발굴 중",
+  "교육원 매칭 필요",
+  "교육원 일정 문의 필요",
+  "강의 확정 필요",
+  "예약금 입금 대기",
+  "강의 접수 메시지 발송 대기",
+  "교육 예약 완료",
+  // 교육 (교육중)
+  "교육 대기",
+  "교육 중",
+  "자격증 취득 대기",
+  // 취업 (취업중)
+  "요양원 발굴 중",
+  "요양원 매칭 필요",
+  "이력서 발송 대기",
+  "면접 일정 확정 필요",
+  "면접 대기",
+  "면접 결과 대기",
+  "웰컴팩 예약금 입금 대기",
+  "취업 진행 중",
+  "근무 시작 대기",
+  // 근무 종료
+  "근무 종료",
+  // 종료
+  "교육 드랍",
+  "교육 완료 (웰컴팩 미신청)",
+  "웰컴팩 예약 포기",
+  "교육 예약 포기",
+  "접수 포기",
+  "유학상담으로 전환",
+];
+
+function labelRank(label: string): number {
+  const i = LABEL_ORDER.indexOf(label);
+  return i === -1 ? Number.MAX_SAFE_INTEGER : i;
+}
+
 export type CustomerListFilters = {
   q?: string;
   /**
@@ -352,8 +394,13 @@ export async function CustomerListPanel({
   }
   const labelOptions = Array.from(uniqueLabels.entries())
     .sort((a, b) => {
-      const diff = STAGE_ORDER_MAP[a[1]] - STAGE_ORDER_MAP[b[1]];
-      return diff !== 0 ? diff : a[0].localeCompare(b[0], "ko");
+      // 1차: stage 순서, 2차: 같은 stage 안에서는 진행 순서(LABEL_ORDER),
+      // 3차: 목록에 없는 라벨끼리는 가나다순.
+      const stageDiff = STAGE_ORDER_MAP[a[1]] - STAGE_ORDER_MAP[b[1]];
+      if (stageDiff !== 0) return stageDiff;
+      const rankDiff = labelRank(a[0]) - labelRank(b[0]);
+      if (rankDiff !== 0) return rankDiff;
+      return a[0].localeCompare(b[0], "ko");
     })
     .map(([label, stage]) => ({ label, stage }));
 
