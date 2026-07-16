@@ -98,7 +98,7 @@ const FLAG_LABELS: Record<FlagKey, string> = {
   intake_confirmed: "등록",
   study_abroad_consultation: "유학상담으로 전환",
   training_center_finding: "교육원 발굴 필요",
-  class_schedule_confirmation_needed: "강의 일정 확인 필요",
+  class_schedule_confirmation_needed: "교육원 일정 문의 필요",
   training_reservation_abandoned: "교육 예약포기",
   class_intake_sms_sent: "강의 접수 메시지 발송",
   certificate_acquired: "자격증 취득",

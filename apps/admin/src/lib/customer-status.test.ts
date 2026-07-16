@@ -671,7 +671,7 @@ describe("computeCustomerStatus — 통합", () => {
     expect(r.label).toBe("교육원 발굴 중");
   });
 
-  it("교육원 매칭 됐지만 강의 일정 확인 필요 → '강의 일정 확인 필요'", () => {
+  it("교육원 매칭 됐지만 교육원에 일정 없음 → '교육원 일정 문의 필요'", () => {
     const r = computeCustomerStatus(
       buildInputs({
         customer: {
@@ -683,7 +683,7 @@ describe("computeCustomerStatus — 통합", () => {
       })
     );
     expect(r.currentStage).toBe("교육예약중");
-    expect(r.label).toBe("강의 일정 확인 필요");
+    expect(r.label).toBe("교육원 일정 문의 필요");
   });
 
   it("예약금 입금까지 완료 + 메시지 미발송 → '강의 접수 메시지 발송 대기'", () => {

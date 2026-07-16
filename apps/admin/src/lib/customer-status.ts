@@ -503,7 +503,7 @@ export function computeCustomerStatus(inputs: StatusInputs): StageSummary {
     if (training.phase === null) {
       // 교육예약중 단계의 동일 의미 라벨 (아래 classScheduleConfirmationNeeded)
       // 과 문자열을 일치시킨다 — 다르면 리스트 필터에 중복 항목으로 노출됨.
-      label = "강의 일정 확인 필요";
+      label = "교육원 일정 문의 필요";
     } else if (training.phase === "전") {
       label = "교육 대기";
     } else if (training.phase === "중") {
@@ -523,10 +523,11 @@ export function computeCustomerStatus(inputs: StatusInputs): StageSummary {
     } else if (!trainingReservation.centerMatched) {
       label = "교육원 매칭 필요";
     } else if (trainingReservation.classScheduleConfirmationNeeded) {
-      // 대시보드 task bucket 카드와 동일한 라벨 사용 (수동 토글 기반)
-      label = "강의 일정 확인 필요";
+      // 교육원에 배정할 강의 자체가 없음 → 교육원에 다음 기수 일정 문의 필요
+      label = "교육원 일정 문의 필요";
     } else if (!trainingReservation.classMatched) {
-      label = "강의 일정 확정 필요";
+      // 교육원 일정은 있음 → 이 학생을 특정 강의에 배정만 하면 됨
+      label = "강의 배정 필요";
     } else if (!trainingReservation.reservationPaid) {
       label = "예약금 입금 대기";
     } else if (!trainingReservation.smsSent) {
