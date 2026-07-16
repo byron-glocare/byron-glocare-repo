@@ -26,9 +26,26 @@ function hasSupabaseSession(req: NextRequest): boolean {
     );
 }
 
+const STUDENT_LOGIN_PATH = "/student/login";
+
 export function proxy(req: NextRequest) {
   const path = req.nextUrl.pathname;
 
+  // ── 학생(B2C) 영역: /student/* (로그인 페이지 제외) ──
+  if (path === "/student" || path.startsWith("/student/")) {
+    if (path === STUDENT_LOGIN_PATH) return NextResponse.next();
+    if (!hasSupabaseSession(req)) {
+      const url = req.nextUrl.clone();
+      url.pathname = STUDENT_LOGIN_PATH;
+      if (path !== "/student") {
+        url.searchParams.set("next", path + req.nextUrl.search);
+      }
+      return NextResponse.redirect(url);
+    }
+    return NextResponse.next();
+  }
+
+  // ── 유학센터 영역: /center/* ──
   // 비인증 통과 허용 경로
   if (path === LOGIN_PATH || path.startsWith(SET_PASSWORD_PATH)) {
     return NextResponse.next();
@@ -48,5 +65,5 @@ export function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/center/:path*"],
+  matcher: ["/center/:path*", "/student/:path*"],
 };

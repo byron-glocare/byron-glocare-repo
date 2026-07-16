@@ -127,7 +127,12 @@ export type StudyCenterUser = {
 // =============================================================================
 export type StudyManagedStudent = {
   id: string;
-  org_id: string;
+  /** 셀프가입(B2C) 학생은 null (0046). 센터 등록 학생은 org 소속. */
+  org_id: string | null;
+  /** 셀프가입 학생의 auth.users (0046). 센터 등록 학생은 null. */
+  auth_user_id: string | null;
+  /** center=유학센터 등록, self=B2C 셀프가입 (0046) */
+  source: "center" | "self";
   name: string;
   dob: string | null;
   passport_no_encrypted: string | null;
