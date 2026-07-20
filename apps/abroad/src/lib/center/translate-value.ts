@@ -30,25 +30,22 @@ export function isMostlyKorean(text: string): boolean {
   return hangul / total >= 0.1;
 }
 
-const SYSTEM_PROMPT = `당신은 한국 대학 유학 서류에 쓸 학생 정보를 번역하는 전문가입니다.
-베트남어(또는 기타 외국어) 입력값을 규칙대로 변환하세요.
+const SYSTEM_PROMPT = `당신은 한국 대학 유학 서류에 쓸 학생 정보를 **한국어로** 번역하는 전문가입니다.
+입력값의 원래 언어(베트남어·영어 등)가 무엇이든 **결과는 한국어**여야 합니다.
 
 # 규칙
-1. **고유명사(학교·대학·회사·기관·지명·인명)는 영어 표기로.**
-   - 베트남어 성조 기호(diacritics)를 제거한 로마자로 쓰고, 일반 명칭 부분은 영어 단어로 번역.
-   - 예: "Trường THPT Chuyên Hà Nội" → "Hanoi High School for the Gifted",
-         "Đại học Quốc gia Hà Nội" → "Vietnam National University, Hanoi",
-         "Hà Nội" → "Hanoi", "Nguyễn Văn A" → "Nguyen Van A".
-2. **일반 명사·서술(가족관계·직업·상태 등)은 자연스러운 한국어로.**
-   - 직업: "nông dân"→"농부", "kinh doanh"→"사업가", "giáo viên"→"교사",
+1. **일반 명사·서술(가족관계·직업·상태 등)은 자연스러운 한국어로.**
+   - 관계: "bố"/"father"→"아버지", "mẹ"/"mother"→"어머니", "anh trai"→"형/오빠".
+   - 직업: "nông dân"/"farmer"→"농부", "kinh doanh"→"사업가", "giáo viên"/"teacher"→"교사",
      "công nhân"→"노동자", "nội trợ"→"주부".
-   - 관계: "bố"→"아버지", "mẹ"→"어머니".
-3. **주소는 지명(로마자·성조 제거) + 행정단위 영어**: "phường"→"Ward", "quận"→"District",
-   "thành phố"→"City". 예: "Số 12, phường Bến Nghé, Quận 1, TP. Hồ Chí Minh"
-   → "12 Ben Nghe Ward, District 1, Ho Chi Minh City".
-4. 숫자·날짜·코드·이메일·전화번호는 그대로.
-5. 애매하면 항목명(field)의 성격으로 판단. (예: '출신 고등학교' → 학교 고유명사는 영어,
-   '아버지 직업' → 직업 일반명사는 한국어.)
+2. **고유명사(사람 이름·학교·기관·지명)는 한국어 표기(음차)로.**
+   - 사람 이름: "Nguyễn Văn A" → "응우옌 반 아"  (※ 영어 로마자로 두지 말 것)
+   - 지명: "Hà Nội" → "하노이", "Hồ Chí Minh" → "호치민"
+   - 학교·기관: "Trường THPT Chuyên Hà Nội" → "하노이 영재고등학교"
+3. **주소**도 한국어로: "Số 12, phường Bến Nghé, Quận 1, TP. Hồ Chí Minh"
+   → "호치민시 1군 벤응에동 12번지".
+4. 숫자·날짜·코드·이메일·전화번호·여권번호는 **그대로** 둔다.
+5. 이미 한국어면 그대로 둔다.
 
 # 출력
 번역 결과 **문자열만** 한 줄로 출력. 따옴표·설명·코드블록·접두사 금지.`;
@@ -78,10 +75,12 @@ export async function translateStudentValue(input: {
   const text = (input.text ?? "").trim();
   if (!text) return { ok: true, text: "", translated: false };
 
-  // 이미 한국어 위주면 번역 불필요
+  // 이미 한국어 위주면 번역 불필요 (불필요한 호출 절약)
   if (isMostlyKorean(text)) return { ok: true, text, translated: false };
-  // 베트남어 신호가 전혀 없으면(순수 로마자/영문 등) 원문 유지 — 이름·코드 등 오번역 방지
-  if (!isVietnamese(text)) return { ok: true, text, translated: false };
+
+  // ※ 예전엔 베트남어(성조기호) 가 없으면 건너뛰었는데, 그 탓에 "father" 같은
+  //   영어 입력이 번역되지 않고 그대로 남았다. 이제 [KR 번역] 은 사용자가 직접
+  //   누르는 명시적 동작이므로 **원어 감지로 건너뛰지 않는다.**
 
   let response;
   try {

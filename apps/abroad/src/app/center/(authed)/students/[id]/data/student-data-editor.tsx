@@ -1078,10 +1078,11 @@ function SignatureInput({
 }
 
 /**
- * 번역형 텍스트 입력 — "입력값(원문)" + "최종값(서류 사용)" 이중 관리.
- *   - 입력값에 베트남어를 넣고 벗어나면 자동으로 한국어(+고유명사 영어)로 번역해 최종값을 채움.
- *   - 최종값은 직접 수정 가능. [재번역] 으로 입력값에서 다시 번역.
- *   - 저장: value=최종값, value_input=입력값 (문서는 value 만 읽음).
+ * 번역형 텍스트 입력 — 입력칸은 **하나**, 오른쪽에 [KR 번역] 버튼.
+ *   - [KR 번역] 누르면 칸의 값이 한국어 번역 결과로 **교체**된다.
+ *   - 교체된 상태에서는 버튼이 [교체](다시 번역) 로 바뀌고 [되돌리기] 가 생긴다.
+ *   - [되돌리기] 를 누르면 번역 전 원문으로 돌아가고 버튼도 [KR 번역] 으로 복귀.
+ *   - 저장: value=칸에 보이는 값(서류에 쓰임), value_input=번역 전 원문(되돌리기용).
  */
 function TranslatableTextInput({
   locale,
@@ -1100,151 +1101,125 @@ function TranslatableTextInput({
   multiline?: boolean;
   onCommit: (final: string, input: string) => void;
 }) {
-  // value_input 이 없던 기존 값은 입력==최종으로 취급
-  const initialInput = inputValue || value;
-  const [draftInput, setDraftInput] = useState(initialInput);
-  const [draftFinal, setDraftFinal] = useState(value);
-  const [committedInput, setCommittedInput] = useState(initialInput);
-  const [committedFinal, setCommittedFinal] = useState(value);
-  const [translating, setTranslating] = useState(false);
+  const [text, setText] = useState(value);
+  // 번역 전 원문 — 있으면 "번역된 상태"
+  const [original, setOriginal] = useState<string | null>(inputValue || null);
+  const [committed, setCommitted] = useState(value);
+  const [busy, setBusy] = useState(false);
   const [note, setNote] = useState<string | null>(null);
 
-  const commit = (final: string, input: string) => {
-    setCommittedFinal(final);
-    setCommittedInput(input);
-    onCommit(final, input);
+  const translated = original !== null;
+
+  const commit = (val: string, orig: string | null) => {
+    setCommitted(val);
+    onCommit(val, orig ?? "");
   };
 
-  const runTranslate = async (force: boolean) => {
-    const text = draftInput.trim();
-    if (!text) {
-      // 입력값 비움 → 최종값도 비우고 삭제
-      setDraftFinal("");
-      setNote(null);
-      commit("", "");
-      return;
-    }
-    if (!force && text === committedInput.trim()) return; // 변화 없음
-    setTranslating(true);
+  const runTranslate = async () => {
+    const src = text.trim();
+    if (!src) return;
+    setBusy(true);
     setNote(null);
-    const res = await translateStudentValueAction({ label, text });
-    setTranslating(false);
+    const res = await translateStudentValueAction({ label, text: src });
+    setBusy(false);
     if (!res.ok) {
-      // 실패 시 원문을 최종값으로 유지 (값 보존)
-      setDraftFinal(text);
-      commit(text, text);
       setNote(
-        tr(
-          locale,
-          `번역 실패 — 원문을 최종값으로 저장했습니다. (${res.error})`,
-          `Dịch lỗi — đã lưu nguyên văn. (${res.error})`
-        )
+        tr(locale, `번역 실패: ${res.error}`, `Dịch lỗi: ${res.error}`)
       );
       return;
     }
-    setDraftFinal(res.text);
-    commit(res.text, text);
-    setNote(
-      res.translated
-        ? tr(
-            locale,
-            "자동 번역됨 — 필요하면 아래 최종값을 수정하세요.",
-            "Đã dịch tự động — sửa 'giá trị cuối' nếu cần."
-          )
-        : null
-    );
+    if (!res.translated || res.text === src) {
+      setNote(
+        tr(locale, "이미 한국어입니다.", "Đã là tiếng Hàn.")
+      );
+      return;
+    }
+    // 최초 번역일 때만 원문 보존 (재번역 시 원문 유지)
+    const orig = original ?? src;
+    setOriginal(orig);
+    setText(res.text);
+    commit(res.text, orig);
   };
 
-  const inputCls = `${baseClass} bg-slate-50`;
-  const finalCls = `${baseClass} border-emerald-300`;
+  const revert = () => {
+    if (original === null) return;
+    setText(original);
+    setOriginal(null);
+    setNote(null);
+    commit(original, null);
+  };
+
+  const saveIfChanged = () => {
+    if (text !== committed) commit(text, original);
+  };
+
+  const btn =
+    "shrink-0 rounded-md border px-2 py-1 text-[11px] font-medium disabled:opacity-40";
 
   return (
-    <div className="space-y-1.5">
-      {/* 입력값 (원문) */}
-      <div>
-        <div className="mb-0.5 flex items-center gap-2">
-          <span className="text-[11px] font-medium text-slate-500">
-            {tr(locale, "입력값 (원문)", "Giá trị nhập (gốc)")}
-          </span>
-          {translating ? (
-            <span className="text-[11px] text-sky-600">
-              {tr(locale, "번역 중…", "Đang dịch…")}
-            </span>
-          ) : null}
-        </div>
+    <div className="space-y-1">
+      <div className="flex items-start gap-1.5">
         {multiline ? (
           <textarea
-            value={draftInput}
-            onChange={(e) => setDraftInput(e.target.value)}
-            onBlur={() => {
-              if (draftInput.trim() !== committedInput.trim())
-                void runTranslate(false);
-            }}
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            onBlur={saveIfChanged}
             rows={3}
-            className={inputCls}
-            placeholder={tr(
-              locale,
-              "베트남어로 입력하면 자동 번역됩니다.",
-              "Nhập tiếng Việt — sẽ tự động dịch."
-            )}
+            className={baseClass}
           />
         ) : (
           <input
             type="text"
-            value={draftInput}
-            onChange={(e) => setDraftInput(e.target.value)}
-            onBlur={() => {
-              if (draftInput.trim() !== committedInput.trim())
-                void runTranslate(false);
-            }}
-            className={inputCls}
-            placeholder={tr(
-              locale,
-              "베트남어로 입력하면 자동 번역됩니다.",
-              "Nhập tiếng Việt — sẽ tự động dịch."
-            )}
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            onBlur={saveIfChanged}
+            className={baseClass}
           />
         )}
-      </div>
 
-      {/* 최종값 (서류 사용) */}
-      <div>
-        <div className="mb-0.5 flex items-center justify-between gap-2">
-          <span className="text-[11px] font-medium text-emerald-700">
-            {tr(locale, "최종값 (서류에 사용)", "Giá trị cuối (dùng cho hồ sơ)")}
-          </span>
+        <div className="flex shrink-0 flex-col gap-1">
           <button
             type="button"
-            onClick={() => void runTranslate(true)}
-            disabled={translating || !draftInput.trim()}
-            className="rounded border border-slate-300 px-1.5 py-0.5 text-[11px] text-slate-600 hover:bg-slate-50 disabled:opacity-40"
+            onClick={() => void runTranslate()}
+            disabled={busy || !text.trim()}
+            className={`${btn} border-emerald-300 bg-emerald-50 text-emerald-700 hover:bg-emerald-100`}
+            title={tr(
+              locale,
+              "한국어로 번역해 이 칸의 값을 교체합니다",
+              "Dịch sang tiếng Hàn và thay thế giá trị"
+            )}
           >
-            {tr(locale, "↻ 재번역", "↻ Dịch lại")}
+            {busy
+              ? tr(locale, "번역 중…", "Đang dịch…")
+              : translated
+                ? tr(locale, "교체", "Thay thế")
+                : tr(locale, "KR 번역", "Dịch KR")}
           </button>
+
+          {translated ? (
+            <button
+              type="button"
+              onClick={revert}
+              disabled={busy}
+              className={`${btn} border-slate-300 bg-white text-slate-600 hover:bg-slate-50`}
+              title={tr(
+                locale,
+                "번역 전 입력값으로 되돌립니다",
+                "Khôi phục giá trị trước khi dịch"
+              )}
+            >
+              {tr(locale, "되돌리기", "Hoàn tác")}
+            </button>
+          ) : null}
         </div>
-        {multiline ? (
-          <textarea
-            value={draftFinal}
-            onChange={(e) => setDraftFinal(e.target.value)}
-            onBlur={() => {
-              if (draftFinal !== committedFinal) commit(draftFinal, committedInput);
-            }}
-            rows={3}
-            className={finalCls}
-          />
-        ) : (
-          <input
-            type="text"
-            value={draftFinal}
-            onChange={(e) => setDraftFinal(e.target.value)}
-            onBlur={() => {
-              if (draftFinal !== committedFinal) commit(draftFinal, committedInput);
-            }}
-            className={finalCls}
-          />
-        )}
       </div>
 
+      {translated ? (
+        <p className="text-[11px] text-slate-400">
+          {tr(locale, "번역 전: ", "Trước khi dịch: ")}
+          <span className="text-slate-500">{original}</span>
+        </p>
+      ) : null}
       {note ? <p className="text-[11px] text-slate-500">{note}</p> : null}
     </div>
   );
