@@ -1,0 +1,19 @@
+{
+  "name": "glocare-guide-builder",
+  "private": true,
+  "description": "유학센터 담당자 가이드 제작 파이프라인 (스크린샷 캡처 → docx 빌드 → VN 번역)",
+  "scripts": {
+    "shoot": "node shoot.js",
+    "build": "node build.js",
+    "build:vi": "cross-env LANG_OUT=vi node build.js",
+    "extract": "node extract.js",
+    "translate": "node translate.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.72.0",
+    "docx": "^9.5.1",
+    "pizzip": "^3.2.0",
+    "puppeteer-core": "^24.28.0",
+    "sharp": "^0.34.5"
+  }
+}

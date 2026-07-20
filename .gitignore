@@ -27,3 +27,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .vercel
+
+# 가이드 빌더 산출물/의존성
+docs/guide-builder/node_modules/
+docs/guide-builder/out/
