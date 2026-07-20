@@ -1104,8 +1104,9 @@ function TranslatableTextInput({
   const [text, setText] = useState(value);
   // 번역 전 원문 — 있으면 "번역된 상태"
   const [original, setOriginal] = useState<string | null>(inputValue || null);
+  const [lastLang, setLastLang] = useState<"ko" | "en" | null>(null);
   const [committed, setCommitted] = useState(value);
-  const [busy, setBusy] = useState(false);
+  const [busy, setBusy] = useState<"ko" | "en" | null>(null);
   const [note, setNote] = useState<string | null>(null);
 
   const translated = original !== null;
@@ -1115,28 +1116,29 @@ function TranslatableTextInput({
     onCommit(val, orig ?? "");
   };
 
-  const runTranslate = async () => {
+  const runTranslate = async (target: "ko" | "en") => {
     const src = text.trim();
     if (!src) return;
-    setBusy(true);
+    setBusy(target);
     setNote(null);
-    const res = await translateStudentValueAction({ label, text: src });
-    setBusy(false);
+    const res = await translateStudentValueAction({ label, text: src, target });
+    setBusy(null);
     if (!res.ok) {
-      setNote(
-        tr(locale, `번역 실패: ${res.error}`, `Dịch lỗi: ${res.error}`)
-      );
+      setNote(tr(locale, `번역 실패: ${res.error}`, `Dịch lỗi: ${res.error}`));
       return;
     }
     if (!res.translated || res.text === src) {
       setNote(
-        tr(locale, "이미 한국어입니다.", "Đã là tiếng Hàn.")
+        target === "en"
+          ? tr(locale, "이미 영문입니다.", "Đã là tiếng Anh.")
+          : tr(locale, "이미 한국어입니다.", "Đã là tiếng Hàn.")
       );
       return;
     }
-    // 최초 번역일 때만 원문 보존 (재번역 시 원문 유지)
+    // 최초 번역일 때만 원문 보존 (재번역·언어 변경 시 원문 유지)
     const orig = original ?? src;
     setOriginal(orig);
+    setLastLang(target);
     setText(res.text);
     commit(res.text, orig);
   };
@@ -1145,6 +1147,7 @@ function TranslatableTextInput({
     if (original === null) return;
     setText(original);
     setOriginal(null);
+    setLastLang(null);
     setNote(null);
     commit(original, null);
   };
@@ -1180,8 +1183,8 @@ function TranslatableTextInput({
         <div className="flex shrink-0 flex-col gap-1">
           <button
             type="button"
-            onClick={() => void runTranslate()}
-            disabled={busy || !text.trim()}
+            onClick={() => void runTranslate("ko")}
+            disabled={!!busy || !text.trim()}
             className={`${btn} border-emerald-300 bg-emerald-50 text-emerald-700 hover:bg-emerald-100`}
             title={tr(
               locale,
@@ -1189,18 +1192,36 @@ function TranslatableTextInput({
               "Dịch sang tiếng Hàn và thay thế giá trị"
             )}
           >
-            {busy
+            {busy === "ko"
               ? tr(locale, "번역 중…", "Đang dịch…")
-              : translated
-                ? tr(locale, "교체", "Thay thế")
+              : lastLang === "ko"
+                ? tr(locale, "KR 교체", "Thay KR")
                 : tr(locale, "KR 번역", "Dịch KR")}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => void runTranslate("en")}
+            disabled={!!busy || !text.trim()}
+            className={`${btn} border-sky-300 bg-sky-50 text-sky-700 hover:bg-sky-100`}
+            title={tr(
+              locale,
+              "영문 표기로 바꿔 이 칸의 값을 교체합니다 (학교·기관명 등)",
+              "Chuyển sang tiếng Anh (tên trường, cơ quan...)"
+            )}
+          >
+            {busy === "en"
+              ? tr(locale, "번역 중…", "Đang dịch…")
+              : lastLang === "en"
+                ? tr(locale, "EN 교체", "Thay EN")
+                : tr(locale, "EN 번역", "Dịch EN")}
           </button>
 
           {translated ? (
             <button
               type="button"
               onClick={revert}
-              disabled={busy}
+              disabled={!!busy}
               className={`${btn} border-slate-300 bg-white text-slate-600 hover:bg-slate-50`}
               title={tr(
                 locale,

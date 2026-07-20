@@ -30,6 +30,27 @@ export function isMostlyKorean(text: string): boolean {
   return hangul / total >= 0.1;
 }
 
+/** 영어 번역 — 학교·기관명처럼 영문 표기가 필요한 칸에서 사용 */
+const SYSTEM_PROMPT_EN = `당신은 한국 대학 유학 서류에 쓸 학생 정보를 **영어로** 표기하는 전문가입니다.
+입력값의 원래 언어(베트남어·한국어 등)가 무엇이든 **결과는 영어(로마자)** 여야 합니다.
+
+# 규칙
+1. **학교·대학·회사·기관 이름**: 일반 명칭 부분은 영어 단어로 번역하고, 고유 부분은
+   성조 기호(diacritics)를 제거한 로마자로.
+   - "Trường THPT Chuyên Hà Nội" → "Hanoi High School for the Gifted"
+   - "Đại học Quốc gia Hà Nội" → "Vietnam National University, Hanoi"
+2. **사람 이름**: 성조 기호를 제거한 로마자 그대로. "Nguyễn Văn A" → "Nguyen Van A"
+   (한국어로 들어온 이름은 로마자로: "응우옌 반 아" → "Nguyen Van A")
+3. **지명·주소**: 로마자 + 행정단위 영어. "phường"→"Ward", "quận"→"District",
+   "thành phố"→"City". 예: "Số 12, phường Bến Nghé, Quận 1, TP. Hồ Chí Minh"
+   → "12 Ben Nghe Ward, District 1, Ho Chi Minh City"
+4. **일반 명사**(직업·관계 등)도 영어로: "nông dân"/"농부" → "Farmer",
+   "아버지" → "Father", "사업가" → "Business owner".
+5. 숫자·날짜·코드·이메일·전화번호·여권번호는 **그대로** 둔다.
+
+# 출력
+결과 **문자열만** 한 줄로 출력. 따옴표·설명·코드블록·접두사 금지.`;
+
 const SYSTEM_PROMPT = `당신은 한국 대학 유학 서류에 쓸 학생 정보를 **한국어로** 번역하는 전문가입니다.
 입력값의 원래 언어(베트남어·영어 등)가 무엇이든 **결과는 한국어**여야 합니다.
 
@@ -68,19 +89,33 @@ export type TranslateValueResult =
  * 단일 값 번역. label(항목명)을 문맥으로 함께 전달.
  *   - 이미 한국어거나 베트남어가 아니면 번역하지 않고 원문 반환(translated=false).
  */
+/** 성조기호·한글 없이 순수 ASCII 인가 (이미 영문 표기) */
+function isAsciiOnly(text: string): boolean {
+  return /^[\x00-\x7F]+$/.test(text);
+}
+
+export type TranslateTarget = "ko" | "en";
+
 export async function translateStudentValue(input: {
   label: string;
   text: string;
+  /** 목표 언어 — ko(기본): 한국어, en: 영문 표기(학교·기관명 등) */
+  target?: TranslateTarget;
 }): Promise<TranslateValueResult> {
   const text = (input.text ?? "").trim();
+  const target: TranslateTarget = input.target ?? "ko";
   if (!text) return { ok: true, text: "", translated: false };
 
-  // 이미 한국어 위주면 번역 불필요 (불필요한 호출 절약)
-  if (isMostlyKorean(text)) return { ok: true, text, translated: false };
-
-  // ※ 예전엔 베트남어(성조기호) 가 없으면 건너뛰었는데, 그 탓에 "father" 같은
-  //   영어 입력이 번역되지 않고 그대로 남았다. 이제 [KR 번역] 은 사용자가 직접
-  //   누르는 명시적 동작이므로 **원어 감지로 건너뛰지 않는다.**
+  // 이미 목표 언어면 호출 절약
+  //   ※ 예전엔 베트남어(성조기호) 가 없으면 무조건 건너뛰어서 "father" 가 그대로
+  //     남았다. 이제 번역은 사용자가 버튼으로 누르는 명시적 동작이므로,
+  //     "이미 목표 언어일 때"만 건너뛴다.
+  if (target === "ko" && isMostlyKorean(text)) {
+    return { ok: true, text, translated: false };
+  }
+  if (target === "en" && isAsciiOnly(text)) {
+    return { ok: true, text, translated: false };
+  }
 
   let response;
   try {
@@ -88,7 +123,11 @@ export async function translateStudentValue(input: {
       model: MODEL,
       max_tokens: MAX_TOKENS,
       system: [
-        { type: "text", text: SYSTEM_PROMPT, cache_control: { type: "ephemeral" } },
+        {
+          type: "text",
+          text: target === "en" ? SYSTEM_PROMPT_EN : SYSTEM_PROMPT,
+          cache_control: { type: "ephemeral" },
+        },
       ],
       messages: [
         {
@@ -96,7 +135,9 @@ export async function translateStudentValue(input: {
           content: [
             {
               type: "text",
-              text: `항목명(field): ${input.label || "(미상)"}\n입력값: ${text}\n\n위 입력값을 규칙대로 번역해 결과 문자열만 출력.`,
+              text: `항목명(field): ${input.label || "(미상)"}\n입력값: ${text}\n\n위 입력값을 규칙대로 ${
+                target === "en" ? "영문 표기로" : "한국어로"
+              } 바꿔 결과 문자열만 출력.`,
             },
           ],
         },

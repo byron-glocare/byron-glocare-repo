@@ -77,12 +77,18 @@ export type TranslateResult =
 export async function translateStudentValueAction(input: {
   label: string;
   text: string;
+  /** ko(기본)=한국어, en=영문 표기(학교·기관명 등) */
+  target?: "ko" | "en";
 }): Promise<TranslateResult> {
   await verifyCenterSession();
   const { translateStudentValue } = await import(
     "@/lib/center/translate-value"
   );
-  return translateStudentValue({ label: input.label, text: input.text });
+  return translateStudentValue({
+    label: input.label,
+    text: input.text,
+    target: input.target ?? "ko",
+  });
 }
 
 export type CreateFillLinkResult =
