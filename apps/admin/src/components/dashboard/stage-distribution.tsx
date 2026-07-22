@@ -34,6 +34,11 @@ const COLORS: Record<string, string> = {
   근무종료: "#6B7280", // muted
   대기중: "#F59E0B",
   종료: "#EF4444", // danger
+  // 교육중 세부 라벨 — amber 계열 명암으로 한 묶음처럼
+  "교육 대기": "#FCD34D",
+  "교육 중": "#F59E0B",
+  "자격증 취득 대기": "#D97706",
+  "교육원 일정 문의 필요": "#FBBF24",
 };
 
 export function StageDistributionChart({ distribution }: Props) {
@@ -48,9 +53,9 @@ export function StageDistributionChart({ distribution }: Props) {
   }
 
   const data = distribution.map((d) => ({
-    name: d.stage,
+    name: d.key,
     value: d.count,
-    color: COLORS[d.stage] ?? "#9CA3AF",
+    color: COLORS[d.key] ?? COLORS[d.stage] ?? "#9CA3AF",
   }));
 
   return (

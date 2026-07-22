@@ -331,6 +331,12 @@ export function computeTaskBuckets(inputs: DashboardInputs): TaskBucket[] {
 // =============================================================================
 
 export type StageDistribution = {
+  /**
+   * 표시 라벨. 대부분 stage 명과 같지만, "교육중" 은 세부 진행 라벨
+   * (교육 대기 / 교육 중 / 자격증 취득 대기 등) 으로 쪼개 표시한다.
+   */
+  key: string;
+  /** 색 그룹핑용 stage (교육중 세부 라벨도 stage 는 "교육중"). */
   stage: StageSummary["currentStage"];
   count: number;
 }[];
@@ -347,18 +353,53 @@ const STAGE_ORDER: StageSummary["currentStage"][] = [
   "대기중",
 ];
 
+// "교육중" stage 를 세부 라벨로 나눌 때의 표시 순서 (진행 순서).
+// 여기 없는 라벨(예상 밖)은 이 순서 뒤에 붙는다.
+const TRAINING_SUBLABEL_ORDER = [
+  "교육원 일정 문의 필요",
+  "교육 대기",
+  "교육 중",
+  "자격증 취득 대기",
+];
+
 export function computeStageDistribution(
   inputs: DashboardInputs
 ): StageDistribution {
   const enriched = enrich(inputs);
-  const counts = new Map<StageSummary["currentStage"], number>();
+  // 표시 키별 카운트 (교육중은 label, 그 외는 stage 명) + 대표 stage 보관
+  const counts = new Map<
+    string,
+    { stage: StageSummary["currentStage"]; count: number }
+  >();
   for (const e of enriched) {
-    counts.set(e.summary.currentStage, (counts.get(e.summary.currentStage) ?? 0) + 1);
+    const stage = e.summary.currentStage;
+    const key = stage === "교육중" ? e.summary.label : stage;
+    const prev = counts.get(key);
+    if (prev) prev.count += 1;
+    else counts.set(key, { stage, count: 1 });
   }
-  return STAGE_ORDER.filter((s) => (counts.get(s) ?? 0) > 0).map((stage) => ({
-    stage,
-    count: counts.get(stage) ?? 0,
-  }));
+
+  const result: StageDistribution = [];
+  for (const stage of STAGE_ORDER) {
+    if (stage === "교육중") {
+      // 교육중 세부 라벨을 정해진 순서로, 목록에 없는 라벨은 뒤에
+      const subKeys = [...counts.keys()].filter(
+        (k) => counts.get(k)!.stage === "교육중"
+      );
+      const ordered = [
+        ...TRAINING_SUBLABEL_ORDER.filter((k) => subKeys.includes(k)),
+        ...subKeys.filter((k) => !TRAINING_SUBLABEL_ORDER.includes(k)),
+      ];
+      for (const key of ordered) {
+        const c = counts.get(key)!;
+        if (c.count > 0) result.push({ key, stage: "교육중", count: c.count });
+      }
+    } else {
+      const c = counts.get(stage);
+      if (c && c.count > 0) result.push({ key: stage, stage, count: c.count });
+    }
+  }
+  return result;
 }
 
 // =============================================================================
