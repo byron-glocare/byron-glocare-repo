@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import {
   PieChart,
   Pie,
@@ -41,7 +42,17 @@ const COLORS: Record<string, string> = {
   "교육원 일정 문의 필요": "#FBBF24",
 };
 
+// 분포 항목 클릭 시 이동할 교육생 리스트 URL.
+// 교육중 세부 라벨(key !== stage)은 라벨 필터(stage=), 그 외는 단계 그룹 필터(stageGroup=).
+function hrefForEntry(key: string, stage: string): string {
+  const params = new URLSearchParams();
+  if (key === stage) params.set("stageGroup", stage);
+  else params.set("stage", key);
+  return `/customers?${params.toString()}`;
+}
+
 export function StageDistributionChart({ distribution }: Props) {
+  const router = useRouter();
   const total = distribution.reduce((sum, d) => sum + d.count, 0);
 
   if (total === 0) {
@@ -56,6 +67,7 @@ export function StageDistributionChart({ distribution }: Props) {
     name: d.key,
     value: d.count,
     color: COLORS[d.key] ?? COLORS[d.stage] ?? "#9CA3AF",
+    href: hrefForEntry(d.key, d.stage),
   }));
 
   return (
@@ -71,6 +83,11 @@ export function StageDistributionChart({ distribution }: Props) {
               outerRadius={90}
               paddingAngle={2}
               dataKey="value"
+              style={{ cursor: "pointer" }}
+              onClick={(_, index) => {
+                const item = data[index];
+                if (item) router.push(item.href);
+              }}
             >
               {data.map((entry) => (
                 <Cell key={entry.name} fill={entry.color} />
@@ -104,7 +121,12 @@ export function StageDistributionChart({ distribution }: Props) {
           </TableHeader>
           <TableBody>
             {data.map((d) => (
-              <TableRow key={d.name}>
+              <TableRow
+                key={d.name}
+                className="cursor-pointer hover:bg-accent/40"
+                onClick={() => router.push(d.href)}
+                title={`${d.name.replace("_", " ")} 교육생 보기`}
+              >
                 <TableCell className="flex items-center gap-2">
                   <span
                     className="inline-block size-3 rounded-sm shrink-0"

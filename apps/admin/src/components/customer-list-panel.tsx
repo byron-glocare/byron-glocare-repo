@@ -129,6 +129,12 @@ export type CustomerListFilters = {
    * 희망 지역 필터. desired_region 의 1단계 prefix (예: "서울", "경기", "경북").
    */
   region?: string;
+  /**
+   * 단계 그룹 필터 — 대시보드 단계별 분포에서 stage 슬라이스 클릭 시 진입.
+   * summary.currentStage 와 정확히 일치하는 고객만 표시.
+   * (교육중 세부 라벨은 이 값이 아니라 stage 라벨 파라미터로 진입한다.)
+   */
+  stageGroup?: string;
 };
 
 export type CustomerListProps = {
@@ -188,6 +194,7 @@ export async function CustomerListPanel({
   const bucketFilter = filters.bucket?.trim() ?? "";
   const selfOnly = (filters.self ?? "").trim() === "1";
   const regionFilter = filters.region?.trim() ?? "";
+  const stageGroupFilter = filters.stageGroup?.trim() ?? "";
   const page = Math.max(1, parseInt(filters.page ?? "1", 10) || 1);
 
   const supabase = await createClient();
@@ -456,6 +463,12 @@ export async function CustomerListPanel({
     });
   }
 
+  if (stageGroupFilter) {
+    filtered = filtered.filter(
+      (x) => x.summary?.currentStage === stageGroupFilter
+    );
+  }
+
   const count = filtered.length;
   const totalPages = Math.max(1, Math.ceil(count / PAGE_SIZE));
   const pageStart = (page - 1) * PAGE_SIZE;
@@ -473,6 +486,7 @@ export async function CustomerListPanel({
     bucketFilter ||
     selfOnly ||
     regionFilter ||
+    stageGroupFilter ||
     (filters.center && !hiddenCenter) ||
     (filters.care && !hiddenCare)
   );
@@ -545,6 +559,27 @@ export async function CustomerListPanel({
           </Link>
         </div>
       )}
+      {/* stageGroup 필터 (대시보드 단계별 분포 클릭으로 진입) */}
+      {stageGroupFilter && (
+        <div className="flex items-center gap-2 text-sm">
+          <span className="text-muted-foreground">단계 필터:</span>
+          <Badge
+            variant="outline"
+            className="bg-warning/10 text-warning border-warning/20"
+          >
+            {stageGroupFilter.replace("_", " ")}
+            {" · "}
+            {count}명
+          </Badge>
+          <Link
+            href={buildUrl({})}
+            className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+          >
+            <X className="size-3" />
+            해제
+          </Link>
+        </div>
+      )}
       {/* 검색 + 필터 */}
       <form method="get" action={basePath} className="flex flex-wrap gap-2 items-end">
         {/* preservedParams 를 hidden 으로 유지 */}
@@ -558,6 +593,10 @@ export async function CustomerListPanel({
         {/* cumulative 필터도 마찬가지로 유지 */}
         {cumulativeFilter && (
           <input type="hidden" name="cumulative" value={cumulativeFilter} />
+        )}
+        {/* stageGroup 필터도 검색/필터 변경 시 유지 (해제 링크로만 풀림) */}
+        {stageGroupFilter && (
+          <input type="hidden" name="stageGroup" value={stageGroupFilter} />
         )}
         <div className="flex-1 min-w-60">
           <label className="text-xs text-muted-foreground block mb-1">
@@ -947,6 +986,7 @@ export async function CustomerListPanel({
                   bucket: bucketFilter,
                   self: selfOnly ? "1" : "",
                   region: regionFilter,
+                  stageGroup: stageGroupFilter,
                   ...(hiddenCenter ? {} : { center: filters.center ?? "" }),
                   ...(hiddenCare ? {} : { care: filters.care ?? "" }),
                   page: String(page - 1),
@@ -967,6 +1007,7 @@ export async function CustomerListPanel({
                   bucket: bucketFilter,
                   self: selfOnly ? "1" : "",
                   region: regionFilter,
+                  stageGroup: stageGroupFilter,
                   ...(hiddenCenter ? {} : { center: filters.center ?? "" }),
                   ...(hiddenCare ? {} : { care: filters.care ?? "" }),
                   page: String(page + 1),
