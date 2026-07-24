@@ -1,23 +1,19 @@
 /**
- * GET /center/students/[id]/final/pdf?form=<formFileId>&app=<applicationId>[&preview=1]
- *   원본 양식 PDF 에 학생 데이터를 좌표 오버레이로 채워 반환.
- *   채움 로직은 lib/admission/fill-form-doc(공용). 여기선 센터 세션 검증만.
+ * GET /student/final/pdf?form=<formFileId>&app=<applicationId>[&preview=1][&inputs=<json>]
+ *   셀프 학생 본인의 데이터로 PDF 양식(좌표 오버레이)을 채워 반환.
+ *   채움 로직은 lib/admission/fill-form-doc(센터와 공용). 세션만 학생.
  */
 
 import { type NextRequest } from "next/server";
 
-import { verifyCenterSession } from "@/lib/center/dal";
-import { createCenterClient } from "@/lib/supabase/center";
+import { verifyStudentSession } from "@/lib/student/dal";
+import { createClient } from "@/lib/supabase/server";
 import { fillFormPdf, pdfResponse } from "@/lib/admission/fill-form-doc";
 
 export const runtime = "nodejs";
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  await verifyCenterSession();
-  const { id } = await params;
+export async function GET(req: NextRequest) {
+  const session = await verifyStudentSession();
   const formFileId = req.nextUrl.searchParams.get("form") ?? "";
   const appId = req.nextUrl.searchParams.get("app") ?? "";
   const isPreview = req.nextUrl.searchParams.get("preview") === "1";
@@ -30,9 +26,9 @@ export async function GET(
     inputVals = {};
   }
 
-  const supabase = await createCenterClient();
+  const supabase = await createClient();
   const result = await fillFormPdf(supabase, {
-    studentId: id,
+    studentId: session.student.id,
     formFileId,
     appId,
     inputVals,
