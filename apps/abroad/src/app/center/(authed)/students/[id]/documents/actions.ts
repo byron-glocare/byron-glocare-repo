@@ -1,13 +1,10 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-
-import { verifyCenterSession } from "@/lib/center/dal";
-import { createCenterClient } from "@/lib/supabase/center";
 import {
   createServiceClient,
   STUDENT_FILES_BUCKET,
 } from "@/lib/supabase/service";
+import { resolveDataAccess } from "@/lib/student/data-access";
 
 const MAX_FILE_BYTES = 20 * 1024 * 1024; // 20MB
 /** 허용 형식: PDF + 이미지(휴대폰 HEIC 포함) */
@@ -55,12 +52,17 @@ export async function createSubmissionUploadAction(input: {
   | { ok: true; bucket: string; path: string; token: string }
   | { ok: false; error: string }
 > {
-  const session = await verifyCenterSession();
   const { studentId, docKey, fileName, sizeBytes } = input;
   const invalid = validateUpload(studentId, docKey, fileName, sizeBytes);
   if (invalid) return { ok: false, error: invalid };
 
-  const rls = await createCenterClient();
+  let access;
+  try {
+    access = await resolveDataAccess(studentId);
+  } catch {
+    return { ok: false, error: "권한이 없습니다." };
+  }
+  const rls = access.supabase;
   const { data: student } = await rls
     .from("study_managed_students")
     .select("id")
@@ -70,7 +72,7 @@ export async function createSubmissionUploadAction(input: {
 
   const safeKey = docKey.replace(/[^\w.\-]+/g, "_").slice(0, 80);
   const safeName = fileName.replace(/[^\w.\-]+/g, "_").slice(-120);
-  const path = `${session.org.id}/${studentId}/submissions/${safeKey}/${Date.now()}-${safeName}`;
+  const path = `${access.storageDir(studentId)}/submissions/${safeKey}/${Date.now()}-${safeName}`;
 
   const svc = createServiceClient();
   const { data, error } = await svc.storage
@@ -92,12 +94,18 @@ export async function finalizeSubmissionUploadAction(input: {
   sizeBytes: number;
   mime: string | null;
 }): Promise<UploadSubmissionResult> {
-  const session = await verifyCenterSession();
   const { studentId, docKey, path, fileName, sizeBytes, mime } = input;
-  if (!path.startsWith(`${session.org.id}/${studentId}/submissions/`))
+
+  let access;
+  try {
+    access = await resolveDataAccess(studentId);
+  } catch {
+    return { ok: false, error: "권한이 없습니다." };
+  }
+  if (!path.startsWith(`${access.storageDir(studentId)}/submissions/`))
     return { ok: false, error: "권한이 없습니다." };
 
-  const rls = await createCenterClient();
+  const rls = access.supabase;
   const { data: student } = await rls
     .from("study_managed_students")
     .select("id")
@@ -122,7 +130,7 @@ export async function finalizeSubmissionUploadAction(input: {
         file_name: fileName,
         size_bytes: sizeBytes,
         mime_type: mime,
-        uploaded_by: session.authUserId,
+        uploaded_by: access.authUserId,
       },
       { onConflict: "student_id,doc_key" }
     );
@@ -134,7 +142,7 @@ export async function finalizeSubmissionUploadAction(input: {
   if (existing?.file_path && existing.file_path !== path)
     await svc.storage.from(STUDENT_FILES_BUCKET).remove([existing.file_path]);
 
-  revalidatePath(`/center/students/${studentId}/documents`);
+  access.revalidateDocuments(studentId);
   return { ok: true };
 }
 
@@ -148,12 +156,17 @@ export async function importSubmissionFileAction(input: {
   fromDocKey: string;
   toDocKey: string;
 }): Promise<UploadSubmissionResult> {
-  const session = await verifyCenterSession();
   const { studentId, fromDocKey, toDocKey } = input;
   if (!studentId || !fromDocKey || !toDocKey || fromDocKey === toDocKey)
     return { ok: false, error: "정보가 부족합니다." };
 
-  const rls = await createCenterClient();
+  let access;
+  try {
+    access = await resolveDataAccess(studentId);
+  } catch {
+    return { ok: false, error: "권한이 없습니다." };
+  }
+  const rls = access.supabase;
   const { data: student } = await rls
     .from("study_managed_students")
     .select("id")
@@ -169,12 +182,12 @@ export async function importSubmissionFileAction(input: {
     .maybeSingle();
   if (!src?.file_path)
     return { ok: false, error: "가져올 파일이 없습니다." };
-  if (!src.file_path.startsWith(`${session.org.id}/`))
+  if (!access.ownsPath(src.file_path))
     return { ok: false, error: "권한이 없습니다." };
 
   const safeKey = toDocKey.replace(/[^\w.\-]+/g, "_").slice(0, 80);
   const safeName = src.file_name.replace(/[^\w.\-]+/g, "_").slice(-120);
-  const dest = `${session.org.id}/${studentId}/submissions/${safeKey}/${Date.now()}-${safeName}`;
+  const dest = `${access.storageDir(studentId)}/submissions/${safeKey}/${Date.now()}-${safeName}`;
 
   const svc = createServiceClient();
   const { error: cpErr } = await svc.storage
@@ -199,7 +212,7 @@ export async function importSubmissionFileAction(input: {
         file_name: src.file_name,
         size_bytes: src.size_bytes,
         mime_type: src.mime_type,
-        uploaded_by: session.authUserId,
+        uploaded_by: access.authUserId,
       },
       { onConflict: "student_id,doc_key" }
     );
@@ -210,7 +223,7 @@ export async function importSubmissionFileAction(input: {
   if (existing?.file_path && existing.file_path !== dest)
     await svc.storage.from(STUDENT_FILES_BUCKET).remove([existing.file_path]);
 
-  revalidatePath(`/center/students/${studentId}/documents`);
+  access.revalidateDocuments(studentId);
   return { ok: true };
 }
 
@@ -218,8 +231,13 @@ export async function importSubmissionFileAction(input: {
 export async function getSubmissionFileSignedUrlAction(
   path: string
 ): Promise<{ ok: true; url: string } | { ok: false; error: string }> {
-  const session = await verifyCenterSession();
-  if (!path || !path.startsWith(`${session.org.id}/`))
+  let access;
+  try {
+    access = await resolveDataAccess();
+  } catch {
+    return { ok: false, error: "권한이 없습니다." };
+  }
+  if (!path || !access.ownsPath(path))
     return { ok: false, error: "권한이 없습니다." };
   const svc = createServiceClient();
   const { data, error } = await svc.storage
@@ -236,14 +254,19 @@ export async function removeSubmissionFileAction(input: {
   docKey: string;
   path: string;
 }): Promise<UploadSubmissionResult> {
-  const session = await verifyCenterSession();
-  if (!input.path.startsWith(`${session.org.id}/`))
+  let access;
+  try {
+    access = await resolveDataAccess(input.studentId);
+  } catch {
+    return { ok: false, error: "권한이 없습니다." };
+  }
+  if (!access.ownsPath(input.path))
     return { ok: false, error: "권한이 없습니다." };
 
   const svc = createServiceClient();
   await svc.storage.from(STUDENT_FILES_BUCKET).remove([input.path]);
 
-  const rls = await createCenterClient();
+  const rls = access.supabase;
   const { error } = await rls
     .from("study_student_submission_files")
     .delete()
@@ -251,6 +274,6 @@ export async function removeSubmissionFileAction(input: {
     .eq("doc_key", input.docKey);
   if (error) return { ok: false, error: error.message };
 
-  revalidatePath(`/center/students/${input.studentId}/documents`);
+  access.revalidateDocuments(input.studentId);
   return { ok: true };
 }

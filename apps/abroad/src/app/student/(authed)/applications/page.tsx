@@ -137,12 +137,12 @@ export default async function StudentApplicationsPage() {
                 >
                   {tr(locale, "작성 서류", "Hồ sơ soạn")}
                 </Link>
-                <span className="inline-flex items-center gap-1 rounded-lg border border-dashed border-slate-200 px-3 py-1.5 text-xs text-slate-400">
+                <Link
+                  href="/student/documents"
+                  className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
+                >
                   {tr(locale, "서류 등록", "Tải giấy tờ")}
-                  <span className="text-[10px]">
-                    {tr(locale, "(준비 중)", "(sắp có)")}
-                  </span>
-                </span>
+                </Link>
                 {r.universityId && (
                   <Link
                     href={`/student/universities/${r.universityId}`}

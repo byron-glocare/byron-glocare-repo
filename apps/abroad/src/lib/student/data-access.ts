@@ -29,6 +29,8 @@ export type DataAccess = {
   ownsPath: (path: string) => boolean;
   /** 정보 입력 페이지 캐시 무효화 */
   revalidateData: (studentId: string) => void;
+  /** 서류 등록 페이지 캐시 무효화 */
+  revalidateDocuments: (studentId: string) => void;
 };
 
 /**
@@ -60,6 +62,7 @@ export async function resolveDataAccess(studentId?: string): Promise<DataAccess>
         storageDir: (sid) => `self/${sid}`,
         ownsPath: (p) => p.startsWith(`self/${selfRow.id}/`),
         revalidateData: () => revalidatePath("/student/data"),
+        revalidateDocuments: () => revalidatePath("/student/documents"),
       };
     }
   }
@@ -74,6 +77,8 @@ export async function resolveDataAccess(studentId?: string): Promise<DataAccess>
     storageDir: (sid) => `${session.org.id}/${sid}`,
     ownsPath: (p) => p.startsWith(`${session.org.id}/`),
     revalidateData: (sid) => revalidatePath(`/center/students/${sid}/data`),
+    revalidateDocuments: (sid) =>
+      revalidatePath(`/center/students/${sid}/documents`),
   };
 }
 
