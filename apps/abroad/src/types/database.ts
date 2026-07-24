@@ -622,6 +622,7 @@ export type Database = {
           tags_vi: string | null;
           categories: string | null;
           emoji: string | null;
+          tier: "partner" | "open";
           created_at: string;
           updated_at: string;
         };
@@ -652,6 +653,7 @@ export type Database = {
           tags_vi?: string | null;
           categories?: string | null;
           emoji?: string | null;
+          tier?: "partner" | "open";
           created_at?: string;
           updated_at?: string;
         };
@@ -1116,6 +1118,20 @@ export type Database = {
             foreignKeyName: "study_applications_target_department_id_fkey";
             columns: ["target_department_id"];
             referencedRelation: "departments";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+
+      study_university_requests: {
+        Row: import("./study").StudyUniversityRequest;
+        Insert: Partial<import("./study").StudyUniversityRequest>;
+        Update: Partial<import("./study").StudyUniversityRequest>;
+        Relationships: [
+          {
+            foreignKeyName: "study_university_requests_student_id_fkey";
+            columns: ["student_id"];
+            referencedRelation: "study_managed_students";
             referencedColumns: ["id"];
           }
         ];

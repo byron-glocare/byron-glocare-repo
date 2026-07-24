@@ -24,7 +24,7 @@ export default async function StudentHomePage() {
         "협약·자유지원 대학을 보고 지원을 시작하세요.",
         "Xem trường liên kết / tự do và bắt đầu đăng ký."
       ),
-      ready: false,
+      ready: true,
     },
     {
       href: "/student/applications",

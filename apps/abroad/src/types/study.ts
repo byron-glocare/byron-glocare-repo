@@ -517,6 +517,22 @@ export type StudyApplication = {
 };
 
 // =============================================================================
+// 6b. study_university_requests — 미등록 대학 추가 요청(B2C 셀프 학생)
+// =============================================================================
+export type StudyUniversityRequest = {
+  id: string;
+  student_id: string | null;
+  requested_by: string | null;
+  university_name: string;
+  university_url: string | null;
+  note: string | null;
+  status: "pending" | "added" | "rejected";
+  resolved_university_id: number | null;
+  resolved_at: string | null;
+  created_at: string;
+};
+
+// =============================================================================
 // 7. study_application_documents
 // =============================================================================
 export type StudyApplicationDocument = {
