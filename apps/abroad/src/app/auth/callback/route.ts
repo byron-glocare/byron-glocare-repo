@@ -24,39 +24,45 @@ export async function GET(req: Request): Promise<Response> {
     return NextResponse.redirect(`${origin}/student/login?error=no_code`);
   }
 
-  const supabase = await createClient();
-  const { error } = await supabase.auth.exchangeCodeForSession(code);
-  if (error) {
-    return NextResponse.redirect(
-      `${origin}/student/login?error=${encodeURIComponent(error.message)}`
+  const fail = (msg: string) =>
+    NextResponse.redirect(
+      `${origin}/student/login?error=${encodeURIComponent(msg)}`
     );
-  }
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const supabase = await createClient();
+  const { data: exchanged, error } =
+    await supabase.auth.exchangeCodeForSession(code);
+  if (error) return fail(`auth:${error.message}`);
 
-  if (user) {
-    // 학생 행 보장 (service role — RLS 우회, auth_user_id 로 1:1)
-    const svc = createServiceClient();
-    const { data: existing } = await svc
-      .from("study_managed_students")
-      .select("id")
-      .eq("auth_user_id", user.id)
-      .maybeSingle();
+  // 교환 결과의 user 를 우선 사용 (getUser 는 직후 간헐적으로 null 이 될 수 있음)
+  const user =
+    exchanged?.user ?? (await supabase.auth.getUser()).data.user ?? null;
+  if (!user) return fail("no_user");
 
-    if (!existing) {
-      const meta = (user.user_metadata ?? {}) as {
-        full_name?: string;
-        name?: string;
-      };
-      await svc.from("study_managed_students").insert({
-        auth_user_id: user.id,
-        source: "self",
-        org_id: null,
-        name: meta.full_name || meta.name || user.email || "학생",
-        email: user.email ?? null,
-      });
+  // 학생 행 보장 (service role — RLS 우회, auth_user_id 로 1:1)
+  const svc = createServiceClient();
+  const { data: existing, error: selErr } = await svc
+    .from("study_managed_students")
+    .select("id")
+    .eq("auth_user_id", user.id)
+    .maybeSingle();
+  if (selErr) return fail(`lookup:${selErr.message}`);
+
+  if (!existing) {
+    const meta = (user.user_metadata ?? {}) as {
+      full_name?: string;
+      name?: string;
+    };
+    const { error: insErr } = await svc.from("study_managed_students").insert({
+      auth_user_id: user.id,
+      source: "self",
+      org_id: null,
+      name: meta.full_name || meta.name || user.email || "학생",
+      email: user.email ?? null,
+    });
+    // 유니크 경합(동시 콜백) 이 아니라면 실패를 드러낸다 — 원인 진단용
+    if (insErr && !/duplicate key|unique/i.test(insErr.message)) {
+      return fail(`create:${insErr.message}`);
     }
   }
 
