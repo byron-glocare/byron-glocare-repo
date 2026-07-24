@@ -1,13 +1,15 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-
 import { verifyCenterSession } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
 import {
   createServiceClient,
   STUDENT_FILES_BUCKET,
 } from "@/lib/supabase/service";
+import {
+  resolveDataAccess,
+  requireAnyAuth,
+} from "@/lib/student/data-access";
 import type { Json } from "@/types/database";
 
 const MAX_FILE_BYTES = 20 * 1024 * 1024; // 20MB
@@ -30,8 +32,8 @@ export async function saveStudentDataValueAction(input: {
   /** 입력 원문. undefined = 변경 안 함, null = 원문 지움(= value 와 동일 취급) */
   valueInput?: Json | null;
 }): Promise<SaveDataValueResult> {
-  const session = await verifyCenterSession();
-  const supabase = await createCenterClient();
+  const access = await resolveDataAccess(input.studentId);
+  const supabase = access.supabase;
 
   if (input.value === null || input.value === undefined || input.value === "") {
     // 삭제
@@ -53,7 +55,7 @@ export async function saveStudentDataValueAction(input: {
       student_id: input.studentId,
       data_type_key: input.dataTypeKey,
       value: input.value,
-      filled_by: session.authUserId,
+      filled_by: access.authUserId,
     };
     if (input.valueInput !== undefined) row.value_input = input.valueInput;
     const { error } = await supabase
@@ -62,7 +64,7 @@ export async function saveStudentDataValueAction(input: {
     if (error) return { ok: false, error: error.message };
   }
 
-  revalidatePath(`/center/students/${input.studentId}/data`);
+  access.revalidateData(input.studentId);
   return { ok: true };
 }
 
@@ -80,7 +82,7 @@ export async function translateStudentValueAction(input: {
   /** ko(기본)=한국어, en=영문 표기(학교·기관명 등) */
   target?: "ko" | "en";
 }): Promise<TranslateResult> {
-  await verifyCenterSession();
+  await requireAnyAuth();
   const { translateStudentValue } = await import(
     "@/lib/center/translate-value"
   );
@@ -144,8 +146,6 @@ export type UploadFileResult =
 export async function uploadStudentFileAction(
   formData: FormData
 ): Promise<UploadFileResult> {
-  const session = await verifyCenterSession();
-
   const studentId = String(formData.get("studentId") ?? "");
   const dataTypeKey = String(formData.get("dataTypeKey") ?? "");
   const file = formData.get("file");
@@ -160,9 +160,14 @@ export async function uploadStudentFileAction(
     return { ok: false, error: "Tệp quá lớn (tối đa 20MB)." };
   }
 
-  // 권한: 이 학생이 내 org 소속인지 — RLS 가 막아주므로 안 보이면 거부
-  const rls = await createCenterClient();
-  const { data: student } = await rls
+  // 권한: 학생 소유 확인 (RLS — 안 보이면 거부). 셀프/센터 자동 판별.
+  let access;
+  try {
+    access = await resolveDataAccess(studentId);
+  } catch {
+    return { ok: false, error: "Không có quyền với sinh viên này." };
+  }
+  const { data: student } = await access.supabase
     .from("study_managed_students")
     .select("id")
     .eq("id", studentId)
@@ -173,7 +178,7 @@ export async function uploadStudentFileAction(
 
   // 검증 끝 → service-role 로 업로드 (Storage RLS 정책 불필요)
   const safeName = file.name.replace(/[^\w.\-]+/g, "_").slice(-120);
-  const path = `${session.org.id}/${studentId}/${dataTypeKey}/${Date.now()}-${safeName}`;
+  const path = `${access.storageDir(studentId)}/${dataTypeKey}/${Date.now()}-${safeName}`;
 
   const svc = createServiceClient();
   const buffer = Buffer.from(await file.arrayBuffer());
@@ -197,8 +202,13 @@ export async function uploadStudentFileAction(
 export async function getStudentFileSignedUrlAction(
   path: string
 ): Promise<{ ok: true; url: string } | { ok: false; error: string }> {
-  const session = await verifyCenterSession();
-  if (!path || !path.startsWith(`${session.org.id}/`)) {
+  let access;
+  try {
+    access = await resolveDataAccess();
+  } catch {
+    return { ok: false, error: "Không có quyền." };
+  }
+  if (!path || !access.ownsPath(path)) {
     return { ok: false, error: "Không có quyền." };
   }
   const svc = createServiceClient();
@@ -219,13 +229,16 @@ export async function removeStudentFileAction(input: {
   dataTypeKey: string;
   path: string;
 }): Promise<SaveDataValueResult> {
-  await verifyCenterSession();
-
-  // 권한: 이 학생이 내 org 소속인지 RLS 로 확인.
-  //   (예전엔 path 가 내 org.id 로 시작하는지만 봤는데, org 이관(0035)·본사 배정 등으로
-  //    파일이 다른 org 경로에 저장돼 있으면 '다시 서명'이 권한오류로 실패했다.
-  //    학생 소유만 확인되면 그 학생의 파일은 지울 수 있어야 한다.)
-  const rls = await createCenterClient();
+  // 권한: 학생 소유 확인 (RLS). 셀프/센터 자동 판별.
+  //   (path 가 아니라 학생 소유로 판별 — org 이관·본사 배정으로 파일이 다른 경로에
+  //    있어도 학생 소유만 확인되면 지울 수 있어야 한다.)
+  let access;
+  try {
+    access = await resolveDataAccess(input.studentId);
+  } catch {
+    return { ok: false, error: "Không có quyền với sinh viên này." };
+  }
+  const rls = access.supabase;
   const { data: student } = await rls
     .from("study_managed_students")
     .select("id")
@@ -241,7 +254,7 @@ export async function removeStudentFileAction(input: {
     await svc.storage.from(STUDENT_FILES_BUCKET).remove([input.path]);
   }
 
-  // 데이터 값 삭제 (RLS — 본인 org 만)
+  // 데이터 값 삭제 (RLS)
   const { error } = await rls
     .from("study_student_data_values")
     .delete()
@@ -249,6 +262,6 @@ export async function removeStudentFileAction(input: {
     .eq("data_type_key", input.dataTypeKey);
   if (error) return { ok: false, error: error.message };
 
-  revalidatePath(`/center/students/${input.studentId}/data`);
+  access.revalidateData(input.studentId);
   return { ok: true };
 }

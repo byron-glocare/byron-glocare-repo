@@ -104,6 +104,7 @@ export function StudentDataEditor({
   existingValues,
   existingInputs = {},
   requiredBySource,
+  showCenterTools = true,
 }: {
   locale: Locale;
   studentId: string;
@@ -112,6 +113,8 @@ export function StudentDataEditor({
   /** 입력 원문(번역 전). value_input 이 있는 항목만. 없으면 최종값과 동일 취급. */
   existingInputs?: Record<string, Json>;
   requiredBySource: Record<string, string[]>;
+  /** 센터 전용 도구(외부 입력 링크·AI 자동채움) 노출. 셀프 학생은 false. */
+  showCenterTools?: boolean;
 }) {
   // 로컬 state — 즉시 UI 반영 + 서버 저장
   const [values, setValues] = useState<Record<string, Json | null>>(
@@ -210,6 +213,7 @@ export function StudentDataEditor({
       )}
 
       {/* 2) 보조 도구 — 외부 입력 링크 · 업로드 서류 자동채움 (접힘 기본, 가끔 사용) */}
+      {showCenterTools && (
       <div className="rounded-lg border border-slate-200 bg-white">
         <button
           type="button"
@@ -246,6 +250,7 @@ export function StudentDataEditor({
           </div>
         ) : null}
       </div>
+      )}
 
       {/* 3) 범위 토글 — 필요한 항목만 / 전체 */}
       {canScope ? (

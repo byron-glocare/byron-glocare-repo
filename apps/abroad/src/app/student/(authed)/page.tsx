@@ -34,7 +34,7 @@ export default async function StudentHomePage() {
         "지원한 대학의 제출 서류를 작성합니다.",
         "Soạn giấy tờ cho trường đã đăng ký."
       ),
-      ready: false,
+      ready: true,
     },
     {
       href: "/student/issuance",

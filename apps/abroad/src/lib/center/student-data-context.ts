@@ -7,10 +7,11 @@
  * 정보 입력은 파일 외 항목을, 서류 등록은 파일(첨부) 항목을 골라 쓴다.
  */
 
-import type { createCenterClient } from "@/lib/supabase/center";
-import type { Json } from "@/types/database";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database, Json } from "@/types/database";
 
-type CenterClient = Awaited<ReturnType<typeof createCenterClient>>;
+// 유학센터 RLS 클라이언트와 셀프 학생 authed 클라이언트 모두 수용(구조적 타입).
+type CenterClient = SupabaseClient<Database>;
 
 export type StudentDataTypeRow = {
   key: string;
