@@ -1141,7 +1141,9 @@ export type Database = {
       study_managed_students: {
         Row: {
           id: string;
-          org_id: string;
+          org_id: string | null;
+          auth_user_id: string | null;
+          source: "center" | "self";
           name: string;
           dob: string | null;
           passport_no_encrypted: string | null;
@@ -1156,7 +1158,9 @@ export type Database = {
         };
         Insert: {
           id?: string;
-          org_id: string;
+          org_id?: string | null;
+          auth_user_id?: string | null;
+          source?: "center" | "self";
           name: string;
           dob?: string | null;
           passport_no_encrypted?: string | null;
@@ -1180,6 +1184,68 @@ export type Database = {
             referencedColumns: ["id"];
           }
         ];
+      };
+
+      study_university_requests: {
+        Row: {
+          id: string;
+          student_id: string | null;
+          requested_by: string | null;
+          university_name: string;
+          university_url: string | null;
+          note: string | null;
+          status: "pending" | "added" | "rejected";
+          resolved_university_id: number | null;
+          resolved_at: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          student_id?: string | null;
+          requested_by?: string | null;
+          university_name: string;
+          university_url?: string | null;
+          note?: string | null;
+          status?: "pending" | "added" | "rejected";
+          resolved_university_id?: number | null;
+          resolved_at?: string | null;
+          created_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["study_university_requests"]["Insert"]
+        >;
+        Relationships: [];
+      };
+
+      study_applications: {
+        Row: {
+          id: string;
+          student_id: string;
+          admission_spec_id: string;
+          offering_id: string | null;
+          selected_language: string | null;
+          target_department_id: number | null;
+          target_department_label: string | null;
+          status: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          student_id: string;
+          admission_spec_id: string;
+          offering_id?: string | null;
+          selected_language?: string | null;
+          target_department_id?: number | null;
+          target_department_label?: string | null;
+          status?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["study_applications"]["Insert"]
+        >;
+        Relationships: [];
       };
 
       study_student_submission_files: {

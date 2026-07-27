@@ -71,6 +71,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { href: "/universities", label: "대학교", icon: School },
       { href: "/departments", label: "학과", icon: BookOpen },
       { href: "/offerings", label: "모집", icon: Megaphone },
+      { href: "/university-requests", label: "대학 요청 (개발중)", icon: Inbox },
       { href: "/admissions", label: "입학서류", icon: ClipboardList },
       { href: "/student-data-types", label: "데이터", icon: Database },
     ],

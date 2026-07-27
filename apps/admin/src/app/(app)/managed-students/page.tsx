@@ -37,7 +37,7 @@ export default async function ManagedStudentsPage() {
       admin
         .from("study_managed_students")
         .select(
-          "id, org_id, name, dob, phone, email, topik_level, current_visa, location, created_at"
+          "id, org_id, source, name, dob, phone, email, topik_level, current_visa, location, created_at"
         )
         .order("created_at", { ascending: false }),
       admin.from("study_center_orgs").select("id, name_ko, name_vi"),
@@ -92,14 +92,20 @@ export default async function ManagedStudentsPage() {
                       <TableCell className="font-medium">
                         <Link
                           href={`/managed-students/${s.id}`}
-                          className="hover:text-primary"
+                          className="inline-flex items-center gap-2 hover:text-primary"
                         >
                           {s.name}
+                          {s.source === "self" ? (
+                            <Badge variant="outline" className="text-[10px]">
+                              B2C
+                            </Badge>
+                          ) : null}
                         </Link>
                       </TableCell>
                       <TableCell className="text-sm text-muted-foreground">
                         <Link href={`/managed-students/${s.id}`} className="block">
-                          {orgMap.get(s.org_id) ?? "—"}
+                          {(s.org_id ? orgMap.get(s.org_id) : null) ??
+                            (s.source === "self" ? "본사 직접 (B2C)" : "—")}
                         </Link>
                       </TableCell>
                       <TableCell className="text-sm">

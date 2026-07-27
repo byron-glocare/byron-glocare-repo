@@ -50,11 +50,19 @@ export default async function ManagedStudentDetailPage({
 
   const [{ data: org }, { data: files }, { data: finals }, { data: centers }] =
     await Promise.all([
-    admin
-      .from("study_center_orgs")
-      .select("name_ko, name_vi, study_center_id")
-      .eq("id", student.org_id)
-      .maybeSingle(),
+    student.org_id
+      ? admin
+          .from("study_center_orgs")
+          .select("name_ko, name_vi, study_center_id")
+          .eq("id", student.org_id)
+          .maybeSingle()
+      : Promise.resolve({
+          data: null as {
+            name_ko: string;
+            name_vi: string;
+            study_center_id: number | null;
+          } | null,
+        }),
     admin
       .from("study_student_submission_files")
       .select("id, doc_key, file_path, file_name, size_bytes, created_at")
@@ -95,7 +103,51 @@ export default async function ManagedStudentDetailPage({
     })
   );
 
-  const orgName = org?.name_ko || org?.name_vi || "—";
+  // 지원 내역 (B2C 셀프·센터 공통) — 대학/학과/학기/상태
+  const { data: apps } = await admin
+    .from("study_applications")
+    .select(
+      "id, admission_spec_id, target_department_label, status, created_at"
+    )
+    .eq("student_id", id)
+    .order("created_at", { ascending: false });
+  const appSpecIds = Array.from(
+    new Set((apps ?? []).map((a) => a.admission_spec_id).filter(Boolean))
+  );
+  const { data: appSpecs } =
+    appSpecIds.length > 0
+      ? await admin
+          .from("study_admission_specs")
+          .select("id, university_id, term")
+          .in("id", appSpecIds)
+      : { data: [] as Array<{ id: string; university_id: number; term: string }> };
+  const specById = new Map((appSpecs ?? []).map((s) => [s.id, s]));
+  const appUniIds = Array.from(
+    new Set((appSpecs ?? []).map((s) => s.university_id))
+  );
+  const { data: appUnis } =
+    appUniIds.length > 0
+      ? await admin
+          .from("universities")
+          .select("id, name_ko")
+          .in("id", appUniIds)
+      : { data: [] as Array<{ id: number; name_ko: string }> };
+  const appUniName = new Map((appUnis ?? []).map((u) => [u.id, u.name_ko]));
+  const appRows = (apps ?? []).map((a) => {
+    const sp = specById.get(a.admission_spec_id);
+    return {
+      id: a.id,
+      university: sp ? appUniName.get(sp.university_id) ?? "—" : "—",
+      dept: a.target_department_label ?? "—",
+      term: sp?.term ?? "",
+      status: a.status,
+    };
+  });
+
+  const orgName =
+    org?.name_ko ||
+    org?.name_vi ||
+    (student.source === "self" ? "본사 직접 (B2C)" : "—");
   const info: { label: string; value: string }[] = [
     { label: "유학센터", value: orgName },
     { label: "생년월일", value: dash(formatDate(student.dob)) },
@@ -157,6 +209,35 @@ export default async function ManagedStudentDetailPage({
                 </dd>
               </div>
             ) : null}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">지원 내역</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {appRows.length === 0 ? (
+              <p className="text-sm text-muted-foreground">지원 내역이 없습니다.</p>
+            ) : (
+              <ul className="divide-y">
+                {appRows.map((a) => (
+                  <li
+                    key={a.id}
+                    className="flex items-center justify-between gap-3 py-2 first:pt-0"
+                  >
+                    <div className="min-w-0">
+                      <span className="text-sm font-medium">{a.university}</span>
+                      <span className="ml-2 text-sm text-muted-foreground">
+                        {a.dept}
+                        {a.term ? ` · ${a.term}` : ""}
+                      </span>
+                    </div>
+                    <Badge variant="secondary">{a.status}</Badge>
+                  </li>
+                ))}
+              </ul>
+            )}
           </CardContent>
         </Card>
 
