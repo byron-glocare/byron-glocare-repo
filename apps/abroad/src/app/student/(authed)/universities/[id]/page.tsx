@@ -34,22 +34,21 @@ export default async function StudentUniversityDetailPage({
   const { data: u } = await supabase
     .from("universities")
     .select(
-      "id, name_ko, name_vi, region_ko, region_vi, desc_ko, desc_vi, emoji, logo_url, tier"
+      "id, name_ko, name_vi, region_ko, region_vi, desc_ko, desc_vi, emoji, logo_url"
     )
     .eq("id", uniId)
     .maybeSingle();
   if (!u) notFound();
 
-  const [{ data: offerings }, { data: specs }, { data: myApps }] =
+  const [{ data: allOfferings }, { data: specs }, { data: myApps }] =
     await Promise.all([
+      // 모집 등록 여부(협약 판별) + 지원 가능(published) 목록을 한 번에
       supabase
         .from("study_offerings")
         .select(
-          "id, department_id, term, intake_quota, source_spec_id, sort_order"
+          "id, department_id, term, intake_quota, source_spec_id, sort_order, status"
         )
         .eq("university_id", uniId)
-        .eq("status", "published")
-        .not("source_spec_id", "is", null)
         .order("sort_order")
         .order("term", { ascending: false }),
       supabase
@@ -68,9 +67,15 @@ export default async function StudentUniversityDetailPage({
     (myApps ?? []).map((a) => a.offering_id).filter(Boolean)
   );
 
+  // 협약 = 모집(offerings)에 등록된 대학. 지원 가능 = published + 모집요강 연결.
+  const isPartner = (allOfferings ?? []).length > 0;
+  const offerings = (allOfferings ?? []).filter(
+    (o) => o.status === "published" && o.source_spec_id
+  );
+
   // 학과명 join
   const deptIds = Array.from(
-    new Set((offerings ?? []).map((o) => o.department_id))
+    new Set(offerings.map((o) => o.department_id))
   );
   const { data: depts } =
     deptIds.length > 0
@@ -81,7 +86,7 @@ export default async function StudentUniversityDetailPage({
       : { data: [] as Array<{ id: number; name_ko: string; name_vi: string | null }> };
   const deptMap = new Map((depts ?? []).map((d) => [d.id, d]));
 
-  const items: OfferingItem[] = (offerings ?? []).map((o) => {
+  const items: OfferingItem[] = offerings.map((o) => {
     const spec = o.source_spec_id ? specById.get(o.source_spec_id) : null;
     const dept = deptMap.get(o.department_id);
     const deptNameKo = dept?.name_ko ?? `학과 #${o.department_id}`;
@@ -105,7 +110,6 @@ export default async function StudentUniversityDetailPage({
   const region =
     (locale === "vi" ? u.region_vi ?? u.region_ko : u.region_ko) ?? null;
   const desc = locale === "vi" ? u.desc_vi ?? u.desc_ko : u.desc_ko;
-  const isPartner = u.tier === "partner";
 
   return (
     <div className="max-w-3xl space-y-6">
