@@ -120,6 +120,10 @@ function injectMarkers(doc: Doc, slots: SlotV2[]): void {
     const addr = Array.isArray(s.addr) ? s.addr[0] : s.addr;
     const loc = locate(doc, addr);
     if (!loc) continue;
+    // date_part 는 해당 년/월/일 글자 앞에 마커를 심어 칩이 그 자리에 놓이게
+    if (s.kind === "date_part" && s.unit) {
+      if (insertBeforeUnit(loc.tc, s.unit, marker(s.index))) continue;
+    }
     const target =
       s.kind === "underline_blank" && loc.p ? loc.p : firstPara(doc, loc.tc);
     target.appendChild(makeTextRun(doc, marker(s.index)));
@@ -175,6 +179,24 @@ function checkOption(tc: El, optionIndex: number): boolean {
     if (idx >= 0) {
       // xmldom 직렬화기는 텍스트 노드의 .data 를 읽는다 (.nodeValue 세터는 반영 안 됨)
       tn.data = s.slice(0, idx) + "☑" + s.slice(idx + 1);
+      return true;
+    }
+  }
+  return false;
+}
+
+/** date_part: 셀 안 첫 년/월/일 글자 '앞'에 문자열 삽입 (마커·값 공용) */
+function insertBeforeUnit(
+  tc: El,
+  unit: "year" | "month" | "day",
+  str: string
+): boolean {
+  const ch = unit === "year" ? "년" : unit === "month" ? "월" : "일";
+  for (const tn of cellTextNodes(tc)) {
+    const s = tn.data ?? "";
+    const idx = s.indexOf(ch);
+    if (idx >= 0) {
+      tn.data = s.slice(0, idx) + str + s.slice(idx);
       return true;
     }
   }
@@ -247,6 +269,12 @@ export function fillSlotsV2(
     }
 
     if (b.kind === "text") {
+      if (s.kind === "date_part" && s.unit) {
+        const loc = locate(doc, addr0);
+        if (loc && insertBeforeUnit(loc.tc, s.unit, b.value)) continue;
+        if (loc) firstPara(doc, loc.tc).appendChild(makeTextRun(doc, b.value));
+        continue;
+      }
       if (s.kind === "char_grid" && Array.isArray(s.addr)) {
         // 한 글자씩 칸칸이 분배
         const chars = [...b.value];

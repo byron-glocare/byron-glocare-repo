@@ -31,6 +31,7 @@ type Slot = {
   options?: string[];
   blanks?: number;
   line_text?: string;
+  unit?: "year" | "month" | "day";
   label_left?: string | null;
   label_above?: string | null;
 };
@@ -46,6 +47,13 @@ const KIND_LABEL: Record<string, string> = {
   checkbox_group: "체크박스",
   underline_blank: "밑줄+탭 빈칸",
   anchor_split: "앵커 분할",
+  date_part: "날짜 단위",
+};
+
+const DATE_UNIT_KO: Record<string, string> = {
+  year: "년",
+  month: "월",
+  day: "일",
 };
 
 export function TestFormFill({
@@ -403,6 +411,11 @@ export function TestFormFill({
                       {activeSlot.boxes ? (
                         <Badge variant="secondary" className="text-[10px]">
                           {activeSlot.boxes}칸
+                        </Badge>
+                      ) : null}
+                      {activeSlot.unit ? (
+                        <Badge variant="secondary" className="text-[10px]">
+                          {DATE_UNIT_KO[activeSlot.unit]}
                         </Badge>
                       ) : null}
                     </div>

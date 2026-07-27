@@ -25,7 +25,10 @@ export type SlotV2Kind =
   | "char_grid"
   | "checkbox_group"
   | "underline_blank"
-  | "anchor_split";
+  | "anchor_split"
+  | "date_part";
+
+export type DateUnit = "year" | "month" | "day";
 
 export type SlotV2 = {
   /** "S001" 형태 표시용 id */
@@ -45,6 +48,8 @@ export type SlotV2 = {
   line_text?: string;
   /** anchor_split: 원문 템플릿 */
   template?: string;
+  /** date_part: 이 슬롯이 채우는 날짜 단위 (년/월/일 앞에 값 삽입) */
+  unit?: DateUnit;
   /** 같은 행 왼쪽 라벨 후보 */
   label_left?: string | null;
   /** 같은 열 위쪽 헤더 후보 */
@@ -102,6 +107,22 @@ function cellText(tc: El): string {
     .join(" ");
 }
 
+/** 셀 원문(strip 안 함) — 빈칸 판정용 */
+function cellRawText(tc: El): string {
+  let s = "";
+  for (const p of childElems(tc, "p")) {
+    for (const t of descElems(p, "t")) s += t.textContent ?? "";
+    s += "\n";
+  }
+  return s;
+}
+
+/** 셀에 '채울 빈칸'이 있는가 = 탭 / 밑줄 2+ / 공백 2+ (프로즈·라벨 오탐 제거용) */
+function cellHasBlank(tc: El): boolean {
+  if (descElems(tc, "tab").length > 0) return true;
+  return /_{2,}|[ 　 ]{2,}/.test(cellRawText(tc));
+}
+
 type Cell = { ci: number; gc: number; span: number; ghost: boolean; el: El };
 
 /** gridSpan/vMerge 를 반영해 셀의 실제 시각 열 위치(gc)를 계산 */
@@ -151,8 +172,6 @@ function aboveLabel(grid: Cell[][], ri: number, cell: Cell): string | null {
   }
   return null;
 }
-
-const ANCHOR_RE = /(@|년|월|일|관계\s*:|인증번호\s*:|확인번호\s*:|\(은행명\))/;
 
 /** 최상위 표들 → 슬롯 목록 (slot_detect.py detect 이식) */
 function detect(tbls: El[]): SlotV2[] {
@@ -230,6 +249,7 @@ function detect(tbls: El[]): SlotV2[] {
           });
         }
         // (c) 밑줄 탭 빈칸
+        let cellHadUnderline = false;
         const paras = childElems(c.el, "p");
         for (let pi = 0; pi < paras.length; pi++) {
           const p = paras[pi];
@@ -241,6 +261,7 @@ function detect(tbls: El[]): SlotV2[] {
             if (rpr && hasU && hasTab) ublanks += 1;
           }
           if (ublanks) {
+            cellHadUnderline = true;
             let ptxt = "";
             for (const t of descElems(p, "t")) ptxt += t.textContent ?? "";
             push({
@@ -253,15 +274,49 @@ function detect(tbls: El[]): SlotV2[] {
             });
           }
         }
-        // (d) 앵커 분할 필요 셀
-        if (ANCHOR_RE.test(txt) && !txt.includes("□") && txt.length < 40) {
-          push({
-            id: nid(),
-            kind: "anchor_split",
-            addr: `t${ti}.r${ri}.c${c.ci}`,
-            template: txt.slice(0, 40),
-            label_left: leftLabel(grid, ri, c),
-          });
+        // (d) 앵커 / 날짜 — 오탐 필터 + 날짜 서브분할
+        //   진짜 앵커 셀 = 강한 마커(관계:/은행명 등) 또는 '채울 빈칸 + 날짜단위'.
+        //   프로즈·라벨(학년도/시작일/생년월일/…1년 보존기간 등)은 빈칸이 없어 제외.
+        if (!txt.includes("□") && txt.length < 60) {
+          const strong = /관계\s*:|인증번호\s*:|확인번호\s*:|\(은행명\)|@/.test(txt);
+          const hasSign = /서명|\(인\)/.test(txt);
+          const dateUnits = (["년", "월", "일"] as const).filter((u) =>
+            txt.includes(u)
+          );
+          const isDate =
+            dateUnits.length > 0 && cellHasBlank(c.el) && !cellHadUnderline;
+
+          if (isDate) {
+            // 날짜 서브분할: 년/월/일 각각을 독립 슬롯으로 (값은 각 단위 앞에 삽입)
+            for (const u of dateUnits) {
+              push({
+                id: nid(),
+                kind: "date_part",
+                addr: `t${ti}.r${ri}.c${c.ci}`,
+                unit: u === "년" ? "year" : u === "월" ? "month" : "day",
+                template: txt.slice(0, 40),
+                label_left: leftLabel(grid, ri, c),
+                label_above: aboveLabel(grid, ri, c),
+              });
+            }
+            if (hasSign) {
+              push({
+                id: nid(),
+                kind: "anchor_split",
+                addr: `t${ti}.r${ri}.c${c.ci}`,
+                template: txt.slice(0, 60),
+                label_left: leftLabel(grid, ri, c),
+              });
+            }
+          } else if (strong || hasSign) {
+            push({
+              id: nid(),
+              kind: "anchor_split",
+              addr: `t${ti}.r${ri}.c${c.ci}`,
+              template: txt.slice(0, 60),
+              label_left: leftLabel(grid, ri, c),
+            });
+          }
         }
       }
       if (run.length && !flushRun()) {
