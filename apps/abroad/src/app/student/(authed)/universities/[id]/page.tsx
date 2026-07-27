@@ -12,6 +12,7 @@ import { getLocale, tr } from "@/lib/i18n";
 import { deriveOfferingLanguages } from "@/lib/admission/offering-languages";
 
 import { OfferingList, type OfferingItem } from "./offering-list";
+import { AppliedToast } from "./applied-toast";
 
 export const dynamic = "force-dynamic";
 
@@ -166,28 +167,48 @@ export default async function StudentUniversityDetailPage({
         <div>
           <h1 className="text-xl font-bold text-slate-900">{name}</h1>
           {region && <p className="text-sm text-slate-500">{region}</p>}
-          <span
-            className={`mt-1 inline-block rounded-full px-2 py-0.5 text-[11px] ${
-              isPartner
-                ? "bg-emerald-50 text-emerald-700"
-                : "bg-sky-50 text-sky-700"
-            }`}
-          >
-            {isPartner
-              ? tr(locale, "협약 대학 · 서류작성 + 컨설팅", "Trường liên kết · Hồ sơ + tư vấn")
-              : tr(locale, "자유 지원 · 서류작성 지원", "Tự do đăng ký · Hỗ trợ hồ sơ")}
-          </span>
+          <div className="mt-1.5">
+            <span
+              className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-bold ${
+                isPartner
+                  ? "bg-emerald-100 text-emerald-800"
+                  : "bg-sky-100 text-sky-800"
+              }`}
+            >
+              {isPartner
+                ? tr(locale, "협약 대학", "Trường liên kết")
+                : tr(locale, "자유 지원 대학", "Trường tự do đăng ký")}
+            </span>
+            <p className="mt-1 text-xs font-semibold text-slate-600">
+              {isPartner
+                ? tr(
+                    locale,
+                    "서류 작성(무료) + 발급 서류 대행(유료) + 지원 컨설팅(무료)",
+                    "Soạn hồ sơ (miễn phí) + Dịch vụ xin cấp giấy tờ (trả phí) + Tư vấn đăng ký (miễn phí)"
+                  )
+                : tr(
+                    locale,
+                    "서류 작성(무료) + 발급 서류 대행(유료)",
+                    "Soạn hồ sơ (miễn phí) + Dịch vụ xin cấp giấy tờ (trả phí)"
+                  )}
+            </p>
+          </div>
         </div>
       </header>
 
       {applied && (
-        <p className="rounded-lg bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-          {tr(
-            locale,
-            "지원이 등록되었습니다. '내 지원'에서 서류 작성을 이어가세요.",
-            "Đã đăng ký. Tiếp tục soạn hồ sơ tại 'Hồ sơ của tôi'."
-          )}
-        </p>
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3">
+          <span className="text-sm font-semibold text-emerald-800">
+            {tr(locale, "✓ 지원이 등록되었습니다", "✓ Đã đăng ký")}
+          </span>
+          <Link
+            href="/student/applications"
+            className="shrink-0 rounded-lg bg-emerald-600 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-700"
+          >
+            {tr(locale, "서류 작성하러 가기 →", "Đi soạn hồ sơ →")}
+          </Link>
+          <AppliedToast locale={locale} />
+        </div>
       )}
 
       {desc && (

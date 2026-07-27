@@ -44,7 +44,7 @@ export default async function StudentHomePage() {
         "졸업·성적·가족관계 등 발급 서류를 대행해 드립니다.",
         "Chúng tôi xin cấp giấy tờ (tốt nghiệp, học bạ, hộ tịch...) thay bạn."
       ),
-      ready: false,
+      ready: true,
     },
   ];
 

@@ -74,8 +74,8 @@ export function UniversitiesClient({
         title={tr(locale, "협약 대학", "Trường liên kết")}
         hint={tr(
           locale,
-          "서류 작성 + 지원 컨설팅을 함께 지원",
-          "Hỗ trợ soạn hồ sơ + tư vấn đăng ký"
+          "서류 작성(무료) + 발급 서류 대행(유료) + 지원 컨설팅(무료)",
+          "Soạn hồ sơ (miễn phí) + Dịch vụ xin cấp giấy tờ (trả phí) + Tư vấn đăng ký (miễn phí)"
         )}
         accent="emerald"
         list={partners}
@@ -86,8 +86,8 @@ export function UniversitiesClient({
         title={tr(locale, "자유 지원 대학", "Trường tự do đăng ký")}
         hint={tr(
           locale,
-          "서류 작성을 지원 (직접 지원)",
-          "Hỗ trợ soạn hồ sơ (bạn tự đăng ký)"
+          "서류 작성(무료) + 발급 서류 대행(유료)",
+          "Soạn hồ sơ (miễn phí) + Dịch vụ xin cấp giấy tờ (trả phí)"
         )}
         accent="sky"
         list={opens}
@@ -122,14 +122,19 @@ function Section({
   list: UniversityCard[];
 }) {
   if (list.length === 0) return null;
-  const dot =
-    accent === "emerald" ? "bg-emerald-500" : "bg-sky-500";
+  const dot = accent === "emerald" ? "bg-emerald-500" : "bg-sky-500";
+  const titleColor =
+    accent === "emerald" ? "text-emerald-700" : "text-sky-700";
   return (
     <section>
-      <div className="mb-2 flex items-baseline gap-2">
-        <span className={`inline-block h-2 w-2 rounded-full ${dot}`} />
-        <h2 className="text-sm font-semibold text-slate-800">{title}</h2>
-        <span className="text-xs text-slate-400">{hint}</span>
+      <div className="mb-3">
+        <div className="flex items-center gap-2">
+          <span className={`inline-block h-2.5 w-2.5 rounded-full ${dot}`} />
+          <h2 className={`text-lg font-extrabold tracking-tight ${titleColor}`}>
+            {title}
+          </h2>
+        </div>
+        <p className="mt-1 pl-4 text-xs font-semibold text-slate-600">{hint}</p>
       </div>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {list.map((u) => (
