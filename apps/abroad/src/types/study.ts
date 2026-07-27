@@ -533,6 +533,77 @@ export type StudyUniversityRequest = {
 };
 
 // =============================================================================
+// 6c. 발급대행 커머스 (study_issuance_*)
+// =============================================================================
+export type IssuanceNotarization =
+  | "none"
+  | "translation_notarization"
+  | "consul"
+  | "consul_for_vietnam"
+  | "apostille"
+  | "apostille_or_consul";
+
+export type StudyIssuancePricing = {
+  id: string;
+  std_key: string | null;
+  label_ko: string;
+  notarization: IssuanceNotarization;
+  unit_price: number;
+  proxy_unavailable_surcharge: number;
+  is_active: boolean;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+};
+
+export type IssuanceOrderStatus =
+  | "draft"
+  | "payment_pending"
+  | "paid"
+  | "info_needed"
+  | "assigned"
+  | "contacted"
+  | "in_progress"
+  | "scheduled"
+  | "issued"
+  | "shipped"
+  | "done"
+  | "cancelled";
+
+export type StudyIssuanceOrder = {
+  id: string;
+  student_id: string;
+  university_id: number | null;
+  status: IssuanceOrderStatus;
+  subtotal: number;
+  payment_transaction_id: string | null;
+  toss_order_id: string | null;
+  paid_at: string | null;
+  contact_snapshot: Json | null;
+  info_completed_at: string | null;
+  manager_note: string | null;
+  eta_date: string | null;
+  result_pdf_path: string | null;
+  shipped_at: string | null;
+  cancelled_at: string | null;
+  cancel_reason: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type StudyIssuanceOrderItem = {
+  id: string;
+  order_id: string;
+  pricing_id: string | null;
+  label_ko: string;
+  notarization: IssuanceNotarization;
+  unit_price: number;
+  proxy_surcharge: number;
+  qty: number;
+  created_at: string;
+};
+
+// =============================================================================
 // 7. study_application_documents
 // =============================================================================
 export type StudyApplicationDocument = {

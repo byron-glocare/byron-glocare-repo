@@ -1137,6 +1137,41 @@ export type Database = {
         ];
       };
 
+      study_issuance_pricing: {
+        Row: import("./study").StudyIssuancePricing;
+        Insert: Partial<import("./study").StudyIssuancePricing>;
+        Update: Partial<import("./study").StudyIssuancePricing>;
+        Relationships: [];
+      };
+
+      study_issuance_orders: {
+        Row: import("./study").StudyIssuanceOrder;
+        Insert: Partial<import("./study").StudyIssuanceOrder>;
+        Update: Partial<import("./study").StudyIssuanceOrder>;
+        Relationships: [
+          {
+            foreignKeyName: "study_issuance_orders_student_id_fkey";
+            columns: ["student_id"];
+            referencedRelation: "study_managed_students";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+
+      study_issuance_order_items: {
+        Row: import("./study").StudyIssuanceOrderItem;
+        Insert: Partial<import("./study").StudyIssuanceOrderItem>;
+        Update: Partial<import("./study").StudyIssuanceOrderItem>;
+        Relationships: [
+          {
+            foreignKeyName: "study_issuance_order_items_order_id_fkey";
+            columns: ["order_id"];
+            referencedRelation: "study_issuance_orders";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+
       study_application_documents: {
         Row: import("./study").StudyApplicationDocument;
         Insert: Partial<import("./study").StudyApplicationDocument>;
