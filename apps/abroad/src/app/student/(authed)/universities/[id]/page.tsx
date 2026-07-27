@@ -53,18 +53,22 @@ export default async function StudentUniversityDetailPage({
         .order("term", { ascending: false }),
       supabase
         .from("study_admission_specs")
-        .select("id, term, admission_category, program_type, eligibility")
+        .select("id, term, admission_category, program_type, eligibility, departments")
         .eq("university_id", uniId)
         .eq("status", "approved"),
       supabase
         .from("study_applications")
-        .select("offering_id")
+        .select("offering_id, admission_spec_id, target_department_label")
         .eq("student_id", session.student.id),
     ]);
 
   const specById = new Map((specs ?? []).map((s) => [s.id, s]));
   const appliedOfferingIds = new Set(
     (myApps ?? []).map((a) => a.offering_id).filter(Boolean)
+  );
+  // 자유 지원(spec 직접) 중복 판별용 — (모집요강 + 학과라벨)
+  const appliedSpecDept = new Set(
+    (myApps ?? []).map((a) => `${a.admission_spec_id}::${a.target_department_label ?? ""}`)
   );
 
   // 협약 = 모집(offerings)에 등록된 대학. 지원 가능 = published + 모집요강 연결.
@@ -73,38 +77,64 @@ export default async function StudentUniversityDetailPage({
     (o) => o.status === "published" && o.source_spec_id
   );
 
-  // 학과명 join
-  const deptIds = Array.from(
-    new Set(offerings.map((o) => o.department_id))
-  );
-  const { data: depts } =
-    deptIds.length > 0
-      ? await supabase
-          .from("departments")
-          .select("id, name_ko, name_vi")
-          .in("id", deptIds)
-      : { data: [] as Array<{ id: number; name_ko: string; name_vi: string | null }> };
-  const deptMap = new Map((depts ?? []).map((d) => [d.id, d]));
+  let items: OfferingItem[];
+  if (isPartner) {
+    // 협약: 모집(offering) 단위로 지원
+    const deptIds = Array.from(new Set(offerings.map((o) => o.department_id)));
+    const { data: depts } =
+      deptIds.length > 0
+        ? await supabase
+            .from("departments")
+            .select("id, name_ko, name_vi")
+            .in("id", deptIds)
+        : { data: [] as Array<{ id: number; name_ko: string; name_vi: string | null }> };
+    const deptMap = new Map((depts ?? []).map((d) => [d.id, d]));
 
-  const items: OfferingItem[] = offerings.map((o) => {
-    const spec = o.source_spec_id ? specById.get(o.source_spec_id) : null;
-    const dept = deptMap.get(o.department_id);
-    const deptNameKo = dept?.name_ko ?? `학과 #${o.department_id}`;
-    const deptName =
-      (locale === "vi" ? dept?.name_vi ?? dept?.name_ko : dept?.name_ko) ??
-      deptNameKo;
-    return {
-      id: o.id,
-      sourceSpecId: (o.source_spec_id as string) ?? "",
-      departmentId: o.department_id,
-      departmentName: deptName,
-      departmentLabelKo: deptNameKo,
-      term: o.term,
-      programType: spec?.program_type ?? null,
-      languages: deriveOfferingLanguages(spec?.eligibility ?? null, deptNameKo),
-      alreadyApplied: appliedOfferingIds.has(o.id),
-    };
-  });
+    items = offerings.map((o) => {
+      const spec = o.source_spec_id ? specById.get(o.source_spec_id) : null;
+      const dept = deptMap.get(o.department_id);
+      const deptNameKo = dept?.name_ko ?? `학과 #${o.department_id}`;
+      const deptName =
+        (locale === "vi" ? dept?.name_vi ?? dept?.name_ko : dept?.name_ko) ??
+        deptNameKo;
+      return {
+        id: o.id,
+        offeringId: o.id,
+        sourceSpecId: (o.source_spec_id as string) ?? "",
+        departmentId: o.department_id,
+        departmentName: deptName,
+        departmentLabelKo: deptNameKo,
+        term: o.term,
+        programType: spec?.program_type ?? null,
+        languages: deriveOfferingLanguages(spec?.eligibility ?? null, deptNameKo),
+        alreadyApplied: appliedOfferingIds.has(o.id),
+      };
+    });
+  } else {
+    // 자유 지원: 승인된 모집요강(spec)의 학과를 직접 골라 지원 (offering 없음)
+    items = (specs ?? []).flatMap((s) => {
+      const depts = Array.isArray(s.departments)
+        ? (s.departments as Array<{ name?: string }>)
+        : [];
+      return depts
+        .filter((d) => d && typeof d.name === "string" && d.name.trim())
+        .map((d) => {
+          const label = (d.name as string).trim();
+          return {
+            id: `${s.id}::${label}`,
+            offeringId: null,
+            sourceSpecId: s.id,
+            departmentId: null,
+            departmentName: label,
+            departmentLabelKo: label,
+            term: s.term,
+            programType: s.program_type ?? null,
+            languages: deriveOfferingLanguages(s.eligibility ?? null, label),
+            alreadyApplied: appliedSpecDept.has(`${s.id}::${label}`),
+          } satisfies OfferingItem;
+        });
+    });
+  }
 
   const name = (locale === "vi" ? u.name_vi ?? u.name_ko : u.name_ko) ?? "";
   const region =
@@ -168,14 +198,25 @@ export default async function StudentUniversityDetailPage({
 
       <section>
         <h2 className="mb-2 text-sm font-semibold text-slate-800">
-          {tr(locale, "모집 중인 과정", "Chương trình đang tuyển")}
+          {isPartner
+            ? tr(locale, "모집 중인 과정", "Chương trình đang tuyển")
+            : tr(locale, "지원 가능 학과", "Ngành có thể đăng ký")}
         </h2>
+        {!isPartner && items.length > 0 && (
+          <p className="mb-2 text-xs text-slate-500">
+            {tr(
+              locale,
+              "자유 지원 대학입니다. 학과를 골라 지원을 시작하면 서류 작성을 도와드립니다.",
+              "Trường tự do đăng ký. Chọn ngành để bắt đầu — chúng tôi hỗ trợ soạn hồ sơ."
+            )}
+          </p>
+        )}
         {items.length === 0 ? (
           <p className="rounded-xl border border-dashed border-slate-200 bg-slate-50/60 px-4 py-8 text-center text-sm text-slate-400">
             {tr(
               locale,
-              "아직 모집 중인 과정이 없습니다.",
-              "Hiện chưa có chương trình đang tuyển."
+              "아직 지원 가능한 모집요강이 없습니다. '대학 요청'으로 문의해 주세요.",
+              "Chưa có thông tin tuyển sinh để đăng ký. Vui lòng gửi 'Yêu cầu trường'."
             )}
           </p>
         ) : (

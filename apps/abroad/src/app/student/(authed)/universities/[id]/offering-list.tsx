@@ -7,9 +7,13 @@ import { tr, type Locale } from "@/lib/i18n";
 import { createSelfApplicationAction, type ApplyState } from "./apply-actions";
 
 export type OfferingItem = {
+  /** react key (offering=offering.id, spec경로=spec::학과) */
   id: string;
+  /** 협약(offering) 경로만. 자유 지원(spec 직접)이면 null. */
+  offeringId: string | null;
   sourceSpecId: string;
-  departmentId: number;
+  /** offering 경로만 실제 학과 FK. spec 경로는 null(라벨만). */
+  departmentId: number | null;
   departmentName: string;
   departmentLabelKo: string;
   term: string;
@@ -113,17 +117,21 @@ function OfferingRow({
       {!item.alreadyApplied && (
         <form action={formAction} className="mt-3">
           <input type="hidden" name="university_id" value={universityId} />
-          <input type="hidden" name="offering_id" value={item.id} />
+          {item.offeringId ? (
+            <input type="hidden" name="offering_id" value={item.offeringId} />
+          ) : null}
           <input
             type="hidden"
             name="admission_spec_id"
             value={item.sourceSpecId}
           />
-          <input
-            type="hidden"
-            name="target_department_id"
-            value={item.departmentId}
-          />
+          {item.departmentId != null ? (
+            <input
+              type="hidden"
+              name="target_department_id"
+              value={item.departmentId}
+            />
+          ) : null}
           <input
             type="hidden"
             name="target_department_label"
