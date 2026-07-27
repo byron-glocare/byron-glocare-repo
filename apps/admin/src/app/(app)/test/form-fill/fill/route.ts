@@ -3,6 +3,7 @@ import { promises as fs } from "node:fs";
 import Docxtemplater from "docxtemplater";
 import ImageModule from "docxtemplater-image-module-free";
 import imageSize from "image-size";
+import type PizZip from "pizzip";
 
 import { createAdminClient } from "@/lib/supabase/server";
 import {
@@ -10,6 +11,11 @@ import {
   type InlineSlot,
   type SlotBinding,
 } from "@/lib/docx/inline-slots";
+import {
+  fillSlotsV2,
+  type SlotV2Binding,
+} from "@/lib/docx/slot-fill-v2";
+import type { SlotV2 } from "@/lib/docx/slot-detect-v2";
 import {
   buildBindings,
   isSignatureToken,
@@ -49,14 +55,18 @@ function safeSize(buf: Buffer): [number, number] {
 
 /**
  * POST /test/form-fill/fill — docx + 슬롯 바인딩 → 테스트 값으로 채운 docx.
- *   mapping: { [slotIndex]: token }  (token = 표준데이터 키 | 날짜파생 | today* | "lit:<직접입력>")
+ *   form field `engine`: "v1"(기본) | "v2"(구조적 탐지)
+ *   mapping: { [slotIndex]: token }
+ *     token = 표준데이터 키 | 날짜파생 | today* | "lit:<직접입력>" | "opt:<옵션번호>"(v2 체크박스)
  */
 export async function POST(req: Request): Promise<Response> {
   let file: unknown;
   let mapping: Record<number, string> = {};
+  let engine = "v1";
   try {
     const form = await req.formData();
     file = form.get("file");
+    engine = String(form.get("engine") ?? "v1");
     mapping = JSON.parse(String(form.get("mapping") ?? "{}")) as Record<
       number,
       string
@@ -83,22 +93,45 @@ export async function POST(req: Request): Promise<Response> {
     const buf = Buffer.from(await file.arrayBuffer());
     const usedImageTokens = new Set<string>();
 
-    const resolve = (slot: InlineSlot): SlotBinding | null => {
-      const token = mapping[slot.index];
-      if (!token) return null;
-      if (token.startsWith("lit:")) {
-        return { kind: "text", value: token.slice(4) };
-      }
-      const opt = optByToken.get(token);
-      if (!opt) return null;
-      if (opt.kind === "image") {
-        usedImageTokens.add(token);
-        return { kind: "image", token: `{{%${token}}}` };
-      }
-      return { kind: "text", value: values[token] ?? "" };
-    };
+    let zip: PizZip;
+    let usedImage: boolean;
 
-    const { zip, usedImage } = fillDocxSlots(buf, resolve);
+    if (engine === "v2") {
+      const resolve = (slot: SlotV2): SlotV2Binding | null => {
+        const token = mapping[slot.index];
+        if (!token) return null;
+        if (slot.kind === "checkbox_group" && token.startsWith("opt:")) {
+          return { kind: "checkbox", optionIndex: Number(token.slice(4)) };
+        }
+        if (token.startsWith("lit:")) {
+          return { kind: "text", value: token.slice(4) };
+        }
+        const opt = optByToken.get(token);
+        if (!opt) return null;
+        if (opt.kind === "image") {
+          usedImageTokens.add(token);
+          return { kind: "image", token: `{{%${token}}}` };
+        }
+        return { kind: "text", value: values[token] ?? "" };
+      };
+      ({ zip, usedImage } = fillSlotsV2(buf, resolve));
+    } else {
+      const resolve = (slot: InlineSlot): SlotBinding | null => {
+        const token = mapping[slot.index];
+        if (!token) return null;
+        if (token.startsWith("lit:")) {
+          return { kind: "text", value: token.slice(4) };
+        }
+        const opt = optByToken.get(token);
+        if (!opt) return null;
+        if (opt.kind === "image") {
+          usedImageTokens.add(token);
+          return { kind: "image", token: `{{%${token}}}` };
+        }
+        return { kind: "text", value: values[token] ?? "" };
+      };
+      ({ zip, usedImage } = fillDocxSlots(buf, resolve));
+    }
 
     let out: Buffer;
     if (usedImage) {

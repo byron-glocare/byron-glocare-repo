@@ -1,0 +1,581 @@
+[
+ {
+  "id": "S001",
+  "kind": "checkbox_group",
+  "addr": "t0.r0.c1",
+  "options": [
+   "수시1차",
+   "수시2차",
+   "정시",
+   "자율(추가)"
+  ],
+  "label_left": "모집 구분",
+  "label_above": null
+ },
+ {
+  "id": "S002",
+  "kind": "text",
+  "addr": "t1.r0.c2",
+  "label_left": "이름",
+  "label_above": null
+ },
+ {
+  "id": "S003",
+  "kind": "char_grid",
+  "addr": [
+   "t1.r0.c4",
+   "t1.r0.c5",
+   "t1.r0.c6",
+   "t1.r0.c7",
+   "t1.r0.c8",
+   "t1.r0.c9"
+  ],
+  "boxes": 6,
+  "label_left": "주민등록번호",
+  "label_above": null
+ },
+ {
+  "id": "S004",
+  "kind": "char_grid",
+  "addr": [
+   "t1.r0.c11",
+   "t1.r0.c12",
+   "t1.r0.c13",
+   "t1.r0.c14",
+   "t1.r0.c15",
+   "t1.r0.c16",
+   "t1.r0.c17"
+  ],
+  "boxes": 7,
+  "label_left": "-",
+  "label_above": null
+ },
+ {
+  "id": "S005",
+  "kind": "text",
+  "addr": "t1.r1.c2",
+  "label_left": "주소",
+  "label_above": null
+ },
+ {
+  "id": "S006",
+  "kind": "text",
+  "addr": "t1.r2.c2",
+  "label_left": "전화번호",
+  "label_above": null
+ },
+ {
+  "id": "S007",
+  "kind": "text",
+  "addr": "t1.r2.c4",
+  "label_left": "휴대전화번호",
+  "label_above": null
+ },
+ {
+  "id": "S008",
+  "kind": "anchor_split",
+  "addr": "t1.r3.c1",
+  "template": "이 메 일",
+  "label_left": null
+ },
+ {
+  "id": "S009",
+  "kind": "text",
+  "addr": "t1.r3.c2",
+  "label_left": "이 메 일",
+  "label_above": null
+ },
+ {
+  "id": "S010",
+  "kind": "anchor_split",
+  "addr": "t1.r3.c4",
+  "template": "1.(관계 :)",
+  "label_left": "추가연락처"
+ },
+ {
+  "id": "S011",
+  "kind": "anchor_split",
+  "addr": "t1.r4.c4",
+  "template": "2.(관계 :)",
+  "label_left": "추가연락처"
+ },
+ {
+  "id": "S012",
+  "kind": "checkbox_group",
+  "addr": "t2.r0.c1",
+  "options": [
+   "간호학과"
+  ],
+  "label_left": "지망 학과",
+  "label_above": null
+ },
+ {
+  "id": "S013",
+  "kind": "checkbox_group",
+  "addr": "t2.r0.c2",
+  "options": [
+   "물리치료과"
+  ],
+  "label_left": "□ 간호학과",
+  "label_above": null
+ },
+ {
+  "id": "S014",
+  "kind": "checkbox_group",
+  "addr": "t2.r0.c3",
+  "options": [
+   "방사선과"
+  ],
+  "label_left": "□ 물리치료과",
+  "label_above": null
+ },
+ {
+  "id": "S015",
+  "kind": "checkbox_group",
+  "addr": "t2.r0.c4",
+  "options": [
+   "치위생과"
+  ],
+  "label_left": "□ 방사선과",
+  "label_above": null
+ },
+ {
+  "id": "S016",
+  "kind": "checkbox_group",
+  "addr": "t2.r0.c5",
+  "options": [
+   "식품영양학과"
+  ],
+  "label_left": "□ 치위생과",
+  "label_above": null
+ },
+ {
+  "id": "S017",
+  "kind": "checkbox_group",
+  "addr": "t2.r0.c6",
+  "options": [
+   "베이커리카페창업과(야)"
+  ],
+  "label_left": "□ 식품영양학과",
+  "label_above": null
+ },
+ {
+  "id": "S018",
+  "kind": "checkbox_group",
+  "addr": "t2.r1.c1",
+  "options": [
+   "건설융합과(야)"
+  ],
+  "label_left": null,
+  "label_above": "□ 간호학과"
+ },
+ {
+  "id": "S019",
+  "kind": "checkbox_group",
+  "addr": "t2.r1.c2",
+  "options": [
+   "신재생에너지전기과"
+  ],
+  "label_left": "□ 건설융합과(야)",
+  "label_above": "□ 물리치료과"
+ },
+ {
+  "id": "S020",
+  "kind": "checkbox_group",
+  "addr": "t2.r1.c3",
+  "options": [
+   "복지학부(주)"
+  ],
+  "label_left": "□ 신재생에너지전기과",
+  "label_above": "□ 방사선과"
+ },
+ {
+  "id": "S021",
+  "kind": "checkbox_group",
+  "addr": "t2.r1.c4",
+  "options": [
+   "복지학부(야)"
+  ],
+  "label_left": "□ 복지학부(주)",
+  "label_above": "□ 치위생과"
+ },
+ {
+  "id": "S022",
+  "kind": "checkbox_group",
+  "addr": "t2.r1.c5",
+  "options": [
+   "웰빙복지융합과"
+  ],
+  "label_left": "□ 복지학부(야)",
+  "label_above": "□ 식품영양학과"
+ },
+ {
+  "id": "S023",
+  "kind": "checkbox_group",
+  "addr": "t2.r1.c6",
+  "options": [
+   "파크골프산업복지학과(야)"
+  ],
+  "label_left": "□ 웰빙복지융합과",
+  "label_above": "□ 베이커리카페창업과(야)"
+ },
+ {
+  "id": "S024",
+  "kind": "checkbox_group",
+  "addr": "t2.r2.c1",
+  "options": [
+   "관광문화융합과"
+  ],
+  "label_left": null,
+  "label_above": "□ 건설융합과(야)"
+ },
+ {
+  "id": "S025",
+  "kind": "checkbox_group",
+  "addr": "t2.r2.c2",
+  "options": [
+   "뷰티미용과"
+  ],
+  "label_left": "□ 관광문화융합과",
+  "label_above": "□ 신재생에너지전기과"
+ },
+ {
+  "id": "S026",
+  "kind": "checkbox_group",
+  "addr": "t2.r2.c3",
+  "options": [
+   "스포츠과학과(주간)"
+  ],
+  "label_left": "□ 뷰티미용과",
+  "label_above": "□ 복지학부(주)"
+ },
+ {
+  "id": "S027",
+  "kind": "checkbox_group",
+  "addr": "t2.r2.c4",
+  "options": [
+   "스포츠과학과(야간)"
+  ],
+  "label_left": "□스포츠과학과(주간)",
+  "label_above": "□ 복지학부(야)"
+ },
+ {
+  "id": "S028",
+  "kind": "checkbox_group",
+  "addr": "t2.r2.c5",
+  "options": [
+   "UCC자율전공학부"
+  ],
+  "label_left": "□ 스포츠과학과(야간)",
+  "label_above": "□ 웰빙복지융합과"
+ },
+ {
+  "id": "S029",
+  "kind": "checkbox_group",
+  "addr": "t2.r3.c6",
+  "options": [
+   "조선학과",
+   "글로벌해양학과",
+   "글로벌항공학부",
+   "글로벌산업학과",
+   "글로벌컬처학과",
+   "글로벌경영학과"
+  ],
+  "label_left": null,
+  "label_above": "정원 외 순수외국인 전담학과"
+ },
+ {
+  "id": "S030",
+  "kind": "anchor_split",
+  "addr": "t2.r5.c1",
+  "template": "일반 전형 (정시 해당)",
+  "label_left": null
+ },
+ {
+  "id": "S031",
+  "kind": "anchor_split",
+  "addr": "t2.r6.c2",
+  "template": "일반고",
+  "label_left": null
+ },
+ {
+  "id": "S032",
+  "kind": "anchor_split",
+  "addr": "t2.r6.c8",
+  "template": "4년제 대학",
+  "label_left": "전문대학 졸업(예정)자"
+ },
+ {
+  "id": "S033",
+  "kind": "anchor_split",
+  "addr": "t2.r7.c8",
+  "template": "2년 수료자",
+  "label_left": null
+ },
+ {
+  "id": "S034",
+  "kind": "char_grid",
+  "addr": [
+   "t2.r8.c1",
+   "t2.r8.c2",
+   "t2.r8.c3",
+   "t2.r8.c4",
+   "t2.r8.c5",
+   "t2.r8.c6",
+   "t2.r8.c7",
+   "t2.r8.c8",
+   "t2.r8.c9",
+   "t2.r8.c10",
+   "t2.r8.c11"
+  ],
+  "boxes": 11,
+  "label_left": null,
+  "label_above": "일반 전형 (정시 해당)"
+ },
+ {
+  "id": "S035",
+  "kind": "checkbox_group",
+  "addr": "t2.r8.c14",
+  "options": [
+   "7호"
+  ],
+  "label_left": "만학도 성인재직자",
+  "label_above": "순수 외국인"
+ },
+ {
+  "id": "S036",
+  "kind": "text",
+  "addr": "t2.r8.c15",
+  "label_left": "6호 □ 7호",
+  "label_above": "새터민"
+ },
+ {
+  "id": "S037",
+  "kind": "checkbox_group",
+  "addr": "t3.r1.c1",
+  "options": [
+   "졸업예정",
+   "졸업 일반계 고교 직업과정 이수자",
+   "공업계 2+1 체제 고교 대표 전화번호 :고"
+  ],
+  "label_left": null,
+  "label_above": "고등학교 졸업(예정)자"
+ },
+ {
+  "id": "S038",
+  "kind": "underline_blank",
+  "addr": "t3.r1.c1.p0",
+  "blanks": 1,
+  "line_text": "고등학교",
+  "label_above": "고등학교 졸업(예정)자"
+ },
+ {
+  "id": "S039",
+  "kind": "underline_blank",
+  "addr": "t3.r1.c2.p0",
+  "blanks": 1,
+  "line_text": "지구 검정고시",
+  "label_above": "검정고시 출신자"
+ },
+ {
+  "id": "S040",
+  "kind": "underline_blank",
+  "addr": "t3.r1.c2.p1",
+  "blanks": 2,
+  "line_text": "년 월",
+  "label_above": "검정고시 출신자"
+ },
+ {
+  "id": "S041",
+  "kind": "anchor_split",
+  "addr": "t3.r1.c2",
+  "template": "지구 검정고시 년 월",
+  "label_left": "고등학교 년   월 □ 졸업예정 □  졸업 일반계 고교 직업과정 이수자 □ 공업계 2+1 체제 고교 대표 전화번호 :고교 소재지"
+ },
+ {
+  "id": "S042",
+  "kind": "checkbox_group",
+  "addr": "t3.r1.c3",
+  "options": [
+   "졸업",
+   "수료"
+  ],
+  "label_left": "지구 검정고시 년 월",
+  "label_above": "대학 졸업(예정)자"
+ },
+ {
+  "id": "S043",
+  "kind": "underline_blank",
+  "addr": "t3.r1.c3.p0",
+  "blanks": 1,
+  "line_text": "대학(교)",
+  "label_above": "대학 졸업(예정)자"
+ },
+ {
+  "id": "S044",
+  "kind": "underline_blank",
+  "addr": "t3.r1.c3.p1",
+  "blanks": 2,
+  "line_text": "년 월",
+  "label_above": "대학 졸업(예정)자"
+ },
+ {
+  "id": "S045",
+  "kind": "checkbox_group",
+  "addr": "t3.r2.c1",
+  "options": [
+   "동의하지 않음",
+   "비대상교"
+  ],
+  "label_left": "온라인 제공 동의",
+  "label_above": "고등학교 년   월 □ 졸업예정 □  졸업 일반계 고교 직업과정 이수자 □ 공업계 2+1 체제 고교 대표 전화번호 :고교 소재지"
+ },
+ {
+  "id": "S046",
+  "kind": "checkbox_group",
+  "addr": "t3.r2.c2",
+  "options": [
+   "동의하지 않음 (제공동의 확인번호 :)"
+  ],
+  "label_left": "동의함 □ 동의하지 않음 □ 비대상교",
+  "label_above": "지구 검정고시 년 월"
+ },
+ {
+  "id": "S047",
+  "kind": "anchor_split",
+  "addr": "t4.r0.c1",
+  "template": "(은행명)",
+  "label_left": "환불계좌번호"
+ },
+ {
+  "id": "S048",
+  "kind": "text",
+  "addr": "t4.r0.c3",
+  "label_left": "계좌번호",
+  "label_above": null
+ },
+ {
+  "id": "S049",
+  "kind": "text",
+  "addr": "t4.r0.c5",
+  "label_left": "예금주",
+  "label_above": null
+ },
+ {
+  "id": "S050",
+  "kind": "checkbox_group",
+  "addr": "t5.r0.c1",
+  "options": [
+   "예☑아니오"
+  ],
+  "label_left": "수시모집에 대한 합격여부 확인 ※ 정시 지원자만 작성",
+  "label_above": null
+ },
+ {
+  "id": "S051",
+  "kind": "checkbox_group",
+  "addr": "t6.r0.c1",
+  "options": [
+   "동의하지 않음"
+  ],
+  "label_left": "개인정보 수집·이용",
+  "label_above": null
+ },
+ {
+  "id": "S052",
+  "kind": "anchor_split",
+  "addr": "t7.r1.c0",
+  "template": "년월일 지 원 자 (서명) 목포과학대학교 총장 귀하",
+  "label_left": null
+ },
+ {
+  "id": "S053",
+  "kind": "anchor_split",
+  "addr": "t8.r1.c2",
+  "template": "대입 원서 접수 후 1년",
+  "label_left": "이름, 국적, 공통원서비밀번호, 주소, 전화번호, 휴대전화번호, 추가전화번호(1개), 이메일, 학교정보(최종학력구분, 재학/출신 고교명, 졸업(예정)연도, 고교 전화번호), 전형구분, 모집단위(지망학과)"
+ },
+ {
+  "id": "S054",
+  "kind": "checkbox_group",
+  "addr": "t8.r2.c0",
+  "options": [
+   "동의하지 않음 ※ 개인정보의 수집 및 이용 "
+  ],
+  "label_left": null,
+  "label_above": "대입 원서 접수 및 대입 전형"
+ },
+ {
+  "id": "S055",
+  "kind": "anchor_split",
+  "addr": "t9.r1.c2",
+  "template": "대입 원서 접수 후 1년",
+  "label_left": "추가전화번호(1~4개), 환불계좌정보(은행명, 계좌번호, 예금주 이름)"
+ },
+ {
+  "id": "S056",
+  "kind": "checkbox_group",
+  "addr": "t9.r2.c0",
+  "options": [
+   "동의하지 않음 ※ 선택적인 개인정보의 수집 "
+  ],
+  "label_left": null,
+  "label_above": "대입 원서 접수 및 대입 전형"
+ },
+ {
+  "id": "S057",
+  "kind": "anchor_split",
+  "addr": "t10.r1.c2",
+  "template": "대입 원서 접수 후 1년",
+  "label_left": "주민등록번호(재외국민과 외국인 전형 등의 경우: 외국인 등록번호 또는 여권번호)"
+ },
+ {
+  "id": "S058",
+  "kind": "anchor_split",
+  "addr": "t11.r1.c2",
+  "template": "대입 원서 접수 후 1년 또는 위탁계약 종료시까지",
+  "label_left": "학교생활기록부 온라인 추출 (항목 : 이름, 주민등록번호)"
+ },
+ {
+  "id": "S059",
+  "kind": "anchor_split",
+  "addr": "t11.r3.c2",
+  "template": "대입 원서 접수 후 1년 또는 위탁계약 종료시까지",
+  "label_left": "지원방법위반 및 이중등록 조항 위반자 사전 예방 (항목 : 모집시기, 이름, 주민등록번호(재외국민과 외국인 전형 등의 경우 : 외국인등록번호 또는 여권번호), 수험번 호, 대학코드, 합격/예치금구분, 접수장소, 접수일자, 지원결과, 전형유형, 모집단위명, 계열코드, 출신고교코드, 출신 고교유형코드, 졸업연도, 등록일자구분)"
+ },
+ {
+  "id": "S060",
+  "kind": "anchor_split",
+  "addr": "t11.r4.c2",
+  "template": "대입 원서 접수 후 1년 또는 위탁계약 종료 시까지",
+  "label_left": "수시 모집 지원 횟수 검색 및 통보 (항목 : 대학코드, 모집시기, 수험번호, 이름, 주민등록번호(재외국민과 외국인 전형 등의 경우 : 외국인등록번호 또는 여권번호), 모집단위명, 접수시간, 접수장소, 합격여부, 예치금납부여부)"
+ },
+ {
+  "id": "S061",
+  "kind": "anchor_split",
+  "addr": "t11.r6.c2",
+  "template": "대입 원서 접수 후 1년 또는 위탁계약 종료 시까지",
+  "label_left": "대학원서 일치성 검사 (항목 : 대학명, 수험번호, 이름, 모집단위, 전형유형, 접수기간)"
+ },
+ {
+  "id": "S062",
+  "kind": "anchor_split",
+  "addr": "t11.r8.c2",
+  "template": "대입 원서 접수 후 1년 또는 위탁계약 종료 시까지",
+  "label_left": "개인정보보호 모니터링 (항목 : ID, 접속정보, 개인민감정보 복호화 내역, 접속IP주소)"
+ },
+ {
+  "id": "S063",
+  "kind": "anchor_split",
+  "addr": "t11.r9.c2",
+  "template": "대입 원서 접수 후 1년 또는 위탁계약 종료 시까지",
+  "label_left": "대입원서접수대행 ※진학어플라이 개인정보처리방침 참조"
+ },
+ {
+  "id": "S064",
+  "kind": "text",
+  "addr": "t11.r10.c2",
+  "label_left": "이름, 수험번호, 모집단위(지망학과), 등록금액",
+  "label_above": "대입 원서 접수 후 1년 또는 위탁계약 종료 시까지"
+ }
+]

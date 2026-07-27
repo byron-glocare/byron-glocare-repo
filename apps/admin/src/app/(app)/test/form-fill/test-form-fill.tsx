@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Download, FileText, Loader2, Upload } from "lucide-react";
 
 import { Card } from "@/components/ui/card";
@@ -14,18 +14,38 @@ type BindingOption = {
   kind: "text" | "image";
 };
 
+type Engine = "v1" | "v2";
+
+/** v1(정규식) + v2(구조적) 슬롯을 함께 다루는 느슨한 타입 */
 type Slot = {
   index: number;
-  kind: "underscore" | "spaces" | "empty_cell";
-  original: string;
-  before: string;
-  after: string;
+  kind: string;
+  // v1
+  original?: string;
+  before?: string;
+  after?: string;
+  // v2
+  id?: string;
+  addr?: string | string[];
+  boxes?: number;
+  options?: string[];
+  blanks?: number;
+  line_text?: string;
+  label_left?: string | null;
+  label_above?: string | null;
 };
 
-const KIND_LABEL: Record<Slot["kind"], string> = {
+const KIND_LABEL: Record<string, string> = {
+  // v1
   underscore: "밑줄",
   spaces: "공백",
   empty_cell: "빈 셀",
+  // v2
+  text: "빈 셀",
+  char_grid: "글자칸 격자",
+  checkbox_group: "체크박스",
+  underline_blank: "밑줄+탭 빈칸",
+  anchor_split: "앵커 분할",
 };
 
 export function TestFormFill({
@@ -35,6 +55,7 @@ export function TestFormFill({
   options: BindingOption[];
   values: Record<string, string>;
 }) {
+  const [engine, setEngine] = useState<Engine>("v2");
   const [file, setFile] = useState<File | null>(null);
   const [slots, setSlots] = useState<Slot[] | null>(null);
   const [mapping, setMapping] = useState<Record<number, string>>({});
@@ -47,38 +68,57 @@ export function TestFormFill({
   const previewRef = useRef<HTMLDivElement | null>(null);
   const resultRef = useRef<HTMLDivElement | null>(null);
 
-  const optByToken = new Map(options.map((o) => [o.token, o]));
+  const optByToken = useMemo(
+    () => new Map(options.map((o) => [o.token, o])),
+    [options]
+  );
+  const slotByIndex = useMemo(
+    () => new Map((slots ?? []).map((s) => [s.index, s])),
+    [slots]
+  );
+
+  /** 매핑 토큰 → 칩에 보일 라벨 */
+  const labelForToken = useCallback(
+    (idx: number, token: string | undefined): string => {
+      if (!token) return `빈칸 ${idx}`;
+      if (token.startsWith("lit:")) return `"${token.slice(4)}"`;
+      if (token.startsWith("opt:")) {
+        const s = slotByIndex.get(idx);
+        const oi = Number(token.slice(4));
+        return `☑ ${s?.options?.[oi] ?? oi}`;
+      }
+      return optByToken.get(token)?.label ?? token;
+    },
+    [optByToken, slotByIndex]
+  );
 
   /** 미리보기 DOM 의 ⟦S{n}⟧ 마커 → 클릭 가능한 칩으로 치환 */
-  const decorateMarkers = useCallback(
-    (root: HTMLElement) => {
-      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
-      const targets: Text[] = [];
-      while (walker.nextNode()) {
-        const n = walker.currentNode as Text;
-        if (n.nodeValue && /⟦S\d+⟧/.test(n.nodeValue)) targets.push(n);
-      }
-      for (const node of targets) {
-        const frag = document.createDocumentFragment();
-        const parts = (node.nodeValue ?? "").split(/(⟦S\d+⟧)/);
-        for (const p of parts) {
-          const m = p.match(/^⟦S(\d+)⟧$/);
-          if (!m) {
-            frag.appendChild(document.createTextNode(p));
-            continue;
-          }
-          const idx = Number(m[1]);
-          const btn = document.createElement("button");
-          btn.type = "button";
-          btn.dataset.slot = String(idx);
-          btn.className = "slot-chip";
-          frag.appendChild(btn);
+  const decorateMarkers = useCallback((root: HTMLElement) => {
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    const targets: Text[] = [];
+    while (walker.nextNode()) {
+      const n = walker.currentNode as Text;
+      if (n.nodeValue && /⟦S\d+⟧/.test(n.nodeValue)) targets.push(n);
+    }
+    for (const node of targets) {
+      const frag = document.createDocumentFragment();
+      const parts = (node.nodeValue ?? "").split(/(⟦S\d+⟧)/);
+      for (const p of parts) {
+        const m = p.match(/^⟦S(\d+)⟧$/);
+        if (!m) {
+          frag.appendChild(document.createTextNode(p));
+          continue;
         }
-        node.parentNode?.replaceChild(frag, node);
+        const idx = Number(m[1]);
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.dataset.slot = String(idx);
+        btn.className = "slot-chip";
+        frag.appendChild(btn);
       }
-    },
-    []
-  );
+      node.parentNode?.replaceChild(frag, node);
+    }
+  }, []);
 
   /** 칩 라벨/스타일 갱신 (매핑 변경 시) */
   const refreshChips = useCallback(() => {
@@ -87,13 +127,7 @@ export function TestFormFill({
     root.querySelectorAll<HTMLButtonElement>("button[data-slot]").forEach((b) => {
       const idx = Number(b.dataset.slot);
       const token = mapping[idx];
-      const opt = token ? optByToken.get(token) : undefined;
-      const label = token
-        ? token.startsWith("lit:")
-          ? `"${token.slice(4)}"`
-          : (opt?.label ?? token)
-        : `빈칸 ${idx}`;
-      b.textContent = label;
+      b.textContent = labelForToken(idx, token);
       const bound = !!token;
       const isActive = active === idx;
       b.style.cssText = [
@@ -110,7 +144,7 @@ export function TestFormFill({
         `color:${bound ? "#065f46" : "#92400e"}`,
       ].join(";");
     });
-  }, [mapping, active, optByToken]);
+  }, [mapping, active, labelForToken]);
 
   useEffect(() => {
     refreshChips();
@@ -122,12 +156,14 @@ export function TestFormFill({
     setError(null);
     setSlots(null);
     setMapping({});
+    setActive(null);
     if (resultUrl) URL.revokeObjectURL(resultUrl);
     setResultUrl(null);
 
     try {
       const fd = new FormData();
       fd.set("file", file);
+      fd.set("engine", engine);
       const res = await fetch("/test/form-fill/scan", { method: "POST", body: fd });
       const j = (await res.json()) as {
         slots?: Slot[];
@@ -186,6 +222,7 @@ export function TestFormFill({
     try {
       const fd = new FormData();
       fd.set("file", file);
+      fd.set("engine", engine);
       fd.set("mapping", JSON.stringify(mapping));
       const res = await fetch("/test/form-fill/fill", { method: "POST", body: fd });
       if (!res.ok) {
@@ -223,19 +260,42 @@ export function TestFormFill({
   const boundCount = Object.values(mapping).filter(Boolean).length;
   const activeSlot = slots?.find((s) => s.index === active) ?? null;
   const groups = Array.from(new Set(options.map((o) => o.group)));
+  const kindCounts = (slots ?? []).reduce<Record<string, number>>((acc, s) => {
+    acc[s.kind] = (acc[s.kind] ?? 0) + 1;
+    return acc;
+  }, {});
 
   return (
     <div className="space-y-4">
       <Card className="space-y-2 p-5">
-        <h2 className="text-sm font-semibold">이 테스트가 증명하는 것</h2>
-        <p className="text-sm text-muted-foreground">
-          <strong>
-            &quot;지원자 : ______ (인)&quot;, &quot;___년 ___월 ___일&quot;
-          </strong>{" "}
-          처럼 <strong>한 칸/문단 안에 다른 텍스트와 섞인 빈칸</strong>을, 주변
-          글자(<code>년</code>, <code>(인)</code>)를 그대로 둔 채 그 자리에만 값을
-          채웁니다. 셀을 통째로 덮어쓰던 기존 방식이 못 하던 지점입니다. Word 편집은
-          필요 없습니다.
+        <h2 className="text-sm font-semibold">엔진 선택</h2>
+        <div className="flex flex-wrap items-center gap-2">
+          {(["v2", "v1"] as Engine[]).map((e) => (
+            <button
+              key={e}
+              type="button"
+              onClick={() => {
+                if (e === engine) return;
+                setEngine(e);
+                setSlots(null);
+                setMapping({});
+                setActive(null);
+                setError(null);
+              }}
+              className={`rounded-md border px-3 py-1.5 text-sm ${
+                engine === e
+                  ? "border-sky-500 bg-sky-50 font-semibold text-sky-800"
+                  : "border-input bg-background hover:bg-muted"
+              }`}
+            >
+              {e === "v2" ? "v2 · 구조적 표 격자 탐지" : "v1 · 정규식(밑줄·공백·빈셀)"}
+            </button>
+          ))}
+        </div>
+        <p className="text-xs text-muted-foreground">
+          <strong>v2</strong> 는 표를 gridSpan/vMerge 반영해 격자로 재구성하고{" "}
+          <strong>탭 빈칸·체크박스·주민번호 격자·앵커</strong>까지 구조적으로 잡습니다.
+          같은 양식을 v1/v2 로 각각 돌려 커버리지를 비교해 보세요.
         </p>
       </Card>
 
@@ -270,7 +330,7 @@ export function TestFormFill({
                 탐지 중...
               </>
             ) : (
-              "빈칸 탐지"
+              `빈칸 탐지 (${engine})`
             )}
           </Button>
           {slots ? (
@@ -280,6 +340,15 @@ export function TestFormFill({
             </span>
           ) : null}
         </div>
+        {slots && slots.length > 0 ? (
+          <div className="flex flex-wrap gap-1.5">
+            {Object.entries(kindCounts).map(([k, n]) => (
+              <Badge key={k} variant="secondary" className="text-[10px]">
+                {KIND_LABEL[k] ?? k} {n}
+              </Badge>
+            ))}
+          </div>
+        ) : null}
         {error ? (
           <div className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
             <p className="font-medium">{error.message}</p>
@@ -324,72 +393,165 @@ export function TestFormFill({
               {activeSlot ? (
                 <>
                   <div className="mb-2 rounded-md border bg-muted/40 p-2 text-xs">
-                    <div className="mb-1 flex items-center gap-1.5">
+                    <div className="mb-1 flex flex-wrap items-center gap-1.5">
                       <Badge variant="outline" className="text-[10px]">
                         빈칸 {activeSlot.index}
                       </Badge>
                       <Badge variant="secondary" className="text-[10px]">
-                        {KIND_LABEL[activeSlot.kind]}
+                        {KIND_LABEL[activeSlot.kind] ?? activeSlot.kind}
                       </Badge>
+                      {activeSlot.boxes ? (
+                        <Badge variant="secondary" className="text-[10px]">
+                          {activeSlot.boxes}칸
+                        </Badge>
+                      ) : null}
                     </div>
-                    <div className="text-muted-foreground">
-                      앞: <span className="text-foreground">{activeSlot.before || "—"}</span>
-                      {" · "}뒤: <span className="text-foreground">{activeSlot.after || "—"}</span>
-                    </div>
+                    {engine === "v2" ? (
+                      <div className="text-muted-foreground">
+                        {activeSlot.label_left ? (
+                          <div>
+                            왼쪽:{" "}
+                            <span className="text-foreground">
+                              {activeSlot.label_left}
+                            </span>
+                          </div>
+                        ) : null}
+                        {activeSlot.label_above ? (
+                          <div>
+                            위:{" "}
+                            <span className="text-foreground">
+                              {activeSlot.label_above}
+                            </span>
+                          </div>
+                        ) : null}
+                        {activeSlot.line_text ? (
+                          <div>
+                            문단:{" "}
+                            <span className="text-foreground">
+                              {activeSlot.line_text}
+                            </span>
+                          </div>
+                        ) : null}
+                        {!activeSlot.label_left &&
+                        !activeSlot.label_above &&
+                        !activeSlot.line_text ? (
+                          <span>라벨 문맥 없음</span>
+                        ) : null}
+                      </div>
+                    ) : (
+                      <div className="text-muted-foreground">
+                        앞:{" "}
+                        <span className="text-foreground">
+                          {activeSlot.before || "—"}
+                        </span>
+                        {" · "}뒤:{" "}
+                        <span className="text-foreground">
+                          {activeSlot.after || "—"}
+                        </span>
+                      </div>
+                    )}
                   </div>
 
-                  <select
-                    value={
-                      mapping[activeSlot.index]?.startsWith("lit:")
-                        ? "__lit__"
-                        : (mapping[activeSlot.index] ?? "")
-                    }
-                    onChange={(e) => {
-                      const v = e.target.value;
-                      setMapping((cur) => {
-                        const next = { ...cur };
-                        if (!v) delete next[activeSlot.index];
-                        else if (v === "__lit__") next[activeSlot.index] = "lit:";
-                        else next[activeSlot.index] = v;
-                        return next;
-                      });
-                    }}
-                    className="w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm"
-                  >
-                    <option value="">— 연결 안 함 —</option>
-                    <option value="__lit__">✎ 직접 입력</option>
-                    {groups.map((g) => (
-                      <optgroup key={g} label={g}>
-                        {options
-                          .filter((o) => o.group === g)
-                          .map((o) => (
-                            <option key={o.token} value={o.token}>
-                              {o.kind === "image" ? "🖼 " : ""}
-                              {o.label}
-                              {o.kind === "text" && values[o.token]
-                                ? ` — ${values[o.token]}`
-                                : ""}
-                            </option>
-                          ))}
-                      </optgroup>
-                    ))}
-                  </select>
+                  {activeSlot.kind === "checkbox_group" &&
+                  activeSlot.options ? (
+                    <div className="space-y-1">
+                      <p className="text-xs text-muted-foreground">
+                        체크할 항목을 고르세요 (☑)
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setMapping((cur) => {
+                            const next = { ...cur };
+                            delete next[activeSlot.index];
+                            return next;
+                          })
+                        }
+                        className={`block w-full rounded-md border px-2 py-1.5 text-left text-sm ${
+                          !mapping[activeSlot.index]
+                            ? "border-sky-500 bg-sky-50"
+                            : "border-input hover:bg-muted"
+                        }`}
+                      >
+                        — 선택 안 함 —
+                      </button>
+                      {activeSlot.options.map((opt, i) => (
+                        <button
+                          key={i}
+                          type="button"
+                          onClick={() =>
+                            setMapping((cur) => ({
+                              ...cur,
+                              [activeSlot.index]: `opt:${i}`,
+                            }))
+                          }
+                          className={`block w-full rounded-md border px-2 py-1.5 text-left text-sm ${
+                            mapping[activeSlot.index] === `opt:${i}`
+                              ? "border-emerald-500 bg-emerald-50 font-medium"
+                              : "border-input hover:bg-muted"
+                          }`}
+                        >
+                          ☑ {opt || `(옵션 ${i})`}
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <>
+                      <select
+                        value={
+                          mapping[activeSlot.index]?.startsWith("lit:")
+                            ? "__lit__"
+                            : (mapping[activeSlot.index] ?? "")
+                        }
+                        onChange={(e) => {
+                          const v = e.target.value;
+                          setMapping((cur) => {
+                            const next = { ...cur };
+                            if (!v) delete next[activeSlot.index];
+                            else if (v === "__lit__")
+                              next[activeSlot.index] = "lit:";
+                            else next[activeSlot.index] = v;
+                            return next;
+                          });
+                        }}
+                        className="w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+                      >
+                        <option value="">— 연결 안 함 —</option>
+                        <option value="__lit__">✎ 직접 입력</option>
+                        {groups.map((g) => (
+                          <optgroup key={g} label={g}>
+                            {options
+                              .filter((o) => o.group === g)
+                              .map((o) => (
+                                <option key={o.token} value={o.token}>
+                                  {o.kind === "image" ? "🖼 " : ""}
+                                  {o.label}
+                                  {o.kind === "text" && values[o.token]
+                                    ? ` — ${values[o.token]}`
+                                    : ""}
+                                </option>
+                              ))}
+                          </optgroup>
+                        ))}
+                      </select>
 
-                  {mapping[activeSlot.index]?.startsWith("lit:") ? (
-                    <input
-                      type="text"
-                      autoFocus
-                      value={mapping[activeSlot.index].slice(4)}
-                      onChange={(e) =>
-                        setMapping((cur) => ({
-                          ...cur,
-                          [activeSlot.index]: `lit:${e.target.value}`,
-                        }))
-                      }
-                      placeholder="이 양식에만 쓰는 값"
-                      className="mt-2 w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm"
-                    />
-                  ) : null}
+                      {mapping[activeSlot.index]?.startsWith("lit:") ? (
+                        <input
+                          type="text"
+                          autoFocus
+                          value={mapping[activeSlot.index].slice(4)}
+                          onChange={(e) =>
+                            setMapping((cur) => ({
+                              ...cur,
+                              [activeSlot.index]: `lit:${e.target.value}`,
+                            }))
+                          }
+                          placeholder="이 양식에만 쓰는 값"
+                          className="mt-2 w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+                        />
+                      ) : null}
+                    </>
+                  )}
                 </>
               ) : (
                 <p className="text-xs text-muted-foreground">
@@ -428,7 +590,7 @@ export function TestFormFill({
                 ) : null}
               </div>
               <p className="text-xs text-muted-foreground">
-                연결 안 한 빈칸은 원래 상태로 되돌립니다(레이아웃 보존).
+                연결 안 한 빈칸은 건드리지 않습니다(레이아웃 보존).
               </p>
             </Card>
           </div>
