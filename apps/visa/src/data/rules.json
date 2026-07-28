@@ -1,0 +1,3299 @@
+{
+  "meta": {
+    "name": "한국 유학비자 발급조건 룰셋",
+    "version": "0.2.0",
+    "compiledAt": "2026-07-28",
+    "scope": "베트남 국적 중심. 중점관리국가(중국·베트남·몽골·우즈베키스탄) 공통 규칙 + 공관별 델타 구조.",
+    "warning": "본 룰셋은 공개된 재외공관 구비서류 안내와 정부 보도자료를 근거로 재구성한 것입니다. 사증 발급은 영사의 재량 행위이며 공관장은 필요 시 첨부서류를 가감할 수 있습니다. confidence가 confirmed가 아닌 항목은 반드시 관할 공관 확인이 필요합니다.",
+    "verification": {
+      "policy": "출처별 lastVerified 로부터 severity 별 TTL 이 지나면 stale 로 표시한다. stale 조항은 확정 안내로 사용하지 않는다.",
+      "ttlDays": {
+        "critical": 90,
+        "high": 180,
+        "medium": 365
+      },
+      "runbook": "VERIFY.md",
+      "entrypoint": "python3 verify.py"
+    }
+  },
+  "confidenceLevels": {
+    "confirmed": {
+      "label": "확인됨",
+      "desc": "1차 자료에 명문으로 존재"
+    },
+    "inferred": {
+      "label": "유추",
+      "desc": "동일 조건 타 공관 자료로부터 추정. 해당 공관 직접 근거 없음"
+    },
+    "conflict": {
+      "label": "자료 충돌",
+      "desc": "문서 버전 간 값이 다름. 보수적 값 적용 권장"
+    },
+    "unknown": {
+      "label": "미확인",
+      "desc": "확인하지 못함. 요건 없음으로 간주 금지"
+    }
+  },
+  "sources": {
+    "moj_guideline": {
+      "issuer": "법무부 체류관리과",
+      "title": "외국인유학생 사증발급 및 체류관리 지침",
+      "asOf": "공개본(2022 확인)",
+      "reliability": "상위규범",
+      "note": "최신 개정본은 비공개. 공개된 버전으로 원칙 조항만 인용",
+      "fetch": "manual",
+      "canonicalUrl": null,
+      "docAsOf": "2022-11",
+      "lastVerified": "2026-07-28",
+      "verifyNote": "최신 개정본 비공개. 공개 게시된 대학·기관 사본을 검색해 대조할 것"
+    },
+    "moe_2026": {
+      "issuer": "교육부·법무부",
+      "title": "2025년 교육국제화역량 인증 심사 및 유학생 유치·관리 실태조사 결과",
+      "asOf": "2026-02-12",
+      "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=294&boardSeq=105347",
+      "reliability": "상위규범",
+      "note": "대학 등급별 사증심사 혜택 및 국적 예외의 근거",
+      "fetch": "auto",
+      "canonicalUrl": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=294&boardSeq=105347&lev=0&m=020402&opType=N&page=1&s=moe&statusYN=W",
+      "docAsOf": "2026-02-12",
+      "lastVerified": "2026-07-28",
+      "verifyNote": "차년도 인증심사 결과가 나오면 등급별 교수·혜택 표가 갱신된다"
+    },
+    "hcmc_2024": {
+      "issuer": "주호치민 대한민국 총영사관",
+      "title": "한국어 어학연수(D-4) / 유학(D-2) 사증 구비서류",
+      "asOf": "2024-09-26",
+      "reliability": "공관 1차",
+      "note": "대학등급 매트릭스와 사증발급 유형표가 남아 있는 마지막 확인 버전",
+      "fetch": "auto",
+      "canonicalUrl": "https://visaforkorea-hc.com/upload/%EC%9C%A0%ED%95%99%EB%B9%84%EC%9E%90%20%EA%B5%AC%EB%B9%84%EC%84%9C%EB%A5%98.pdf",
+      "docAsOf": "2024-09-26",
+      "lastVerified": "2026-07-28",
+      "verifyNote": "대학등급 매트릭스가 남아 있는 마지막 버전. 삭제되면 이 룰셋의 CHN-* 근거가 사라진다"
+    },
+    "hcmc_cur": {
+      "issuer": "주호치민 대한민국 총영사관 / KVAC HCMC",
+      "title": "유학(D-2) 비자 신청 구비서류",
+      "asOf": "일자 미표기(2024-09-26 이후로 추정)",
+      "reliability": "공관 1차",
+      "note": "CT07/CT08 규정 반영. 대학등급 구분이 삭제된 간소화 버전",
+      "fetch": "auto",
+      "canonicalUrl": "https://visaforkorea-hc.com/upload/%EC%9C%A0%ED%95%99%20%EA%B5%AC%EB%B9%84%EC%84%9C%EB%A5%98.pdf",
+      "docAsOf": null,
+      "lastVerified": "2026-07-28",
+      "verifyNote": "일자 미표기. 파일이 예고 없이 교체되므로 본문 해시를 기록해 변경을 탐지할 것"
+    },
+    "kvac_mn": {
+      "issuer": "주몽골 대한민국 대사관",
+      "title": "전문학사과정 이상 유학(D-2-1~D-2-4) 구비서류",
+      "asOf": "2025-05-19",
+      "reliability": "공관 1차",
+      "note": "동일 중점관리국가. 우수인증대학 예외가 명문으로 존재",
+      "fetch": "auto",
+      "canonicalUrl": "https://www.visaforkorea.mn/sites/g/files/tmzbdl2131/files/inline-files/D-2-1-4%20Kor_25.05.19%20revised.pdf",
+      "docAsOf": "2025-05-19",
+      "lastVerified": "2026-07-28",
+      "verifyNote": "베트남 미확인 항목의 유추 근거. 몽골이 바뀌면 유추도 재검토"
+    },
+    "emb_cn": {
+      "issuer": "주중국 대한민국 대사관 영사부",
+      "title": "입국목적별 구비서류",
+      "asOf": "2022-12",
+      "reliability": "공관 1차",
+      "note": "동일 중점관리국가. 5개 등급 전부 명시",
+      "fetch": "search",
+      "canonicalUrl": null,
+      "docAsOf": "2022-12",
+      "lastVerified": "2026-07-28",
+      "verifyNote": "원본은 주중국대사관. 확인한 경로는 3자 미러라 신뢰도 낮음"
+    },
+    "cg_la": {
+      "issuer": "주로스앤젤레스 대한민국 총영사관",
+      "title": "유학(D-2) 및 연수(D-4)비자 안내",
+      "asOf": "미상",
+      "reliability": "공관 1차",
+      "note": "불법체류다발 21개국 예외를 문장으로 명시",
+      "fetch": "manual",
+      "canonicalUrl": "https://overseas.mofa.go.kr/us-losangeles-ko/brd/m_4355/view.do?seq=1333035",
+      "docAsOf": null,
+      "lastVerified": "2026-07-28",
+      "verifyNote": "MOFA 도메인은 자동 접근 차단. 브라우저 도구 필요"
+    },
+    "emb_vn_hanoi": {
+      "issuer": "주베트남 대한민국 대사관 (하노이)",
+      "title": "유학(D-2)·어학연수(D-4) 사증 구비서류",
+      "asOf": "미확보",
+      "reliability": "공관 1차",
+      "status": "not_obtained",
+      "fetch": "manual",
+      "canonicalUrl": "https://overseas.mofa.go.kr/vn-ko/brd/m_2198/view.do?seq=1343485",
+      "docAsOf": null,
+      "lastVerified": null,
+      "verifyNote": "MOFA 도메인 robots 차단으로 미확보. 북부 거주자 케이스 전체가 이 공백에 걸린다. 최우선 확보 대상",
+      "note": "확보 전까지 북부 관할 결과는 남부(호치민) 기준의 근사치로만 취급할 것"
+    },
+    "moe_standard_2025": {
+      "issuer": "교육부",
+      "title": "외국인 유학생 및 어학연수생 표준업무처리요령",
+      "asOf": "2025-03-14 개정",
+      "reliability": "상위규범",
+      "fetch": "auto",
+      "canonicalUrl": "https://moe.go.kr/boardCnts/fileDown.do?m=040103&s=moe&fileSeq=889b4cc3c586896b4754fb6ec953a462",
+      "docAsOf": "2025-03-14",
+      "lastVerified": "2026-07-28",
+      "verifyNote": "대학 입학심사(1관문) 기준의 유일한 근거. 재정능력 심사기준을 공관 문서와 독립적으로 확인해 준다",
+      "note": "2008 제정 이후 11차 개정. 대학의 표준입학허가서 발급 단계를 규율"
+    }
+  },
+  "countryClass": {
+    "priority": {
+      "label": "중점관리국가",
+      "members": [
+        "vn",
+        "cn",
+        "mn",
+        "uz"
+      ],
+      "desc": "중국·베트남·몽골·우즈베키스탄. 사증발급 유형과 재정심사에서 별도 취급",
+      "conflictNote": "교육부 표준업무처리요령(2025-03-14)은 '중점관리 5개국'으로 표기한다. 공관 문서에서 확인되는 것은 중국·베트남·몽골·우즈베키스탄 4개국뿐이며 5번째 국가는 미확인."
+    },
+    "notified": {
+      "label": "법무부장관 고시국가(불법체류 다발 21개국)",
+      "members": [
+        "ph",
+        "id",
+        "bd",
+        "th",
+        "pk",
+        "lk",
+        "in",
+        "mm",
+        "np",
+        "ir",
+        "kz",
+        "kg",
+        "ua",
+        "ng"
+      ],
+      "desc": "중점관리국가 4개국을 포함하는 상위 집합. 인증대학 재정서류 면제에서 제외됨"
+    },
+    "general": {
+      "label": "일반 국가",
+      "members": [],
+      "desc": "위 어디에도 속하지 않는 국가"
+    }
+  },
+  "axes": [
+    {
+      "id": "track",
+      "label": "신청 경로",
+      "required": true,
+      "options": [
+        {
+          "value": "new_d2",
+          "label": "외국인 → D-2 (국외 신규 사증)"
+        },
+        {
+          "value": "new_d4",
+          "label": "외국인 → D-4 (국외 신규 사증)"
+        },
+        {
+          "value": "change_d4_d2",
+          "label": "D-4 → D-2 (국내 체류자격 변경)"
+        }
+      ]
+    },
+    {
+      "id": "nationality",
+      "label": "국적",
+      "required": true,
+      "options": [
+        {
+          "value": "vn",
+          "label": "베트남",
+          "class": "priority"
+        },
+        {
+          "value": "cn",
+          "label": "중국",
+          "class": "priority"
+        },
+        {
+          "value": "mn",
+          "label": "몽골",
+          "class": "priority"
+        },
+        {
+          "value": "uz",
+          "label": "우즈베키스탄",
+          "class": "priority"
+        },
+        {
+          "value": "notified_other",
+          "label": "기타 고시국가(21개국)",
+          "class": "notified"
+        },
+        {
+          "value": "general",
+          "label": "일반 국가",
+          "class": "general"
+        }
+      ]
+    },
+    {
+      "id": "applicantRegion",
+      "label": "신청인 거주지(베트남)",
+      "required": false,
+      "dependsOn": {
+        "nationality": [
+          "vn"
+        ]
+      },
+      "options": [
+        {
+          "value": "vn_north",
+          "label": "북부 (하노이 대사관 관할)"
+        },
+        {
+          "value": "vn_south",
+          "label": "남부 (호치민 총영사관 관할)"
+        }
+      ]
+    },
+    {
+      "id": "univTier",
+      "label": "대학 등급",
+      "required": true,
+      "options": [
+        {
+          "value": "excellent",
+          "label": "우수 인증대학",
+          "note": "2025년 39개교"
+        },
+        {
+          "value": "certified",
+          "label": "인증대학",
+          "note": "2025년 181개교"
+        },
+        {
+          "value": "general",
+          "label": "일반대학(미인증)",
+          "note": "134개교. 명단 비공개"
+        },
+        {
+          "value": "consulting",
+          "label": "컨설팅대학(비자심사 강화)",
+          "note": "13개교. 명단 비공개"
+        },
+        {
+          "value": "restricted",
+          "label": "비자정밀 심사대학",
+          "note": "16개교. 26년 2학기부터 1년간 제한"
+        }
+      ]
+    },
+    {
+      "id": "univRegion",
+      "label": "대학 소재지",
+      "required": true,
+      "options": [
+        {
+          "value": "metro",
+          "label": "수도권 (서울·인천·경기)"
+        },
+        {
+          "value": "nonmetro",
+          "label": "비수도권 (그 외 전 지역)"
+        }
+      ]
+    },
+    {
+      "id": "statusCode",
+      "label": "체류자격 세부코드",
+      "required": true,
+      "options": [
+        {
+          "value": "D-2-1",
+          "label": "D-2-1 전문학사",
+          "track": [
+            "new_d2",
+            "change_d4_d2"
+          ]
+        },
+        {
+          "value": "D-2-2",
+          "label": "D-2-2 학사(전공심화)",
+          "track": [
+            "new_d2",
+            "change_d4_d2"
+          ]
+        },
+        {
+          "value": "D-2-3",
+          "label": "D-2-3 석사(학·석 통합)",
+          "track": [
+            "new_d2",
+            "change_d4_d2"
+          ]
+        },
+        {
+          "value": "D-2-4",
+          "label": "D-2-4 박사(석·박 통합)",
+          "track": [
+            "new_d2",
+            "change_d4_d2"
+          ]
+        },
+        {
+          "value": "D-2-5",
+          "label": "D-2-5 연구과정",
+          "track": [
+            "new_d2",
+            "change_d4_d2"
+          ]
+        },
+        {
+          "value": "D-2-6",
+          "label": "D-2-6 교환학생",
+          "track": [
+            "new_d2"
+          ]
+        },
+        {
+          "value": "D-2-7",
+          "label": "D-2-7 일·학습연계",
+          "track": [
+            "new_d2",
+            "change_d4_d2"
+          ]
+        },
+        {
+          "value": "D-2-8",
+          "label": "D-2-8 방문학생",
+          "track": [
+            "new_d2"
+          ]
+        },
+        {
+          "value": "D-4-1",
+          "label": "D-4-1 한국어연수",
+          "track": [
+            "new_d4"
+          ]
+        },
+        {
+          "value": "D-4-7",
+          "label": "D-4-7 외국어연수",
+          "track": [
+            "new_d4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scholarship",
+      "label": "장학금",
+      "required": true,
+      "options": [
+        {
+          "value": "none",
+          "label": "없음"
+        },
+        {
+          "value": "partial",
+          "label": "부분 장학금 (100% 미만)"
+        },
+        {
+          "value": "full",
+          "label": "전액 장학금 (학비+생활비 100%)"
+        },
+        {
+          "value": "gks",
+          "label": "GKS 정부초청장학생"
+        }
+      ]
+    },
+    {
+      "id": "sponsor",
+      "label": "재정보증 주체",
+      "required": true,
+      "options": [
+        {
+          "value": "self",
+          "label": "본인"
+        },
+        {
+          "value": "parents",
+          "label": "부모"
+        },
+        {
+          "value": "other_family",
+          "label": "부모 외 가족 (부모 부재 시)"
+        },
+        {
+          "value": "kr_family",
+          "label": "한국 국적 가족"
+        },
+        {
+          "value": "professor",
+          "label": "교육기관 관계자(지도교수)"
+        },
+        {
+          "value": "company",
+          "label": "회사"
+        }
+      ]
+    },
+    {
+      "id": "parentJob",
+      "label": "재정보증인 직업",
+      "required": false,
+      "dependsOn": {
+        "sponsor": [
+          "parents",
+          "other_family"
+        ]
+      },
+      "options": [
+        {
+          "value": "employee",
+          "label": "직장인"
+        },
+        {
+          "value": "business_owner",
+          "label": "사업자(법인)"
+        },
+        {
+          "value": "sole_proprietor",
+          "label": "자영업(호 킨 조아인)"
+        },
+        {
+          "value": "farmer",
+          "label": "농민"
+        }
+      ]
+    },
+    {
+      "id": "stayMonths",
+      "label": "예정 체류기간",
+      "required": true,
+      "options": [
+        {
+          "value": "ge12",
+          "label": "12개월 이상"
+        },
+        {
+          "value": "lt12",
+          "label": "12개월 미만"
+        }
+      ]
+    },
+    {
+      "id": "gradCert",
+      "label": "최종학력 서류",
+      "required": true,
+      "options": [
+        {
+          "value": "graduated",
+          "label": "졸업증명서"
+        },
+        {
+          "value": "expected",
+          "label": "졸업예정(임시졸업)증명서"
+        }
+      ]
+    },
+    {
+      "id": "langTrack",
+      "label": "수학 언어",
+      "required": true,
+      "options": [
+        {
+          "value": "ko",
+          "label": "한국어 과정"
+        },
+        {
+          "value": "en",
+          "label": "영어 트랙"
+        }
+      ]
+    },
+    {
+      "id": "balanceCurrency",
+      "label": "잔고증명 통화",
+      "required": true,
+      "options": [
+        {
+          "value": "krw",
+          "label": "원화 (KRW)"
+        },
+        {
+          "value": "vnd",
+          "label": "베트남 동 (VND)"
+        },
+        {
+          "value": "usd",
+          "label": "미 달러 (USD)"
+        }
+      ]
+    }
+  ],
+  "groups": {
+    "eligibility": {
+      "label": "발급 가능성",
+      "order": 1,
+      "gate": "공관"
+    },
+    "channel": {
+      "label": "신청 경로",
+      "order": 2,
+      "gate": "공관"
+    },
+    "finance": {
+      "label": "재정능력 요건",
+      "order": 3,
+      "gate": "공관"
+    },
+    "documents": {
+      "label": "제출 서류",
+      "order": 4,
+      "gate": "공관"
+    },
+    "language": {
+      "label": "어학 요건",
+      "order": 5,
+      "gate": "공관"
+    },
+    "duration": {
+      "label": "체류기간",
+      "order": 6,
+      "gate": "공관"
+    },
+    "jurisdiction": {
+      "label": "관할·접수",
+      "order": 7,
+      "gate": "공관"
+    },
+    "process": {
+      "label": "절차 일반",
+      "order": 8,
+      "gate": "공관"
+    },
+    "admission": {
+      "label": "① 대학 입학심사 (표준입학허가서)",
+      "order": 0,
+      "gate": "대학"
+    }
+  },
+  "rules": [
+    {
+      "id": "ELG-010",
+      "group": "eligibility",
+      "kind": "blocker",
+      "title": "비자정밀 심사대학 — 사증 발급 원칙적 금지",
+      "body": "2025년 실태조사에서 비자정밀 심사대학으로 지정된 학위과정 16개교는 2026년 2학기부터 1년간 신입 유학생 비자 발급이 제한됩니다. 예외적으로 D-2-4~D-2-6, 뿌리산업 관련 학과, 복학생에 한해 사증발급인정서 경로만 열려 있습니다.",
+      "when": {
+        "univTier": [
+          "restricted"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "moe_2026",
+        "hcmc_2024"
+      ]
+    },
+    {
+      "id": "ELG-020",
+      "group": "eligibility",
+      "kind": "caution",
+      "title": "컨설팅대학 — 정밀 심사 대상",
+      "body": "학력요건과 재정능력에 더해 불법취업 가능성에 대한 면담 또는 실태조사가 병행됩니다. 재정 예치기간이 6개월로 늘어나고 어학능력 입증이 필수로 전환됩니다.",
+      "when": {
+        "univTier": [
+          "consulting"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "moe_2026",
+        "hcmc_2024"
+      ]
+    },
+    {
+      "id": "ELG-030",
+      "group": "eligibility",
+      "kind": "info",
+      "title": "일반대학(미인증) — 표준 심사",
+      "body": "대학의 관리능력, 유학생 학력 요건, 재정능력을 모두 심사합니다. 간소화 혜택이 없습니다.",
+      "when": {
+        "univTier": [
+          "general"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "moe_2026"
+      ]
+    },
+    {
+      "id": "ELG-040",
+      "group": "eligibility",
+      "kind": "info",
+      "title": "인증대학 — 표준입학허가서 중심 심사",
+      "body": "원칙적으로 표준입학허가서만으로 심사합니다. 다만 법무부장관 고시국가 및 중점관리국가 국민은 재정능력 입증서류를 별도로 제출해야 합니다.",
+      "when": {
+        "univTier": [
+          "certified"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "moe_2026",
+        "cg_la"
+      ]
+    },
+    {
+      "id": "ELG-050",
+      "group": "eligibility",
+      "kind": "info",
+      "title": "우수 인증대학 — 최대 간소화",
+      "body": "공통서류와 표준입학허가서만으로 심사합니다. 인증대학 중 국제화 역량이 특히 우수한 39개교(2025년)가 해당합니다.",
+      "when": {
+        "univTier": [
+          "excellent"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "moe_2026",
+        "emb_cn"
+      ]
+    },
+    {
+      "id": "CHN-010",
+      "group": "channel",
+      "kind": "requirement",
+      "title": "사증 직접 신청 + 사증발급인정서 + 전자비자 모두 가능",
+      "body": "우수 인증대학은 국적과 무관하게 세 경로가 모두 열려 있습니다. 다만 어학연수(D-4-1)는 전자비자 대상이 아닙니다.",
+      "when": {
+        "univTier": [
+          "excellent"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_2024"
+      ]
+    },
+    {
+      "id": "CHN-020",
+      "group": "channel",
+      "kind": "requirement",
+      "title": "사증 직접 신청만 가능 (인정서·전자비자 불가)",
+      "body": "인증대학은 국적 무관하게 재외공관 사증 직접 신청 경로만 사용합니다. 단 석사(D-2-3)·박사(D-2-4)는 전자비자도 가능합니다.",
+      "when": {
+        "univTier": [
+          "certified"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_2024"
+      ]
+    },
+    {
+      "id": "CHN-030",
+      "group": "channel",
+      "kind": "requirement",
+      "title": "D-2는 사증 직접 신청 가능",
+      "body": "일반대학에 진학하는 중점관리국가 국민이라도 유학(D-2)은 재외공관 사증 직접 신청이 가능합니다.",
+      "when": {
+        "univTier": [
+          "general"
+        ],
+        "nationality": [
+          "vn",
+          "cn",
+          "mn",
+          "uz"
+        ],
+        "track": [
+          "new_d2"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_2024"
+      ]
+    },
+    {
+      "id": "CHN-040",
+      "group": "channel",
+      "kind": "blocker",
+      "title": "어학연수는 사증발급인정서로만 가능",
+      "body": "일반대학에 입학하는 중국·베트남·몽골·우즈베키스탄 국민의 어학연수(D-4-1)는 사증 직접 신청이 막혀 있습니다. 국내 대학이 출입국관서에서 사증발급인정서를 먼저 받아야 합니다. 대학 측 처리 기간이 추가되므로 일정 산정 시 반영하세요.",
+      "when": {
+        "univTier": [
+          "general"
+        ],
+        "nationality": [
+          "vn",
+          "cn",
+          "mn",
+          "uz"
+        ],
+        "track": [
+          "new_d4"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_2024"
+      ]
+    },
+    {
+      "id": "CHN-050",
+      "group": "channel",
+      "kind": "requirement",
+      "title": "D-2-1~5, D-2-7은 사증 직접 신청 가능",
+      "body": "컨설팅대학에 진학하는 중점관리국가 국민 중 전문학사~연구과정 및 일·학습연계는 사증 직접 신청 경로가 유지됩니다.",
+      "when": {
+        "univTier": [
+          "consulting"
+        ],
+        "nationality": [
+          "vn",
+          "cn",
+          "mn",
+          "uz"
+        ],
+        "statusCode": [
+          "D-2-1",
+          "D-2-2",
+          "D-2-3",
+          "D-2-4",
+          "D-2-5",
+          "D-2-7"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_2024"
+      ]
+    },
+    {
+      "id": "CHN-060",
+      "group": "channel",
+      "kind": "blocker",
+      "title": "사증발급인정서 경로만 가능",
+      "body": "컨설팅대학 + 중점관리국가 조합에서 교환학생(D-2-6), 방문학생(D-2-8), 어학연수(D-4-1)는 사증 직접 신청이 불가합니다.",
+      "when": {
+        "univTier": [
+          "consulting"
+        ],
+        "nationality": [
+          "vn",
+          "cn",
+          "mn",
+          "uz"
+        ],
+        "statusCode": [
+          "D-2-6",
+          "D-2-8",
+          "D-4-1"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_2024"
+      ]
+    },
+    {
+      "id": "CHN-070",
+      "group": "channel",
+      "kind": "requirement",
+      "title": "국내 체류자격 변경 — 출입국·외국인관서 관할",
+      "body": "재외공관이 아니라 체류지 관할 출입국·외국인관서에 신청합니다. 하이코리아 전자민원 또는 방문 예약으로 접수합니다. 결핵진단서·영사확인·번역공증 등 국외 신청 전용 요건은 적용되지 않습니다.",
+      "when": {
+        "track": [
+          "change_d4_d2"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "moj_guideline"
+      ]
+    },
+    {
+      "id": "FIN-010",
+      "group": "finance",
+      "kind": "info",
+      "title": "재정능력 입증서류 면제",
+      "body": "우수 인증대학 입학예정자는 공통서류와 표준입학허가서만 제출합니다. 중점관리국가 국민이라도 면제가 유지됩니다.",
+      "when": {
+        "univTier": [
+          "excellent"
+        ],
+        "track": [
+          "new_d2"
+        ]
+      },
+      "whenNot": {
+        "statusCode": [
+          "D-2-5"
+        ]
+      },
+      "confidence": "inferred",
+      "sources": [
+        "kvac_mn",
+        "emb_cn",
+        "moe_2026"
+      ],
+      "note": "몽골·중국 공관 문서에는 우수인증대학 예외가 명문으로 존재하나, 호치민 현행 안내문에는 등급 구분 자체가 없습니다. 베트남 공관 직접 근거 미확인. 면제를 전제로 준비를 생략하지 마세요."
+    },
+    {
+      "id": "FIN-011",
+      "group": "finance",
+      "kind": "caution",
+      "title": "D-2-5(연구과정)는 우수인증대학이라도 면제 제외",
+      "body": "주중국대사관 안내 기준으로 연구과정은 간소화 대상에서 빠집니다. 신원보증서 또는 재정능력 입증서류(잔고증명, 연구수당 지급확인서 등)를 제출합니다.",
+      "when": {
+        "univTier": [
+          "excellent"
+        ],
+        "statusCode": [
+          "D-2-5"
+        ]
+      },
+      "confidence": "inferred",
+      "sources": [
+        "emb_cn",
+        "hcmc_2024"
+      ],
+      "note": "이 경우 금액·예치기간은 일반 학위과정 기준(FIN-030/031, FIN-040)을 준용하는 것으로 보이나 명문 규정을 확인하지 못했습니다. 공관 확인 필요."
+    },
+    {
+      "id": "FIN-020",
+      "group": "finance",
+      "kind": "info",
+      "title": "재정능력 입증서류 면제 (일반 국가)",
+      "body": "인증대학 입학예정자가 고시국가·중점관리국가 국민이 아니면 표준입학허가서만으로 심사합니다.",
+      "when": {
+        "univTier": [
+          "certified"
+        ],
+        "nationality": [
+          "general"
+        ],
+        "track": [
+          "new_d2"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "moe_2026",
+        "cg_la"
+      ]
+    },
+    {
+      "id": "FIN-021",
+      "group": "finance",
+      "kind": "requirement",
+      "title": "재정능력 입증서류 제출 의무 — 국적에 의한 면제 배제",
+      "body": "인증대학이라도 법무부장관 고시국가 및 중점관리국가 국민은 재정능력 입증서류를 제출해야 합니다. 대학 등급만 보고 면제를 안내하면 이 지점에서 틀립니다.",
+      "when": {
+        "univTier": [
+          "certified"
+        ],
+        "nationality": [
+          "vn",
+          "cn",
+          "mn",
+          "uz",
+          "notified_other"
+        ],
+        "track": [
+          "new_d2"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "moe_2026",
+        "cg_la"
+      ]
+    },
+    {
+      "id": "FIN-022",
+      "group": "finance",
+      "kind": "requirement",
+      "title": "재정능력 입증서류 제출 의무",
+      "body": "일반대학·컨설팅대학은 등급 자체로 재정능력 심사 대상입니다.",
+      "when": {
+        "univTier": [
+          "general",
+          "consulting",
+          "restricted"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "moe_2026"
+      ]
+    },
+    {
+      "id": "FIN-023",
+      "group": "finance",
+      "kind": "requirement",
+      "title": "어학연수는 대학 등급과 무관하게 재정능력 입증 필요",
+      "body": "어학연수(D-4)는 우수인증대학 여부에 상관없이 학력요건과 재정능력 입증서류를 제출합니다.",
+      "when": {
+        "track": [
+          "new_d4"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_2024"
+      ]
+    },
+    {
+      "id": "FIN-030",
+      "group": "finance",
+      "kind": "requirement",
+      "title": "예치 기준액 2,000만 원 (수도권 학위과정)",
+      "body": "서울·인천·경기 소재 대학의 학위과정은 본인 명의 계좌에 최소 2,000만 원 이상을 예치해야 합니다.",
+      "when": {
+        "track": [
+          "new_d2"
+        ],
+        "univRegion": [
+          "metro"
+        ],
+        "statusCode": [
+          "D-2-1",
+          "D-2-2",
+          "D-2-3",
+          "D-2-4",
+          "D-2-5",
+          "D-2-7"
+        ],
+        "stayMonths": [
+          "ge12"
+        ],
+        "finProof": [
+          "required"
+        ]
+      },
+      "value": {
+        "amountKRW": 20000000
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_cur",
+        "hcmc_2024",
+        "kvac_mn",
+        "moe_standard_2025"
+      ]
+    },
+    {
+      "id": "FIN-031",
+      "group": "finance",
+      "kind": "requirement",
+      "title": "예치 기준액 1,600만 원 (비수도권 학위과정)",
+      "body": "서울·인천·경기를 제외한 전 지역 대학의 학위과정은 최소 1,600만 원 이상을 예치합니다. 부산·대구·광주·대전·울산·세종 등 광역시도 모두 비수도권입니다.",
+      "when": {
+        "track": [
+          "new_d2"
+        ],
+        "univRegion": [
+          "nonmetro"
+        ],
+        "statusCode": [
+          "D-2-1",
+          "D-2-2",
+          "D-2-3",
+          "D-2-4",
+          "D-2-5",
+          "D-2-7"
+        ],
+        "stayMonths": [
+          "ge12"
+        ],
+        "finProof": [
+          "required"
+        ]
+      },
+      "value": {
+        "amountKRW": 16000000
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_cur",
+        "hcmc_2024",
+        "kvac_mn",
+        "moe_standard_2025"
+      ]
+    },
+    {
+      "id": "FIN-032",
+      "group": "finance",
+      "kind": "requirement",
+      "title": "예치 기준액 1,000만 원 (수도권 어학연수)",
+      "body": "서울·인천·경기 소재 기관의 한국어연수는 최소 1,000만 원 이상을 예치합니다.",
+      "when": {
+        "track": [
+          "new_d4"
+        ],
+        "univRegion": [
+          "metro"
+        ],
+        "finProof": [
+          "required"
+        ]
+      },
+      "value": {
+        "amountKRW": 10000000
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_cur",
+        "hcmc_2024",
+        "moe_standard_2025"
+      ]
+    },
+    {
+      "id": "FIN-033",
+      "group": "finance",
+      "kind": "requirement",
+      "title": "예치 기준액 800만 원 (비수도권 어학연수)",
+      "body": "비수도권 기관의 한국어연수는 최소 800만 원 이상을 예치합니다. 대학이 800만 원을 안내했다면 이 행을 읽었을 가능성이 높습니다. D-2 학위과정 금액이 아닙니다.",
+      "when": {
+        "track": [
+          "new_d4"
+        ],
+        "univRegion": [
+          "nonmetro"
+        ],
+        "finProof": [
+          "required"
+        ]
+      },
+      "value": {
+        "amountKRW": 8000000
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_cur",
+        "hcmc_2024",
+        "moe_standard_2025"
+      ]
+    },
+    {
+      "id": "FIN-034",
+      "group": "finance",
+      "kind": "requirement",
+      "title": "교환·방문학생 — 체재비 비례 산정",
+      "body": "정액이 아니라 월 기준액 × 체류개월 수로 계산합니다. 월 기준액은 해당연도 「주거급여 선정기준 및 최저보장수준」(국토교통부 고시)의 1인 가구 월 기준금액을 씁니다. 교육부 표준업무처리요령(2025-03-14)이 2024년 값으로 1,069,654원을 명시합니다.",
+      "when": {
+        "track": [
+          "new_d2"
+        ],
+        "statusCode": [
+          "D-2-6",
+          "D-2-8"
+        ]
+      },
+      "value": {
+        "formula": "monthlyBase * stayMonths",
+        "monthlyBaseByYear": {
+          "2024": 1069654
+        },
+        "staleValueSeen": 976609
+      },
+      "confidence": "conflict",
+      "sources": [
+        "moe_standard_2025",
+        "hcmc_2024",
+        "hcmc_cur"
+      ],
+      "note": "산식과 근거는 확정되었습니다. 남은 문제는 값의 최신성입니다. 호치민 간소화판에 적힌 976,609원은 2023년 값으로 보이며 갱신 누락으로 추정됩니다. 매년 국토교통부 고시로 바뀌므로 2026년 값을 확인해 넣어야 합니다. 확정 전까지 높은 쪽으로 준비하세요."
+    },
+    {
+      "id": "FIN-035",
+      "group": "finance",
+      "kind": "requirement",
+      "title": "체류 12개월 미만 — 등록금 + 비례 체재비",
+      "body": "학위과정에 한해 정액 기준 대신 등록금에 체류기간 비례 체재비를 더해 산정합니다. 어학연수과정에는 적용되지 않습니다(ADM-022 참조).",
+      "when": {
+        "track": [
+          "new_d2"
+        ],
+        "stayMonths": [
+          "lt12"
+        ]
+      },
+      "value": {
+        "formula": "tuition + monthlyBase * stayMonths"
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_cur",
+        "hcmc_2024",
+        "moe_standard_2025"
+      ]
+    },
+    {
+      "id": "FIN-040",
+      "group": "finance",
+      "kind": "requirement",
+      "title": "최소 예치기간 3개월 (학위과정)",
+      "body": "잔고증명서 발급일 기준으로 해당 금액이 3개월 이상 계좌에 유지되어 있어야 합니다. 돈을 넣는 시점부터 기산하므로, 준비 시작일이 곧 신청 가능일을 결정합니다.",
+      "when": {
+        "track": [
+          "new_d2"
+        ],
+        "statusCode": [
+          "D-2-1",
+          "D-2-2",
+          "D-2-3",
+          "D-2-4",
+          "D-2-5",
+          "D-2-7"
+        ],
+        "finProof": [
+          "required"
+        ]
+      },
+      "value": {
+        "holdingMonths": 3
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_cur",
+        "hcmc_2024"
+      ],
+      "whenNot": {
+        "univTier": [
+          "consulting"
+        ]
+      }
+    },
+    {
+      "id": "FIN-041",
+      "group": "finance",
+      "kind": "requirement",
+      "title": "최소 예치기간 6개월 (컨설팅대학)",
+      "body": "컨설팅대학(하위대학) 진학자는 예치기간이 6개월로 늘어납니다. 일정 산정 시 3개월이 아니라 6개월로 잡아야 합니다.",
+      "when": {
+        "track": [
+          "new_d2"
+        ],
+        "univTier": [
+          "consulting"
+        ],
+        "finProof": [
+          "required"
+        ]
+      },
+      "value": {
+        "holdingMonths": 6
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_2024"
+      ]
+    },
+    {
+      "id": "FIN-042",
+      "group": "finance",
+      "kind": "requirement",
+      "title": "최소 예치기간 6개월 (어학연수)",
+      "body": "어학연수는 금액이 낮은 대신 예치기간이 6개월로 깁니다.",
+      "when": {
+        "track": [
+          "new_d4"
+        ],
+        "finProof": [
+          "required"
+        ]
+      },
+      "value": {
+        "holdingMonths": 6
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_cur",
+        "hcmc_2024"
+      ]
+    },
+    {
+      "id": "FIN-043",
+      "group": "finance",
+      "kind": "caution",
+      "title": "박사·연구·교환·방문학생 예치기간 — 자료 충돌",
+      "body": "2024-09-26판에는 D-2-4~D-2-8은 최소 예치기간(3개월) 충족이 불필요하다고 되어 있으나, 현행 간소화판은 D-2 전체를 3개월로 일괄 표기합니다.",
+      "when": {
+        "track": [
+          "new_d2"
+        ],
+        "statusCode": [
+          "D-2-4",
+          "D-2-5",
+          "D-2-6",
+          "D-2-8"
+        ]
+      },
+      "confidence": "conflict",
+      "sources": [
+        "hcmc_2024",
+        "hcmc_cur"
+      ],
+      "note": "3개월을 충족하는 쪽으로 준비하는 것이 안전합니다."
+    },
+    {
+      "id": "FIN-050",
+      "group": "finance",
+      "kind": "requirement",
+      "title": "잔고증명 명의 — 본인 또는 부모 원칙",
+      "body": "재정증명은 본인 혹은 부모가 하는 것이 원칙입니다. 부모가 부재한 경우에 한해 부모 외 가족이 재정보증인이 될 수 있습니다. 삼촌·지인 명의는 원칙적으로 인정되지 않습니다.",
+      "when": {
+        "track": [
+          "new_d2",
+          "new_d4"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_cur",
+        "hcmc_2024"
+      ]
+    },
+    {
+      "id": "FIN-051",
+      "group": "finance",
+      "kind": "caution",
+      "title": "잔고증명서 발급 시점 — 자료 충돌",
+      "body": "현행 간소화판은 최근 1개월 이내 발급본을 인정하나, 2024-09-26판은 접수일 기준 10일 이내 발급분만 유효하다고 규정합니다.",
+      "when": {
+        "track": [
+          "new_d2",
+          "new_d4"
+        ]
+      },
+      "confidence": "conflict",
+      "sources": [
+        "hcmc_cur",
+        "hcmc_2024"
+      ],
+      "note": "10일 이내로 잡고 설계하세요. 참고로 대학 입학심사 단계는 30일 기준(ADM-030)이라 더 느슨합니다. 대학에 낸 잔고증명서를 공관에 그대로 재사용할 수 없습니다."
+    },
+    {
+      "id": "FIN-052",
+      "group": "finance",
+      "kind": "requirement",
+      "title": "통장 원본 지참 · 양도 통장 불인정",
+      "body": "은행계좌 사본과 잔고증명서 원본을 제출하되 대조를 위해 통장 원본을 지참합니다. 명의를 양도받은 통장, 은행이 아닌 기관(신용펀드 등)의 예치금은 인정되지 않습니다.",
+      "when": {
+        "track": [
+          "new_d2",
+          "new_d4"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_cur",
+        "hcmc_2024"
+      ]
+    },
+    {
+      "id": "FIN-053",
+      "group": "finance",
+      "kind": "caution",
+      "title": "현지 통화 환산 — 신청일 환율 적용",
+      "body": "베트남 동으로 된 잔고증명서를 제출하면 사증 신청일 기준 환율로 환산합니다. 기준액에 딱 맞추면 환율 변동으로 미달 판정이 날 수 있습니다.",
+      "when": {
+        "balanceCurrency": [
+          "vnd",
+          "usd"
+        ]
+      },
+      "value": {
+        "bufferRecommendPct": 15
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_2024"
+      ],
+      "note": "기준액의 110~115% 수준으로 예치할 것을 권장합니다."
+    },
+    {
+      "id": "FIN-054",
+      "group": "finance",
+      "kind": "caution",
+      "title": "심사 중 인출 제한",
+      "body": "심사 종료 전 잔고의 50% 이상을 인출하면 재정능력 입증을 다시 요구받고, 70% 이상 변동하면 사실관계 변화를 이유로 체류허가가 억제됩니다. 잔고증명 제출 후 인출했다가 보정명령을 받고 재입금한 뒤 다시 인출한 사실이 확인된 사례에서 재정능력이 부정된 판례가 있습니다.",
+      "when": {},
+      "confidence": "confirmed",
+      "sources": [
+        "moj_guideline"
+      ]
+    },
+    {
+      "id": "FIN-055",
+      "group": "finance",
+      "kind": "caution",
+      "title": "유학경비 국외 조달 원칙",
+      "body": "유학경비는 국외 조달이 원칙이며, 시간제 취업허가 등 자격외 활동허가를 통해 형성된 금액에 한해 국내 조달이 예외적으로 인정됩니다. 허가 없이 형성한 국내 자금은 재정능력으로 인정되지 않을 뿐 아니라 불법취업 이력으로 역작용합니다.",
+      "when": {
+        "track": [
+          "change_d4_d2"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "moj_guideline"
+      ]
+    },
+    {
+      "id": "FIN-060",
+      "group": "finance",
+      "kind": "info",
+      "title": "전액 장학생 — 재정증명 면제",
+      "body": "학비와 생활비를 모두 100% 지원받는 경우 재정증명이 면제됩니다. 표준입학허가서와 동일한 직인이 날인된 장학증서 원본을 제출합니다.",
+      "when": {
+        "scholarship": [
+          "full"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_cur",
+        "hcmc_2024"
+      ]
+    },
+    {
+      "id": "FIN-061",
+      "group": "finance",
+      "kind": "requirement",
+      "title": "부분 장학생 — 본인부담금에 대한 재정능력 입증 필요",
+      "body": "장학금이 100% 미만이면 일반적인 재정증명이 필요합니다. 장학증서 원본과 본인부담분 재정능력 입증서류를 함께 제출합니다.",
+      "when": {
+        "scholarship": [
+          "partial"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_cur",
+        "hcmc_2024"
+      ]
+    },
+    {
+      "id": "FIN-062",
+      "group": "finance",
+      "kind": "verify",
+      "title": "부분 장학금 + 예치금 합산 인정 여부 — 미확인",
+      "body": "주몽골대사관은 표준입학허가서상 장학금 1,000만 원 + 예치금 1,000만 원 = 2,000만 원 방식의 합산을 인정합니다. 베트남 공관 문서에는 합산 규정이 명시되어 있지 않습니다.",
+      "when": {
+        "scholarship": [
+          "partial"
+        ],
+        "nationality": [
+          "vn"
+        ]
+      },
+      "confidence": "unknown",
+      "sources": [
+        "kvac_mn"
+      ],
+      "note": "합산이 가능하면 준비 부담이 크게 줄어드는 항목입니다. 공관에 서면 질의할 가치가 있습니다."
+    },
+    {
+      "id": "FIN-063",
+      "group": "finance",
+      "kind": "info",
+      "title": "GKS 정부초청장학생 — 재정증명 면제",
+      "body": "국립국제교육원장이 발행한 초청장으로 표준입학허가서를 갈음하며 학력요건과 재정능력 입증서류가 면제됩니다. 영사 심사 수수료도 면제됩니다.",
+      "when": {
+        "scholarship": [
+          "gks"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_cur",
+        "hcmc_2024"
+      ]
+    },
+    {
+      "id": "FIN-070",
+      "group": "finance",
+      "kind": "requirement",
+      "title": "유학경비 예치제(지급유보) 적용",
+      "body": "일반대학·컨설팅대학에 입학하는 중국·베트남·몽골·우즈베키스탄 어학연수생은 유학경비를 지정 방식으로 예치하고 예치확인서 원본을 제출합니다. 이 제도는 어학연수(D-4) 전용이며 D-2 학위과정에는 적용되지 않습니다.",
+      "when": {
+        "track": [
+          "new_d4"
+        ],
+        "nationality": [
+          "vn",
+          "cn",
+          "mn",
+          "uz"
+        ],
+        "univTier": [
+          "general",
+          "consulting"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_cur",
+        "moj_guideline",
+        "moe_standard_2025"
+      ]
+    },
+    {
+      "id": "FIN-080",
+      "group": "finance",
+      "kind": "verify",
+      "title": "체류자격 변경 시 금액·예치기간 기준 — 미확인",
+      "body": "체류자격 변경 시에도 국내외 은행이 발급한 본인 또는 부모의 잔고증명서로 재정능력을 확인한다는 원칙은 확인됩니다. 그러나 변경 시의 기준 금액이 신규 사증과 동일한 1,600만 원/2,000만 원인지, 예치기간이 3개월인지는 확인하지 못했습니다.",
+      "when": {
+        "track": [
+          "change_d4_d2"
+        ]
+      },
+      "confidence": "unknown",
+      "sources": [
+        "moj_guideline"
+      ],
+      "note": "신규 사증 기준을 그대로 복사해 쓰지 마세요. 관할 출입국관서에 직접 확인이 필요합니다."
+    },
+    {
+      "id": "DOC-010",
+      "group": "documents",
+      "kind": "doc",
+      "title": "기본 서류",
+      "body": "여권 원본 / 사증발급신청서(여권용 사진 3.5×4.5cm 1매 부착) / 표준입학허가서 / 한국 대학 사업자등록증(또는 고유번호증) 사본 / 최종학력 입증서류 원본 / 결핵진단서 / 신분증·출생증명서 사본",
+      "when": {
+        "track": [
+          "new_d2",
+          "new_d4"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_cur"
+      ]
+    },
+    {
+      "id": "DOC-011",
+      "group": "documents",
+      "kind": "doc",
+      "title": "CT07 서식 — 친필 서명 원본만 인정",
+      "body": "전자서명, 스캔본, 인쇄본은 인정되지 않습니다. 반드시 친필 서명 원본을 제출합니다.",
+      "when": {
+        "nationality": [
+          "vn"
+        ],
+        "track": [
+          "new_d2",
+          "new_d4"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_cur"
+      ]
+    },
+    {
+      "id": "DOC-012",
+      "group": "documents",
+      "kind": "doc",
+      "title": "학업계획 관련 서류",
+      "body": "영어·한국어 자격증, 연수계획서(강의시간표, 강사구성표, 연수시설 등 포함)",
+      "when": {
+        "track": [
+          "new_d2"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_cur"
+      ]
+    },
+    {
+      "id": "DOC-020",
+      "group": "documents",
+      "kind": "doc",
+      "title": "재정보증 — 부모(직장인)",
+      "body": "부모의 재정지원 확인서 원본 및 공증번역본(관할 공안 확인 필수) / 근로계약서 / 사회보험 VssID / 급여은행 계좌거래내역서(최근 3개월 월급 포함)",
+      "when": {
+        "nationality": [
+          "vn"
+        ],
+        "sponsor": [
+          "parents",
+          "other_family"
+        ],
+        "parentJob": [
+          "employee"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_cur"
+      ]
+    },
+    {
+      "id": "DOC-021",
+      "group": "documents",
+      "kind": "doc",
+      "title": "재정보증 — 부모(사업자)",
+      "body": "부모의 재정지원 확인서 원본 및 공증번역본 / 사업자등록증 / 최근 3개월 내 부가가치세 또는 가장 최근 몬바이(Môn bài)세 납세증명서 / 부모의 소득확인서 원본 및 공증번역본(관할 공안 확인 필수, 불가 시 법인인감 날인)",
+      "when": {
+        "nationality": [
+          "vn"
+        ],
+        "sponsor": [
+          "parents",
+          "other_family"
+        ],
+        "parentJob": [
+          "business_owner"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_cur"
+      ]
+    },
+    {
+      "id": "DOC-022",
+      "group": "documents",
+      "kind": "doc",
+      "title": "재정보증 — 부모(자영업)",
+      "body": "사업자등록증 / 최근 3개월 내 부가가치세 또는 가장 최근 몬바이세 납세증명서 / 부모의 소득확인서 원본 및 공증번역본(관할 공안 확인 필수)",
+      "when": {
+        "nationality": [
+          "vn"
+        ],
+        "sponsor": [
+          "parents",
+          "other_family"
+        ],
+        "parentJob": [
+          "sole_proprietor"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_cur"
+      ]
+    },
+    {
+      "id": "DOC-023",
+      "group": "documents",
+      "kind": "doc",
+      "title": "재정보증 — 부모(농민)",
+      "body": "부모의 소득확인서 원본 및 공증번역본(관할 공안에서 부모의 직업과 소득을 확인해야 함) / 부동산 소유 입증서류(레드북) — 관할 인민위원회 공증 필수",
+      "when": {
+        "nationality": [
+          "vn"
+        ],
+        "sponsor": [
+          "parents",
+          "other_family"
+        ],
+        "parentJob": [
+          "farmer"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_cur"
+      ]
+    },
+    {
+      "id": "DOC-024",
+      "group": "documents",
+      "kind": "doc",
+      "title": "재정보증 — 부모 외 가족",
+      "body": "부모 부재를 전제로 합니다. 호적부·CT07·출생증명서 등 가족관계 입증서류 / 재정부담 확약서 원본 / 보증인의 자산 입증 서류를 추가로 제출합니다.",
+      "when": {
+        "sponsor": [
+          "other_family"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_2024"
+      ]
+    },
+    {
+      "id": "DOC-025",
+      "group": "documents",
+      "kind": "doc",
+      "title": "재정보증 — 한국 국적 가족",
+      "body": "가족관계 입증서류 / 재직증명서 및 사업자등록증명 등 재직증명서류 원본 / 신원보증서 및 재정부담 확약서 원본 / 재정보증인의 인감증명서 원본 / 재정보증인의 은행잔고증명서 원본 / 재정보증인의 신분증 사본",
+      "when": {
+        "sponsor": [
+          "kr_family"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_2024"
+      ]
+    },
+    {
+      "id": "DOC-026",
+      "group": "documents",
+      "kind": "doc",
+      "title": "재정보증 — 지도교수",
+      "body": "지도교수 재정보증서 원본(인감 날인 또는 서명) / 인감증명서 또는 본인서명사실확인서 원본 / 재직증명서 원본 / 지도교수 명의 은행잔고증명서 원본. 연구비 명목 장학금 지급 시에는 연구비 입금 계좌의 잔고증명 사본, 장학금 부담능력 입증서류, 교육기관 직인확인서류로 대체 가능합니다.",
+      "when": {
+        "sponsor": [
+          "professor"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_cur",
+        "hcmc_2024"
+      ]
+    },
+    {
+      "id": "DOC-027",
+      "group": "documents",
+      "kind": "doc",
+      "title": "재정보증 — 회사",
+      "body": "한국 본사·베트남 지사 장학생 선발 목적에 한합니다. 베트남 지사 노동계약서 사본 / 베트남 지사 투자증명서 사본 / 한국 본사 사업자등록증명 사본(최근 3개월 이내) / 신원보증서 및 재정부담 확약서 원본(법인인감 날인) / 법인인감증명서 원본 / 회사대표 신분증 사본",
+      "when": {
+        "sponsor": [
+          "company"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_2024"
+      ]
+    },
+    {
+      "id": "DOC-030",
+      "group": "documents",
+      "kind": "doc",
+      "title": "교환·방문학생 추가 서류",
+      "body": "본국 대학의 장이 발급한 추천서(파견 결정서) / 대학 간 체결한 MOU·학생교류협정서·공문 / 본국 대학 재학증명서와 성적표 원본 및 번역공증본 / 체류기간 3개월 이상인 경우 결핵진단서",
+      "when": {
+        "statusCode": [
+          "D-2-6",
+          "D-2-8"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_cur",
+        "hcmc_2024"
+      ]
+    },
+    {
+      "id": "DOC-040",
+      "group": "documents",
+      "kind": "doc",
+      "title": "북부 출신이 호치민 총영사관에 접수하는 경우",
+      "body": "남부지역 1년 이상 거주 이력이 확인되는 CT08 서식, 또는 남부지역에서 6개월 이상 근무·재학한 사실을 확인할 수 있는 증빙(근로계약서, 재학증명서 등) 중 하나를 제출합니다. 남부지역 고등학교 졸업자는 졸업일로부터 6개월 이내면 추가서류가 면제되고, 6개월이 지나면 위 두 가지 중 하나를 택해 증빙해야 합니다. 근무 중인 경우 사회보험(VssID) 제출이 필수입니다.",
+      "when": {
+        "nationality": [
+          "vn"
+        ],
+        "applicantRegion": [
+          "vn_north"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_cur"
+      ],
+      "note": "북부 거주자는 원칙적으로 하노이 대사관 관할입니다. 이 규칙은 예외적으로 호치민에 접수하는 경우에만 적용됩니다."
+    },
+    {
+      "id": "DOC-050",
+      "group": "documents",
+      "kind": "doc",
+      "title": "체류자격 변경 시 추가 서류",
+      "body": "직전 어학연수 과정의 출석률이 확인되는 재학증명서(연수기간 기재)와 성적증명서를 제출합니다. 출석률과 학업 성취도가 핵심 심사 항목입니다.",
+      "when": {
+        "track": [
+          "change_d4_d2"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "moj_guideline"
+      ]
+    },
+    {
+      "id": "LNG-010",
+      "group": "language",
+      "kind": "requirement",
+      "title": "어학능력 입증 필수 (하위대학)",
+      "body": "컨설팅대학·비자정밀 심사대학 입학·진학 예정 유학생(D-2-1~D-2-8)은 어학능력 입증이 필수입니다.",
+      "when": {
+        "univTier": [
+          "consulting",
+          "restricted"
+        ],
+        "track": [
+          "new_d2"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_2024"
+      ]
+    },
+    {
+      "id": "LNG-011",
+      "group": "language",
+      "kind": "info",
+      "title": "어학능력 입증 — 의무 아님, 가점 대상",
+      "body": "인증대학 및 일반대학 유학생은 제출이 의무는 아니나 사증 심사 시 가점이 부여되고 우대됩니다. 실무적으로는 제출하는 편이 유리합니다.",
+      "when": {
+        "univTier": [
+          "excellent",
+          "certified",
+          "general"
+        ],
+        "track": [
+          "new_d2"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_2024"
+      ]
+    },
+    {
+      "id": "LNG-020",
+      "group": "language",
+      "kind": "requirement",
+      "title": "한국어 기준 — 전문학사",
+      "body": "TOPIK 3급 이상 / 사회통합프로그램(KIIP) 3단계 이상 이수 또는 사전평가 61점 이상 / 세종학당 중급1 과정 이상. 뿌리산업 양성학과는 TOPIK 2급, KIIP 2단계 또는 사전평가 41점, 세종학당 초급2로 완화됩니다.",
+      "when": {
+        "langTrack": [
+          "ko"
+        ],
+        "statusCode": [
+          "D-2-1"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_2024"
+      ]
+    },
+    {
+      "id": "LNG-021",
+      "group": "language",
+      "kind": "requirement",
+      "title": "한국어 기준 — 학사 이상",
+      "body": "TOPIK 4급 이상 / KIIP 4단계 이상 이수 또는 사전평가 81점 이상 / 세종학당 중급2 과정 이상. 예체능 학과는 TOPIK 3급, KIIP 3단계 또는 61점, 세종학당 중급1로 완화됩니다.",
+      "when": {
+        "langTrack": [
+          "ko"
+        ],
+        "statusCode": [
+          "D-2-2",
+          "D-2-3",
+          "D-2-4",
+          "D-2-7"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_2024"
+      ]
+    },
+    {
+      "id": "LNG-022",
+      "group": "language",
+      "kind": "requirement",
+      "title": "한국어 기준 — 교환학생",
+      "body": "TOPIK 2급 이상 / KIIP 2단계 이상 이수 또는 사전평가 41점 이상 / 세종학당 초급2 과정 이상",
+      "when": {
+        "langTrack": [
+          "ko"
+        ],
+        "statusCode": [
+          "D-2-6"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_2024"
+      ]
+    },
+    {
+      "id": "LNG-030",
+      "group": "language",
+      "kind": "requirement",
+      "title": "영어 트랙 기준 — 학위과정 구분 없이 동일",
+      "body": "TOEFL 530(CBT 197, iBT 71) / IELTS 5.5 / CEFR B2 / TEPS 601점(NEW TEPS 327점) 이상. 영어사용과정(영어트랙) 유학생에 한해 예외적으로 적용됩니다.",
+      "when": {
+        "langTrack": [
+          "en"
+        ],
+        "track": [
+          "new_d2"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_2024"
+      ]
+    },
+    {
+      "id": "LNG-040",
+      "group": "language",
+      "kind": "verify",
+      "title": "2026년부터 어학능력 기준 점진 상향 예정",
+      "body": "제4주기 기본계획에 따라 어학 능력 기준이 2026년부터 점진적으로 상향 적용됩니다. 상향 폭과 적용 시점은 확인하지 못했습니다.",
+      "when": {
+        "track": [
+          "new_d2",
+          "new_d4"
+        ]
+      },
+      "confidence": "unknown",
+      "sources": [
+        "moe_2026"
+      ],
+      "note": "룰셋에 하드코딩된 TOPIK 급수는 유효기간이 짧습니다. 갱신 알림을 걸어두세요."
+    },
+    {
+      "id": "LNG-050",
+      "group": "language",
+      "kind": "info",
+      "title": "어학요건 예외",
+      "body": "복학생, 정부초청장학생, 외국정부지원 장학생은 대학 자체 입학 기준이 적용됩니다.",
+      "when": {
+        "scholarship": [
+          "gks"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_2024"
+      ]
+    },
+    {
+      "id": "DUR-010",
+      "group": "duration",
+      "kind": "info",
+      "title": "체류기간 2년 이내, 단수 사증",
+      "body": "전문학사·학사·석사·박사·일학습연계 과정은 체류기간 2년 이내 단수 사증이 발급됩니다. 우수인증대학·인증대학 유학생에게는 체류기간 상한(2년)이 부여됩니다.",
+      "when": {
+        "statusCode": [
+          "D-2-1",
+          "D-2-2",
+          "D-2-3",
+          "D-2-4",
+          "D-2-7"
+        ]
+      },
+      "whenNot": {
+        "gradCert": [
+          "expected"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_2024"
+      ]
+    },
+    {
+      "id": "DUR-011",
+      "group": "duration",
+      "kind": "caution",
+      "title": "졸업예정증명서 제출 시 체류기간 1년으로 단축",
+      "body": "유학(D-2) 사증 발급 시 졸업예정증명서를 제출한 경우, 우수인증대학·인증대학이라 하더라도 체류기간이 1년 이내로 부여됩니다. 정식 졸업증명서 발급을 기다렸다가 신청하는 편이 유리할 수 있습니다.",
+      "when": {
+        "gradCert": [
+          "expected"
+        ],
+        "track": [
+          "new_d2"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_2024"
+      ]
+    },
+    {
+      "id": "DUR-020",
+      "group": "duration",
+      "kind": "info",
+      "title": "체류기간 1년 이내, 단수 사증",
+      "body": "연구과정(D-2-5), 교환학생(D-2-6), 방문학생(D-2-8)은 체류기간 1년 이내입니다.",
+      "when": {
+        "statusCode": [
+          "D-2-5",
+          "D-2-6",
+          "D-2-8"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_2024"
+      ]
+    },
+    {
+      "id": "DUR-030",
+      "group": "duration",
+      "kind": "info",
+      "title": "체류기간 6개월 이내, 단수 사증",
+      "body": "한국어연수(D-4-1)는 체류기간 6개월 이내로 발급되며 국내에서 연장 가능합니다.",
+      "when": {
+        "statusCode": [
+          "D-4-1",
+          "D-4-7"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_2024"
+      ]
+    },
+    {
+      "id": "JUR-010",
+      "group": "jurisdiction",
+      "kind": "requirement",
+      "title": "관할 공관 — 주하노이 대한민국 대사관",
+      "body": "베트남 북부 거주자는 주하노이 대사관 관할입니다. 본 룰셋의 서류 세부 항목은 주호치민 총영사관 안내를 기준으로 작성되었으므로, 하노이 접수 시에는 세부 서류가 다를 수 있습니다.",
+      "when": {
+        "nationality": [
+          "vn"
+        ],
+        "applicantRegion": [
+          "vn_north"
+        ]
+      },
+      "confidence": "unknown",
+      "sources": [],
+      "note": "주하노이 대사관 현행 구비서류 목록은 확인하지 못했습니다. 접수 전 반드시 대사관 공지를 확인하세요."
+    },
+    {
+      "id": "JUR-011",
+      "group": "jurisdiction",
+      "kind": "requirement",
+      "title": "관할 공관 — 주호치민 대한민국 총영사관 (KVAC HCMC)",
+      "body": "베트남 남부(다낭 이남, 다낭시·후에·꽝남성·꽝응아이성 제외 기준 참고) 거주자는 주호치민 총영사관 관할입니다. 접수는 KVAC(비자신청센터)를 경유합니다.",
+      "when": {
+        "nationality": [
+          "vn"
+        ],
+        "applicantRegion": [
+          "vn_south"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_cur"
+      ]
+    },
+    {
+      "id": "JUR-020",
+      "group": "jurisdiction",
+      "kind": "blocker",
+      "title": "사증 신청 목적의 주소 이전은 원칙적 발급 불허",
+      "body": "신청인의 최종 졸업학교 소재지 관할 공관에서 신청하는 것이 원칙입니다. 사증 신청을 위해 관내로 주소를 이전한 경우 원칙적으로 사증 발급이 불허됩니다. 직장·학업 등의 사유로 이전한 경우에는 6개월 이상 거주자에 한해 접수가 가능합니다.",
+      "when": {
+        "nationality": [
+          "vn"
+        ],
+        "track": [
+          "new_d2",
+          "new_d4"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_2024"
+      ]
+    },
+    {
+      "id": "PRC-010",
+      "group": "process",
+      "kind": "requirement",
+      "title": "서류 유효기간 — 접수일 기준 3개월",
+      "body": "별도의 유효기간이 설정되어 있지 않은 모든 구비서류는 접수일 기준 발급일로부터 3개월 이내의 것만 유효합니다.",
+      "when": {
+        "track": [
+          "new_d2",
+          "new_d4"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_2024",
+        "hcmc_cur"
+      ]
+    },
+    {
+      "id": "PRC-011",
+      "group": "process",
+      "kind": "requirement",
+      "title": "번역공증 및 사본 형식",
+      "body": "베트남 또는 제3국에서 발급된 서류는 한글 또는 영문 번역공증을 받아야 합니다(최근 3개월 이내 발급, 신분증 제외). 번역공증본을 포함한 사본 제출 시 A4 용지 한 쪽 면만 사용하며 양면 복사는 금지됩니다.",
+      "when": {
+        "nationality": [
+          "vn"
+        ],
+        "track": [
+          "new_d2",
+          "new_d4"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_cur"
+      ]
+    },
+    {
+      "id": "PRC-012",
+      "group": "process",
+      "kind": "requirement",
+      "title": "학력서류 영사확인 필수",
+      "body": "최고학력 졸업장, 성적증명서 또는 생활기록부, 재학증명서는 호치민 외무성 및 주호치민 대한민국 총영사관의 영사확인을 받아야 합니다. 영사확인은 사증 접수일로부터 1년 이내의 것만 인정됩니다.",
+      "when": {
+        "nationality": [
+          "vn"
+        ],
+        "applicantRegion": [
+          "vn_south"
+        ],
+        "track": [
+          "new_d2",
+          "new_d4"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_cur",
+        "hcmc_2024"
+      ]
+    },
+    {
+      "id": "PRC-013",
+      "group": "process",
+      "kind": "requirement",
+      "title": "졸업예정증명서 인정 조건",
+      "body": "졸업예정증명서 또는 임시졸업증명서는 표준입학허가서 발급일 기준으로 졸업일로부터 1년 이내인 경우에만 인정됩니다.",
+      "when": {
+        "gradCert": [
+          "expected"
+        ],
+        "track": [
+          "new_d2",
+          "new_d4"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_2024"
+      ]
+    },
+    {
+      "id": "PRC-014",
+      "group": "process",
+      "kind": "requirement",
+      "title": "결핵진단서 — 지정병원, 3개월 이내",
+      "body": "베트남은 결핵고위험국가로 분류되어 흉부 X선 검사 결과가 포함된 지정병원 결핵진단서가 필요합니다. 최근 3개월 이내 발급본만 인정되며 공관이 지정한 병원에서 받아야 합니다.",
+      "when": {
+        "nationality": [
+          "vn"
+        ],
+        "track": [
+          "new_d2",
+          "new_d4"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_cur"
+      ]
+    },
+    {
+      "id": "PRC-020",
+      "group": "process",
+      "kind": "caution",
+      "title": "불허 시 6개월간 재접수 불가",
+      "body": "사증발급 불허자는 불허일로부터 6개월이 지나야 재접수할 수 있습니다. 준비 부족으로 접수했다가 불허되면 다음 학기가 아니라 그 다음 학기로 밀립니다. 서류가 완비되기 전에 접수하지 마세요.",
+      "when": {
+        "track": [
+          "new_d2",
+          "new_d4"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_cur",
+        "hcmc_2024"
+      ]
+    },
+    {
+      "id": "PRC-021",
+      "group": "process",
+      "kind": "info",
+      "title": "심사 소요기간 — 약 20영업일",
+      "body": "유학비자는 일반적으로 접수일로부터 20일(근무일 기준) 소요되며, 학력 조회 및 사실확인으로 더 길어질 수 있습니다. 여권 유효기간은 최소 6개월 이상 남아 있어야 합니다.",
+      "when": {
+        "nationality": [
+          "vn"
+        ],
+        "track": [
+          "new_d2",
+          "new_d4"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "hcmc_cur"
+      ]
+    },
+    {
+      "id": "PRC-022",
+      "group": "process",
+      "kind": "caution",
+      "title": "공관장 재량으로 서류 가감 가능",
+      "body": "재외공관의 장은 입국목적, 초청의 진정성, 초청자 및 피초청자의 자격 확인 등을 심사하기 위해 필요한 경우 첨부서류를 일부 가감할 수 있습니다. 본 룰셋의 결과는 최소 요건이며 상한이 아닙니다.",
+      "when": {},
+      "confidence": "confirmed",
+      "sources": [
+        "moj_guideline"
+      ]
+    },
+    {
+      "id": "ADM-010",
+      "group": "admission",
+      "kind": "info",
+      "title": "발급 절차는 두 개의 관문으로 나뉜다",
+      "body": "입학허가서 신청 → 표준입학허가서 발급 → (사증발급인정서 신청 → 발급) → 사증발급 신청 → 사증발급 → 입국. 앞쪽은 대학이, 뒤쪽은 재외공관이 심사합니다. 대학이 통과시켜도 공관이 불허할 수 있고, 두 단계의 서류 유효기간과 어학 기준이 서로 다릅니다. 사증발급인정서 신청은 대학의 장 또는 대학이 지정한 유학생 관리부서의 장 명의로 대리할 수 있습니다.",
+      "when": {
+        "track": [
+          "new_d2",
+          "new_d4",
+          "change_d4_d2"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "moe_standard_2025"
+      ],
+      "note": "대학 안내와 공관 요건이 어긋나는 사고는 대부분 이 두 관문을 하나로 착각해서 발생합니다."
+    },
+    {
+      "id": "ADM-020",
+      "group": "admission",
+      "kind": "requirement",
+      "title": "대학 입학심사 재정능력 기준 — 공관 기준과 동일 금액",
+      "body": "교육부 표준업무처리요령이 정한 재정능력 심사기준은 학위과정 수도권 연간 2,000만 원 이상·지방 1,600만 원 이상, 어학연수과정 수도권 1,000만 원 이상·지방 800만 원 이상입니다. 재외공관 사증심사 금액과 같습니다. 대학이 이보다 낮은 금액을 안내했다면 근거가 없습니다.",
+      "when": {
+        "track": [
+          "new_d2",
+          "new_d4",
+          "change_d4_d2"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "moe_standard_2025"
+      ],
+      "value": {
+        "degreeMetroKRW": 20000000,
+        "degreeNonmetroKRW": 16000000,
+        "langMetroKRW": 10000000,
+        "langNonmetroKRW": 8000000
+      },
+      "note": "이 조항이 대학 안내값을 검증하는 기준선입니다. 대학은 기준을 올릴 수는 있어도 내릴 수 없습니다."
+    },
+    {
+      "id": "ADM-021",
+      "group": "admission",
+      "kind": "info",
+      "title": "금액의 산정 근거 — 학위 1년분, 어학연수 6개월분",
+      "body": "학위과정은 등록금·체재비 등 1년간의 평균 소요경비 이상, 어학연수는 6개월간의 평균 소요경비 이상을 기준으로 합니다. 어학연수 금액이 학위과정의 절반인 이유가 여기 있습니다.",
+      "when": {
+        "track": [
+          "new_d2",
+          "new_d4",
+          "change_d4_d2"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "moe_standard_2025"
+      ]
+    },
+    {
+      "id": "ADM-022",
+      "group": "admission",
+      "kind": "caution",
+      "title": "어학연수는 체류기간과 무관하게 정액",
+      "body": "학위과정만 체류기간이 1년 미만일 때 등록금에 비례 체재비를 더해 산정합니다. 어학연수과정은 체류기간에 관계없이 표에 적힌 금액을 그대로 적용합니다. 3개월만 연수해도 감액되지 않습니다.",
+      "when": {
+        "track": [
+          "new_d4"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "moe_standard_2025"
+      ]
+    },
+    {
+      "id": "ADM-030",
+      "group": "admission",
+      "kind": "requirement",
+      "title": "대학 단계 잔고증명서 유효기간 — 30일 (공관 단계와 다름)",
+      "body": "입학허가 심사용 잔고증명서는 신청일 기준 30일 이내 발급본이어야 합니다. 다만 유효기간이 명시된 잔고증명서는 그 유효기간까지 효력을 인정하되 발급일로부터 최대 6개월까지만 인정합니다. 공관 사증심사 단계는 이보다 훨씬 짧으므로(10일~1개월) 같은 서류를 재사용할 수 없습니다.",
+      "when": {
+        "track": [
+          "new_d2",
+          "new_d4",
+          "change_d4_d2"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "moe_standard_2025"
+      ],
+      "value": {
+        "validDays": 30,
+        "maxWithExpiryMonths": 6
+      },
+      "note": "대학용과 공관용 잔고증명서는 별도로 발급받아야 한다고 보고 일정을 짜세요."
+    },
+    {
+      "id": "ADM-031",
+      "group": "admission",
+      "kind": "doc",
+      "title": "대학 입학심사 재정 제출서류",
+      "body": "본인 또는 재정보증인의 국내외 은행 잔고증명서 또는 국내송금 증명서. 재정보증인의 경우 ① 재직증명서 또는 사업자등록증 ② 자산증명서 ③ 유학경비 부담 서약서(입학지원서에 포함)를 함께 제출합니다. 장학생은 장학금 증명서·학비지원 확인서, 대학 간 교류학생은 총·학장 초청장 및 학비 면제 확인서로 갈음합니다.",
+      "when": {
+        "track": [
+          "new_d2",
+          "new_d4",
+          "change_d4_d2"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "moe_standard_2025"
+      ]
+    },
+    {
+      "id": "ADM-040",
+      "group": "admission",
+      "kind": "caution",
+      "title": "표준입학허가서에 소요경비와 조달계획이 기재된다",
+      "body": "표준입학허가서 7·8항에는 등록금·생활비·기타를 합산한 연간 소요경비와, 본인 부담·보증인 부담·장학금으로 나눈 조달계획이 금액으로 기재됩니다. 공관은 이 금액과 제출된 잔고증명을 대조합니다. 대학이 적어 넣은 소요경비가 잔고보다 크면 그 자체로 재정능력 미흡이 됩니다.",
+      "when": {
+        "track": [
+          "new_d2",
+          "new_d4"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "moe_standard_2025"
+      ],
+      "note": "표준입학허가서를 받으면 7·8항 금액을 먼저 확인하고, 그 금액 이상으로 예치했는지 역산하세요."
+    },
+    {
+      "id": "ADM-050",
+      "group": "admission",
+      "kind": "requirement",
+      "title": "대학 입학 한국어 기준 — 4년제·대학원",
+      "body": "TOPIK 3급 이상으로 입학하고 졸업 전까지 4급 이상을 취득하도록 권장합니다. 영어사용과정은 TOEFL iBT 59, IELTS 5.5, CEFR B2, NEW TEPS 202점 또는 상응 점수이며 졸업기준은 없습니다.",
+      "when": {
+        "track": [
+          "new_d2",
+          "new_d4",
+          "change_d4_d2"
+        ],
+        "statusCode": [
+          "D-2-2",
+          "D-2-3",
+          "D-2-4",
+          "D-2-7"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "moe_standard_2025"
+      ],
+      "note": "공관 사증심사 기준(하위대학 학사 이상 TOPIK 4급)보다 낮습니다. 대학 입학은 3급으로 되지만 하위대학 진학자는 사증에서 4급이 요구될 수 있습니다."
+    },
+    {
+      "id": "ADM-051",
+      "group": "admission",
+      "kind": "requirement",
+      "title": "대학 입학 한국어 기준 — 전문대학·전문학사",
+      "body": "TOPIK 2급 이상으로 입학하고 졸업 전까지 3급 이상을 취득하도록 권장합니다. 영어 기준은 4년제와 동일합니다.",
+      "when": {
+        "track": [
+          "new_d2",
+          "new_d4",
+          "change_d4_d2"
+        ],
+        "statusCode": [
+          "D-2-1"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "moe_standard_2025"
+      ],
+      "note": "공관 사증심사는 전문학사에 TOPIK 3급을 요구합니다. 2급으로 입학허가를 받아도 하위대학이면 사증 단계에서 막힙니다."
+    },
+    {
+      "id": "ADM-052",
+      "group": "admission",
+      "kind": "info",
+      "title": "TOPIK 2급 입학자의 보충 한국어연수 의무",
+      "body": "4년제에서 TOPIK 2급 소지자의 입학을 허용하는 경우, 입학 후 1년간 300시간 이상의 한국어연수 또는 사회통합프로그램 또는 세종학당 한국어과정을 필수 이수해야 합니다. 첫 학기 중 TOPIK 3급을 취득하면 120시간으로 줄어듭니다. 입학 전 1년 내 대학 지정 온·오프라인 한국어 강좌 이수분은 최대 20시간까지 인정됩니다.",
+      "when": {
+        "track": [
+          "new_d2",
+          "new_d4",
+          "change_d4_d2"
+        ],
+        "statusCode": [
+          "D-2-2",
+          "D-2-3",
+          "D-2-4",
+          "D-2-7"
+        ],
+        "langTrack": [
+          "ko"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "moe_standard_2025"
+      ]
+    },
+    {
+      "id": "ADM-053",
+      "group": "admission",
+      "kind": "info",
+      "title": "TOPIK 대체 인정 — 사회통합프로그램·세종학당",
+      "body": "TOPIK 2급은 사전평가 41점 또는 2단계 이수 또는 세종학당 초급2, 3급은 61점 또는 3단계 또는 중급1, 4급은 81점 또는 4단계 또는 중급2로 대체 인정됩니다. 세종학당은 현지 세종학당이 발급한 기본 교육과정 수료증만 인정되며 온라인 세종학당 수료증은 제외됩니다. 국내 체류 중 해외 세종학당 과정에 온라인으로 참여한 경우는 수료증에 온라인 표기가 없더라도 인정되지 않습니다.",
+      "when": {
+        "track": [
+          "new_d2",
+          "new_d4",
+          "change_d4_d2"
+        ],
+        "langTrack": [
+          "ko"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "moe_standard_2025",
+        "hcmc_2024"
+      ]
+    },
+    {
+      "id": "ADM-054",
+      "group": "admission",
+      "kind": "info",
+      "title": "어학 기준 완화 대상 과정",
+      "body": "교환학생, 정부초청장학생, 지자체 초청 장학생, 외국정부지원 장학생, 예체능 학과, 이공계 대학원, 이중언어 과정 입학생은 입학·졸업 기준을 완화할 수 있습니다. 전문대학은 기술직 학과(음악·체육·보건·미용·정비·공학·디자인 등 실기 위주)도 포함됩니다. 이공계열 중 한국어능력이 덜 요구되는 학과를 전체의 20% 미만으로 지정해 TOPIK 졸업기준을 3급으로 완화하는 것도 가능합니다.",
+      "when": {
+        "track": [
+          "new_d2",
+          "new_d4",
+          "change_d4_d2"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "moe_standard_2025"
+      ]
+    },
+    {
+      "id": "ADM-060",
+      "group": "admission",
+      "kind": "caution",
+      "title": "대학의 입학 보증금 예치는 지양 대상",
+      "body": "교육부는 대학이 유학생 입학 시 보증금을 예치받는 것을 지양하도록 정하고 있습니다. 법무부의 유학경비 예치제(지급유보)와는 다른 제도이므로 혼동하지 마세요. 대학이 별도 보증금을 요구한다면 근거를 확인할 필요가 있습니다.",
+      "when": {
+        "track": [
+          "new_d2",
+          "new_d4",
+          "change_d4_d2"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "moe_standard_2025"
+      ]
+    },
+    {
+      "id": "ADM-061",
+      "group": "admission",
+      "kind": "requirement",
+      "title": "등록금은 학생 명의로 직접 납부",
+      "body": "등록금과 수강료는 개인 가상계좌 등을 통해 학생 명의로 직접 납부하고, 환불도 학생 명의 계좌로 직접 실시하는 것이 원칙입니다. 단체 납부·환불은 불가피함을 입증할 수 있는 경우에만 예외적으로 허용됩니다. 유학원을 통한 단체 송금은 재정능력 심사에서 자금 출처 문제를 일으킬 수 있습니다.",
+      "when": {
+        "track": [
+          "new_d2",
+          "new_d4",
+          "change_d4_d2"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "moe_standard_2025"
+      ]
+    },
+    {
+      "id": "ADM-070",
+      "group": "admission",
+      "kind": "blocker",
+      "title": "위탁 운영 어학연수기관은 사증발급이 불가할 수 있다",
+      "body": "대학의 어학연수기관은 직접 운영이 원칙이며 위탁 운영은 지양 대상입니다. 위탁 운영하는 어학연수기관의 경우 법무부 「외국인 유학생 사증발급 및 체류관리 지침」에 의해 사증발급이 불가할 수 있습니다.",
+      "when": {
+        "track": [
+          "new_d4"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "moe_standard_2025"
+      ],
+      "note": "어학연수 기관 선택 시 직접 운영인지 위탁인지 먼저 확인하세요. 대학 브랜드만 보고 판단하면 안 됩니다."
+    },
+    {
+      "id": "ADM-080",
+      "group": "admission",
+      "kind": "caution",
+      "title": "졸업예정증명서로 입학허가는 가능하나 사증·입국은 최종학기에",
+      "body": "졸업학년 재학 중인 자는 졸업예정증명서로 입학허가를 받을 수 있습니다. 다만 비자 발급과 입국은 졸업 최종학기에만 가능합니다.",
+      "when": {
+        "gradCert": [
+          "expected"
+        ],
+        "track": [
+          "new_d2",
+          "new_d4"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "moe_standard_2025",
+        "hcmc_2024"
+      ]
+    },
+    {
+      "id": "ELG-060",
+      "group": "eligibility",
+      "kind": "verify",
+      "title": "중점관리국가 수 불일치 — 4개국인가 5개국인가",
+      "body": "교육부 표준업무처리요령(2025-03-14)은 법무부장관 고시 21개국과 함께 '중점관리 5개국'을 언급합니다. 그러나 공관 문서에서 확인되는 중점관리국가는 중국·베트남·몽골·우즈베키스탄 4개국뿐이며, 5번째 국가가 무엇인지 확인하지 못했습니다.",
+      "when": {},
+      "confidence": "unknown",
+      "sources": [
+        "moe_standard_2025"
+      ],
+      "note": "베트남 케이스에는 영향이 없습니다. 다만 국가를 확장할 때 5번째 국가를 누락하면 그 국적 신청자의 판정이 통째로 틀립니다."
+    },
+    {
+      "id": "LNG-060",
+      "group": "language",
+      "kind": "caution",
+      "title": "대학 입학 기준과 사증 심사 기준이 다르다",
+      "body": "대학 입학은 4년제 TOPIK 3급·전문대 2급이면 가능하지만, 하위대학(컨설팅·비자정밀 심사대학)에 진학하는 고시 21개국 및 중점관리국가 국민에게는 사증 단계에서 별도의 어학능력이 요구될 수 있습니다. 공관 기준은 학사 이상 4급·전문학사 3급으로 한 급수씩 높습니다.",
+      "when": {
+        "univTier": [
+          "consulting",
+          "restricted"
+        ],
+        "track": [
+          "new_d2"
+        ],
+        "nationality": [
+          "vn",
+          "cn",
+          "mn",
+          "uz",
+          "notified_other"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "moe_standard_2025",
+        "hcmc_2024"
+      ],
+      "note": "입학허가를 받았다는 사실이 어학요건 충족을 뜻하지 않습니다. 두 기준 중 높은 쪽을 맞추세요."
+    },
+    {
+      "id": "FIN-036",
+      "group": "finance",
+      "kind": "caution",
+      "title": "어학연수는 단기여도 감액되지 않는다",
+      "body": "어학연수과정의 기준액은 체류기간과 무관하게 적용됩니다. 3개월 과정이라도 수도권 1,000만 원·지방 800만 원을 그대로 충족해야 합니다.",
+      "when": {
+        "track": [
+          "new_d4"
+        ],
+        "stayMonths": [
+          "lt12"
+        ]
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "moe_standard_2025"
+      ]
+    }
+  ],
+  "derivedAxes": {
+    "finProof": {
+      "label": "재정능력 입증서류 제출 의무",
+      "desc": "장학금·경로·대학등급·국적을 순서대로 평가해 먼저 일치하는 case를 채택한다(first match wins).",
+      "default": "required",
+      "values": {
+        "required": "제출 필요",
+        "exempt": "면제",
+        "unknown": "기준 미확인"
+      },
+      "cases": [
+        {
+          "if": {
+            "scholarship": [
+              "full",
+              "gks"
+            ]
+          },
+          "then": "exempt",
+          "why": "전액 장학·GKS는 재정증명 면제"
+        },
+        {
+          "if": {
+            "track": [
+              "change_d4_d2"
+            ]
+          },
+          "then": "unknown",
+          "why": "국내 체류자격 변경 시 금액·기간 기준 미확인"
+        },
+        {
+          "if": {
+            "track": [
+              "new_d4"
+            ]
+          },
+          "then": "required",
+          "why": "어학연수는 대학 등급과 무관하게 제출"
+        },
+        {
+          "if": {
+            "track": [
+              "new_d2"
+            ],
+            "univTier": [
+              "excellent"
+            ],
+            "statusCode": [
+              "D-2-5"
+            ]
+          },
+          "then": "required",
+          "why": "우수인증대라도 연구과정은 간소화 제외"
+        },
+        {
+          "if": {
+            "track": [
+              "new_d2"
+            ],
+            "univTier": [
+              "excellent"
+            ]
+          },
+          "then": "exempt",
+          "why": "우수인증대는 표준입학허가서만으로 심사"
+        },
+        {
+          "if": {
+            "track": [
+              "new_d2"
+            ],
+            "univTier": [
+              "certified"
+            ],
+            "nationality": [
+              "general"
+            ]
+          },
+          "then": "exempt",
+          "why": "인증대 + 비고시국가는 면제"
+        }
+      ]
+    }
+  },
+  "checks": [
+    {
+      "id": "CHK-001",
+      "title": "D-2 학위과정 예치 기준액",
+      "targets": [
+        "FIN-030",
+        "FIN-031"
+      ],
+      "source": "hcmc_cur",
+      "severity": "critical",
+      "locate": [
+        "2,000 만원",
+        "1,600 만원",
+        "서울·인천·경기",
+        "그 외 지역"
+      ],
+      "expect": {
+        "metroKRW": 20000000,
+        "nonmetroKRW": 16000000
+      },
+      "onChange": "FIN-030/031 의 value.amountKRW 수정 → test_rules.py 케이스 ①④ 기대값 갱신"
+    },
+    {
+      "id": "CHK-002",
+      "title": "D-2 최소 예치기간",
+      "targets": [
+        "FIN-040",
+        "FIN-041"
+      ],
+      "source": "hcmc_cur",
+      "severity": "critical",
+      "locate": [
+        "3 개월 이상 예치",
+        "최소 6개월 이상 예치"
+      ],
+      "expect": {
+        "holdingMonths": 3,
+        "consultingHoldingMonths": 6
+      },
+      "onChange": "FIN-040/041 의 value.holdingMonths 수정. 컨설팅대 6개월은 hcmc_2024 에만 존재하므로 별도 확인"
+    },
+    {
+      "id": "CHK-003",
+      "title": "D-4 어학연수 기준액·예치기간",
+      "targets": [
+        "FIN-032",
+        "FIN-033",
+        "FIN-042"
+      ],
+      "source": "hcmc_cur",
+      "severity": "critical",
+      "locate": [
+        "1,000 만원",
+        "800 만원",
+        "6 개월 이상 예치"
+      ],
+      "expect": {
+        "metroKRW": 10000000,
+        "nonmetroKRW": 8000000,
+        "holdingMonths": 6
+      },
+      "onChange": "FIN-032/033/042 수정. 대학이 800만원을 오안내하는 근원이므로 값이 바뀌면 경고 문구도 함께 수정"
+    },
+    {
+      "id": "CHK-004",
+      "title": "인증대학 재정서류 면제의 국적 예외",
+      "targets": [
+        "ELG-040",
+        "FIN-020",
+        "FIN-021"
+      ],
+      "source": "moe_2026",
+      "severity": "critical",
+      "locate": [
+        "법무부장관 고시국가",
+        "중점관리국가",
+        "재정능력 입증서류 제출",
+        "표준입학허가서만으로 심사"
+      ],
+      "expect": {
+        "certifiedExemptExceptNotifiedCountries": true
+      },
+      "onChange": "이 문장이 사라지거나 조건이 바뀌면 derivedAxes.finProof 의 case 순서를 재설계해야 함. 이 룰셋에서 가장 파급이 큰 항목"
+    },
+    {
+      "id": "CHK-005",
+      "title": "대학 등급 체계와 등급별 혜택",
+      "targets": [
+        "ELG-010",
+        "ELG-020",
+        "ELG-030",
+        "ELG-040",
+        "ELG-050"
+      ],
+      "source": "moe_2026",
+      "severity": "critical",
+      "locate": [
+        "우수 인증대학",
+        "인증대학",
+        "일반대학",
+        "컨설팅대학",
+        "비자정밀 심사대학"
+      ],
+      "expect": {
+        "tiers": [
+          "excellent",
+          "certified",
+          "general",
+          "consulting",
+          "restricted"
+        ]
+      },
+      "onChange": "등급 명칭·개수가 바뀌면 axes.univTier 옵션과 모든 univTier 조건을 일괄 수정. 마이그레이션 필요",
+      "cadence": "매년 2월경 차년도 인증심사 결과 발표 직후"
+    },
+    {
+      "id": "CHK-006",
+      "title": "비자정밀 심사대학 제재 기간",
+      "targets": [
+        "ELG-010"
+      ],
+      "source": "moe_2026",
+      "severity": "high",
+      "locate": [
+        "2026년 2학기부터 1년",
+        "비자 발급이 제한"
+      ],
+      "expect": {
+        "restrictedFrom": "2026-2학기",
+        "restrictedMonths": 12
+      },
+      "onChange": "ELG-010 body 갱신. 제재 최대 3년으로 확대된 규정이 실제 적용되는지 확인"
+    },
+    {
+      "id": "CHK-007",
+      "title": "잔고증명서 발급 유효기간 (자료 충돌 중)",
+      "targets": [
+        "FIN-051"
+      ],
+      "source": "hcmc_cur",
+      "severity": "high",
+      "locate": [
+        "최근 1 개월 발급",
+        "잔고증명서는 접수일 기준 10일 이내"
+      ],
+      "expect": {
+        "conservativeDays": 10,
+        "conflict": true
+      },
+      "onChange": "두 문서 중 어느 쪽이 현행인지 확정되면 conflict 를 confirmed 로 승격하고 값 확정"
+    },
+    {
+      "id": "CHK-008",
+      "title": "교환·방문학생 월 체재비 기준액 (자료 충돌 중)",
+      "targets": [
+        "FIN-034"
+      ],
+      "source": "hcmc_cur",
+      "severity": "high",
+      "locate": [
+        "976,609",
+        "1,069,654",
+        "주거급여 선정기준"
+      ],
+      "expect": {
+        "candidates": [
+          1069654,
+          976609
+        ]
+      },
+      "onChange": "당해연도 국토교통부 「주거급여 선정기준 및 최저보장수준」 1인 가구 월 기준금액으로 갱신. 매년 변경됨",
+      "cadence": "매년 1월"
+    },
+    {
+      "id": "CHK-009",
+      "title": "사증발급 유형 매트릭스 (등급 × 국적)",
+      "targets": [
+        "CHN-010",
+        "CHN-020",
+        "CHN-030",
+        "CHN-040",
+        "CHN-050",
+        "CHN-060"
+      ],
+      "source": "hcmc_2024",
+      "severity": "critical",
+      "locate": [
+        "대상별 사증 발급 유형표",
+        "사증발급인정서",
+        "전자비자",
+        "중국, 베트남",
+        "몽골, 우즈벡"
+      ],
+      "expect": {
+        "matrixPresent": true
+      },
+      "onChange": "현행 간소화판에는 이 표가 없다. 2024-09-26 판이 내려가면 CHN-* 조항 6건의 근거가 통째로 사라지므로 즉시 대체 근거를 찾을 것",
+      "risk": "단일 출처 의존"
+    },
+    {
+      "id": "CHK-010",
+      "title": "베트남 국적 재정보증 서류 세트",
+      "targets": [
+        "DOC-020",
+        "DOC-021",
+        "DOC-022",
+        "DOC-023",
+        "DOC-011"
+      ],
+      "source": "hcmc_cur",
+      "severity": "high",
+      "locate": [
+        "CT07",
+        "VssID",
+        "Môn bài",
+        "레드북",
+        "관할 공안 확인"
+      ],
+      "expect": {
+        "jobTypes": [
+          "employee",
+          "business_owner",
+          "sole_proprietor",
+          "farmer"
+        ]
+      },
+      "onChange": "DOC-020~023 본문 갱신. 베트남 행정서식(CT07/CT08)은 개편 이력이 있으므로 서식명 변경에 주의"
+    },
+    {
+      "id": "CHK-011",
+      "title": "어학능력 기준표",
+      "targets": [
+        "LNG-020",
+        "LNG-021",
+        "LNG-022",
+        "LNG-030",
+        "LNG-040"
+      ],
+      "source": "hcmc_2024",
+      "severity": "high",
+      "locate": [
+        "TOPIK",
+        "사회통합프로그램",
+        "세종학당",
+        "TOEFL",
+        "IELTS",
+        "TEPS"
+      ],
+      "expect": {
+        "assocDegree": 3,
+        "bachelorPlus": 4,
+        "exchange": 2
+      },
+      "onChange": "2026년부터 점진 상향 예정(moe_2026). 상향 확정 시 LNG-020~022 급수 수정 및 LNG-040 을 confirmed 로 승격",
+      "cadence": "학기마다"
+    },
+    {
+      "id": "CHK-012",
+      "title": "우수인증대학 재정 면제의 베트남 적용 여부",
+      "targets": [
+        "FIN-010",
+        "FIN-011"
+      ],
+      "source": "emb_vn_hanoi",
+      "severity": "critical",
+      "locate": [
+        "우수인증대학",
+        "재정",
+        "면제",
+        "표준입학허가서만"
+      ],
+      "expect": {
+        "currentConfidence": "inferred"
+      },
+      "onChange": "베트남 공관 문서에서 직접 근거를 찾으면 confidence 를 confirmed 로 승격. 반대로 베트남만 예외 없이 전원 제출로 운영되면 FIN-010 을 삭제하고 finProof 케이스에서 excellent 분기 제거",
+      "risk": "타국 공관 문서로부터의 유추"
+    },
+    {
+      "id": "CHK-013",
+      "title": "주하노이 대사관 구비서류 확보",
+      "targets": [
+        "JUR-010",
+        "DOC-040",
+        "PRC-012"
+      ],
+      "source": "emb_vn_hanoi",
+      "severity": "critical",
+      "locate": [
+        "재정능력",
+        "잔고증명",
+        "구비서류"
+      ],
+      "expect": {
+        "obtained": false
+      },
+      "onChange": "확보 시 sources.emb_vn_hanoi.status 를 obtained 로 바꾸고, 남부 기준으로만 작성된 DOC-*/PRC-* 조항에 북부 분기를 추가",
+      "risk": "미확보. 북부 거주자 전체가 이 공백에 걸림"
+    },
+    {
+      "id": "CHK-014",
+      "title": "D-4 → D-2 체류자격 변경 재정 기준",
+      "targets": [
+        "FIN-080",
+        "DOC-050",
+        "FIN-055"
+      ],
+      "source": null,
+      "severity": "critical",
+      "locate": [
+        "체류자격 변경",
+        "재정능력",
+        "출석률"
+      ],
+      "expect": {
+        "obtained": false
+      },
+      "onChange": "하이코리아 민원안내 또는 관할 출입국관서 질의로 금액·예치기간 확정. 확정 전까지 finProof=unknown 유지",
+      "risk": "미확인. 신규 사증 기준을 복사하면 오안내"
+    },
+    {
+      "id": "CHK-015",
+      "title": "유학경비 예치제 적용 범위",
+      "targets": [
+        "FIN-070"
+      ],
+      "source": "hcmc_cur",
+      "severity": "medium",
+      "locate": [
+        "유학경비",
+        "예치확인서",
+        "보증제도"
+      ],
+      "expect": {
+        "appliesTo": "D-4 only",
+        "countries": [
+          "vn",
+          "cn",
+          "mn",
+          "uz"
+        ]
+      },
+      "onChange": "D-2 로 확대되면 finProof 및 FIN-070 조건 전면 수정"
+    },
+    {
+      "id": "CHK-016",
+      "title": "체류기간 부여 기준",
+      "targets": [
+        "DUR-010",
+        "DUR-011",
+        "DUR-020",
+        "DUR-030"
+      ],
+      "source": "hcmc_2024",
+      "severity": "high",
+      "locate": [
+        "체류기간 2년 이내",
+        "체류기간 1년 이내",
+        "체류기간 6개월 이내",
+        "졸업예정증명서를 제출한 경우"
+      ],
+      "expect": {
+        "degreeYears": 2,
+        "researchYears": 1,
+        "languageMonths": 6
+      },
+      "onChange": "DUR-* 본문 갱신. 졸업예정증명서 제출 시 1년 단축 규정이 유지되는지 특히 확인",
+      "risk": "단일 출처 의존"
+    },
+    {
+      "id": "CHK-017",
+      "title": "서류 형식·유효기간 일반 규정",
+      "targets": [
+        "PRC-010",
+        "PRC-011",
+        "PRC-012",
+        "PRC-013",
+        "PRC-014",
+        "PRC-020",
+        "PRC-021",
+        "PRC-022"
+      ],
+      "source": "hcmc_cur",
+      "severity": "high",
+      "locate": [
+        "3 개월 이내",
+        "번역공증",
+        "영사확인",
+        "결핵진단서",
+        "6 개월 후 재접수",
+        "20일"
+      ],
+      "expect": {
+        "docValidMonths": 3,
+        "reapplyAfterMonths": 6,
+        "reviewBusinessDays": 20
+      },
+      "onChange": "PRC-* 본문 갱신. 특히 불허 후 재접수 제한 기간은 일정 산정에 직접 영향"
+    },
+    {
+      "id": "CHK-018",
+      "title": "재정보증 주체별 서류 세트",
+      "targets": [
+        "DOC-024",
+        "DOC-025",
+        "DOC-026",
+        "DOC-027",
+        "DOC-030"
+      ],
+      "source": "hcmc_2024",
+      "severity": "medium",
+      "locate": [
+        "부모 외 가족",
+        "한국국적인 가족",
+        "교육기관관계자",
+        "회사 재정보증",
+        "교환학생"
+      ],
+      "expect": {
+        "sponsors": [
+          "other_family",
+          "kr_family",
+          "professor",
+          "company"
+        ]
+      },
+      "onChange": "DOC-024~027, DOC-030 본문 갱신. 현행 간소화판에는 일부 항목이 축약돼 있어 2024판이 더 상세함",
+      "risk": "현행판에서 축약됨. 2024판 의존"
+    },
+    {
+      "id": "CHK-019",
+      "title": "기본 제출서류 및 국내 변경 관할",
+      "targets": [
+        "DOC-010",
+        "DOC-012",
+        "DOC-050",
+        "CHN-070"
+      ],
+      "source": "hcmc_cur",
+      "severity": "high",
+      "locate": [
+        "여권 원본",
+        "사증발급신청서",
+        "표준입학허가서",
+        "사업자등록증",
+        "연수계획서"
+      ],
+      "expect": {
+        "baseDocsPresent": true
+      },
+      "onChange": "DOC-010/012 갱신. CHN-070·DOC-050(국내 변경)은 하이코리아 기준이므로 별도 확인 필요"
+    },
+    {
+      "id": "CHK-020",
+      "title": "장학생 재정증명 면제 범위",
+      "targets": [
+        "FIN-060",
+        "FIN-061",
+        "FIN-062",
+        "FIN-063",
+        "LNG-050",
+        "LNG-010",
+        "LNG-011"
+      ],
+      "source": "hcmc_cur",
+      "severity": "high",
+      "locate": [
+        "재정증명 불요",
+        "학생부금 미만",
+        "장학증서",
+        "GKS"
+      ],
+      "expect": {
+        "fullExempt": true,
+        "partialRequiresProof": true
+      },
+      "onChange": "FIN-060~063 갱신. 부분 장학금 합산 인정 여부(FIN-062)는 여전히 미확인 상태인지 함께 확인"
+    },
+    {
+      "id": "CHK-021",
+      "title": "잔고증명 형식요건 및 인출 제한",
+      "targets": [
+        "FIN-050",
+        "FIN-052",
+        "FIN-053",
+        "FIN-054",
+        "FIN-043",
+        "FIN-035"
+      ],
+      "source": "hcmc_cur",
+      "severity": "high",
+      "locate": [
+        "본인 혹은 부모",
+        "양도한 통장",
+        "은행 외 기관",
+        "환율",
+        "등록금"
+      ],
+      "expect": {
+        "selfOrParentOnly": true,
+        "transferredPassbookRejected": true
+      },
+      "onChange": "FIN-050~054 갱신. 인출 제한(50%/70%)은 법무부 지침 근거이므로 moj_guideline 도 함께 확인"
+    },
+    {
+      "id": "CHK-022",
+      "title": "관할 공관 및 주소이전 제한",
+      "targets": [
+        "JUR-011",
+        "JUR-020",
+        "FIN-022",
+        "FIN-023"
+      ],
+      "source": "hcmc_2024",
+      "severity": "high",
+      "locate": [
+        "최종 졸업학교 소재지 관할 공관",
+        "주소이전",
+        "6개월 이상 거주자"
+      ],
+      "expect": {
+        "addressTransferBlocked": true
+      },
+      "onChange": "JUR-* 갱신. 하노이·호치민 관할 경계가 재조정되면 axes.applicantRegion 옵션도 수정",
+      "risk": "단일 출처 의존"
+    },
+    {
+      "id": "CHK-023",
+      "title": "교육부 재정능력 심사기준 (대학 입학단계)",
+      "targets": [
+        "ADM-020",
+        "ADM-021",
+        "ADM-022"
+      ],
+      "source": "moe_standard_2025",
+      "severity": "critical",
+      "locate": [
+        "수도권 소재 대학 연간 2,000만원",
+        "지방 소재 대학 연간 1,600만원",
+        "1,000만원",
+        "800만원"
+      ],
+      "expect": {
+        "degreeMetroKRW": 20000000,
+        "degreeNonmetroKRW": 16000000,
+        "langMetroKRW": 10000000,
+        "langNonmetroKRW": 8000000
+      },
+      "onChange": "ADM-020 및 FIN-030~033 동시 수정. 이 문서는 공관 문서와 독립된 교차 근거이므로 둘이 갈라지면 즉시 조사할 것"
+    },
+    {
+      "id": "CHK-024",
+      "title": "두 관문의 서류 유효기간 차이",
+      "targets": [
+        "ADM-030",
+        "ADM-010",
+        "ADM-031",
+        "ADM-040"
+      ],
+      "source": "moe_standard_2025",
+      "severity": "high",
+      "locate": [
+        "신청일 기준 30일 이내 발급",
+        "최대 6개월까지만 인정",
+        "유학경비 부담 서약서"
+      ],
+      "expect": {
+        "admissionValidDays": 30,
+        "maxWithExpiryMonths": 6
+      },
+      "onChange": "ADM-030 value 수정. 공관 단계(FIN-051)와 혼동하지 말 것"
+    },
+    {
+      "id": "CHK-025",
+      "title": "대학 입학 어학기준 및 보충연수 의무",
+      "targets": [
+        "ADM-050",
+        "ADM-051",
+        "ADM-052",
+        "ADM-053",
+        "ADM-054",
+        "LNG-060"
+      ],
+      "source": "moe_standard_2025",
+      "severity": "high",
+      "locate": [
+        "3급 이상 입학",
+        "4급",
+        "2급 이상 입학",
+        "300시간",
+        "120시간",
+        "TOEFL iBT 59",
+        "NEW TEPS 202"
+      ],
+      "expect": {
+        "bachelorEntry": 3,
+        "bachelorGrad": 4,
+        "assocEntry": 2,
+        "assocGrad": 3,
+        "supplementHours": 300
+      },
+      "onChange": "ADM-050~054 수정. 사증 기준(LNG-020~030)과 별개이므로 한쪽만 고치지 말 것",
+      "cadence": "학기마다"
+    },
+    {
+      "id": "CHK-026",
+      "title": "중점관리국가 5개국의 5번째 국가",
+      "targets": [
+        "ELG-060"
+      ],
+      "source": "moe_standard_2025",
+      "severity": "critical",
+      "locate": [
+        "법무부장관 고시 21개국",
+        "중점관리 5개국"
+      ],
+      "expect": {
+        "knownMembers": 4,
+        "documentSays": 5
+      },
+      "onChange": "확인되면 countryClass.priority.members 와 axes.nationality 옵션에 추가하고, 국적 배열을 쓰는 모든 조항을 일괄 점검",
+      "risk": "미확인. 국가 확장 시 누락하면 해당 국적 판정이 통째로 틀림"
+    },
+    {
+      "id": "CHK-027",
+      "title": "대학 운영 관련 사증 제약",
+      "targets": [
+        "ADM-060",
+        "ADM-061",
+        "ADM-070",
+        "ADM-080",
+        "FIN-036"
+      ],
+      "source": "moe_standard_2025",
+      "severity": "high",
+      "locate": [
+        "위탁 운영",
+        "사증발급이 불가",
+        "보증금 예치를 지양",
+        "학생 명의로 직접 납부",
+        "졸업 최종학기"
+      ],
+      "expect": {
+        "outsourcedLangInstituteBlocked": true
+      },
+      "onChange": "ADM-060/061/070/080 수정. 특히 위탁 운영 어학연수기관 제약은 기관 선택 단계의 차단 요건"
+    }
+  ]
+}

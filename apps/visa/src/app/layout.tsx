@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "한국 비자 발급 요건 조회",
+  title: "한국 유학비자 발급요건 조회 (D-2 / D-4)",
   description:
-    "한국 체류·입국 비자(체류자격)별 자격요건·제출서류·절차를 한눈에 조회하는 사이트.",
+    "베트남 국적 중심 한국 유학비자(D-2·D-4) 발급요건 판정기 — 신청 상황을 선택하면 적용 조항을 실시간 조회.",
 };
 
 export default function RootLayout({
