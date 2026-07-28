@@ -627,11 +627,12 @@ function DocuCard({ doc, rules }: { doc: VisaDoc; rules: Candidate[] }) {
           </dl>
 
           {(() => {
-            // DOC-* 는 여러 서류를 나열한 '묶음 규정' → 목록(terse)은 숨기고 적용상황(태그)만.
-            const substantive = rules.filter((c) => c.rule.group !== "documents");
+            // DOC-*, ADM-031 은 여러 서류를 나열한 '묶음 규정' → 목록(terse)은 숨기고 적용상황(태그)만.
+            const isBundle = (c: Candidate) => c.rule.group === "documents" || c.rule.id === "ADM-031";
+            const substantive = rules.filter((c) => !isBundle(c));
             const bundleTags: OptionTag[] = [];
             const seen = new Set<string>();
-            for (const c of rules.filter((c) => c.rule.group === "documents")) {
+            for (const c of rules.filter(isBundle)) {
               for (const t of c.tags) {
                 const key = `${t.axis}|${t.values.join(",")}|${t.negate ? "!" : ""}`;
                 if (!seen.has(key)) { seen.add(key); bundleTags.push(t); }
