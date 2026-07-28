@@ -27,6 +27,18 @@ import {
 import { ANN, DOCUMENTS, docOf } from "@/data/annotations";
 import { UNIVERSITIES } from "@/data/universities";
 import { DOCUMENTS_DATA, DOC_CATEGORY_ORDER, type VisaDoc, type Holder, type HolderWho } from "@/data/documents";
+import { EditProvider, EditToolbar, EditableText } from "@/lib/edits";
+
+/** 조항 id → 이 조항을 참조하는 서류 수(공유 위치 계산용). */
+const RULE_REF_COUNT: Map<string, number> = (() => {
+  const m = new Map<string, number>();
+  for (const d of DOCUMENTS_DATA) for (const id of d.ruleRefs ?? []) m.set(id, (m.get(id) ?? 0) + 1);
+  return m;
+})();
+/** 조항 텍스트가 화면에 노출되는 위치 수(서류 참조 + 조건섹션 노출). */
+function sharedCount(id: string, inCondition: boolean): number {
+  return (RULE_REF_COUNT.get(id) ?? 0) + (inCondition ? 1 : 0);
+}
 
 /* ── 라벨 ─────────────────────────────────────────────── */
 const TIER_LABEL: Record<UnivTier, string> = {
@@ -105,6 +117,7 @@ export default function Page() {
   }
 
   return (
+    <EditProvider>
     <main style={{ minHeight: "100vh" }}>
       <header
         style={{
@@ -136,11 +149,13 @@ export default function Page() {
         ) : (
           <>
             <SummaryBar inst={inst} isChange={isChange} origin={originOpt.label} status={status} place={place!} onEdit={() => setSearched(false)} />
+            <EditToolbar />
             {result && <Results result={result} />}
           </>
         )}
       </div>
     </main>
+    </EditProvider>
   );
 }
 
@@ -582,7 +597,9 @@ function DocuCard({ doc, rules }: { doc: VisaDoc; rules: Candidate[] }) {
       <button onClick={() => setOpen((o) => !o)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "13px 16px", border: "none", background: "none", cursor: "pointer", textAlign: "left" }}>
         <span style={{ flex: 1, minWidth: 0 }}>
           <span style={{ display: "flex", alignItems: "center", gap: 7, flexWrap: "wrap" }}>
-            <span style={{ fontSize: 15, fontWeight: 800 }}>{doc.name}</span>
+            <span style={{ fontSize: 15, fontWeight: 800 }}>
+              <EditableText path={`doc:${doc.id}:name`} value={doc.name} />
+            </span>
             {showHolder && doc.holder && (doc.holder.ambiguous || doc.holder.who.length > 1) && <HolderBadge holder={doc.holder} />}
             {doc.confidence !== "confirmed" && <span style={badge("#b3261e", "#fdecea")}>미확정</span>}
           </span>
@@ -597,16 +614,16 @@ function DocuCard({ doc, rules }: { doc: VisaDoc; rules: Candidate[] }) {
       {open && (
         <div style={{ borderTop: "1px solid var(--bdr)", padding: "12px 16px" }}>
           <dl style={{ margin: 0, display: "grid", gridTemplateColumns: "auto 1fr", gap: "6px 12px", fontSize: 12.5 }}>
-            <Attr k="발급기관" v={doc.issuer.join(", ")} />
-            <Attr k="형식" v={doc.form + (doc.bringOriginal ? " · 대조용 원본 지참" : "")} />
-            {doc.validity && <Attr k="유효기간" v={validityText(doc.validity)} />}
-            {showHolder && doc.holder && <Attr k="명의" v={<HolderInline holder={doc.holder} />} highlight={doc.holder.ambiguous} />}
-            {doc.translation && <Attr k="번역" v={doc.translation.required ? `필요 (${(doc.translation.langs ?? ["ko", "en"]).map((l) => (l === "ko" ? "국문" : "영문")).join("/")})${doc.translation.note ? " · " + doc.translation.note : ""}` : "불요"} />}
-            {doc.notarization?.required && <Attr k="공증" v={`필요${doc.notarization.by ? " · " + doc.notarization.by : ""}`} />}
-            {doc.authentication?.required && <Attr k="영사확인" v={`${(doc.authentication.chain ?? []).join(" → ")}${doc.authentication.validityDays ? ` (${doc.authentication.validityDays}일 이내)` : ""}`} />}
-            {doc.signature?.handwrittenOnly && <Attr k="서명" v={`친필 서명 원본만${doc.signature.note ? " · " + doc.signature.note : ""}`} />}
-            <Attr k="발급 소요일" v={doc.obtainDays ?? "미상 (전문가 자료 대기)"} />
-            {doc.appliesTo && <Attr k="적용 대상" v={doc.appliesTo} />}
+            <Attr docId={doc.id} k="발급기관" field="issuer" v={doc.issuer.join(", ")} />
+            <Attr docId={doc.id} k="형식" field="form" v={doc.form + (doc.bringOriginal ? " · 대조용 원본 지참" : "")} />
+            {doc.validity && <Attr docId={doc.id} k="유효기간" field="validity" v={validityText(doc.validity)} multiline />}
+            {showHolder && doc.holder && <Attr docId={doc.id} k="명의" field="holder" v={holderString(doc.holder)} multiline highlight={doc.holder.ambiguous} />}
+            {doc.translation && <Attr docId={doc.id} k="번역" field="translation" v={doc.translation.required ? `필요 (${(doc.translation.langs ?? ["ko", "en"]).map((l) => (l === "ko" ? "국문" : "영문")).join("/")})${doc.translation.note ? " · " + doc.translation.note : ""}` : "불요"} multiline />}
+            {doc.notarization?.required && <Attr docId={doc.id} k="공증" field="notarization" v={`필요${doc.notarization.by ? " · " + doc.notarization.by : ""}`} />}
+            {doc.authentication?.required && <Attr docId={doc.id} k="영사확인" field="authentication" v={`${(doc.authentication.chain ?? []).join(" → ")}${doc.authentication.validityDays ? ` (${doc.authentication.validityDays}일 이내)` : ""}`} multiline />}
+            {doc.signature?.handwrittenOnly && <Attr docId={doc.id} k="서명" field="signature" v={`친필 서명 원본만${doc.signature.note ? " · " + doc.signature.note : ""}`} />}
+            <Attr docId={doc.id} k="발급 소요일" field="obtainDays" v={doc.obtainDays ?? "미상 (전문가 자료 대기)"} />
+            {doc.appliesTo && <Attr docId={doc.id} k="적용 대상" field="appliesTo" v={doc.appliesTo} multiline />}
           </dl>
 
           {(() => {
@@ -637,7 +654,9 @@ function DocuCard({ doc, rules }: { doc: VisaDoc; rules: Candidate[] }) {
                     <div key={c.rule.id} style={{ display: "flex", gap: 7, alignItems: "baseline" }}>
                       <span style={{ color: "var(--coral)", flexShrink: 0, fontSize: 12 }}>•</span>
                       <div style={{ flex: 1 }}>
-                        <span style={{ fontSize: 12.5, color: "var(--ink-mid)" }}>{ANN[c.rule.id]?.terse ?? c.rule.title}</span>
+                        <span style={{ fontSize: 12.5, color: "var(--ink-mid)" }}>
+                          <EditableText path={`rule:${c.rule.id}:terse`} value={ANN[c.rule.id]?.terse ?? c.rule.title} multiline shared={sharedCount(c.rule.id, false)} />
+                        </span>
                         {c.tags.length > 0 && (
                           <span style={{ display: "inline-flex", gap: 5, flexWrap: "wrap", marginLeft: 7, verticalAlign: "middle" }}>
                             {c.tags.map((t, i) => (
@@ -658,7 +677,9 @@ function DocuCard({ doc, rules }: { doc: VisaDoc; rules: Candidate[] }) {
                       <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 8 }}>
                         {substantive.map((c) => (
                           <div key={c.rule.id} style={{ fontSize: 12, color: "var(--ink-light)", lineHeight: 1.6 }}>
-                            <b style={{ color: "var(--ink-mid)" }}>{ANN[c.rule.id]?.title ?? c.rule.title}</b> — {c.rule.body}
+                            <b style={{ color: "var(--ink-mid)" }}>
+                              <EditableText path={`rule:${c.rule.id}:title`} value={ANN[c.rule.id]?.title ?? c.rule.title} shared={sharedCount(c.rule.id, false)} />
+                            </b>{" "}— <EditableText path={`rule:${c.rule.id}:body`} value={c.rule.body} multiline shared={sharedCount(c.rule.id, false)} />
                           </div>
                         ))}
                       </div>
@@ -671,7 +692,7 @@ function DocuCard({ doc, rules }: { doc: VisaDoc; rules: Candidate[] }) {
 
           {doc.ambiguities && doc.ambiguities.length > 0 && (
             <div style={{ marginTop: 12, fontSize: 11.5, color: "#8a6d1a", background: "#fff7e0", border: "1px solid #f0dca0", borderRadius: 8, padding: "7px 10px" }}>
-              확인 필요: {doc.ambiguities.join(" / ")}
+              확인 필요: <EditableText path={`doc:${doc.id}:ambiguities`} value={doc.ambiguities.join(" / ")} multiline />
             </div>
           )}
         </div>
@@ -680,23 +701,19 @@ function DocuCard({ doc, rules }: { doc: VisaDoc; rules: Candidate[] }) {
   );
 }
 
-function Attr({ k, v, highlight }: { k: string; v: React.ReactNode; highlight?: boolean }) {
+function Attr({ docId, k, field, v, multiline, highlight }: { docId: string; k: string; field: string; v: string; multiline?: boolean; highlight?: boolean }) {
   return (
     <>
       <dt style={{ fontWeight: 700, color: "var(--ink-light)", whiteSpace: "nowrap" }}>{k}</dt>
-      <dd style={{ margin: 0, color: highlight ? "#b3261e" : "var(--ink-mid)" }}>{v}</dd>
+      <dd style={{ margin: 0, color: highlight ? "#b3261e" : "var(--ink-mid)" }}>
+        <EditableText path={`doc:${docId}:attr:${field}`} value={v} multiline={multiline} />
+      </dd>
     </>
   );
 }
-function HolderInline({ holder }: { holder: Holder }) {
+function holderString(holder: Holder): string {
   const { text, suffix } = holderText(holder);
-  return (
-    <span style={{ fontWeight: holder.ambiguous ? 800 : 600, color: holder.ambiguous ? "#b3261e" : "var(--ink-mid)" }}>
-      {text}
-      {suffix}
-      {holder.note ? <span style={{ display: "block", fontWeight: 400, color: "var(--ink-light)", marginTop: 2 }}>{holder.note}</span> : null}
-    </span>
-  );
+  return `${text}${suffix}${holder.note ? ` — ${holder.note}` : ""}`;
 }
 function validityText(v: import("@/data/documents").Validity): string {
   if (v.byStage && v.byStage.length) {
@@ -733,7 +750,9 @@ function DocCard({ def, list }: { def: { key: string; name: string; section: str
       <button onClick={() => setOpen((o) => !o)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "13px 16px", border: "none", background: "none", cursor: "pointer", textAlign: "left" }}>
         <span style={{ flex: 1, minWidth: 0 }}>
           <span style={{ display: "flex", alignItems: "center", gap: 7, flexWrap: "wrap" }}>
-            <span style={{ fontSize: 15, fontWeight: 800 }}>{def.name}</span>
+            <span style={{ fontSize: 15, fontWeight: 800 }}>
+              <EditableText path={`cond:${def.key}:name`} value={def.name} />
+            </span>
             {hasCondTag && !isCond && <span style={badge("var(--blue)", "#eaf2fb")}>조건부</span>}
             {hasUnconfirmed && <span style={badge("#b3261e", "#fdecea")}>미확정</span>}
           </span>
@@ -757,7 +776,7 @@ function DocCard({ def, list }: { def: { key: string; name: string; section: str
                   <span style={{ color: blk ? "#b3261e" : accent, flexShrink: 0, fontSize: 12 }}>•</span>
                   <div style={{ flex: 1 }}>
                     <span style={{ fontSize: 13, color: blk ? "#b3261e" : "var(--ink-mid)", fontWeight: blk ? 700 : 400 }}>
-                      {ANN[c.rule.id]?.terse ?? c.rule.title}
+                      <EditableText path={`rule:${c.rule.id}:terse`} value={ANN[c.rule.id]?.terse ?? c.rule.title} multiline shared={sharedCount(c.rule.id, true)} />
                     </span>
                     {c.tags.length > 0 && (
                       <span style={{ display: "inline-flex", gap: 5, flexWrap: "wrap", marginLeft: 7, verticalAlign: "middle" }}>
