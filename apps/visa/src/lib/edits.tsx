@@ -68,10 +68,18 @@ const fieldStyle: React.CSSProperties = {
   background: "#fffdf5",
   border: "1px solid var(--coral-l)",
   borderRadius: 6,
-  padding: "1px 6px",
+  padding: "2px 7px",
   outline: "none",
+  boxSizing: "border-box",
   boxShadow: "0 0 0 2px rgba(242,92,92,.08)",
 };
+
+/** CJK(한글 등)는 폭이 ch 기준 ~2배 → 표시폭을 반영해 입력창 너비 산정. */
+function displayWidthCh(s: string): number {
+  let w = 0;
+  for (const ch of s) w += ch.charCodeAt(0) > 0x2e7f ? 2 : 1;
+  return Math.min(64, Math.max(8, w + 3));
+}
 
 /**
  * 편집 가능한 텍스트. 편집 모드가 아니면 그냥 텍스트, 편집 모드면 입력창.
@@ -109,7 +117,7 @@ export function EditableText({
         <input
           value={cur}
           onChange={(e) => set(path, e.target.value)}
-          style={{ ...fieldStyle, ...style, width: `${Math.min(60, Math.max(4, cur.length + 1))}ch` }}
+          style={{ ...fieldStyle, ...style, width: `${displayWidthCh(cur)}ch`, maxWidth: "100%" }}
         />
       )}
       {shared && shared > 1 ? (
