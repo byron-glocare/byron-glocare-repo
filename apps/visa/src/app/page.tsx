@@ -35,33 +35,47 @@ const TIER_LABEL: Record<UnivTier, string> = {
 };
 const REGION_LABEL: Record<UnivRegion, string> = { metro: "수도권", nonmetro: "비수도권" };
 
-const TRACK_OPTS = D.axes.find((a) => a.id === "track")!.options;
 const STATUS_OPTS = D.axes.find((a) => a.id === "statusCode")!.options;
+
+type InstKind = "univ" | "hagwon";
+
+/** 지원기관별 신청 가능한 체류자격 코드. */
+function statusOptionsFor(inst: InstKind) {
+  const prefix = inst === "hagwon" ? "D-4" : "D-2";
+  return STATUS_OPTS.filter((o) => o.value.startsWith(prefix));
+}
 
 interface UnivPick {
   name: string;
   tier: UnivTier;
   region: UnivRegion;
 }
-const UNIV_SPECIAL: UnivPick[] = [
-  { name: "그 외 대학 — 수도권 (미인증)", tier: "general", region: "metro" },
-  { name: "그 외 대학 — 비수도권 (미인증)", tier: "general", region: "nonmetro" },
-  { name: "컨설팅대학 — 수도권", tier: "consulting", region: "metro" },
-  { name: "컨설팅대학 — 비수도권", tier: "consulting", region: "nonmetro" },
-  { name: "비자정밀 심사대학 — 수도권", tier: "restricted", region: "metro" },
-  { name: "비자정밀 심사대학 — 비수도권", tier: "restricted", region: "nonmetro" },
-];
+/** 지원기관별 특수/폴백 선택지. */
+function specialsFor(inst: InstKind): UnivPick[] {
+  const noun = inst === "hagwon" ? "어학당" : "대학";
+  return [
+    { name: `그 외 ${noun} — 수도권 (미인증)`, tier: "general", region: "metro" },
+    { name: `그 외 ${noun} — 비수도권 (미인증)`, tier: "general", region: "nonmetro" },
+    { name: `컨설팅대학 ${inst === "hagwon" ? "어학당 " : ""}— 수도권`, tier: "consulting", region: "metro" },
+    { name: `컨설팅대학 ${inst === "hagwon" ? "어학당 " : ""}— 비수도권`, tier: "consulting", region: "nonmetro" },
+    { name: `비자정밀 심사대학 — 수도권`, tier: "restricted", region: "metro" },
+    { name: `비자정밀 심사대학 — 비수도권`, tier: "restricted", region: "nonmetro" },
+  ];
+}
 
 /* group 표시 순서/라벨은 rules.json 것을 사용 */
 const GROUPS_SORTED = Object.entries(D.groups).sort((a, b) => a[1].order - b[1].order);
 
 export default function Page() {
-  const [track, setTrack] = useState("new_d2");
+  const [inst, setInst] = useState<InstKind>("univ");
+  const [isChange, setIsChange] = useState(false);
   const [origin, setOrigin] = useState("vn_south");
   const [status, setStatus] = useState("D-2-2");
   const [univ, setUniv] = useState<UnivPick | null>(null);
   const [searched, setSearched] = useState(false);
 
+  // 지원기관 + 신규/변경 → 엔진 track
+  const track = inst === "hagwon" ? "new_d4" : isChange ? "change_d4_d2" : "new_d2";
   const originOpt = ORIGIN_OPTIONS.find((o) => o.value === origin)!;
 
   const result = useMemo(() => {
@@ -77,6 +91,14 @@ export default function Page() {
   }, [track, origin, status, univ, originOpt]);
 
   const canSearch = !!univ;
+
+  // 지원기관 변경 시 기관 선택·비자·변경여부 초기화
+  function changeInst(next: InstKind) {
+    setInst(next);
+    setUniv(null);
+    setIsChange(false);
+    setStatus(next === "hagwon" ? "D-4-1" : "D-2-2");
+  }
 
   return (
     <main style={{ minHeight: "100vh" }}>
@@ -103,14 +125,15 @@ export default function Page() {
       <div style={{ maxWidth: 980, margin: "0 auto", padding: "20px 20px 64px" }}>
         {!searched ? (
           <InputForm
-            {...{ track, setTrack, origin, setOrigin, status, setStatus, univ, setUniv }}
+            {...{ inst, changeInst, isChange, setIsChange, origin, setOrigin, status, setStatus, univ, setUniv }}
             canSearch={canSearch}
             onSearch={() => setSearched(true)}
           />
         ) : (
           <>
             <SummaryBar
-              track={track}
+              inst={inst}
+              isChange={isChange}
               origin={originOpt.label}
               status={status}
               univ={univ!}
@@ -126,8 +149,10 @@ export default function Page() {
 
 /* ══════════════════════ 입력 폼 ══════════════════════ */
 function InputForm({
-  track,
-  setTrack,
+  inst,
+  changeInst,
+  isChange,
+  setIsChange,
   origin,
   setOrigin,
   status,
@@ -137,8 +162,10 @@ function InputForm({
   canSearch,
   onSearch,
 }: {
-  track: string;
-  setTrack: (v: string) => void;
+  inst: InstKind;
+  changeInst: (v: InstKind) => void;
+  isChange: boolean;
+  setIsChange: (v: boolean) => void;
   origin: string;
   setOrigin: (v: string) => void;
   status: string;
@@ -148,23 +175,37 @@ function InputForm({
   canSearch: boolean;
   onSearch: () => void;
 }) {
+  const statusOpts = statusOptionsFor(inst);
   return (
     <div style={{ background: "#fff", border: "1px solid var(--bdr)", borderRadius: 18, padding: 22, boxShadow: "var(--shadow-sm)" }}>
       <div style={{ display: "grid", gap: 18 }}>
-        <Field label="현재 상태 및 희망 비자">
-          <Dropdown value={track} onChange={setTrack} options={TRACK_OPTS.map((o) => ({ value: o.value, label: o.label }))} />
+        <Field label="지원 기관">
+          <RadioGroup
+            value={inst}
+            onChange={(v) => changeInst(v as InstKind)}
+            options={[
+              { value: "hagwon", label: "어학당", desc: "어학연수 (D-4)" },
+              { value: "univ", label: "대학교", desc: "학위과정 (D-2)" },
+            ]}
+          />
+          {inst === "univ" && (
+            <label style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 10, fontSize: 13, color: "var(--ink-mid)", cursor: "pointer" }}>
+              <input type="checkbox" checked={isChange} onChange={(e) => setIsChange(e.target.checked)} style={{ width: 16, height: 16, accentColor: "var(--coral)" }} />
+              이미 한국에서 어학연수(D-4) 중 → D-2로 국내 변경
+            </label>
+          )}
         </Field>
         <Field label="본인의 국적 및 거주지">
           <Dropdown value={origin} onChange={setOrigin} options={ORIGIN_OPTIONS.map((o) => ({ value: o.value, label: o.label }))} />
         </Field>
-        <Field label="지원할 대학교">
-          <UnivPicker value={univ} onChange={setUniv} />
+        <Field label={inst === "hagwon" ? "지원할 어학당" : "지원할 대학교"}>
+          <UnivPicker inst={inst} value={univ} onChange={setUniv} />
         </Field>
         <Field label="신청할 비자">
           <Dropdown
             value={status}
             onChange={setStatus}
-            options={STATUS_OPTS.map((o) => ({ value: o.value, label: o.label, bold: EMPHASIZED_STATUS.has(o.value) }))}
+            options={statusOpts.map((o) => ({ value: o.value, label: o.label, bold: EMPHASIZED_STATUS.has(o.value) }))}
           />
         </Field>
       </div>
@@ -251,18 +292,62 @@ function Dropdown({
   );
 }
 
-/* ── 대학교 검색 피커 ─────────────────────────────────── */
-function UnivPicker({ value, onChange }: { value: UnivPick | null; onChange: (v: UnivPick | null) => void }) {
+/* ── 라디오 그룹 ──────────────────────────────────────── */
+function RadioGroup({
+  value,
+  onChange,
+  options,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  options: { value: string; label: string; desc?: string }[];
+}) {
+  return (
+    <div style={{ display: "flex", gap: 10 }}>
+      {options.map((o) => {
+        const active = o.value === value;
+        return (
+          <button
+            key={o.value}
+            type="button"
+            onClick={() => onChange(o.value)}
+            style={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 2,
+              padding: "12px 10px",
+              borderRadius: 12,
+              border: `1.5px solid ${active ? "var(--coral)" : "var(--bdr-d)"}`,
+              background: active ? "var(--coral-pale)" : "#fff",
+              cursor: "pointer",
+              transition: "all .12s",
+            }}
+          >
+            <span style={{ fontSize: 15, fontWeight: 800, color: active ? "var(--coral-d)" : "var(--ink)" }}>{o.label}</span>
+            {o.desc && <span style={{ fontSize: 12, color: active ? "var(--coral-d)" : "var(--ink-light)" }}>{o.desc}</span>}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+/* ── 기관 검색 피커 (대학교/어학당) ───────────────────── */
+function UnivPicker({ inst, value, onChange }: { inst: InstKind; value: UnivPick | null; onChange: (v: UnivPick | null) => void }) {
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
   const ref = useRef<HTMLDivElement>(null);
   useOutside(ref, () => setOpen(false));
 
+  const pool = useMemo(() => (inst === "hagwon" ? UNIVERSITIES.filter((u) => u.lang) : UNIVERSITIES), [inst]);
+  const specials = useMemo(() => specialsFor(inst), [inst]);
   const matches = useMemo(() => {
     const query = q.trim();
-    const base = query ? UNIVERSITIES.filter((u) => u.name.includes(query)) : UNIVERSITIES;
+    const base = query ? pool.filter((u) => u.name.includes(query)) : pool;
     return base.slice(0, 40);
-  }, [q]);
+  }, [q, pool]);
 
   return (
     <div ref={ref} style={{ position: "relative" }}>
@@ -274,7 +359,7 @@ function UnivPicker({ value, onChange }: { value: UnivPick | null; onChange: (v:
             <TierBadge tier={value.tier} region={value.region} />
           </span>
         ) : (
-          <span style={{ color: "var(--ink-light)" }}>대학교 검색 / 선택</span>
+          <span style={{ color: "var(--ink-light)" }}>{inst === "hagwon" ? "어학당(대학) 검색 / 선택" : "대학교 검색 / 선택"}</span>
         )}
         <ChevronDown size={16} style={{ color: "var(--ink-light)", flexShrink: 0 }} />
       </button>
@@ -287,7 +372,7 @@ function UnivPicker({ value, onChange }: { value: UnivPick | null; onChange: (v:
                 autoFocus
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
-                placeholder="대학명 입력 (예: 한양대, 부산대)"
+                placeholder={inst === "hagwon" ? "어학당 운영 대학 검색 (예: 부산대, 경희대)" : "대학명 입력 (예: 한양대, 부산대)"}
                 style={{ border: "none", outline: "none", background: "transparent", fontSize: 13.5, width: "100%" }}
               />
               {q && <X size={15} style={{ cursor: "pointer", color: "var(--ink-light)" }} onClick={() => setQ("")} />}
@@ -307,7 +392,7 @@ function UnivPicker({ value, onChange }: { value: UnivPick | null; onChange: (v:
             )}
             <div style={{ borderTop: "1px solid var(--bdr)", padding: "6px 0" }}>
               <div style={{ fontSize: 11, color: "var(--ink-xlight)", padding: "4px 14px" }}>목록에 없거나 특수 등급</div>
-              {UNIV_SPECIAL.map((u) => (
+              {specials.map((u) => (
                 <button key={u.name} type="button" onClick={() => pick(u)} style={dropdownItem}>
                   <span>{u.name}</span>
                   <TierBadge tier={u.tier} region={u.region} />
@@ -339,13 +424,13 @@ function TierBadge({ tier, region }: { tier: UnivTier; region: UnivRegion }) {
 }
 
 /* ══════════════════════ 요약 바 ══════════════════════ */
-function SummaryBar({ track, origin, status, univ, onEdit }: { track: string; origin: string; status: string; univ: UnivPick; onEdit: () => void }) {
-  const trackLabel = TRACK_OPTS.find((o) => o.value === track)?.label ?? track;
+function SummaryBar({ inst, isChange, origin, status, univ, onEdit }: { inst: InstKind; isChange: boolean; origin: string; status: string; univ: UnivPick; onEdit: () => void }) {
+  const instLabel = inst === "hagwon" ? "어학당 (D-4)" : isChange ? "대학교 · D-4→D-2 변경" : "대학교 (D-2)";
   const statusLabel = STATUS_OPTS.find((o) => o.value === status)?.label ?? status;
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 10, background: "#fff", border: "1px solid var(--bdr)", borderRadius: 14, padding: "12px 14px", marginBottom: 18, boxShadow: "var(--shadow-sm)", flexWrap: "wrap" }}>
       <div style={{ display: "flex", gap: 6, flexWrap: "wrap", flex: 1, minWidth: 0 }}>
-        <SumChip>{trackLabel}</SumChip>
+        <SumChip>{instLabel}</SumChip>
         <SumChip>{origin}</SumChip>
         <SumChip>
           {univ.name} · {TIER_LABEL[univ.tier]} · {REGION_LABEL[univ.region]}
