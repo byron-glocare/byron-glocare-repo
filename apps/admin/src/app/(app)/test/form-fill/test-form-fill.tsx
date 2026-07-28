@@ -56,6 +56,9 @@ const DATE_UNIT_KO: Record<string, string> = {
   day: "일",
 };
 
+const DOCX_MIME =
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+
 export function TestFormFill({
   options,
   values,
@@ -73,6 +76,9 @@ export function TestFormFill({
     null
   );
   const [resultUrl, setResultUrl] = useState<string | null>(null);
+  // 마커 docx(base64) / 채움 결과 blob — 렌더는 카드가 마운트된 뒤 useEffect 에서.
+  const [markedDocx, setMarkedDocx] = useState<string | null>(null);
+  const [resultBlob, setResultBlob] = useState<Blob | null>(null);
   const previewRef = useRef<HTMLDivElement | null>(null);
   const resultRef = useRef<HTMLDivElement | null>(null);
 
@@ -163,10 +169,12 @@ export function TestFormFill({
     setBusy(true);
     setError(null);
     setSlots(null);
+    setMarkedDocx(null);
     setMapping({});
     setActive(null);
     if (resultUrl) URL.revokeObjectURL(resultUrl);
     setResultUrl(null);
+    setResultBlob(null);
 
     try {
       const fd = new FormData();
@@ -183,28 +191,43 @@ export function TestFormFill({
         return;
       }
       setSlots(j.slots);
-
-      // 마커가 박힌 docx 를 렌더 → 마커를 클릭 칩으로
-      const bin = Uint8Array.from(atob(j.markedDocx), (c) => c.charCodeAt(0));
-      const blob = new Blob([bin], {
-        type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      });
-      const { renderAsync } = await import("docx-preview");
-      if (previewRef.current) {
-        previewRef.current.innerHTML = "";
-        await renderAsync(blob, previewRef.current, undefined, {
-          className: "docx",
-          inWrapper: true,
-        });
-        decorateMarkers(previewRef.current);
-        refreshChips();
-      }
+      // 실제 렌더는 미리보기 카드가 마운트된 뒤 아래 useEffect 에서 (previewRef 보장)
+      setMarkedDocx(j.markedDocx);
     } catch (e) {
       setError({ message: (e as Error).message, details: [] });
     } finally {
       setBusy(false);
     }
   }
+
+  // 마커 docx → docx-preview 렌더 + 마커를 클릭 칩으로 (카드 마운트 후 실행)
+  useEffect(() => {
+    if (!markedDocx) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const bin = Uint8Array.from(atob(markedDocx), (c) => c.charCodeAt(0));
+        const blob = new Blob([bin], { type: DOCX_MIME });
+        const { renderAsync } = await import("docx-preview");
+        if (cancelled || !previewRef.current) return;
+        previewRef.current.innerHTML = "";
+        await renderAsync(blob, previewRef.current, undefined, {
+          className: "docx",
+          inWrapper: true,
+        });
+        if (cancelled || !previewRef.current) return;
+        decorateMarkers(previewRef.current);
+        refreshChips();
+      } catch (e) {
+        setError({ message: (e as Error).message, details: [] });
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // decorateMarkers 는 안정적, refreshChips 는 초기 1회만 필요(이후 매핑 변경은 별도 effect)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [markedDocx]);
 
   // 칩 클릭 → 해당 슬롯 선택
   useEffect(() => {
@@ -246,24 +269,35 @@ export function TestFormFill({
       }
       const blob = await res.blob();
       setResultUrl(URL.createObjectURL(blob));
-      try {
-        const { renderAsync } = await import("docx-preview");
-        if (resultRef.current) {
-          resultRef.current.innerHTML = "";
-          await renderAsync(blob, resultRef.current, undefined, {
-            className: "docx",
-            inWrapper: true,
-          });
-        }
-      } catch {
-        /* preview 실패 무시 */
-      }
+      setResultBlob(blob); // 렌더는 아래 useEffect (결과 카드 마운트 후)
     } catch (e) {
       setError({ message: (e as Error).message, details: [] });
     } finally {
       setBusy(false);
     }
   }
+
+  // 채운 결과 blob → docx-preview 렌더 (결과 카드 마운트 후 실행)
+  useEffect(() => {
+    if (!resultBlob) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const { renderAsync } = await import("docx-preview");
+        if (cancelled || !resultRef.current) return;
+        resultRef.current.innerHTML = "";
+        await renderAsync(resultBlob, resultRef.current, undefined, {
+          className: "docx",
+          inWrapper: true,
+        });
+      } catch {
+        /* preview 실패 무시 */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [resultBlob]);
 
   const boundCount = Object.values(mapping).filter(Boolean).length;
   const activeSlot = slots?.find((s) => s.index === active) ?? null;
@@ -286,6 +320,7 @@ export function TestFormFill({
                 if (e === engine) return;
                 setEngine(e);
                 setSlots(null);
+                setMarkedDocx(null);
                 setMapping({});
                 setActive(null);
                 setError(null);
