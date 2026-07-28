@@ -27,7 +27,7 @@ export interface DocDef {
 }
 export const DOCUMENTS: DocDef[] = [
   // ── 제출 서류(서류명) ──
-  { key: "basic", name: "기본 서류", section: "submit", headline: "여권 · 사증발급신청서 · 사진 · 신분증 등 공통" },
+  //   기본 공통서류(DOC-010)는 BASIC_DOCS 로 개별 분리해 별도 렌더.
   { key: "admission", name: "표준입학허가서", section: "submit", headline: "대학 발급 · 소요경비·조달계획 기재 · 유효기간 유의" },
   { key: "edu", name: "최종학력 서류", section: "submit", headline: "졸업·성적증명 · 영사확인(접수일 1년 이내)" },
   { key: "finance", name: "재정능력 입증서류 (잔고증명)", section: "submit", headline: "예치 기준액·예치기간·명의 충족 (장학 시 면제)" },
@@ -44,6 +44,23 @@ export const DOCUMENTS: DocDef[] = [
   { key: "duration", name: "체류기간", section: "condition" },
   { key: "jurisdiction", name: "관할·접수", section: "condition" },
   { key: "process", name: "심사 절차·유의", section: "condition" },
+];
+
+/**
+ * 기본 공통서류 — DOC-010(기본 서류)을 개별 서류로 분리한 정적 목록.
+ * DOC-010 이 적용 후보일 때(track=new_d2/new_d4) 제출 서류 최상단에 렌더한다.
+ * (표준입학허가서·최종학력·결핵진단서는 별도 카드가 있어 여기서 제외.)
+ */
+export interface BasicDoc {
+  name: string;
+  headline: string;
+}
+export const BASIC_DOCS: BasicDoc[] = [
+  { name: "여권", headline: "원본 · 잔여 유효기간 6개월 이상" },
+  { name: "사증발급신청서", headline: "소정 양식 작성" },
+  { name: "표준규격 사진", headline: "3.5 × 4.5cm · 1매" },
+  { name: "대학 사업자등록증 사본", headline: "한국 대학 사업자등록증 또는 고유번호증" },
+  { name: "신분증·출생증명서 사본", headline: "본인 신분 확인용" },
 ];
 
 /** 조항 → 서류/조건 키. */

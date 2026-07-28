@@ -24,7 +24,7 @@ import {
   type UnivRegion,
   type UnivTier,
 } from "@/data/engine";
-import { ANN, DOCUMENTS, docOf } from "@/data/annotations";
+import { ANN, DOCUMENTS, BASIC_DOCS, docOf } from "@/data/annotations";
 import { UNIVERSITIES } from "@/data/universities";
 
 /* ── 라벨 ─────────────────────────────────────────────── */
@@ -490,6 +490,7 @@ function Results({ result }: { result: { finProof: Set<string>; candidates: Cand
 
       <SectionHead icon={<ClipboardList size={18} />} title="제출 서류" sub="비자 신청 시 준비할 서류. 서류명을 펼치면 세부 조건이 나옵니다." />
       <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 28 }}>
+        {byDoc.get("basic")?.length ? BASIC_DOCS.map((b) => <StaticDoc key={b.name} name={b.name} headline={b.headline} />) : null}
         {submit.map((d) => (
           <DocCard key={d.key} def={d} list={byDoc.get(d.key)!} />
         ))}
@@ -513,6 +514,16 @@ function SectionHead({ icon, title, sub }: { icon: React.ReactNode; title: strin
         <h2 style={{ fontSize: 18, fontWeight: 800, margin: 0 }}>{title}</h2>
       </div>
       <p style={{ margin: "4px 0 0 26px", fontSize: 12.5, color: "var(--ink-light)" }}>{sub}</p>
+    </div>
+  );
+}
+
+/* ── 정적 서류 카드 (세부조건 없는 기본 공통서류) ────── */
+function StaticDoc({ name, headline }: { name: string; headline: string }) {
+  return (
+    <div style={{ background: "#fff", border: "1px solid var(--bdr)", borderLeft: "4px solid var(--coral)", borderRadius: 12, padding: "13px 16px", boxShadow: "var(--shadow-sm)" }}>
+      <div style={{ fontSize: 15, fontWeight: 800 }}>{name}</div>
+      <div style={{ fontSize: 12.5, color: "var(--ink-light)", marginTop: 3 }}>{headline}</div>
     </div>
   );
 }
