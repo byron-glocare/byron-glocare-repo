@@ -609,40 +609,65 @@ function DocuCard({ doc, rules }: { doc: VisaDoc; rules: Candidate[] }) {
             {doc.appliesTo && <Attr k="적용 대상" v={doc.appliesTo} />}
           </dl>
 
-          {rules.length > 0 && (
-            <div style={{ marginTop: 12 }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: "var(--coral-d)", marginBottom: 6 }}>적용 조건 (선택 상황 기준)</div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                {rules.map((c) => (
-                  <div key={c.rule.id} style={{ display: "flex", gap: 7, alignItems: "baseline" }}>
-                    <span style={{ color: "var(--coral)", flexShrink: 0, fontSize: 12 }}>•</span>
-                    <div style={{ flex: 1 }}>
-                      <span style={{ fontSize: 12.5, color: "var(--ink-mid)" }}>{ANN[c.rule.id]?.terse ?? c.rule.title}</span>
-                      {c.tags.length > 0 && (
-                        <span style={{ display: "inline-flex", gap: 5, flexWrap: "wrap", marginLeft: 7, verticalAlign: "middle" }}>
-                          {c.tags.map((t, i) => (
-                            <Tag key={i} tag={t} />
-                          ))}
-                        </span>
-                      )}
-                    </div>
+          {(() => {
+            // DOC-* 는 여러 서류를 나열한 '묶음 규정' → 목록(terse)은 숨기고 적용상황(태그)만.
+            const substantive = rules.filter((c) => c.rule.group !== "documents");
+            const bundleTags: OptionTag[] = [];
+            const seen = new Set<string>();
+            for (const c of rules.filter((c) => c.rule.group === "documents")) {
+              for (const t of c.tags) {
+                const key = `${t.axis}|${t.values.join(",")}|${t.negate ? "!" : ""}`;
+                if (!seen.has(key)) { seen.add(key); bundleTags.push(t); }
+              }
+            }
+            if (substantive.length === 0 && bundleTags.length === 0) return null;
+            return (
+              <div style={{ marginTop: 12 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: "var(--coral-d)", marginBottom: 6 }}>적용 조건 (선택 상황 기준)</div>
+                {bundleTags.length > 0 && (
+                  <div style={{ display: "flex", gap: 5, flexWrap: "wrap", alignItems: "center", marginBottom: substantive.length ? 8 : 0 }}>
+                    <span style={{ fontSize: 12, color: "var(--ink-light)" }}>적용 상황</span>
+                    {bundleTags.map((t, i) => (
+                      <Tag key={i} tag={t} />
+                    ))}
                   </div>
-                ))}
-              </div>
-              <button onClick={() => setShowRaw((s) => !s)} style={{ marginTop: 8, border: "none", background: "none", padding: 0, cursor: "pointer", fontSize: 11.5, fontWeight: 700, color: "var(--ink-xlight)" }}>
-                {showRaw ? "규정 원문 닫기" : "규정 원문 보기"}
-              </button>
-              {showRaw && (
-                <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 8 }}>
-                  {rules.map((c) => (
-                    <div key={c.rule.id} style={{ fontSize: 12, color: "var(--ink-light)", lineHeight: 1.6 }}>
-                      <b style={{ color: "var(--ink-mid)" }}>{ANN[c.rule.id]?.title ?? c.rule.title}</b> — {c.rule.body}
+                )}
+                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                  {substantive.map((c) => (
+                    <div key={c.rule.id} style={{ display: "flex", gap: 7, alignItems: "baseline" }}>
+                      <span style={{ color: "var(--coral)", flexShrink: 0, fontSize: 12 }}>•</span>
+                      <div style={{ flex: 1 }}>
+                        <span style={{ fontSize: 12.5, color: "var(--ink-mid)" }}>{ANN[c.rule.id]?.terse ?? c.rule.title}</span>
+                        {c.tags.length > 0 && (
+                          <span style={{ display: "inline-flex", gap: 5, flexWrap: "wrap", marginLeft: 7, verticalAlign: "middle" }}>
+                            {c.tags.map((t, i) => (
+                              <Tag key={i} tag={t} />
+                            ))}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>
-              )}
-            </div>
-          )}
+                {substantive.length > 0 && (
+                  <>
+                    <button onClick={() => setShowRaw((s) => !s)} style={{ marginTop: 8, border: "none", background: "none", padding: 0, cursor: "pointer", fontSize: 11.5, fontWeight: 700, color: "var(--ink-xlight)" }}>
+                      {showRaw ? "규정 원문 닫기" : "규정 원문 보기"}
+                    </button>
+                    {showRaw && (
+                      <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 8 }}>
+                        {substantive.map((c) => (
+                          <div key={c.rule.id} style={{ fontSize: 12, color: "var(--ink-light)", lineHeight: 1.6 }}>
+                            <b style={{ color: "var(--ink-mid)" }}>{ANN[c.rule.id]?.title ?? c.rule.title}</b> — {c.rule.body}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            );
+          })()}
 
           {doc.ambiguities && doc.ambiguities.length > 0 && (
             <div style={{ marginTop: 12, fontSize: 11.5, color: "#8a6d1a", background: "#fff7e0", border: "1px solid #f0dca0", borderRadius: 8, padding: "7px 10px" }}>

@@ -169,7 +169,7 @@ export const DOCUMENTS_DATA: VisaDoc[] = [
     },
     translation: { required: false, note: "번역공증 대상에서 신분증은 제외(PRC-011)." },
     appliesTo: "모든 신청 공통(본인). 보증인 신분증은 재정보증 유형별로 추가.",
-    ruleRefs: ["DOC-010", "DOC-025", "DOC-027", "PRC-011"],
+    ruleRefs: ["DOC-010"],
     confidence: "confirmed",
     sources: ["hcmc_cur"],
     ambiguities: ["'신분증'이 본인만인지, 재정보증인 것까지 한 항목인지 통합/분리 기준이 애매."],
