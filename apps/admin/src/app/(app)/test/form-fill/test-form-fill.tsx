@@ -1,11 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Download, FileText, Loader2, Upload } from "lucide-react";
+import { Download, FileText, Loader2, Upload, Wand2 } from "lucide-react";
 
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { autoMap, type CatalogType } from "@/lib/test/auto-map";
 
 type BindingOption = {
   token: string;
@@ -13,6 +14,8 @@ type BindingOption = {
   group: string;
   kind: "text" | "image";
 };
+
+type TestStudent = { id: string; name: string };
 
 type Engine = "v1" | "v2";
 
@@ -31,6 +34,7 @@ type Slot = {
   options?: string[];
   blanks?: number;
   line_text?: string;
+  template?: string;
   unit?: "year" | "month" | "day";
   label_left?: string | null;
   label_above?: string | null;
@@ -62,11 +66,18 @@ const DOCX_MIME =
 export function TestFormFill({
   options,
   values,
+  catalog,
+  students,
 }: {
   options: BindingOption[];
   values: Record<string, string>;
+  catalog: CatalogType[];
+  students: TestStudent[];
 }) {
   const [engine, setEngine] = useState<Engine>("v2");
+  const [studentId, setStudentId] = useState<string>("");
+  const [studentValues, setStudentValues] = useState<Record<string, string>>({});
+  const [autoNote, setAutoNote] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [slots, setSlots] = useState<Slot[] | null>(null);
   const [mapping, setMapping] = useState<Record<number, string>>({});
@@ -172,6 +183,7 @@ export function TestFormFill({
     setMarkedDocx(null);
     setMapping({});
     setActive(null);
+    setAutoNote(null);
     if (resultUrl) URL.revokeObjectURL(resultUrl);
     setResultUrl(null);
     setResultBlob(null);
@@ -254,6 +266,7 @@ export function TestFormFill({
       const fd = new FormData();
       fd.set("file", file);
       fd.set("engine", engine);
+      fd.set("studentId", studentId);
       fd.set("mapping", JSON.stringify(mapping));
       const res = await fetch("/test/form-fill/fill", { method: "POST", body: fd });
       if (!res.ok) {
@@ -298,6 +311,35 @@ export function TestFormFill({
       cancelled = true;
     };
   }, [resultBlob]);
+
+  async function loadStudent(id: string) {
+    setStudentId(id);
+    setStudentValues({});
+    if (!id) return;
+    try {
+      const res = await fetch(
+        `/test/form-fill/student?id=${encodeURIComponent(id)}`
+      );
+      const j = (await res.json()) as { values?: Record<string, string> };
+      if (res.ok && j.values) setStudentValues(j.values);
+    } catch {
+      /* ignore */
+    }
+  }
+
+  function runAutoMap() {
+    if (!slots) return;
+    const validTokens = new Set(options.map((o) => o.token));
+    const { mapping: m, mappedCount } = autoMap(
+      slots,
+      catalog,
+      validTokens,
+      Object.keys(studentValues).length ? studentValues : undefined
+    );
+    setMapping(m);
+    setActive(null);
+    setAutoNote(`자동 매핑 완료 — ${mappedCount} / ${slots.length}개 연결됨`);
+  }
 
   const boundCount = Object.values(mapping).filter(Boolean).length;
   const activeSlot = slots?.find((s) => s.index === active) ?? null;
@@ -390,6 +432,41 @@ export function TestFormFill({
                 {KIND_LABEL[k] ?? k} {n}
               </Badge>
             ))}
+          </div>
+        ) : null}
+        {slots ? (
+          <div className="flex flex-wrap items-center gap-2 rounded-md border bg-muted/30 p-2.5">
+            <span className="text-xs font-medium">테스트 학생</span>
+            <select
+              value={studentId}
+              onChange={(e) => loadStudent(e.target.value)}
+              className="rounded-md border border-input bg-background px-2 py-1 text-sm"
+            >
+              <option value="">— 더미값(테스트+라벨) —</option>
+              {students.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name}
+                </option>
+              ))}
+            </select>
+            {studentId ? (
+              <span className="text-xs text-muted-foreground">
+                값 {Object.keys(studentValues).length}개 로드됨
+              </span>
+            ) : null}
+            <span className="mx-1 h-4 w-px bg-border" />
+            <Button
+              type="button"
+              variant="outline"
+              onClick={runAutoMap}
+              className="h-8 gap-1.5"
+            >
+              <Wand2 className="size-4" />
+              자동 매핑
+            </Button>
+            {autoNote ? (
+              <span className="text-xs font-medium text-sky-700">{autoNote}</span>
+            ) : null}
           </div>
         ) : null}
         {error ? (

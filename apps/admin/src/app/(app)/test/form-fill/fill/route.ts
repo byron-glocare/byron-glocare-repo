@@ -15,7 +15,8 @@ import {
   fillSlotsV2,
   type SlotV2Binding,
 } from "@/lib/docx/slot-fill-v2";
-import type { SlotV2 } from "@/lib/docx/slot-detect-v2";
+import { detectDocxSlots, type SlotV2 } from "@/lib/docx/slot-detect-v2";
+import { loadStudentValues } from "@/lib/test/student-data";
 import {
   buildBindings,
   isSignatureToken,
@@ -63,10 +64,12 @@ export async function POST(req: Request): Promise<Response> {
   let file: unknown;
   let mapping: Record<number, string> = {};
   let engine = "v1";
+  let studentId = "";
   try {
     const form = await req.formData();
     file = form.get("file");
     engine = String(form.get("engine") ?? "v1");
+    studentId = String(form.get("studentId") ?? "");
     mapping = JSON.parse(String(form.get("mapping") ?? "{}")) as Record<
       number,
       string
@@ -87,7 +90,15 @@ export async function POST(req: Request): Promise<Response> {
       .select("key, label_ko, category, input_type")
       .eq("is_active", true)
       .order("sort_order");
-    const { options, values } = buildBindings((types ?? []) as CatalogRow[]);
+    // 학생 지정 시 실제 값으로 채움(없으면 더미 `테스트{라벨}`)
+    const realValues = studentId
+      ? (await loadStudentValues(supabase, studentId)).values
+      : undefined;
+    const { options, values } = buildBindings(
+      (types ?? []) as CatalogRow[],
+      new Date(),
+      realValues
+    );
     const optByToken = new Map(options.map((o) => [o.token, o]));
 
     const buf = Buffer.from(await file.arrayBuffer());
@@ -97,23 +108,64 @@ export async function POST(req: Request): Promise<Response> {
     let usedImage: boolean;
 
     if (engine === "v2") {
-      const resolve = (slot: SlotV2): SlotV2Binding | null => {
-        const token = mapping[slot.index];
-        if (!token) return null;
-        if (slot.kind === "checkbox_group" && token.startsWith("opt:")) {
-          return { kind: "checkbox", optionIndex: Number(token.slice(4)) };
+      // 슬롯 순회하며 종류별 바인딩 사전 계산.
+      //   char_grid: 같은 토큰의 연속 격자(주민번호 6칸+7칸)에 값의 글자를 이어서 분배.
+      const slots = detectDocxSlots(buf);
+      const perSlot = new Map<number, SlotV2Binding>();
+      const stripCg = (v: string) => v.replace(/[\s.\-]/g, "");
+      let cgToken: string | null = null;
+      let cgOffset = 0;
+      const resetCg = () => {
+        cgToken = null;
+        cgOffset = 0;
+      };
+      for (const s of slots) {
+        const token = mapping[s.index];
+        if (!token) {
+          if (s.kind !== "char_grid") resetCg();
+          continue;
+        }
+        if (s.kind === "checkbox_group" && token.startsWith("opt:")) {
+          perSlot.set(s.index, {
+            kind: "checkbox",
+            optionIndex: Number(token.slice(4)),
+          });
+          resetCg();
+          continue;
         }
         if (token.startsWith("lit:")) {
-          return { kind: "text", value: token.slice(4) };
+          perSlot.set(s.index, { kind: "text", value: token.slice(4) });
+          resetCg();
+          continue;
         }
         const opt = optByToken.get(token);
-        if (!opt) return null;
+        if (!opt) {
+          resetCg();
+          continue;
+        }
         if (opt.kind === "image") {
           usedImageTokens.add(token);
-          return { kind: "image", token: `{{%${token}}}` };
+          perSlot.set(s.index, { kind: "image", token: `{{%${token}}}` });
+          resetCg();
+          continue;
         }
-        return { kind: "text", value: values[token] ?? "" };
-      };
+        const value = values[token] ?? "";
+        if (s.kind === "char_grid") {
+          const boxes = Array.isArray(s.addr) ? s.addr.length : (s.boxes ?? 0);
+          const offset = token === cgToken ? cgOffset : 0;
+          cgToken = token;
+          cgOffset = offset + boxes;
+          perSlot.set(s.index, {
+            kind: "text",
+            value: stripCg(value).slice(offset, offset + boxes),
+          });
+          continue;
+        }
+        resetCg();
+        perSlot.set(s.index, { kind: "text", value });
+      }
+      const resolve = (slot: SlotV2): SlotV2Binding | null =>
+        perSlot.get(slot.index) ?? null;
       ({ zip, usedImage } = fillSlotsV2(buf, resolve));
     } else {
       const resolve = (slot: InlineSlot): SlotBinding | null => {

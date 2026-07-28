@@ -12,6 +12,7 @@
 import { createAdminClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/page-header";
 import { buildBindings, type CatalogRow } from "@/lib/test/bindings";
+import { listTestStudents } from "@/lib/test/student-data";
 
 import { TestFormFill } from "./test-form-fill";
 
@@ -25,7 +26,9 @@ export default async function TestFormFillPage() {
     .eq("is_active", true)
     .order("sort_order");
 
-  const { options, values } = buildBindings((types ?? []) as CatalogRow[]);
+  const catalog = (types ?? []) as CatalogRow[];
+  const { options, values } = buildBindings(catalog);
+  const students = await listTestStudents(supabase);
 
   return (
     <>
@@ -35,7 +38,17 @@ export default async function TestFormFillPage() {
         breadcrumbs={[{ label: "테스트" }, { label: "양식 채움" }]}
       />
       <div className="p-6">
-        <TestFormFill options={options} values={values} />
+        <TestFormFill
+          options={options}
+          values={values}
+          catalog={catalog.map((c) => ({
+            key: c.key,
+            label_ko: c.label_ko,
+            input_type: c.input_type,
+            category: c.category,
+          }))}
+          students={students}
+        />
       </div>
     </>
   );

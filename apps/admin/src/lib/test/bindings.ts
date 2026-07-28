@@ -43,10 +43,16 @@ export function isSignatureToken(token: string, label: string): boolean {
 
 export function buildBindings(
   types: CatalogRow[],
-  now: Date = new Date()
+  now: Date = new Date(),
+  /** 실제 학생 값 {key: 문자열}. 있으면 더미(`테스트{라벨}`) 대신 이 값으로 채움 */
+  realValues?: Record<string, string>
 ): { options: BindingOption[]; values: Record<string, string> } {
   const options: BindingOption[] = [];
   const values: Record<string, string> = {};
+  const real = (key: string): string | undefined => {
+    const v = realValues?.[key];
+    return v != null && v !== "" ? v : undefined;
+  };
 
   // 1) 작성일 + 파생 — "____년 ____월 ____일" 케이스의 핵심
   const y = String(now.getFullYear());
@@ -78,11 +84,12 @@ export function buildBindings(
     if (t.input_type === "file") continue;
 
     if (t.input_type === "date") {
-      values[t.key] = TEST_DATE;
-      const [yy, mm, dd] = TEST_DATE.split("-");
-      values[`${t.key}_year`] = yy;
-      values[`${t.key}_month`] = mm;
-      values[`${t.key}_day`] = dd;
+      const dateStr = real(t.key) ?? TEST_DATE;
+      values[t.key] = dateStr;
+      const [yy, mm, dd] = dateStr.split("-");
+      values[`${t.key}_year`] = yy ?? "";
+      values[`${t.key}_month`] = mm ? String(Number(mm)) : "";
+      values[`${t.key}_day`] = dd ? String(Number(dd)) : "";
       options.push(
         { token: t.key, label: `${t.label_ko} (전체)`, group: t.category, kind: "text" },
         { token: `${t.key}_year`, label: `${t.label_ko} — 년`, group: t.category, kind: "text" },
@@ -92,7 +99,7 @@ export function buildBindings(
       continue;
     }
 
-    values[t.key] = `테스트${t.label_ko}`;
+    values[t.key] = real(t.key) ?? `테스트${t.label_ko}`;
     options.push({
       token: t.key,
       label: t.label_ko,
