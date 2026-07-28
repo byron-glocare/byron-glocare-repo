@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Download, FileText, Loader2, Upload, Wand2 } from "lucide-react";
+import { Download, FileText, Loader2, Sparkles, Upload, Wand2 } from "lucide-react";
 
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -78,6 +78,7 @@ export function TestFormFill({
   const [studentId, setStudentId] = useState<string>("");
   const [studentValues, setStudentValues] = useState<Record<string, string>>({});
   const [autoNote, setAutoNote] = useState<string | null>(null);
+  const [aiBusy, setAiBusy] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [slots, setSlots] = useState<Slot[] | null>(null);
   const [mapping, setMapping] = useState<Record<number, string>>({});
@@ -338,7 +339,58 @@ export function TestFormFill({
     );
     setMapping(m);
     setActive(null);
-    setAutoNote(`자동 매핑 완료 — ${mappedCount} / ${slots.length}개 연결됨`);
+    setAutoNote(`규칙 매핑 — ${mappedCount} / ${slots.length}개 연결됨`);
+  }
+
+  /** 하이브리드: 규칙매핑(강한 기본) 먼저 → 못 잡은 칸만 AI 로 보강 */
+  async function runAiMap() {
+    if (!slots) return;
+    setAiBusy(true);
+    setError(null);
+    setAutoNote(null);
+    try {
+      const validTokens = new Set(options.map((o) => o.token));
+      const { mapping: ruleMap } = autoMap(
+        slots,
+        catalog,
+        validTokens,
+        Object.keys(studentValues).length ? studentValues : undefined
+      );
+      const ruleCount = Object.keys(ruleMap).length;
+      const gaps = slots.filter((s) => !ruleMap[s.index]);
+
+      let aiMap: Record<number, string> = {};
+      if (gaps.length) {
+        const res = await fetch("/test/form-fill/automap", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ slots: gaps, studentId }),
+        });
+        const j = (await res.json()) as {
+          mapping?: Record<number, string>;
+          error?: string;
+        };
+        if (!res.ok || !j.mapping) {
+          setError({
+            message: j.error ?? `AI 매핑 실패 (HTTP ${res.status})`,
+            details: [],
+          });
+          return;
+        }
+        aiMap = j.mapping;
+      }
+      const merged = { ...ruleMap, ...aiMap };
+      setMapping(merged);
+      setActive(null);
+      const aiCount = Object.keys(aiMap).length;
+      setAutoNote(
+        `AI 매핑 — 규칙 ${ruleCount} + AI 보강 ${aiCount} = ${Object.keys(merged).length} / ${slots.length}개`
+      );
+    } catch (e) {
+      setError({ message: (e as Error).message, details: [] });
+    } finally {
+      setAiBusy(false);
+    }
   }
 
   const boundCount = Object.values(mapping).filter(Boolean).length;
@@ -459,10 +511,24 @@ export function TestFormFill({
               type="button"
               variant="outline"
               onClick={runAutoMap}
+              disabled={aiBusy}
               className="h-8 gap-1.5"
             >
               <Wand2 className="size-4" />
-              자동 매핑
+              규칙 매핑
+            </Button>
+            <Button
+              type="button"
+              onClick={runAiMap}
+              disabled={aiBusy}
+              className="h-8 gap-1.5"
+            >
+              {aiBusy ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                <Sparkles className="size-4" />
+              )}
+              AI 매핑
             </Button>
             {autoNote ? (
               <span className="text-xs font-medium text-sky-700">{autoNote}</span>
