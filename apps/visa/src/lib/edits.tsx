@@ -74,21 +74,36 @@ const fieldStyle: React.CSSProperties = {
   boxShadow: "0 0 0 2px rgba(242,92,92,.08)",
 };
 
-/** CJK(한글 등)는 폭이 ch 기준 ~2배 → 표시폭을 반영해 입력창 너비 산정. */
-function displayWidthCh(s: string): number {
-  let w = 0;
-  for (const ch of s) w += ch.charCodeAt(0) > 0x2e7f ? 2 : 1;
-  return Math.min(64, Math.max(8, w + 3));
+/** 내용에 맞춰 높이가 자동으로 늘어나는 textarea (길이·줄바꿈 자유). */
+function AutoTextarea({ value, onChange, style }: { value: string; onChange: (v: string) => void; style?: React.CSSProperties }) {
+  const ref = React.useRef<HTMLTextAreaElement>(null);
+  const resize = React.useCallback(() => {
+    const el = ref.current;
+    if (el) {
+      el.style.height = "auto";
+      el.style.height = el.scrollHeight + 2 + "px";
+    }
+  }, []);
+  React.useEffect(() => { resize(); }, [value, resize]);
+  return (
+    <textarea
+      ref={ref}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      onInput={resize}
+      rows={1}
+      style={{ ...fieldStyle, ...style, width: "100%", resize: "none", overflow: "hidden", lineHeight: 1.5, display: "block" }}
+    />
+  );
 }
 
 /**
- * 편집 가능한 텍스트. 편집 모드가 아니면 그냥 텍스트, 편집 모드면 입력창.
- * shared>1 이면 "공유 N곳" 배지 노출(수정 시 연결된 모든 곳에 반영됨을 알림).
+ * 편집 가능한 텍스트. 편집 모드가 아니면 그냥 텍스트, 편집 모드면 자동높이 textarea.
+ * 길이·줄바꿈 제한 없음. shared>1 이면 "공유 N곳" 배지 노출.
  */
 export function EditableText({
   path,
   value,
-  multiline,
   shared,
   style,
 }: {
@@ -104,31 +119,23 @@ export function EditableText({
   if (!editMode) return <span style={style}>{cur}</span>;
 
   const changed = cur !== value;
+  const stop = (e: React.SyntheticEvent) => e.stopPropagation();
   return (
-    <span style={{ display: multiline ? "block" : "inline-flex", alignItems: "baseline", gap: 5, position: "relative", width: multiline ? "100%" : "auto", maxWidth: "100%" }}>
-      {multiline ? (
-        <textarea
-          value={cur}
-          onChange={(e) => set(path, e.target.value)}
-          rows={Math.min(8, Math.max(2, Math.ceil(cur.length / 46)))}
-          style={{ ...fieldStyle, ...style, width: "100%", resize: "vertical", lineHeight: 1.5 }}
-        />
-      ) : (
-        <input
-          value={cur}
-          onChange={(e) => set(path, e.target.value)}
-          style={{ ...fieldStyle, ...style, width: `${displayWidthCh(cur)}ch`, maxWidth: "100%" }}
-        />
-      )}
-      {shared && shared > 1 ? (
-        <span
-          title={`이 값은 ${shared}곳에 연결되어 있어, 수정하면 모두 함께 바뀝니다.`}
-          style={{ fontSize: 10, fontWeight: 800, color: "#8a4b00", background: "#ffe8cc", border: "1px solid #f0c088", borderRadius: 999, padding: "0 6px", whiteSpace: "nowrap", flexShrink: 0 }}
-        >
-          🔗 공유 {shared}곳
+    <span style={{ display: "block", width: "100%" }} onClick={stop} onMouseDown={stop}>
+      {(shared && shared > 1) || changed ? (
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 5, marginBottom: 3 }}>
+          {shared && shared > 1 ? (
+            <span
+              title={`이 값은 ${shared}곳에 연결되어 있어, 수정하면 모두 함께 바뀝니다.`}
+              style={{ fontSize: 10, fontWeight: 800, color: "#8a4b00", background: "#ffe8cc", border: "1px solid #f0c088", borderRadius: 999, padding: "0 6px", whiteSpace: "nowrap" }}
+            >
+              🔗 공유 {shared}곳
+            </span>
+          ) : null}
+          {changed ? <span title="수정됨" style={{ fontSize: 10, fontWeight: 800, color: "var(--coral-d)" }}>● 수정됨</span> : null}
         </span>
       ) : null}
-      {changed ? <span title="수정됨" style={{ width: 6, height: 6, borderRadius: 999, background: "var(--coral)", flexShrink: 0 }} /> : null}
+      <AutoTextarea value={cur} onChange={(v) => set(path, v)} style={style} />
     </span>
   );
 }
