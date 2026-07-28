@@ -8,6 +8,8 @@ import {
   Pencil,
   Building2,
   Check,
+  FileText,
+  ClipboardList,
   X,
 } from "lucide-react";
 import {
@@ -22,7 +24,7 @@ import {
   type UnivRegion,
   type UnivTier,
 } from "@/data/engine";
-import { ANN } from "@/data/annotations";
+import { ANN, DOC_GROUPS, docGroupKey } from "@/data/annotations";
 import { UNIVERSITIES } from "@/data/universities";
 
 /* ── 라벨 ─────────────────────────────────────────────── */
@@ -38,8 +40,8 @@ const REGION_LABEL: Record<UnivRegion, string> = { metro: "수도권", nonmetro:
 const STATUS_OPTS = D.axes.find((a) => a.id === "statusCode")!.options;
 
 type InstKind = "univ" | "hagwon";
+type PickMode = "name" | "cond";
 
-/** 지원기관별 신청 가능한 체류자격 코드. */
 function statusOptionsFor(inst: InstKind) {
   const prefix = inst === "hagwon" ? "D-4" : "D-2";
   return STATUS_OPTS.filter((o) => o.value.startsWith(prefix));
@@ -50,49 +52,50 @@ interface UnivPick {
   tier: UnivTier;
   region: UnivRegion;
 }
-/** 지원기관별 특수/폴백 선택지. */
-function specialsFor(inst: InstKind): UnivPick[] {
-  const noun = inst === "hagwon" ? "어학당" : "대학";
-  return [
-    { name: `그 외 ${noun} — 수도권 (미인증)`, tier: "general", region: "metro" },
-    { name: `그 외 ${noun} — 비수도권 (미인증)`, tier: "general", region: "nonmetro" },
-    { name: `컨설팅대학 ${inst === "hagwon" ? "어학당 " : ""}— 수도권`, tier: "consulting", region: "metro" },
-    { name: `컨설팅대학 ${inst === "hagwon" ? "어학당 " : ""}— 비수도권`, tier: "consulting", region: "nonmetro" },
-    { name: `비자정밀 심사대학 — 수도권`, tier: "restricted", region: "metro" },
-    { name: `비자정밀 심사대학 — 비수도권`, tier: "restricted", region: "nonmetro" },
-  ];
-}
 
-/* group 표시 순서/라벨은 rules.json 것을 사용 */
-const GROUPS_SORTED = Object.entries(D.groups).sort((a, b) => a[1].order - b[1].order);
+const TIER_OPTS: { value: UnivTier; label: string }[] = [
+  { value: "excellent", label: "우수 인증대학" },
+  { value: "certified", label: "인증대학" },
+  { value: "general", label: "미인증(일반) 대학" },
+  { value: "consulting", label: "컨설팅대학 (비자심사 강화)" },
+  { value: "restricted", label: "비자정밀 심사대학" },
+];
+const REGION_OPTS: { value: UnivRegion; label: string }[] = [
+  { value: "metro", label: "수도권 (서울·인천·경기)" },
+  { value: "nonmetro", label: "비수도권 (그 외)" },
+];
 
 export default function Page() {
   const [inst, setInst] = useState<InstKind>("univ");
   const [isChange, setIsChange] = useState(false);
+  const [pickMode, setPickMode] = useState<PickMode>("name");
+  const [univ, setUniv] = useState<UnivPick | null>(null);
+  const [condTier, setCondTier] = useState<UnivTier>("certified");
+  const [condRegion, setCondRegion] = useState<UnivRegion>("metro");
   const [origin, setOrigin] = useState("vn_south");
   const [status, setStatus] = useState("D-2-2");
-  const [univ, setUniv] = useState<UnivPick | null>(null);
   const [searched, setSearched] = useState(false);
 
-  // 지원기관 + 신규/변경 → 엔진 track
   const track = inst === "hagwon" ? "new_d4" : isChange ? "change_d4_d2" : "new_d2";
   const originOpt = ORIGIN_OPTIONS.find((o) => o.value === origin)!;
 
+  // 조회 대상(대학/조건) 확정
+  const place: UnivPick | null =
+    pickMode === "name" ? univ : { name: "", tier: condTier, region: condRegion };
+  const canSearch = pickMode === "cond" || !!univ;
+
   const result = useMemo(() => {
-    if (!univ) return null;
+    if (!place) return null;
     return lookup({
       track,
       nationality: originOpt.ctx.nationality as string,
       applicantRegion: (originOpt.ctx.applicantRegion ?? null) as string | null,
-      univTier: univ.tier,
-      univRegion: univ.region,
+      univTier: place.tier,
+      univRegion: place.region,
       statusCode: status,
     });
-  }, [track, origin, status, univ, originOpt]);
+  }, [track, originOpt, status, place?.tier, place?.region]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const canSearch = !!univ;
-
-  // 지원기관 변경 시 기관 선택·비자·변경여부 초기화
   function changeInst(next: InstKind) {
     setInst(next);
     setUniv(null);
@@ -116,7 +119,7 @@ export default function Page() {
           </h1>
           {!searched && (
             <p style={{ margin: "8px 0 0", fontSize: 15, opacity: 0.92 }}>
-              신청 상황 4가지를 고르고 조회하면, 적용되는 발급요건을 서류별로 정리해 드립니다. 기준일 {D.meta.compiledAt}.
+              신청 상황을 고르면 제출 서류와 발급 조건을 정리해 드립니다. 기준일 {D.meta.compiledAt}.
             </p>
           )}
         </div>
@@ -125,20 +128,13 @@ export default function Page() {
       <div style={{ maxWidth: 980, margin: "0 auto", padding: "20px 20px 64px" }}>
         {!searched ? (
           <InputForm
-            {...{ inst, changeInst, isChange, setIsChange, origin, setOrigin, status, setStatus, univ, setUniv }}
+            {...{ inst, changeInst, isChange, setIsChange, pickMode, setPickMode, univ, setUniv, condTier, setCondTier, condRegion, setCondRegion, origin, setOrigin, status, setStatus }}
             canSearch={canSearch}
             onSearch={() => setSearched(true)}
           />
         ) : (
           <>
-            <SummaryBar
-              inst={inst}
-              isChange={isChange}
-              origin={originOpt.label}
-              status={status}
-              univ={univ!}
-              onEdit={() => setSearched(false)}
-            />
+            <SummaryBar inst={inst} isChange={isChange} origin={originOpt.label} status={status} place={place!} onEdit={() => setSearched(false)} />
             {result && <Results result={result} />}
           </>
         )}
@@ -148,82 +144,94 @@ export default function Page() {
 }
 
 /* ══════════════════════ 입력 폼 ══════════════════════ */
-function InputForm({
-  inst,
-  changeInst,
-  isChange,
-  setIsChange,
-  origin,
-  setOrigin,
-  status,
-  setStatus,
-  univ,
-  setUniv,
-  canSearch,
-  onSearch,
-}: {
+function InputForm(p: {
   inst: InstKind;
   changeInst: (v: InstKind) => void;
   isChange: boolean;
   setIsChange: (v: boolean) => void;
+  pickMode: PickMode;
+  setPickMode: (v: PickMode) => void;
+  univ: UnivPick | null;
+  setUniv: (v: UnivPick | null) => void;
+  condTier: UnivTier;
+  setCondTier: (v: UnivTier) => void;
+  condRegion: UnivRegion;
+  setCondRegion: (v: UnivRegion) => void;
   origin: string;
   setOrigin: (v: string) => void;
   status: string;
   setStatus: (v: string) => void;
-  univ: UnivPick | null;
-  setUniv: (v: UnivPick | null) => void;
   canSearch: boolean;
   onSearch: () => void;
 }) {
-  const statusOpts = statusOptionsFor(inst);
+  const instNoun = p.inst === "hagwon" ? "어학당" : "대학교";
+  const statusOpts = statusOptionsFor(p.inst);
   return (
     <div style={{ background: "#fff", border: "1px solid var(--bdr)", borderRadius: 18, padding: 22, boxShadow: "var(--shadow-sm)" }}>
       <div style={{ display: "grid", gap: 18 }}>
         <Field label="지원 기관">
           <RadioGroup
-            value={inst}
-            onChange={(v) => changeInst(v as InstKind)}
+            value={p.inst}
+            onChange={(v) => p.changeInst(v as InstKind)}
             options={[
-              { value: "hagwon", label: "어학당", desc: "어학연수 (D-4)" },
               { value: "univ", label: "대학교", desc: "학위과정 (D-2)" },
+              { value: "hagwon", label: "어학당", desc: "어학연수 (D-4)" },
             ]}
           />
-          {inst === "univ" && (
+          {p.inst === "univ" && (
             <label style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 10, fontSize: 13, color: "var(--ink-mid)", cursor: "pointer" }}>
-              <input type="checkbox" checked={isChange} onChange={(e) => setIsChange(e.target.checked)} style={{ width: 16, height: 16, accentColor: "var(--coral)" }} />
+              <input type="checkbox" checked={p.isChange} onChange={(e) => p.setIsChange(e.target.checked)} style={{ width: 16, height: 16, accentColor: "var(--coral)" }} />
               이미 한국에서 어학연수(D-4) 중 → D-2로 국내 변경
             </label>
           )}
         </Field>
+
         <Field label="본인의 국적 및 거주지">
-          <Dropdown value={origin} onChange={setOrigin} options={ORIGIN_OPTIONS.map((o) => ({ value: o.value, label: o.label }))} />
+          <Dropdown value={p.origin} onChange={p.setOrigin} options={ORIGIN_OPTIONS.map((o) => ({ value: o.value, label: o.label, group: o.group }))} />
         </Field>
-        <Field label={inst === "hagwon" ? "지원할 어학당" : "지원할 대학교"}>
-          <UnivPicker inst={inst} value={univ} onChange={setUniv} />
+
+        <Field label={instNoun}>
+          {/* 조회 방식 토글 */}
+          <div style={{ marginBottom: 10 }}>
+            <RadioGroup
+              value={p.pickMode}
+              onChange={(v) => p.setPickMode(v as PickMode)}
+              options={[
+                { value: "name", label: `${instNoun} 이름으로`, desc: "등급·지역 자동" },
+                { value: "cond", label: "조건으로", desc: "등급 + 지역 직접" },
+              ]}
+              small
+            />
+          </div>
+          {p.pickMode === "name" ? (
+            <UnivPicker inst={p.inst} value={p.univ} onChange={p.setUniv} />
+          ) : (
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+              <Dropdown value={p.condTier} onChange={(v) => p.setCondTier(v as UnivTier)} options={TIER_OPTS} />
+              <Dropdown value={p.condRegion} onChange={(v) => p.setCondRegion(v as UnivRegion)} options={REGION_OPTS} />
+            </div>
+          )}
         </Field>
+
         <Field label="신청할 비자">
-          <Dropdown
-            value={status}
-            onChange={setStatus}
-            options={statusOpts.map((o) => ({ value: o.value, label: o.label, bold: EMPHASIZED_STATUS.has(o.value) }))}
-          />
+          <Dropdown value={p.status} onChange={p.setStatus} options={statusOpts.map((o) => ({ value: o.value, label: o.label, bold: EMPHASIZED_STATUS.has(o.value) }))} />
         </Field>
       </div>
 
       <button
-        onClick={onSearch}
-        disabled={!canSearch}
+        onClick={p.onSearch}
+        disabled={!p.canSearch}
         style={{
           marginTop: 22,
           width: "100%",
           padding: "14px",
           borderRadius: 12,
           border: "none",
-          background: canSearch ? "var(--coral)" : "var(--bdr-d)",
+          background: p.canSearch ? "var(--coral)" : "var(--bdr-d)",
           color: "#fff",
           fontSize: 16,
           fontWeight: 800,
-          cursor: canSearch ? "pointer" : "not-allowed",
+          cursor: p.canSearch ? "pointer" : "not-allowed",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -232,9 +240,9 @@ function InputForm({
       >
         <Search size={18} /> 발급요건 조회
       </button>
-      {!canSearch && (
+      {!p.canSearch && (
         <p style={{ margin: "8px 0 0", fontSize: 12.5, color: "var(--ink-light)", textAlign: "center" }}>
-          지원할 대학교를 선택하면 조회할 수 있습니다.
+          {instNoun}를 선택하면 조회할 수 있습니다.
         </p>
       )}
     </div>
@@ -250,57 +258,17 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   );
 }
 
-/* ── 커스텀 드롭다운 (bold 옵션 지원) ─────────────────── */
-function Dropdown({
-  value,
-  onChange,
-  options,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  options: { value: string; label: string; bold?: boolean }[];
-}) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-  useOutside(ref, () => setOpen(false));
-  const sel = options.find((o) => o.value === value);
-  return (
-    <div ref={ref} style={{ position: "relative" }}>
-      <button type="button" onClick={() => setOpen((o) => !o)} style={selectBtn}>
-        <span style={{ fontWeight: sel?.bold ? 800 : 500 }}>{sel?.label ?? "선택"}</span>
-        <ChevronDown size={16} style={{ color: "var(--ink-light)", flexShrink: 0 }} />
-      </button>
-      {open && (
-        <div style={dropdownPanel}>
-          {options.map((o) => (
-            <button
-              key={o.value}
-              type="button"
-              onClick={() => {
-                onChange(o.value);
-                setOpen(false);
-              }}
-              style={{ ...dropdownItem, fontWeight: o.bold ? 800 : 500, background: o.value === value ? "var(--coral-pale)" : "#fff" }}
-            >
-              {o.label}
-              {o.value === value && <Check size={15} style={{ color: "var(--coral-d)" }} />}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
 /* ── 라디오 그룹 ──────────────────────────────────────── */
 function RadioGroup({
   value,
   onChange,
   options,
+  small,
 }: {
   value: string;
   onChange: (v: string) => void;
   options: { value: string; label: string; desc?: string }[];
+  small?: boolean;
 }) {
   return (
     <div style={{ display: "flex", gap: 10 }}>
@@ -317,16 +285,16 @@ function RadioGroup({
               flexDirection: "column",
               alignItems: "center",
               gap: 2,
-              padding: "12px 10px",
-              borderRadius: 12,
+              padding: small ? "8px 10px" : "12px 10px",
+              borderRadius: small ? 10 : 12,
               border: `1.5px solid ${active ? "var(--coral)" : "var(--bdr-d)"}`,
               background: active ? "var(--coral-pale)" : "#fff",
               cursor: "pointer",
               transition: "all .12s",
             }}
           >
-            <span style={{ fontSize: 15, fontWeight: 800, color: active ? "var(--coral-d)" : "var(--ink)" }}>{o.label}</span>
-            {o.desc && <span style={{ fontSize: 12, color: active ? "var(--coral-d)" : "var(--ink-light)" }}>{o.desc}</span>}
+            <span style={{ fontSize: small ? 13.5 : 15, fontWeight: 800, color: active ? "var(--coral-d)" : "var(--ink)" }}>{o.label}</span>
+            {o.desc && <span style={{ fontSize: small ? 11 : 12, color: active ? "var(--coral-d)" : "var(--ink-light)" }}>{o.desc}</span>}
           </button>
         );
       })}
@@ -334,7 +302,56 @@ function RadioGroup({
   );
 }
 
-/* ── 기관 검색 피커 (대학교/어학당) ───────────────────── */
+/* ── 커스텀 드롭다운 ──────────────────────────────────── */
+function Dropdown({
+  value,
+  onChange,
+  options,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  options: { value: string; label: string; bold?: boolean; group?: string }[];
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  useOutside(ref, () => setOpen(false));
+  const sel = options.find((o) => o.value === value);
+  let lastGroup: string | undefined;
+  return (
+    <div ref={ref} style={{ position: "relative" }}>
+      <button type="button" onClick={() => setOpen((o) => !o)} style={selectBtn}>
+        <span style={{ fontWeight: sel?.bold ? 800 : 500 }}>{sel?.label ?? "선택"}</span>
+        <ChevronDown size={16} style={{ color: "var(--ink-light)", flexShrink: 0 }} />
+      </button>
+      {open && (
+        <div style={dropdownPanel}>
+          {options.map((o) => {
+            const showGroup = o.group && o.group !== lastGroup;
+            lastGroup = o.group;
+            return (
+              <div key={o.value}>
+                {showGroup && <div style={{ fontSize: 11, color: "var(--ink-xlight)", padding: "6px 13px 2px", fontWeight: 700 }}>{o.group}</div>}
+                <button
+                  type="button"
+                  onClick={() => {
+                    onChange(o.value);
+                    setOpen(false);
+                  }}
+                  style={{ ...dropdownItem, fontWeight: o.bold ? 800 : 500, background: o.value === value ? "var(--coral-pale)" : "#fff" }}
+                >
+                  {o.label}
+                  {o.value === value && <Check size={15} style={{ color: "var(--coral-d)", marginLeft: "auto" }} />}
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── 기관 검색 피커 ───────────────────────────────────── */
 function UnivPicker({ inst, value, onChange }: { inst: InstKind; value: UnivPick | null; onChange: (v: UnivPick | null) => void }) {
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
@@ -342,12 +359,11 @@ function UnivPicker({ inst, value, onChange }: { inst: InstKind; value: UnivPick
   useOutside(ref, () => setOpen(false));
 
   const pool = useMemo(() => (inst === "hagwon" ? UNIVERSITIES.filter((u) => u.lang) : UNIVERSITIES), [inst]);
-  const specials = useMemo(() => specialsFor(inst), [inst]);
-  const matches = useMemo(() => {
+  const all = useMemo(() => {
     const query = q.trim();
-    const base = query ? pool.filter((u) => u.name.includes(query)) : pool;
-    return base.slice(0, 40);
+    return query ? pool.filter((u) => u.name.includes(query)) : pool;
   }, [q, pool]);
+  const matches = all.slice(0, 60);
 
   return (
     <div ref={ref} style={{ position: "relative" }}>
@@ -359,12 +375,12 @@ function UnivPicker({ inst, value, onChange }: { inst: InstKind; value: UnivPick
             <TierBadge tier={value.tier} region={value.region} />
           </span>
         ) : (
-          <span style={{ color: "var(--ink-light)" }}>{inst === "hagwon" ? "어학당(대학) 검색 / 선택" : "대학교 검색 / 선택"}</span>
+          <span style={{ color: "var(--ink-light)" }}>{inst === "hagwon" ? "어학당 운영 대학 검색" : "대학교 검색"}</span>
         )}
         <ChevronDown size={16} style={{ color: "var(--ink-light)", flexShrink: 0 }} />
       </button>
       {open && (
-        <div style={{ ...dropdownPanel, maxHeight: 340, display: "flex", flexDirection: "column" }}>
+        <div style={{ ...dropdownPanel, maxHeight: 360, display: "flex", flexDirection: "column" }}>
           <div style={{ padding: 8, borderBottom: "1px solid var(--bdr)", position: "sticky", top: 0, background: "#fff" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 6, background: "var(--peach)", borderRadius: 8, padding: "6px 10px" }}>
               <Search size={15} color="var(--ink-light)" />
@@ -372,7 +388,7 @@ function UnivPicker({ inst, value, onChange }: { inst: InstKind; value: UnivPick
                 autoFocus
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
-                placeholder={inst === "hagwon" ? "어학당 운영 대학 검색 (예: 부산대, 경희대)" : "대학명 입력 (예: 한양대, 부산대)"}
+                placeholder={inst === "hagwon" ? "어학당 운영 대학 검색 (예: 부산대)" : "대학명 입력 (예: 한양대, 거제대)"}
                 style={{ border: "none", outline: "none", background: "transparent", fontSize: 13.5, width: "100%" }}
               />
               {q && <X size={15} style={{ cursor: "pointer", color: "var(--ink-light)" }} onClick={() => setQ("")} />}
@@ -380,36 +396,35 @@ function UnivPicker({ inst, value, onChange }: { inst: InstKind; value: UnivPick
           </div>
           <div style={{ overflowY: "auto" }}>
             {matches.map((u) => (
-              <button key={u.name} type="button" onClick={() => pick(u)} style={dropdownItem}>
+              <button
+                key={u.name}
+                type="button"
+                onClick={() => {
+                  onChange({ name: u.name, tier: u.tier, region: u.region });
+                  setOpen(false);
+                  setQ("");
+                }}
+                style={dropdownItem}
+              >
                 <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{u.name}</span>
                 <TierBadge tier={u.tier} region={u.region} />
               </button>
             ))}
-            {matches.length === 0 && (
-              <div style={{ padding: "14px", fontSize: 12.5, color: "var(--ink-light)", textAlign: "center" }}>
-                목록에 없는 대학입니다. 아래에서 등급·지역을 선택하세요.
+            {all.length > matches.length && (
+              <div style={{ padding: "10px 14px", fontSize: 12, color: "var(--ink-light)", textAlign: "center" }}>
+                {all.length}개 중 60개 표시 — 더 좁히려면 검색하세요.
               </div>
             )}
-            <div style={{ borderTop: "1px solid var(--bdr)", padding: "6px 0" }}>
-              <div style={{ fontSize: 11, color: "var(--ink-xlight)", padding: "4px 14px" }}>목록에 없거나 특수 등급</div>
-              {specials.map((u) => (
-                <button key={u.name} type="button" onClick={() => pick(u)} style={dropdownItem}>
-                  <span>{u.name}</span>
-                  <TierBadge tier={u.tier} region={u.region} />
-                </button>
-              ))}
-            </div>
+            {all.length === 0 && (
+              <div style={{ padding: "16px", fontSize: 12.5, color: "var(--ink-light)", textAlign: "center" }}>
+                목록에 없습니다. 위 &quot;조건으로&quot;에서 등급·지역을 직접 선택하세요.
+              </div>
+            )}
           </div>
         </div>
       )}
     </div>
   );
-
-  function pick(u: UnivPick) {
-    onChange({ name: u.name, tier: u.tier, region: u.region });
-    setOpen(false);
-    setQ("");
-  }
 }
 
 function TierBadge({ tier, region }: { tier: UnivTier; region: UnivRegion }) {
@@ -424,7 +439,7 @@ function TierBadge({ tier, region }: { tier: UnivTier; region: UnivRegion }) {
 }
 
 /* ══════════════════════ 요약 바 ══════════════════════ */
-function SummaryBar({ inst, isChange, origin, status, univ, onEdit }: { inst: InstKind; isChange: boolean; origin: string; status: string; univ: UnivPick; onEdit: () => void }) {
+function SummaryBar({ inst, isChange, origin, status, place, onEdit }: { inst: InstKind; isChange: boolean; origin: string; status: string; place: UnivPick; onEdit: () => void }) {
   const instLabel = inst === "hagwon" ? "어학당 (D-4)" : isChange ? "대학교 · D-4→D-2 변경" : "대학교 (D-2)";
   const statusLabel = STATUS_OPTS.find((o) => o.value === status)?.label ?? status;
   return (
@@ -432,9 +447,7 @@ function SummaryBar({ inst, isChange, origin, status, univ, onEdit }: { inst: In
       <div style={{ display: "flex", gap: 6, flexWrap: "wrap", flex: 1, minWidth: 0 }}>
         <SumChip>{instLabel}</SumChip>
         <SumChip>{origin}</SumChip>
-        <SumChip>
-          {univ.name} · {TIER_LABEL[univ.tier]} · {REGION_LABEL[univ.region]}
-        </SumChip>
+        <SumChip>{place.name ? `${place.name} · ` : ""}{TIER_LABEL[place.tier]} · {REGION_LABEL[place.region]}</SumChip>
         <SumChip strong>{statusLabel}</SumChip>
       </div>
       <button onClick={onEdit} style={{ display: "flex", alignItems: "center", gap: 5, border: "1.5px solid var(--coral)", background: "#fff", color: "var(--coral-d)", padding: "7px 14px", borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: "pointer", flexShrink: 0 }}>
@@ -456,9 +469,20 @@ function Results({ result }: { result: { finProof: Set<string>; candidates: Cand
   const { candidates, finProof } = result;
   const blockers = candidates.filter((c) => c.rule.kind === "blocker");
   const nonConfirmed = candidates.filter((c) => c.rule.confidence !== "confirmed");
+  const finText = finProof.size > 1 ? "장학금 등 조건에 따라 다름" : valueLabel("finProof", [...finProof][0] ?? "required");
 
-  const finText =
-    finProof.size > 1 ? "장학금 등 조건에 따라 다름" : valueLabel("finProof", [...finProof][0] ?? "required");
+  const byGroup = useMemo(() => {
+    const m = new Map<string, Candidate[]>();
+    for (const c of candidates) {
+      const k = docGroupKey(c.rule);
+      if (!m.has(k)) m.set(k, []);
+      m.get(k)!.push(c);
+    }
+    return m;
+  }, [candidates]);
+
+  const submit = DOC_GROUPS.filter((g) => g.section === "submit" && byGroup.get(g.key)?.length);
+  const cond = DOC_GROUPS.filter((g) => g.section === "condition" && byGroup.get(g.key)?.length);
 
   return (
     <div>
@@ -480,33 +504,24 @@ function Results({ result }: { result: { finProof: Set<string>; candidates: Cand
         </div>
       )}
 
-      {GROUPS_SORTED.map(([gid, g]) => {
-        const rows = candidates.filter((c) => c.rule.group === gid);
-        if (rows.length === 0) return null;
-        // doc 로 묶기
-        const docs = new Map<string, Candidate[]>();
-        for (const c of rows) {
-          const key = ANN[c.rule.id]?.doc ?? ANN[c.rule.id]?.title ?? c.rule.title;
-          if (!docs.has(key)) docs.set(key, []);
-          docs.get(key)!.push(c);
-        }
-        return (
-          <section key={gid} style={{ marginBottom: 26 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
-              <h3 style={{ fontSize: 16, fontWeight: 800, margin: 0 }}>{g.label}</h3>
-              <span style={{ fontSize: 11.5, fontWeight: 700, color: "var(--navy)", background: "#e8eef6", padding: "2px 9px", borderRadius: 999 }}>{g.gate} 심사</span>
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              {[...docs.entries()].map(([docKey, list]) => (
-                <DocCard key={docKey} title={docKey} list={list} />
-              ))}
-            </div>
-          </section>
-        );
-      })}
+      {/* ── 제출 서류 ── */}
+      <SectionHead icon={<ClipboardList size={18} />} title="제출 서류" sub="비자 신청 시 준비할 서류. 각 서류를 펼치면 세부 절차·규칙이 나옵니다." />
+      <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 30 }}>
+        {submit.map((g) => (
+          <SubmitCard key={g.key} def={g} list={byGroup.get(g.key)!} defaultOpen={g.key === "basic"} />
+        ))}
+      </div>
+
+      {/* ── 발급 조건 ── */}
+      <SectionHead icon={<FileText size={18} />} title="발급 조건 및 유의사항" sub="서류 외에 발급 가능성·경로·기간 등 판정에 영향을 주는 조건." />
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        {cond.map((g) => (
+          <ConditionCard key={g.key} title={DOC_GROUPS.find((d) => d.key === g.key)!.title} list={byGroup.get(g.key)!} />
+        ))}
+      </div>
 
       {nonConfirmed.length > 0 && (
-        <p style={{ fontSize: 12.5, color: "var(--ink-light)", marginTop: 8 }}>
+        <p style={{ fontSize: 12.5, color: "var(--ink-light)", marginTop: 16 }}>
           ※ 적용 요건 중 <b>{nonConfirmed.length}건</b>은 확정되지 않았습니다(유추·자료충돌·미확인). 확정 안내로 쓰지 말고 관할 공관에 확인하세요.
         </p>
       )}
@@ -514,57 +529,55 @@ function Results({ result }: { result: { finProof: Set<string>; candidates: Cand
   );
 }
 
-/* ── 문서 카드 ────────────────────────────────────────── */
-function DocCard({ title, list }: { title: string; list: Candidate[] }) {
-  const [open, setOpen] = useState(false);
+function SectionHead({ icon, title, sub }: { icon: React.ReactNode; title: string; sub: string }) {
+  return (
+    <div style={{ marginBottom: 12 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <span style={{ color: "var(--coral-d)" }}>{icon}</span>
+        <h2 style={{ fontSize: 18, fontWeight: 800, margin: 0 }}>{title}</h2>
+      </div>
+      <p style={{ margin: "4px 0 0 26px", fontSize: 12.5, color: "var(--ink-light)" }}>{sub}</p>
+    </div>
+  );
+}
+
+/* ── 서류 카드 (펼침형 체크리스트 항목) ───────────────── */
+function SubmitCard({ def, list, defaultOpen }: { def: { key: string; title: string; intro?: string }; list: Candidate[]; defaultOpen?: boolean }) {
+  const [open, setOpen] = useState(!!defaultOpen);
   const hasBlocker = list.some((c) => c.rule.kind === "blocker");
   const hasCond = list.some((c) => c.tags.length > 0);
   const hasUnconfirmed = list.some((c) => c.rule.confidence !== "confirmed");
 
+  // 서류(doc) 단위 하위 묶음
+  const docs = useMemo(() => {
+    const m = new Map<string, Candidate[]>();
+    for (const c of list) {
+      const k = ANN[c.rule.id]?.doc ?? ANN[c.rule.id]?.title ?? c.rule.title;
+      if (!m.has(k)) m.set(k, []);
+      m.get(k)!.push(c);
+    }
+    return [...m.entries()];
+  }, [list]);
+
   return (
-    <div
-      style={{
-        background: "#fff",
-        border: `1px solid ${hasBlocker ? "#f3c6c1" : "var(--bdr)"}`,
-        borderLeft: `4px solid ${hasBlocker ? "#b3261e" : "var(--coral)"}`,
-        borderRadius: 12,
-        padding: "13px 15px",
-        boxShadow: "var(--shadow-sm)",
-      }}
-    >
-      <div style={{ display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
-        <span style={{ fontSize: 15, fontWeight: 800 }}>{title}</span>
-        {hasCond && <span style={badge("var(--blue)", "#eaf2fb")}>조건부</span>}
-        {hasUnconfirmed && <span style={badge("#b3261e", "#fdecea")}>미확정</span>}
-      </div>
-
-      <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 7 }}>
-        {list.map((c) => (
-          <Row key={c.rule.id} c={c} multi={list.length > 1} />
-        ))}
-      </div>
-
-      <button
-        onClick={() => setOpen((o) => !o)}
-        style={{ marginTop: 10, border: "none", background: "none", padding: 0, cursor: "pointer", fontSize: 12.5, fontWeight: 700, color: "var(--ink-light)", display: "flex", alignItems: "center", gap: 5 }}
-      >
-        <ChevronDown size={14} style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .15s" }} />
-        {open ? "상세 닫기" : "상세히 보기"}
+    <div style={{ background: "#fff", border: `1px solid ${hasBlocker ? "#f3c6c1" : "var(--bdr)"}`, borderLeft: `4px solid ${hasBlocker ? "#b3261e" : "var(--coral)"}`, borderRadius: 12, overflow: "hidden", boxShadow: "var(--shadow-sm)" }}>
+      <button onClick={() => setOpen((o) => !o)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "14px 16px", border: "none", background: "none", cursor: "pointer", textAlign: "left" }}>
+        <span style={{ flex: 1 }}>
+          <span style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+            <span style={{ fontSize: 15.5, fontWeight: 800 }}>{def.title}</span>
+            <span style={{ fontSize: 11.5, color: "var(--ink-xlight)" }}>{docs.length}개 항목</span>
+            {hasCond && <span style={badge("var(--blue)", "#eaf2fb")}>조건부</span>}
+            {hasUnconfirmed && <span style={badge("#b3261e", "#fdecea")}>미확정</span>}
+          </span>
+          {def.intro && <span style={{ display: "block", fontSize: 12.5, color: "var(--ink-light)", marginTop: 4 }}>{def.intro}</span>}
+        </span>
+        <ChevronDown size={18} style={{ color: "var(--ink-light)", flexShrink: 0, transform: open ? "rotate(180deg)" : "none", transition: "transform .15s" }} />
       </button>
 
       {open && (
-        <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 10, borderTop: "1px solid var(--bdr)", paddingTop: 10 }}>
-          {list.map((c) => (
-            <div key={c.rule.id} style={{ fontSize: 13, color: "var(--ink-mid)", lineHeight: 1.65 }}>
-              {c.tags.length > 0 && (
-                <div style={{ display: "flex", gap: 5, flexWrap: "wrap", marginBottom: 5 }}>
-                  {c.tags.map((t, i) => (
-                    <Tag key={i} tag={t} />
-                  ))}
-                </div>
-              )}
-              <div>{c.rule.body}</div>
-            </div>
+        <div style={{ borderTop: "1px solid var(--bdr)", padding: "12px 16px", display: "flex", flexDirection: "column", gap: 14 }}>
+          {docs.map(([docKey, rules]) => (
+            <DocBlock key={docKey} title={docKey} rules={rules} />
           ))}
         </div>
       )}
@@ -572,20 +585,65 @@ function DocCard({ title, list }: { title: string; list: Candidate[] }) {
   );
 }
 
-function Row({ c, multi }: { c: Candidate; multi: boolean }) {
-  const terse = ANN[c.rule.id]?.terse ?? c.rule.title;
+/* ── 서류 안의 개별 규정 묶음 ─────────────────────────── */
+function DocBlock({ title, rules }: { title: string; rules: Candidate[] }) {
+  const [showRaw, setShowRaw] = useState(false);
   return (
-    <div style={{ display: "flex", gap: 8, alignItems: "baseline" }}>
-      {multi && <span style={{ color: "var(--coral)", flexShrink: 0 }}>•</span>}
-      <div style={{ flex: 1 }}>
-        <span style={{ fontSize: 13.5, color: "var(--ink)" }}>{terse}</span>
-        {c.tags.length > 0 && (
-          <span style={{ display: "inline-flex", gap: 5, flexWrap: "wrap", marginLeft: 8, verticalAlign: "middle" }}>
-            {c.tags.map((t, i) => (
-              <Tag key={i} tag={t} />
-            ))}
-          </span>
-        )}
+    <div>
+      <div style={{ fontSize: 13.5, fontWeight: 700, color: "var(--ink)", marginBottom: 6 }}>{title}</div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+        {rules.map((c) => (
+          <div key={c.rule.id} style={{ display: "flex", gap: 7, alignItems: "baseline" }}>
+            <span style={{ color: "var(--coral)", flexShrink: 0, fontSize: 12 }}>•</span>
+            <div style={{ flex: 1 }}>
+              <span style={{ fontSize: 13, color: "var(--ink-mid)" }}>{ANN[c.rule.id]?.terse ?? c.rule.title}</span>
+              {c.tags.length > 0 && (
+                <span style={{ display: "inline-flex", gap: 5, flexWrap: "wrap", marginLeft: 7, verticalAlign: "middle" }}>
+                  {c.tags.map((t, i) => (
+                    <Tag key={i} tag={t} />
+                  ))}
+                </span>
+              )}
+              {showRaw && <div style={{ fontSize: 12, color: "var(--ink-light)", lineHeight: 1.6, marginTop: 3 }}>{c.rule.body}</div>}
+            </div>
+          </div>
+        ))}
+      </div>
+      <button onClick={() => setShowRaw((s) => !s)} style={{ marginTop: 6, border: "none", background: "none", padding: 0, cursor: "pointer", fontSize: 11.5, fontWeight: 700, color: "var(--ink-xlight)" }}>
+        {showRaw ? "규정 원문 닫기" : "규정 원문 보기"}
+      </button>
+    </div>
+  );
+}
+
+/* ── 조건 카드 ────────────────────────────────────────── */
+function ConditionCard({ title, list }: { title: string; list: Candidate[] }) {
+  const hasBlocker = list.some((c) => c.rule.kind === "blocker");
+  const hasUnconfirmed = list.some((c) => c.rule.confidence !== "confirmed");
+  return (
+    <div style={{ background: "#fff", border: `1px solid ${hasBlocker ? "#f3c6c1" : "var(--bdr)"}`, borderLeft: `4px solid ${hasBlocker ? "#b3261e" : "var(--ink-xlight)"}`, borderRadius: 12, padding: "13px 15px", boxShadow: "var(--shadow-sm)" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+        <span style={{ fontSize: 14.5, fontWeight: 800 }}>{title}</span>
+        {hasUnconfirmed && <span style={badge("#b3261e", "#fdecea")}>미확정</span>}
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+        {list.map((c) => (
+          <div key={c.rule.id} style={{ display: "flex", gap: 7, alignItems: "baseline" }}>
+            <span style={{ color: c.rule.kind === "blocker" ? "#b3261e" : "var(--ink-xlight)", flexShrink: 0, fontSize: 12 }}>•</span>
+            <div style={{ flex: 1 }}>
+              <span style={{ fontSize: 13, color: c.rule.kind === "blocker" ? "#b3261e" : "var(--ink-mid)", fontWeight: c.rule.kind === "blocker" ? 700 : 400 }}>
+                {ANN[c.rule.id]?.terse ?? c.rule.title}
+              </span>
+              {c.tags.length > 0 && (
+                <span style={{ display: "inline-flex", gap: 5, flexWrap: "wrap", marginLeft: 7, verticalAlign: "middle" }}>
+                  {c.tags.map((t, i) => (
+                    <Tag key={i} tag={t} />
+                  ))}
+                </span>
+              )}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -594,18 +652,7 @@ function Row({ c, multi }: { c: Candidate; multi: boolean }) {
 function Tag({ tag }: { tag: OptionTag }) {
   const label = tag.values.map((v) => valueLabel(tag.axis, v)).join(" / ");
   return (
-    <span
-      style={{
-        fontSize: 11,
-        fontWeight: 600,
-        color: tag.negate ? "var(--ink-light)" : "var(--navy)",
-        background: tag.negate ? "#f2f2f4" : "#eef2f8",
-        border: "1px solid var(--bdr)",
-        padding: "1px 8px",
-        borderRadius: 999,
-        whiteSpace: "nowrap",
-      }}
-    >
+    <span style={{ fontSize: 11, fontWeight: 600, color: tag.negate ? "var(--ink-light)" : "var(--navy)", background: tag.negate ? "#f2f2f4" : "#eef2f8", border: "1px solid var(--bdr)", padding: "1px 8px", borderRadius: 999, whiteSpace: "nowrap" }}>
       {tag.negate ? "제외 " : ""}
       {axisLabel(tag.axis)}: {label}
     </span>
@@ -662,7 +709,7 @@ const dropdownPanel: React.CSSProperties = {
   boxShadow: "var(--shadow-lg)",
   zIndex: 30,
   overflow: "hidden",
-  maxHeight: 300,
+  maxHeight: 320,
   overflowY: "auto",
 };
 const dropdownItem: React.CSSProperties = {

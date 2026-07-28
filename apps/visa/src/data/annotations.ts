@@ -13,6 +13,57 @@ export interface Annotation {
   doc?: string;
 }
 
+/* ============================================================================
+ * 결과 상위 구조 — "제출 서류(체크리스트)" vs "발급 조건·절차"
+ * 각 조항을 서류 항목(submit) 또는 조건(condition) 그룹으로 매핑한다.
+ * ==========================================================================*/
+export type ResultSection = "submit" | "condition";
+export interface DocGroupDef {
+  key: string;
+  title: string;
+  section: ResultSection;
+  order: number;
+  intro?: string;
+}
+export const DOC_GROUPS: DocGroupDef[] = [
+  // ── 제출 서류 ──
+  { key: "basic", title: "기본 제출 서류", section: "submit", order: 1, intro: "모든 신청자 공통 — 여권·신청서·사진·최종학력·결핵진단서 등." },
+  { key: "admission", title: "표준입학허가서 (대학 발급)", section: "submit", order: 2, intro: "대학 입학심사로 발급되는 핵심 문서. 재정·어학·소요경비 기준이 이 문서에 연동됩니다." },
+  { key: "finance", title: "재정능력 입증서류", section: "submit", order: 3, intro: "잔고증명서(예치금액·기간·명의) + 재정보증인 증빙." },
+  { key: "language", title: "어학능력 증빙", section: "submit", order: 4, intro: "TOPIK 등 어학 성적 — 과정·대학등급에 따라 요건이 다름." },
+  { key: "format", title: "서류 형식·인증 요건", section: "submit", order: 5, intro: "번역공증·영사확인·유효기간 등 서류 준비 공통 규칙." },
+  { key: "extra", title: "상황별 추가 서류", section: "submit", order: 6, intro: "교환·방문학생, 국내 체류자격 변경 등 상황에 따른 추가분." },
+  // ── 발급 조건·절차 ──
+  { key: "eligibility", title: "발급 가능성·제한", section: "condition", order: 7 },
+  { key: "channel", title: "신청 경로", section: "condition", order: 8 },
+  { key: "duration", title: "체류기간", section: "condition", order: 9 },
+  { key: "jurisdiction", title: "관할·접수", section: "condition", order: 10 },
+  { key: "process", title: "심사 절차·유의사항", section: "condition", order: 11 },
+];
+
+/** 조항 → 서류/조건 그룹 키. */
+export function docGroupKey(rule: { id: string; group: string }): string {
+  const g = rule.group;
+  if (g === "admission") return "admission";
+  if (g === "finance") return "finance";
+  if (g === "language") return "language";
+  if (g === "documents") {
+    if (/^DOC-02[0-7]$/.test(rule.id)) return "finance"; // 재정보증인 증빙
+    if (["DOC-030", "DOC-040", "DOC-050"].includes(rule.id)) return "extra";
+    return "basic"; // DOC-010/011/012
+  }
+  if (g === "process") {
+    if (rule.id === "PRC-014") return "basic"; // 결핵진단서
+    if (["PRC-011", "PRC-012", "PRC-013"].includes(rule.id)) return "format";
+    return "process";
+  }
+  if (g === "eligibility") return "eligibility";
+  if (g === "channel") return "channel";
+  if (g === "duration") return "duration";
+  if (g === "jurisdiction") return "jurisdiction";
+  return "process";
+}
+
 export const ANN: Record<string, Annotation> = {
   // ── eligibility ────────────────────────────────────────
   "ELG-010": { title: "발급 제한 — 비자정밀 심사대학", terse: "2026-2학기부터 1년간 신규 유학비자 제한. 예외(D-2-4~6·뿌리산업·복학생)는 사증발급인정서 경로만." },

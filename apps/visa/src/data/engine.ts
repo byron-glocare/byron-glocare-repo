@@ -148,15 +148,29 @@ export const OPTION_AXES = [
   "balanceCurrency",
 ] as const;
 
-/** 병합 입력 '국적 및 거주지' 옵션 → {nationality, applicantRegion} 매핑. */
-export const ORIGIN_OPTIONS: { value: string; label: string; ctx: Ctx }[] = [
-  { value: "vn_north", label: "베트남 — 북부 (하노이 대사관 관할)", ctx: { nationality: "vn", applicantRegion: "vn_north" } },
-  { value: "vn_south", label: "베트남 — 남부 (호치민 총영사관 관할)", ctx: { nationality: "vn", applicantRegion: "vn_south" } },
-  { value: "cn", label: "중국", ctx: { nationality: "cn", applicantRegion: null } },
-  { value: "mn", label: "몽골", ctx: { nationality: "mn", applicantRegion: null } },
-  { value: "uz", label: "우즈베키스탄", ctx: { nationality: "uz", applicantRegion: null } },
-  { value: "notified_other", label: "기타 법무부 고시국가 (21개국)", ctx: { nationality: "notified_other", applicantRegion: null } },
-  { value: "general", label: "일반 국가 (그 외)", ctx: { nationality: "general", applicantRegion: null } },
+/**
+ * 병합 입력 '국적 및 거주지' 옵션 → {nationality, applicantRegion} 매핑.
+ * 법무부 고시 21개국 = 중점관리 4개국(vn·cn·mn·uz) + 그 외 17개국(모두 notified_other 로 동일 처리).
+ * 베트남만 관할 공관이 갈려 북부/남부로 분리.
+ */
+const NOTIFIED_OTHER = [
+  "필리핀", "인도네시아", "방글라데시", "태국", "파키스탄", "스리랑카", "인도",
+  "미얀마", "네팔", "이란", "카자흐스탄", "키르기스스탄", "우크라이나",
+  "나이지리아", "가나", "이집트", "페루",
+];
+export const ORIGIN_OPTIONS: { value: string; label: string; ctx: Ctx; group?: string }[] = [
+  { value: "vn_north", label: "베트남 — 북부 (하노이 대사관 관할)", ctx: { nationality: "vn", applicantRegion: "vn_north" }, group: "고시 21개국" },
+  { value: "vn_south", label: "베트남 — 남부 (호치민 총영사관 관할)", ctx: { nationality: "vn", applicantRegion: "vn_south" }, group: "고시 21개국" },
+  { value: "cn", label: "중국", ctx: { nationality: "cn", applicantRegion: null }, group: "고시 21개국" },
+  { value: "mn", label: "몽골", ctx: { nationality: "mn", applicantRegion: null }, group: "고시 21개국" },
+  { value: "uz", label: "우즈베키스탄", ctx: { nationality: "uz", applicantRegion: null }, group: "고시 21개국" },
+  ...NOTIFIED_OTHER.map((ko) => ({
+    value: `no_${ko}`,
+    label: ko,
+    ctx: { nationality: "notified_other", applicantRegion: null } as Ctx,
+    group: "고시 21개국",
+  })),
+  { value: "general", label: "그 외 일반 국가", ctx: { nationality: "general", applicantRegion: null }, group: "그 외" },
 ];
 
 /** 축 값 → 한글 라벨 조회 (D.axes 기반). */
