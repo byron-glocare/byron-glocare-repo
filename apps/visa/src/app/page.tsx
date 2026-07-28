@@ -24,8 +24,9 @@ import {
   type UnivRegion,
   type UnivTier,
 } from "@/data/engine";
-import { ANN, DOCUMENTS, BASIC_DOCS, docOf } from "@/data/annotations";
+import { ANN, DOCUMENTS, docOf } from "@/data/annotations";
 import { UNIVERSITIES } from "@/data/universities";
+import { DOCUMENTS_DATA, DOC_CATEGORY_ORDER, type VisaDoc, type Holder, type HolderWho } from "@/data/documents";
 
 /* ── 라벨 ─────────────────────────────────────────────── */
 const TIER_LABEL: Record<UnivTier, string> = {
@@ -460,22 +461,32 @@ function SumChip({ children, strong }: { children: React.ReactNode; strong?: boo
 }
 
 /* ══════════════════════ 결과 ══════════════════════ */
+const CONDITION_KEYS = new Set(["eligibility", "channel", "duration", "jurisdiction", "process"]);
+
 function Results({ result }: { result: { finProof: Set<string>; candidates: Candidate[] } }) {
   const { candidates } = result;
   const blockers = candidates.filter((c) => c.rule.kind === "blocker");
+  const candMap = useMemo(() => new Map(candidates.map((c) => [c.rule.id, c])), [candidates]);
 
-  const byDoc = useMemo(() => {
+  // 제출 서류 = documents.ts (적용 조항이 하나라도 후보인 서류), 카테고리 순
+  const submitByCat = useMemo(() => {
+    const applies = DOCUMENTS_DATA.filter((d) => (d.ruleRefs ?? []).some((id) => candMap.has(id)));
+    return DOC_CATEGORY_ORDER.map((cat) => ({ cat, docs: applies.filter((d) => d.category === cat) })).filter((g) => g.docs.length);
+  }, [candMap]);
+
+  // 발급 조건 = 서류가 아닌 조항(조건 그룹)
+  const condByKey = useMemo(() => {
     const m = new Map<string, Candidate[]>();
     for (const c of candidates) {
       const k = docOf(c.rule);
-      if (!m.has(k)) m.set(k, []);
-      m.get(k)!.push(c);
+      if (CONDITION_KEYS.has(k)) {
+        if (!m.has(k)) m.set(k, []);
+        m.get(k)!.push(c);
+      }
     }
     return m;
   }, [candidates]);
-
-  const submit = DOCUMENTS.filter((d) => d.section === "submit" && byDoc.get(d.key)?.length);
-  const cond = DOCUMENTS.filter((d) => d.section === "condition" && byDoc.get(d.key)?.length);
+  const cond = DOCUMENTS.filter((d) => d.section === "condition" && condByKey.get(d.key)?.length);
 
   return (
     <div>
@@ -488,22 +499,186 @@ function Results({ result }: { result: { finProof: Set<string>; candidates: Cand
         </div>
       )}
 
-      <SectionHead icon={<ClipboardList size={18} />} title="제출 서류" sub="비자 신청 시 준비할 서류. 서류명을 펼치면 세부 조건이 나옵니다." />
-      <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 28 }}>
-        {byDoc.get("basic")?.length ? BASIC_DOCS.map((b) => <StaticDoc key={b.name} name={b.name} headline={b.headline} />) : null}
-        {submit.map((d) => (
-          <DocCard key={d.key} def={d} list={byDoc.get(d.key)!} />
+      <SectionHead icon={<ClipboardList size={18} />} title="제출 서류" sub="비자 신청 시 준비할 서류. 서류명을 펼치면 발급기관·형식·명의·유효기간 등 세부가 나옵니다." />
+      <div style={{ marginBottom: 28 }}>
+        {submitByCat.map(({ cat, docs }) => (
+          <div key={cat} style={{ marginBottom: 14 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: "var(--ink-xlight)", margin: "0 2px 7px", letterSpacing: 0.3 }}>{cat}</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {docs.map((d) => (
+                <DocuCard key={d.id} doc={d} rules={(d.ruleRefs ?? []).map((id) => candMap.get(id)).filter(Boolean) as Candidate[]} />
+              ))}
+            </div>
+          </div>
         ))}
       </div>
 
       <SectionHead icon={<FileText size={18} />} title="발급 조건" sub="서류 외에 발급 여부·경로·기간에 영향을 주는 조건." />
       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
         {cond.map((d) => (
-          <DocCard key={d.key} def={d} list={byDoc.get(d.key)!} />
+          <DocCard key={d.key} def={d} list={condByKey.get(d.key)!} />
         ))}
       </div>
     </div>
   );
+}
+
+/* ── 명의(holder) 강조 ─────────────────────────────────── */
+const WHO_LABEL: Record<HolderWho, string> = {
+  self: "본인",
+  father: "아버지",
+  mother: "어머니",
+  family: "부모 외 가족",
+  kr_family: "한국 국적 가족",
+  professor: "지도교수",
+  company: "회사",
+  institution: "기관 발급",
+  na: "",
+};
+function holderText(h: Holder): { text: string; suffix: string } {
+  const labels = h.who.map((w) => WHO_LABEL[w]).filter(Boolean);
+  if (h.logic === "allOf") return { text: labels.join(" + "), suffix: " 모두 제출" };
+  if (h.logic === "anyOf") return { text: labels.join(" / "), suffix: " 중 1인 이상" };
+  if (h.logic === "oneOf") return { text: labels.join(" / "), suffix: labels.length > 1 ? " 중 택1" : "" };
+  return { text: labels.join(" / "), suffix: "" };
+}
+function HolderBadge({ holder }: { holder: Holder }) {
+  const { text, suffix } = holderText(holder);
+  const amb = holder.ambiguous;
+  return (
+    <span
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 4,
+        fontSize: 11.5,
+        fontWeight: 800,
+        color: amb ? "#b3261e" : "var(--navy)",
+        background: amb ? "#fdecea" : "#e8eef6",
+        border: `1px solid ${amb ? "#f3c6c1" : "#cdd9ea"}`,
+        padding: "2px 9px",
+        borderRadius: 999,
+        whiteSpace: "nowrap",
+      }}
+      title={holder.note}
+    >
+      {amb && <ShieldAlert size={12} />}
+      명의: {text}
+      {suffix}
+      {amb ? " · 확인필요" : ""}
+    </span>
+  );
+}
+
+/* ── 서류 카드 (documents.ts 정본) ────────────────────── */
+function DocuCard({ doc, rules }: { doc: VisaDoc; rules: Candidate[] }) {
+  const [open, setOpen] = useState(false);
+  const [showRaw, setShowRaw] = useState(false);
+  const showHolder = doc.holder && doc.holder.logic !== "na";
+  const summary = [doc.issuer.join("·"), doc.form + (doc.bringOriginal ? "(원본지참)" : "")].join(" · ");
+
+  return (
+    <div style={{ background: "#fff", border: `1px solid ${doc.holder?.ambiguous ? "#f3c6c1" : "var(--bdr)"}`, borderLeft: "4px solid var(--coral)", borderRadius: 12, overflow: "hidden", boxShadow: "var(--shadow-sm)" }}>
+      <button onClick={() => setOpen((o) => !o)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "13px 16px", border: "none", background: "none", cursor: "pointer", textAlign: "left" }}>
+        <span style={{ flex: 1, minWidth: 0 }}>
+          <span style={{ display: "flex", alignItems: "center", gap: 7, flexWrap: "wrap" }}>
+            <span style={{ fontSize: 15, fontWeight: 800 }}>{doc.name}</span>
+            {showHolder && doc.holder && (doc.holder.ambiguous || doc.holder.who.length > 1) && <HolderBadge holder={doc.holder} />}
+            {doc.confidence !== "confirmed" && <span style={badge("#b3261e", "#fdecea")}>미확정</span>}
+          </span>
+          <span style={{ display: "block", fontSize: 12.5, color: "var(--ink-light)", marginTop: 3 }}>{summary}</span>
+        </span>
+        <span style={{ display: "flex", alignItems: "center", gap: 4, flexShrink: 0, color: "var(--ink-light)", fontSize: 12, fontWeight: 700 }}>
+          {open ? "닫기" : "세부"}
+          <ChevronDown size={17} style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .15s" }} />
+        </span>
+      </button>
+
+      {open && (
+        <div style={{ borderTop: "1px solid var(--bdr)", padding: "12px 16px" }}>
+          <dl style={{ margin: 0, display: "grid", gridTemplateColumns: "auto 1fr", gap: "6px 12px", fontSize: 12.5 }}>
+            <Attr k="발급기관" v={doc.issuer.join(", ")} />
+            <Attr k="형식" v={doc.form + (doc.bringOriginal ? " · 대조용 원본 지참" : "")} />
+            {doc.validity && <Attr k="유효기간" v={validityText(doc.validity)} />}
+            {showHolder && doc.holder && <Attr k="명의" v={<HolderInline holder={doc.holder} />} highlight={doc.holder.ambiguous} />}
+            {doc.translation && <Attr k="번역" v={doc.translation.required ? `필요 (${(doc.translation.langs ?? ["ko", "en"]).map((l) => (l === "ko" ? "국문" : "영문")).join("/")})${doc.translation.note ? " · " + doc.translation.note : ""}` : "불요"} />}
+            {doc.notarization?.required && <Attr k="공증" v={`필요${doc.notarization.by ? " · " + doc.notarization.by : ""}`} />}
+            {doc.authentication?.required && <Attr k="영사확인" v={`${(doc.authentication.chain ?? []).join(" → ")}${doc.authentication.validityDays ? ` (${doc.authentication.validityDays}일 이내)` : ""}`} />}
+            {doc.signature?.handwrittenOnly && <Attr k="서명" v={`친필 서명 원본만${doc.signature.note ? " · " + doc.signature.note : ""}`} />}
+            <Attr k="발급 소요일" v={doc.obtainDays ?? "미상 (전문가 자료 대기)"} />
+            {doc.appliesTo && <Attr k="적용 대상" v={doc.appliesTo} />}
+          </dl>
+
+          {rules.length > 0 && (
+            <div style={{ marginTop: 12 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: "var(--coral-d)", marginBottom: 6 }}>적용 조건 (선택 상황 기준)</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                {rules.map((c) => (
+                  <div key={c.rule.id} style={{ display: "flex", gap: 7, alignItems: "baseline" }}>
+                    <span style={{ color: "var(--coral)", flexShrink: 0, fontSize: 12 }}>•</span>
+                    <div style={{ flex: 1 }}>
+                      <span style={{ fontSize: 12.5, color: "var(--ink-mid)" }}>{ANN[c.rule.id]?.terse ?? c.rule.title}</span>
+                      {c.tags.length > 0 && (
+                        <span style={{ display: "inline-flex", gap: 5, flexWrap: "wrap", marginLeft: 7, verticalAlign: "middle" }}>
+                          {c.tags.map((t, i) => (
+                            <Tag key={i} tag={t} />
+                          ))}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <button onClick={() => setShowRaw((s) => !s)} style={{ marginTop: 8, border: "none", background: "none", padding: 0, cursor: "pointer", fontSize: 11.5, fontWeight: 700, color: "var(--ink-xlight)" }}>
+                {showRaw ? "규정 원문 닫기" : "규정 원문 보기"}
+              </button>
+              {showRaw && (
+                <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 8 }}>
+                  {rules.map((c) => (
+                    <div key={c.rule.id} style={{ fontSize: 12, color: "var(--ink-light)", lineHeight: 1.6 }}>
+                      <b style={{ color: "var(--ink-mid)" }}>{ANN[c.rule.id]?.title ?? c.rule.title}</b> — {c.rule.body}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {doc.ambiguities && doc.ambiguities.length > 0 && (
+            <div style={{ marginTop: 12, fontSize: 11.5, color: "#8a6d1a", background: "#fff7e0", border: "1px solid #f0dca0", borderRadius: 8, padding: "7px 10px" }}>
+              확인 필요: {doc.ambiguities.join(" / ")}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Attr({ k, v, highlight }: { k: string; v: React.ReactNode; highlight?: boolean }) {
+  return (
+    <>
+      <dt style={{ fontWeight: 700, color: "var(--ink-light)", whiteSpace: "nowrap" }}>{k}</dt>
+      <dd style={{ margin: 0, color: highlight ? "#b3261e" : "var(--ink-mid)" }}>{v}</dd>
+    </>
+  );
+}
+function HolderInline({ holder }: { holder: Holder }) {
+  const { text, suffix } = holderText(holder);
+  return (
+    <span style={{ fontWeight: holder.ambiguous ? 800 : 600, color: holder.ambiguous ? "#b3261e" : "var(--ink-mid)" }}>
+      {text}
+      {suffix}
+      {holder.note ? <span style={{ display: "block", fontWeight: 400, color: "var(--ink-light)", marginTop: 2 }}>{holder.note}</span> : null}
+    </span>
+  );
+}
+function validityText(v: import("@/data/documents").Validity): string {
+  if (v.byStage && v.byStage.length) {
+    return v.byStage.map((s) => `${s.stage} ${s.days}일`).join(" / ") + (v.note ? ` · ${v.note}` : "");
+  }
+  if (v.days) return `${v.days}일${v.basis ? ` (${v.basis} 기준)` : ""}${v.note ? ` · ${v.note}` : ""}`;
+  return v.note ?? "-";
 }
 
 function SectionHead({ icon, title, sub }: { icon: React.ReactNode; title: string; sub: string }) {
@@ -514,16 +689,6 @@ function SectionHead({ icon, title, sub }: { icon: React.ReactNode; title: strin
         <h2 style={{ fontSize: 18, fontWeight: 800, margin: 0 }}>{title}</h2>
       </div>
       <p style={{ margin: "4px 0 0 26px", fontSize: 12.5, color: "var(--ink-light)" }}>{sub}</p>
-    </div>
-  );
-}
-
-/* ── 정적 서류 카드 (세부조건 없는 기본 공통서류) ────── */
-function StaticDoc({ name, headline }: { name: string; headline: string }) {
-  return (
-    <div style={{ background: "#fff", border: "1px solid var(--bdr)", borderLeft: "4px solid var(--coral)", borderRadius: 12, padding: "13px 16px", boxShadow: "var(--shadow-sm)" }}>
-      <div style={{ fontSize: 15, fontWeight: 800 }}>{name}</div>
-      <div style={{ fontSize: 12.5, color: "var(--ink-light)", marginTop: 3 }}>{headline}</div>
     </div>
   );
 }
