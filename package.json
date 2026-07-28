@@ -11,6 +11,8 @@
     "dev:abroad": "npm run dev -w abroad -- -p 3000 --disable-source-maps",
     "dev:admin": "npm run dev -w admin -- -p 3001 --disable-source-maps",
     "dev:caregiver": "npm run dev -w caregiver -- -p 3002 --disable-source-maps",
+    "dev:visa": "npm run dev -w visa -- -p 3003 --disable-source-maps",
+    "build:visa": "npm run build -w visa",
     "build:admin": "npm run build -w admin",
     "build:abroad": "npm run build -w abroad",
     "build:caregiver": "npm run build -w caregiver"
