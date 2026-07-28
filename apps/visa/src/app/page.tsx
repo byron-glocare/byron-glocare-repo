@@ -1,386 +1,535 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef, useEffect } from "react";
 import {
-  ShieldAlert,
-  AlertTriangle,
-  Info,
-  FileText,
-  CheckCircle2,
   Search,
-  Ban,
-  BadgeCheck,
   ChevronDown,
+  ShieldAlert,
+  Pencil,
+  Building2,
+  Check,
+  X,
 } from "lucide-react";
-import { D, resolve, type Rule } from "@/data/engine";
+import {
+  D,
+  lookup,
+  axisLabel,
+  valueLabel,
+  ORIGIN_OPTIONS,
+  EMPHASIZED_STATUS,
+  type Candidate,
+  type OptionTag,
+  type UnivRegion,
+  type UnivTier,
+} from "@/data/engine";
+import { ANN } from "@/data/annotations";
+import { UNIVERSITIES } from "@/data/universities";
 
-/* ── kind / confidence 스타일 ─────────────────────────── */
-const KIND_META: Record<
-  Rule["kind"],
-  { label: string; color: string; bg: string; icon: React.ReactNode }
-> = {
-  blocker: { label: "발급 제한", color: "#b3261e", bg: "#fdecea", icon: <Ban size={13} /> },
-  caution: { label: "주의", color: "#8a6d1a", bg: "#fff7e0", icon: <AlertTriangle size={13} /> },
-  requirement: { label: "요건", color: "var(--coral-d)", bg: "var(--coral-pale)", icon: <CheckCircle2 size={13} /> },
-  doc: { label: "제출서류", color: "var(--blue)", bg: "#eaf2fb", icon: <FileText size={13} /> },
-  verify: { label: "확인필요", color: "#7c3aed", bg: "#f1ebfd", icon: <Search size={13} /> },
-  info: { label: "안내", color: "var(--ink-mid)", bg: "#f2f2f4", icon: <Info size={13} /> },
+/* ── 라벨 ─────────────────────────────────────────────── */
+const TIER_LABEL: Record<UnivTier, string> = {
+  excellent: "우수인증",
+  certified: "인증",
+  general: "미인증(일반)",
+  consulting: "컨설팅대학",
+  restricted: "비자정밀 심사대학",
 };
+const REGION_LABEL: Record<UnivRegion, string> = { metro: "수도권", nonmetro: "비수도권" };
 
-const CONF_META: Record<
-  Rule["confidence"],
-  { label: string; color: string; bg: string }
-> = {
-  confirmed: { label: "확인됨", color: "var(--green)", bg: "#e6f5ee" },
-  inferred: { label: "유추", color: "#8a6d1a", bg: "#fff7e0" },
-  conflict: { label: "자료충돌", color: "#c2620f", bg: "#fdefe2" },
-  unknown: { label: "미확인", color: "#b3261e", bg: "#fdecea" },
-};
+const TRACK_OPTS = D.axes.find((a) => a.id === "track")!.options;
+const STATUS_OPTS = D.axes.find((a) => a.id === "statusCode")!.options;
+
+interface UnivPick {
+  name: string;
+  tier: UnivTier;
+  region: UnivRegion;
+}
+const UNIV_SPECIAL: UnivPick[] = [
+  { name: "그 외 대학 — 수도권 (미인증)", tier: "general", region: "metro" },
+  { name: "그 외 대학 — 비수도권 (미인증)", tier: "general", region: "nonmetro" },
+  { name: "컨설팅대학 — 수도권", tier: "consulting", region: "metro" },
+  { name: "컨설팅대학 — 비수도권", tier: "consulting", region: "nonmetro" },
+  { name: "비자정밀 심사대학 — 수도권", tier: "restricted", region: "metro" },
+  { name: "비자정밀 심사대학 — 비수도권", tier: "restricted", region: "nonmetro" },
+];
+
+/* group 표시 순서/라벨은 rules.json 것을 사용 */
+const GROUPS_SORTED = Object.entries(D.groups).sort((a, b) => a[1].order - b[1].order);
 
 export default function Page() {
-  // 각 축의 기본값 = 첫 옵션
-  const [input, setInput] = useState<Record<string, string>>(() =>
-    Object.fromEntries(D.axes.map((a) => [a.id, a.options[0]?.value ?? ""]))
-  );
+  const [track, setTrack] = useState("new_d2");
+  const [origin, setOrigin] = useState("vn_south");
+  const [status, setStatus] = useState("D-2-2");
+  const [univ, setUniv] = useState<UnivPick | null>(null);
+  const [searched, setSearched] = useState(false);
 
-  const { ctx, rules } = useMemo(() => resolve(input), [input]);
+  const originOpt = ORIGIN_OPTIONS.find((o) => o.value === origin)!;
 
-  const groupsSorted = useMemo(
-    () =>
-      Object.entries(D.groups).sort((a, b) => a[1].order - b[1].order),
-    []
-  );
+  const result = useMemo(() => {
+    if (!univ) return null;
+    return lookup({
+      track,
+      nationality: originOpt.ctx.nationality as string,
+      applicantRegion: (originOpt.ctx.applicantRegion ?? null) as string | null,
+      univTier: univ.tier,
+      univRegion: univ.region,
+      statusCode: status,
+    });
+  }, [track, origin, status, univ, originOpt]);
 
-  const blockers = rules.filter((r) => r.kind === "blocker");
-  const nonConfirmed = rules.filter((r) => r.confidence !== "confirmed");
-  const finProof = ctx.finProof as string | undefined;
-  const finProofLabel = finProof ? D.derivedAxes.finProof.values[finProof] : "";
-
-  const set = (id: string, v: string) => setInput((s) => ({ ...s, [id]: v }));
+  const canSearch = !!univ;
 
   return (
     <main style={{ minHeight: "100vh" }}>
-      {/* ── Header ─────────────────────────────────────── */}
       <header
         style={{
           background: "linear-gradient(135deg, var(--coral) 0%, var(--coral-d) 100%)",
           color: "#fff",
-          padding: "40px 20px 34px",
+          padding: searched ? "24px 20px 20px" : "40px 20px 34px",
+          transition: "padding .2s",
         }}
       >
-        <div style={{ maxWidth: 1160, margin: "0 auto" }}>
-          <div style={inlineBadge}>
-            <BadgeCheck size={15} /> 베트남 국적 중심 · D-2 / D-4 · v{D.meta.version}
-          </div>
-          <h1 style={{ fontSize: 30, fontWeight: 800, margin: "0 0 8px", letterSpacing: -0.5 }}>
+        <div style={{ maxWidth: 980, margin: "0 auto" }}>
+          <h1 style={{ fontSize: searched ? 20 : 28, fontWeight: 800, margin: 0, letterSpacing: -0.5, transition: "font-size .2s" }}>
             한국 유학비자 발급요건 조회
           </h1>
-          <p style={{ margin: 0, fontSize: 15, opacity: 0.92, maxWidth: 720 }}>
-            신청 상황을 선택하면 적용되는 발급요건 조항을 실시간으로 판정합니다. 기준일 {D.meta.compiledAt}.
-          </p>
+          {!searched && (
+            <p style={{ margin: "8px 0 0", fontSize: 15, opacity: 0.92 }}>
+              신청 상황 4가지를 고르고 조회하면, 적용되는 발급요건을 서류별로 정리해 드립니다. 기준일 {D.meta.compiledAt}.
+            </p>
+          )}
         </div>
       </header>
 
-      <div
-        style={{
-          maxWidth: 1160,
-          margin: "0 auto",
-          padding: "24px 20px 64px",
-          display: "grid",
-          gridTemplateColumns: "minmax(280px, 340px) 1fr",
-          gap: 28,
-          alignItems: "start",
-        }}
-      >
-        {/* ── 입력 폼 ──────────────────────────────────── */}
-        <aside
-          style={{
-            position: "sticky",
-            top: 20,
-            background: "#fff",
-            border: "1px solid var(--bdr)",
-            borderRadius: 18,
-            padding: 20,
-            boxShadow: "var(--shadow-sm)",
-          }}
-        >
-          <h2 style={{ fontSize: 15, fontWeight: 800, margin: "0 0 4px" }}>신청 상황</h2>
-          <p style={{ fontSize: 12.5, color: "var(--ink-light)", margin: "0 0 16px" }}>
-            13개 항목을 선택하세요.
-          </p>
-
-          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-            {D.axes.map((axis) => (
-              <label key={axis.id} style={{ display: "block" }}>
-                <span style={{ fontSize: 12.5, fontWeight: 700, color: "var(--ink-mid)", display: "block", marginBottom: 5 }}>
-                  {axis.label}
-                </span>
-                <div style={{ position: "relative" }}>
-                  <select
-                    value={input[axis.id]}
-                    onChange={(e) => set(axis.id, e.target.value)}
-                    style={selectStyle}
-                  >
-                    {axis.options.map((o) => (
-                      <option key={o.value} value={o.value}>
-                        {o.label}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown size={16} style={chevron} />
-                </div>
-              </label>
-            ))}
-          </div>
-
-          {/* 파생: 재정능력 입증 */}
-          <div
-            style={{
-              marginTop: 18,
-              padding: "12px 14px",
-              borderRadius: 12,
-              background: "var(--peach)",
-              border: "1px solid var(--bdr)",
-            }}
-          >
-            <div style={{ fontSize: 12, fontWeight: 700, color: "var(--ink-light)" }}>
-              {D.derivedAxes.finProof.label} (자동 판정)
-            </div>
-            <div
-              style={{
-                fontSize: 15,
-                fontWeight: 800,
-                marginTop: 3,
-                color:
-                  finProof === "exempt"
-                    ? "var(--green)"
-                    : finProof === "unknown"
-                    ? "#b3261e"
-                    : "var(--coral-d)",
-              }}
-            >
-              {finProofLabel}
-            </div>
-          </div>
-        </aside>
-
-        {/* ── 결과 ────────────────────────────────────── */}
-        <section>
-          {/* 상시 경고 */}
-          <Callout tone="amber" icon={<AlertTriangle size={18} />}>
-            {D.meta.warning}
-          </Callout>
-
-          {/* 요약 */}
-          <div style={{ display: "flex", gap: 10, flexWrap: "wrap", margin: "16px 0 4px" }}>
-            <SummaryPill label="적용 조항" value={rules.length} tone="coral" />
-            {blockers.length > 0 && <SummaryPill label="발급 제한" value={blockers.length} tone="red" />}
-            {nonConfirmed.length > 0 && (
-              <SummaryPill label="미확정(확인필요)" value={nonConfirmed.length} tone="amber" />
-            )}
-          </div>
-
-          {/* 차단 조항 강조 */}
-          {blockers.length > 0 && (
-            <Callout tone="red" icon={<ShieldAlert size={18} />}>
-              <b>발급이 제한·불가한 조건입니다.</b>{" "}
-              {blockers.map((b) => b.title).join(" / ")}
-            </Callout>
-          )}
-
-          {nonConfirmed.length > 0 && (
-            <div style={{ fontSize: 12.5, color: "var(--ink-light)", margin: "10px 2px 0" }}>
-              ※ 적용 조항 중 <b>{nonConfirmed.length}건</b>은 확정되지 않았습니다(유추·자료충돌·미확인).
-              확정 안내로 사용하지 말고 관할 공관에 확인하세요.
-            </div>
-          )}
-
-          {/* 그룹별 조항 */}
-          <div style={{ marginTop: 20, display: "flex", flexDirection: "column", gap: 22 }}>
-            {groupsSorted.map(([gid, g]) => {
-              const list = rules.filter((r) => r.group === gid);
-              if (list.length === 0) return null;
-              return (
-                <div key={gid}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
-                    <h3 style={{ fontSize: 16, fontWeight: 800, margin: 0 }}>{g.label}</h3>
-                    <span style={gateBadge}>{g.gate} 심사</span>
-                    <span style={{ fontSize: 12.5, color: "var(--ink-xlight)" }}>{list.length}건</span>
-                  </div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                    {list.map((r) => (
-                      <RuleCard key={r.id} rule={r} />
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
-            {rules.length === 0 && (
-              <div style={{ padding: 40, textAlign: "center", color: "var(--ink-light)", background: "#fff", borderRadius: 14, border: "1px dashed var(--bdr-d)" }}>
-                이 조건에 적용되는 조항이 없습니다.
-              </div>
-            )}
-          </div>
-
-          <SourceFooter />
-        </section>
+      <div style={{ maxWidth: 980, margin: "0 auto", padding: "20px 20px 64px" }}>
+        {!searched ? (
+          <InputForm
+            {...{ track, setTrack, origin, setOrigin, status, setStatus, univ, setUniv }}
+            canSearch={canSearch}
+            onSearch={() => setSearched(true)}
+          />
+        ) : (
+          <>
+            <SummaryBar
+              track={track}
+              origin={originOpt.label}
+              status={status}
+              univ={univ!}
+              onEdit={() => setSearched(false)}
+            />
+            {result && <Results result={result} />}
+          </>
+        )}
       </div>
     </main>
   );
 }
 
-/* ── Rule card ────────────────────────────────────────── */
-function RuleCard({ rule }: { rule: Rule }) {
-  const k = KIND_META[rule.kind];
-  const c = CONF_META[rule.confidence];
-  const isBlocker = rule.kind === "blocker";
+/* ══════════════════════ 입력 폼 ══════════════════════ */
+function InputForm({
+  track,
+  setTrack,
+  origin,
+  setOrigin,
+  status,
+  setStatus,
+  univ,
+  setUniv,
+  canSearch,
+  onSearch,
+}: {
+  track: string;
+  setTrack: (v: string) => void;
+  origin: string;
+  setOrigin: (v: string) => void;
+  status: string;
+  setStatus: (v: string) => void;
+  univ: UnivPick | null;
+  setUniv: (v: UnivPick | null) => void;
+  canSearch: boolean;
+  onSearch: () => void;
+}) {
   return (
-    <div
-      style={{
-        background: "#fff",
-        border: `1px solid ${isBlocker ? "#f3c6c1" : "var(--bdr)"}`,
-        borderLeft: `4px solid ${k.color}`,
-        borderRadius: 12,
-        padding: "14px 16px",
-        boxShadow: "var(--shadow-sm)",
-      }}
-    >
-      <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 6 }}>
-        <span style={{ ...tag, color: k.color, background: k.bg }}>
-          {k.icon} {k.label}
-        </span>
-        <span style={{ fontSize: 15, fontWeight: 700, flex: 1 }}>{rule.title}</span>
-        <span
-          style={{ ...tag, color: c.color, background: c.bg }}
-          title={D.confidenceLevels[rule.confidence]?.desc}
-        >
-          {c.label}
-        </span>
+    <div style={{ background: "#fff", border: "1px solid var(--bdr)", borderRadius: 18, padding: 22, boxShadow: "var(--shadow-sm)" }}>
+      <div style={{ display: "grid", gap: 18 }}>
+        <Field label="현재 상태 및 희망 비자">
+          <Dropdown value={track} onChange={setTrack} options={TRACK_OPTS.map((o) => ({ value: o.value, label: o.label }))} />
+        </Field>
+        <Field label="본인의 국적 및 거주지">
+          <Dropdown value={origin} onChange={setOrigin} options={ORIGIN_OPTIONS.map((o) => ({ value: o.value, label: o.label }))} />
+        </Field>
+        <Field label="지원할 대학교">
+          <UnivPicker value={univ} onChange={setUniv} />
+        </Field>
+        <Field label="신청할 비자">
+          <Dropdown
+            value={status}
+            onChange={setStatus}
+            options={STATUS_OPTS.map((o) => ({ value: o.value, label: o.label, bold: EMPHASIZED_STATUS.has(o.value) }))}
+          />
+        </Field>
       </div>
-      <p style={{ margin: 0, fontSize: 13.5, color: "var(--ink-mid)", lineHeight: 1.6 }}>{rule.body}</p>
-      {rule.note && (
-        <p
-          style={{
-            margin: "8px 0 0",
-            fontSize: 12.5,
-            color: "#8a6d1a",
-            background: "#fff7e0",
-            border: "1px solid #f0dca0",
-            borderRadius: 8,
-            padding: "7px 10px",
-            lineHeight: 1.55,
-          }}
-        >
-          ⚠ {rule.note}
+
+      <button
+        onClick={onSearch}
+        disabled={!canSearch}
+        style={{
+          marginTop: 22,
+          width: "100%",
+          padding: "14px",
+          borderRadius: 12,
+          border: "none",
+          background: canSearch ? "var(--coral)" : "var(--bdr-d)",
+          color: "#fff",
+          fontSize: 16,
+          fontWeight: 800,
+          cursor: canSearch ? "pointer" : "not-allowed",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 8,
+        }}
+      >
+        <Search size={18} /> 발급요건 조회
+      </button>
+      {!canSearch && (
+        <p style={{ margin: "8px 0 0", fontSize: 12.5, color: "var(--ink-light)", textAlign: "center" }}>
+          지원할 대학교를 선택하면 조회할 수 있습니다.
         </p>
       )}
-      <div style={{ marginTop: 8, display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" }}>
-        <span style={{ fontSize: 11, color: "var(--ink-xlight)", fontFamily: "ui-monospace, monospace" }}>{rule.id}</span>
-        {(rule.sources ?? []).map((sid) => {
-          const s = D.sources[sid];
-          if (!s) return null;
-          return (
-            <span key={sid} style={sourceTag} title={s.title}>
-              {s.issuer}
-              {s.docAsOf ? ` · ${s.docAsOf}` : s.asOf ? ` · ${s.asOf}` : ""}
-            </span>
-          );
-        })}
-      </div>
     </div>
   );
 }
 
-/* ── Source legend (collapsible) ─────────────────────── */
-function SourceFooter() {
-  const [open, setOpen] = useState(false);
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div style={{ marginTop: 32, borderTop: "1px solid var(--bdr)", paddingTop: 16 }}>
-      <button
-        onClick={() => setOpen((o) => !o)}
-        style={{
-          border: "none",
-          background: "none",
-          cursor: "pointer",
-          fontSize: 13,
-          fontWeight: 700,
-          color: "var(--ink-light)",
-          display: "flex",
-          alignItems: "center",
-          gap: 6,
-          padding: 0,
-        }}
-      >
-        <ChevronDown size={15} style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .15s" }} />
-        출처 · 확신도 안내
+    <label style={{ display: "block" }}>
+      <span style={{ fontSize: 13, fontWeight: 700, color: "var(--ink-mid)", display: "block", marginBottom: 7 }}>{label}</span>
+      {children}
+    </label>
+  );
+}
+
+/* ── 커스텀 드롭다운 (bold 옵션 지원) ─────────────────── */
+function Dropdown({
+  value,
+  onChange,
+  options,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  options: { value: string; label: string; bold?: boolean }[];
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  useOutside(ref, () => setOpen(false));
+  const sel = options.find((o) => o.value === value);
+  return (
+    <div ref={ref} style={{ position: "relative" }}>
+      <button type="button" onClick={() => setOpen((o) => !o)} style={selectBtn}>
+        <span style={{ fontWeight: sel?.bold ? 800 : 500 }}>{sel?.label ?? "선택"}</span>
+        <ChevronDown size={16} style={{ color: "var(--ink-light)", flexShrink: 0 }} />
       </button>
       {open && (
-        <div style={{ marginTop: 12, fontSize: 12.5, color: "var(--ink-mid)", lineHeight: 1.7 }}>
-          <div style={{ marginBottom: 10 }}>
-            <b>확신도</b>:{" "}
-            {Object.entries(D.confidenceLevels)
-              .map(([k, v]) => `${v.label} — ${v.desc}`)
-              .join(" · ")}
-          </div>
-          <b>출처</b>
-          <ul style={{ margin: "6px 0 0", paddingLeft: 18 }}>
-            {Object.entries(D.sources).map(([id, s]) => (
-              <li key={id} style={{ marginBottom: 3 }}>
-                <span style={{ fontFamily: "ui-monospace, monospace", color: "var(--ink-light)" }}>{id}</span> — {s.issuer},{" "}
-                {s.title}
-                {s.docAsOf ? ` (${s.docAsOf})` : ""}
-              </li>
-            ))}
-          </ul>
+        <div style={dropdownPanel}>
+          {options.map((o) => (
+            <button
+              key={o.value}
+              type="button"
+              onClick={() => {
+                onChange(o.value);
+                setOpen(false);
+              }}
+              style={{ ...dropdownItem, fontWeight: o.bold ? 800 : 500, background: o.value === value ? "var(--coral-pale)" : "#fff" }}
+            >
+              {o.label}
+              {o.value === value && <Check size={15} style={{ color: "var(--coral-d)" }} />}
+            </button>
+          ))}
         </div>
       )}
     </div>
   );
 }
 
-/* ── small components ────────────────────────────────── */
-function Callout({
-  children,
-  tone,
-  icon,
-}: {
-  children: React.ReactNode;
-  tone: "amber" | "red";
-  icon: React.ReactNode;
-}) {
-  const map = {
-    amber: { bg: "#fff9e6", bd: "#f5d98a", fg: "#8a6d1a" },
-    red: { bg: "#fdecea", bd: "#f3c6c1", fg: "#b3261e" },
-  } as const;
-  const t = map[tone];
+/* ── 대학교 검색 피커 ─────────────────────────────────── */
+function UnivPicker({ value, onChange }: { value: UnivPick | null; onChange: (v: UnivPick | null) => void }) {
+  const [open, setOpen] = useState(false);
+  const [q, setQ] = useState("");
+  const ref = useRef<HTMLDivElement>(null);
+  useOutside(ref, () => setOpen(false));
+
+  const matches = useMemo(() => {
+    const query = q.trim();
+    const base = query ? UNIVERSITIES.filter((u) => u.name.includes(query)) : UNIVERSITIES;
+    return base.slice(0, 40);
+  }, [q]);
+
   return (
-    <div
-      style={{
-        display: "flex",
-        gap: 10,
-        alignItems: "flex-start",
-        background: t.bg,
-        border: `1px solid ${t.bd}`,
-        color: t.fg,
-        borderRadius: 12,
-        padding: "12px 14px",
-        fontSize: 13,
-        lineHeight: 1.6,
-        marginTop: 12,
-      }}
-    >
-      <span style={{ flexShrink: 0, marginTop: 1 }}>{icon}</span>
-      <span>{children}</span>
+    <div ref={ref} style={{ position: "relative" }}>
+      <button type="button" onClick={() => setOpen((o) => !o)} style={selectBtn}>
+        {value ? (
+          <span style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
+            <Building2 size={15} style={{ color: "var(--coral-d)", flexShrink: 0 }} />
+            <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{value.name}</span>
+            <TierBadge tier={value.tier} region={value.region} />
+          </span>
+        ) : (
+          <span style={{ color: "var(--ink-light)" }}>대학교 검색 / 선택</span>
+        )}
+        <ChevronDown size={16} style={{ color: "var(--ink-light)", flexShrink: 0 }} />
+      </button>
+      {open && (
+        <div style={{ ...dropdownPanel, maxHeight: 340, display: "flex", flexDirection: "column" }}>
+          <div style={{ padding: 8, borderBottom: "1px solid var(--bdr)", position: "sticky", top: 0, background: "#fff" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, background: "var(--peach)", borderRadius: 8, padding: "6px 10px" }}>
+              <Search size={15} color="var(--ink-light)" />
+              <input
+                autoFocus
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                placeholder="대학명 입력 (예: 한양대, 부산대)"
+                style={{ border: "none", outline: "none", background: "transparent", fontSize: 13.5, width: "100%" }}
+              />
+              {q && <X size={15} style={{ cursor: "pointer", color: "var(--ink-light)" }} onClick={() => setQ("")} />}
+            </div>
+          </div>
+          <div style={{ overflowY: "auto" }}>
+            {matches.map((u) => (
+              <button key={u.name} type="button" onClick={() => pick(u)} style={dropdownItem}>
+                <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{u.name}</span>
+                <TierBadge tier={u.tier} region={u.region} />
+              </button>
+            ))}
+            {matches.length === 0 && (
+              <div style={{ padding: "14px", fontSize: 12.5, color: "var(--ink-light)", textAlign: "center" }}>
+                목록에 없는 대학입니다. 아래에서 등급·지역을 선택하세요.
+              </div>
+            )}
+            <div style={{ borderTop: "1px solid var(--bdr)", padding: "6px 0" }}>
+              <div style={{ fontSize: 11, color: "var(--ink-xlight)", padding: "4px 14px" }}>목록에 없거나 특수 등급</div>
+              {UNIV_SPECIAL.map((u) => (
+                <button key={u.name} type="button" onClick={() => pick(u)} style={dropdownItem}>
+                  <span>{u.name}</span>
+                  <TierBadge tier={u.tier} region={u.region} />
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
+  function pick(u: UnivPick) {
+    onChange({ name: u.name, tier: u.tier, region: u.region });
+    setOpen(false);
+    setQ("");
+  }
+}
+
+function TierBadge({ tier, region }: { tier: UnivTier; region: UnivRegion }) {
+  const color =
+    tier === "excellent" ? "var(--green)" : tier === "certified" ? "var(--blue)" : tier === "general" ? "var(--ink-light)" : "var(--coral-d)";
+  return (
+    <span style={{ display: "inline-flex", gap: 4, flexShrink: 0, marginLeft: "auto" }}>
+      <span style={{ fontSize: 10.5, fontWeight: 700, color: "#fff", background: color, padding: "1px 7px", borderRadius: 999 }}>{TIER_LABEL[tier]}</span>
+      <span style={{ fontSize: 10.5, fontWeight: 700, color: "var(--ink-mid)", background: "var(--peach)", padding: "1px 7px", borderRadius: 999 }}>{REGION_LABEL[region]}</span>
+    </span>
+  );
+}
+
+/* ══════════════════════ 요약 바 ══════════════════════ */
+function SummaryBar({ track, origin, status, univ, onEdit }: { track: string; origin: string; status: string; univ: UnivPick; onEdit: () => void }) {
+  const trackLabel = TRACK_OPTS.find((o) => o.value === track)?.label ?? track;
+  const statusLabel = STATUS_OPTS.find((o) => o.value === status)?.label ?? status;
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 10, background: "#fff", border: "1px solid var(--bdr)", borderRadius: 14, padding: "12px 14px", marginBottom: 18, boxShadow: "var(--shadow-sm)", flexWrap: "wrap" }}>
+      <div style={{ display: "flex", gap: 6, flexWrap: "wrap", flex: 1, minWidth: 0 }}>
+        <SumChip>{trackLabel}</SumChip>
+        <SumChip>{origin}</SumChip>
+        <SumChip>
+          {univ.name} · {TIER_LABEL[univ.tier]} · {REGION_LABEL[univ.region]}
+        </SumChip>
+        <SumChip strong>{statusLabel}</SumChip>
+      </div>
+      <button onClick={onEdit} style={{ display: "flex", alignItems: "center", gap: 5, border: "1.5px solid var(--coral)", background: "#fff", color: "var(--coral-d)", padding: "7px 14px", borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: "pointer", flexShrink: 0 }}>
+        <Pencil size={14} /> 수정
+      </button>
+    </div>
+  );
+}
+function SumChip({ children, strong }: { children: React.ReactNode; strong?: boolean }) {
+  return (
+    <span style={{ fontSize: 12.5, fontWeight: strong ? 800 : 600, color: strong ? "var(--coral-d)" : "var(--ink-mid)", background: strong ? "var(--coral-pale)" : "var(--peach)", padding: "5px 11px", borderRadius: 8 }}>
+      {children}
+    </span>
+  );
+}
+
+/* ══════════════════════ 결과 ══════════════════════ */
+function Results({ result }: { result: { finProof: Set<string>; candidates: Candidate[] } }) {
+  const { candidates, finProof } = result;
+  const blockers = candidates.filter((c) => c.rule.kind === "blocker");
+  const nonConfirmed = candidates.filter((c) => c.rule.confidence !== "confirmed");
+
+  const finText =
+    finProof.size > 1 ? "장학금 등 조건에 따라 다름" : valueLabel("finProof", [...finProof][0] ?? "required");
+
+  return (
+    <div>
+      {/* 요약 */}
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 14 }}>
+        <Pill label="적용 요건" value={candidates.length} tone="coral" />
+        {blockers.length > 0 && <Pill label="발급 제한" value={blockers.length} tone="red" />}
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "var(--peach)", color: "var(--ink-mid)", padding: "7px 14px", borderRadius: 10, fontSize: 13, fontWeight: 700 }}>
+          재정능력 입증: <b style={{ color: "var(--coral-d)" }}>{finText}</b>
+        </span>
+      </div>
+
+      {blockers.length > 0 && (
+        <div style={{ display: "flex", gap: 10, alignItems: "flex-start", background: "#fdecea", border: "1px solid #f3c6c1", color: "#b3261e", borderRadius: 12, padding: "12px 14px", fontSize: 13.5, marginBottom: 18 }}>
+          <ShieldAlert size={18} style={{ flexShrink: 0, marginTop: 1 }} />
+          <span>
+            <b>발급이 제한·불가할 수 있는 조건입니다.</b> {blockers.map((b) => ANN[b.rule.id]?.title ?? b.rule.title).join(" · ")}
+          </span>
+        </div>
+      )}
+
+      {GROUPS_SORTED.map(([gid, g]) => {
+        const rows = candidates.filter((c) => c.rule.group === gid);
+        if (rows.length === 0) return null;
+        // doc 로 묶기
+        const docs = new Map<string, Candidate[]>();
+        for (const c of rows) {
+          const key = ANN[c.rule.id]?.doc ?? ANN[c.rule.id]?.title ?? c.rule.title;
+          if (!docs.has(key)) docs.set(key, []);
+          docs.get(key)!.push(c);
+        }
+        return (
+          <section key={gid} style={{ marginBottom: 26 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+              <h3 style={{ fontSize: 16, fontWeight: 800, margin: 0 }}>{g.label}</h3>
+              <span style={{ fontSize: 11.5, fontWeight: 700, color: "var(--navy)", background: "#e8eef6", padding: "2px 9px", borderRadius: 999 }}>{g.gate} 심사</span>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {[...docs.entries()].map(([docKey, list]) => (
+                <DocCard key={docKey} title={docKey} list={list} />
+              ))}
+            </div>
+          </section>
+        );
+      })}
+
+      {nonConfirmed.length > 0 && (
+        <p style={{ fontSize: 12.5, color: "var(--ink-light)", marginTop: 8 }}>
+          ※ 적용 요건 중 <b>{nonConfirmed.length}건</b>은 확정되지 않았습니다(유추·자료충돌·미확인). 확정 안내로 쓰지 말고 관할 공관에 확인하세요.
+        </p>
+      )}
     </div>
   );
 }
 
-function SummaryPill({ label, value, tone }: { label: string; value: number; tone: "coral" | "red" | "amber" }) {
-  const map = {
-    coral: { bg: "var(--coral-pale)", fg: "var(--coral-d)" },
-    red: { bg: "#fdecea", fg: "#b3261e" },
-    amber: { bg: "#fff7e0", fg: "#8a6d1a" },
-  } as const;
+/* ── 문서 카드 ────────────────────────────────────────── */
+function DocCard({ title, list }: { title: string; list: Candidate[] }) {
+  const [open, setOpen] = useState(false);
+  const hasBlocker = list.some((c) => c.rule.kind === "blocker");
+  const hasCond = list.some((c) => c.tags.length > 0);
+  const hasUnconfirmed = list.some((c) => c.rule.confidence !== "confirmed");
+
+  return (
+    <div
+      style={{
+        background: "#fff",
+        border: `1px solid ${hasBlocker ? "#f3c6c1" : "var(--bdr)"}`,
+        borderLeft: `4px solid ${hasBlocker ? "#b3261e" : "var(--coral)"}`,
+        borderRadius: 12,
+        padding: "13px 15px",
+        boxShadow: "var(--shadow-sm)",
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
+        <span style={{ fontSize: 15, fontWeight: 800 }}>{title}</span>
+        {hasCond && <span style={badge("var(--blue)", "#eaf2fb")}>조건부</span>}
+        {hasUnconfirmed && <span style={badge("#b3261e", "#fdecea")}>미확정</span>}
+      </div>
+
+      <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 7 }}>
+        {list.map((c) => (
+          <Row key={c.rule.id} c={c} multi={list.length > 1} />
+        ))}
+      </div>
+
+      <button
+        onClick={() => setOpen((o) => !o)}
+        style={{ marginTop: 10, border: "none", background: "none", padding: 0, cursor: "pointer", fontSize: 12.5, fontWeight: 700, color: "var(--ink-light)", display: "flex", alignItems: "center", gap: 5 }}
+      >
+        <ChevronDown size={14} style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .15s" }} />
+        {open ? "상세 닫기" : "상세히 보기"}
+      </button>
+
+      {open && (
+        <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 10, borderTop: "1px solid var(--bdr)", paddingTop: 10 }}>
+          {list.map((c) => (
+            <div key={c.rule.id} style={{ fontSize: 13, color: "var(--ink-mid)", lineHeight: 1.65 }}>
+              {c.tags.length > 0 && (
+                <div style={{ display: "flex", gap: 5, flexWrap: "wrap", marginBottom: 5 }}>
+                  {c.tags.map((t, i) => (
+                    <Tag key={i} tag={t} />
+                  ))}
+                </div>
+              )}
+              <div>{c.rule.body}</div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Row({ c, multi }: { c: Candidate; multi: boolean }) {
+  const terse = ANN[c.rule.id]?.terse ?? c.rule.title;
+  return (
+    <div style={{ display: "flex", gap: 8, alignItems: "baseline" }}>
+      {multi && <span style={{ color: "var(--coral)", flexShrink: 0 }}>•</span>}
+      <div style={{ flex: 1 }}>
+        <span style={{ fontSize: 13.5, color: "var(--ink)" }}>{terse}</span>
+        {c.tags.length > 0 && (
+          <span style={{ display: "inline-flex", gap: 5, flexWrap: "wrap", marginLeft: 8, verticalAlign: "middle" }}>
+            {c.tags.map((t, i) => (
+              <Tag key={i} tag={t} />
+            ))}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function Tag({ tag }: { tag: OptionTag }) {
+  const label = tag.values.map((v) => valueLabel(tag.axis, v)).join(" / ");
+  return (
+    <span
+      style={{
+        fontSize: 11,
+        fontWeight: 600,
+        color: tag.negate ? "var(--ink-light)" : "var(--navy)",
+        background: tag.negate ? "#f2f2f4" : "#eef2f8",
+        border: "1px solid var(--bdr)",
+        padding: "1px 8px",
+        borderRadius: 999,
+        whiteSpace: "nowrap",
+      }}
+    >
+      {tag.negate ? "제외 " : ""}
+      {axisLabel(tag.axis)}: {label}
+    </span>
+  );
+}
+
+/* ── 소품 ─────────────────────────────────────────────── */
+function Pill({ label, value, tone }: { label: string; value: number; tone: "coral" | "red" }) {
+  const map = { coral: { bg: "var(--coral-pale)", fg: "var(--coral-d)" }, red: { bg: "#fdecea", fg: "#b3261e" } } as const;
   const t = map[tone];
   return (
     <span style={{ display: "inline-flex", alignItems: "baseline", gap: 6, background: t.bg, color: t.fg, padding: "7px 14px", borderRadius: 10, fontSize: 13, fontWeight: 700 }}>
@@ -389,64 +538,58 @@ function SummaryPill({ label, value, tone }: { label: string; value: number; ton
     </span>
   );
 }
+const badge = (fg: string, bg: string): React.CSSProperties => ({ fontSize: 11, fontWeight: 700, color: fg, background: bg, padding: "2px 8px", borderRadius: 999 });
 
-/* ── inline style objects ────────────────────────────── */
-const inlineBadge: React.CSSProperties = {
-  display: "inline-flex",
-  alignItems: "center",
-  gap: 8,
-  background: "rgba(255,255,255,.18)",
-  padding: "6px 14px",
-  borderRadius: 999,
-  fontSize: 13,
-  fontWeight: 600,
-  marginBottom: 14,
-};
-const selectStyle: React.CSSProperties = {
+/* ── util ─────────────────────────────────────────────── */
+function useOutside(ref: React.RefObject<HTMLDivElement | null>, cb: () => void) {
+  useEffect(() => {
+    function h(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) cb();
+    }
+    document.addEventListener("mousedown", h);
+    return () => document.removeEventListener("mousedown", h);
+  });
+}
+
+const selectBtn: React.CSSProperties = {
   width: "100%",
-  appearance: "none",
-  WebkitAppearance: "none",
-  MozAppearance: "none",
-  padding: "9px 34px 9px 12px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  gap: 8,
+  padding: "11px 13px",
   borderRadius: 10,
   border: "1.5px solid var(--bdr-d)",
+  background: "#fff",
+  fontSize: 14,
+  color: "var(--ink)",
+  cursor: "pointer",
+  textAlign: "left",
+};
+const dropdownPanel: React.CSSProperties = {
+  position: "absolute",
+  top: "calc(100% + 6px)",
+  left: 0,
+  right: 0,
+  background: "#fff",
+  border: "1px solid var(--bdr-d)",
+  borderRadius: 12,
+  boxShadow: "var(--shadow-lg)",
+  zIndex: 30,
+  overflow: "hidden",
+  maxHeight: 300,
+  overflowY: "auto",
+};
+const dropdownItem: React.CSSProperties = {
+  width: "100%",
+  display: "flex",
+  alignItems: "center",
+  gap: 8,
+  padding: "10px 13px",
+  border: "none",
   background: "#fff",
   fontSize: 13.5,
   color: "var(--ink)",
   cursor: "pointer",
-  outline: "none",
-};
-const chevron: React.CSSProperties = {
-  position: "absolute",
-  right: 11,
-  top: "50%",
-  transform: "translateY(-50%)",
-  color: "var(--ink-light)",
-  pointerEvents: "none",
-};
-const tag: React.CSSProperties = {
-  display: "inline-flex",
-  alignItems: "center",
-  gap: 4,
-  fontSize: 11.5,
-  fontWeight: 700,
-  padding: "3px 9px",
-  borderRadius: 999,
-  whiteSpace: "nowrap",
-};
-const gateBadge: React.CSSProperties = {
-  fontSize: 11.5,
-  fontWeight: 700,
-  color: "var(--navy)",
-  background: "#e8eef6",
-  padding: "3px 9px",
-  borderRadius: 999,
-};
-const sourceTag: React.CSSProperties = {
-  fontSize: 11,
-  color: "var(--ink-light)",
-  background: "var(--peach)",
-  border: "1px solid var(--bdr)",
-  padding: "2px 7px",
-  borderRadius: 6,
+  textAlign: "left",
 };
