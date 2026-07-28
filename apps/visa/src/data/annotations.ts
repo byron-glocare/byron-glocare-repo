@@ -14,53 +14,62 @@ export interface Annotation {
 }
 
 /* ============================================================================
- * 결과 상위 구조 — "제출 서류(체크리스트)" vs "발급 조건·절차"
- * 각 조항을 서류 항목(submit) 또는 조건(condition) 그룹으로 매핑한다.
+ * 결과 상위 구조 — 서류명이 곧 목록 항목.
+ *   제출 서류(submit): 서류명 + 한 줄 핵심(headline). 펼치면 세부조건.
+ *   발급 조건(condition): 서류가 아닌 판정 조건(경로·기간·가능성 등).
  * ==========================================================================*/
 export type ResultSection = "submit" | "condition";
-export interface DocGroupDef {
+export interface DocDef {
   key: string;
-  title: string;
+  name: string;
   section: ResultSection;
-  order: number;
-  intro?: string;
+  headline?: string; // 접힘 상태에서 보이는 한 줄 핵심(단어형)
 }
-export const DOC_GROUPS: DocGroupDef[] = [
-  // ── 제출 서류 ──
-  { key: "basic", title: "기본 제출 서류", section: "submit", order: 1, intro: "모든 신청자 공통 — 여권·신청서·사진·최종학력·결핵진단서 등." },
-  { key: "admission", title: "표준입학허가서 (대학 발급)", section: "submit", order: 2, intro: "대학 입학심사로 발급되는 핵심 문서. 재정·어학·소요경비 기준이 이 문서에 연동됩니다." },
-  { key: "finance", title: "재정능력 입증서류", section: "submit", order: 3, intro: "잔고증명서(예치금액·기간·명의) + 재정보증인 증빙." },
-  { key: "language", title: "어학능력 증빙", section: "submit", order: 4, intro: "TOPIK 등 어학 성적 — 과정·대학등급에 따라 요건이 다름." },
-  { key: "format", title: "서류 형식·인증 요건", section: "submit", order: 5, intro: "번역공증·영사확인·유효기간 등 서류 준비 공통 규칙." },
-  { key: "extra", title: "상황별 추가 서류", section: "submit", order: 6, intro: "교환·방문학생, 국내 체류자격 변경 등 상황에 따른 추가분." },
-  // ── 발급 조건·절차 ──
-  { key: "eligibility", title: "발급 가능성·제한", section: "condition", order: 7 },
-  { key: "channel", title: "신청 경로", section: "condition", order: 8 },
-  { key: "duration", title: "체류기간", section: "condition", order: 9 },
-  { key: "jurisdiction", title: "관할·접수", section: "condition", order: 10 },
-  { key: "process", title: "심사 절차·유의사항", section: "condition", order: 11 },
+export const DOCUMENTS: DocDef[] = [
+  // ── 제출 서류(서류명) ──
+  { key: "basic", name: "기본 서류", section: "submit", headline: "여권 · 사증발급신청서 · 사진 · 신분증 등 공통" },
+  { key: "admission", name: "표준입학허가서", section: "submit", headline: "대학 발급 · 소요경비·조달계획 기재 · 유효기간 유의" },
+  { key: "edu", name: "최종학력 서류", section: "submit", headline: "졸업·성적증명 · 영사확인(접수일 1년 이내)" },
+  { key: "finance", name: "재정능력 입증서류 (잔고증명)", section: "submit", headline: "예치 기준액·예치기간·명의 충족 (장학 시 면제)" },
+  { key: "guarantor", name: "재정보증인 증빙", section: "submit", headline: "보증인 직업별 소득·자산 증빙 (부모 원칙)" },
+  { key: "language", name: "어학능력 증빙", section: "submit", headline: "TOPIK 등 어학 성적 (과정·등급별 기준)" },
+  { key: "tb", name: "결핵진단서", section: "submit", headline: "지정병원 · 흉부 X선 · 3개월 이내" },
+  { key: "ct07", name: "CT07 서식", section: "submit", headline: "친필 서명 원본 (전자·스캔·인쇄 불가)" },
+  { key: "studyplan", name: "학업계획 서류", section: "submit", headline: "어학 자격증 · 연수계획서" },
+  { key: "format", name: "번역공증·서류 형식", section: "submit", headline: "한/영 번역공증(3개월 내) · A4 단면" },
+  { key: "extra", name: "상황별 추가 서류", section: "submit", headline: "교환·방문 / 국내 변경 / 관할 추가분" },
+  // ── 발급 조건(서류 아님) ──
+  { key: "eligibility", name: "발급 가능성·제한", section: "condition" },
+  { key: "channel", name: "신청 경로", section: "condition" },
+  { key: "duration", name: "체류기간", section: "condition" },
+  { key: "jurisdiction", name: "관할·접수", section: "condition" },
+  { key: "process", name: "심사 절차·유의", section: "condition" },
 ];
 
-/** 조항 → 서류/조건 그룹 키. */
-export function docGroupKey(rule: { id: string; group: string }): string {
+/** 조항 → 서류/조건 키. */
+export function docOf(rule: { id: string; group: string }): string {
+  const id = rule.id;
   const g = rule.group;
-  if (g === "admission") return "admission";
+  if (g === "admission") return id === "ADM-070" ? "eligibility" : "admission";
   if (g === "finance") return "finance";
   if (g === "language") return "language";
   if (g === "documents") {
-    if (/^DOC-02[0-7]$/.test(rule.id)) return "finance"; // 재정보증인 증빙
-    if (["DOC-030", "DOC-040", "DOC-050"].includes(rule.id)) return "extra";
-    return "basic"; // DOC-010/011/012
+    if (/^DOC-02[0-7]$/.test(id)) return "guarantor";
+    if (id === "DOC-011") return "ct07";
+    if (id === "DOC-012") return "studyplan";
+    if (["DOC-030", "DOC-040", "DOC-050"].includes(id)) return "extra";
+    return "basic"; // DOC-010
   }
   if (g === "process") {
-    if (rule.id === "PRC-014") return "basic"; // 결핵진단서
-    if (["PRC-011", "PRC-012", "PRC-013"].includes(rule.id)) return "format";
-    return "process";
+    if (id === "PRC-014") return "tb";
+    if (id === "PRC-011") return "format";
+    if (id === "PRC-012" || id === "PRC-013") return "edu";
+    return "process"; // PRC-010/020/021/022
   }
   if (g === "eligibility") return "eligibility";
   if (g === "channel") return "channel";
   if (g === "duration") return "duration";
-  if (g === "jurisdiction") return "jurisdiction";
+  if (g === "jurisdiction") return id === "JUR-020" ? "eligibility" : "jurisdiction";
   return "process";
 }
 

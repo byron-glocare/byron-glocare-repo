@@ -24,7 +24,7 @@ import {
   type UnivRegion,
   type UnivTier,
 } from "@/data/engine";
-import { ANN, DOC_GROUPS, docGroupKey } from "@/data/annotations";
+import { ANN, DOCUMENTS, docOf } from "@/data/annotations";
 import { UNIVERSITIES } from "@/data/universities";
 
 /* ── 라벨 ─────────────────────────────────────────────── */
@@ -359,11 +359,10 @@ function UnivPicker({ inst, value, onChange }: { inst: InstKind; value: UnivPick
   useOutside(ref, () => setOpen(false));
 
   const pool = useMemo(() => (inst === "hagwon" ? UNIVERSITIES.filter((u) => u.lang) : UNIVERSITIES), [inst]);
-  const all = useMemo(() => {
+  const matches = useMemo(() => {
     const query = q.trim();
     return query ? pool.filter((u) => u.name.includes(query)) : pool;
   }, [q, pool]);
-  const matches = all.slice(0, 60);
 
   return (
     <div ref={ref} style={{ position: "relative" }}>
@@ -395,6 +394,7 @@ function UnivPicker({ inst, value, onChange }: { inst: InstKind; value: UnivPick
             </div>
           </div>
           <div style={{ overflowY: "auto" }}>
+            <div style={{ fontSize: 11, color: "var(--ink-xlight)", padding: "6px 14px 2px" }}>{matches.length}개</div>
             {matches.map((u) => (
               <button
                 key={u.name}
@@ -410,12 +410,7 @@ function UnivPicker({ inst, value, onChange }: { inst: InstKind; value: UnivPick
                 <TierBadge tier={u.tier} region={u.region} />
               </button>
             ))}
-            {all.length > matches.length && (
-              <div style={{ padding: "10px 14px", fontSize: 12, color: "var(--ink-light)", textAlign: "center" }}>
-                {all.length}개 중 60개 표시 — 더 좁히려면 검색하세요.
-              </div>
-            )}
-            {all.length === 0 && (
+            {matches.length === 0 && (
               <div style={{ padding: "16px", fontSize: 12.5, color: "var(--ink-light)", textAlign: "center" }}>
                 목록에 없습니다. 위 &quot;조건으로&quot;에서 등급·지역을 직접 선택하세요.
               </div>
@@ -466,65 +461,46 @@ function SumChip({ children, strong }: { children: React.ReactNode; strong?: boo
 
 /* ══════════════════════ 결과 ══════════════════════ */
 function Results({ result }: { result: { finProof: Set<string>; candidates: Candidate[] } }) {
-  const { candidates, finProof } = result;
+  const { candidates } = result;
   const blockers = candidates.filter((c) => c.rule.kind === "blocker");
-  const nonConfirmed = candidates.filter((c) => c.rule.confidence !== "confirmed");
-  const finText = finProof.size > 1 ? "장학금 등 조건에 따라 다름" : valueLabel("finProof", [...finProof][0] ?? "required");
 
-  const byGroup = useMemo(() => {
+  const byDoc = useMemo(() => {
     const m = new Map<string, Candidate[]>();
     for (const c of candidates) {
-      const k = docGroupKey(c.rule);
+      const k = docOf(c.rule);
       if (!m.has(k)) m.set(k, []);
       m.get(k)!.push(c);
     }
     return m;
   }, [candidates]);
 
-  const submit = DOC_GROUPS.filter((g) => g.section === "submit" && byGroup.get(g.key)?.length);
-  const cond = DOC_GROUPS.filter((g) => g.section === "condition" && byGroup.get(g.key)?.length);
+  const submit = DOCUMENTS.filter((d) => d.section === "submit" && byDoc.get(d.key)?.length);
+  const cond = DOCUMENTS.filter((d) => d.section === "condition" && byDoc.get(d.key)?.length);
 
   return (
     <div>
-      {/* 요약 */}
-      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 14 }}>
-        <Pill label="적용 요건" value={candidates.length} tone="coral" />
-        {blockers.length > 0 && <Pill label="발급 제한" value={blockers.length} tone="red" />}
-        <span style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "var(--peach)", color: "var(--ink-mid)", padding: "7px 14px", borderRadius: 10, fontSize: 13, fontWeight: 700 }}>
-          재정능력 입증: <b style={{ color: "var(--coral-d)" }}>{finText}</b>
-        </span>
-      </div>
-
       {blockers.length > 0 && (
         <div style={{ display: "flex", gap: 10, alignItems: "flex-start", background: "#fdecea", border: "1px solid #f3c6c1", color: "#b3261e", borderRadius: 12, padding: "12px 14px", fontSize: 13.5, marginBottom: 18 }}>
           <ShieldAlert size={18} style={{ flexShrink: 0, marginTop: 1 }} />
           <span>
-            <b>발급이 제한·불가할 수 있는 조건입니다.</b> {blockers.map((b) => ANN[b.rule.id]?.title ?? b.rule.title).join(" · ")}
+            <b>발급이 제한·불가할 수 있습니다.</b> {blockers.map((b) => ANN[b.rule.id]?.title ?? b.rule.title).join(" · ")}
           </span>
         </div>
       )}
 
-      {/* ── 제출 서류 ── */}
-      <SectionHead icon={<ClipboardList size={18} />} title="제출 서류" sub="비자 신청 시 준비할 서류. 각 서류를 펼치면 세부 절차·규칙이 나옵니다." />
-      <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 30 }}>
-        {submit.map((g) => (
-          <SubmitCard key={g.key} def={g} list={byGroup.get(g.key)!} defaultOpen={g.key === "basic"} />
+      <SectionHead icon={<ClipboardList size={18} />} title="제출 서류" sub="비자 신청 시 준비할 서류. 서류명을 펼치면 세부 조건이 나옵니다." />
+      <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 28 }}>
+        {submit.map((d) => (
+          <DocCard key={d.key} def={d} list={byDoc.get(d.key)!} />
         ))}
       </div>
 
-      {/* ── 발급 조건 ── */}
-      <SectionHead icon={<FileText size={18} />} title="발급 조건 및 유의사항" sub="서류 외에 발급 가능성·경로·기간 등 판정에 영향을 주는 조건." />
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-        {cond.map((g) => (
-          <ConditionCard key={g.key} title={DOC_GROUPS.find((d) => d.key === g.key)!.title} list={byGroup.get(g.key)!} />
+      <SectionHead icon={<FileText size={18} />} title="발급 조건" sub="서류 외에 발급 여부·경로·기간에 영향을 주는 조건." />
+      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        {cond.map((d) => (
+          <DocCard key={d.key} def={d} list={byDoc.get(d.key)!} />
         ))}
       </div>
-
-      {nonConfirmed.length > 0 && (
-        <p style={{ fontSize: 12.5, color: "var(--ink-light)", marginTop: 16 }}>
-          ※ 적용 요건 중 <b>{nonConfirmed.length}건</b>은 확정되지 않았습니다(유추·자료충돌·미확인). 확정 안내로 쓰지 말고 관할 공관에 확인하세요.
-        </p>
-      )}
     </div>
   );
 }
@@ -541,110 +517,73 @@ function SectionHead({ icon, title, sub }: { icon: React.ReactNode; title: strin
   );
 }
 
-/* ── 서류 카드 (펼침형 체크리스트 항목) ───────────────── */
-function SubmitCard({ def, list, defaultOpen }: { def: { key: string; title: string; intro?: string }; list: Candidate[]; defaultOpen?: boolean }) {
-  const [open, setOpen] = useState(!!defaultOpen);
+/* ── 서류/조건 카드 (서류명 + 한 줄 핵심 → 펼치면 세부조건) ── */
+function DocCard({ def, list }: { def: { key: string; name: string; section: string; headline?: string }; list: Candidate[] }) {
+  const [open, setOpen] = useState(false);
+  const [raw, setRaw] = useState(false);
+  const isCond = def.section === "condition";
   const hasBlocker = list.some((c) => c.rule.kind === "blocker");
-  const hasCond = list.some((c) => c.tags.length > 0);
+  const hasCondTag = list.some((c) => c.tags.length > 0);
   const hasUnconfirmed = list.some((c) => c.rule.confidence !== "confirmed");
-
-  // 서류(doc) 단위 하위 묶음
-  const docs = useMemo(() => {
-    const m = new Map<string, Candidate[]>();
-    for (const c of list) {
-      const k = ANN[c.rule.id]?.doc ?? ANN[c.rule.id]?.title ?? c.rule.title;
-      if (!m.has(k)) m.set(k, []);
-      m.get(k)!.push(c);
-    }
-    return [...m.entries()];
-  }, [list]);
+  const accent = hasBlocker ? "#b3261e" : isCond ? "var(--ink-xlight)" : "var(--coral)";
 
   return (
-    <div style={{ background: "#fff", border: `1px solid ${hasBlocker ? "#f3c6c1" : "var(--bdr)"}`, borderLeft: `4px solid ${hasBlocker ? "#b3261e" : "var(--coral)"}`, borderRadius: 12, overflow: "hidden", boxShadow: "var(--shadow-sm)" }}>
-      <button onClick={() => setOpen((o) => !o)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "14px 16px", border: "none", background: "none", cursor: "pointer", textAlign: "left" }}>
-        <span style={{ flex: 1 }}>
-          <span style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-            <span style={{ fontSize: 15.5, fontWeight: 800 }}>{def.title}</span>
-            <span style={{ fontSize: 11.5, color: "var(--ink-xlight)" }}>{docs.length}개 항목</span>
-            {hasCond && <span style={badge("var(--blue)", "#eaf2fb")}>조건부</span>}
+    <div style={{ background: "#fff", border: `1px solid ${hasBlocker ? "#f3c6c1" : "var(--bdr)"}`, borderLeft: `4px solid ${accent}`, borderRadius: 12, overflow: "hidden", boxShadow: "var(--shadow-sm)" }}>
+      <button onClick={() => setOpen((o) => !o)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "13px 16px", border: "none", background: "none", cursor: "pointer", textAlign: "left" }}>
+        <span style={{ flex: 1, minWidth: 0 }}>
+          <span style={{ display: "flex", alignItems: "center", gap: 7, flexWrap: "wrap" }}>
+            <span style={{ fontSize: 15, fontWeight: 800 }}>{def.name}</span>
+            {hasCondTag && !isCond && <span style={badge("var(--blue)", "#eaf2fb")}>조건부</span>}
             {hasUnconfirmed && <span style={badge("#b3261e", "#fdecea")}>미확정</span>}
           </span>
-          {def.intro && <span style={{ display: "block", fontSize: 12.5, color: "var(--ink-light)", marginTop: 4 }}>{def.intro}</span>}
+          <span style={{ display: "block", fontSize: 12.5, color: "var(--ink-light)", marginTop: 3 }}>
+            {def.headline ?? (open ? "" : `세부 조건 ${list.length}건`)}
+          </span>
         </span>
-        <ChevronDown size={18} style={{ color: "var(--ink-light)", flexShrink: 0, transform: open ? "rotate(180deg)" : "none", transition: "transform .15s" }} />
+        <span style={{ display: "flex", alignItems: "center", gap: 4, flexShrink: 0, color: "var(--ink-light)", fontSize: 12, fontWeight: 700 }}>
+          {open ? "닫기" : "세부 조건"}
+          <ChevronDown size={17} style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .15s" }} />
+        </span>
       </button>
 
       {open && (
-        <div style={{ borderTop: "1px solid var(--bdr)", padding: "12px 16px", display: "flex", flexDirection: "column", gap: 14 }}>
-          {docs.map(([docKey, rules]) => (
-            <DocBlock key={docKey} title={docKey} rules={rules} />
-          ))}
+        <div style={{ borderTop: "1px solid var(--bdr)", padding: "12px 16px" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+            {list.map((c) => {
+              const blk = c.rule.kind === "blocker";
+              return (
+                <div key={c.rule.id} style={{ display: "flex", gap: 7, alignItems: "baseline" }}>
+                  <span style={{ color: blk ? "#b3261e" : accent, flexShrink: 0, fontSize: 12 }}>•</span>
+                  <div style={{ flex: 1 }}>
+                    <span style={{ fontSize: 13, color: blk ? "#b3261e" : "var(--ink-mid)", fontWeight: blk ? 700 : 400 }}>
+                      {ANN[c.rule.id]?.terse ?? c.rule.title}
+                    </span>
+                    {c.tags.length > 0 && (
+                      <span style={{ display: "inline-flex", gap: 5, flexWrap: "wrap", marginLeft: 7, verticalAlign: "middle" }}>
+                        {c.tags.map((t, i) => (
+                          <Tag key={i} tag={t} />
+                        ))}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <button onClick={() => setRaw((s) => !s)} style={{ marginTop: 10, border: "none", background: "none", padding: 0, cursor: "pointer", fontSize: 11.5, fontWeight: 700, color: "var(--ink-xlight)" }}>
+            {raw ? "규정 원문 닫기" : "규정 원문 보기"}
+          </button>
+          {raw && (
+            <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 8 }}>
+              {list.map((c) => (
+                <div key={c.rule.id} style={{ fontSize: 12, color: "var(--ink-light)", lineHeight: 1.6 }}>
+                  <b style={{ color: "var(--ink-mid)" }}>{ANN[c.rule.id]?.title ?? c.rule.title}</b> — {c.rule.body}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
-    </div>
-  );
-}
-
-/* ── 서류 안의 개별 규정 묶음 ─────────────────────────── */
-function DocBlock({ title, rules }: { title: string; rules: Candidate[] }) {
-  const [showRaw, setShowRaw] = useState(false);
-  return (
-    <div>
-      <div style={{ fontSize: 13.5, fontWeight: 700, color: "var(--ink)", marginBottom: 6 }}>{title}</div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-        {rules.map((c) => (
-          <div key={c.rule.id} style={{ display: "flex", gap: 7, alignItems: "baseline" }}>
-            <span style={{ color: "var(--coral)", flexShrink: 0, fontSize: 12 }}>•</span>
-            <div style={{ flex: 1 }}>
-              <span style={{ fontSize: 13, color: "var(--ink-mid)" }}>{ANN[c.rule.id]?.terse ?? c.rule.title}</span>
-              {c.tags.length > 0 && (
-                <span style={{ display: "inline-flex", gap: 5, flexWrap: "wrap", marginLeft: 7, verticalAlign: "middle" }}>
-                  {c.tags.map((t, i) => (
-                    <Tag key={i} tag={t} />
-                  ))}
-                </span>
-              )}
-              {showRaw && <div style={{ fontSize: 12, color: "var(--ink-light)", lineHeight: 1.6, marginTop: 3 }}>{c.rule.body}</div>}
-            </div>
-          </div>
-        ))}
-      </div>
-      <button onClick={() => setShowRaw((s) => !s)} style={{ marginTop: 6, border: "none", background: "none", padding: 0, cursor: "pointer", fontSize: 11.5, fontWeight: 700, color: "var(--ink-xlight)" }}>
-        {showRaw ? "규정 원문 닫기" : "규정 원문 보기"}
-      </button>
-    </div>
-  );
-}
-
-/* ── 조건 카드 ────────────────────────────────────────── */
-function ConditionCard({ title, list }: { title: string; list: Candidate[] }) {
-  const hasBlocker = list.some((c) => c.rule.kind === "blocker");
-  const hasUnconfirmed = list.some((c) => c.rule.confidence !== "confirmed");
-  return (
-    <div style={{ background: "#fff", border: `1px solid ${hasBlocker ? "#f3c6c1" : "var(--bdr)"}`, borderLeft: `4px solid ${hasBlocker ? "#b3261e" : "var(--ink-xlight)"}`, borderRadius: 12, padding: "13px 15px", boxShadow: "var(--shadow-sm)" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-        <span style={{ fontSize: 14.5, fontWeight: 800 }}>{title}</span>
-        {hasUnconfirmed && <span style={badge("#b3261e", "#fdecea")}>미확정</span>}
-      </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-        {list.map((c) => (
-          <div key={c.rule.id} style={{ display: "flex", gap: 7, alignItems: "baseline" }}>
-            <span style={{ color: c.rule.kind === "blocker" ? "#b3261e" : "var(--ink-xlight)", flexShrink: 0, fontSize: 12 }}>•</span>
-            <div style={{ flex: 1 }}>
-              <span style={{ fontSize: 13, color: c.rule.kind === "blocker" ? "#b3261e" : "var(--ink-mid)", fontWeight: c.rule.kind === "blocker" ? 700 : 400 }}>
-                {ANN[c.rule.id]?.terse ?? c.rule.title}
-              </span>
-              {c.tags.length > 0 && (
-                <span style={{ display: "inline-flex", gap: 5, flexWrap: "wrap", marginLeft: 7, verticalAlign: "middle" }}>
-                  {c.tags.map((t, i) => (
-                    <Tag key={i} tag={t} />
-                  ))}
-                </span>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
     </div>
   );
 }
@@ -660,16 +599,6 @@ function Tag({ tag }: { tag: OptionTag }) {
 }
 
 /* ── 소품 ─────────────────────────────────────────────── */
-function Pill({ label, value, tone }: { label: string; value: number; tone: "coral" | "red" }) {
-  const map = { coral: { bg: "var(--coral-pale)", fg: "var(--coral-d)" }, red: { bg: "#fdecea", fg: "#b3261e" } } as const;
-  const t = map[tone];
-  return (
-    <span style={{ display: "inline-flex", alignItems: "baseline", gap: 6, background: t.bg, color: t.fg, padding: "7px 14px", borderRadius: 10, fontSize: 13, fontWeight: 700 }}>
-      <span style={{ fontSize: 17, fontWeight: 800 }}>{value}</span>
-      {label}
-    </span>
-  );
-}
 const badge = (fg: string, bg: string): React.CSSProperties => ({ fontSize: 11, fontWeight: 700, color: fg, background: bg, padding: "2px 8px", borderRadius: 999 });
 
 /* ── util ─────────────────────────────────────────────── */
