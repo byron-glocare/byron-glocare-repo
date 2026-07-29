@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useRef, useEffect } from "react";
+import { useMemo, useState, useRef, useEffect, Fragment } from "react";
 import { Search, ChevronDown, ShieldAlert, Pencil, Building2, Check, X } from "lucide-react";
 import { D, ORIGIN_OPTIONS, EMPHASIZED_STATUS, type UnivRegion, type UnivTier } from "@/data/engine";
 import { UNIVERSITIES } from "@/data/universities";
@@ -110,6 +110,7 @@ export default function Page() {
                 tier={place.tier}
                 region={place.region}
                 nationality={originOpt.ctx.nationality as string}
+                applicantRegion={(originOpt.ctx.applicantRegion ?? null) as string | null}
                 status={status}
                 isChange={isChange}
               />
@@ -452,6 +453,7 @@ function Results({
   tier,
   region,
   nationality,
+  applicantRegion,
   status,
   isChange,
 }: {
@@ -459,6 +461,7 @@ function Results({
   tier: UnivTier;
   region: UnivRegion;
   nationality: string;
+  applicantRegion: string | null;
   status: string;
   isChange: boolean;
 }) {
@@ -491,7 +494,12 @@ function Results({
       <div style={{ marginTop: 22, display: "flex", flexDirection: "column", gap: 24 }}>
         {sections.map((sec) => {
           const docs = DOCS.filter(
-            (d) => d.section === sec && d.courses.includes(course) && (d.onlyVN ? nationality === "vn" : true) && !(isChange && d.id === "tb")
+            (d) =>
+              d.section === sec &&
+              d.courses.includes(course) &&
+              (d.onlyVN ? nationality === "vn" : true) &&
+              (d.onlyNorth ? applicantRegion === "vn_north" : true) &&
+              !(isChange && d.id === "tb")
           );
           if (!docs.length) return null;
           return (
@@ -534,6 +542,16 @@ function DocRow({ doc, docName }: { doc: ChecklistDoc; docName: (id: string) => 
   const [open, setOpen] = useState(false);
   const linked = !!doc.holderSameAs;
   const holderTxt = doc.holderSameAs ? `${docName(doc.holderSameAs)}와 같은 사람` : doc.holder;
+  const moreAttrs: [string, string, string | undefined][] = [
+    ["유효기간", "validity", doc.validity],
+    ["번역", "translation", doc.translation],
+    ["공증", "notarization", doc.notarization],
+    ["영사확인", "authentication", doc.authentication],
+    ["서명", "signature", doc.signature],
+    ["발급 소요일", "obtainDays", doc.obtainDays],
+  ];
+  const shown = moreAttrs.filter(([, , v]) => v);
+  const hasMore = shown.length > 0 || !!doc.detail || !!doc.ambiguous;
   return (
     <div style={{ background: "#fff", border: `1px solid ${doc.ambiguous ? "#f3c6c1" : "var(--bdr)"}`, borderLeft: "4px solid var(--coral)", borderRadius: 12, padding: "13px 16px", boxShadow: "var(--shadow-sm)" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
@@ -552,35 +570,52 @@ function DocRow({ doc, docName }: { doc: ChecklistDoc; docName: (id: string) => 
       <div style={{ fontSize: 13, color: "var(--ink-mid)", marginTop: 5, lineHeight: 1.55 }}>
         <EditableText path={`doc:${doc.id}:brief`} value={doc.brief} multiline />
       </div>
+      {(doc.issuer || doc.form) && (
+        <div style={{ fontSize: 12, color: "var(--ink-light)", marginTop: 6, display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" }}>
+          {doc.issuer && <span style={attrChip}>발급기관 <EditableText path={`doc:${doc.id}:issuer`} value={doc.issuer} /></span>}
+          {doc.form && <span style={attrChip}>형식 <EditableText path={`doc:${doc.id}:form`} value={doc.form + (doc.bringOriginal ? " · 원본 지참" : "")} /></span>}
+        </div>
+      )}
       {doc.cond && (
         <div style={{ fontSize: 12.5, color: "var(--ink-light)", marginTop: 6, paddingLeft: 10, borderLeft: "2px solid var(--bdr-d)", lineHeight: 1.55 }}>
           <EditableText path={`doc:${doc.id}:cond`} value={doc.cond} multiline />
         </div>
       )}
-      {(doc.detail || doc.ambiguous) && (
+      {hasMore && (
         <div>
           <button onClick={() => setOpen((o) => !o)} style={{ marginTop: 8, border: "none", background: "none", padding: 0, cursor: "pointer", fontSize: 11.5, fontWeight: 700, color: "var(--ink-xlight)" }}>
             {open ? "접기 ▲" : "자세히 ▾"}
           </button>
           {open && (
-            <div style={{ marginTop: 6, display: "flex", flexDirection: "column", gap: 6 }}>
+            <dl style={{ margin: "8px 0 0", display: "grid", gridTemplateColumns: "auto 1fr", gap: "5px 12px", fontSize: 12 }}>
+              {shown.map(([label, field, val]) => (
+                <Fragment key={field}>
+                  <dt style={dtStyle}>{label}</dt>
+                  <dd style={ddStyle}><EditableText path={`doc:${doc.id}:${field}`} value={val as string} multiline /></dd>
+                </Fragment>
+              ))}
               {doc.detail && (
-                <div style={{ fontSize: 12, color: "var(--ink-light)", lineHeight: 1.6 }}>
-                  <EditableText path={`doc:${doc.id}:detail`} value={doc.detail} multiline />
-                </div>
+                <Fragment>
+                  <dt style={dtStyle}>메모</dt>
+                  <dd style={ddStyle}><EditableText path={`doc:${doc.id}:detail`} value={doc.detail} multiline /></dd>
+                </Fragment>
               )}
               {doc.ambiguous && (
-                <div style={{ fontSize: 11.5, color: "#8a6d1a", background: "#fff7e0", border: "1px solid #f0dca0", borderRadius: 8, padding: "6px 9px", lineHeight: 1.55 }}>
-                  확인 필요: <EditableText path={`doc:${doc.id}:ambiguous`} value={doc.ambiguous} multiline />
-                </div>
+                <Fragment>
+                  <dt style={{ ...dtStyle, color: "#8a6d1a" }}>확인 필요</dt>
+                  <dd style={{ ...ddStyle, color: "#8a6d1a" }}><EditableText path={`doc:${doc.id}:ambiguous`} value={doc.ambiguous} multiline /></dd>
+                </Fragment>
               )}
-            </div>
+            </dl>
           )}
         </div>
       )}
     </div>
   );
 }
+const attrChip: React.CSSProperties = { background: "var(--peach)", border: "1px solid var(--bdr)", borderRadius: 7, padding: "2px 8px" };
+const dtStyle: React.CSSProperties = { fontWeight: 700, color: "var(--ink-light)", whiteSpace: "nowrap" };
+const ddStyle: React.CSSProperties = { margin: 0, color: "var(--ink-mid)" };
 
 function Callout({ tone, children }: { tone: "amber" | "blue"; children: React.ReactNode }) {
   const map = { amber: { bg: "#fff9e6", bd: "#f5d98a", fg: "#8a6d1a" }, blue: { bg: "#eaf2fb", bd: "#cdd9ea", fg: "var(--navy)" } } as const;
