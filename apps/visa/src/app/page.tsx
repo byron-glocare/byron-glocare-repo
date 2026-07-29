@@ -1,44 +1,11 @@
 "use client";
 
 import { useMemo, useState, useRef, useEffect } from "react";
-import {
-  Search,
-  ChevronDown,
-  ShieldAlert,
-  Pencil,
-  Building2,
-  Check,
-  FileText,
-  ClipboardList,
-  X,
-} from "lucide-react";
-import {
-  D,
-  lookup,
-  axisLabel,
-  valueLabel,
-  ORIGIN_OPTIONS,
-  EMPHASIZED_STATUS,
-  type Candidate,
-  type OptionTag,
-  type UnivRegion,
-  type UnivTier,
-} from "@/data/engine";
-import { ANN, DOCUMENTS, docOf } from "@/data/annotations";
+import { Search, ChevronDown, ShieldAlert, Pencil, Building2, Check, X } from "lucide-react";
+import { D, ORIGIN_OPTIONS, EMPHASIZED_STATUS, type UnivRegion, type UnivTier } from "@/data/engine";
 import { UNIVERSITIES } from "@/data/universities";
-import { DOCUMENTS_DATA, DOC_CATEGORY_ORDER, type VisaDoc, type Holder, type HolderWho } from "@/data/documents";
+import { judge, sectionNeeded, DOCS, SECTIONS, type Verdict, type Course, type Section, type ChecklistDoc } from "@/data/checklist";
 import { EditProvider, EditToolbar, EditableText } from "@/lib/edits";
-
-/** 조항 id → 이 조항을 참조하는 서류 수(공유 위치 계산용). */
-const RULE_REF_COUNT: Map<string, number> = (() => {
-  const m = new Map<string, number>();
-  for (const d of DOCUMENTS_DATA) for (const id of d.ruleRefs ?? []) m.set(id, (m.get(id) ?? 0) + 1);
-  return m;
-})();
-/** 조항 텍스트가 화면에 노출되는 위치 수(서류 참조 + 조건섹션 노출). */
-function sharedCount(id: string, inCondition: boolean): number {
-  return (RULE_REF_COUNT.get(id) ?? 0) + (inCondition ? 1 : 0);
-}
 
 /* ── 라벨 ─────────────────────────────────────────────── */
 const TIER_LABEL: Record<UnivTier, string> = {
@@ -89,25 +56,12 @@ export default function Page() {
   const [status, setStatus] = useState("D-2-2");
   const [searched, setSearched] = useState(false);
 
-  const track = inst === "hagwon" ? "new_d4" : isChange ? "change_d4_d2" : "new_d2";
   const originOpt = ORIGIN_OPTIONS.find((o) => o.value === origin)!;
 
   // 조회 대상(대학/조건) 확정
   const place: UnivPick | null =
     pickMode === "name" ? univ : { name: "", tier: condTier, region: condRegion };
   const canSearch = pickMode === "cond" || !!univ;
-
-  const result = useMemo(() => {
-    if (!place) return null;
-    return lookup({
-      track,
-      nationality: originOpt.ctx.nationality as string,
-      applicantRegion: (originOpt.ctx.applicantRegion ?? null) as string | null,
-      univTier: place.tier,
-      univRegion: place.region,
-      statusCode: status,
-    });
-  }, [track, originOpt, status, place?.tier, place?.region]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function changeInst(next: InstKind) {
     setInst(next);
@@ -150,7 +104,16 @@ export default function Page() {
           <>
             <SummaryBar inst={inst} isChange={isChange} origin={originOpt.label} status={status} place={place!} onEdit={() => setSearched(false)} />
             <EditToolbar />
-            {result && <Results result={result} />}
+            {place && (
+              <Results
+                course={inst === "hagwon" ? "hagwon" : "univ"}
+                tier={place.tier}
+                region={place.region}
+                nationality={originOpt.ctx.nationality as string}
+                status={status}
+                isChange={isChange}
+              />
+            )}
           </>
         )}
       </div>
@@ -476,331 +439,141 @@ function SumChip({ children, strong }: { children: React.ReactNode; strong?: boo
 }
 
 /* ══════════════════════ 결과 ══════════════════════ */
-const CONDITION_KEYS = new Set(["eligibility", "channel", "duration", "jurisdiction", "process"]);
+const SECTION_EMOJI: Record<Section, string> = {
+  "신분·공통": "🪪",
+  "학력": "🎓",
+  "재정": "💰",
+  "건강": "🩺",
+  "어학": "🗣️",
+};
 
-function Results({ result }: { result: { finProof: Set<string>; candidates: Candidate[] } }) {
-  const { candidates } = result;
-  const blockers = candidates.filter((c) => c.rule.kind === "blocker");
-  const candMap = useMemo(() => new Map(candidates.map((c) => [c.rule.id, c])), [candidates]);
+function Results({
+  course,
+  tier,
+  region,
+  nationality,
+  status,
+  isChange,
+}: {
+  course: Course;
+  tier: UnivTier;
+  region: UnivRegion;
+  nationality: string;
+  status: string;
+  isChange: boolean;
+}) {
+  const v = useMemo(() => judge(course, tier, region, nationality, status), [course, tier, region, nationality, status]);
+  const docName = (id: string) => DOCS.find((d) => d.id === id)?.name ?? id;
 
-  // 제출 서류 = documents.ts (적용 조항이 하나라도 후보인 서류), 카테고리 순
-  const submitByCat = useMemo(() => {
-    const applies = DOCUMENTS_DATA.filter((d) => (d.ruleRefs ?? []).some((id) => candMap.has(id)));
-    return DOC_CATEGORY_ORDER.map((cat) => ({ cat, docs: applies.filter((d) => d.category === cat) })).filter((g) => g.docs.length);
-  }, [candMap]);
+  if (v.burden === "blocked") {
+    return (
+      <div style={{ display: "flex", gap: 12, alignItems: "flex-start", background: "#fdecea", border: "1px solid #f3c6c1", color: "#b3261e", borderRadius: 14, padding: "16px 18px" }}>
+        <ShieldAlert size={22} style={{ flexShrink: 0, marginTop: 2 }} />
+        <div>
+          <div style={{ fontSize: 16, fontWeight: 800 }}>발급 제한</div>
+          <div style={{ fontSize: 13.5, marginTop: 4, lineHeight: 1.6 }}>{v.blockedReason}</div>
+        </div>
+      </div>
+    );
+  }
 
-  // 발급 조건 = 서류가 아닌 조항(조건 그룹)
-  const condByKey = useMemo(() => {
-    const m = new Map<string, Candidate[]>();
-    for (const c of candidates) {
-      const k = docOf(c.rule);
-      if (CONDITION_KEYS.has(k)) {
-        if (!m.has(k)) m.set(k, []);
-        m.get(k)!.push(c);
-      }
-    }
-    return m;
-  }, [candidates]);
-  const cond = DOCUMENTS.filter((d) => d.section === "condition" && condByKey.get(d.key)?.length);
+  const sections = SECTIONS.filter((s) => sectionNeeded(s, v, course, nationality));
 
   return (
     <div>
-      {blockers.length > 0 && (
-        <div style={{ display: "flex", gap: 10, alignItems: "flex-start", background: "#fdecea", border: "1px solid #f3c6c1", color: "#b3261e", borderRadius: 12, padding: "12px 14px", fontSize: 13.5, marginBottom: 18 }}>
-          <ShieldAlert size={18} style={{ flexShrink: 0, marginTop: 1 }} />
-          <span>
-            <b>발급이 제한·불가할 수 있습니다.</b> {blockers.map((b) => ANN[b.rule.id]?.title ?? b.rule.title).join(" · ")}
-          </span>
-        </div>
-      )}
+      <VerdictBanner v={v} />
+      {isChange && <Callout tone="blue">국내 변경(D-4→D-2)은 관할 출입국·외국인청에 접수합니다(하이코리아). 결핵진단서·영사확인·번역공증은 면제됩니다.</Callout>}
+      {v.financeCaveat && <Callout tone="amber">{v.financeCaveat}</Callout>}
+      {v.notes.map((n, i) => (
+        <Callout key={i} tone="amber">{n}</Callout>
+      ))}
 
-      <SectionHead icon={<ClipboardList size={18} />} title="제출 서류" sub="비자 신청 시 준비할 서류. 서류명을 펼치면 발급기관·형식·명의·유효기간 등 세부가 나옵니다." />
-      <div style={{ marginBottom: 28 }}>
-        {submitByCat.map(({ cat, docs }) => (
-          <div key={cat} style={{ marginBottom: 14 }}>
-            <div style={{ fontSize: 12, fontWeight: 700, color: "var(--ink-xlight)", margin: "0 2px 7px", letterSpacing: 0.3 }}>{cat}</div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {docs.map((d) => (
-                <DocuCard key={d.id} doc={d} rules={(d.ruleRefs ?? []).map((id) => candMap.get(id)).filter(Boolean) as Candidate[]} />
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <SectionHead icon={<FileText size={18} />} title="발급 조건" sub="서류 외에 발급 여부·경로·기간에 영향을 주는 조건." />
-      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-        {cond.map((d) => (
-          <DocCard key={d.key} def={d} list={condByKey.get(d.key)!} />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ── 명의(holder) 강조 ─────────────────────────────────── */
-const WHO_LABEL: Record<HolderWho, string> = {
-  self: "본인",
-  father: "아버지",
-  mother: "어머니",
-  family: "부모 외 가족",
-  kr_family: "한국 국적 가족",
-  professor: "지도교수",
-  company: "회사",
-  institution: "기관 발급",
-  na: "",
-};
-function holderText(h: Holder): { text: string; suffix: string } {
-  const labels = h.who.map((w) => WHO_LABEL[w]).filter(Boolean);
-  if (h.logic === "allOf") return { text: labels.join(" + "), suffix: " 모두 제출" };
-  if (h.logic === "anyOf") return { text: labels.join(" / "), suffix: " 중 1인 이상" };
-  if (h.logic === "oneOf") return { text: labels.join(" / "), suffix: labels.length > 1 ? " 중 택1" : "" };
-  return { text: labels.join(" / "), suffix: "" };
-}
-function HolderBadge({ holder }: { holder: Holder }) {
-  const { text, suffix } = holderText(holder);
-  const amb = holder.ambiguous;
-  return (
-    <span
-      style={{
-        display: "inline-flex",
-        alignItems: "center",
-        gap: 4,
-        fontSize: 11.5,
-        fontWeight: 800,
-        color: amb ? "#b3261e" : "var(--navy)",
-        background: amb ? "#fdecea" : "#e8eef6",
-        border: `1px solid ${amb ? "#f3c6c1" : "#cdd9ea"}`,
-        padding: "2px 9px",
-        borderRadius: 999,
-        whiteSpace: "nowrap",
-      }}
-      title={holder.note}
-    >
-      {amb && <ShieldAlert size={12} />}
-      명의: {text}
-      {suffix}
-      {amb ? " · 확인필요" : ""}
-    </span>
-  );
-}
-
-/* ── 서류 카드 (documents.ts 정본) ────────────────────── */
-function DocuCard({ doc, rules }: { doc: VisaDoc; rules: Candidate[] }) {
-  const [open, setOpen] = useState(false);
-  const [showRaw, setShowRaw] = useState(false);
-  const showHolder = doc.holder && doc.holder.logic !== "na";
-  const summary = [doc.issuer.join("·"), doc.form + (doc.bringOriginal ? "(원본지참)" : "")].join(" · ");
-
-  return (
-    <div style={{ background: "#fff", border: `1px solid ${doc.holder?.ambiguous ? "#f3c6c1" : "var(--bdr)"}`, borderLeft: "4px solid var(--coral)", borderRadius: 12, overflow: "hidden", boxShadow: "var(--shadow-sm)" }}>
-      <button onClick={() => setOpen((o) => !o)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "13px 16px", border: "none", background: "none", cursor: "pointer", textAlign: "left" }}>
-        <span style={{ flex: 1, minWidth: 0 }}>
-          <span style={{ display: "flex", alignItems: "center", gap: 7, flexWrap: "wrap" }}>
-            <span style={{ fontSize: 15, fontWeight: 800 }}>
-              <EditableText path={`doc:${doc.id}:name`} value={doc.name} />
-            </span>
-            {showHolder && doc.holder && (doc.holder.ambiguous || doc.holder.who.length > 1) && <HolderBadge holder={doc.holder} />}
-            {doc.confidence !== "confirmed" && <span style={badge("#b3261e", "#fdecea")}>미확정</span>}
-          </span>
-          <span style={{ display: "block", fontSize: 12.5, color: "var(--ink-light)", marginTop: 3 }}>{summary}</span>
-        </span>
-        <span style={{ display: "flex", alignItems: "center", gap: 4, flexShrink: 0, color: "var(--ink-light)", fontSize: 12, fontWeight: 700 }}>
-          {open ? "닫기" : "세부"}
-          <ChevronDown size={17} style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .15s" }} />
-        </span>
-      </button>
-
-      {open && (
-        <div style={{ borderTop: "1px solid var(--bdr)", padding: "12px 16px" }}>
-          <dl style={{ margin: 0, display: "grid", gridTemplateColumns: "auto 1fr", gap: "6px 12px", fontSize: 12.5 }}>
-            <Attr docId={doc.id} k="발급기관" field="issuer" v={doc.issuer.join(", ")} />
-            <Attr docId={doc.id} k="형식" field="form" v={doc.form + (doc.bringOriginal ? " · 대조용 원본 지참" : "")} />
-            {doc.validity && <Attr docId={doc.id} k="유효기간" field="validity" v={validityText(doc.validity)} multiline />}
-            {showHolder && doc.holder && <Attr docId={doc.id} k="명의" field="holder" v={holderString(doc.holder)} multiline highlight={doc.holder.ambiguous} />}
-            {doc.translation && <Attr docId={doc.id} k="번역" field="translation" v={doc.translation.required ? `필요 (${(doc.translation.langs ?? ["ko", "en"]).map((l) => (l === "ko" ? "국문" : "영문")).join("/")})${doc.translation.note ? " · " + doc.translation.note : ""}` : "불요"} multiline />}
-            {doc.notarization?.required && <Attr docId={doc.id} k="공증" field="notarization" v={`필요${doc.notarization.by ? " · " + doc.notarization.by : ""}`} />}
-            {doc.authentication?.required && <Attr docId={doc.id} k="영사확인" field="authentication" v={`${(doc.authentication.chain ?? []).join(" → ")}${doc.authentication.validityDays ? ` (${doc.authentication.validityDays}일 이내)` : ""}`} multiline />}
-            {doc.signature?.handwrittenOnly && <Attr docId={doc.id} k="서명" field="signature" v={`친필 서명 원본만${doc.signature.note ? " · " + doc.signature.note : ""}`} />}
-            <Attr docId={doc.id} k="발급 소요일" field="obtainDays" v={doc.obtainDays ?? "미상 (전문가 자료 대기)"} />
-            {doc.appliesTo && <Attr docId={doc.id} k="적용 대상" field="appliesTo" v={doc.appliesTo} multiline />}
-          </dl>
-
-          {(() => {
-            // DOC-*, ADM-031 은 여러 서류를 나열한 '묶음 규정' → 목록(terse)은 숨기고 적용상황(태그)만.
-            const isBundle = (c: Candidate) => c.rule.group === "documents" || c.rule.id === "ADM-031";
-            const substantive = rules.filter((c) => !isBundle(c));
-            const bundleTags: OptionTag[] = [];
-            const seen = new Set<string>();
-            for (const c of rules.filter(isBundle)) {
-              for (const t of c.tags) {
-                const key = `${t.axis}|${t.values.join(",")}|${t.negate ? "!" : ""}`;
-                if (!seen.has(key)) { seen.add(key); bundleTags.push(t); }
-              }
-            }
-            if (substantive.length === 0 && bundleTags.length === 0) return null;
-            return (
-              <div style={{ marginTop: 12 }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: "var(--coral-d)", marginBottom: 6 }}>적용 조건 (선택 상황 기준)</div>
-                {bundleTags.length > 0 && (
-                  <div style={{ display: "flex", gap: 5, flexWrap: "wrap", alignItems: "center", marginBottom: substantive.length ? 8 : 0 }}>
-                    <span style={{ fontSize: 12, color: "var(--ink-light)" }}>적용 상황</span>
-                    {bundleTags.map((t, i) => (
-                      <Tag key={i} tag={t} />
-                    ))}
-                  </div>
-                )}
-                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                  {substantive.map((c) => (
-                    <div key={c.rule.id} style={{ display: "flex", gap: 7, alignItems: "baseline" }}>
-                      <span style={{ color: "var(--coral)", flexShrink: 0, fontSize: 12 }}>•</span>
-                      <div style={{ flex: 1 }}>
-                        <span style={{ fontSize: 12.5, color: "var(--ink-mid)" }}>
-                          <EditableText path={`rule:${c.rule.id}:terse`} value={ANN[c.rule.id]?.terse ?? c.rule.title} multiline shared={sharedCount(c.rule.id, false)} />
-                        </span>
-                        {c.tags.length > 0 && (
-                          <span style={{ display: "inline-flex", gap: 5, flexWrap: "wrap", marginLeft: 7, verticalAlign: "middle" }}>
-                            {c.tags.map((t, i) => (
-                              <Tag key={i} tag={t} />
-                            ))}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                {substantive.length > 0 && (
-                  <>
-                    <button onClick={() => setShowRaw((s) => !s)} style={{ marginTop: 8, border: "none", background: "none", padding: 0, cursor: "pointer", fontSize: 11.5, fontWeight: 700, color: "var(--ink-xlight)" }}>
-                      {showRaw ? "규정 원문 닫기" : "규정 원문 보기"}
-                    </button>
-                    {showRaw && (
-                      <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 8 }}>
-                        {substantive.map((c) => (
-                          <div key={c.rule.id} style={{ fontSize: 12, color: "var(--ink-light)", lineHeight: 1.6 }}>
-                            <b style={{ color: "var(--ink-mid)" }}>
-                              <EditableText path={`rule:${c.rule.id}:title`} value={ANN[c.rule.id]?.title ?? c.rule.title} shared={sharedCount(c.rule.id, false)} />
-                            </b>{" "}— <EditableText path={`rule:${c.rule.id}:body`} value={c.rule.body} multiline shared={sharedCount(c.rule.id, false)} />
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </>
-                )}
+      <div style={{ marginTop: 22, display: "flex", flexDirection: "column", gap: 24 }}>
+        {sections.map((sec) => {
+          const docs = DOCS.filter(
+            (d) => d.section === sec && d.courses.includes(course) && (d.onlyVN ? nationality === "vn" : true) && !(isChange && d.id === "tb")
+          );
+          if (!docs.length) return null;
+          return (
+            <div key={sec}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+                <span style={{ fontSize: 17 }}>{SECTION_EMOJI[sec]}</span>
+                <h3 style={{ fontSize: 16, fontWeight: 800, margin: 0 }}>{sec}</h3>
+                <span style={{ fontSize: 12, color: "var(--ink-xlight)" }}>{docs.length}건</span>
               </div>
-            );
-          })()}
-
-          {doc.ambiguities && doc.ambiguities.length > 0 && (
-            <div style={{ marginTop: 12, fontSize: 11.5, color: "#8a6d1a", background: "#fff7e0", border: "1px solid #f0dca0", borderRadius: 8, padding: "7px 10px" }}>
-              확인 필요: <EditableText path={`doc:${doc.id}:ambiguities`} value={doc.ambiguities.join(" / ")} multiline />
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {docs.map((d) => (
+                  <DocRow key={d.id} doc={d} docName={docName} />
+                ))}
+              </div>
             </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
-
-function Attr({ docId, k, field, v, multiline, highlight }: { docId: string; k: string; field: string; v: string; multiline?: boolean; highlight?: boolean }) {
-  return (
-    <>
-      <dt style={{ fontWeight: 700, color: "var(--ink-light)", whiteSpace: "nowrap" }}>{k}</dt>
-      <dd style={{ margin: 0, color: highlight ? "#b3261e" : "var(--ink-mid)" }}>
-        <EditableText path={`doc:${docId}:attr:${field}`} value={v} multiline={multiline} />
-      </dd>
-    </>
-  );
-}
-function holderString(holder: Holder): string {
-  const { text, suffix } = holderText(holder);
-  return `${text}${suffix}${holder.note ? ` — ${holder.note}` : ""}`;
-}
-function validityText(v: import("@/data/documents").Validity): string {
-  if (v.byStage && v.byStage.length) {
-    return v.byStage.map((s) => `${s.stage} ${s.days}일`).join(" / ") + (v.note ? ` · ${v.note}` : "");
-  }
-  if (v.days) return `${v.days}일${v.basis ? ` (${v.basis} 기준)` : ""}${v.note ? ` · ${v.note}` : ""}`;
-  return v.note ?? "-";
-}
-
-function SectionHead({ icon, title, sub }: { icon: React.ReactNode; title: string; sub: string }) {
-  return (
-    <div style={{ marginBottom: 12 }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <span style={{ color: "var(--coral-d)" }}>{icon}</span>
-        <h2 style={{ fontSize: 18, fontWeight: 800, margin: 0 }}>{title}</h2>
+          );
+        })}
       </div>
-      <p style={{ margin: "4px 0 0 26px", fontSize: 12.5, color: "var(--ink-light)" }}>{sub}</p>
     </div>
   );
 }
 
-/* ── 서류/조건 카드 (서류명 + 한 줄 핵심 → 펼치면 세부조건) ── */
-function DocCard({ def, list }: { def: { key: string; name: string; section: string; headline?: string }; list: Candidate[] }) {
-  const [open, setOpen] = useState(false);
-  const [raw, setRaw] = useState(false);
-  const isCond = def.section === "condition";
-  const hasBlocker = list.some((c) => c.rule.kind === "blocker");
-  const hasCondTag = list.some((c) => c.tags.length > 0);
-  const hasUnconfirmed = list.some((c) => c.rule.confidence !== "confirmed");
-  const accent = hasBlocker ? "#b3261e" : isCond ? "var(--ink-xlight)" : "var(--coral)";
-
+function VerdictBanner({ v }: { v: Verdict }) {
+  const color = v.burden === "full" ? "var(--coral-d)" : v.burden === "admission" ? "var(--blue)" : "var(--green)";
   return (
-    <div style={{ background: "#fff", border: `1px solid ${hasBlocker ? "#f3c6c1" : "var(--bdr)"}`, borderLeft: `4px solid ${accent}`, borderRadius: 12, overflow: "hidden", boxShadow: "var(--shadow-sm)" }}>
-      <button onClick={() => setOpen((o) => !o)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "13px 16px", border: "none", background: "none", cursor: "pointer", textAlign: "left" }}>
-        <span style={{ flex: 1, minWidth: 0 }}>
-          <span style={{ display: "flex", alignItems: "center", gap: 7, flexWrap: "wrap" }}>
-            <span style={{ fontSize: 15, fontWeight: 800 }}>
-              <EditableText path={`cond:${def.key}:name`} value={def.name} />
-            </span>
-            {hasCondTag && !isCond && <span style={badge("var(--blue)", "#eaf2fb")}>조건부</span>}
-            {hasUnconfirmed && <span style={badge("#b3261e", "#fdecea")}>미확정</span>}
-          </span>
-          <span style={{ display: "block", fontSize: 12.5, color: "var(--ink-light)", marginTop: 3 }}>
-            {def.headline ?? (open ? "" : `세부 조건 ${list.length}건`)}
-          </span>
-        </span>
-        <span style={{ display: "flex", alignItems: "center", gap: 4, flexShrink: 0, color: "var(--ink-light)", fontSize: 12, fontWeight: 700 }}>
-          {open ? "닫기" : "세부 조건"}
-          <ChevronDown size={17} style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .15s" }} />
-        </span>
-      </button>
+    <div style={{ background: "#fff", border: "1px solid var(--bdr)", borderRadius: 14, padding: "16px 18px", boxShadow: "var(--shadow-sm)" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+        <span style={{ fontSize: 14, fontWeight: 800, color: "#fff", background: color, padding: "5px 14px", borderRadius: 999 }}>서류 부담 · {v.burdenLabel}</span>
+        <span style={{ fontSize: 12.5, fontWeight: 700, color: "var(--ink-mid)", background: "var(--peach)", padding: "5px 12px", borderRadius: 999 }}>체류기간 {v.stayPeriod}</span>
+      </div>
+      <div style={{ fontSize: 13.5, color: "var(--ink-mid)", marginTop: 9 }}>{v.burdenDesc}</div>
+      <div style={{ fontSize: 13, color: "var(--ink-mid)", marginTop: 7 }}>
+        <b style={{ color: "var(--coral-d)" }}>신청 경로</b> — {v.routes.join(" / ")}
+      </div>
+    </div>
+  );
+}
 
-      {open && (
-        <div style={{ borderTop: "1px solid var(--bdr)", padding: "12px 16px" }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
-            {list.map((c) => {
-              const blk = c.rule.kind === "blocker";
-              return (
-                <div key={c.rule.id} style={{ display: "flex", gap: 7, alignItems: "baseline" }}>
-                  <span style={{ color: blk ? "#b3261e" : accent, flexShrink: 0, fontSize: 12 }}>•</span>
-                  <div style={{ flex: 1 }}>
-                    <span style={{ fontSize: 13, color: blk ? "#b3261e" : "var(--ink-mid)", fontWeight: blk ? 700 : 400 }}>
-                      <EditableText path={`rule:${c.rule.id}:terse`} value={ANN[c.rule.id]?.terse ?? c.rule.title} multiline shared={sharedCount(c.rule.id, true)} />
-                    </span>
-                    {c.tags.length > 0 && (
-                      <span style={{ display: "inline-flex", gap: 5, flexWrap: "wrap", marginLeft: 7, verticalAlign: "middle" }}>
-                        {c.tags.map((t, i) => (
-                          <Tag key={i} tag={t} />
-                        ))}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          <button onClick={() => setRaw((s) => !s)} style={{ marginTop: 10, border: "none", background: "none", padding: 0, cursor: "pointer", fontSize: 11.5, fontWeight: 700, color: "var(--ink-xlight)" }}>
-            {raw ? "규정 원문 닫기" : "규정 원문 보기"}
+function DocRow({ doc, docName }: { doc: ChecklistDoc; docName: (id: string) => string }) {
+  const [open, setOpen] = useState(false);
+  const linked = !!doc.holderSameAs;
+  const holderTxt = doc.holderSameAs ? `${docName(doc.holderSameAs)}와 같은 사람` : doc.holder;
+  return (
+    <div style={{ background: "#fff", border: `1px solid ${doc.ambiguous ? "#f3c6c1" : "var(--bdr)"}`, borderLeft: "4px solid var(--coral)", borderRadius: 12, padding: "13px 16px", boxShadow: "var(--shadow-sm)" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+        <span style={{ fontSize: 15, fontWeight: 800 }}>
+          <EditableText path={`doc:${doc.id}:name`} value={doc.name} />
+        </span>
+        {holderTxt && (
+          <span
+            style={{ fontSize: 11.5, fontWeight: 800, color: linked ? "#7c3aed" : "var(--navy)", background: linked ? "#f1ebfd" : "#eef2f8", border: `1px solid ${linked ? "#d6c6f5" : "#cdd9ea"}`, padding: "2px 9px", borderRadius: 999 }}
+            title={linked ? "같은 명의자 것을 제출해야 합니다" : undefined}
+          >
+            명의: <EditableText path={`doc:${doc.id}:holder`} value={holderTxt} />
+          </span>
+        )}
+      </div>
+      <div style={{ fontSize: 13, color: "var(--ink-mid)", marginTop: 5, lineHeight: 1.55 }}>
+        <EditableText path={`doc:${doc.id}:brief`} value={doc.brief} multiline />
+      </div>
+      {doc.cond && (
+        <div style={{ fontSize: 12.5, color: "var(--ink-light)", marginTop: 6, paddingLeft: 10, borderLeft: "2px solid var(--bdr-d)", lineHeight: 1.55 }}>
+          <EditableText path={`doc:${doc.id}:cond`} value={doc.cond} multiline />
+        </div>
+      )}
+      {(doc.detail || doc.ambiguous) && (
+        <div>
+          <button onClick={() => setOpen((o) => !o)} style={{ marginTop: 8, border: "none", background: "none", padding: 0, cursor: "pointer", fontSize: 11.5, fontWeight: 700, color: "var(--ink-xlight)" }}>
+            {open ? "접기 ▲" : "자세히 ▾"}
           </button>
-          {raw && (
-            <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 8 }}>
-              {list.map((c) => (
-                <div key={c.rule.id} style={{ fontSize: 12, color: "var(--ink-light)", lineHeight: 1.6 }}>
-                  <b style={{ color: "var(--ink-mid)" }}>{ANN[c.rule.id]?.title ?? c.rule.title}</b> — {c.rule.body}
+          {open && (
+            <div style={{ marginTop: 6, display: "flex", flexDirection: "column", gap: 6 }}>
+              {doc.detail && (
+                <div style={{ fontSize: 12, color: "var(--ink-light)", lineHeight: 1.6 }}>
+                  <EditableText path={`doc:${doc.id}:detail`} value={doc.detail} multiline />
                 </div>
-              ))}
+              )}
+              {doc.ambiguous && (
+                <div style={{ fontSize: 11.5, color: "#8a6d1a", background: "#fff7e0", border: "1px solid #f0dca0", borderRadius: 8, padding: "6px 9px", lineHeight: 1.55 }}>
+                  확인 필요: <EditableText path={`doc:${doc.id}:ambiguous`} value={doc.ambiguous} multiline />
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -809,18 +582,16 @@ function DocCard({ def, list }: { def: { key: string; name: string; section: str
   );
 }
 
-function Tag({ tag }: { tag: OptionTag }) {
-  const label = tag.values.map((v) => valueLabel(tag.axis, v)).join(" / ");
+function Callout({ tone, children }: { tone: "amber" | "blue"; children: React.ReactNode }) {
+  const map = { amber: { bg: "#fff9e6", bd: "#f5d98a", fg: "#8a6d1a" }, blue: { bg: "#eaf2fb", bd: "#cdd9ea", fg: "var(--navy)" } } as const;
+  const t = map[tone];
   return (
-    <span style={{ fontSize: 11, fontWeight: 600, color: tag.negate ? "var(--ink-light)" : "var(--navy)", background: tag.negate ? "#f2f2f4" : "#eef2f8", border: "1px solid var(--bdr)", padding: "1px 8px", borderRadius: 999, whiteSpace: "nowrap" }}>
-      {tag.negate ? "제외 " : ""}
-      {axisLabel(tag.axis)}: {label}
-    </span>
+    <div style={{ display: "flex", gap: 8, alignItems: "flex-start", background: t.bg, border: `1px solid ${t.bd}`, color: t.fg, borderRadius: 12, padding: "11px 14px", fontSize: 13, lineHeight: 1.6, marginTop: 12 }}>
+      <span style={{ flexShrink: 0 }}>⚠</span>
+      <span>{children}</span>
+    </div>
   );
 }
-
-/* ── 소품 ─────────────────────────────────────────────── */
-const badge = (fg: string, bg: string): React.CSSProperties => ({ fontSize: 11, fontWeight: 700, color: fg, background: bg, padding: "2px 8px", borderRadius: 999 });
 
 /* ── util ─────────────────────────────────────────────── */
 function useOutside(ref: React.RefObject<HTMLDivElement | null>, cb: () => void) {
