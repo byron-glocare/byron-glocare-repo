@@ -573,7 +573,7 @@ function Results({
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {docs.map((d) => (
-                  <DocRow key={d.id} doc={d} docName={docName} ctx={{ course, region: region as Region, tier: degreeTier as Tier }} />
+                  <DocRow key={d.id} doc={d} docName={docName} ctx={{ course, region: region as Region, tier: degreeTier as Tier, langTier: langTier as Tier }} />
                 ))}
               </div>
             </div>
@@ -645,7 +645,7 @@ function StepLine({ text }: { text: string }) {
  * 편집값(이름·설명·속성·숨김·추가태그·조건별 값)은 편집 페이지(/edit)에서 저장한 값을 반영한다.
  * ★ 태그 = 조건별 값(조회 조건마다 달라짐). ★ 없는 태그 = 공용 값(모든 조건 공통).
  */
-function DocRow({ doc, docName, ctx }: { doc: ChecklistDoc; docName: (id: string) => string; ctx: { course: Course; region: Region; tier: Tier } }) {
+function DocRow({ doc, docName, ctx }: { doc: ChecklistDoc; docName: (id: string) => string; ctx: { course: Course; region: Region; tier: Tier; langTier: Tier } }) {
   const [open, setOpen] = useState(false);
   const { get } = useEdit();
 
@@ -660,7 +660,7 @@ function DocRow({ doc, docName, ctx }: { doc: ChecklistDoc; docName: (id: string
   const visibleAttrs = attrs.filter((a) => !hidden.includes(a.key));
 
   // ★ 조건별 값(조회 조건에 맞춰 계산 + 편집값 반영)
-  const dynTags = doc.id === "balance" ? balanceTags(ctx.course, ctx.region, ctx.tier, get).map((t) => `★${t}`) : [];
+  const dynTags = doc.id === "balance" ? balanceTags(ctx.course, ctx.region, ctx.tier, ctx.langTier, get).map((t) => `★${t}`) : [];
   const collapsedTags = [...dynTags, ...visibleAttrs.filter((a) => !a.missing).map((a) => a.val), ...extra.filter((e) => e.value.trim()).map((e) => e.value)];
 
   return (

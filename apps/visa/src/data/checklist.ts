@@ -135,13 +135,20 @@ export const CONDITIONAL_SLOTS: Record<string, CondSlot[]> = {
 
 type Getter = (path: string, def: string) => string;
 
-/** 잔고증명서: 조회 조건에 맞는 예치금·예치기간 값 태그(조건별 편집값 반영). */
-export function balanceTags(course: Course, region: Region, tier: Tier, get?: Getter): string[] {
+/**
+ * 잔고증명서: 조회 조건에 맞는 예치금·예치기간 값 태그(조건별 편집값 반영).
+ * 예치 기간 등급:
+ *  - 학위(D-2): 본대학(학위과정) 등급 그대로.
+ *  - 어학당(D-4): 어학 인증이면 본대학 등급을 따라가고(우수인증→우수인증, 인증→인증),
+ *                 어학 일반이면 본대학 등급과 무관하게 일반.
+ */
+export function balanceTags(course: Course, region: Region, degreeTier: Tier, langTier: Tier, get?: Getter): string[] {
   const g = get ?? ((_p, d) => d);
   const slots = CONDITIONAL_SLOTS.balance;
   const val = (slot: string) => g(`dyn:balance:${slot}`, slots.find((s) => s.slot === slot)!.value);
   const amountSlot = `amount:${course}:${region}`;
-  const tierKey = tier === "excellent" || tier === "certified" || tier === "consulting" ? tier : "general";
+  const periodTier: Tier = course === "univ" ? degreeTier : langTier === "certified" ? degreeTier : "general";
+  const tierKey = periodTier === "excellent" || periodTier === "certified" || periodTier === "consulting" ? periodTier : "general";
   return [`예치금 ${val(amountSlot)} 이상`, `예치 ${val(`period:${tierKey}`)}`];
 }
 
