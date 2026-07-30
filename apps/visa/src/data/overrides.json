@@ -1,1 +1,16 @@
-{}
+{
+  "doc:passport:detailDesc": "여권 발급 절차를 잘 숙지하여 미리 준비해주세요.",
+  "doc:passport:brief": "본국 여권",
+  "doc:passport:obtainDays": "공안부 출입국관리소: 5일 / 지방 경찰 출입국관리소: 8일",
+  "doc:passport:issuer": "공안부/지방 경찰 출입국관리소",
+  "doc:visa-form:detailDesc": "흰 배경 증명사진 3.5×4.5cm 1장(6개월 이내 촬영)이 필요하며, 대사관 홈페이지에서 미리 다운로드 받을 수 있습니다.",
+  "doc:visa-form:brief": "비자 신청 시 제출하는 대사관 양식의 문서",
+  "doc:visa-form:issuer": "대사관",
+  "doc:id-card:brief": "본인 신분증",
+  "doc:id-card:name": "신분증",
+  "doc:id-card:detailDesc": "베트남 정부에서 발급하는 신분증입니다.",
+  "doc:id-card:_hidden": "[\"translation\"]",
+  "doc:id-card:form": "원본 및 사본",
+  "doc:id-card:obtainDays": "7일",
+  "doc:id-card:issuer": "공안부 사회질서행정관리경찰국"
+}
