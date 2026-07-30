@@ -125,9 +125,11 @@ export const CONDITIONAL_SLOTS: Record<string, CondSlot[]> = {
     { slot: "amount:univ:nonmetro", group: "예치금", label: "학위(D-2) · 비수도권", value: "1,600만원" },
     { slot: "amount:hagwon:metro", group: "예치금", label: "어학당(D-4) · 수도권", value: "1,000만원" },
     { slot: "amount:hagwon:nonmetro", group: "예치금", label: "어학당(D-4) · 비수도권", value: "800만원" },
-    { slot: "months:univ", group: "예치기간", label: "학위(D-2)", value: "3개월" },
-    { slot: "months:hagwon", group: "예치기간", label: "어학당(D-4)", value: "6개월" },
-    { slot: "months:consulting", group: "예치기간", label: "컨설팅대학(D-2·D-4 공통)", value: "6개월" },
+    // 예치 기간은 대학 인증 등급에 따라 달라진다.
+    { slot: "period:excellent", group: "예치기간", label: "우수인증대학", value: "면제(재정입증 면제)" },
+    { slot: "period:certified", group: "예치기간", label: "인증대학", value: "3개월 이상" },
+    { slot: "period:general", group: "예치기간", label: "일반(미인증)대학", value: "6개월 이상" },
+    { slot: "period:consulting", group: "예치기간", label: "컨설팅대학", value: "6개월 이상" },
   ],
 };
 
@@ -139,8 +141,8 @@ export function balanceTags(course: Course, region: Region, tier: Tier, get?: Ge
   const slots = CONDITIONAL_SLOTS.balance;
   const val = (slot: string) => g(`dyn:balance:${slot}`, slots.find((s) => s.slot === slot)!.value);
   const amountSlot = `amount:${course}:${region}`;
-  const monthsSlot = tier === "consulting" ? "months:consulting" : course === "hagwon" ? "months:hagwon" : "months:univ";
-  return [`예치금 ${val(amountSlot)} 이상`, `예치 ${val(monthsSlot)} 이상`];
+  const tierKey = tier === "excellent" || tier === "certified" || tier === "consulting" ? tier : "general";
+  return [`예치금 ${val(amountSlot)} 이상`, `예치 ${val(`period:${tierKey}`)}`];
 }
 
 /** 서류의 태그 속성 원본값 목록(공용). holderSameAs·원본지참 반영. get 적용 전 raw. */
