@@ -51,39 +51,49 @@ const BURDEN_META: Record<Burden, { label: string; desc: string }> = {
   blocked: { label: "발급 제한", desc: "이 조합은 신규 비자 발급이 제한됩니다." },
 };
 
-export function judge(course: Course, tier: Tier, region: Region, nationality: string, statusCode: string): Verdict {
+/**
+ * 판정. 매트릭스(학위과정 등급 × 어학연수 등급 × 과정)에 따름.
+ *  - 학위(D-2): 학위과정 등급만 사용.
+ *  - 어학당(D-4-1): 학위과정 등급 + 어학연수 등급 둘 다 사용.
+ */
+export function judge(course: Course, degreeTier: Tier, langTier: Tier, region: Region, nationality: string, statusCode: string): Verdict {
   void region;
   const isVN = nationality === "vn";
   const notes: string[] = [];
+  const stay = course === "hagwon" ? "최대 6개월 (국내 연장 가능)" : "1~2년";
+  const caveat = (burden: Burden): string | undefined =>
+    isVN && burden === "exempt" ? "베트남 남부(호치민 총영사관)는 우수 인증대학이어도 재정 심사를 합니다 → 재정서류를 준비하세요." : undefined;
 
-  if (tier === "restricted") {
-    if (course === "hagwon") return blocked("비자정밀 심사대학은 어학연수 비자 발급이 제한됩니다.");
-    if (["D-2-1", "D-2-2", "D-2-3"].includes(statusCode))
-      return blocked("비자정밀 심사대학은 학사·석사 신규 비자가 제한됩니다(박사·연구과정은 사증발급인정서 경로).");
+  const mk = (burden: Burden, routes: string[], financeCaveat?: string): Verdict => ({
+    burden,
+    burdenLabel: BURDEN_META[burden].label,
+    burdenDesc: BURDEN_META[burden].desc,
+    routes,
+    stayPeriod: stay,
+    financeCaveat,
+    notes,
+  });
+  const blocked = (reason: string): Verdict => ({ burden: "blocked", burdenLabel: BURDEN_META.blocked.label, burdenDesc: BURDEN_META.blocked.desc, routes: [], stayPeriod: stay, blockedReason: reason, notes: [] });
+
+  if (course === "hagwon") {
+    // 어학당 (D-4-1) — 어학연수 등급이 정밀심사면 발급 제한
+    if (langTier === "restricted") return blocked("어학연수 비자정밀 심사대학은 어학연수 비자 발급이 제한됩니다.");
+    if (langTier === "consulting" || degreeTier === "consulting") notes.push("컨설팅대학(비자심사 강화): 재정 예치기간 6개월·어학 성적 필수.");
+    const burden: Burden = degreeTier === "excellent" ? "exempt" : degreeTier === "certified" && langTier === "certified" ? "admission" : "full";
+    const routes = degreeTier === "excellent" ? ["재외공관 직접 신청", "사증발급인정서 (선택 가능)"] : ["재외공관 직접 신청"];
+    return mk(burden, routes, caveat(burden));
   }
 
-  const burden: Burden = tier === "excellent" ? "exempt" : tier === "certified" ? "admission" : "full";
-  if (tier === "consulting") notes.push("컨설팅대학(비자심사 강화): 재정 예치기간이 6개월로 늘고 어학 성적이 필수입니다.");
-
-  const routes: string[] = [];
-  if (course === "hagwon" && (tier === "general" || tier === "consulting" || tier === "restricted") && isVN) {
-    routes.push("사증발급인정서 (대학이 대리 신청) — 어학연수는 직접 신청 불가");
-  } else {
-    routes.push("재외공관 직접 신청");
-    if (tier === "excellent") routes.push("사증발급인정서 (선택 가능)");
+  // 학위 (D-2) — 학위과정 등급만
+  if (degreeTier === "restricted") {
+    if (["D-2-1", "D-2-2", "D-2-3"].includes(statusCode)) return blocked("비자정밀 심사대학은 학사·석사 신규 비자가 제한됩니다(박사·연구과정은 사증발급인정서 경로).");
+    return mk("full", ["사증발급인정서 (인정서 경로만)"]);
   }
-
-  let financeCaveat: string | undefined;
-  if (isVN && burden === "exempt") {
-    financeCaveat = "베트남 남부(호치민 총영사관)는 우수 인증대학이어도 재정 심사를 합니다 → 재정서류를 준비하세요.";
-  }
-
-  const stayPeriod = course === "hagwon" ? "최대 6개월 (국내 연장 가능)" : "1~2년";
-  return { burden, burdenLabel: BURDEN_META[burden].label, burdenDesc: BURDEN_META[burden].desc, routes, stayPeriod, financeCaveat, notes };
-
-  function blocked(reason: string): Verdict {
-    return { burden: "blocked", burdenLabel: BURDEN_META.blocked.label, burdenDesc: BURDEN_META.blocked.desc, routes: [], stayPeriod: "", blockedReason: reason, notes: [] };
-  }
+  if (degreeTier === "consulting") notes.push("컨설팅대학(비자심사 강화): 재정 예치기간 6개월·어학 성적 필수.");
+  const burden: Burden = degreeTier === "excellent" ? "exempt" : degreeTier === "certified" ? "admission" : "full";
+  const routes = ["재외공관 직접 신청"];
+  if (degreeTier === "excellent") routes.push("사증발급인정서 (선택 가능)");
+  return mk(burden, routes, caveat(burden));
 }
 
 export function sectionNeeded(section: Section, v: Verdict, course: Course, nationality: string): boolean {

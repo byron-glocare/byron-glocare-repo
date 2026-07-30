@@ -29,8 +29,9 @@ function statusOptionsFor(inst: InstKind) {
 
 interface UnivPick {
   name: string;
-  tier: UnivTier;
+  tier: UnivTier; // 학위과정 등급
   region: UnivRegion;
+  lang?: boolean; // 어학연수 인증 여부
 }
 
 const TIER_OPTS: { value: UnivTier; label: string }[] = [
@@ -39,6 +40,12 @@ const TIER_OPTS: { value: UnivTier; label: string }[] = [
   { value: "general", label: "미인증(일반) 대학" },
   { value: "consulting", label: "컨설팅대학 (비자심사 강화)" },
   { value: "restricted", label: "비자정밀 심사대학" },
+];
+// 어학당(D-4-1) 어학연수 등급
+const LANG_TIER_OPTS: { value: UnivTier; label: string }[] = [
+  { value: "certified", label: "어학연수 인증" },
+  { value: "general", label: "어학연수 일반(미인증)" },
+  { value: "restricted", label: "어학연수 정밀심사" },
 ];
 const REGION_OPTS: { value: UnivRegion; label: string }[] = [
   { value: "metro", label: "수도권 (서울·인천·경기)" },
@@ -51,6 +58,7 @@ export default function Page() {
   const [pickMode, setPickMode] = useState<PickMode>("name");
   const [univ, setUniv] = useState<UnivPick | null>(null);
   const [condTier, setCondTier] = useState<UnivTier>("certified");
+  const [condLangTier, setCondLangTier] = useState<UnivTier>("certified");
   const [condRegion, setCondRegion] = useState<UnivRegion>("metro");
   const [origin, setOrigin] = useState("vn_south");
   const [status, setStatus] = useState("D-2-2");
@@ -60,8 +68,13 @@ export default function Page() {
 
   // 조회 대상(대학/조건) 확정
   const place: UnivPick | null =
-    pickMode === "name" ? univ : { name: "", tier: condTier, region: condRegion };
+    pickMode === "name" ? univ : { name: "", tier: condTier, region: condRegion, lang: condLangTier === "certified" };
   const canSearch = pickMode === "cond" || !!univ;
+
+  // 판정 입력: 학위과정 등급 / 어학연수 등급 / 지역
+  const degreeTier: UnivTier = pickMode === "name" ? univ?.tier ?? "certified" : condTier;
+  const langTier: UnivTier = pickMode === "name" ? (univ?.lang ? "certified" : "general") : condLangTier;
+  const region2: UnivRegion = pickMode === "name" ? univ?.region ?? "metro" : condRegion;
 
   function changeInst(next: InstKind) {
     setInst(next);
@@ -96,7 +109,7 @@ export default function Page() {
       <div style={{ maxWidth: 980, margin: "0 auto", padding: "20px 20px 64px" }}>
         {!searched ? (
           <InputForm
-            {...{ inst, changeInst, isChange, setIsChange, pickMode, setPickMode, univ, setUniv, condTier, setCondTier, condRegion, setCondRegion, origin, setOrigin, status, setStatus }}
+            {...{ inst, changeInst, isChange, setIsChange, pickMode, setPickMode, univ, setUniv, condTier, setCondTier, condLangTier, setCondLangTier, condRegion, setCondRegion, origin, setOrigin, status, setStatus }}
             canSearch={canSearch}
             onSearch={() => setSearched(true)}
           />
@@ -107,8 +120,9 @@ export default function Page() {
             {place && (
               <Results
                 course={inst === "hagwon" ? "hagwon" : "univ"}
-                tier={place.tier}
-                region={place.region}
+                degreeTier={degreeTier}
+                langTier={langTier}
+                region={region2}
                 nationality={originOpt.ctx.nationality as string}
                 applicantRegion={(originOpt.ctx.applicantRegion ?? null) as string | null}
                 status={status}
@@ -135,6 +149,8 @@ function InputForm(p: {
   setUniv: (v: UnivPick | null) => void;
   condTier: UnivTier;
   setCondTier: (v: UnivTier) => void;
+  condLangTier: UnivTier;
+  setCondLangTier: (v: UnivTier) => void;
   condRegion: UnivRegion;
   setCondRegion: (v: UnivRegion) => void;
   origin: string;
@@ -185,6 +201,14 @@ function InputForm(p: {
           </div>
           {p.pickMode === "name" ? (
             <UnivPicker inst={p.inst} value={p.univ} onChange={p.setUniv} />
+          ) : p.inst === "hagwon" ? (
+            <div style={{ display: "grid", gap: 8 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                <LabeledDropdown label="학위과정 등급" value={p.condTier} onChange={(v) => p.setCondTier(v as UnivTier)} options={TIER_OPTS} />
+                <LabeledDropdown label="어학연수 등급" value={p.condLangTier} onChange={(v) => p.setCondLangTier(v as UnivTier)} options={LANG_TIER_OPTS} />
+              </div>
+              <Dropdown value={p.condRegion} onChange={(v) => p.setCondRegion(v as UnivRegion)} options={REGION_OPTS} />
+            </div>
           ) : (
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
               <Dropdown value={p.condTier} onChange={(v) => p.setCondTier(v as UnivTier)} options={TIER_OPTS} />
@@ -234,6 +258,14 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
     <label style={{ display: "block" }}>
       <span style={{ fontSize: 13, fontWeight: 700, color: "var(--ink-mid)", display: "block", marginBottom: 7 }}>{label}</span>
       {children}
+    </label>
+  );
+}
+function LabeledDropdown({ label, value, onChange, options }: { label: string; value: string; onChange: (v: string) => void; options: { value: string; label: string }[] }) {
+  return (
+    <label style={{ display: "block" }}>
+      <span style={{ fontSize: 11.5, fontWeight: 700, color: "var(--ink-light)", display: "block", marginBottom: 4 }}>{label}</span>
+      <Dropdown value={value} onChange={onChange} options={options} />
     </label>
   );
 }
@@ -338,7 +370,7 @@ function UnivPicker({ inst, value, onChange }: { inst: InstKind; value: UnivPick
   const ref = useRef<HTMLDivElement>(null);
   useOutside(ref, () => setOpen(false));
 
-  const pool = useMemo(() => (inst === "hagwon" ? UNIVERSITIES.filter((u) => u.lang) : UNIVERSITIES), [inst]);
+  const pool = UNIVERSITIES; // 어학당도 전체 대학(어학 인증/일반 모두)
   const matches = useMemo(() => {
     const query = q.trim();
     return query ? pool.filter((u) => u.name.includes(query)) : pool;
@@ -380,14 +412,19 @@ function UnivPicker({ inst, value, onChange }: { inst: InstKind; value: UnivPick
                 key={u.name}
                 type="button"
                 onClick={() => {
-                  onChange({ name: u.name, tier: u.tier, region: u.region });
+                  onChange({ name: u.name, tier: u.tier, region: u.region, lang: u.lang });
                   setOpen(false);
                   setQ("");
                 }}
                 style={dropdownItem}
               >
                 <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{u.name}</span>
-                <TierBadge tier={u.tier} region={u.region} />
+                <span style={{ display: "inline-flex", gap: 4, marginLeft: "auto", flexShrink: 0 }}>
+                  {inst === "hagwon" && (
+                    <span style={{ fontSize: 10.5, fontWeight: 700, color: "#fff", background: u.lang ? "var(--blue)" : "var(--ink-light)", padding: "1px 7px", borderRadius: 999 }}>{u.lang ? "어학인증" : "어학일반"}</span>
+                  )}
+                  <TierBadge tier={u.tier} region={u.region} />
+                </span>
               </button>
             ))}
             {matches.length === 0 && (
@@ -406,7 +443,7 @@ function TierBadge({ tier, region }: { tier: UnivTier; region: UnivRegion }) {
   const color =
     tier === "excellent" ? "var(--green)" : tier === "certified" ? "var(--blue)" : tier === "general" ? "var(--ink-light)" : "var(--coral-d)";
   return (
-    <span style={{ display: "inline-flex", gap: 4, flexShrink: 0, marginLeft: "auto" }}>
+    <span style={{ display: "inline-flex", gap: 4, flexShrink: 0 }}>
       <span style={{ fontSize: 10.5, fontWeight: 700, color: "#fff", background: color, padding: "1px 7px", borderRadius: 999 }}>{TIER_LABEL[tier]}</span>
       <span style={{ fontSize: 10.5, fontWeight: 700, color: "var(--ink-mid)", background: "var(--peach)", padding: "1px 7px", borderRadius: 999 }}>{REGION_LABEL[region]}</span>
     </span>
@@ -422,7 +459,11 @@ function SummaryBar({ inst, isChange, origin, status, place, onEdit }: { inst: I
       <div style={{ display: "flex", gap: 6, flexWrap: "wrap", flex: 1, minWidth: 0 }}>
         <SumChip>{instLabel}</SumChip>
         <SumChip>{origin}</SumChip>
-        <SumChip>{place.name ? `${place.name} · ` : ""}{TIER_LABEL[place.tier]} · {REGION_LABEL[place.region]}</SumChip>
+        <SumChip>
+          {place.name ? `${place.name} · ` : ""}
+          {inst === "hagwon" ? `학위 ${TIER_LABEL[place.tier]} · 어학 ${place.lang ? "인증" : "일반"}` : TIER_LABEL[place.tier]}
+          {` · ${REGION_LABEL[place.region]}`}
+        </SumChip>
         <SumChip strong>{statusLabel}</SumChip>
       </div>
       <button onClick={onEdit} style={{ display: "flex", alignItems: "center", gap: 5, border: "1.5px solid var(--coral)", background: "#fff", color: "var(--coral-d)", padding: "7px 14px", borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: "pointer", flexShrink: 0 }}>
@@ -450,7 +491,8 @@ const SECTION_EMOJI: Record<Section, string> = {
 
 function Results({
   course,
-  tier,
+  degreeTier,
+  langTier,
   region,
   nationality,
   applicantRegion,
@@ -458,14 +500,15 @@ function Results({
   isChange,
 }: {
   course: Course;
-  tier: UnivTier;
+  degreeTier: UnivTier;
+  langTier: UnivTier;
   region: UnivRegion;
   nationality: string;
   applicantRegion: string | null;
   status: string;
   isChange: boolean;
 }) {
-  const v = useMemo(() => judge(course, tier, region, nationality, status), [course, tier, region, nationality, status]);
+  const v = useMemo(() => judge(course, degreeTier as Tier, langTier as Tier, region as Region, nationality, status), [course, degreeTier, langTier, region, nationality, status]);
   const docName = (id: string) => DOCS.find((d) => d.id === id)?.name ?? id;
 
   if (v.burden === "blocked") {
@@ -511,7 +554,7 @@ function Results({
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {docs.map((d) => (
-                  <DocRow key={d.id} doc={d} docName={docName} ctx={{ course, region: region as Region, tier: tier as Tier }} />
+                  <DocRow key={d.id} doc={d} docName={docName} ctx={{ course, region: region as Region, tier: degreeTier as Tier }} />
                 ))}
               </div>
             </div>
