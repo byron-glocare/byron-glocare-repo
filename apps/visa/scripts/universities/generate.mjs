@@ -73,8 +73,37 @@ for (const name of new Set([...metroNames, ...nonmetroNames])) {
   unis.push({ name, region: nonmetroNames.has(name) ? "nonmetro" : "metro", tier: "general", lang: false });
 }
 
+// ── 3. 비자정밀 심사대학(restricted) — 사용자 제공 명단 오버라이드 ──
+const RESTRICTED_DEGREE = new Set([
+  "금강대학교", "수원가톨릭대학교", "중앙승가대학교", "협성대학교", "부산경상대학교", "부산예술대학교", "한영대학교",
+  "구세군사관대학원대학교", "국제법률경영대학원대학교", "능인대학원대학교", "성서침례대학원대학교", "순복음대학원대학교",
+  "에스라성경대학원대학교", "치유상담대학원대학교", "한국상담대학원대학교", "합동신학대학원대학교",
+].map(base));
+const RESTRICTED_LANG = new Set(["대구한의대학교", "상지대학교", "호원대학교", "목포과학대학교"].map(base));
+// 목록에 없어 새로 추가(정밀심사) — region 은 판정에 영향 없음(정밀=차단), 대략치.
+const ADD_RESTRICTED = [
+  { name: "중앙승가대학교", region: "metro" },
+  { name: "한영대학교", region: "nonmetro" },
+  { name: "구세군사관대학원대학교", region: "metro" },
+  { name: "국제법률경영대학원대학교", region: "metro" },
+  { name: "능인대학원대학교", region: "metro" },
+  { name: "성서침례대학원대학교", region: "nonmetro" },
+  { name: "순복음대학원대학교", region: "metro" },
+  { name: "에스라성경대학원대학교", region: "metro" },
+  { name: "치유상담대학원대학교", region: "metro" },
+  { name: "한국상담대학원대학교", region: "metro" },
+  { name: "합동신학대학원대학교", region: "metro" },
+];
+for (const u of unis) {
+  if (RESTRICTED_DEGREE.has(base(u.name))) u.tier = "restricted";
+  if (RESTRICTED_LANG.has(base(u.name))) u.langRestricted = true;
+}
+for (const a of ADD_RESTRICTED) {
+  if (!unis.some((u) => base(u.name) === base(a.name))) unis.push({ name: a.name, region: a.region, tier: "restricted", lang: false });
+}
+
 unis.sort((a, b) => a.name.localeCompare(b.name, "ko"));
-const body = unis.map((u) => `  { name: ${JSON.stringify(u.name)}, region: ${JSON.stringify(u.region)}, tier: ${JSON.stringify(u.tier)}${u.lang ? ", lang: true" : ""} },`).join("\n");
+const body = unis.map((u) => `  { name: ${JSON.stringify(u.name)}, region: ${JSON.stringify(u.region)}, tier: ${JSON.stringify(u.tier)}${u.lang ? ", lang: true" : ""}${u.langRestricted ? ", langRestricted: true" : ""} },`).join("\n");
 
 fs.writeFileSync(
   OUT,
@@ -95,8 +124,9 @@ fs.writeFileSync(
 export interface University {
   name: string;
   region: UnivRegion;
-  tier: UnivTier;
-  lang?: boolean;
+  tier: UnivTier; // 학위과정 등급 (restricted=학위 정밀심사)
+  lang?: boolean; // 어학연수 인증 여부
+  langRestricted?: boolean; // 어학연수 정밀심사
 }
 
 export const UNIVERSITIES: University[] = [

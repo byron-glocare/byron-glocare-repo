@@ -4,7 +4,8 @@ import { useMemo, useState, useRef, useEffect, Fragment } from "react";
 import { Search, ChevronDown, ShieldAlert, Pencil, Building2, Check, X } from "lucide-react";
 import { D, ORIGIN_OPTIONS, EMPHASIZED_STATUS, type UnivRegion, type UnivTier } from "@/data/engine";
 import { UNIVERSITIES } from "@/data/universities";
-import { judge, sectionNeeded, DOCS, SECTIONS, ATTR_LABELS, balanceTags, UNVERIFIED, type Verdict, type Course, type Section, type ChecklistDoc, type Tier, type Region } from "@/data/checklist";
+import { judge, sectionNeeded, DOCS, SECTIONS, ATTR_LABELS, balanceTags, UNVERIFIED, type Course, type Section, type ChecklistDoc, type Tier, type Region } from "@/data/checklist";
+import { flowOf, PROCESS_STEPS, TRACK_META, type FlowResult } from "@/data/process";
 import { EditProvider, EditToolbar, EditableText, useEdit } from "@/lib/edits";
 
 /* ── 라벨 ─────────────────────────────────────────────── */
@@ -32,6 +33,7 @@ interface UnivPick {
   tier: UnivTier; // 학위과정 등급
   region: UnivRegion;
   lang?: boolean; // 어학연수 인증 여부
+  langRestricted?: boolean; // 어학연수 정밀심사
 }
 
 const TIER_OPTS: { value: UnivTier; label: string }[] = [
@@ -68,12 +70,12 @@ export default function Page() {
 
   // 조회 대상(대학/조건) 확정
   const place: UnivPick | null =
-    pickMode === "name" ? univ : { name: "", tier: condTier, region: condRegion, lang: condLangTier === "certified" };
+    pickMode === "name" ? univ : { name: "", tier: condTier, region: condRegion, lang: condLangTier === "certified", langRestricted: condLangTier === "restricted" };
   const canSearch = pickMode === "cond" || !!univ;
 
   // 판정 입력: 학위과정 등급 / 어학연수 등급 / 지역
   const degreeTier: UnivTier = pickMode === "name" ? univ?.tier ?? "certified" : condTier;
-  const langTier: UnivTier = pickMode === "name" ? (univ?.lang ? "certified" : "general") : condLangTier;
+  const langTier: UnivTier = pickMode === "name" ? (univ?.langRestricted ? "restricted" : univ?.lang ? "certified" : "general") : condLangTier;
   const region2: UnivRegion = pickMode === "name" ? univ?.region ?? "metro" : condRegion;
 
   function changeInst(next: InstKind) {
@@ -412,7 +414,7 @@ function UnivPicker({ inst, value, onChange }: { inst: InstKind; value: UnivPick
                 key={u.name}
                 type="button"
                 onClick={() => {
-                  onChange({ name: u.name, tier: u.tier, region: u.region, lang: u.lang });
+                  onChange({ name: u.name, tier: u.tier, region: u.region, lang: u.lang, langRestricted: u.langRestricted });
                   setOpen(false);
                   setQ("");
                 }}
@@ -421,7 +423,7 @@ function UnivPicker({ inst, value, onChange }: { inst: InstKind; value: UnivPick
                 <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{u.name}</span>
                 <span style={{ display: "inline-flex", gap: 4, marginLeft: "auto", flexShrink: 0 }}>
                   {inst === "hagwon" && (
-                    <span style={{ fontSize: 10.5, fontWeight: 700, color: "#fff", background: u.lang ? "var(--blue)" : "var(--ink-light)", padding: "1px 7px", borderRadius: 999 }}>{u.lang ? "어학인증" : "어학일반"}</span>
+                    <span style={{ fontSize: 10.5, fontWeight: 700, color: "#fff", background: u.langRestricted ? "#b3261e" : u.lang ? "var(--blue)" : "var(--ink-light)", padding: "1px 7px", borderRadius: 999 }}>{u.langRestricted ? "어학정밀" : u.lang ? "어학인증" : "어학일반"}</span>
                   )}
                   <TierBadge tier={u.tier} region={u.region} />
                 </span>
@@ -461,7 +463,7 @@ function SummaryBar({ inst, isChange, origin, status, place, onEdit }: { inst: I
         <SumChip>{origin}</SumChip>
         <SumChip>
           {place.name ? `${place.name} · ` : ""}
-          {inst === "hagwon" ? `학위 ${TIER_LABEL[place.tier]} · 어학 ${place.lang ? "인증" : "일반"}` : TIER_LABEL[place.tier]}
+          {inst === "hagwon" ? `학위 ${TIER_LABEL[place.tier]} · 어학 ${place.langRestricted ? "정밀" : place.lang ? "인증" : "일반"}` : TIER_LABEL[place.tier]}
           {` · ${REGION_LABEL[place.region]}`}
         </SumChip>
         <SumChip strong>{statusLabel}</SumChip>
@@ -509,15 +511,27 @@ function Results({
   isChange: boolean;
 }) {
   const v = useMemo(() => judge(course, degreeTier as Tier, langTier as Tier, region as Region, nationality, status), [course, degreeTier, langTier, region, nationality, status]);
+  const flow = useMemo(() => flowOf(course, degreeTier as Tier, langTier as Tier), [course, degreeTier, langTier]);
   const docName = (id: string) => DOCS.find((d) => d.id === id)?.name ?? id;
 
-  if (v.burden === "blocked") {
+  if (flow.impossible) {
+    return (
+      <div style={{ background: "#fff", border: "1px solid var(--bdr)", borderRadius: 14, padding: "16px 18px", fontSize: 13.5, color: "var(--ink-mid)", lineHeight: 1.6 }}>
+        제도상 발생하지 않는 조합입니다(어학연수 인증은 학위과정 인증이 전제). 등급을 다시 확인해 주세요.
+      </div>
+    );
+  }
+  if (flow.track === "blocked") {
+    const doctoral = course === "univ" && ["D-2-4", "D-2-5"].includes(status);
     return (
       <div style={{ display: "flex", gap: 12, alignItems: "flex-start", background: "#fdecea", border: "1px solid #f3c6c1", color: "#b3261e", borderRadius: 14, padding: "16px 18px" }}>
         <ShieldAlert size={22} style={{ flexShrink: 0, marginTop: 2 }} />
         <div>
-          <div style={{ fontSize: 16, fontWeight: 800 }}>발급 제한</div>
-          <div style={{ fontSize: 13.5, marginTop: 4, lineHeight: 1.6 }}>{v.blockedReason}</div>
+          <div style={{ fontSize: 16, fontWeight: 800 }}>발급 제한 (흐름 {flow.key})</div>
+          <div style={{ fontSize: 13.5, marginTop: 4, lineHeight: 1.6 }}>
+            {course === "hagwon" ? "어학연수 정밀심사 대학은 어학연수 비자 발급이 제한됩니다." : "학위 정밀심사 대학은 학사·석사 신규 비자가 제한됩니다."}
+            {doctoral && " 다만 박사·연구과정은 사증발급인정서 경로로 신청할 수 있습니다(이 문서 범위 밖 — 관할 공관 확인)."}
+          </div>
         </div>
       </div>
     );
@@ -527,7 +541,7 @@ function Results({
 
   return (
     <div>
-      <VerdictBanner v={v} />
+      <ProcessStepper flow={flow} />
       {isChange && <Callout tone="blue">국내 변경(D-4→D-2)은 관할 출입국·외국인청에 접수합니다(하이코리아). 결핵진단서·영사확인·번역공증은 면제됩니다.</Callout>}
       {v.financeCaveat && <Callout tone="amber">{v.financeCaveat}</Callout>}
       {v.notes.map((n, i) => (
@@ -565,20 +579,58 @@ function Results({
   );
 }
 
-function VerdictBanner({ v }: { v: Verdict }) {
-  const color = v.burden === "full" ? "var(--coral-d)" : v.burden === "admission" ? "var(--blue)" : "var(--green)";
+function ProcessStepper({ flow }: { flow: FlowResult }) {
+  const meta = TRACK_META[flow.track];
   return (
     <div style={{ background: "#fff", border: "1px solid var(--bdr)", borderRadius: 14, padding: "16px 18px", boxShadow: "var(--shadow-sm)" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-        <span style={{ fontSize: 14, fontWeight: 800, color: "#fff", background: color, padding: "5px 14px", borderRadius: 999 }}>서류 부담 · {v.burdenLabel}</span>
-        <span style={{ fontSize: 12.5, fontWeight: 700, color: "var(--ink-mid)", background: "var(--peach)", padding: "5px 12px", borderRadius: 999 }}>체류기간 {v.stayPeriod}</span>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
+        <span style={{ fontSize: 15, fontWeight: 800 }}>지원 프로세스</span>
+        <span style={{ fontSize: 12.5, fontWeight: 800, color: "#fff", background: meta.color, padding: "4px 12px", borderRadius: 999 }}>{meta.label}</span>
+        <span style={{ fontSize: 11.5, color: "var(--ink-xlight)" }}>흐름 {flow.key}</span>
       </div>
-      <div style={{ fontSize: 13.5, color: "var(--ink-mid)", marginTop: 9 }}>{v.burdenDesc}</div>
-      <div style={{ fontSize: 13, color: "var(--ink-mid)", marginTop: 7 }}>
-        <b style={{ color: "var(--coral-d)" }}>신청 경로</b> — {v.routes.join(" / ")}
+      <div>
+        {PROCESS_STEPS.map((title, i) => {
+          const cell = flow.steps[i];
+          const empty = !cell;
+          const last = i === PROCESS_STEPS.length - 1;
+          return (
+            <div key={i} style={{ display: "flex", gap: 11 }}>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                <span style={{ width: 22, height: 22, borderRadius: 999, background: empty ? "var(--bdr-d)" : meta.color, color: "#fff", fontSize: 11, fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>{i + 1}</span>
+                {!last && <span style={{ flex: 1, width: 2, background: "var(--bdr)", marginTop: 2, minHeight: 10 }} />}
+              </div>
+              <div style={{ flex: 1, paddingBottom: last ? 0 : 14 }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: empty ? "var(--ink-xlight)" : "var(--ink)" }}>{title}</div>
+                {empty ? (
+                  <div style={{ fontSize: 12, color: "var(--ink-xlight)", marginTop: 2 }}>{i === 0 ? "사전 준비 없음" : "해당 없음"}</div>
+                ) : (
+                  <div style={{ marginTop: 3, display: "flex", flexDirection: "column", gap: 3 }}>
+                    {cell.split(" / ").map((line, j) => (
+                      <StepLine key={j} text={line} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
+}
+
+const ACTOR_COLOR: Record<string, string> = { 학생: "var(--coral-d)", 대학: "var(--blue)", 출입국: "var(--navy)", 대사관: "var(--green)" };
+function StepLine({ text }: { text: string }) {
+  const m = text.match(/^【([^】]+)】\s*(.*)$/);
+  if (m) {
+    return (
+      <div style={{ fontSize: 12.5, color: "var(--ink-mid)", lineHeight: 1.5 }}>
+        <span style={{ fontSize: 10.5, fontWeight: 800, color: "#fff", background: ACTOR_COLOR[m[1]] ?? "var(--ink-light)", padding: "1px 6px", borderRadius: 6, marginRight: 5 }}>{m[1]}</span>
+        {m[2]}
+      </div>
+    );
+  }
+  return <div style={{ fontSize: 12.5, color: "var(--ink-mid)", lineHeight: 1.5 }}>{text}</div>;
 }
 
 function DocRow({ doc, docName, ctx }: { doc: ChecklistDoc; docName: (id: string) => string; ctx: { course: Course; region: Region; tier: Tier } }) {
