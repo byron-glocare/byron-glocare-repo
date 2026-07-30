@@ -581,30 +581,32 @@ function Results({
 
 function ProcessStepper({ flow }: { flow: FlowResult }) {
   const meta = TRACK_META[flow.track];
+  const last = PROCESS_STEPS.length - 1;
   return (
     <div style={{ background: "#fff", border: "1px solid var(--bdr)", borderRadius: 14, padding: "16px 18px", boxShadow: "var(--shadow-sm)" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 14 }}>
         <span style={{ fontSize: 15, fontWeight: 800 }}>지원 프로세스</span>
         <span style={{ fontSize: 12.5, fontWeight: 800, color: "#fff", background: meta.color, padding: "4px 12px", borderRadius: 999 }}>{meta.label}</span>
         <span style={{ fontSize: 11.5, color: "var(--ink-xlight)" }}>흐름 {flow.key}</span>
       </div>
-      <div>
+      <div style={{ display: "flex", overflowX: "auto", paddingBottom: 4 }}>
         {PROCESS_STEPS.map((title, i) => {
           const cell = flow.steps[i];
           const empty = !cell;
-          const last = i === PROCESS_STEPS.length - 1;
           return (
-            <div key={i} style={{ display: "flex", gap: 11 }}>
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                <span style={{ width: 22, height: 22, borderRadius: 999, background: empty ? "var(--bdr-d)" : meta.color, color: "#fff", fontSize: 11, fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>{i + 1}</span>
-                {!last && <span style={{ flex: 1, width: 2, background: "var(--bdr)", marginTop: 2, minHeight: 10 }} />}
+            <div key={i} style={{ flex: "1 0 150px", minWidth: 150, display: "flex", flexDirection: "column" }}>
+              {/* 번호 + 가로 연결선 */}
+              <div style={{ display: "flex", alignItems: "center", height: 24 }}>
+                <span style={{ flex: 1, height: 2, background: i === 0 ? "transparent" : "var(--bdr-d)" }} />
+                <span style={{ width: 24, height: 24, borderRadius: 999, background: empty ? "var(--bdr-d)" : meta.color, color: "#fff", fontSize: 11.5, fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>{i + 1}</span>
+                <span style={{ flex: 1, height: 2, background: i === last ? "transparent" : "var(--bdr-d)" }} />
               </div>
-              <div style={{ flex: 1, paddingBottom: last ? 0 : 14 }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: empty ? "var(--ink-xlight)" : "var(--ink)" }}>{title}</div>
+              <div style={{ padding: "8px 8px 0", textAlign: "center" }}>
+                <div style={{ fontSize: 12.5, fontWeight: 800, color: empty ? "var(--ink-xlight)" : "var(--ink)" }}>{title}</div>
                 {empty ? (
-                  <div style={{ fontSize: 12, color: "var(--ink-xlight)", marginTop: 2 }}>{i === 0 ? "사전 준비 없음" : "해당 없음"}</div>
+                  <div style={{ fontSize: 11.5, color: "var(--ink-xlight)", marginTop: 4 }}>{i === 0 ? "사전 준비 없음" : "해당 없음"}</div>
                 ) : (
-                  <div style={{ marginTop: 3, display: "flex", flexDirection: "column", gap: 3 }}>
+                  <div style={{ marginTop: 6, display: "flex", flexDirection: "column", gap: 5, textAlign: "left" }}>
                     {cell.split(" / ").map((line, j) => (
                       <StepLine key={j} text={line} />
                     ))}
@@ -635,7 +637,7 @@ function StepLine({ text }: { text: string }) {
 
 function DocRow({ doc, docName, ctx }: { doc: ChecklistDoc; docName: (id: string) => string; ctx: { course: Course; region: Region; tier: Tier } }) {
   const [open, setOpen] = useState(false);
-  const { get } = useEdit();
+  const { get, set, editMode } = useEdit();
 
   const holderVal = doc.holderSameAs ? `${docName(doc.holderSameAs)}와 같은 사람` : doc.holder;
 
@@ -648,8 +650,16 @@ function DocRow({ doc, docName, ctx }: { doc: ChecklistDoc; docName: (id: string
     return { key: String(key), label, path, raw, val, missing: val === UNVERIFIED };
   }).filter(Boolean) as { key: string; label: string; path: string; raw: string; val: string; missing: boolean }[];
 
+  // 편집: 태그 삭제(숨김)/추가(사용자 정의)
+  const hidden: string[] = JSON.parse(get(`doc:${doc.id}:_hidden`, "[]"));
+  const extra: { label: string; value: string }[] = JSON.parse(get(`doc:${doc.id}:_extra`, "[]"));
+  const setHidden = (a: string[]) => set(`doc:${doc.id}:_hidden`, JSON.stringify(a));
+  const setExtra = (a: { label: string; value: string }[]) => set(`doc:${doc.id}:_extra`, JSON.stringify(a));
+  const visibleAttrs = attrs.filter((a) => !hidden.includes(a.key));
+
   const dynTags = doc.id === "balance" ? balanceTags(ctx.course, ctx.region, ctx.tier) : [];
-  const collapsedTags = [...dynTags, ...attrs.filter((a) => !a.missing).map((a) => a.val)];
+  const collapsedTags = [...dynTags, ...visibleAttrs.filter((a) => !a.missing).map((a) => a.val), ...extra.filter((e) => e.value.trim()).map((e) => e.value)];
+  const stop = (e: React.SyntheticEvent) => { e.stopPropagation(); };
 
   return (
     <div
@@ -663,19 +673,51 @@ function DocRow({ doc, docName, ctx }: { doc: ChecklistDoc; docName: (id: string
         <span style={{ fontSize: 11.5, fontWeight: 700, color: "var(--ink-xlight)", flexShrink: 0 }}>{open ? "접기 ▲" : "자세히 ▾"}</span>
       </div>
 
-      <div style={{ display: "flex", gap: 5, flexWrap: "wrap", marginTop: 8 }}>
-        {open
-          ? attrs.map((a) => (
+      <div style={{ display: "flex", gap: 5, flexWrap: "wrap", marginTop: 8, alignItems: "center" }}>
+        {!open ? (
+          collapsedTags.map((t, i) => (
+            <span key={i} style={{ ...tagStyle, color: "var(--ink-mid)", background: "var(--peach)", borderColor: "var(--bdr)" }}>
+              {t}
+            </span>
+          ))
+        ) : (
+          <>
+            {visibleAttrs.map((a) => (
               <span key={a.key} style={{ ...tagStyle, color: a.missing ? "#b3261e" : "var(--ink-mid)", background: a.missing ? "#fdecea" : "var(--peach)", borderColor: a.missing ? "#f3c6c1" : "var(--bdr)" }}>
                 <b style={{ color: "var(--ink-light)", fontWeight: 700, marginRight: 4 }}>{a.label}</b>
                 <EditableText path={a.path} value={a.raw} />
-              </span>
-            ))
-          : collapsedTags.map((t, i) => (
-              <span key={i} style={{ ...tagStyle, color: "var(--ink-mid)", background: "var(--peach)", borderColor: "var(--bdr)" }}>
-                {t}
+                {editMode && <TagDelBtn onClick={(e) => { stop(e); setHidden([...hidden, a.key]); }} />}
               </span>
             ))}
+            {extra.map((ex, i) =>
+              editMode ? (
+                <span key={`x${i}`} onClick={stop} onMouseDown={stop} style={{ ...tagStyle, background: "#fffdf5", borderColor: "var(--coral-l)", gap: 4 }}>
+                  <input value={ex.label} onChange={(e) => setExtra(extra.map((v, j) => (j === i ? { ...v, label: e.target.value } : v)))} placeholder="항목" style={miniInput(46)} />
+                  <input value={ex.value} onChange={(e) => setExtra(extra.map((v, j) => (j === i ? { ...v, value: e.target.value } : v)))} placeholder="값" style={miniInput(70)} />
+                  <TagDelBtn onClick={(e) => { stop(e); setExtra(extra.filter((_, j) => j !== i)); }} />
+                </span>
+              ) : ex.value.trim() ? (
+                <span key={`x${i}`} style={{ ...tagStyle, color: "var(--ink-mid)", background: "var(--peach)", borderColor: "var(--bdr)" }}>
+                  {ex.label.trim() && <b style={{ color: "var(--ink-light)", fontWeight: 700, marginRight: 4 }}>{ex.label}</b>}
+                  {ex.value}
+                </span>
+              ) : null
+            )}
+            {editMode &&
+              attrs.filter((a) => hidden.includes(a.key)).map((a) => (
+                <button key={`r${a.key}`} onClick={(e) => { stop(e); setHidden(hidden.filter((k) => k !== a.key)); }}
+                  style={{ ...tagStyle, cursor: "pointer", color: "var(--ink-light)", background: "#f4f4f4", borderColor: "var(--bdr)", textDecoration: "line-through" }}>
+                  {a.label} ↩︎ 복구
+                </button>
+              ))}
+            {editMode && (
+              <button onClick={(e) => { stop(e); setExtra([...extra, { label: "", value: "새 태그" }]); }}
+                style={{ ...tagStyle, cursor: "pointer", color: "var(--coral-d)", background: "#fff", borderColor: "var(--coral-l)", fontWeight: 800 }}>
+                + 태그 추가
+              </button>
+            )}
+          </>
+        )}
       </div>
 
       <div style={{ fontSize: 13, color: "var(--ink-mid)", marginTop: 8, lineHeight: 1.6 }}>
@@ -700,6 +742,15 @@ function DocRow({ doc, docName, ctx }: { doc: ChecklistDoc; docName: (id: string
   );
 }
 const tagStyle: React.CSSProperties = { display: "inline-flex", alignItems: "baseline", fontSize: 12, fontWeight: 600, border: "1px solid var(--bdr)", borderRadius: 999, padding: "2px 10px", whiteSpace: "normal", maxWidth: "100%" };
+
+function TagDelBtn({ onClick }: { onClick: (e: React.MouseEvent) => void }) {
+  return (
+    <span onClick={onClick} onMouseDown={(e) => e.stopPropagation()} title="이 태그 삭제" style={{ marginLeft: 5, color: "#b3261e", cursor: "pointer", fontWeight: 800, fontSize: 12, lineHeight: 1 }}>
+      ✕
+    </span>
+  );
+}
+const miniInput = (w: number): React.CSSProperties => ({ font: "inherit", fontSize: 12, width: w, minWidth: w, border: "1px solid var(--coral-l)", borderRadius: 5, padding: "1px 5px", outline: "none", background: "#fff" });
 
 function Callout({ tone, children }: { tone: "amber" | "blue"; children: React.ReactNode }) {
   const map = { amber: { bg: "#fff9e6", bd: "#f5d98a", fg: "#8a6d1a" }, blue: { bg: "#eaf2fb", bd: "#cdd9ea", fg: "var(--navy)" } } as const;

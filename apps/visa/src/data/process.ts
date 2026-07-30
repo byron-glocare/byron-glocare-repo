@@ -13,7 +13,7 @@ export type Track = "simplified" | "partial" | "full" | "blocked";
 export const PROCESS_STEPS = [
   "사전 준비",
   "원서 접수",
-  "면접·합격",
+  "평가·합격",
   "등록금 납부",
   "표준입학허가서",
   "사증발급인정서",
@@ -26,7 +26,7 @@ const TRACK_STEPS: Record<Track, string[]> = {
   simplified: [
     "",
     "입학 서류 PDF 제출",
-    "면접 생략 가능",
+    "서류 및 면접 평가",
     "【대학】 Invoice 발행 / 【학생】 등록금 납부",
     "【대학】 표준입학허가서 발급 (이 흐름에선 비자에 사용 안 함)",
     "【학생】 원본 서류 발송 / 【대학】 사증발급인정서 신청 / 【출입국】 사증발급인정서 발급",
@@ -36,7 +36,7 @@ const TRACK_STEPS: Record<Track, string[]> = {
   partial: [
     "",
     "입학 서류 PDF 제출",
-    "면접 생략 가능",
+    "서류 및 면접 평가",
     "【대학】 Invoice 발행 / 【학생】 등록금 납부",
     "【대학】 표준입학허가서 발급",
     "",
@@ -46,7 +46,7 @@ const TRACK_STEPS: Record<Track, string[]> = {
   full: [
     "예치금 준비 (원서 접수 전 · 최소 1개월 리드타임)",
     "입학 서류 PDF 제출",
-    "면접 생략 가능",
+    "서류 및 면접 평가",
     "【대학】 Invoice 발행 / 【학생】 등록금 납부",
     "【대학】 표준입학허가서 발급",
     "",
