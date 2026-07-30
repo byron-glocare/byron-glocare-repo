@@ -10,8 +10,15 @@
  * - 여러 위치에서 참조되는 값(조항 terse 등)은 shared 카운트로 "공유 N곳" 표시.
  */
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
+import overridesRaw from "@/data/overrides.json";
 
 type EditMap = Record<string, string>;
+
+/**
+ * 소스에 커밋된 편집값(개발 중 /api/overrides 로 저장). 배포에 실려 모든 방문자에게 반영.
+ * 우선순위: 브라우저 localStorage(미저장 임시) > overrides.json(커밋됨) > 원본 데이터.
+ */
+const OVERRIDES = overridesRaw as EditMap;
 
 interface EditCtx {
   editMode: boolean;
@@ -22,6 +29,8 @@ interface EditCtx {
   edits: EditMap;
   reset: () => void;
   load: (m: EditMap) => void;
+  /** localStorage + overrides 를 합쳐 소스 파일(overrides.json)에 기록(개발 서버 전용). 저장 건수 반환. */
+  saveToSource: () => Promise<number>;
 }
 
 const Ctx = createContext<EditCtx | null>(null);
@@ -43,14 +52,27 @@ export function EditProvider({ children, defaultOn = false }: { children: React.
     } catch {}
   }, [edits]);
 
-  const get = useCallback((path: string, original: string) => (path in edits ? edits[path] : original), [edits]);
+  const get = useCallback(
+    (path: string, original: string) => (path in edits ? edits[path] : path in OVERRIDES ? OVERRIDES[path] : original),
+    [edits]
+  );
   const set = useCallback((path: string, value: string) => setEdits((e) => ({ ...e, [path]: value })), []);
   const clear = useCallback((path: string) => setEdits((e) => { const n = { ...e }; delete n[path]; return n; }), []);
   const reset = useCallback(() => setEdits({}), []);
   const load = useCallback((m: EditMap) => setEdits(m), []);
+  const saveToSource = useCallback(async () => {
+    const merged: EditMap = { ...OVERRIDES, ...edits };
+    const res = await fetch("/api/overrides", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(merged) });
+    if (!res.ok) {
+      const j = (await res.json().catch(() => ({}))) as { error?: string };
+      throw new Error(j.error || `HTTP ${res.status}`);
+    }
+    const j = (await res.json()) as { count: number };
+    return j.count;
+  }, [edits]);
 
   return (
-    <Ctx.Provider value={{ editMode, toggle: () => setEditMode((m) => !m), get, set, clear, edits, reset, load }}>
+    <Ctx.Provider value={{ editMode, toggle: () => setEditMode((m) => !m), get, set, clear, edits, reset, load, saveToSource }}>
       {children}
     </Ctx.Provider>
   );
@@ -142,8 +164,24 @@ export function EditableText({
 
 /** 편집 툴바 — 편집 on/off, 변경 개수, 내보내기/불러오기/초기화. */
 export function EditToolbar() {
-  const { editMode, toggle, edits, reset, load } = useEdit();
+  const { editMode, toggle, edits, reset, load, saveToSource } = useEdit();
   const count = Object.keys(edits).length;
+  const [saveState, setSaveState] = useState<"idle" | "saving" | "done" | "err">("idle");
+  const [saveMsg, setSaveMsg] = useState("");
+
+  const doSave = async () => {
+    setSaveState("saving");
+    setSaveMsg("");
+    try {
+      const n = await saveToSource();
+      setSaveMsg(`소스에 저장됨 · ${n}건 (커밋·배포하면 모두에게 반영)`);
+      setSaveState("done");
+      setTimeout(() => setSaveState("idle"), 4000);
+    } catch (e) {
+      setSaveMsg(e instanceof Error ? e.message : String(e));
+      setSaveState("err");
+    }
+  };
 
   const exportJson = () => {
     const text = JSON.stringify(edits, null, 2);
@@ -188,13 +226,25 @@ export function EditToolbar() {
       {editMode && (
         <>
           <span style={{ fontSize: 12.5, color: "var(--ink-light)" }}>변경 {count}건</span>
+          <button
+            onClick={doSave}
+            disabled={saveState === "saving"}
+            style={{ ...btn, border: "none", background: "var(--coral)", color: "#fff", cursor: saveState === "saving" ? "default" : "pointer" }}
+          >
+            {saveState === "saving" ? "저장 중…" : "💾 소스에 저장(배포용)"}
+          </button>
           <span style={{ flex: 1 }} />
           <button onClick={exportJson} style={btn}>내보내기(JSON)</button>
           <button onClick={importJson} style={btn}>불러오기</button>
           <button onClick={() => { if (confirm("모든 편집을 초기화할까요?")) reset(); }} style={{ ...btn, color: "#b3261e", borderColor: "#f3c6c1" }}>초기화</button>
         </>
       )}
-      {editMode && <span style={{ width: "100%", fontSize: 11.5, color: "var(--ink-light)" }}>🔗 표시가 붙은 값은 여러 곳에 연결돼 있어, 수정하면 모두 함께 바뀝니다. 편집값은 이 브라우저에 저장되며, 내보내기로 백업·이관하세요.</span>}
+      {editMode && saveState !== "idle" && saveMsg && (
+        <span style={{ width: "100%", fontSize: 12, fontWeight: 700, color: saveState === "err" ? "#b3261e" : "var(--coral-d)" }}>
+          {saveState === "err" ? `저장 실패: ${saveMsg}` : `✓ ${saveMsg}`}
+        </span>
+      )}
+      {editMode && <span style={{ width: "100%", fontSize: 11.5, color: "var(--ink-light)" }}>🔗 표시가 붙은 값은 여러 곳에 연결돼 있어, 수정하면 모두 함께 바뀝니다. <b>💾 소스에 저장</b>을 누르면 로컬 개발 서버가 편집값을 소스 파일에 기록합니다 — 커밋·배포하면 모든 방문자에게 영구 반영됩니다. (운영 사이트에서는 이 저장이 비활성화됩니다.)</span>}
     </div>
   );
 }
