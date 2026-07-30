@@ -1,12 +1,13 @@
 "use client";
 
-import { useMemo, useState, useRef, useEffect, Fragment } from "react";
+import { useMemo, useState, useRef, useEffect } from "react";
+import Link from "next/link";
 import { Search, ChevronDown, ShieldAlert, Pencil, Building2, Check, X } from "lucide-react";
 import { D, ORIGIN_OPTIONS, EMPHASIZED_STATUS, type UnivRegion, type UnivTier } from "@/data/engine";
 import { UNIVERSITIES } from "@/data/universities";
-import { judge, sectionNeeded, DOCS, SECTIONS, ATTR_LABELS, balanceTags, UNVERIFIED, type Course, type Section, type ChecklistDoc, type Tier, type Region } from "@/data/checklist";
+import { judge, sectionNeeded, DOCS, SECTIONS, docAttrRaws, balanceTags, UNVERIFIED, type Course, type Section, type ChecklistDoc, type Tier, type Region } from "@/data/checklist";
 import { flowOf, PROCESS_STEPS, TRACK_META, type FlowResult } from "@/data/process";
-import { EditProvider, EditToolbar, EditableText, useEdit } from "@/lib/edits";
+import { EditProvider, useEdit } from "@/lib/edits";
 
 /* ── 라벨 ─────────────────────────────────────────────── */
 const TIER_LABEL: Record<UnivTier, string> = {
@@ -118,7 +119,11 @@ export default function Page() {
         ) : (
           <>
             <SummaryBar inst={inst} isChange={isChange} origin={originOpt.label} status={status} place={place!} onEdit={() => setSearched(false)} />
-            <EditToolbar />
+            <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 14 }}>
+              <Link href="/edit" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12.5, fontWeight: 700, color: "var(--ink-light)", textDecoration: "none", border: "1px solid var(--bdr)", borderRadius: 9, padding: "6px 11px", background: "#fff" }}>
+                <Pencil size={13} /> 서류 내용 편집
+              </Link>
+            </div>
             {place && (
               <Results
                 course={inst === "hagwon" ? "hagwon" : "univ"}
@@ -635,31 +640,28 @@ function StepLine({ text }: { text: string }) {
   return <div style={{ fontSize: 12.5, color: "var(--ink-mid)", lineHeight: 1.5 }}>{text}</div>;
 }
 
+/**
+ * 조회 결과의 서류 카드(읽기 전용).
+ * 편집값(이름·설명·속성·숨김·추가태그·조건별 값)은 편집 페이지(/edit)에서 저장한 값을 반영한다.
+ * ★ 태그 = 조건별 값(조회 조건마다 달라짐). ★ 없는 태그 = 공용 값(모든 조건 공통).
+ */
 function DocRow({ doc, docName, ctx }: { doc: ChecklistDoc; docName: (id: string) => string; ctx: { course: Course; region: Region; tier: Tier } }) {
   const [open, setOpen] = useState(false);
-  const { get, set, editMode } = useEdit();
+  const { get } = useEdit();
 
-  const holderVal = doc.holderSameAs ? `${docName(doc.holderSameAs)}와 같은 사람` : doc.holder;
+  const attrs = docAttrRaws(doc, docName).map((a) => {
+    const path = `doc:${doc.id}:${a.key}`;
+    const val = get(path, a.raw);
+    return { ...a, path, val, missing: val === UNVERIFIED };
+  });
 
-  const attrs = ATTR_LABELS.map(({ key, label }) => {
-    let raw = key === "holder" ? holderVal : (doc[key] as string | undefined);
-    if (key === "form" && raw) raw = raw + (doc.bringOriginal ? " · 원본 지참" : "");
-    if (raw === undefined) return null;
-    const path = `doc:${doc.id}:${key}`;
-    const val = get(path, raw);
-    return { key: String(key), label, path, raw, val, missing: val === UNVERIFIED };
-  }).filter(Boolean) as { key: string; label: string; path: string; raw: string; val: string; missing: boolean }[];
-
-  // 편집: 태그 삭제(숨김)/추가(사용자 정의)
   const hidden: string[] = JSON.parse(get(`doc:${doc.id}:_hidden`, "[]"));
   const extra: { label: string; value: string }[] = JSON.parse(get(`doc:${doc.id}:_extra`, "[]"));
-  const setHidden = (a: string[]) => set(`doc:${doc.id}:_hidden`, JSON.stringify(a));
-  const setExtra = (a: { label: string; value: string }[]) => set(`doc:${doc.id}:_extra`, JSON.stringify(a));
   const visibleAttrs = attrs.filter((a) => !hidden.includes(a.key));
 
-  const dynTags = doc.id === "balance" ? balanceTags(ctx.course, ctx.region, ctx.tier) : [];
+  // ★ 조건별 값(조회 조건에 맞춰 계산 + 편집값 반영)
+  const dynTags = doc.id === "balance" ? balanceTags(ctx.course, ctx.region, ctx.tier, get).map((t) => `★${t}`) : [];
   const collapsedTags = [...dynTags, ...visibleAttrs.filter((a) => !a.missing).map((a) => a.val), ...extra.filter((e) => e.value.trim()).map((e) => e.value)];
-  const stop = (e: React.SyntheticEvent) => { e.stopPropagation(); };
 
   return (
     <div
@@ -667,90 +669,62 @@ function DocRow({ doc, docName, ctx }: { doc: ChecklistDoc; docName: (id: string
       style={{ background: "#fff", border: `1px solid ${doc.ambiguous ? "#f3c6c1" : "var(--bdr)"}`, borderLeft: "4px solid var(--coral)", borderRadius: 12, padding: "13px 16px", boxShadow: "var(--shadow-sm)", cursor: "pointer" }}
     >
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
-        <span style={{ fontSize: 15, fontWeight: 800 }}>
-          <EditableText path={`doc:${doc.id}:name`} value={doc.name} />
-        </span>
+        <span style={{ fontSize: 15, fontWeight: 800 }}>{get(`doc:${doc.id}:name`, doc.name)}</span>
         <span style={{ fontSize: 11.5, fontWeight: 700, color: "var(--ink-xlight)", flexShrink: 0 }}>{open ? "접기 ▲" : "자세히 ▾"}</span>
       </div>
 
       <div style={{ display: "flex", gap: 5, flexWrap: "wrap", marginTop: 8, alignItems: "center" }}>
-        {!open ? (
-          collapsedTags.map((t, i) => (
-            <span key={i} style={{ ...tagStyle, color: "var(--ink-mid)", background: "var(--peach)", borderColor: "var(--bdr)" }}>
-              {t}
-            </span>
-          ))
-        ) : (
-          <>
-            {visibleAttrs.map((a) => (
-              <span key={a.key} style={{ ...tagStyle, color: a.missing ? "#b3261e" : "var(--ink-mid)", background: a.missing ? "#fdecea" : "var(--peach)", borderColor: a.missing ? "#f3c6c1" : "var(--bdr)" }}>
-                <b style={{ color: "var(--ink-light)", fontWeight: 700, marginRight: 4 }}>{a.label}</b>
-                <EditableText path={a.path} value={a.raw} />
-                {editMode && <TagDelBtn onClick={(e) => { stop(e); setHidden([...hidden, a.key]); }} />}
+        {!open
+          ? collapsedTags.map((t, i) => (
+              <span key={i} style={{ ...tagStyle, color: "var(--ink-mid)", background: "var(--peach)", borderColor: "var(--bdr)" }}>
+                {t}
               </span>
-            ))}
-            {extra.map((ex, i) =>
-              editMode ? (
-                <span key={`x${i}`} onClick={stop} onMouseDown={stop} style={{ ...tagStyle, background: "#fffdf5", borderColor: "var(--coral-l)", gap: 4 }}>
-                  <input value={ex.label} onChange={(e) => setExtra(extra.map((v, j) => (j === i ? { ...v, label: e.target.value } : v)))} placeholder="항목" style={miniInput(46)} />
-                  <input value={ex.value} onChange={(e) => setExtra(extra.map((v, j) => (j === i ? { ...v, value: e.target.value } : v)))} placeholder="값" style={miniInput(70)} />
-                  <TagDelBtn onClick={(e) => { stop(e); setExtra(extra.filter((_, j) => j !== i)); }} />
+            ))
+          : (
+            <>
+              {dynTags.map((t, i) => (
+                <span key={`d${i}`} style={{ ...tagStyle, color: "var(--coral-d)", background: "var(--coral-pale)", borderColor: "var(--coral-l)", fontWeight: 700 }}>
+                  {t}
                 </span>
-              ) : ex.value.trim() ? (
-                <span key={`x${i}`} style={{ ...tagStyle, color: "var(--ink-mid)", background: "var(--peach)", borderColor: "var(--bdr)" }}>
-                  {ex.label.trim() && <b style={{ color: "var(--ink-light)", fontWeight: 700, marginRight: 4 }}>{ex.label}</b>}
-                  {ex.value}
-                </span>
-              ) : null
-            )}
-            {editMode &&
-              attrs.filter((a) => hidden.includes(a.key)).map((a) => (
-                <button key={`r${a.key}`} onClick={(e) => { stop(e); setHidden(hidden.filter((k) => k !== a.key)); }}
-                  style={{ ...tagStyle, cursor: "pointer", color: "var(--ink-light)", background: "#f4f4f4", borderColor: "var(--bdr)", textDecoration: "line-through" }}>
-                  {a.label} ↩︎ 복구
-                </button>
               ))}
-            {editMode && (
-              <button onClick={(e) => { stop(e); setExtra([...extra, { label: "", value: "새 태그" }]); }}
-                style={{ ...tagStyle, cursor: "pointer", color: "var(--coral-d)", background: "#fff", borderColor: "var(--coral-l)", fontWeight: 800 }}>
-                + 태그 추가
-              </button>
-            )}
-          </>
-        )}
+              {visibleAttrs.map((a) => (
+                <span key={a.key} style={{ ...tagStyle, color: a.missing ? "#b3261e" : "var(--ink-mid)", background: a.missing ? "#fdecea" : "var(--peach)", borderColor: a.missing ? "#f3c6c1" : "var(--bdr)" }}>
+                  <b style={{ color: "var(--ink-light)", fontWeight: 700, marginRight: 4 }}>{a.label}</b>
+                  {a.val}
+                </span>
+              ))}
+              {extra
+                .filter((e) => e.value.trim())
+                .map((ex, i) => (
+                  <span key={`x${i}`} style={{ ...tagStyle, color: "var(--ink-mid)", background: "var(--peach)", borderColor: "var(--bdr)" }}>
+                    {ex.label.trim() && <b style={{ color: "var(--ink-light)", fontWeight: 700, marginRight: 4 }}>{ex.label}</b>}
+                    {ex.value}
+                  </span>
+                ))}
+            </>
+          )}
       </div>
 
       <div style={{ fontSize: 13, color: "var(--ink-mid)", marginTop: 8, lineHeight: 1.6 }}>
-        <EditableText path={`doc:${doc.id}:brief`} value={doc.brief} multiline />
-        {open && doc.detailDesc ? (
-          <> <EditableText path={`doc:${doc.id}:detailDesc`} value={doc.detailDesc} multiline /></>
-        ) : null}
+        {get(`doc:${doc.id}:brief`, doc.brief)}
+        {open && (get(`doc:${doc.id}:detailDesc`, doc.detailDesc ?? "") ? " " + get(`doc:${doc.id}:detailDesc`, doc.detailDesc ?? "") : "")}
       </div>
 
       {doc.cond && (
         <div style={{ fontSize: 12.5, color: "var(--ink-light)", marginTop: 6, paddingLeft: 10, borderLeft: "2px solid var(--bdr-d)", lineHeight: 1.55 }}>
-          <EditableText path={`doc:${doc.id}:cond`} value={doc.cond} multiline />
+          {get(`doc:${doc.id}:cond`, doc.cond)}
         </div>
       )}
 
       {open && doc.ambiguous && (
         <div style={{ marginTop: 8, fontSize: 11.5, color: "#8a6d1a", background: "#fff7e0", border: "1px solid #f0dca0", borderRadius: 8, padding: "6px 9px", lineHeight: 1.55 }}>
-          확인 필요: <EditableText path={`doc:${doc.id}:ambiguous`} value={doc.ambiguous} multiline />
+          확인 필요: {get(`doc:${doc.id}:ambiguous`, doc.ambiguous)}
         </div>
       )}
     </div>
   );
 }
 const tagStyle: React.CSSProperties = { display: "inline-flex", alignItems: "baseline", fontSize: 12, fontWeight: 600, border: "1px solid var(--bdr)", borderRadius: 999, padding: "2px 10px", whiteSpace: "normal", maxWidth: "100%" };
-
-function TagDelBtn({ onClick }: { onClick: (e: React.MouseEvent) => void }) {
-  return (
-    <span onClick={onClick} onMouseDown={(e) => e.stopPropagation()} title="이 태그 삭제" style={{ marginLeft: 5, color: "#b3261e", cursor: "pointer", fontWeight: 800, fontSize: 12, lineHeight: 1 }}>
-      ✕
-    </span>
-  );
-}
-const miniInput = (w: number): React.CSSProperties => ({ font: "inherit", fontSize: 12, width: w, minWidth: w, border: "1px solid var(--coral-l)", borderRadius: 5, padding: "1px 5px", outline: "none", background: "#fff" });
 
 function Callout({ tone, children }: { tone: "amber" | "blue"; children: React.ReactNode }) {
   const map = { amber: { bg: "#fff9e6", bd: "#f5d98a", fg: "#8a6d1a" }, blue: { bg: "#eaf2fb", bd: "#cdd9ea", fg: "var(--navy)" } } as const;

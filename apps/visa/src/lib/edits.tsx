@@ -27,8 +27,8 @@ interface EditCtx {
 const Ctx = createContext<EditCtx | null>(null);
 const LS_KEY = "visa-text-edits-v1";
 
-export function EditProvider({ children }: { children: React.ReactNode }) {
-  const [editMode, setEditMode] = useState(false);
+export function EditProvider({ children, defaultOn = false }: { children: React.ReactNode; defaultOn?: boolean }) {
+  const [editMode, setEditMode] = useState(defaultOn);
   const [edits, setEdits] = useState<EditMap>({});
 
   useEffect(() => {

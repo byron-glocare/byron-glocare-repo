@@ -109,11 +109,49 @@ export function sectionNeeded(section: Section, v: Verdict, course: Course, nati
   }
 }
 
-/** 잔고증명서: 조회 조건에 맞는 예치금·예치기간 값 태그. */
-export function balanceTags(course: Course, region: Region, tier: Tier): string[] {
-  const amount = course === "hagwon" ? (region === "metro" ? "1,000만원" : "800만원") : region === "metro" ? "2,000만원" : "1,600만원";
-  const months = course === "hagwon" || tier === "consulting" ? "6개월" : "3개월";
-  return [`예치금 ${amount} 이상`, `예치 ${months} 이상`];
+/**
+ * 조건별(★) 값 슬롯 — 조회 조건마다 달라지는 값. 공용 속성과 달리 조건별로 따로 편집.
+ * 편집 저장 키: `dyn:{docId}:{slot}`.
+ */
+export interface CondSlot {
+  slot: string; // 문서 내 안정 키
+  group: string; // 묶음 이름(예: 예치금)
+  label: string; // 조건 설명(예: 학위 · 수도권)
+  value: string; // 기본값
+}
+export const CONDITIONAL_SLOTS: Record<string, CondSlot[]> = {
+  balance: [
+    { slot: "amount:univ:metro", group: "예치금", label: "학위(D-2) · 수도권", value: "2,000만원" },
+    { slot: "amount:univ:nonmetro", group: "예치금", label: "학위(D-2) · 비수도권", value: "1,600만원" },
+    { slot: "amount:hagwon:metro", group: "예치금", label: "어학당(D-4) · 수도권", value: "1,000만원" },
+    { slot: "amount:hagwon:nonmetro", group: "예치금", label: "어학당(D-4) · 비수도권", value: "800만원" },
+    { slot: "months:univ", group: "예치기간", label: "학위(D-2)", value: "3개월" },
+    { slot: "months:hagwon", group: "예치기간", label: "어학당(D-4)", value: "6개월" },
+    { slot: "months:consulting", group: "예치기간", label: "컨설팅대학(D-2·D-4 공통)", value: "6개월" },
+  ],
+};
+
+type Getter = (path: string, def: string) => string;
+
+/** 잔고증명서: 조회 조건에 맞는 예치금·예치기간 값 태그(조건별 편집값 반영). */
+export function balanceTags(course: Course, region: Region, tier: Tier, get?: Getter): string[] {
+  const g = get ?? ((_p, d) => d);
+  const slots = CONDITIONAL_SLOTS.balance;
+  const val = (slot: string) => g(`dyn:balance:${slot}`, slots.find((s) => s.slot === slot)!.value);
+  const amountSlot = `amount:${course}:${region}`;
+  const monthsSlot = tier === "consulting" ? "months:consulting" : course === "hagwon" ? "months:hagwon" : "months:univ";
+  return [`예치금 ${val(amountSlot)} 이상`, `예치 ${val(monthsSlot)} 이상`];
+}
+
+/** 서류의 태그 속성 원본값 목록(공용). holderSameAs·원본지참 반영. get 적용 전 raw. */
+export function docAttrRaws(doc: ChecklistDoc, nameOf: (id: string) => string): { key: string; label: string; raw: string }[] {
+  const holderVal = doc.holderSameAs ? `${nameOf(doc.holderSameAs)}와 같은 사람` : doc.holder;
+  return ATTR_LABELS.map(({ key, label }) => {
+    let raw = key === "holder" ? holderVal : (doc[key] as string | undefined);
+    if (key === "form" && raw) raw = raw + (doc.bringOriginal ? " · 원본 지참" : "");
+    if (raw === undefined) return null;
+    return { key: String(key), label, raw };
+  }).filter(Boolean) as { key: string; label: string; raw: string }[];
 }
 
 /* ── 서류 정의 ── */
