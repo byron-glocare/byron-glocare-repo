@@ -4,8 +4,8 @@ import { useMemo, useState, useRef, useEffect, Fragment } from "react";
 import { Search, ChevronDown, ShieldAlert, Pencil, Building2, Check, X } from "lucide-react";
 import { D, ORIGIN_OPTIONS, EMPHASIZED_STATUS, type UnivRegion, type UnivTier } from "@/data/engine";
 import { UNIVERSITIES } from "@/data/universities";
-import { judge, sectionNeeded, DOCS, SECTIONS, type Verdict, type Course, type Section, type ChecklistDoc } from "@/data/checklist";
-import { EditProvider, EditToolbar, EditableText } from "@/lib/edits";
+import { judge, sectionNeeded, DOCS, SECTIONS, ATTR_LABELS, balanceTags, UNVERIFIED, type Verdict, type Course, type Section, type ChecklistDoc, type Tier, type Region } from "@/data/checklist";
+import { EditProvider, EditToolbar, EditableText, useEdit } from "@/lib/edits";
 
 /* ── 라벨 ─────────────────────────────────────────────── */
 const TIER_LABEL: Record<UnivTier, string> = {
@@ -511,7 +511,7 @@ function Results({
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {docs.map((d) => (
-                  <DocRow key={d.id} doc={d} docName={docName} />
+                  <DocRow key={d.id} doc={d} docName={docName} ctx={{ course, region: region as Region, tier: tier as Tier }} />
                 ))}
               </div>
             </div>
@@ -538,84 +538,73 @@ function VerdictBanner({ v }: { v: Verdict }) {
   );
 }
 
-function DocRow({ doc, docName }: { doc: ChecklistDoc; docName: (id: string) => string }) {
+function DocRow({ doc, docName, ctx }: { doc: ChecklistDoc; docName: (id: string) => string; ctx: { course: Course; region: Region; tier: Tier } }) {
   const [open, setOpen] = useState(false);
-  const linked = !!doc.holderSameAs;
-  const holderTxt = doc.holderSameAs ? `${docName(doc.holderSameAs)}와 같은 사람` : doc.holder;
-  const moreAttrs: [string, string, string | undefined][] = [
-    ["유효기간", "validity", doc.validity],
-    ["번역", "translation", doc.translation],
-    ["공증", "notarization", doc.notarization],
-    ["영사확인", "authentication", doc.authentication],
-    ["서명", "signature", doc.signature],
-    ["발급 소요일", "obtainDays", doc.obtainDays],
-  ];
-  const shown = moreAttrs.filter(([, , v]) => v);
-  const hasMore = shown.length > 0 || !!doc.detail || !!doc.ambiguous;
+  const { get } = useEdit();
+
+  const holderVal = doc.holderSameAs ? `${docName(doc.holderSameAs)}와 같은 사람` : doc.holder;
+
+  const attrs = ATTR_LABELS.map(({ key, label }) => {
+    let raw = key === "holder" ? holderVal : (doc[key] as string | undefined);
+    if (key === "form" && raw) raw = raw + (doc.bringOriginal ? " · 원본 지참" : "");
+    if (raw === undefined) return null;
+    const path = `doc:${doc.id}:${key}`;
+    const val = get(path, raw);
+    return { key: String(key), label, path, raw, val, missing: val === UNVERIFIED };
+  }).filter(Boolean) as { key: string; label: string; path: string; raw: string; val: string; missing: boolean }[];
+
+  const dynTags = doc.id === "balance" ? balanceTags(ctx.course, ctx.region, ctx.tier) : [];
+  const collapsedTags = [...dynTags, ...attrs.filter((a) => !a.missing).map((a) => a.val)];
+
   return (
-    <div style={{ background: "#fff", border: `1px solid ${doc.ambiguous ? "#f3c6c1" : "var(--bdr)"}`, borderLeft: "4px solid var(--coral)", borderRadius: 12, padding: "13px 16px", boxShadow: "var(--shadow-sm)" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+    <div
+      onClick={() => setOpen((o) => !o)}
+      style={{ background: "#fff", border: `1px solid ${doc.ambiguous ? "#f3c6c1" : "var(--bdr)"}`, borderLeft: "4px solid var(--coral)", borderRadius: 12, padding: "13px 16px", boxShadow: "var(--shadow-sm)", cursor: "pointer" }}
+    >
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
         <span style={{ fontSize: 15, fontWeight: 800 }}>
           <EditableText path={`doc:${doc.id}:name`} value={doc.name} />
         </span>
-        {holderTxt && (
-          <span
-            style={{ fontSize: 11.5, fontWeight: 800, color: linked ? "#7c3aed" : "var(--navy)", background: linked ? "#f1ebfd" : "#eef2f8", border: `1px solid ${linked ? "#d6c6f5" : "#cdd9ea"}`, padding: "2px 9px", borderRadius: 999 }}
-            title={linked ? "같은 명의자 것을 제출해야 합니다" : undefined}
-          >
-            명의: <EditableText path={`doc:${doc.id}:holder`} value={holderTxt} />
-          </span>
-        )}
+        <span style={{ fontSize: 11.5, fontWeight: 700, color: "var(--ink-xlight)", flexShrink: 0 }}>{open ? "접기 ▲" : "자세히 ▾"}</span>
       </div>
-      <div style={{ fontSize: 13, color: "var(--ink-mid)", marginTop: 5, lineHeight: 1.55 }}>
+
+      <div style={{ display: "flex", gap: 5, flexWrap: "wrap", marginTop: 8 }}>
+        {open
+          ? attrs.map((a) => (
+              <span key={a.key} style={{ ...tagStyle, color: a.missing ? "#b3261e" : "var(--ink-mid)", background: a.missing ? "#fdecea" : "var(--peach)", borderColor: a.missing ? "#f3c6c1" : "var(--bdr)" }}>
+                <b style={{ color: "var(--ink-light)", fontWeight: 700, marginRight: 4 }}>{a.label}</b>
+                <EditableText path={a.path} value={a.raw} />
+              </span>
+            ))
+          : collapsedTags.map((t, i) => (
+              <span key={i} style={{ ...tagStyle, color: "var(--ink-mid)", background: "var(--peach)", borderColor: "var(--bdr)" }}>
+                {t}
+              </span>
+            ))}
+      </div>
+
+      <div style={{ fontSize: 13, color: "var(--ink-mid)", marginTop: 8, lineHeight: 1.6 }}>
         <EditableText path={`doc:${doc.id}:brief`} value={doc.brief} multiline />
+        {open && doc.detailDesc ? (
+          <> <EditableText path={`doc:${doc.id}:detailDesc`} value={doc.detailDesc} multiline /></>
+        ) : null}
       </div>
-      {(doc.issuer || doc.form) && (
-        <div style={{ fontSize: 12, color: "var(--ink-light)", marginTop: 6, display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" }}>
-          {doc.issuer && <span style={attrChip}>발급기관 <EditableText path={`doc:${doc.id}:issuer`} value={doc.issuer} /></span>}
-          {doc.form && <span style={attrChip}>형식 <EditableText path={`doc:${doc.id}:form`} value={doc.form + (doc.bringOriginal ? " · 원본 지참" : "")} /></span>}
-        </div>
-      )}
+
       {doc.cond && (
         <div style={{ fontSize: 12.5, color: "var(--ink-light)", marginTop: 6, paddingLeft: 10, borderLeft: "2px solid var(--bdr-d)", lineHeight: 1.55 }}>
           <EditableText path={`doc:${doc.id}:cond`} value={doc.cond} multiline />
         </div>
       )}
-      {hasMore && (
-        <div>
-          <button onClick={() => setOpen((o) => !o)} style={{ marginTop: 8, border: "none", background: "none", padding: 0, cursor: "pointer", fontSize: 11.5, fontWeight: 700, color: "var(--ink-xlight)" }}>
-            {open ? "접기 ▲" : "자세히 ▾"}
-          </button>
-          {open && (
-            <dl style={{ margin: "8px 0 0", display: "grid", gridTemplateColumns: "auto 1fr", gap: "5px 12px", fontSize: 12 }}>
-              {shown.map(([label, field, val]) => (
-                <Fragment key={field}>
-                  <dt style={dtStyle}>{label}</dt>
-                  <dd style={ddStyle}><EditableText path={`doc:${doc.id}:${field}`} value={val as string} multiline /></dd>
-                </Fragment>
-              ))}
-              {doc.detail && (
-                <Fragment>
-                  <dt style={dtStyle}>메모</dt>
-                  <dd style={ddStyle}><EditableText path={`doc:${doc.id}:detail`} value={doc.detail} multiline /></dd>
-                </Fragment>
-              )}
-              {doc.ambiguous && (
-                <Fragment>
-                  <dt style={{ ...dtStyle, color: "#8a6d1a" }}>확인 필요</dt>
-                  <dd style={{ ...ddStyle, color: "#8a6d1a" }}><EditableText path={`doc:${doc.id}:ambiguous`} value={doc.ambiguous} multiline /></dd>
-                </Fragment>
-              )}
-            </dl>
-          )}
+
+      {open && doc.ambiguous && (
+        <div style={{ marginTop: 8, fontSize: 11.5, color: "#8a6d1a", background: "#fff7e0", border: "1px solid #f0dca0", borderRadius: 8, padding: "6px 9px", lineHeight: 1.55 }}>
+          확인 필요: <EditableText path={`doc:${doc.id}:ambiguous`} value={doc.ambiguous} multiline />
         </div>
       )}
     </div>
   );
 }
-const attrChip: React.CSSProperties = { background: "var(--peach)", border: "1px solid var(--bdr)", borderRadius: 7, padding: "2px 8px" };
-const dtStyle: React.CSSProperties = { fontWeight: 700, color: "var(--ink-light)", whiteSpace: "nowrap" };
-const ddStyle: React.CSSProperties = { margin: 0, color: "var(--ink-mid)" };
+const tagStyle: React.CSSProperties = { display: "inline-flex", alignItems: "baseline", fontSize: 12, fontWeight: 600, border: "1px solid var(--bdr)", borderRadius: 999, padding: "2px 10px", whiteSpace: "normal", maxWidth: "100%" };
 
 function Callout({ tone, children }: { tone: "amber" | "blue"; children: React.ReactNode }) {
   const map = { amber: { bg: "#fff9e6", bd: "#f5d98a", fg: "#8a6d1a" }, blue: { bg: "#eaf2fb", bd: "#cdd9ea", fg: "var(--navy)" } } as const;
