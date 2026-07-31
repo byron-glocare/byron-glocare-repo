@@ -117,16 +117,25 @@ export interface CondSlot {
   label: string; // 조건 설명(예: 학위 · 수도권)
   value: string; // 기본값
 }
+/**
+ * 잔고증명서 요건 — 모든 경우를 개별 행으로 나열(매트릭스 X). 잔액+유지기간을 한 값으로 통합.
+ * 키: `{course}:{tier}:{region}`. tier=잔고 요건을 정하는 등급(어학당은 어학 인증→본대학 등급, 어학 일반→general).
+ * 각 케이스를 /edit 에서 독립적으로 편집 가능.
+ */
 export const CONDITIONAL_SLOTS: Record<string, CondSlot[]> = {
   balance: [
-    { slot: "amount:univ:metro", group: "잔액", label: "학위(D-2) · 수도권", value: "2,000만원" },
-    { slot: "amount:univ:nonmetro", group: "잔액", label: "학위(D-2) · 비수도권", value: "1,600만원" },
-    { slot: "amount:hagwon:metro", group: "잔액", label: "어학당(D-4) · 수도권", value: "1,000만원" },
-    { slot: "amount:hagwon:nonmetro", group: "잔액", label: "어학당(D-4) · 비수도권", value: "800만원" },
-    // 잔액 유지기간은 대학 인증 등급에 따라 달라진다.
-    { slot: "period:excellent", group: "잔액 유지기간", label: "우수인증대학", value: "면제(재정입증 면제)" },
-    { slot: "period:certified", group: "잔액 유지기간", label: "인증대학", value: "3개월 이상" },
-    { slot: "period:general", group: "잔액 유지기간", label: "일반(미인증)대학", value: "6개월 이상" },
+    { slot: "univ:excellent:metro", group: "학위(D-2)", label: "우수인증 · 수도권", value: "잔액 2,000만원 이상 · 유지기간 면제" },
+    { slot: "univ:excellent:nonmetro", group: "학위(D-2)", label: "우수인증 · 비수도권", value: "잔액 1,600만원 이상 · 유지기간 면제" },
+    { slot: "univ:certified:metro", group: "학위(D-2)", label: "인증 · 수도권", value: "잔액 2,000만원 이상 · 3개월 유지" },
+    { slot: "univ:certified:nonmetro", group: "학위(D-2)", label: "인증 · 비수도권", value: "잔액 1,600만원 이상 · 3개월 유지" },
+    { slot: "univ:general:metro", group: "학위(D-2)", label: "일반(미인증) · 수도권", value: "잔액 2,000만원 이상 · 6개월 유지" },
+    { slot: "univ:general:nonmetro", group: "학위(D-2)", label: "일반(미인증) · 비수도권", value: "잔액 1,600만원 이상 · 6개월 유지" },
+    { slot: "hagwon:excellent:metro", group: "어학당(D-4)", label: "어학인증(본대학 우수인증) · 수도권", value: "잔액 1,000만원 이상 · 유지기간 면제" },
+    { slot: "hagwon:excellent:nonmetro", group: "어학당(D-4)", label: "어학인증(본대학 우수인증) · 비수도권", value: "잔액 800만원 이상 · 유지기간 면제" },
+    { slot: "hagwon:certified:metro", group: "어학당(D-4)", label: "어학인증(본대학 인증) · 수도권", value: "잔액 1,000만원 이상 · 3개월 유지" },
+    { slot: "hagwon:certified:nonmetro", group: "어학당(D-4)", label: "어학인증(본대학 인증) · 비수도권", value: "잔액 800만원 이상 · 3개월 유지" },
+    { slot: "hagwon:general:metro", group: "어학당(D-4)", label: "어학일반 · 수도권", value: "잔액 1,000만원 이상 · 6개월 유지" },
+    { slot: "hagwon:general:nonmetro", group: "어학당(D-4)", label: "어학일반 · 비수도권", value: "잔액 800만원 이상 · 6개월 유지" },
   ],
 };
 
@@ -142,13 +151,13 @@ type Getter = (path: string, def: string) => string;
 export function balanceTags(course: Course, region: Region, degreeTier: Tier, langTier: Tier, get?: Getter): string[] {
   const g = get ?? ((_p, d) => d);
   const slots = CONDITIONAL_SLOTS.balance;
-  const val = (slot: string) => g(`dyn:balance:${slot}`, slots.find((s) => s.slot === slot)!.value);
-  const amountSlot = `amount:${course}:${region}`;
-  const periodTier: Tier = course === "univ" ? degreeTier : langTier === "certified" ? degreeTier : "general";
-  const tierKey = periodTier === "excellent" || periodTier === "certified" ? periodTier : "general";
-  const period = val(`period:${tierKey}`);
-  const periodTag = period.includes("면제") ? period : `잔액 ${period} 유지`;
-  return [`잔액 ${val(amountSlot)} 이상`, periodTag];
+  // 잔고 요건 등급: 학위=본대학 등급 / 어학당=어학 인증이면 본대학 등급, 어학 일반이면 일반.
+  const effTier: Tier = course === "univ" ? degreeTier : langTier === "certified" ? degreeTier : "general";
+  const tierKey = effTier === "excellent" || effTier === "certified" ? effTier : "general";
+  const slot = `${course}:${tierKey}:${region}`;
+  const def = slots.find((s) => s.slot === slot);
+  const val = g(`dyn:balance:${slot}`, def ? def.value : "");
+  return val ? [val] : [];
 }
 
 /** 서류의 태그 속성 원본값 목록(공용). holderSameAs·원본지참 반영. get 적용 전 raw. */
