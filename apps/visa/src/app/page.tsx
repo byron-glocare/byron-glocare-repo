@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Search, ChevronDown, ShieldAlert, Pencil, Building2, Check, X } from "lucide-react";
 import { D, ORIGIN_OPTIONS, EMPHASIZED_STATUS, type UnivRegion, type UnivTier, type SchoolType } from "@/data/engine";
 import { UNIVERSITIES } from "@/data/universities";
-import { judge, sectionNeeded, DOCS, SECTIONS, docAttrRaws, balanceTags, UNVERIFIED, type Course, type Section, type ChecklistDoc, type Tier, type Region } from "@/data/checklist";
+import { judge, sectionNeeded, DOCS, SECTIONS, docAttrRaws, balanceTags, depositTags, UNVERIFIED, type Course, type Section, type ChecklistDoc, type Tier, type Region } from "@/data/checklist";
 import { flowOf, PROCESS_STEPS, TRACK_META, type FlowResult } from "@/data/process";
 import { EditProvider, useEdit, Bi, LanguageToggle, T, useTStr } from "@/lib/edits";
 
@@ -683,7 +683,12 @@ function DocRow({ doc, docName, ctx }: { doc: ChecklistDoc; docName: (id: string
   const visibleAttrs = attrs.filter((a) => !hidden.includes(a.key));
 
   // ★ 조건별 값(조회 조건에 맞춰 계산 + 편집값 반영). 현재 한국어만(숫자/단위 위주).
-  const dynTags = doc.id === "balance" ? balanceTags(ctx.course, ctx.region, ctx.tier, ctx.langTier, getKo).map((t) => `★${t}`) : [];
+  const dynTags =
+    doc.id === "balance"
+      ? balanceTags(ctx.course, ctx.region, ctx.tier, ctx.langTier, getKo).map((t) => `★${t}`)
+      : doc.id === "deposit-confirm"
+        ? depositTags(ctx.region, getKo).map((t) => `★${t}`)
+        : [];
   const detailKo = getKo(`doc:${doc.id}:detailDesc`, doc.detailDesc ?? "");
   const condKo = getKo(`doc:${doc.id}:cond`, doc.cond ?? "");
   const ambKo = getKo(`doc:${doc.id}:ambiguous`, doc.ambiguous ?? "");

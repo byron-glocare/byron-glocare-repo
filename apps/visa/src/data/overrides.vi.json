@@ -5,101 +5,80 @@
   "doc:passport:issuer": "Cục QLXNC Bộ Công an / Cục QLXNC công an địa phương",
   "doc:passport:validity": "Còn hạn ít nhất 6 tháng",
   "doc:passport:obtainDays": "Cục QLXNC Bộ Công an: 5 ngày / Cục QLXNC công an địa phương: 8 ngày",
-
   "doc:visa-form:name": "Đơn xin cấp visa",
   "doc:visa-form:brief": "Mẫu đơn của Đại sứ quán nộp khi xin visa",
   "doc:visa-form:detailDesc": "Cần 1 ảnh thẻ nền trắng 3.5×4.5cm (chụp trong vòng 6 tháng); có thể tải trước trên website Đại sứ quán.",
-
   "doc:id-card:name": "CCCD (Căn cước công dân)",
   "doc:id-card:brief": "CCCD của bản thân",
   "doc:id-card:detailDesc": "Là thẻ căn cước do chính phủ cấp. CCCD (không dùng giấy chứng nhận).",
   "doc:id-card:issuer": "Cục CSQLHC về TTXH - Bộ Công an",
-
   "doc:admission:name": "Giấy nhập học tiêu chuẩn",
   "doc:admission:brief": "Giấy xác nhận nhập học do trường đăng ký cấp.",
   "doc:admission:detailDesc": "Được cấp khi qua xét tuyển của trường, nộp khi Đại sứ quán thẩm định visa.",
   "doc:admission:obtainDays": "1 ~ 10 ngày kể từ ngày nộp hồ sơ",
-
   "doc:univ-reg:name": "Giấy phép kinh doanh của trường",
   "doc:univ-reg:brief": "Giấy tờ chính thức của Hàn Quốc do trường cung cấp",
   "doc:univ-reg:detailDesc": "Có thể xin từ trường; có thể thay bằng giấy chứng nhận mã số.",
-
   "doc:family-ct07:brief": "Giấy xác nhận thông tin cư trú.",
   "doc:family-ct07:detailDesc": "Xác nhận nơi cư trú của bản thân.",
   "doc:family-ct07:issuer": "Bộ Công an Việt Nam",
   "doc:family-ct07:signature": "Chỉ bản gốc ký tay (không chấp nhận điện tử·scan·in)",
-
   "doc:birth-cert:name": "Giấy khai sinh",
   "doc:birth-cert:brief": "Chứng minh quan hệ với cha mẹ.",
   "doc:birth-cert:detailDesc": "Xác nhận quốc tịch của cha mẹ và việc cha mẹ đúng là người bảo lãnh tài chính.",
   "doc:birth-cert:issuer": "Ủy ban nhân dân · Công an",
-
   "doc:residence-ct08:brief": "Nộp khi xin visa tại ĐSQ/LSQ khác nơi hộ khẩu",
   "doc:residence-ct08:detailDesc": "Có lịch sử cư trú từ 1 năm ở nơi khác hộ khẩu (thay thế: 6 tháng làm việc·học). Miễn nếu tốt nghiệp THPT trong vòng 6 tháng.",
   "doc:residence-ct08:issuer": "Công an Việt Nam",
-
   "doc:grad-cert:name": "Bằng tốt nghiệp",
   "doc:grad-cert:brief": "Bằng tốt nghiệp trường học cuối cùng.",
   "doc:grad-cert:detailDesc": "Nộp giấy tờ của THPT hoặc đại học. Nếu còn trong vòng 1 năm trước ngày dự kiến tốt nghiệp thì thay bằng giấy chứng nhận sẽ tốt nghiệp. Dù đang học hay đã tốt nghiệp đại học, nên nộp kèm cả giấy tờ THPT.",
-
   "doc:transcript:name": "Bảng điểm (học bạ)",
   "doc:transcript:brief": "Bảng điểm trường học cuối cùng.",
   "doc:transcript:detailDesc": "Nộp giấy tờ của THPT hoặc đại học. Dù đang học hay đã tốt nghiệp đại học, nên nộp kèm cả giấy tờ THPT.",
-
   "doc:balance:name": "Giấy xác nhận số dư tài khoản",
   "doc:balance:brief": "Chứng minh số dư tài khoản.",
   "doc:balance:detailDesc": "Học vị: thủ đô 20 triệu · ngoài thủ đô 16 triệu won / Trung tâm tiếng: thủ đô 10 triệu · ngoài thủ đô 8 triệu won trở lên. Duy trì số dư 3 tháng (trung tâm tiếng 6 tháng). Không có nghĩa vụ duy trì với trường hợp khác. Bản nộp xin visa và bản nộp cho trường (30 ngày) có thời hạn khác nhau nên phải cấp riêng.",
   "doc:balance:holder": "Bản thân hoặc cha/mẹ. Nếu không có cha/mẹ thì có thể là chú/bác·người quen",
   "doc:balance:validity": "Bản nộp visa: 10 ngày (bản nộp cho trường: hiệu lực 30 ngày)",
   "doc:balance:obtainDays": "Ngân hàng Việt Nam: cấp trong ngày",
-
   "doc:bankbook:name": "Sổ tài khoản ngân hàng",
   "doc:bankbook:brief": "Cùng sổ với giấy xác nhận số dư.",
   "doc:bankbook:detailDesc": "Sổ tài khoản được chuyển nhượng không được chấp nhận.",
-
   "doc:remittance:name": "Giấy xác nhận chuyển tiền vào Hàn Quốc",
   "doc:remittance:brief": "Khi chứng minh tài chính bằng cách chuyển tiền sang Hàn Quốc thay cho giấy xác nhận số dư.",
-
   "doc:parent-support:name": "Giấy bảo lãnh tài chính",
   "doc:parent-support:brief": "Mẫu do Đại sứ quán, văn phòng công chứng hoặc trung tâm du học cung cấp.",
-
   "doc:parent-income:name": "Chứng minh thu nhập · việc làm của người bảo lãnh",
   "doc:parent-income:brief": "Chuẩn bị theo nghề nghiệp của cha/mẹ đứng tên số dư.",
   "doc:parent-income:detailDesc": "Nguyên tắc theo 1 người bảo lãnh (cha/mẹ đứng tên số dư). Nếu tài chính eo hẹp, nộp thu nhập của cả hai sẽ có lợi. Người đi làm → giấy xác nhận công tác·bảng lương (3 tháng gần nhất)·bảo hiểm xã hội / Chủ kinh doanh → đăng ký kinh doanh·chứng từ nộp thuế / Nông dân → giấy xác nhận thu nhập·bất động sản (sổ đỏ). Dù nghề gì, nộp càng nhiều càng có lợi.",
   "doc:parent-income:issuer": "Công ty · thuế · công an, v.v.",
-
   "doc:guarantor-id:name": "CCCD của người bảo lãnh tài chính",
   "doc:guarantor-id:brief": "CCCD của người bảo lãnh tài chính.",
   "doc:guarantor-id:detailDesc": "Là thẻ căn cước do chính phủ cấp. CCCD (không dùng giấy chứng nhận).",
   "doc:guarantor-id:issuer": "Cục CSQLHC về TTXH - Bộ Công an",
-
   "doc:cost-pledge:name": "Cam kết chi trả chi phí du học",
   "doc:cost-pledge:brief": "Cam kết người bảo lãnh chi trả chi phí du học.",
   "doc:cost-pledge:detailDesc": "Thường được bao gồm trong đơn xin nhập học.",
-
   "doc:deposit-confirm:name": "Giấy xác nhận ký quỹ chi phí du học",
   "doc:deposit-confirm:brief": "Đối tượng ký quỹ chi phí du học của trung tâm tiếng thường (chưa chứng nhận).",
   "doc:deposit-confirm:detailDesc": "Ký quỹ theo phương thức chỉ định rồi nộp giấy xác nhận. Nộp thay cho giấy xác nhận số dư; không áp dụng cho chương trình học vị (D-2).",
   "doc:deposit-confirm:issuer": "Ngân hàng · cơ quan chỉ định",
-
   "doc:tb:name": "Giấy khám lao (X-quang phổi)",
   "doc:tb:brief": "Cấp tại bệnh viện do cơ quan đại diện chỉ định.",
   "doc:tb:detailDesc": "Bao gồm chụp X-quang ngực. Danh sách bệnh viện chỉ định khác nhau theo cơ quan đại diện.",
   "doc:tb:issuer": "Bệnh viện do cơ quan đại diện chỉ định",
   "doc:tb:validity": "Trong vòng 3 tháng gần nhất",
-
   "doc:korean:name": "Chứng chỉ tiếng Hàn (TOPIK, v.v.)",
   "doc:korean:brief": "Khi đăng ký chương trình tiếng Hàn.",
   "doc:korean:cond": "Học vị: từ cử nhân TOPIK cấp 4 · cao đẳng cấp 3 / Trung tâm tiếng: theo tiêu chuẩn nhập học. Trường chứng nhận: khuyến khích, trường thường: bắt buộc.",
   "doc:korean:detailDesc": "Có thể thay bằng chứng chỉ KIIP·Sejong (Sejong chỉ công nhận khóa offline tại địa phương, không tính online).",
   "doc:korean:issuer": "Tổ chức khảo thí (TOPIK, v.v.)",
-
   "doc:training-plan:name": "Kế hoạch học tập",
   "doc:training-plan:brief": "Khi đăng ký trung tâm tiếng Hàn.",
   "doc:training-plan:detailDesc": "Bao gồm nội dung đào tạo: thời khóa biểu · giảng viên · cơ sở vật chất.",
   "doc:training-plan:holder": "Trường · cơ quan đào tạo",
   "doc:training-plan:issuer": "Trường · cơ quan đào tạo",
-
   "doc:english:name": "Chứng chỉ tiếng Anh",
   "doc:english:brief": "Khi đăng ký chương trình giảng dạy bằng tiếng Anh.",
   "doc:english:cond": "TOEFL 530 (iBT 71) / IELTS 5.5 / CEFR B2 / TEPS 327 trở lên.",

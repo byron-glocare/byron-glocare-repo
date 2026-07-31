@@ -137,6 +137,11 @@ export const CONDITIONAL_SLOTS: Record<string, CondSlot[]> = {
     { slot: "hagwon:general:metro", group: "어학당(D-4)", label: "어학일반 · 수도권", value: "잔액 1,000만원 이상 · 6개월 유지" },
     { slot: "hagwon:general:nonmetro", group: "어학당(D-4)", label: "어학일반 · 비수도권", value: "잔액 800만원 이상 · 6개월 유지" },
   ],
+  // 유학경비 예치확인서(D-4 어학당·일반) — 지역별 예치금.
+  "deposit-confirm": [
+    { slot: "metro", group: "예치금", label: "수도권", value: "예치금 1,000만원 이상" },
+    { slot: "nonmetro", group: "예치금", label: "비수도권", value: "예치금 800만원 이상" },
+  ],
 };
 
 type Getter = (path: string, def: string) => string;
@@ -157,6 +162,16 @@ export function balanceTags(course: Course, region: Region, degreeTier: Tier, la
   const slot = `${course}:${tierKey}:${region}`;
   const def = slots.find((s) => s.slot === slot);
   const val = g(`dyn:balance:${slot}`, def ? def.value : "");
+  return val ? [val] : [];
+}
+
+/** 유학경비 예치확인서: 지역별 예치금 태그. */
+export function depositTags(region: Region, get?: Getter): string[] {
+  const g = get ?? ((_p, d) => d);
+  const slots = CONDITIONAL_SLOTS["deposit-confirm"];
+  if (!slots) return [];
+  const def = slots.find((s) => s.slot === region);
+  const val = g(`dyn:deposit-confirm:${region}`, def ? def.value : "");
   return val ? [val] : [];
 }
 
