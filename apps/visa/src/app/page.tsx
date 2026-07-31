@@ -3,20 +3,25 @@
 import { useMemo, useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { Search, ChevronDown, ShieldAlert, Pencil, Building2, Check, X } from "lucide-react";
-import { D, ORIGIN_OPTIONS, EMPHASIZED_STATUS, type UnivRegion, type UnivTier } from "@/data/engine";
+import { D, ORIGIN_OPTIONS, EMPHASIZED_STATUS, type UnivRegion, type UnivTier, type SchoolType } from "@/data/engine";
 import { UNIVERSITIES } from "@/data/universities";
 import { judge, sectionNeeded, DOCS, SECTIONS, docAttrRaws, balanceTags, UNVERIFIED, type Course, type Section, type ChecklistDoc, type Tier, type Region } from "@/data/checklist";
 import { flowOf, PROCESS_STEPS, TRACK_META, type FlowResult } from "@/data/process";
-import { EditProvider, useEdit, Bi, LanguageToggle } from "@/lib/edits";
+import { EditProvider, useEdit, Bi, LanguageToggle, T, useTStr } from "@/lib/edits";
 
 /* ── 라벨 ─────────────────────────────────────────────── */
 const TIER_LABEL: Record<UnivTier, string> = {
   excellent: "우수인증",
   certified: "인증",
   general: "미인증(일반)",
-  consulting: "컨설팅대학",
   restricted: "비자정밀 심사대학",
 };
+const SCHOOL_LABEL: Record<SchoolType, string> = { univ: "대학", college: "전문대학", grad: "대학원" };
+/** 학위 등급 라벨(인증·우수인증은 학교유형으로 세분: 인증-대학/전문대학/대학원). */
+function tierLabel(tier: UnivTier, schoolType?: SchoolType): string {
+  if (schoolType && (tier === "certified" || tier === "excellent")) return `${TIER_LABEL[tier]}-${SCHOOL_LABEL[schoolType]}`;
+  return TIER_LABEL[tier];
+}
 const REGION_LABEL: Record<UnivRegion, string> = { metro: "수도권", nonmetro: "비수도권" };
 
 const STATUS_OPTS = D.axes.find((a) => a.id === "statusCode")!.options;
@@ -32,6 +37,7 @@ function statusOptionsFor(inst: InstKind) {
 interface UnivPick {
   name: string;
   tier: UnivTier; // 학위과정 등급
+  schoolType?: SchoolType; // 대학/전문대학/대학원
   region: UnivRegion;
   lang?: boolean; // 어학연수 인증 여부
   langRestricted?: boolean; // 어학연수 정밀심사
@@ -41,7 +47,6 @@ const TIER_OPTS: { value: UnivTier; label: string }[] = [
   { value: "excellent", label: "우수 인증대학" },
   { value: "certified", label: "인증대학" },
   { value: "general", label: "미인증(일반) 대학" },
-  { value: "consulting", label: "컨설팅대학 (비자심사 강화)" },
   { value: "restricted", label: "비자정밀 심사대학" },
 ];
 // 어학당(D-4-1) 어학연수 등급
@@ -106,7 +111,7 @@ export default function Page() {
           </div>
           {!searched && (
             <p style={{ margin: "8px 0 0", fontSize: 15, opacity: 0.92 }}>
-              신청 상황을 고르면 제출 서류와 발급 조건을 정리해 드립니다. 기준일 {D.meta.compiledAt}.
+              <T ko="신청 상황을 고르면 제출 서류와 발급 조건을 정리해 드립니다." /> <T ko="기준일" /> {D.meta.compiledAt}.
             </p>
           )}
         </div>
@@ -124,7 +129,7 @@ export default function Page() {
             <SummaryBar inst={inst} isChange={isChange} origin={originOpt.label} status={status} place={place!} onEdit={() => setSearched(false)} />
             <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 14 }}>
               <Link href="/edit" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12.5, fontWeight: 700, color: "var(--ink-light)", textDecoration: "none", border: "1px solid var(--bdr)", borderRadius: 9, padding: "6px 11px", background: "#fff" }}>
-                <Pencil size={13} /> 서류 내용 편집
+                <Pencil size={13} /> <T ko="서류 내용 편집" />
               </Link>
             </div>
             {place && (
@@ -252,11 +257,11 @@ function InputForm(p: {
           gap: 8,
         }}
       >
-        <Search size={18} /> 발급요건 조회
+        <Search size={18} /> <T ko="발급요건 조회" />
       </button>
       {!p.canSearch && (
         <p style={{ margin: "8px 0 0", fontSize: 12.5, color: "var(--ink-light)", textAlign: "center" }}>
-          {instNoun}를 선택하면 조회할 수 있습니다.
+          <T ko="기관을 선택하면 조회할 수 있습니다." />
         </p>
       )}
     </div>
@@ -266,7 +271,7 @@ function InputForm(p: {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label style={{ display: "block" }}>
-      <span style={{ fontSize: 13, fontWeight: 700, color: "var(--ink-mid)", display: "block", marginBottom: 7 }}>{label}</span>
+      <span style={{ fontSize: 13, fontWeight: 700, color: "var(--ink-mid)", display: "block", marginBottom: 7 }}><T ko={label} /></span>
       {children}
     </label>
   );
@@ -274,7 +279,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 function LabeledDropdown({ label, value, onChange, options }: { label: string; value: string; onChange: (v: string) => void; options: { value: string; label: string }[] }) {
   return (
     <label style={{ display: "block" }}>
-      <span style={{ fontSize: 11.5, fontWeight: 700, color: "var(--ink-light)", display: "block", marginBottom: 4 }}>{label}</span>
+      <span style={{ fontSize: 11.5, fontWeight: 700, color: "var(--ink-light)", display: "block", marginBottom: 4 }}><T ko={label} /></span>
       <Dropdown value={value} onChange={onChange} options={options} />
     </label>
   );
@@ -315,8 +320,8 @@ function RadioGroup({
               transition: "all .12s",
             }}
           >
-            <span style={{ fontSize: small ? 13.5 : 15, fontWeight: 800, color: active ? "var(--coral-d)" : "var(--ink)" }}>{o.label}</span>
-            {o.desc && <span style={{ fontSize: small ? 11 : 12, color: active ? "var(--coral-d)" : "var(--ink-light)" }}>{o.desc}</span>}
+            <span style={{ fontSize: small ? 13.5 : 15, fontWeight: 800, color: active ? "var(--coral-d)" : "var(--ink)", textAlign: "center" }}><T ko={o.label} /></span>
+            {o.desc && <span style={{ fontSize: small ? 11 : 12, color: active ? "var(--coral-d)" : "var(--ink-light)", textAlign: "center" }}><T ko={o.desc} /></span>}
           </button>
         );
       })}
@@ -342,7 +347,7 @@ function Dropdown({
   return (
     <div ref={ref} style={{ position: "relative" }}>
       <button type="button" onClick={() => setOpen((o) => !o)} style={selectBtn}>
-        <span style={{ fontWeight: sel?.bold ? 800 : 500 }}>{sel?.label ?? "선택"}</span>
+        <span style={{ fontWeight: sel?.bold ? 800 : 500 }}>{sel ? <T ko={sel.label} /> : "선택"}</span>
         <ChevronDown size={16} style={{ color: "var(--ink-light)", flexShrink: 0 }} />
       </button>
       {open && (
@@ -352,7 +357,7 @@ function Dropdown({
             lastGroup = o.group;
             return (
               <div key={o.value}>
-                {showGroup && <div style={{ fontSize: 11, color: "var(--ink-xlight)", padding: "6px 13px 2px", fontWeight: 700 }}>{o.group}</div>}
+                {showGroup && <div style={{ fontSize: 11, color: "var(--ink-xlight)", padding: "6px 13px 2px", fontWeight: 700 }}><T ko={o.group!} /></div>}
                 <button
                   type="button"
                   onClick={() => {
@@ -361,7 +366,7 @@ function Dropdown({
                   }}
                   style={{ ...dropdownItem, fontWeight: o.bold ? 800 : 500, background: o.value === value ? "var(--coral-pale)" : "#fff" }}
                 >
-                  {o.label}
+                  <T ko={o.label} />
                   {o.value === value && <Check size={15} style={{ color: "var(--coral-d)", marginLeft: "auto" }} />}
                 </button>
               </div>
@@ -378,6 +383,7 @@ function UnivPicker({ inst, value, onChange }: { inst: InstKind; value: UnivPick
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
   const ref = useRef<HTMLDivElement>(null);
+  const tr = useTStr();
   useOutside(ref, () => setOpen(false));
 
   const pool = UNIVERSITIES; // 어학당도 전체 대학(어학 인증/일반 모두)
@@ -390,10 +396,11 @@ function UnivPicker({ inst, value, onChange }: { inst: InstKind; value: UnivPick
     <div ref={ref} style={{ position: "relative" }}>
       <button type="button" onClick={() => setOpen((o) => !o)} style={selectBtn}>
         {value ? (
-          <span style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
+          <span style={{ display: "flex", alignItems: "center", gap: 6, minWidth: 0 }}>
             <Building2 size={15} style={{ color: "var(--coral-d)", flexShrink: 0 }} />
             <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{value.name}</span>
-            <TierBadge tier={value.tier} region={value.region} />
+            {inst === "hagwon" && <LangBadge langRestricted={value.langRestricted} lang={value.lang} />}
+            <TierBadge tier={value.tier} region={value.region} schoolType={value.schoolType} />
           </span>
         ) : (
           <span style={{ color: "var(--ink-light)" }}>{inst === "hagwon" ? "어학당 운영 대학 검색" : "대학교 검색"}</span>
@@ -422,7 +429,7 @@ function UnivPicker({ inst, value, onChange }: { inst: InstKind; value: UnivPick
                 key={u.name}
                 type="button"
                 onClick={() => {
-                  onChange({ name: u.name, tier: u.tier, region: u.region, lang: u.lang, langRestricted: u.langRestricted });
+                  onChange({ name: u.name, tier: u.tier, schoolType: u.schoolType, region: u.region, lang: u.lang, langRestricted: u.langRestricted });
                   setOpen(false);
                   setQ("");
                 }}
@@ -430,16 +437,14 @@ function UnivPicker({ inst, value, onChange }: { inst: InstKind; value: UnivPick
               >
                 <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{u.name}</span>
                 <span style={{ display: "inline-flex", gap: 4, marginLeft: "auto", flexShrink: 0 }}>
-                  {inst === "hagwon" && (
-                    <span style={{ fontSize: 10.5, fontWeight: 700, color: "#fff", background: u.langRestricted ? "#b3261e" : u.lang ? "var(--blue)" : "var(--ink-light)", padding: "1px 7px", borderRadius: 999 }}>{u.langRestricted ? "어학정밀" : u.lang ? "어학인증" : "어학일반"}</span>
-                  )}
-                  <TierBadge tier={u.tier} region={u.region} />
+                  {inst === "hagwon" && <LangBadge langRestricted={u.langRestricted} lang={u.lang} />}
+                  <TierBadge tier={u.tier} region={u.region} schoolType={u.schoolType} />
                 </span>
               </button>
             ))}
             {matches.length === 0 && (
               <div style={{ padding: "16px", fontSize: 12.5, color: "var(--ink-light)", textAlign: "center" }}>
-                목록에 없습니다. 위 &quot;조건으로&quot;에서 등급·지역을 직접 선택하세요.
+                {tr("목록에 없습니다. 조건으로 등급·지역을 직접 선택하세요.")}
               </div>
             )}
           </div>
@@ -449,13 +454,22 @@ function UnivPicker({ inst, value, onChange }: { inst: InstKind; value: UnivPick
   );
 }
 
-function TierBadge({ tier, region }: { tier: UnivTier; region: UnivRegion }) {
+function LangBadge({ langRestricted, lang }: { langRestricted?: boolean; lang?: boolean }) {
+  const tr = useTStr();
+  return (
+    <span style={{ fontSize: 10.5, fontWeight: 700, color: "#fff", background: langRestricted ? "#b3261e" : lang ? "var(--blue)" : "var(--ink-light)", padding: "1px 7px", borderRadius: 999 }}>
+      {tr(langRestricted ? "어학-정밀" : lang ? "어학-인증" : "어학-일반")}
+    </span>
+  );
+}
+function TierBadge({ tier, region, schoolType }: { tier: UnivTier; region: UnivRegion; schoolType?: SchoolType }) {
+  const tr = useTStr();
   const color =
     tier === "excellent" ? "var(--green)" : tier === "certified" ? "var(--blue)" : tier === "general" ? "var(--ink-light)" : "var(--coral-d)";
   return (
     <span style={{ display: "inline-flex", gap: 4, flexShrink: 0 }}>
-      <span style={{ fontSize: 10.5, fontWeight: 700, color: "#fff", background: color, padding: "1px 7px", borderRadius: 999 }}>{TIER_LABEL[tier]}</span>
-      <span style={{ fontSize: 10.5, fontWeight: 700, color: "var(--ink-mid)", background: "var(--peach)", padding: "1px 7px", borderRadius: 999 }}>{REGION_LABEL[region]}</span>
+      <span style={{ fontSize: 10.5, fontWeight: 700, color: "#fff", background: color, padding: "1px 7px", borderRadius: 999 }}>{tr(tierLabel(tier, schoolType))}</span>
+      <span style={{ fontSize: 10.5, fontWeight: 700, color: "var(--ink-mid)", background: "var(--peach)", padding: "1px 7px", borderRadius: 999 }}>{tr(REGION_LABEL[region])}</span>
     </span>
   );
 }
@@ -467,17 +481,17 @@ function SummaryBar({ inst, isChange, origin, status, place, onEdit }: { inst: I
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 10, background: "#fff", border: "1px solid var(--bdr)", borderRadius: 14, padding: "12px 14px", marginBottom: 18, boxShadow: "var(--shadow-sm)", flexWrap: "wrap" }}>
       <div style={{ display: "flex", gap: 6, flexWrap: "wrap", flex: 1, minWidth: 0 }}>
-        <SumChip>{instLabel}</SumChip>
-        <SumChip>{origin}</SumChip>
+        <SumChip><T ko={instLabel} /></SumChip>
+        <SumChip><T ko={origin} /></SumChip>
         <SumChip>
           {place.name ? `${place.name} · ` : ""}
-          {inst === "hagwon" ? `학위 ${TIER_LABEL[place.tier]} · 어학 ${place.langRestricted ? "정밀" : place.lang ? "인증" : "일반"}` : TIER_LABEL[place.tier]}
+          {inst === "hagwon" ? `학위 ${tierLabel(place.tier, place.schoolType)} · 어학 ${place.langRestricted ? "정밀" : place.lang ? "인증" : "일반"}` : tierLabel(place.tier, place.schoolType)}
           {` · ${REGION_LABEL[place.region]}`}
         </SumChip>
-        <SumChip strong>{statusLabel}</SumChip>
+        <SumChip strong><T ko={statusLabel} /></SumChip>
       </div>
       <button onClick={onEdit} style={{ display: "flex", alignItems: "center", gap: 5, border: "1.5px solid var(--coral)", background: "#fff", color: "var(--coral-d)", padding: "7px 14px", borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: "pointer", flexShrink: 0 }}>
-        <Pencil size={14} /> 수정
+        <Pencil size={14} /> <T ko="수정" />
       </button>
     </div>
   );
@@ -525,7 +539,7 @@ function Results({
   if (flow.impossible) {
     return (
       <div style={{ background: "#fff", border: "1px solid var(--bdr)", borderRadius: 14, padding: "16px 18px", fontSize: 13.5, color: "var(--ink-mid)", lineHeight: 1.6 }}>
-        제도상 발생하지 않는 조합입니다(어학연수 인증은 학위과정 인증이 전제). 등급을 다시 확인해 주세요.
+        <T ko="제도상 발생하지 않는 조합입니다(어학연수 인증은 학위과정 인증이 전제). 등급을 다시 확인해 주세요." />
       </div>
     );
   }
@@ -535,10 +549,10 @@ function Results({
       <div style={{ display: "flex", gap: 12, alignItems: "flex-start", background: "#fdecea", border: "1px solid #f3c6c1", color: "#b3261e", borderRadius: 14, padding: "16px 18px" }}>
         <ShieldAlert size={22} style={{ flexShrink: 0, marginTop: 2 }} />
         <div>
-          <div style={{ fontSize: 16, fontWeight: 800 }}>발급 제한 (흐름 {flow.key})</div>
+          <div style={{ fontSize: 16, fontWeight: 800 }}><T ko="발급 제한" /> (<T ko="흐름" /> {flow.key})</div>
           <div style={{ fontSize: 13.5, marginTop: 4, lineHeight: 1.6 }}>
-            {course === "hagwon" ? "어학연수 정밀심사 대학은 어학연수 비자 발급이 제한됩니다." : "학위 정밀심사 대학은 학사·석사 신규 비자가 제한됩니다."}
-            {doctoral && " 다만 박사·연구과정은 사증발급인정서 경로로 신청할 수 있습니다(이 문서 범위 밖 — 관할 공관 확인)."}
+            <T ko={course === "hagwon" ? "어학연수 정밀심사 대학은 어학연수 비자 발급이 제한됩니다." : "학위 정밀심사 대학은 학사·석사 신규 비자가 제한됩니다."} />
+            {doctoral && <> <T ko="다만 박사·연구과정은 사증발급인정서 경로로 신청할 수 있습니다(이 문서 범위 밖 — 관할 공관 확인)." /></>}
           </div>
         </div>
       </div>
@@ -546,14 +560,16 @@ function Results({
   }
 
   const sections = SECTIONS.filter((s) => sectionNeeded(s, v, course, nationality));
+  // 예치제(유학경비 예치확인서) = D-4 어학당 + 어학 일반(비인증)만. 그 외엔 잔고증명서.
+  const isDepositCase = course === "hagwon" && langTier === "general";
 
   return (
     <div>
       <ProcessStepper flow={flow} />
-      {isChange && <Callout tone="blue">국내 변경(D-4→D-2)은 관할 출입국·외국인청에 접수합니다(하이코리아). 결핵진단서·영사확인·번역공증은 면제됩니다.</Callout>}
-      {v.financeCaveat && <Callout tone="amber">{v.financeCaveat}</Callout>}
+      {isChange && <Callout tone="blue"><T ko="국내 변경(D-4→D-2)은 관할 출입국·외국인청에 접수합니다(하이코리아). 결핵진단서·영사확인·번역공증은 면제됩니다." /></Callout>}
+      {v.financeCaveat && <Callout tone="amber"><T ko={v.financeCaveat} /></Callout>}
       {v.notes.map((n, i) => (
-        <Callout key={i} tone="amber">{n}</Callout>
+        <Callout key={i} tone="amber"><T ko={n} /></Callout>
       ))}
 
       <div style={{ marginTop: 22, display: "flex", flexDirection: "column", gap: 24 }}>
@@ -564,15 +580,18 @@ function Results({
               d.courses.includes(course) &&
               (d.onlyVN ? nationality === "vn" : true) &&
               (d.onlyNorth ? applicantRegion === "vn_north" : true) &&
-              !(isChange && d.id === "tb")
+              !(isChange && d.id === "tb") &&
+              // 예치제 케이스: 잔고증명 계열 대신 예치확인서 / 그 외: 예치확인서 숨김
+              !(isDepositCase && ["balance", "bankbook", "remittance"].includes(d.id)) &&
+              !(!isDepositCase && d.id === "deposit-confirm")
           );
           if (!docs.length) return null;
           return (
             <div key={sec}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
                 <span style={{ fontSize: 17 }}>{SECTION_EMOJI[sec]}</span>
-                <h3 style={{ fontSize: 16, fontWeight: 800, margin: 0 }}>{sec}</h3>
-                <span style={{ fontSize: 12, color: "var(--ink-xlight)" }}>{docs.length}건</span>
+                <h3 style={{ fontSize: 16, fontWeight: 800, margin: 0 }}><T ko={sec} /></h3>
+                <span style={{ fontSize: 12, color: "var(--ink-xlight)" }}>{docs.length}<T ko="건" /></span>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {docs.map((d) => (
@@ -593,9 +612,9 @@ function ProcessStepper({ flow }: { flow: FlowResult }) {
   return (
     <div style={{ background: "#fff", border: "1px solid var(--bdr)", borderRadius: 14, padding: "16px 18px", boxShadow: "var(--shadow-sm)" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 14 }}>
-        <span style={{ fontSize: 15, fontWeight: 800 }}>지원 프로세스</span>
-        <span style={{ fontSize: 12.5, fontWeight: 800, color: "#fff", background: meta.color, padding: "4px 12px", borderRadius: 999 }}>{meta.label}</span>
-        <span style={{ fontSize: 11.5, color: "var(--ink-xlight)" }}>흐름 {flow.key}</span>
+        <span style={{ fontSize: 15, fontWeight: 800 }}><T ko="지원 프로세스" /></span>
+        <span style={{ fontSize: 12.5, fontWeight: 800, color: "#fff", background: meta.color, padding: "4px 12px", borderRadius: 999 }}><T ko={meta.label} viStyle={{ color: "#fff", opacity: 0.9 }} /></span>
+        <span style={{ fontSize: 11.5, color: "var(--ink-xlight)" }}><T ko="흐름" /> {flow.key}</span>
       </div>
       <div style={{ display: "flex", overflowX: "auto", paddingBottom: 4 }}>
         {PROCESS_STEPS.map((title, i) => {
@@ -610,9 +629,9 @@ function ProcessStepper({ flow }: { flow: FlowResult }) {
                 <span style={{ flex: 1, height: 2, background: i === last ? "transparent" : "var(--bdr-d)" }} />
               </div>
               <div style={{ padding: "8px 8px 0", textAlign: "center" }}>
-                <div style={{ fontSize: 12.5, fontWeight: 800, color: empty ? "var(--ink-xlight)" : "var(--ink)" }}>{title}</div>
+                <div style={{ fontSize: 12.5, fontWeight: 800, color: empty ? "var(--ink-xlight)" : "var(--ink)" }}><T ko={title} /></div>
                 {empty ? (
-                  <div style={{ fontSize: 11.5, color: "var(--ink-xlight)", marginTop: 4 }}>{i === 0 ? "사전 준비 없음" : "해당 없음"}</div>
+                  <div style={{ fontSize: 11.5, color: "var(--ink-xlight)", marginTop: 4 }}><T ko={i === 0 ? "사전 준비 없음" : "해당 없음"} /></div>
                 ) : (
                   <div style={{ marginTop: 6, display: "flex", flexDirection: "column", gap: 5, textAlign: "left" }}>
                     {cell.split(" / ").map((line, j) => (
@@ -635,12 +654,12 @@ function StepLine({ text }: { text: string }) {
   if (m) {
     return (
       <div style={{ fontSize: 12.5, color: "var(--ink-mid)", lineHeight: 1.5 }}>
-        <span style={{ fontSize: 10.5, fontWeight: 800, color: "#fff", background: ACTOR_COLOR[m[1]] ?? "var(--ink-light)", padding: "1px 6px", borderRadius: 6, marginRight: 5 }}>{m[1]}</span>
-        {m[2]}
+        <span style={{ fontSize: 10.5, fontWeight: 800, color: "#fff", background: ACTOR_COLOR[m[1]] ?? "var(--ink-light)", padding: "1px 6px", borderRadius: 6, marginRight: 5 }}><T ko={m[1]} viStyle={{ color: "#fff", opacity: 0.9 }} /></span>
+        <T ko={m[2]} />
       </div>
     );
   }
-  return <div style={{ fontSize: 12.5, color: "var(--ink-mid)", lineHeight: 1.5 }}>{text}</div>;
+  return <div style={{ fontSize: 12.5, color: "var(--ink-mid)", lineHeight: 1.5 }}><T ko={text} /></div>;
 }
 
 /**
@@ -651,6 +670,7 @@ function StepLine({ text }: { text: string }) {
 function DocRow({ doc, docName, ctx }: { doc: ChecklistDoc; docName: (id: string) => string; ctx: { course: Course; region: Region; tier: Tier; langTier: Tier } }) {
   const [open, setOpen] = useState(false);
   const { getKo } = useEdit();
+  const tr = useTStr();
 
   const attrs = docAttrRaws(doc, docName).map((a) => {
     const path = `doc:${doc.id}:${a.key}`;
@@ -679,7 +699,7 @@ function DocRow({ doc, docName, ctx }: { doc: ChecklistDoc; docName: (id: string
         <span style={{ fontSize: 15, fontWeight: 800 }}>
           <Bi path={`doc:${doc.id}:name`} ko={doc.name} />
         </span>
-        <span style={{ fontSize: 11.5, fontWeight: 700, color: "var(--ink-xlight)", flexShrink: 0 }}>{open ? "접기 ▲" : "자세히 ▾"}</span>
+        <span style={{ fontSize: 11.5, fontWeight: 700, color: "var(--ink-xlight)", flexShrink: 0 }}>{open ? `${tr("접기")} ▲` : `${tr("자세히")} ▾`}</span>
       </div>
 
       <div style={{ display: "flex", gap: 5, flexWrap: "wrap", marginTop: 8, alignItems: "center" }}>
@@ -704,7 +724,7 @@ function DocRow({ doc, docName, ctx }: { doc: ChecklistDoc; docName: (id: string
             ))}
             {visibleAttrs.map((a) => (
               <span key={a.key} style={{ ...tagStyle, color: a.missing ? "#b3261e" : "var(--ink-mid)", background: a.missing ? "#fdecea" : "var(--peach)", borderColor: a.missing ? "#f3c6c1" : "var(--bdr)" }}>
-                <b style={{ color: "var(--ink-light)", fontWeight: 700, marginRight: 4 }}>{a.label}</b>
+                <b style={{ color: "var(--ink-light)", fontWeight: 700, marginRight: 4 }}>{tr(a.label)}</b>
                 <Bi path={a.path} ko={a.raw} />
               </span>
             ))}
@@ -731,7 +751,7 @@ function DocRow({ doc, docName, ctx }: { doc: ChecklistDoc; docName: (id: string
 
       {open && ambKo && (
         <div style={{ marginTop: 8, fontSize: 11.5, color: "#8a6d1a", background: "#fff7e0", border: "1px solid #f0dca0", borderRadius: 8, padding: "6px 9px", lineHeight: 1.55 }}>
-          확인 필요: <Bi path={`doc:${doc.id}:ambiguous`} ko={doc.ambiguous ?? ""} />
+          {tr("확인 필요")}: <Bi path={`doc:${doc.id}:ambiguous`} ko={doc.ambiguous ?? ""} />
         </div>
       )}
     </div>

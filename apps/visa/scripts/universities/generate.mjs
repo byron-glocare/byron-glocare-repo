@@ -25,20 +25,31 @@ const regionMap = {};
 for (const f of ["region_AB.json", "region_C.json"]) {
   for (const r of JSON.parse(read(f))) regionMap[normReg(r.name)] = r.region;
 }
+const stFromHeader = (l) => (l.includes("일반대학") ? "univ" : l.includes("전문대학") ? "college" : l.includes("대학원") ? "grad" : null);
+const stFromPrefix = (l) => (/^일반\s*:/.test(l) ? "univ" : /^전문\s*:/.test(l) ? "college" : /^대학원\s*:/.test(l) ? "grad" : null);
+
 let bucket = null;
+let headerSchool = null;
 const degree = [], excellent = [], lang = [];
 const T = { degree, excellent, lang };
+const schoolTypeMap = {}; // normReg 이름 → univ/college/grad (학위 인증 섹션 먼저 만난 값 우선)
 for (const raw of read("studyinkorea_lists.txt").split(/\r?\n/)) {
   const line = raw.trim();
   if (!line) continue;
   if (line.startsWith("==")) {
     bucket = line.includes("학위 인증") ? "degree" : line.includes("우수인증") ? "excellent" : line.includes("어학연수 인증") ? "lang" : null;
+    headerSchool = bucket === "degree" ? stFromHeader(line) : null;
     continue;
   }
   if (!bucket) continue;
+  const school = headerSchool || stFromPrefix(line);
   for (const nm of line.replace(/^(일반|전문|대학원)\s*:\s*/, "").split(",")) {
     const n = nm.trim();
-    if (n && !/^\d+$/.test(n)) T[bucket].push(n);
+    if (n && !/^\d+$/.test(n)) {
+      T[bucket].push(n);
+      const key = normReg(n);
+      if (school && !schoolTypeMap[key]) schoolTypeMap[key] = school;
+    }
   }
 }
 const excellentSet = new Set(excellent.map(normReg));
@@ -52,7 +63,7 @@ for (const name of degree) {
   if (seen.has(key)) continue;
   seen.add(key);
   certifiedBase.add(base(name));
-  unis.push({ name, region: regionMap[key] || "nonmetro", tier: excellentSet.has(key) ? "excellent" : "certified", lang: langSet.has(key) });
+  unis.push({ name, region: regionMap[key] || "nonmetro", tier: excellentSet.has(key) ? "excellent" : "certified", lang: langSet.has(key), schoolType: schoolTypeMap[key] });
 }
 
 // ── 2. 나무위키 전 대학(미인증=general) ────────────────
@@ -103,11 +114,11 @@ for (const a of ADD_RESTRICTED) {
 }
 
 unis.sort((a, b) => a.name.localeCompare(b.name, "ko"));
-const body = unis.map((u) => `  { name: ${JSON.stringify(u.name)}, region: ${JSON.stringify(u.region)}, tier: ${JSON.stringify(u.tier)}${u.lang ? ", lang: true" : ""}${u.langRestricted ? ", langRestricted: true" : ""} },`).join("\n");
+const body = unis.map((u) => `  { name: ${JSON.stringify(u.name)}, region: ${JSON.stringify(u.region)}, tier: ${JSON.stringify(u.tier)}${u.schoolType ? `, schoolType: ${JSON.stringify(u.schoolType)}` : ""}${u.lang ? ", lang: true" : ""}${u.langRestricted ? ", langRestricted: true" : ""} },`).join("\n");
 
 fs.writeFileSync(
   OUT,
-  `import type { UnivRegion, UnivTier } from "./engine";
+  `import type { UnivRegion, UnivTier, SchoolType } from "./engine";
 
 /**
  * 전국 대학 데이터셋.
@@ -115,16 +126,17 @@ fs.writeFileSync(
  * - 그 외(미인증=general): 나무위키 지역별 대학교 목록 + 소재지(페이지 기준).
  * 자동 생성물(scripts/universities/generate.mjs). 직접 수정 대신 생성 스크립트를 고칠 것.
  *
- * region: metro=서울·인천·경기, nonmetro=그 외.
- * tier:   excellent=우수인증, certified=인증(학위과정), general=미인증.
- * lang:   어학연수 인증대학 여부.
- * ⚠ consulting(컨설팅)·restricted(비자정밀심사)는 별도 지정 → 피커의 특수등급으로만.
- * ⚠ general 대학 소재지는 페이지 기준 자동판정이라 일부 캠퍼스 오차 가능.
+ * region:     metro=서울·인천·경기, nonmetro=그 외.
+ * tier:       excellent=우수인증, certified=인증(학위과정), general=미인증, restricted=학위 정밀심사.
+ * schoolType: univ=대학, college=전문대학, grad=대학원대학 (인증/우수인증에만 존재).
+ * lang:       어학연수 인증대학 여부.
+ * ⚠ restricted(비자정밀심사)는 별도 지정. general 소재지는 페이지 기준이라 일부 캠퍼스 오차 가능.
  */
 export interface University {
   name: string;
   region: UnivRegion;
   tier: UnivTier; // 학위과정 등급 (restricted=학위 정밀심사)
+  schoolType?: SchoolType; // 대학/전문대학/대학원 (인증·우수인증)
   lang?: boolean; // 어학연수 인증 여부
   langRestricted?: boolean; // 어학연수 정밀심사
 }

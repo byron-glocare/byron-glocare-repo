@@ -71,7 +71,7 @@ export interface FlowResult {
   impossible?: boolean; // 제도상 발생 불가(일반×어학인증 등)
 }
 
-/** 학위등급 × 어학등급 → 조합 번호(1~12). consulting 은 일반으로 간주. */
+/** 학위등급 × 어학등급 → 조합 번호(1~12). */
 export function comboOf(degreeTier: Tier, langTier: Tier): number {
   const d = degreeTier === "excellent" ? 0 : degreeTier === "certified" ? 1 : degreeTier === "restricted" ? 3 : 2;
   const l = langTier === "certified" ? 0 : langTier === "restricted" ? 2 : 1;

@@ -13,6 +13,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
 import overridesKoRaw from "@/data/overrides.json";
 import overridesViRaw from "@/data/overrides.vi.json";
+import { VI } from "@/data/i18n";
 
 type EditMap = Record<string, string>;
 export type Lang = "ko" | "vi";
@@ -132,22 +133,41 @@ export function useEdit(): EditCtx {
   return c;
 }
 
-/**
- * 병기 표시. 표시 언어가 ko 면 한국어만, vi 면 한국어 + (번역 있으면) 그 아래 베트남어.
- * block=true 면 세로 블록, 기본은 인라인 흐름 안에서 세로 스택.
- */
-export function Bi({ path, ko, viStyle }: { path: string; ko: string; viStyle?: React.CSSProperties }) {
-  const { lang, getKo, getVi } = useEdit();
-  const koVal = getKo(path, ko);
-  if (lang === "ko") return <>{koVal}</>;
-  const viVal = getVi(path);
-  if (!viVal) return <>{koVal}</>;
+function biStack( koVal: string, viVal: string, viStyle?: React.CSSProperties) {
   return (
     <span style={{ display: "inline-block" }}>
       <span style={{ display: "block" }}>{koVal}</span>
       <span style={{ display: "block", color: "var(--ink-light)", fontSize: "0.92em", fontStyle: "italic", marginTop: 1, ...viStyle }}>{viVal}</span>
     </span>
   );
+}
+
+/**
+ * 병기 표시(내용). 표시 언어가 ko 면 한국어만, vi 면 한국어 + 그 아래 베트남어.
+ * 번역 우선순위: 사용자 편집(overrides.vi/localStorage) > 사전(VI) > 없으면 한국어만.
+ */
+export function Bi({ path, ko, viStyle }: { path: string; ko: string; viStyle?: React.CSSProperties }) {
+  const { lang, getKo, getVi } = useEdit();
+  const koVal = getKo(path, ko);
+  if (lang === "ko") return <>{koVal}</>;
+  const viVal = getVi(path) || VI[koVal] || "";
+  if (!viVal) return <>{koVal}</>;
+  return biStack(koVal, viVal, viStyle);
+}
+
+/** 병기 표시(UI 텍스트). 사전(VI) 기반. */
+export function T({ ko, viStyle }: { ko: string; viStyle?: React.CSSProperties }) {
+  const { lang } = useEdit();
+  if (lang === "ko") return <>{ko}</>;
+  const vi = VI[ko] || "";
+  if (!vi) return <>{ko}</>;
+  return biStack(ko, vi, viStyle);
+}
+
+/** UI 문자열 훅 — placeholder 등 JSX 를 못 쓰는 곳(병기 불가): vi 면 번역, 없으면 한국어. */
+export function useTStr() {
+  const { lang } = useEdit();
+  return useCallback((ko: string) => (lang === "vi" && VI[ko] ? VI[ko] : ko), [lang]);
 }
 
 /** 헤더용 언어 선택 (한국어 / Tiếng Việt). */

@@ -11,7 +11,7 @@
  */
 
 export type Course = "univ" | "hagwon";
-export type Tier = "excellent" | "certified" | "general" | "consulting" | "restricted";
+export type Tier = "excellent" | "certified" | "general" | "restricted";
 export type Burden = "exempt" | "admission" | "full" | "blocked";
 export type Region = "metro" | "nonmetro";
 export type Section = "신분·공통" | "학력" | "재정" | "건강" | "어학";
@@ -78,7 +78,6 @@ export function judge(course: Course, degreeTier: Tier, langTier: Tier, region: 
   if (course === "hagwon") {
     // 어학당 (D-4-1) — 어학연수 등급이 정밀심사면 발급 제한
     if (langTier === "restricted") return blocked("어학연수 비자정밀 심사대학은 어학연수 비자 발급이 제한됩니다.");
-    if (langTier === "consulting" || degreeTier === "consulting") notes.push("컨설팅대학(비자심사 강화): 재정 예치기간 6개월·어학 성적 필수.");
     const burden: Burden = degreeTier === "excellent" ? "exempt" : degreeTier === "certified" && langTier === "certified" ? "admission" : "full";
     const routes = degreeTier === "excellent" ? ["재외공관 직접 신청", "사증발급인정서 (선택 가능)"] : ["재외공관 직접 신청"];
     return mk(burden, routes, caveat(burden));
@@ -89,7 +88,6 @@ export function judge(course: Course, degreeTier: Tier, langTier: Tier, region: 
     if (["D-2-1", "D-2-2", "D-2-3"].includes(statusCode)) return blocked("비자정밀 심사대학은 학사·석사 신규 비자가 제한됩니다(박사·연구과정은 사증발급인정서 경로).");
     return mk("full", ["사증발급인정서 (인정서 경로만)"]);
   }
-  if (degreeTier === "consulting") notes.push("컨설팅대학(비자심사 강화): 재정 예치기간 6개월·어학 성적 필수.");
   const burden: Burden = degreeTier === "excellent" ? "exempt" : degreeTier === "certified" ? "admission" : "full";
   const routes = ["재외공관 직접 신청"];
   if (degreeTier === "excellent") routes.push("사증발급인정서 (선택 가능)");
@@ -121,15 +119,14 @@ export interface CondSlot {
 }
 export const CONDITIONAL_SLOTS: Record<string, CondSlot[]> = {
   balance: [
-    { slot: "amount:univ:metro", group: "예치금", label: "학위(D-2) · 수도권", value: "2,000만원" },
-    { slot: "amount:univ:nonmetro", group: "예치금", label: "학위(D-2) · 비수도권", value: "1,600만원" },
-    { slot: "amount:hagwon:metro", group: "예치금", label: "어학당(D-4) · 수도권", value: "1,000만원" },
-    { slot: "amount:hagwon:nonmetro", group: "예치금", label: "어학당(D-4) · 비수도권", value: "800만원" },
-    // 예치 기간은 대학 인증 등급에 따라 달라진다.
-    { slot: "period:excellent", group: "예치기간", label: "우수인증대학", value: "면제(재정입증 면제)" },
-    { slot: "period:certified", group: "예치기간", label: "인증대학", value: "3개월 이상" },
-    { slot: "period:general", group: "예치기간", label: "일반(미인증)대학", value: "6개월 이상" },
-    { slot: "period:consulting", group: "예치기간", label: "컨설팅대학", value: "6개월 이상" },
+    { slot: "amount:univ:metro", group: "잔액", label: "학위(D-2) · 수도권", value: "2,000만원" },
+    { slot: "amount:univ:nonmetro", group: "잔액", label: "학위(D-2) · 비수도권", value: "1,600만원" },
+    { slot: "amount:hagwon:metro", group: "잔액", label: "어학당(D-4) · 수도권", value: "1,000만원" },
+    { slot: "amount:hagwon:nonmetro", group: "잔액", label: "어학당(D-4) · 비수도권", value: "800만원" },
+    // 잔액 유지기간은 대학 인증 등급에 따라 달라진다.
+    { slot: "period:excellent", group: "잔액 유지기간", label: "우수인증대학", value: "면제(재정입증 면제)" },
+    { slot: "period:certified", group: "잔액 유지기간", label: "인증대학", value: "3개월 이상" },
+    { slot: "period:general", group: "잔액 유지기간", label: "일반(미인증)대학", value: "6개월 이상" },
   ],
 };
 
@@ -148,8 +145,10 @@ export function balanceTags(course: Course, region: Region, degreeTier: Tier, la
   const val = (slot: string) => g(`dyn:balance:${slot}`, slots.find((s) => s.slot === slot)!.value);
   const amountSlot = `amount:${course}:${region}`;
   const periodTier: Tier = course === "univ" ? degreeTier : langTier === "certified" ? degreeTier : "general";
-  const tierKey = periodTier === "excellent" || periodTier === "certified" || periodTier === "consulting" ? periodTier : "general";
-  return [`예치금 ${val(amountSlot)} 이상`, `예치 ${val(`period:${tierKey}`)}`];
+  const tierKey = periodTier === "excellent" || periodTier === "certified" ? periodTier : "general";
+  const period = val(`period:${tierKey}`);
+  const periodTag = period.includes("면제") ? period : `잔액 ${period} 유지`;
+  return [`잔액 ${val(amountSlot)} 이상`, periodTag];
 }
 
 /** 서류의 태그 속성 원본값 목록(공용). holderSameAs·원본지참 반영. get 적용 전 raw. */
@@ -216,7 +215,7 @@ export const DOCS: ChecklistDoc[] = [
   { id: "parent-income", name: "부모 소득·재직 증빙", section: "재정", courses: ["univ", "hagwon"], brief: "잔고 명의 부모 기준, 직업에 따라 준비.", cond: "직장인 → 재직증명·급여내역(최근 3개월)·사회보험 / 사업자 → 사업자등록·납세증명 / 농민 → 소득확인서·부동산(레드북).", holderSameAs: "parent-support", issuer: "회사·세무·공안 등", form: "원본·사본", validity: U, translation: "번역 및 공증", notarization: "관할 공안 확인", obtainDays: U, detailDesc: "보증인 1명(잔고 명의 부모) 기준이 원칙. 재정이 빠듯하면 두 분 소득을 함께 내면 유리.", ambiguous: "보증인 1명 기준인지 부모 공동인지 원문 불명확.", onlyVN: true },
   { id: "guarantor-id", name: "재정보증인 신분증 사본", section: "재정", courses: ["univ", "hagwon"], brief: "부모 등 재정보증인의 신분증.", cond: "부모 등 재정보증인이 자금을 댈 때(본인 자비 부담이면 불요).", holderSameAs: "parent-support", issuer: "신분증 발급기관", form: "사본", validity: U, translation: "번역 및 공증", obtainDays: U, onlyVN: true },
   { id: "cost-pledge", name: "유학경비 부담 서약서", section: "재정", courses: ["univ", "hagwon"], brief: "누가 유학 비용을 부담하는지 서약.", holder: "본인 또는 부모(재정보증인)", issuer: "본인 작성", form: "원본", validity: U, detailDesc: "보통 입학지원서에 포함됨." },
-  { id: "deposit-confirm", name: "유학경비 예치확인서", section: "재정", courses: ["hagwon"], brief: "어학당(일반·컨설팅대학) 유학경비 예치제 대상.", holder: "본인", issuer: "은행·지정기관", form: "원본", validity: U, obtainDays: U, detailDesc: "지정 방식으로 예치 후 확인서 제출. 학위과정(D-2)에는 없음." },
+  { id: "deposit-confirm", name: "유학경비 예치확인서", section: "재정", courses: ["hagwon"], brief: "일반(비인증) 어학당의 유학경비 예치제 대상.", holder: "본인", issuer: "은행·지정기관", form: "원본", validity: U, obtainDays: U, detailDesc: "지정 방식으로 예치 후 확인서 제출. 잔고증명서 대신 제출하며, 학위과정(D-2)에는 없음." },
 
   /* ── 건강 ── */
   { id: "tb", name: "결핵진단서", section: "건강", courses: ["univ", "hagwon"], brief: "공관 지정병원에서 발급.", holder: "본인", issuer: "공관 지정병원", form: "원본", validity: "최근 3개월 이내", obtainDays: U, detailDesc: "흉부 X선 검사 포함. 지정병원 목록은 공관별로 다름.", onlyVN: true },

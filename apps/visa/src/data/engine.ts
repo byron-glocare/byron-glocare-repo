@@ -124,8 +124,10 @@ export type UnivTier =
   | "excellent"
   | "certified"
   | "general"
-  | "consulting"
   | "restricted";
+
+/** 학교 유형(인증 등급 세분화 표시용). */
+export type SchoolType = "univ" | "college" | "grad";
 
 /** 사용자가 상단에서 직접 고르는 축(4개 입력이 매핑되는 하위 엔진축). */
 export const QUERY_AXES = [
