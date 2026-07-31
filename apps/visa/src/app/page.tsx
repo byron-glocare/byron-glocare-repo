@@ -63,7 +63,7 @@ export default function Page() {
   const [condTier, setCondTier] = useState<UnivTier>("certified");
   const [condLangTier, setCondLangTier] = useState<UnivTier>("certified");
   const [condRegion, setCondRegion] = useState<UnivRegion>("metro");
-  const [origin, setOrigin] = useState("vn_south");
+  const [origin, setOrigin] = useState("vn");
   const [status, setStatus] = useState("D-2-2");
   const [searched, setSearched] = useState(false);
 

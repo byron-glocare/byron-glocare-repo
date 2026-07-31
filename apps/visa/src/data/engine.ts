@@ -159,8 +159,7 @@ const NOTIFIED_OTHER = [
   "나이지리아", "가나", "이집트", "페루",
 ];
 export const ORIGIN_OPTIONS: { value: string; label: string; ctx: Ctx; group?: string }[] = [
-  { value: "vn_north", label: "베트남 — 북부 (하노이 대사관 관할)", ctx: { nationality: "vn", applicantRegion: "vn_north" }, group: "고시 21개국" },
-  { value: "vn_south", label: "베트남 — 남부 (호치민 총영사관 관할)", ctx: { nationality: "vn", applicantRegion: "vn_south" }, group: "고시 21개국" },
+  { value: "vn", label: "베트남", ctx: { nationality: "vn", applicantRegion: null }, group: "고시 21개국" },
   { value: "cn", label: "중국", ctx: { nationality: "cn", applicantRegion: null }, group: "고시 21개국" },
   { value: "mn", label: "몽골", ctx: { nationality: "mn", applicantRegion: null }, group: "고시 21개국" },
   { value: "uz", label: "우즈베키스탄", ctx: { nationality: "uz", applicantRegion: null }, group: "고시 21개국" },

@@ -62,7 +62,7 @@ export function judge(course: Course, degreeTier: Tier, langTier: Tier, region: 
   const notes: string[] = [];
   const stay = course === "hagwon" ? "최대 6개월 (국내 연장 가능)" : "1~2년";
   const caveat = (burden: Burden): string | undefined =>
-    isVN && burden === "exempt" ? "베트남 남부(호치민 총영사관)는 우수 인증대학이어도 재정 심사를 합니다 → 재정서류를 준비하세요." : undefined;
+    isVN && burden === "exempt" ? "베트남은 우수 인증대학이어도 재정 심사를 합니다 → 재정서류를 준비하세요." : undefined;
 
   const mk = (burden: Burden, routes: string[], financeCaveat?: string): Verdict => ({
     burden,
@@ -202,7 +202,7 @@ export const DOCS: ChecklistDoc[] = [
   { id: "univ-reg", name: "대학 사업자등록증 사본", section: "신분·공통", courses: ["univ", "hagwon"], brief: "대학이 주는 서류(고유번호증도 가능).", holder: "대학 발급", issuer: "대학", form: "사본", validity: U, obtainDays: U },
   { id: "family-ct07", name: "가족관계 확인서(CT07)", section: "신분·공통", courses: ["univ", "hagwon"], brief: "가족관계 확인.", holder: "본인", issuer: "베트남 공안", form: "원본", validity: U, signature: "친필 서명 원본만(전자·스캔·인쇄 불가)", translation: "번역 및 공증", obtainDays: U, onlyVN: true },
   { id: "birth-cert", name: "출생증명서", section: "신분·공통", courses: ["univ", "hagwon"], brief: "부모와의 관계 입증(부모가 재정보증할 때).", holder: "본인", issuer: "인민위원회·공안", form: "사본", validity: U, translation: "번역 및 공증", notarization: "공증", obtainDays: U, onlyVN: true },
-  { id: "residence-ct08", name: "거주 확인서(CT08)", section: "신분·공통", courses: ["univ", "hagwon"], brief: "북부 출신이 호치민 총영사관에 접수할 때.", cond: "남부 1년 이상 거주 이력(대체: 남부 6개월 근무·재학). 남부 고교 졸업 6개월 이내면 면제.", holder: "본인", issuer: "베트남 공안", form: "원본", validity: U, translation: "번역 및 공증", obtainDays: U, onlyVN: true, onlyNorth: true },
+  { id: "residence-ct08", name: "거주 확인서(CT08)", section: "신분·공통", courses: ["univ", "hagwon"], brief: "호적과 다른 지역의 공관에 신청할 때 제출.", cond: "다른 지역 1년 이상 거주 이력(대체: 6개월 근무·재학). 고교 졸업 6개월 이내면 면제.", holder: "본인", issuer: "베트남 공안", form: "원본", validity: U, translation: "번역 및 공증", obtainDays: U, onlyVN: true },
 
   /* ── 학력 ── */
   { id: "grad-cert", name: "졸업증명서", section: "학력", courses: ["univ", "hagwon"], brief: "최종 학교 졸업증명서.", cond: "아직 졸업 전이면 졸업예정증명서로 대체(졸업일 1년 이내).", holder: "본인", issuer: "최종 학교", form: "원본", validity: U, translation: "번역 및 공증", authentication: "남부 영사확인(외무성 → 총영사관, 접수일 1년 이내)", obtainDays: U, detailDesc: "북부(하노이) 관할 영사확인 절차는 다를 수 있음(★확인불가)." },
