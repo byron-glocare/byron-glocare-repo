@@ -7,7 +7,7 @@ import { D, ORIGIN_OPTIONS, EMPHASIZED_STATUS, type UnivRegion, type UnivTier } 
 import { UNIVERSITIES } from "@/data/universities";
 import { judge, sectionNeeded, DOCS, SECTIONS, docAttrRaws, balanceTags, UNVERIFIED, type Course, type Section, type ChecklistDoc, type Tier, type Region } from "@/data/checklist";
 import { flowOf, PROCESS_STEPS, TRACK_META, type FlowResult } from "@/data/process";
-import { EditProvider, useEdit } from "@/lib/edits";
+import { EditProvider, useEdit, Bi, LanguageToggle } from "@/lib/edits";
 
 /* ── 라벨 ─────────────────────────────────────────────── */
 const TIER_LABEL: Record<UnivTier, string> = {
@@ -98,9 +98,12 @@ export default function Page() {
         }}
       >
         <div style={{ maxWidth: 980, margin: "0 auto" }}>
-          <h1 style={{ fontSize: searched ? 20 : 28, fontWeight: 800, margin: 0, letterSpacing: -0.5, transition: "font-size .2s" }}>
-            한국 유학비자 발급요건 조회
-          </h1>
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
+            <h1 style={{ fontSize: searched ? 20 : 28, fontWeight: 800, margin: 0, letterSpacing: -0.5, transition: "font-size .2s" }}>
+              한국 유학비자 발급요건 조회
+            </h1>
+            <LanguageToggle />
+          </div>
           {!searched && (
             <p style={{ margin: "8px 0 0", fontSize: 15, opacity: 0.92 }}>
               신청 상황을 고르면 제출 서류와 발급 조건을 정리해 드립니다. 기준일 {D.meta.compiledAt}.
@@ -647,21 +650,25 @@ function StepLine({ text }: { text: string }) {
  */
 function DocRow({ doc, docName, ctx }: { doc: ChecklistDoc; docName: (id: string) => string; ctx: { course: Course; region: Region; tier: Tier; langTier: Tier } }) {
   const [open, setOpen] = useState(false);
-  const { get } = useEdit();
+  const { getKo } = useEdit();
 
   const attrs = docAttrRaws(doc, docName).map((a) => {
     const path = `doc:${doc.id}:${a.key}`;
-    const val = get(path, a.raw);
+    const val = getKo(path, a.raw);
     return { ...a, path, val, missing: val === UNVERIFIED };
   });
 
-  const hidden: string[] = JSON.parse(get(`doc:${doc.id}:_hidden`, "[]"));
-  const extra: { label: string; value: string }[] = JSON.parse(get(`doc:${doc.id}:_extra`, "[]"));
+  const hidden: string[] = JSON.parse(getKo(`doc:${doc.id}:_hidden`, "[]"));
+  const extra: { label: string; value: string }[] = JSON.parse(getKo(`doc:${doc.id}:_extra`, "[]"));
   const visibleAttrs = attrs.filter((a) => !hidden.includes(a.key));
 
-  // ★ 조건별 값(조회 조건에 맞춰 계산 + 편집값 반영)
-  const dynTags = doc.id === "balance" ? balanceTags(ctx.course, ctx.region, ctx.tier, ctx.langTier, get).map((t) => `★${t}`) : [];
-  const collapsedTags = [...dynTags, ...visibleAttrs.filter((a) => !a.missing).map((a) => a.val), ...extra.filter((e) => e.value.trim()).map((e) => e.value)];
+  // ★ 조건별 값(조회 조건에 맞춰 계산 + 편집값 반영). 현재 한국어만(숫자/단위 위주).
+  const dynTags = doc.id === "balance" ? balanceTags(ctx.course, ctx.region, ctx.tier, ctx.langTier, getKo).map((t) => `★${t}`) : [];
+  const detailKo = getKo(`doc:${doc.id}:detailDesc`, doc.detailDesc ?? "");
+  const condKo = getKo(`doc:${doc.id}:cond`, doc.cond ?? "");
+  const ambKo = getKo(`doc:${doc.id}:ambiguous`, doc.ambiguous ?? "");
+
+  const peachTag = { ...tagStyle, color: "var(--ink-mid)", background: "var(--peach)", borderColor: "var(--bdr)" } as React.CSSProperties;
 
   return (
     <div
@@ -669,56 +676,62 @@ function DocRow({ doc, docName, ctx }: { doc: ChecklistDoc; docName: (id: string
       style={{ background: "#fff", border: `1px solid ${doc.ambiguous ? "#f3c6c1" : "var(--bdr)"}`, borderLeft: "4px solid var(--coral)", borderRadius: 12, padding: "13px 16px", boxShadow: "var(--shadow-sm)", cursor: "pointer" }}
     >
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
-        <span style={{ fontSize: 15, fontWeight: 800 }}>{get(`doc:${doc.id}:name`, doc.name)}</span>
+        <span style={{ fontSize: 15, fontWeight: 800 }}>
+          <Bi path={`doc:${doc.id}:name`} ko={doc.name} />
+        </span>
         <span style={{ fontSize: 11.5, fontWeight: 700, color: "var(--ink-xlight)", flexShrink: 0 }}>{open ? "접기 ▲" : "자세히 ▾"}</span>
       </div>
 
       <div style={{ display: "flex", gap: 5, flexWrap: "wrap", marginTop: 8, alignItems: "center" }}>
-        {!open
-          ? collapsedTags.map((t, i) => (
-              <span key={i} style={{ ...tagStyle, color: "var(--ink-mid)", background: "var(--peach)", borderColor: "var(--bdr)" }}>
-                {t}
+        {!open ? (
+          <>
+            {dynTags.map((t, i) => (
+              <span key={`cd${i}`} style={peachTag}>{t}</span>
+            ))}
+            {visibleAttrs.filter((a) => !a.missing).map((a) => (
+              <span key={a.key} style={peachTag}>
+                <Bi path={a.path} ko={a.raw} />
               </span>
-            ))
-          : (
-            <>
-              {dynTags.map((t, i) => (
-                <span key={`d${i}`} style={{ ...tagStyle, color: "var(--coral-d)", background: "var(--coral-pale)", borderColor: "var(--coral-l)", fontWeight: 700 }}>
-                  {t}
-                </span>
-              ))}
-              {visibleAttrs.map((a) => (
-                <span key={a.key} style={{ ...tagStyle, color: a.missing ? "#b3261e" : "var(--ink-mid)", background: a.missing ? "#fdecea" : "var(--peach)", borderColor: a.missing ? "#f3c6c1" : "var(--bdr)" }}>
-                  <b style={{ color: "var(--ink-light)", fontWeight: 700, marginRight: 4 }}>{a.label}</b>
-                  {a.val}
-                </span>
-              ))}
-              {extra
-                .filter((e) => e.value.trim())
-                .map((ex, i) => (
-                  <span key={`x${i}`} style={{ ...tagStyle, color: "var(--ink-mid)", background: "var(--peach)", borderColor: "var(--bdr)" }}>
-                    {ex.label.trim() && <b style={{ color: "var(--ink-light)", fontWeight: 700, marginRight: 4 }}>{ex.label}</b>}
-                    {ex.value}
-                  </span>
-                ))}
-            </>
-          )}
+            ))}
+            {extra.filter((e) => e.value.trim()).map((ex, i) => (
+              <span key={`cx${i}`} style={peachTag}>{ex.value}</span>
+            ))}
+          </>
+        ) : (
+          <>
+            {dynTags.map((t, i) => (
+              <span key={`d${i}`} style={{ ...tagStyle, color: "var(--coral-d)", background: "var(--coral-pale)", borderColor: "var(--coral-l)", fontWeight: 700 }}>{t}</span>
+            ))}
+            {visibleAttrs.map((a) => (
+              <span key={a.key} style={{ ...tagStyle, color: a.missing ? "#b3261e" : "var(--ink-mid)", background: a.missing ? "#fdecea" : "var(--peach)", borderColor: a.missing ? "#f3c6c1" : "var(--bdr)" }}>
+                <b style={{ color: "var(--ink-light)", fontWeight: 700, marginRight: 4 }}>{a.label}</b>
+                <Bi path={a.path} ko={a.raw} />
+              </span>
+            ))}
+            {extra.filter((e) => e.value.trim()).map((ex, i) => (
+              <span key={`x${i}`} style={{ ...tagStyle, color: "var(--ink-mid)", background: "var(--peach)", borderColor: "var(--bdr)" }}>
+                {ex.label.trim() && <b style={{ color: "var(--ink-light)", fontWeight: 700, marginRight: 4 }}>{ex.label}</b>}
+                {ex.value}
+              </span>
+            ))}
+          </>
+        )}
       </div>
 
       <div style={{ fontSize: 13, color: "var(--ink-mid)", marginTop: 8, lineHeight: 1.6 }}>
-        {get(`doc:${doc.id}:brief`, doc.brief)}
-        {open && (get(`doc:${doc.id}:detailDesc`, doc.detailDesc ?? "") ? " " + get(`doc:${doc.id}:detailDesc`, doc.detailDesc ?? "") : "")}
+        <Bi path={`doc:${doc.id}:brief`} ko={doc.brief} />
+        {open && detailKo ? <span style={{ display: "block", marginTop: 4 }}><Bi path={`doc:${doc.id}:detailDesc`} ko={doc.detailDesc ?? ""} /></span> : null}
       </div>
 
-      {doc.cond && (
+      {condKo && (
         <div style={{ fontSize: 12.5, color: "var(--ink-light)", marginTop: 6, paddingLeft: 10, borderLeft: "2px solid var(--bdr-d)", lineHeight: 1.55 }}>
-          {get(`doc:${doc.id}:cond`, doc.cond)}
+          <Bi path={`doc:${doc.id}:cond`} ko={doc.cond ?? ""} />
         </div>
       )}
 
-      {open && doc.ambiguous && (
+      {open && ambKo && (
         <div style={{ marginTop: 8, fontSize: 11.5, color: "#8a6d1a", background: "#fff7e0", border: "1px solid #f0dca0", borderRadius: 8, padding: "6px 9px", lineHeight: 1.55 }}>
-          확인 필요: {get(`doc:${doc.id}:ambiguous`, doc.ambiguous)}
+          확인 필요: <Bi path={`doc:${doc.id}:ambiguous`} ko={doc.ambiguous ?? ""} />
         </div>
       )}
     </div>

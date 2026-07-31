@@ -61,14 +61,14 @@ export default function EditPage() {
 }
 
 function DocEditor({ doc }: { doc: ChecklistDoc }) {
-  const { get, set } = useEdit();
+  const { getKo, setKo } = useEdit();
   const P = (k: string) => `doc:${doc.id}:${k}`;
 
   const attrs = docAttrRaws(doc, nameOf);
-  const hidden: string[] = JSON.parse(get(P("_hidden"), "[]"));
-  const extra: { label: string; value: string }[] = JSON.parse(get(P("_extra"), "[]"));
-  const setHidden = (a: string[]) => set(P("_hidden"), JSON.stringify(a));
-  const setExtra = (a: { label: string; value: string }[]) => set(P("_extra"), JSON.stringify(a));
+  const hidden: string[] = JSON.parse(getKo(P("_hidden"), "[]"));
+  const extra: { label: string; value: string }[] = JSON.parse(getKo(P("_extra"), "[]"));
+  const setHidden = (a: string[]) => setKo(P("_hidden"), JSON.stringify(a));
+  const setExtra = (a: { label: string; value: string }[]) => setKo(P("_extra"), JSON.stringify(a));
   const slots = CONDITIONAL_SLOTS[doc.id] ?? [];
   const slotGroups = [...new Set(slots.map((s) => s.group))];
 

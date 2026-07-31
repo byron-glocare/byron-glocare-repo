@@ -1,78 +1,126 @@
 "use client";
 
 /**
- * 텍스트 편집 모드.
+ * 텍스트 편집 + 다국어(한국어/베트남어) 오버레이.
  *
- * 정적 사이트라 서버 저장이 없어 편집값은 localStorage 에 보관하고,
- * JSON 내보내기/불러오기로 백업·이관한다. (원본 데이터 파일은 그대로.)
- *
- * - 편집 대상은 path(안정적 키)로 식별: "doc:{id}:name", "rule:{id}:terse" 등.
- * - 여러 위치에서 참조되는 값(조항 terse 등)은 shared 카운트로 "공유 N곳" 표시.
+ * 값 우선순위(언어별): localStorage(미저장 임시) > overrides.{lang}.json(커밋됨) > 원본 데이터(ko 한정).
+ *  - path(안정 키)로 식별: "doc:{id}:name", "dyn:balance:period:certified" 등.
+ *  - 한국어(ko)는 원본 데이터가 기본값. 베트남어(vi)는 번역이 없으면 빈 값("").
+ *  - 표시: 언어=ko → 한국어만. 언어=vi → 한국어 + (번역 있으면) 그 아래 베트남어 병기.
+ *  - 편집(/edit): editLang 으로 한국어/베트남어를 전환해 각각 저장.
+ *  - '소스에 저장'은 두 언어 오버레이 파일을 함께 기록(개발 서버 전용).
  */
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
-import overridesRaw from "@/data/overrides.json";
+import overridesKoRaw from "@/data/overrides.json";
+import overridesViRaw from "@/data/overrides.vi.json";
 
 type EditMap = Record<string, string>;
+export type Lang = "ko" | "vi";
 
-/**
- * 소스에 커밋된 편집값(개발 중 /api/overrides 로 저장). 배포에 실려 모든 방문자에게 반영.
- * 우선순위: 브라우저 localStorage(미저장 임시) > overrides.json(커밋됨) > 원본 데이터.
- */
-const OVERRIDES = overridesRaw as EditMap;
+export const LANG_LABEL: Record<Lang, string> = { ko: "한국어", vi: "Tiếng Việt" };
+
+const OVERRIDES: Record<Lang, EditMap> = {
+  ko: overridesKoRaw as EditMap,
+  vi: overridesViRaw as EditMap,
+};
+const LS: Record<Lang, string> = { ko: "visa-text-edits-v1", vi: "visa-text-edits-vi-v1" };
+const LS_LANG = "visa-lang";
 
 interface EditCtx {
+  // 표시 언어(공개 화면)
+  lang: Lang;
+  setLang: (l: Lang) => void;
+  // 편집 모드(/edit)
   editMode: boolean;
   toggle: () => void;
-  get: (path: string, original: string) => string;
-  set: (path: string, value: string) => void;
-  clear: (path: string) => void;
-  edits: EditMap;
+  editLang: Lang;
+  setEditLang: (l: Lang) => void;
+  // 읽기
+  getKo: (path: string, original: string) => string;
+  getVi: (path: string) => string;
+  setKo: (path: string, value: string) => void;
+  // 활성 편집 언어 기준 읽기/쓰기(EditableText 용)
+  getEdit: (path: string, koFallback: string) => string;
+  setEdit: (path: string, value: string) => void;
+  // 툴바
+  edits: Record<Lang, EditMap>;
   reset: () => void;
   load: (m: EditMap) => void;
-  /** localStorage + overrides 를 합쳐 소스 파일(overrides.json)에 기록(개발 서버 전용). 저장 건수 반환. */
   saveToSource: () => Promise<number>;
 }
 
 const Ctx = createContext<EditCtx | null>(null);
-const LS_KEY = "visa-text-edits-v1";
 
 export function EditProvider({ children, defaultOn = false }: { children: React.ReactNode; defaultOn?: boolean }) {
   const [editMode, setEditMode] = useState(defaultOn);
-  const [edits, setEdits] = useState<EditMap>({});
+  const [editLang, setEditLang] = useState<Lang>("ko");
+  const [lang, setLangState] = useState<Lang>("ko");
+  const [koEdits, setKoEdits] = useState<EditMap>({});
+  const [viEdits, setViEdits] = useState<EditMap>({});
 
   useEffect(() => {
     try {
-      const s = localStorage.getItem(LS_KEY);
-      if (s) setEdits(JSON.parse(s));
+      const ko = localStorage.getItem(LS.ko);
+      if (ko) setKoEdits(JSON.parse(ko));
+      const vi = localStorage.getItem(LS.vi);
+      if (vi) setViEdits(JSON.parse(vi));
+      const l = localStorage.getItem(LS_LANG);
+      if (l === "ko" || l === "vi") setLangState(l);
     } catch {}
   }, []);
-  useEffect(() => {
-    try {
-      localStorage.setItem(LS_KEY, JSON.stringify(edits));
-    } catch {}
-  }, [edits]);
+  useEffect(() => { try { localStorage.setItem(LS.ko, JSON.stringify(koEdits)); } catch {} }, [koEdits]);
+  useEffect(() => { try { localStorage.setItem(LS.vi, JSON.stringify(viEdits)); } catch {} }, [viEdits]);
 
-  const get = useCallback(
-    (path: string, original: string) => (path in edits ? edits[path] : path in OVERRIDES ? OVERRIDES[path] : original),
-    [edits]
+  const setLang = useCallback((l: Lang) => {
+    setLangState(l);
+    try { localStorage.setItem(LS_LANG, l); } catch {}
+  }, []);
+
+  const getKo = useCallback(
+    (path: string, original: string) => (path in koEdits ? koEdits[path] : path in OVERRIDES.ko ? OVERRIDES.ko[path] : original),
+    [koEdits]
   );
-  const set = useCallback((path: string, value: string) => setEdits((e) => ({ ...e, [path]: value })), []);
-  const clear = useCallback((path: string) => setEdits((e) => { const n = { ...e }; delete n[path]; return n; }), []);
-  const reset = useCallback(() => setEdits({}), []);
-  const load = useCallback((m: EditMap) => setEdits(m), []);
+  const getVi = useCallback(
+    (path: string) => (path in viEdits ? viEdits[path] : path in OVERRIDES.vi ? OVERRIDES.vi[path] : ""),
+    [viEdits]
+  );
+  const setKo = useCallback((path: string, value: string) => setKoEdits((e) => ({ ...e, [path]: value })), []);
+  const setVi = useCallback((path: string, value: string) => setViEdits((e) => ({ ...e, [path]: value })), []);
+
+  const getEdit = useCallback(
+    (path: string, koFallback: string) => (editLang === "ko" ? getKo(path, koFallback) : getVi(path)),
+    [editLang, getKo, getVi]
+  );
+  const setEdit = useCallback((path: string, value: string) => (editLang === "ko" ? setKo(path, value) : setVi(path, value)), [editLang, setKo, setVi]);
+
+  const reset = useCallback(() => (editLang === "ko" ? setKoEdits({}) : setViEdits({})), [editLang]);
+  const load = useCallback((m: EditMap) => (editLang === "ko" ? setKoEdits(m) : setViEdits(m)), [editLang]);
+
   const saveToSource = useCallback(async () => {
-    const merged: EditMap = { ...OVERRIDES, ...edits };
-    const res = await fetch("/api/overrides", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(merged) });
+    const body = {
+      ko: { ...OVERRIDES.ko, ...koEdits },
+      vi: { ...OVERRIDES.vi, ...viEdits },
+    };
+    const res = await fetch("/api/overrides", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
     if (!res.ok) {
       const j = (await res.json().catch(() => ({}))) as { error?: string };
       throw new Error(j.error || `HTTP ${res.status}`);
     }
     const j = (await res.json()) as { count: number };
     return j.count;
-  }, [edits]);
+  }, [koEdits, viEdits]);
 
   return (
-    <Ctx.Provider value={{ editMode, toggle: () => setEditMode((m) => !m), get, set, clear, edits, reset, load, saveToSource }}>
+    <Ctx.Provider
+      value={{
+        lang, setLang,
+        editMode, toggle: () => setEditMode((m) => !m),
+        editLang, setEditLang,
+        getKo, getVi, setKo, getEdit, setEdit,
+        edits: { ko: koEdits, vi: viEdits },
+        reset, load, saveToSource,
+      }}
+    >
       {children}
     </Ctx.Provider>
   );
@@ -82,6 +130,53 @@ export function useEdit(): EditCtx {
   const c = useContext(Ctx);
   if (!c) throw new Error("useEdit must be used within EditProvider");
   return c;
+}
+
+/**
+ * 병기 표시. 표시 언어가 ko 면 한국어만, vi 면 한국어 + (번역 있으면) 그 아래 베트남어.
+ * block=true 면 세로 블록, 기본은 인라인 흐름 안에서 세로 스택.
+ */
+export function Bi({ path, ko, viStyle }: { path: string; ko: string; viStyle?: React.CSSProperties }) {
+  const { lang, getKo, getVi } = useEdit();
+  const koVal = getKo(path, ko);
+  if (lang === "ko") return <>{koVal}</>;
+  const viVal = getVi(path);
+  if (!viVal) return <>{koVal}</>;
+  return (
+    <span style={{ display: "inline-block" }}>
+      <span style={{ display: "block" }}>{koVal}</span>
+      <span style={{ display: "block", color: "var(--ink-light)", fontSize: "0.92em", fontStyle: "italic", marginTop: 1, ...viStyle }}>{viVal}</span>
+    </span>
+  );
+}
+
+/** 헤더용 언어 선택 (한국어 / Tiếng Việt). */
+export function LanguageToggle() {
+  const { lang, setLang } = useEdit();
+  const opt = (l: Lang) => (
+    <button
+      key={l}
+      onClick={() => setLang(l)}
+      style={{
+        border: "none",
+        background: lang === l ? "#fff" : "transparent",
+        color: lang === l ? "var(--coral-d)" : "#fff",
+        fontWeight: 800,
+        fontSize: 12.5,
+        padding: "5px 12px",
+        borderRadius: 999,
+        cursor: "pointer",
+      }}
+    >
+      {LANG_LABEL[l]}
+    </button>
+  );
+  return (
+    <div style={{ display: "inline-flex", gap: 2, background: "rgba(255,255,255,.22)", borderRadius: 999, padding: 2 }}>
+      {opt("ko")}
+      {opt("vi")}
+    </div>
+  );
 }
 
 const fieldStyle: React.CSSProperties = {
@@ -97,7 +192,7 @@ const fieldStyle: React.CSSProperties = {
 };
 
 /** 내용에 맞춰 높이가 자동으로 늘어나는 textarea (길이·줄바꿈 자유). */
-function AutoTextarea({ value, onChange, style }: { value: string; onChange: (v: string) => void; style?: React.CSSProperties }) {
+function AutoTextarea({ value, onChange, placeholder, style }: { value: string; onChange: (v: string) => void; placeholder?: string; style?: React.CSSProperties }) {
   const ref = React.useRef<HTMLTextAreaElement>(null);
   const resize = React.useCallback(() => {
     const el = ref.current;
@@ -113,6 +208,7 @@ function AutoTextarea({ value, onChange, style }: { value: string; onChange: (v:
       value={value}
       onChange={(e) => onChange(e.target.value)}
       onInput={resize}
+      placeholder={placeholder}
       rows={1}
       style={{ ...fieldStyle, ...style, width: "100%", resize: "none", overflow: "hidden", lineHeight: 1.5, display: "block" }}
     />
@@ -120,52 +216,42 @@ function AutoTextarea({ value, onChange, style }: { value: string; onChange: (v:
 }
 
 /**
- * 편집 가능한 텍스트. 편집 모드가 아니면 그냥 텍스트, 편집 모드면 자동높이 textarea.
- * 길이·줄바꿈 제한 없음. shared>1 이면 "공유 N곳" 배지 노출.
+ * 편집 가능한 텍스트. 편집 모드가 아니면 활성 편집 언어 값(없으면 한국어) 표시.
+ * 편집 모드면 자동높이 textarea. 베트남어 편집 시 한국어 원문을 placeholder 로 보여준다.
  */
 export function EditableText({
   path,
   value,
-  shared,
   style,
 }: {
   path: string;
   value: string;
   multiline?: boolean;
-  shared?: number;
   style?: React.CSSProperties;
 }) {
-  const { editMode, get, set } = useEdit();
-  const cur = get(path, value);
+  const { editMode, editLang, getEdit, setEdit } = useEdit();
+  const cur = getEdit(path, value);
 
-  if (!editMode) return <span style={style}>{cur}</span>;
+  if (!editMode) return <span style={style}>{cur || value}</span>;
 
-  const changed = cur !== value;
+  const changed = editLang === "ko" ? cur !== value : cur !== "";
   const stop = (e: React.SyntheticEvent) => e.stopPropagation();
   return (
     <span style={{ display: "block", width: "100%" }} onClick={stop} onMouseDown={stop}>
-      {(shared && shared > 1) || changed ? (
+      {changed ? (
         <span style={{ display: "inline-flex", alignItems: "center", gap: 5, marginBottom: 3 }}>
-          {shared && shared > 1 ? (
-            <span
-              title={`이 값은 ${shared}곳에 연결되어 있어, 수정하면 모두 함께 바뀝니다.`}
-              style={{ fontSize: 10, fontWeight: 800, color: "#8a4b00", background: "#ffe8cc", border: "1px solid #f0c088", borderRadius: 999, padding: "0 6px", whiteSpace: "nowrap" }}
-            >
-              🔗 공유 {shared}곳
-            </span>
-          ) : null}
-          {changed ? <span title="수정됨" style={{ fontSize: 10, fontWeight: 800, color: "var(--coral-d)" }}>● 수정됨</span> : null}
+          <span title="수정됨" style={{ fontSize: 10, fontWeight: 800, color: "var(--coral-d)" }}>● {editLang === "vi" ? "VI" : ""} 수정됨</span>
         </span>
       ) : null}
-      <AutoTextarea value={cur} onChange={(v) => set(path, v)} style={style} />
+      <AutoTextarea value={cur} placeholder={editLang === "vi" ? value : undefined} onChange={(v) => setEdit(path, v)} style={style} />
     </span>
   );
 }
 
-/** 편집 툴바 — 편집 on/off, 변경 개수, 내보내기/불러오기/초기화. */
+/** 편집 툴바 — 편집 on/off, 언어 전환, 변경 개수, 소스 저장/내보내기/불러오기/초기화. */
 export function EditToolbar() {
-  const { editMode, toggle, edits, reset, load, saveToSource } = useEdit();
-  const count = Object.keys(edits).length;
+  const { editMode, toggle, editLang, setEditLang, edits, reset, load, saveToSource } = useEdit();
+  const count = Object.keys(edits[editLang]).length;
   const [saveState, setSaveState] = useState<"idle" | "saving" | "done" | "err">("idle");
   const [saveMsg, setSaveMsg] = useState("");
 
@@ -184,12 +270,12 @@ export function EditToolbar() {
   };
 
   const exportJson = () => {
-    const text = JSON.stringify(edits, null, 2);
+    const text = JSON.stringify(edits[editLang], null, 2);
     const blob = new Blob([text], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "visa-text-edits.json";
+    a.download = `visa-text-edits-${editLang}.json`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -214,29 +300,34 @@ export function EditToolbar() {
   };
 
   const btn: React.CSSProperties = { border: "1px solid var(--bdr-d)", background: "#fff", color: "var(--ink-mid)", padding: "6px 11px", borderRadius: 9, fontSize: 12.5, fontWeight: 700, cursor: "pointer" };
+  const langBtn = (l: Lang) => (
+    <button
+      key={l}
+      onClick={() => setEditLang(l)}
+      style={{ ...btn, border: "none", background: editLang === l ? "var(--navy)" : "var(--peach)", color: editLang === l ? "#fff" : "var(--ink-mid)" }}
+    >
+      {LANG_LABEL[l]}
+    </button>
+  );
 
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 14, background: editMode ? "#fff7f5" : "#fff", border: `1px solid ${editMode ? "var(--coral-l)" : "var(--bdr)"}`, borderRadius: 12, padding: "10px 12px" }}>
-      <button
-        onClick={toggle}
-        style={{ ...btn, border: "none", background: editMode ? "var(--coral)" : "var(--ink-mid)", color: "#fff" }}
-      >
+      <button onClick={toggle} style={{ ...btn, border: "none", background: editMode ? "var(--coral)" : "var(--ink-mid)", color: "#fff" }}>
         {editMode ? "✓ 편집 모드 (켜짐)" : "✏ 편집 모드"}
       </button>
       {editMode && (
         <>
+          <span style={{ fontSize: 12, color: "var(--ink-light)", fontWeight: 700 }}>편집 언어</span>
+          {langBtn("ko")}
+          {langBtn("vi")}
           <span style={{ fontSize: 12.5, color: "var(--ink-light)" }}>변경 {count}건</span>
-          <button
-            onClick={doSave}
-            disabled={saveState === "saving"}
-            style={{ ...btn, border: "none", background: "var(--coral)", color: "#fff", cursor: saveState === "saving" ? "default" : "pointer" }}
-          >
+          <button onClick={doSave} disabled={saveState === "saving"} style={{ ...btn, border: "none", background: "var(--coral)", color: "#fff", cursor: saveState === "saving" ? "default" : "pointer" }}>
             {saveState === "saving" ? "저장 중…" : "💾 소스에 저장(배포용)"}
           </button>
           <span style={{ flex: 1 }} />
           <button onClick={exportJson} style={btn}>내보내기(JSON)</button>
           <button onClick={importJson} style={btn}>불러오기</button>
-          <button onClick={() => { if (confirm("모든 편집을 초기화할까요?")) reset(); }} style={{ ...btn, color: "#b3261e", borderColor: "#f3c6c1" }}>초기화</button>
+          <button onClick={() => { if (confirm(`${LANG_LABEL[editLang]} 편집을 모두 초기화할까요?`)) reset(); }} style={{ ...btn, color: "#b3261e", borderColor: "#f3c6c1" }}>초기화</button>
         </>
       )}
       {editMode && saveState !== "idle" && saveMsg && (
@@ -244,7 +335,11 @@ export function EditToolbar() {
           {saveState === "err" ? `저장 실패: ${saveMsg}` : `✓ ${saveMsg}`}
         </span>
       )}
-      {editMode && <span style={{ width: "100%", fontSize: 11.5, color: "var(--ink-light)" }}>🔗 표시가 붙은 값은 여러 곳에 연결돼 있어, 수정하면 모두 함께 바뀝니다. <b>💾 소스에 저장</b>을 누르면 로컬 개발 서버가 편집값을 소스 파일에 기록합니다 — 커밋·배포하면 모든 방문자에게 영구 반영됩니다. (운영 사이트에서는 이 저장이 비활성화됩니다.)</span>}
+      {editMode && (
+        <span style={{ width: "100%", fontSize: 11.5, color: "var(--ink-light)" }}>
+          <b>편집 언어</b>를 <b>Tiếng Việt</b> 로 바꾸면 각 칸에 베트남어 번역을 넣습니다(한국어 원문은 흐린 안내로 표시). <b>💾 소스에 저장</b>은 한국어·베트남어 오버레이를 함께 파일에 기록합니다 — 커밋·배포하면 모두에게 반영. (운영 사이트에서는 저장 비활성화)
+        </span>
+      )}
     </div>
   );
 }
