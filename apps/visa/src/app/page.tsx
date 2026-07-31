@@ -105,7 +105,7 @@ export default function Page() {
         <div style={{ maxWidth: 980, margin: "0 auto" }}>
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
             <h1 style={{ fontSize: searched ? 20 : 28, fontWeight: 800, margin: 0, letterSpacing: -0.5, transition: "font-size .2s" }}>
-              한국 유학비자 발급요건 조회
+              <T ko="한국 유학비자 발급요건 조회" viStyle={{ fontStyle: "normal", opacity: 0.9, fontSize: "0.7em" }} />
             </h1>
             <LanguageToggle />
           </div>
