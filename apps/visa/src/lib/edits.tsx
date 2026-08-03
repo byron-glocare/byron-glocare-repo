@@ -88,8 +88,9 @@ export function EditProvider({ children, defaultOn = false }: { children: React.
   const setKo = useCallback((path: string, value: string) => setKoEdits((e) => ({ ...e, [path]: value })), []);
   const setVi = useCallback((path: string, value: string) => setViEdits((e) => ({ ...e, [path]: value })), []);
 
+  // 편집 화면: vi 는 저장된 번역이 없으면 사전(VI[현재 한국어]) 값을 초기값으로 보여준다.
   const getEdit = useCallback(
-    (path: string, koFallback: string) => (editLang === "ko" ? getKo(path, koFallback) : getVi(path)),
+    (path: string, koFallback: string) => (editLang === "ko" ? getKo(path, koFallback) : getVi(path) || VI[getKo(path, koFallback)] || ""),
     [editLang, getKo, getVi]
   );
   const setEdit = useCallback((path: string, value: string) => (editLang === "ko" ? setKo(path, value) : setVi(path, value)), [editLang, setKo, setVi]);
@@ -249,12 +250,12 @@ export function EditableText({
   multiline?: boolean;
   style?: React.CSSProperties;
 }) {
-  const { editMode, editLang, getEdit, setEdit } = useEdit();
+  const { editMode, editLang, getEdit, setEdit, getVi } = useEdit();
   const cur = getEdit(path, value);
 
   if (!editMode) return <span style={style}>{cur || value}</span>;
 
-  const changed = editLang === "ko" ? cur !== value : cur !== "";
+  const changed = editLang === "ko" ? cur !== value : getVi(path) !== "";
   const stop = (e: React.SyntheticEvent) => e.stopPropagation();
   return (
     <span style={{ display: "block", width: "100%" }} onClick={stop} onMouseDown={stop}>

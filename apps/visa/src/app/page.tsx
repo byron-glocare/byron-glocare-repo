@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Search, ChevronDown, ShieldAlert, Pencil, Building2, Check, X } from "lucide-react";
 import { D, ORIGIN_OPTIONS, EMPHASIZED_STATUS, type UnivRegion, type UnivTier, type SchoolType } from "@/data/engine";
 import { UNIVERSITIES } from "@/data/universities";
-import { judge, sectionNeeded, DOCS, SECTIONS, docAttrRaws, balanceTags, depositTags, UNVERIFIED, type Course, type Section, type ChecklistDoc, type Tier, type Region } from "@/data/checklist";
+import { judge, sectionNeeded, DOCS, SECTIONS, docAttrRaws, balanceTags, depositTags, UNVERIFIED, type Course, type Section, type ChecklistDoc, type Tier, type Region, type DynTag } from "@/data/checklist";
 import { flowOf, PROCESS_STEPS, TRACK_META, type FlowResult } from "@/data/process";
 import { EditProvider, useEdit, Bi, LanguageToggle, T, useTStr } from "@/lib/edits";
 
@@ -729,12 +729,12 @@ function DocRow({ doc, docName, ctx }: { doc: ChecklistDoc; docName: (id: string
   const extra: { label: string; value: string }[] = JSON.parse(getKo(`doc:${doc.id}:_extra`, "[]"));
   const visibleAttrs = attrs.filter((a) => !hidden.includes(a.key));
 
-  // ★ 조건별 값(조회 조건에 맞춰 계산 + 편집값 반영). 현재 한국어만(숫자/단위 위주).
-  const dynTags =
+  // ★ 조건별 값(조회 조건에 맞춰 계산 + 편집값 반영). 한국어 + 베트남어 병기.
+  const dynTags: DynTag[] =
     doc.id === "balance"
-      ? balanceTags(ctx.course, ctx.region, ctx.tier, ctx.langTier, getKo).map((t) => `★${t}`)
+      ? balanceTags(ctx.course, ctx.region, ctx.tier, ctx.langTier, getKo)
       : doc.id === "deposit-confirm"
-        ? depositTags(ctx.region, getKo).map((t) => `★${t}`)
+        ? depositTags(ctx.region, getKo)
         : [];
   const detailKo = getKo(`doc:${doc.id}:detailDesc`, doc.detailDesc ?? "");
   const condKo = getKo(`doc:${doc.id}:cond`, doc.cond ?? "");
@@ -758,7 +758,7 @@ function DocRow({ doc, docName, ctx }: { doc: ChecklistDoc; docName: (id: string
         {!open ? (
           <>
             {dynTags.map((t, i) => (
-              <span key={`cd${i}`} style={peachTag}>{t}</span>
+              <span key={`cd${i}`} style={peachTag}>★<Bi path={t.path} ko={t.value} /></span>
             ))}
             {visibleAttrs.filter((a) => !a.missing).map((a) => (
               <span key={a.key} style={peachTag}>
@@ -772,7 +772,7 @@ function DocRow({ doc, docName, ctx }: { doc: ChecklistDoc; docName: (id: string
         ) : (
           <>
             {dynTags.map((t, i) => (
-              <span key={`d${i}`} style={{ ...tagStyle, color: "var(--coral-d)", background: "var(--coral-pale)", borderColor: "var(--coral-l)", fontWeight: 700 }}>{t}</span>
+              <span key={`d${i}`} style={{ ...tagStyle, color: "var(--coral-d)", background: "var(--coral-pale)", borderColor: "var(--coral-l)", fontWeight: 700 }}>★<Bi path={t.path} ko={t.value} /></span>
             ))}
             {visibleAttrs.map((a) => (
               <span key={a.key} style={{ ...tagStyle, color: a.missing ? "#b3261e" : "var(--ink-mid)", background: a.missing ? "#fdecea" : "var(--peach)", borderColor: a.missing ? "#f3c6c1" : "var(--bdr)" }}>

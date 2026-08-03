@@ -82,5 +82,20 @@
   "doc:english:name": "Chứng chỉ tiếng Anh",
   "doc:english:brief": "Khi đăng ký chương trình giảng dạy bằng tiếng Anh.",
   "doc:english:cond": "TOEFL 530 (iBT 71) / IELTS 5.5 / CEFR B2 / TEPS 327 trở lên.",
-  "doc:english:issuer": "Tổ chức khảo thí"
+  "doc:english:issuer": "Tổ chức khảo thí",
+
+  "dyn:balance:univ:excellent:metro": "Miễn",
+  "dyn:balance:univ:excellent:nonmetro": "Miễn",
+  "dyn:balance:univ:certified:metro": "Số dư từ 20 triệu won trở lên · duy trì 3 tháng",
+  "dyn:balance:univ:certified:nonmetro": "Số dư từ 16 triệu won trở lên · duy trì 3 tháng",
+  "dyn:balance:univ:general:metro": "Số dư từ 20 triệu won trở lên · duy trì 3 tháng",
+  "dyn:balance:univ:general:nonmetro": "Số dư từ 16 triệu won trở lên · duy trì 3 tháng",
+  "dyn:balance:hagwon:excellent:metro": "Số dư từ 10 triệu won trở lên · duy trì 6 tháng",
+  "dyn:balance:hagwon:excellent:nonmetro": "Số dư từ 8 triệu won trở lên · duy trì 6 tháng",
+  "dyn:balance:hagwon:certified:metro": "Số dư từ 10 triệu won trở lên · duy trì 6 tháng",
+  "dyn:balance:hagwon:certified:nonmetro": "Số dư từ 8 triệu won trở lên · duy trì 6 tháng",
+  "dyn:balance:hagwon:general:metro": "Nộp Giấy xác nhận ký quỹ chi phí du học",
+  "dyn:balance:hagwon:general:nonmetro": "Nộp Giấy xác nhận ký quỹ chi phí du học",
+  "dyn:deposit-confirm:metro": "Ký quỹ từ 10 triệu won trở lên",
+  "dyn:deposit-confirm:nonmetro": "Ký quỹ từ 8 triệu won trở lên"
 }

@@ -153,7 +153,11 @@ type Getter = (path: string, def: string) => string;
  *  - 어학당(D-4): 어학 인증이면 본대학 등급을 따라가고(우수인증→우수인증, 인증→인증),
  *                 어학 일반이면 본대학 등급과 무관하게 일반.
  */
-export function balanceTags(course: Course, region: Region, degreeTier: Tier, langTier: Tier, get?: Getter): string[] {
+export interface DynTag {
+  path: string;
+  value: string;
+}
+export function balanceTags(course: Course, region: Region, degreeTier: Tier, langTier: Tier, get?: Getter): DynTag[] {
   const g = get ?? ((_p, d) => d);
   const slots = CONDITIONAL_SLOTS.balance;
   // 잔고 요건 등급: 학위=본대학 등급 / 어학당=어학 인증이면 본대학 등급, 어학 일반이면 일반.
@@ -161,18 +165,20 @@ export function balanceTags(course: Course, region: Region, degreeTier: Tier, la
   const tierKey = effTier === "excellent" || effTier === "certified" ? effTier : "general";
   const slot = `${course}:${tierKey}:${region}`;
   const def = slots.find((s) => s.slot === slot);
-  const val = g(`dyn:balance:${slot}`, def ? def.value : "");
-  return val ? [val] : [];
+  const path = `dyn:balance:${slot}`;
+  const value = g(path, def ? def.value : "");
+  return value ? [{ path, value }] : [];
 }
 
 /** 유학경비 예치확인서: 지역별 예치금 태그. */
-export function depositTags(region: Region, get?: Getter): string[] {
+export function depositTags(region: Region, get?: Getter): DynTag[] {
   const g = get ?? ((_p, d) => d);
   const slots = CONDITIONAL_SLOTS["deposit-confirm"];
   if (!slots) return [];
   const def = slots.find((s) => s.slot === region);
-  const val = g(`dyn:deposit-confirm:${region}`, def ? def.value : "");
-  return val ? [val] : [];
+  const path = `dyn:deposit-confirm:${region}`;
+  const value = g(path, def ? def.value : "");
+  return value ? [{ path, value }] : [];
 }
 
 /** 서류의 태그 속성 원본값 목록(공용). holderSameAs·원본지참 반영. get 적용 전 raw. */
