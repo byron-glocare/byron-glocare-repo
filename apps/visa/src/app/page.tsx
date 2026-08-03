@@ -119,19 +119,18 @@ export default function Page() {
 
       <div style={{ maxWidth: 980, margin: "0 auto", padding: "20px 20px 64px" }}>
         {!searched ? (
-          <InputForm
-            {...{ inst, changeInst, isChange, setIsChange, pickMode, setPickMode, univ, setUniv, condTier, setCondTier, condLangTier, setCondLangTier, condRegion, setCondRegion, origin, setOrigin, status, setStatus }}
-            canSearch={canSearch}
-            onSearch={() => setSearched(true)}
-          />
+          <>
+            <InputForm
+              {...{ inst, changeInst, isChange, setIsChange, pickMode, setPickMode, univ, setUniv, condTier, setCondTier, condLangTier, setCondLangTier, condRegion, setCondRegion, origin, setOrigin, status, setStatus }}
+              canSearch={canSearch}
+              onSearch={() => setSearched(true)}
+            />
+            <EditLink center />
+          </>
         ) : (
           <>
             <SummaryBar inst={inst} isChange={isChange} origin={originOpt.label} status={status} place={place!} onEdit={() => setSearched(false)} />
-            <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 14 }}>
-              <Link href="/edit" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12.5, fontWeight: 700, color: "var(--ink-light)", textDecoration: "none", border: "1px solid var(--bdr)", borderRadius: 9, padding: "6px 11px", background: "#fff" }}>
-                <Pencil size={13} /> <T ko="서류 내용 편집" />
-              </Link>
-            </div>
+            <EditLink />
             {place && (
               <Results
                 course={inst === "hagwon" ? "hagwon" : "univ"}
@@ -493,6 +492,15 @@ function SummaryBar({ inst, isChange, origin, status, place, onEdit }: { inst: I
       <button onClick={onEdit} style={{ display: "flex", alignItems: "center", gap: 5, border: "1.5px solid var(--coral)", background: "#fff", color: "var(--coral-d)", padding: "7px 14px", borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: "pointer", flexShrink: 0 }}>
         <Pencil size={14} /> <T ko="수정" />
       </button>
+    </div>
+  );
+}
+function EditLink({ center }: { center?: boolean }) {
+  return (
+    <div style={{ display: "flex", justifyContent: center ? "center" : "flex-end", margin: center ? "16px 0 0" : "0 0 14px" }}>
+      <Link href="/edit" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12.5, fontWeight: 700, color: "var(--ink-light)", textDecoration: "none", border: "1px solid var(--bdr)", borderRadius: 9, padding: "6px 11px", background: "#fff" }}>
+        <Pencil size={13} /> <T ko="서류 내용 편집" />
+      </Link>
     </div>
   );
 }
