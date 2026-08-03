@@ -42,19 +42,26 @@ interface UnivPick {
   langRestricted?: boolean; // 어학연수 정밀심사
 }
 
-const TIER_OPTS: { value: UnivTier; label: string }[] = [
+// 필터용 선택값 — "all"(전체)은 그 축으로 필터하지 않음.
+type TierSel = UnivTier | "all";
+type RegionSel = UnivRegion | "all";
+
+const TIER_OPTS: { value: TierSel; label: string }[] = [
+  { value: "all", label: "전체" },
   { value: "excellent", label: "우수 인증대학" },
   { value: "certified", label: "인증대학" },
   { value: "general", label: "미인증(일반) 대학" },
   { value: "restricted", label: "비자정밀 심사대학" },
 ];
 // 어학당(D-4-1) 어학연수 등급
-const LANG_TIER_OPTS: { value: UnivTier; label: string }[] = [
+const LANG_TIER_OPTS: { value: TierSel; label: string }[] = [
+  { value: "all", label: "전체" },
   { value: "certified", label: "어학연수 인증" },
   { value: "general", label: "어학연수 일반(미인증)" },
   { value: "restricted", label: "어학연수 정밀심사" },
 ];
-const REGION_OPTS: { value: UnivRegion; label: string }[] = [
+const REGION_OPTS: { value: RegionSel; label: string }[] = [
+  { value: "all", label: "전체" },
   { value: "metro", label: "수도권 (서울·인천·경기)" },
   { value: "nonmetro", label: "비수도권 (그 외)" },
 ];
@@ -63,9 +70,9 @@ export default function Page() {
   const [inst, setInst] = useState<InstKind>("univ");
   const [isChange, setIsChange] = useState(false);
   const [univ, setUniv] = useState<UnivPick | null>(null);
-  const [condTier, setCondTier] = useState<UnivTier>("certified"); // 대학교 탭: 인증 등급
-  const [condLangTier, setCondLangTier] = useState<UnivTier>("certified"); // 어학당 탭: 어학 인증
-  const [condRegion, setCondRegion] = useState<UnivRegion>("metro");
+  const [condTier, setCondTier] = useState<TierSel>("certified"); // 대학교 탭: 인증 등급
+  const [condLangTier, setCondLangTier] = useState<TierSel>("certified"); // 어학당 탭: 어학 인증
+  const [condRegion, setCondRegion] = useState<RegionSel>("metro");
   const [origin, setOrigin] = useState("vn");
   const [status, setStatus] = useState("D-2-2");
   const [searched, setSearched] = useState(false);
@@ -73,10 +80,12 @@ export default function Page() {
   const originOpt = ORIGIN_OPTIONS.find((o) => o.value === origin)!;
 
   // 지역·등급(조건)으로 조회. 대학교를 고르면 그 학교값이 우선(조건은 목록 필터 역할).
+  // "전체"는 필터만 풀어주는 값이라, 학교를 안 고르면 조회 불가(조회하려면 학교 선택).
   const isUniv = inst === "univ";
-  const degreeTier: UnivTier = univ ? univ.tier : isUniv ? condTier : condLangTier === "certified" ? "certified" : "general";
-  const langTier: UnivTier = univ ? (univ.langRestricted ? "restricted" : univ.lang ? "certified" : "general") : isUniv ? "general" : condLangTier;
-  const region2: UnivRegion = univ ? univ.region : condRegion;
+  const rT = (t: TierSel): UnivTier => (t === "all" ? "certified" : t);
+  const degreeTier: UnivTier = univ ? univ.tier : isUniv ? rT(condTier) : condLangTier === "certified" ? "certified" : "general";
+  const langTier: UnivTier = univ ? (univ.langRestricted ? "restricted" : univ.lang ? "certified" : "general") : isUniv ? "general" : rT(condLangTier);
+  const region2: UnivRegion = univ ? univ.region : condRegion === "all" ? "metro" : condRegion;
   const place: UnivPick = {
     name: univ?.name ?? "",
     tier: degreeTier,
@@ -85,7 +94,8 @@ export default function Page() {
     lang: univ?.lang ?? condLangTier === "certified",
     langRestricted: univ?.langRestricted ?? condLangTier === "restricted",
   };
-  const canSearch = true;
+  const needUniv = !univ && (condRegion === "all" || (isUniv ? condTier === "all" : condLangTier === "all"));
+  const canSearch = !needUniv;
 
   function changeInst(next: InstKind) {
     setInst(next);
@@ -162,12 +172,12 @@ function InputForm(p: {
   setIsChange: (v: boolean) => void;
   univ: UnivPick | null;
   setUniv: (v: UnivPick | null) => void;
-  condTier: UnivTier;
-  setCondTier: (v: UnivTier) => void;
-  condLangTier: UnivTier;
-  setCondLangTier: (v: UnivTier) => void;
-  condRegion: UnivRegion;
-  setCondRegion: (v: UnivRegion) => void;
+  condTier: TierSel;
+  setCondTier: (v: TierSel) => void;
+  condLangTier: TierSel;
+  setCondLangTier: (v: TierSel) => void;
+  condRegion: RegionSel;
+  setCondRegion: (v: RegionSel) => void;
   origin: string;
   setOrigin: (v: string) => void;
   status: string;
@@ -204,11 +214,11 @@ function InputForm(p: {
         <Field label={instNoun}>
           <div style={{ display: "grid", gap: 10 }}>
             {/* 1) 지역  2) 인증 등급 → 대학교 목록의 필터. 대학교 선택은 선택사항. */}
-            <LabeledDropdown label="지역" value={p.condRegion} onChange={(v) => { p.setCondRegion(v as UnivRegion); p.setUniv(null); }} options={REGION_OPTS} />
+            <LabeledDropdown label="지역" value={p.condRegion} onChange={(v) => { p.setCondRegion(v as RegionSel); p.setUniv(null); }} options={REGION_OPTS} />
             {p.inst === "univ" ? (
-              <LabeledDropdown label="인증 등급" value={p.condTier} onChange={(v) => { p.setCondTier(v as UnivTier); p.setUniv(null); }} options={TIER_OPTS} />
+              <LabeledDropdown label="인증 등급" value={p.condTier} onChange={(v) => { p.setCondTier(v as TierSel); p.setUniv(null); }} options={TIER_OPTS} />
             ) : (
-              <LabeledDropdown label="어학 인증" value={p.condLangTier} onChange={(v) => { p.setCondLangTier(v as UnivTier); p.setUniv(null); }} options={LANG_TIER_OPTS} />
+              <LabeledDropdown label="어학 인증" value={p.condLangTier} onChange={(v) => { p.setCondLangTier(v as TierSel); p.setUniv(null); }} options={LANG_TIER_OPTS} />
             )}
             <div>
               <span style={{ fontSize: 11.5, fontWeight: 700, color: "var(--ink-light)", display: "block", marginBottom: 4 }}>
@@ -255,7 +265,7 @@ function InputForm(p: {
       </button>
       {!p.canSearch && (
         <p style={{ margin: "8px 0 0", fontSize: 12.5, color: "var(--ink-light)", textAlign: "center" }}>
-          <T ko="기관을 선택하면 조회할 수 있습니다." />
+          <T ko="지역·등급이 '전체'면 학교를 선택해야 조회할 수 있어요." />
         </p>
       )}
     </div>
@@ -384,9 +394,9 @@ function UnivPicker({
   inst: InstKind;
   value: UnivPick | null;
   onChange: (v: UnivPick | null) => void;
-  filterRegion: UnivRegion;
-  filterTier: UnivTier;
-  filterLangTier: UnivTier;
+  filterRegion: RegionSel;
+  filterTier: TierSel;
+  filterLangTier: TierSel;
 }) {
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
@@ -398,8 +408,9 @@ function UnivPicker({
   const pool = useMemo(
     () =>
       UNIVERSITIES.filter((u) => {
-        if (u.region !== filterRegion) return false;
-        if (inst === "univ") return u.tier === filterTier;
+        if (filterRegion !== "all" && u.region !== filterRegion) return false;
+        if (inst === "univ") return filterTier === "all" || u.tier === filterTier;
+        if (filterLangTier === "all") return true;
         if (filterLangTier === "certified") return u.lang === true;
         if (filterLangTier === "restricted") return u.langRestricted === true;
         return !u.lang && !u.langRestricted; // 어학 일반
