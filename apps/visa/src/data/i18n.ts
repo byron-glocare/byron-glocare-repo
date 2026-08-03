@@ -30,6 +30,14 @@ export const VI: Record<string, string> = {
   "신청할 비자": "Loại visa đăng ký",
   "발급요건 조회": "Tra cứu điều kiện",
   "기관을 선택하면 조회할 수 있습니다.": "Chọn cơ quan để tra cứu.",
+  "지역": "Khu vực",
+  "인증 등급": "Hạng chứng nhận",
+  "어학 인증": "Chứng nhận học tiếng",
+  "대학교 (선택)": "Trường đại học (tùy chọn)",
+  "어학당 (선택)": "Trung tâm tiếng Hàn (tùy chọn)",
+  "조건에 맞는 학교에서 선택 (선택 안 해도 조회 가능)": "Chọn từ trường phù hợp (không bắt buộc)",
+  "학교 이름 검색 (예: 부산대)": "Tìm theo tên trường (vd: ĐH Busan)",
+  "선택한 지역·등급에 맞는 학교가 없습니다. (학교를 안 골라도 조회할 수 있어요)": "Không có trường phù hợp khu vực·hạng đã chọn. (Vẫn có thể tra cứu mà không chọn trường)",
 
   /* ── 대학 등급 선택지 ── */
   "우수 인증대학": "Trường được chứng nhận xuất sắc",

@@ -27,7 +27,6 @@ const REGION_LABEL: Record<UnivRegion, string> = { metro: "수도권", nonmetro:
 const STATUS_OPTS = D.axes.find((a) => a.id === "statusCode")!.options;
 
 type InstKind = "univ" | "hagwon";
-type PickMode = "name" | "cond";
 
 function statusOptionsFor(inst: InstKind) {
   const prefix = inst === "hagwon" ? "D-4" : "D-2";
@@ -63,10 +62,9 @@ const REGION_OPTS: { value: UnivRegion; label: string }[] = [
 export default function Page() {
   const [inst, setInst] = useState<InstKind>("univ");
   const [isChange, setIsChange] = useState(false);
-  const [pickMode, setPickMode] = useState<PickMode>("name");
   const [univ, setUniv] = useState<UnivPick | null>(null);
-  const [condTier, setCondTier] = useState<UnivTier>("certified");
-  const [condLangTier, setCondLangTier] = useState<UnivTier>("certified");
+  const [condTier, setCondTier] = useState<UnivTier>("certified"); // 대학교 탭: 인증 등급
+  const [condLangTier, setCondLangTier] = useState<UnivTier>("certified"); // 어학당 탭: 어학 인증
   const [condRegion, setCondRegion] = useState<UnivRegion>("metro");
   const [origin, setOrigin] = useState("vn");
   const [status, setStatus] = useState("D-2-2");
@@ -74,15 +72,20 @@ export default function Page() {
 
   const originOpt = ORIGIN_OPTIONS.find((o) => o.value === origin)!;
 
-  // 조회 대상(대학/조건) 확정
-  const place: UnivPick | null =
-    pickMode === "name" ? univ : { name: "", tier: condTier, region: condRegion, lang: condLangTier === "certified", langRestricted: condLangTier === "restricted" };
-  const canSearch = pickMode === "cond" || !!univ;
-
-  // 판정 입력: 학위과정 등급 / 어학연수 등급 / 지역
-  const degreeTier: UnivTier = pickMode === "name" ? univ?.tier ?? "certified" : condTier;
-  const langTier: UnivTier = pickMode === "name" ? (univ?.langRestricted ? "restricted" : univ?.lang ? "certified" : "general") : condLangTier;
-  const region2: UnivRegion = pickMode === "name" ? univ?.region ?? "metro" : condRegion;
+  // 지역·등급(조건)으로 조회. 대학교를 고르면 그 학교값이 우선(조건은 목록 필터 역할).
+  const isUniv = inst === "univ";
+  const degreeTier: UnivTier = univ ? univ.tier : isUniv ? condTier : condLangTier === "certified" ? "certified" : "general";
+  const langTier: UnivTier = univ ? (univ.langRestricted ? "restricted" : univ.lang ? "certified" : "general") : isUniv ? "general" : condLangTier;
+  const region2: UnivRegion = univ ? univ.region : condRegion;
+  const place: UnivPick = {
+    name: univ?.name ?? "",
+    tier: degreeTier,
+    schoolType: univ?.schoolType,
+    region: region2,
+    lang: univ?.lang ?? condLangTier === "certified",
+    langRestricted: univ?.langRestricted ?? condLangTier === "restricted",
+  };
+  const canSearch = true;
 
   function changeInst(next: InstKind) {
     setInst(next);
@@ -121,7 +124,7 @@ export default function Page() {
         {!searched ? (
           <>
             <InputForm
-              {...{ inst, changeInst, isChange, setIsChange, pickMode, setPickMode, univ, setUniv, condTier, setCondTier, condLangTier, setCondLangTier, condRegion, setCondRegion, origin, setOrigin, status, setStatus }}
+              {...{ inst, changeInst, isChange, setIsChange, univ, setUniv, condTier, setCondTier, condLangTier, setCondLangTier, condRegion, setCondRegion, origin, setOrigin, status, setStatus }}
               canSearch={canSearch}
               onSearch={() => setSearched(true)}
             />
@@ -157,8 +160,6 @@ function InputForm(p: {
   changeInst: (v: InstKind) => void;
   isChange: boolean;
   setIsChange: (v: boolean) => void;
-  pickMode: PickMode;
-  setPickMode: (v: PickMode) => void;
   univ: UnivPick | null;
   setUniv: (v: UnivPick | null) => void;
   condTier: UnivTier;
@@ -201,34 +202,28 @@ function InputForm(p: {
         </Field>
 
         <Field label={instNoun}>
-          {/* 조회 방식 토글 */}
-          <div style={{ marginBottom: 10 }}>
-            <RadioGroup
-              value={p.pickMode}
-              onChange={(v) => p.setPickMode(v as PickMode)}
-              options={[
-                { value: "name", label: `${instNoun} 이름으로`, desc: "등급·지역 자동" },
-                { value: "cond", label: "조건으로", desc: "등급 + 지역 직접" },
-              ]}
-              small
-            />
+          <div style={{ display: "grid", gap: 10 }}>
+            {/* 1) 지역  2) 인증 등급 → 대학교 목록의 필터. 대학교 선택은 선택사항. */}
+            <LabeledDropdown label="지역" value={p.condRegion} onChange={(v) => { p.setCondRegion(v as UnivRegion); p.setUniv(null); }} options={REGION_OPTS} />
+            {p.inst === "univ" ? (
+              <LabeledDropdown label="인증 등급" value={p.condTier} onChange={(v) => { p.setCondTier(v as UnivTier); p.setUniv(null); }} options={TIER_OPTS} />
+            ) : (
+              <LabeledDropdown label="어학 인증" value={p.condLangTier} onChange={(v) => { p.setCondLangTier(v as UnivTier); p.setUniv(null); }} options={LANG_TIER_OPTS} />
+            )}
+            <div>
+              <span style={{ fontSize: 11.5, fontWeight: 700, color: "var(--ink-light)", display: "block", marginBottom: 4 }}>
+                <T ko={`${instNoun} (선택)`} />
+              </span>
+              <UnivPicker
+                inst={p.inst}
+                value={p.univ}
+                onChange={p.setUniv}
+                filterRegion={p.condRegion}
+                filterTier={p.condTier}
+                filterLangTier={p.condLangTier}
+              />
+            </div>
           </div>
-          {p.pickMode === "name" ? (
-            <UnivPicker inst={p.inst} value={p.univ} onChange={p.setUniv} />
-          ) : p.inst === "hagwon" ? (
-            <div style={{ display: "grid", gap: 8 }}>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-                <LabeledDropdown label="학위과정 등급" value={p.condTier} onChange={(v) => p.setCondTier(v as UnivTier)} options={TIER_OPTS} />
-                <LabeledDropdown label="어학연수 등급" value={p.condLangTier} onChange={(v) => p.setCondLangTier(v as UnivTier)} options={LANG_TIER_OPTS} />
-              </div>
-              <Dropdown value={p.condRegion} onChange={(v) => p.setCondRegion(v as UnivRegion)} options={REGION_OPTS} />
-            </div>
-          ) : (
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-              <Dropdown value={p.condTier} onChange={(v) => p.setCondTier(v as UnivTier)} options={TIER_OPTS} />
-              <Dropdown value={p.condRegion} onChange={(v) => p.setCondRegion(v as UnivRegion)} options={REGION_OPTS} />
-            </div>
-          )}
         </Field>
 
         <Field label="신청할 비자">
@@ -378,14 +373,39 @@ function Dropdown({
 }
 
 /* ── 기관 검색 피커 ───────────────────────────────────── */
-function UnivPicker({ inst, value, onChange }: { inst: InstKind; value: UnivPick | null; onChange: (v: UnivPick | null) => void }) {
+function UnivPicker({
+  inst,
+  value,
+  onChange,
+  filterRegion,
+  filterTier,
+  filterLangTier,
+}: {
+  inst: InstKind;
+  value: UnivPick | null;
+  onChange: (v: UnivPick | null) => void;
+  filterRegion: UnivRegion;
+  filterTier: UnivTier;
+  filterLangTier: UnivTier;
+}) {
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
   const ref = useRef<HTMLDivElement>(null);
   const tr = useTStr();
   useOutside(ref, () => setOpen(false));
 
-  const pool = UNIVERSITIES; // 어학당도 전체 대학(어학 인증/일반 모두)
+  // 앞의 지역·등급 조건에 맞는 대학만
+  const pool = useMemo(
+    () =>
+      UNIVERSITIES.filter((u) => {
+        if (u.region !== filterRegion) return false;
+        if (inst === "univ") return u.tier === filterTier;
+        if (filterLangTier === "certified") return u.lang === true;
+        if (filterLangTier === "restricted") return u.langRestricted === true;
+        return !u.lang && !u.langRestricted; // 어학 일반
+      }),
+    [inst, filterRegion, filterTier, filterLangTier]
+  );
   const matches = useMemo(() => {
     const query = q.trim();
     return query ? pool.filter((u) => u.name.includes(query)) : pool;
@@ -402,9 +422,17 @@ function UnivPicker({ inst, value, onChange }: { inst: InstKind; value: UnivPick
             <TierBadge tier={value.tier} region={value.region} schoolType={value.schoolType} />
           </span>
         ) : (
-          <span style={{ color: "var(--ink-light)" }}>{inst === "hagwon" ? "어학당 운영 대학 검색" : "대학교 검색"}</span>
+          <span style={{ color: "var(--ink-light)" }}>{tr("조건에 맞는 학교에서 선택 (선택 안 해도 조회 가능)")}</span>
         )}
-        <ChevronDown size={16} style={{ color: "var(--ink-light)", flexShrink: 0 }} />
+        {value ? (
+          <X
+            size={16}
+            style={{ color: "var(--ink-light)", flexShrink: 0 }}
+            onClick={(e) => { e.stopPropagation(); onChange(null); }}
+          />
+        ) : (
+          <ChevronDown size={16} style={{ color: "var(--ink-light)", flexShrink: 0 }} />
+        )}
       </button>
       {open && (
         <div style={{ ...dropdownPanel, maxHeight: 360, display: "flex", flexDirection: "column" }}>
@@ -415,7 +443,7 @@ function UnivPicker({ inst, value, onChange }: { inst: InstKind; value: UnivPick
                 autoFocus
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
-                placeholder={inst === "hagwon" ? "어학당 운영 대학 검색 (예: 부산대)" : "대학명 입력 (예: 한양대, 거제대)"}
+                placeholder={tr("학교 이름 검색 (예: 부산대)")}
                 style={{ border: "none", outline: "none", background: "transparent", fontSize: 13.5, width: "100%" }}
               />
               {q && <X size={15} style={{ cursor: "pointer", color: "var(--ink-light)" }} onClick={() => setQ("")} />}
@@ -443,7 +471,7 @@ function UnivPicker({ inst, value, onChange }: { inst: InstKind; value: UnivPick
             ))}
             {matches.length === 0 && (
               <div style={{ padding: "16px", fontSize: 12.5, color: "var(--ink-light)", textAlign: "center" }}>
-                {tr("목록에 없습니다. 조건으로 등급·지역을 직접 선택하세요.")}
+                {tr("선택한 지역·등급에 맞는 학교가 없습니다. (학교를 안 골라도 조회할 수 있어요)")}
               </div>
             )}
           </div>
