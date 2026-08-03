@@ -1123,6 +1123,23 @@ export type Database = {
         ];
       };
 
+      study_visa_overrides: {
+        Row: {
+          lang: string;
+          data: Record<string, string>;
+          updated_at: string;
+        };
+        Insert: {
+          lang: string;
+          data?: Record<string, string>;
+          updated_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["study_visa_overrides"]["Insert"]
+        >;
+        Relationships: [];
+      };
+
       study_university_requests: {
         Row: import("./study").StudyUniversityRequest;
         Insert: Partial<import("./study").StudyUniversityRequest>;

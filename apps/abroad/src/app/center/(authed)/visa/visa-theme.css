@@ -1,0 +1,55 @@
+/* =============================================================================
+ * 한국 비자 요건 조회 — 디자인 토큰 (Glocare 코랄 시스템 재사용)
+ * apps/visa/src/app/globals.css 에서 이식. center 다른 페이지 오염 방지를 위해
+ * 모든 셀렉터를 .visa-scope 하위로 스코프.
+ * ===========================================================================*/
+.visa-scope {
+  --coral: #f25c5c;
+  --coral-d: #d94646;
+  --coral-l: #ff8080;
+  --coral-pale: #fff0f0;
+  --coral-soft: #ffe0e0;
+  --peach: #fff7f5;
+  --white: #ffffff;
+  --ink: #1c1c1e;
+  --ink-mid: #3a3a3c;
+  --ink-light: #6e6e73;
+  --ink-xlight: #aeaeb2;
+  --border: #f0edede;
+  --bdr: #ebe6e5;
+  --bdr-d: #e0d8d7;
+  --green: #2d9e6b;
+  --blue: #3b82c4;
+  --yellow: #f5a623;
+  --navy: #0f2d52;
+
+  --radius: 16px;
+  --shadow-sm: 0 1px 2px rgba(28, 28, 30, 0.04), 0 1px 3px rgba(28, 28, 30, 0.06);
+  --shadow-md: 0 4px 16px rgba(28, 28, 30, 0.08);
+  --shadow-lg: 0 12px 40px rgba(28, 28, 30, 0.12);
+
+  background: var(--peach);
+  color: var(--ink);
+  font-family: "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Malgun Gothic", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.6;
+}
+
+.visa-scope * {
+  box-sizing: border-box;
+}
+
+.visa-scope ::selection {
+  background: var(--coral-soft);
+}
+
+/* scrollbar */
+.visa-scope ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.visa-scope ::-webkit-scrollbar-thumb {
+  background: var(--bdr-d);
+  border-radius: 999px;
+}

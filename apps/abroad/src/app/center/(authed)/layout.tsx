@@ -24,6 +24,7 @@ export default async function CenterAuthedLayout({
     { href: "/center", label: t(locale, "center.nav.overview") },
     { href: "/center/students", label: t(locale, "center.nav.students") },
     { href: "/center/admissions", label: t(locale, "center.nav.admissions") },
+    { href: "/center/visa", label: t(locale, "center.nav.visa") },
     { href: "/center/invoices", label: t(locale, "center.nav.invoices") },
   ];
 

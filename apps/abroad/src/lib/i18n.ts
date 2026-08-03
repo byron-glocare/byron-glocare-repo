@@ -16,6 +16,7 @@ const koDict = {
     "center.nav.overview": "대시보드",
     "center.nav.students": "학생",
     "center.nav.admissions": "모집요강",
+    "center.nav.visa": "비자 서류",
     "center.nav.invoices": "청구서",
     "center.logout": "로그아웃",
 
@@ -108,6 +109,7 @@ const viDict: DictShape = {
     "center.nav.overview": "Tổng quan",
     "center.nav.students": "Sinh viên",
     "center.nav.admissions": "Tuyển sinh",
+    "center.nav.visa": "Giấy tờ visa",
     "center.nav.invoices": "Hóa đơn",
     "center.logout": "Đăng xuất",
 
