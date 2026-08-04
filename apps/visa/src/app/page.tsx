@@ -76,9 +76,9 @@ export default function Page() {
   const [isChange, setIsChange] = useState(false);
   const [sameUniv, setSameUniv] = useState(true); // 국내 변경 시 같은 대학 어학당→본과 여부
   const [univ, setUniv] = useState<UnivPick | null>(null);
-  const [condTier, setCondTier] = useState<TierSel>("certified"); // 대학교 탭: 인증 등급
-  const [condLangTier, setCondLangTier] = useState<TierSel>("certified"); // 어학당 탭: 어학 인증
-  const [condRegion, setCondRegion] = useState<RegionSel>("metro");
+  const [condTier, setCondTier] = useState<TierSel>("all"); // 대학교 탭: 인증 등급
+  const [condLangTier, setCondLangTier] = useState<TierSel>("all"); // 어학당 탭: 어학 인증
+  const [condRegion, setCondRegion] = useState<RegionSel>("all");
   const [origin, setOrigin] = useState("vn");
   const [status, setStatus] = useState("D-2-2");
   const [searched, setSearched] = useState(false);
@@ -220,8 +220,8 @@ function InputForm(p: {
                     value={p.sameUniv ? "same" : "other"}
                     onChange={(v) => p.setSameUniv(v === "same")}
                     options={[
-                      { value: "same", label: "같은 대학 어학당에서 진학", desc: "재정·서류 혜택" },
-                      { value: "other", label: "다른 대학 · 기타" },
+                      { value: "same", label: "같은 대학 어학당에서 교육중", desc: "재정·서류 혜택" },
+                      { value: "other", label: "다른 대학 어학당에서 교육중" },
                     ]}
                     small
                   />
