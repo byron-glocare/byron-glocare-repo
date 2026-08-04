@@ -728,7 +728,6 @@ function DocRow({ doc, docName, ctx }: { doc: ChecklistDoc; docName: (id: string
         ? depositTags(ctx.region, getKo)
         : [];
   const detailKo = getKo(`doc:${doc.id}:detailDesc`, doc.detailDesc ?? "");
-  const condKo = getKo(`doc:${doc.id}:cond`, doc.cond ?? "");
   const ambKo = getKo(`doc:${doc.id}:ambiguous`, doc.ambiguous ?? "");
 
   const peachTag = { ...tagStyle, color: "var(--ink-mid)", background: "var(--peach)", borderColor: "var(--bdr)" } as React.CSSProperties;
@@ -785,12 +784,6 @@ function DocRow({ doc, docName, ctx }: { doc: ChecklistDoc; docName: (id: string
         <Bi path={`doc:${doc.id}:brief`} ko={doc.brief} />
         {open && detailKo ? <span style={{ display: "block", marginTop: 4 }}><Bi path={`doc:${doc.id}:detailDesc`} ko={doc.detailDesc ?? ""} /></span> : null}
       </div>
-
-      {condKo && (
-        <div style={{ fontSize: 12.5, color: "var(--ink-light)", marginTop: 6, paddingLeft: 10, borderLeft: "2px solid var(--bdr-d)", lineHeight: 1.55 }}>
-          <Bi path={`doc:${doc.id}:cond`} ko={doc.cond ?? ""} />
-        </div>
-      )}
 
       {open && ambKo && (
         <div style={{ marginTop: 8, fontSize: 11.5, color: "#8a6d1a", background: "#fff7e0", border: "1px solid #f0dca0", borderRadius: 8, padding: "6px 9px", lineHeight: 1.55 }}>
