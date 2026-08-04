@@ -14,7 +14,6 @@ export function SiteHeader({ locale }: { locale: Locale }) {
           universities: t["nav.universities"],
           recruiting: t["nav.recruiting"],
           centers: t["nav.centers"],
-          insurance: t["nav.insurance"],
           about: t["nav.about"],
           student: t["nav.student"],
           apply: t["nav.apply"],

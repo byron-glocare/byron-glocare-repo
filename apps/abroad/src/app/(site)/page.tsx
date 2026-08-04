@@ -2,12 +2,9 @@ import { Apply } from "@/components/sections/apply";
 import { Cases } from "@/components/sections/cases";
 import { Centers } from "@/components/sections/centers";
 import { Hero } from "@/components/sections/hero";
-import { InsuranceInfo } from "@/components/sections/insurance-info";
-import { InsuranceRefund } from "@/components/sections/insurance-refund";
 import { Recruiting } from "@/components/sections/recruiting";
 import { Universities, type UniversityCard } from "@/components/sections/universities";
 import { FloatingButtons } from "@/components/floating-buttons";
-import { InsurancePopup } from "@/components/insurance-popup";
 import { createClient } from "@/lib/supabase/server";
 import { getDict, getLocale } from "@/lib/i18n";
 import { getSectionStrings } from "@/lib/section-strings";
@@ -155,10 +152,7 @@ export default async function HomePage() {
       <Apply strings={ss.apply} />
       <Recruiting strings={ss.recruiting} />
       <Centers t={t} centers={centerCards} />
-      <InsuranceRefund strings={ss.insuranceRefund} />
-      <InsuranceInfo strings={ss.insuranceInfo} />
       <FloatingButtons strings={ss.floating} />
-      <InsurancePopup strings={ss.insurancePopup} />
     </>
   );
 }

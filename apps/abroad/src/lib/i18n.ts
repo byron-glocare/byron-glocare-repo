@@ -24,7 +24,6 @@ const koDict = {
     "nav.universities": "제휴 대학",
     "nav.recruiting": "리크루팅 혜택",
     "nav.centers": "협력 유학센터",
-    "nav.insurance": "보험 환급",
     "nav.about": "글로케어",
     "nav.student": "유학 지원 (학생)",
     "nav.apply": "상담 신청 →",
@@ -83,15 +82,6 @@ const koDict = {
     "apply.submit": "상담 신청하기",
     "apply.success": "상담 신청이 정상 접수됐습니다. 곧 연락드리겠습니다.",
 
-    "insurance.title": "유학생 보험 환급 신청",
-    "insurance.description":
-      "아래 정보를 입력해주시면 담당자가 Zalo로 직접 연락드립니다.",
-    "insurance.field.name": "이름",
-    "insurance.field.alien_no": "외국인 등록번호",
-    "insurance.field.zalo": "Zalo 번호",
-    "insurance.field.marketing": "마케팅 정보 수신 동의",
-    "insurance.submit": "신청하기",
-    "insurance.success": "보험 환급 신청이 정상 접수됐습니다.",
 
     "common.loading": "불러오는 중...",
     "common.error": "오류가 발생했습니다.",
@@ -118,7 +108,6 @@ const viDict: DictShape = {
     "nav.universities": "Trường ĐH liên kết",
     "nav.recruiting": "Ưu đãi giới thiệu",
     "nav.centers": "Trung tâm du học",
-    "nav.insurance": "Hoàn tiền BH",
     "nav.about": "Về GLOCARE",
     "nav.student": "Du học (Sinh viên)",
     "nav.apply": "Đăng ký tư vấn →",
@@ -177,15 +166,6 @@ const viDict: DictShape = {
     "apply.submit": "Đăng ký tư vấn",
     "apply.success": "Đăng ký tư vấn đã được tiếp nhận. Chúng tôi sẽ sớm liên hệ.",
 
-    "insurance.title": "Đăng ký hoàn tiền bảo hiểm",
-    "insurance.description":
-      "Điền thông tin bên dưới — nhân viên phụ trách sẽ liên hệ bạn qua Zalo.",
-    "insurance.field.name": "Họ và tên",
-    "insurance.field.alien_no": "Số đăng ký người nước ngoài",
-    "insurance.field.zalo": "Số Zalo",
-    "insurance.field.marketing": "Đồng ý nhận thông tin marketing",
-    "insurance.submit": "Đăng ký",
-    "insurance.success": "Đăng ký bảo hiểm đã được tiếp nhận.",
 
     "common.loading": "Đang tải...",
     "common.error": "Đã xảy ra lỗi.",

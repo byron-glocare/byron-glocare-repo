@@ -8,7 +8,6 @@ type NavStrings = {
   universities: string;
   recruiting: string;
   centers: string;
-  insurance: string;
   about: string;
   student: string;
   apply: string;
@@ -41,14 +40,6 @@ export function SiteNav({ strings }: { strings: NavStrings }) {
           </li>
           <li>
             <Link href="/#centers">{strings.centers}</Link>
-          </li>
-          <li>
-            <Link
-              href="/#insurance-refund"
-              style={{ color: "var(--coral)", fontWeight: 800 }}
-            >
-              {strings.insurance}
-            </Link>
           </li>
           <li>
             <Link
@@ -108,13 +99,6 @@ export function SiteNav({ strings }: { strings: NavStrings }) {
         </Link>
         <Link href="/#centers" onClick={close}>
           {strings.centers}
-        </Link>
-        <Link
-          href="/#insurance-refund"
-          onClick={close}
-          style={{ color: "var(--coral)", fontWeight: 800 }}
-        >
-          {strings.insurance}
         </Link>
         <Link href="/about" onClick={close}>
           {strings.about}

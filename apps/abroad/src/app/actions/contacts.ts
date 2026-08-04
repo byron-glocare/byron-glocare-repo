@@ -169,57 +169,6 @@ function confirmationEmail({
 }
 
 // =============================================================================
-// 보험 신청
-// =============================================================================
-
-const insuranceSchema = z.object({
-  name: z.string().trim().min(1, "이름을 입력해주세요."),
-  alien_no: z.string().trim().min(1, "외국인등록번호를 입력해주세요."),
-  zalo: z.string().trim().min(1, "Zalo 또는 전화번호를 입력해주세요."),
-  marketing: z.string().optional().nullable(),
-});
-
-export type InsuranceInput = z.input<typeof insuranceSchema>;
-
-export async function submitInsurance(
-  input: InsuranceInput
-): Promise<{ ok: true } | { ok: false; error: string }> {
-  const parsed = insuranceSchema.safeParse(input);
-  if (!parsed.success) {
-    return { ok: false, error: parsed.error.issues[0].message };
-  }
-  const data = parsed.data;
-
-  const supabase = await createClient();
-  const { error } = await supabase.from("study_insurance_claims").insert({
-    name: data.name,
-    alien_no: data.alien_no,
-    zalo: data.zalo,
-    marketing: data.marketing || "N",
-  });
-
-  if (error) return { ok: false, error: error.message };
-
-  await sendOperatorNotification({
-    subject: `[글로케어] 새 보험 신청: ${data.name}`,
-    html: `
-      <h2>새 보험 신청이 접수되었습니다</h2>
-      <table cellpadding="6" style="border-collapse:collapse;border:1px solid #eee">
-        <tr><td><b>이름</b></td><td>${escape(data.name)}</td></tr>
-        <tr><td><b>외국인등록번호</b></td><td>${escape(data.alien_no)}</td></tr>
-        <tr><td><b>Zalo / 전화</b></td><td>${escape(data.zalo)}</td></tr>
-        <tr><td><b>마케팅 동의</b></td><td>${data.marketing === "Y" ? "예" : "아니오"}</td></tr>
-      </table>
-      <p style="color:#888;font-size:12px;margin-top:16px">
-        admin: <a href="https://glocare-customer.vercel.app/students?tab=insurance">https://glocare-customer.vercel.app/students?tab=insurance</a>
-      </p>
-    `,
-  });
-
-  return { ok: true };
-}
-
-// =============================================================================
 // HTML escape
 // =============================================================================
 function escape(s: string | null | undefined): string {
