@@ -16,6 +16,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
           centers: t["nav.centers"],
           insurance: t["nav.insurance"],
           about: t["nav.about"],
+          student: t["nav.student"],
           apply: t["nav.apply"],
         }}
       />

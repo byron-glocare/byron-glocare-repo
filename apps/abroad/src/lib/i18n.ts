@@ -26,6 +26,7 @@ const koDict = {
     "nav.centers": "협력 유학센터",
     "nav.insurance": "보험 환급",
     "nav.about": "글로케어",
+    "nav.student": "유학 지원 (학생)",
     "nav.apply": "상담 신청 →",
 
     "hero.badge": "취업 보장 유학",
@@ -119,6 +120,7 @@ const viDict: DictShape = {
     "nav.centers": "Trung tâm du học",
     "nav.insurance": "Hoàn tiền BH",
     "nav.about": "Về GLOCARE",
+    "nav.student": "Du học (Sinh viên)",
     "nav.apply": "Đăng ký tư vấn →",
 
     "hero.badge": "Du học có việc làm đảm bảo",
