@@ -122,8 +122,8 @@ export interface CondSlot {
  * 키: `{course}:{tier}:{region}`. tier=잔고 요건을 정하는 등급(어학당은 어학 인증→본대학 등급, 어학 일반→general).
  * 각 케이스를 /edit 에서 독립적으로 편집 가능.
  */
-export const CONDITIONAL_SLOTS: Record<string, CondSlot[]> = {
-  balance: [
+// 잔고증명서 케이스(과정×등급×지역 + 국내변경 same/other). 한국어 서류들도 같은 케이스 구조를 공유.
+const BALANCE_SLOTS: CondSlot[] = [
     { slot: "univ:excellent:metro", group: "학위(D-2)", label: "우수인증 · 수도권", value: "잔액 2,000만원 이상 · 유지기간 면제" },
     { slot: "univ:excellent:nonmetro", group: "학위(D-2)", label: "우수인증 · 비수도권", value: "잔액 1,600만원 이상 · 유지기간 면제" },
     { slot: "univ:certified:metro", group: "학위(D-2)", label: "인증 · 수도권", value: "잔액 2,000만원 이상 · 3개월 유지" },
@@ -149,7 +149,17 @@ export const CONDITIONAL_SLOTS: Record<string, CondSlot[]> = {
     { slot: "change:other:certified:nonmetro", group: "국내 변경 · 다른 대학", label: "인증 · 비수도권", value: "잔액 1,600만원 이상 · 3개월 유지" },
     { slot: "change:other:general:metro", group: "국내 변경 · 다른 대학", label: "일반(미인증) · 수도권", value: "잔액 2,000만원 이상 · 6개월 유지" },
     { slot: "change:other:general:nonmetro", group: "국내 변경 · 다른 대학", label: "일반(미인증) · 비수도권", value: "잔액 1,600만원 이상 · 6개월 유지" },
-  ],
+];
+
+// 같은 케이스 구조를 값만 비운 채 복제(한국어 서류용 — 값은 /edit에서 채움).
+const emptyCaseSlots = (): CondSlot[] => BALANCE_SLOTS.map((s) => ({ slot: s.slot, group: s.group, label: s.label, value: "" }));
+
+export const CONDITIONAL_SLOTS: Record<string, CondSlot[]> = {
+  balance: BALANCE_SLOTS,
+  // 한국어 능력 서류 3종(TOPIK/KIIP/세종학당) — 잔고증명서와 동일 케이스.
+  korean: emptyCaseSlots(),
+  "korean-kiip": emptyCaseSlots(),
+  "korean-sejong": emptyCaseSlots(),
   // 유학경비 예치확인서(D-4 어학당·일반) — 지역별 예치금.
   "deposit-confirm": [
     { slot: "metro", group: "예치금", label: "수도권", value: "예치금 1,000만원 이상" },
@@ -170,18 +180,27 @@ export interface DynTag {
   path: string;
   value: string;
 }
-export function balanceTags(course: Course, region: Region, degreeTier: Tier, langTier: Tier, get?: Getter, isChange?: boolean, sameUniv?: boolean): DynTag[] {
+/**
+ * 케이스 태그(잔고증명서·한국어 서류 공용). 과정×등급×지역 + 국내변경(same/other)으로 케이스를 고른다.
+ *  - 등급: 학위=본대학 등급 / 어학당=어학 인증이면 본대학 등급, 어학 일반이면 일반.
+ *  - 국내변경(D-4→D-2): change:{same|other}:{등급}:{지역}. same=같은 대학 어학당→본과.
+ */
+export function caseTags(docId: string, course: Course, region: Region, degreeTier: Tier, langTier: Tier, get?: Getter, isChange?: boolean, sameUniv?: boolean): DynTag[] {
   const g = get ?? ((_p, d) => d);
-  const slots = CONDITIONAL_SLOTS.balance;
-  // 잔고 요건 등급: 학위=본대학 등급 / 어학당=어학 인증이면 본대학 등급, 어학 일반이면 일반.
+  const slots = CONDITIONAL_SLOTS[docId];
+  if (!slots) return [];
   const effTier: Tier = course === "univ" ? degreeTier : langTier === "certified" ? degreeTier : "general";
   const tierKey = effTier === "excellent" || effTier === "certified" ? effTier : "general";
-  // D-4→D-2 국내 변경은 별도 케이스. 같은 대학 어학당→본과(same)는 혜택 완화, 다른 대학(other)은 별도.
   const slot = isChange ? `change:${sameUniv ? "same" : "other"}:${tierKey}:${region}` : `${course}:${tierKey}:${region}`;
   const def = slots.find((s) => s.slot === slot);
-  const path = `dyn:balance:${slot}`;
+  const path = `dyn:${docId}:${slot}`;
   const value = g(path, def ? def.value : "");
   return value ? [{ path, value }] : [];
+}
+
+/** 잔고증명서 케이스 태그(caseTags 래퍼). */
+export function balanceTags(course: Course, region: Region, degreeTier: Tier, langTier: Tier, get?: Getter, isChange?: boolean, sameUniv?: boolean): DynTag[] {
+  return caseTags("balance", course, region, degreeTier, langTier, get, isChange, sameUniv);
 }
 
 /** 유학경비 예치확인서: 지역별 예치금 태그. */
@@ -264,7 +283,9 @@ export const DOCS: ChecklistDoc[] = [
   { id: "tb", name: "결핵진단서", section: "건강", courses: ["univ", "hagwon"], brief: "공관 지정병원에서 발급.", holder: "본인", issuer: "공관 지정병원", form: "원본", validity: "최근 3개월 이내", obtainDays: U, detailDesc: "흉부 X선 검사 포함. 지정병원 목록은 공관별로 다름.", onlyVN: true },
 
   /* ── 어학 ── */
-  { id: "korean", name: "한국어 성적(TOPIK 등)", section: "어학", courses: ["univ", "hagwon"], brief: "한국어 과정 지원 시.", holder: "본인", issuer: "시험기관(TOPIK 등)", form: "원본", validity: U, obtainDays: U, detailDesc: "KIIP·세종학당 수료증으로 대체 가능(세종학당은 현지 오프라인 과정만 인정, 온라인 제외)." },
+  { id: "korean", name: "한국어 능력 (TOPIK)", section: "어학", courses: ["univ", "hagwon"], brief: "TOPIK(한국어능력시험) 성적.", holder: "본인", issuer: "시험기관(TOPIK)", form: "원본", validity: U, obtainDays: U },
+  { id: "korean-kiip", name: "한국어 능력 (KIIP 이수)", section: "어학", courses: ["univ", "hagwon"], brief: "사회통합프로그램(KIIP) 이수로 한국어 능력 증빙.", holder: "본인", issuer: "법무부(사회통합정보망)", form: "원본", validity: U, obtainDays: U },
+  { id: "korean-sejong", name: "한국어 능력 (세종학당 이수)", section: "어학", courses: ["univ", "hagwon"], brief: "세종학당 한국어연수 이수로 증빙.", holder: "본인", issuer: "세종학당", form: "원본", validity: U, obtainDays: U, detailDesc: "현지 오프라인 과정만 인정(온라인 제외)." },
   { id: "training-plan", name: "연수계획서", section: "어학", courses: ["hagwon"], brief: "어학당 지원 시.", holder: "대학·연수기관", issuer: "대학·연수기관", form: "원본", validity: U, obtainDays: U, detailDesc: "수업 시간표·강사·시설 등 연수 내용 포함." },
   { id: "english", name: "영어 성적", section: "어학", courses: ["univ"], brief: "영어로 수업하는 과정(영어트랙) 지원 시.", holder: "본인", issuer: "시험기관", form: "원본", validity: U, obtainDays: U },
 ];

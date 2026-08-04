@@ -6,7 +6,7 @@ import { Search, ChevronDown, ShieldAlert, Pencil, Building2, Check, X } from "l
 import {
   D, ORIGIN_OPTIONS, EMPHASIZED_STATUS, type UnivRegion, type UnivTier, type SchoolType,
   UNIVERSITIES,
-  judge, sectionNeeded, DOCS, SECTIONS, docAttrRaws, balanceTags, depositTags, UNVERIFIED,
+  judge, sectionNeeded, DOCS, SECTIONS, docAttrRaws, caseTags, depositTags, CONDITIONAL_SLOTS, UNVERIFIED,
   type Course, type Section, type ChecklistDoc, type Tier, type Region, type DynTag,
   flowOf, PROCESS_STEPS, TRACK_META, type FlowResult,
   useEdit, Bi, LanguageToggle, T, useTStr,
@@ -762,10 +762,10 @@ function DocRow({ doc, docName, ctx }: { doc: ChecklistDoc; docName: (id: string
 
   // ★ 조건별 값(조회 조건에 맞춰 계산 + 편집값 반영). 한국어 + 베트남어 병기.
   const dynTags: DynTag[] =
-    doc.id === "balance"
-      ? balanceTags(ctx.course, ctx.region, ctx.tier, ctx.langTier, getKo, ctx.isChange, ctx.sameUniv)
-      : doc.id === "deposit-confirm"
-        ? depositTags(ctx.region, getKo)
+    doc.id === "deposit-confirm"
+      ? depositTags(ctx.region, getKo)
+      : CONDITIONAL_SLOTS[doc.id]
+        ? caseTags(doc.id, ctx.course, ctx.region, ctx.tier, ctx.langTier, getKo, ctx.isChange, ctx.sameUniv)
         : [];
   const detailKo = getKo(`doc:${doc.id}:detailDesc`, doc.detailDesc ?? "");
   const ambKo = getKo(`doc:${doc.id}:ambiguous`, doc.ambiguous ?? "");
