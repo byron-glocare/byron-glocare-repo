@@ -2,11 +2,11 @@
 
 import { useMemo, useState, useRef, useEffect } from "react";
 import { Search, ChevronDown, ShieldAlert, Pencil, Building2, Check, X } from "lucide-react";
-import { D, ORIGIN_OPTIONS, EMPHASIZED_STATUS, type UnivRegion, type UnivTier, type SchoolType } from "@/lib/visa/engine";
-import { UNIVERSITIES } from "@/lib/visa/universities";
-import { judge, sectionNeeded, DOCS, SECTIONS, docAttrRaws, balanceTags, depositTags, UNVERIFIED, type Course, type Section, type ChecklistDoc, type Tier, type Region, type DynTag } from "@/lib/visa/checklist";
-import { flowOf, PROCESS_STEPS, TRACK_META, type FlowResult } from "@/lib/visa/process";
-import { EditProvider, useEdit, Bi, LanguageToggle, T, useTStr } from "@/lib/visa/edits";
+import { D, ORIGIN_OPTIONS, EMPHASIZED_STATUS, type UnivRegion, type UnivTier, type SchoolType } from "@glocare/visa-core";
+import { UNIVERSITIES } from "@glocare/visa-core";
+import { judge, sectionNeeded, DOCS, SECTIONS, docAttrRaws, balanceTags, depositTags, UNVERIFIED, type Course, type Section, type ChecklistDoc, type Tier, type Region, type DynTag } from "@glocare/visa-core";
+import { flowOf, PROCESS_STEPS, TRACK_META, type FlowResult } from "@glocare/visa-core";
+import { EditProvider, useEdit, Bi, LanguageToggle, T, useTStr } from "@glocare/visa-core";
 import "./visa-theme.css";
 
 /* ── 라벨 ─────────────────────────────────────────────── */
@@ -106,7 +106,7 @@ export function VisaContent({ overrides }: { overrides: { ko: Record<string, str
 
   return (
     <div className="visa-scope">
-    <EditProvider overrides={overrides} readOnly>
+    <EditProvider overrides={overrides} readOnly persistKey="center-visa">
     <main style={{ minHeight: "100vh" }}>
       <header
         style={{

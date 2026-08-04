@@ -19,7 +19,9 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@glocare/visa-core": ["../../packages/visa-core/src/index.ts"],
+      "@glocare/visa-core/*": ["../../packages/visa-core/src/*"]
     }
   },
   "include": [
