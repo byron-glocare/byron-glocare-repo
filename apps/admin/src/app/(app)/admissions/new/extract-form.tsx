@@ -95,8 +95,26 @@ export function ExtractForm({
           admission_category: fd.get("admission_category") ?? "",
         }),
       });
-      const json = (await res.json()) as CallExtractResult;
-      setResult(json);
+      // 서버가 비-JSON(타임아웃 등 플랫폼 오류 텍스트)을 뱉을 수 있어 방어적으로 파싱
+      const raw = await res.text();
+      let json: CallExtractResult | null = null;
+      try {
+        json = JSON.parse(raw) as CallExtractResult;
+      } catch {
+        json = null;
+      }
+      if (json) {
+        setResult(json);
+      } else {
+        const timeout =
+          res.status === 504 ||
+          /timeout|FUNCTION_INVOCATION_TIMEOUT|An error occurred/i.test(raw);
+        setError(
+          timeout
+            ? `AI 추출이 제한 시간을 초과해 중단됐습니다. 페이지가 많은 PDF는 필요한 페이지만 남겨 다시 시도하거나, 잠시 후 재시도해 주세요. (HTTP ${res.status})`
+            : `서버 오류 (HTTP ${res.status})${raw ? ` — ${raw.slice(0, 160)}` : ""}`
+        );
+      }
     } catch (err) {
       setError(
         `네트워크 오류: ${err instanceof Error ? err.message : String(err)}`

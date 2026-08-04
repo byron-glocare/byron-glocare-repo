@@ -18,7 +18,9 @@ import {
 } from "@/lib/admission/call-extract";
 
 export const runtime = "nodejs";
-export const maxDuration = 60;
+// AI 추출(다운스트림 Claude 호출 대기)이 60초를 넘길 수 있어 상향.
+// 플랜 상한을 넘으면 Vercel 이 자동으로 상한까지 낮춘다(빌드 실패 아님).
+export const maxDuration = 300;
 
 const MAX_PDF_SIZE = 40 * 1024 * 1024; // 40MB — 리플릿 PDF 대응
 const MAX_HWP_SIZE = 30 * 1024 * 1024; // 30MB — HWP/HWPX

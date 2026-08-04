@@ -24,7 +24,8 @@ import {
 } from "@/lib/admission/hwp-to-text";
 
 export const runtime = "nodejs";
-export const maxDuration = 60; // Vercel: PDF + Sonnet 호출 시간 여유
+// PDF + Sonnet vision 추출이 60초를 넘길 수 있어 상향(플랜 상한 초과 시 Vercel 자동 하향).
+export const maxDuration = 300;
 
 const MAX_PDF_SIZE = 40 * 1024 * 1024; // 40MB — 리플릿 PDF 대응. Anthropic API 자체 한계 ~32MB
 const MAX_HWP_SIZE = 30 * 1024 * 1024; // 30MB — HWP/HWPX (텍스트 변환 메모리 여유)
