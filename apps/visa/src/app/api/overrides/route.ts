@@ -41,8 +41,8 @@ export async function GET() {
     const out = { ko: { ...BASE.ko, ...(db.ko ?? {}) }, vi: { ...BASE.vi, ...(db.vi ?? {}) } };
     return NextResponse.json(out, { headers: { "Cache-Control": "public, s-maxage=20, stale-while-revalidate=120" } });
   }
-  // dev 폴백: 소스 파일
-  const out: Record<string, unknown> = { ko: {}, vi: {} };
+  // DB 미설정: 커밋된 base 반환(dev 는 파일이 읽히면 최신 파일로 갱신).
+  const out: Record<string, unknown> = { ko: { ...BASE.ko }, vi: { ...BASE.vi } };
   for (const lang of ["ko", "vi"] as const) {
     try { out[lang] = JSON.parse(await fs.readFile(FILES[lang], "utf8")); } catch {}
   }
