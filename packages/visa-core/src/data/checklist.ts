@@ -214,7 +214,6 @@ export interface ChecklistDoc {
   courses: Course[];
   brief: string; // 태그 아래 한 줄 설명(접힘)
   detailDesc?: string; // 펼침 시 이어지는 상세 설명(명시 사실 + 실무 팁)
-  cond?: string; // 조건/대체(접힘에서도 노출)
 
   holderSameAs?: string; // 명의를 이 서류 id 와 동일하게
   // ── 속성(태그): 값 / "★확인불가" / 없음 ──
@@ -245,19 +244,19 @@ export const DOCS: ChecklistDoc[] = [
   { id: "univ-reg", name: "대학 사업자등록증 사본", section: "신분·공통", courses: ["univ", "hagwon"], brief: "대학이 주는 서류(고유번호증도 가능).", holder: "대학 발급", issuer: "대학", form: "사본", validity: U, obtainDays: U },
   { id: "family-ct07", name: "가족관계 확인서(CT07)", section: "신분·공통", courses: ["univ", "hagwon"], brief: "가족관계 확인.", holder: "본인", issuer: "베트남 공안", form: "원본", validity: U, signature: "친필 서명 원본만(전자·스캔·인쇄 불가)", translation: "번역 및 공증", obtainDays: U, onlyVN: true },
   { id: "birth-cert", name: "출생증명서", section: "신분·공통", courses: ["univ", "hagwon"], brief: "부모와의 관계 입증(부모가 재정보증할 때).", holder: "본인", issuer: "인민위원회·공안", form: "사본", validity: U, translation: "번역 및 공증", notarization: "공증", obtainDays: U, onlyVN: true },
-  { id: "residence-ct08", name: "거주 확인서(CT08)", section: "신분·공통", courses: ["univ", "hagwon"], brief: "호적과 다른 지역의 공관에 신청할 때 제출.", cond: "다른 지역 1년 이상 거주 이력(대체: 6개월 근무·재학). 고교 졸업 6개월 이내면 면제.", holder: "본인", issuer: "베트남 공안", form: "원본", validity: U, translation: "번역 및 공증", obtainDays: U, onlyVN: true },
+  { id: "residence-ct08", name: "거주 확인서(CT08)", section: "신분·공통", courses: ["univ", "hagwon"], brief: "호적과 다른 지역의 공관에 신청할 때 제출.", holder: "본인", issuer: "베트남 공안", form: "원본", validity: U, translation: "번역 및 공증", obtainDays: U, onlyVN: true },
 
   /* ── 학력 ── */
-  { id: "grad-cert", name: "졸업증명서", section: "학력", courses: ["univ", "hagwon"], brief: "최종 학교 졸업증명서.", cond: "아직 졸업 전이면 졸업예정증명서로 대체(졸업일 1년 이내).", holder: "본인", issuer: "최종 학교", form: "원본", validity: U, translation: "번역 및 공증", authentication: "남부 영사확인(외무성 → 총영사관, 접수일 1년 이내)", obtainDays: U, detailDesc: "북부(하노이) 관할 영사확인 절차는 다를 수 있음(★확인불가)." },
+  { id: "grad-cert", name: "졸업증명서", section: "학력", courses: ["univ", "hagwon"], brief: "최종 학교 졸업증명서.", holder: "본인", issuer: "최종 학교", form: "원본", validity: U, translation: "번역 및 공증", authentication: "남부 영사확인(외무성 → 총영사관, 접수일 1년 이내)", obtainDays: U, detailDesc: "북부(하노이) 관할 영사확인 절차는 다를 수 있음(★확인불가)." },
   { id: "transcript", name: "성적증명서", section: "학력", courses: ["univ", "hagwon"], brief: "최종 학교 성적증명서.", holderSameAs: "grad-cert", issuer: "최종 학교", form: "원본", validity: U, translation: "번역 및 공증", authentication: "졸업증명서와 동일(남부 영사확인)", obtainDays: U },
 
   /* ── 재정 ── */
   { id: "balance", name: "잔고증명서", section: "재정", courses: ["univ", "hagwon"], brief: "통장 잔액 증명.", holder: "본인 또는 부모(아버지·어머니 중 1명). 삼촌·지인 명의 원칙 불인정", issuer: "베트남 은행 또는 한국은행", form: "원본", bringOriginal: true, validity: "공관 제출용 10일 / 대학 제출용 30일 — 따로 발급", translation: "번역 및 공증", obtainDays: U, detailDesc: "학위: 수도권 2,000·비수도권 1,600만원 / 어학당: 수도권 1,000·비수도권 800만원 이상. 예치 3개월(어학당·컨설팅대학 6개월). 대학용(30일)과 공관용(10일)은 유효기간이 달라 같은 서류를 재사용할 수 없으니 따로 발급받으세요." },
   { id: "bankbook", name: "통장 사본", section: "재정", courses: ["univ", "hagwon"], brief: "잔고증명서와 같은 통장. 양도받은 통장 불인정.", holderSameAs: "balance", issuer: "은행", form: "사본", validity: U, bringOriginal: true, obtainDays: U },
   { id: "remittance", name: "국내송금 증명서", section: "재정", courses: ["univ", "hagwon"], brief: "잔고증명서 대신 한국으로 송금해 재정을 증명할 때.", holderSameAs: "balance", issuer: "은행", form: "원본", validity: U, obtainDays: U },
-  { id: "parent-support", name: "부모 재정지원 확인서", section: "재정", courses: ["univ", "hagwon"], brief: "부모가 유학 비용을 대는 경우 제출.", cond: "잔고·소득 증빙은 이 부모(잔고 명의자) 기준으로 맞춤.", holder: "잔고 명의 부모", issuer: "부모 작성", form: "원본", validity: U, translation: "번역 및 공증", notarization: "관할 공안 확인 필수", obtainDays: U, onlyVN: true },
-  { id: "parent-income", name: "부모 소득·재직 증빙", section: "재정", courses: ["univ", "hagwon"], brief: "잔고 명의 부모 기준, 직업에 따라 준비.", cond: "직장인 → 재직증명·급여내역(최근 3개월)·사회보험 / 사업자 → 사업자등록·납세증명 / 농민 → 소득확인서·부동산(레드북).", holderSameAs: "parent-support", issuer: "회사·세무·공안 등", form: "원본·사본", validity: U, translation: "번역 및 공증", notarization: "관할 공안 확인", obtainDays: U, detailDesc: "보증인 1명(잔고 명의 부모) 기준이 원칙. 재정이 빠듯하면 두 분 소득을 함께 내면 유리.", ambiguous: "보증인 1명 기준인지 부모 공동인지 원문 불명확.", onlyVN: true },
-  { id: "guarantor-id", name: "재정보증인 신분증 사본", section: "재정", courses: ["univ", "hagwon"], brief: "부모 등 재정보증인의 신분증.", cond: "부모 등 재정보증인이 자금을 댈 때(본인 자비 부담이면 불요).", holderSameAs: "parent-support", issuer: "신분증 발급기관", form: "사본", validity: U, translation: "번역 및 공증", obtainDays: U, onlyVN: true },
+  { id: "parent-support", name: "부모 재정지원 확인서", section: "재정", courses: ["univ", "hagwon"], brief: "부모가 유학 비용을 대는 경우 제출.", holder: "잔고 명의 부모", issuer: "부모 작성", form: "원본", validity: U, translation: "번역 및 공증", notarization: "관할 공안 확인 필수", obtainDays: U, onlyVN: true },
+  { id: "parent-income", name: "부모 소득·재직 증빙", section: "재정", courses: ["univ", "hagwon"], brief: "잔고 명의 부모 기준, 직업에 따라 준비.", holderSameAs: "parent-support", issuer: "회사·세무·공안 등", form: "원본·사본", validity: U, translation: "번역 및 공증", notarization: "관할 공안 확인", obtainDays: U, detailDesc: "보증인 1명(잔고 명의 부모) 기준이 원칙. 재정이 빠듯하면 두 분 소득을 함께 내면 유리.", ambiguous: "보증인 1명 기준인지 부모 공동인지 원문 불명확.", onlyVN: true },
+  { id: "guarantor-id", name: "재정보증인 신분증 사본", section: "재정", courses: ["univ", "hagwon"], brief: "부모 등 재정보증인의 신분증.", holderSameAs: "parent-support", issuer: "신분증 발급기관", form: "사본", validity: U, translation: "번역 및 공증", obtainDays: U, onlyVN: true },
   { id: "cost-pledge", name: "유학경비 부담 서약서", section: "재정", courses: ["univ", "hagwon"], brief: "누가 유학 비용을 부담하는지 서약.", holder: "본인 또는 부모(재정보증인)", issuer: "본인 작성", form: "원본", validity: U, detailDesc: "보통 입학지원서에 포함됨." },
   { id: "deposit-confirm", name: "유학경비 예치확인서", section: "재정", courses: ["hagwon"], brief: "일반(비인증) 어학당의 유학경비 예치제 대상.", holder: "본인", issuer: "은행·지정기관", form: "원본", validity: U, obtainDays: U, detailDesc: "지정 방식으로 예치 후 확인서 제출. 잔고증명서 대신 제출하며, 학위과정(D-2)에는 없음." },
 
@@ -265,8 +264,8 @@ export const DOCS: ChecklistDoc[] = [
   { id: "tb", name: "결핵진단서", section: "건강", courses: ["univ", "hagwon"], brief: "공관 지정병원에서 발급.", holder: "본인", issuer: "공관 지정병원", form: "원본", validity: "최근 3개월 이내", obtainDays: U, detailDesc: "흉부 X선 검사 포함. 지정병원 목록은 공관별로 다름.", onlyVN: true },
 
   /* ── 어학 ── */
-  { id: "korean", name: "한국어 성적(TOPIK 등)", section: "어학", courses: ["univ", "hagwon"], brief: "한국어 과정 지원 시.", cond: "학위: 학사 이상 TOPIK 4급·전문학사 3급 / 어학당: 입학 기준. 인증대학은 권장, 일반·컨설팅대학은 필수.", holder: "본인", issuer: "시험기관(TOPIK 등)", form: "원본", validity: U, obtainDays: U, detailDesc: "KIIP·세종학당 수료증으로 대체 가능(세종학당은 현지 오프라인 과정만 인정, 온라인 제외)." },
+  { id: "korean", name: "한국어 성적(TOPIK 등)", section: "어학", courses: ["univ", "hagwon"], brief: "한국어 과정 지원 시.", holder: "본인", issuer: "시험기관(TOPIK 등)", form: "원본", validity: U, obtainDays: U, detailDesc: "KIIP·세종학당 수료증으로 대체 가능(세종학당은 현지 오프라인 과정만 인정, 온라인 제외)." },
   { id: "training-plan", name: "연수계획서", section: "어학", courses: ["hagwon"], brief: "어학당 지원 시.", holder: "대학·연수기관", issuer: "대학·연수기관", form: "원본", validity: U, obtainDays: U, detailDesc: "수업 시간표·강사·시설 등 연수 내용 포함." },
-  { id: "english", name: "영어 성적", section: "어학", courses: ["univ"], brief: "영어로 수업하는 과정(영어트랙) 지원 시.", cond: "TOEFL 530(iBT 71) / IELTS 5.5 / CEFR B2 / TEPS 327 이상.", holder: "본인", issuer: "시험기관", form: "원본", validity: U, obtainDays: U },
+  { id: "english", name: "영어 성적", section: "어학", courses: ["univ"], brief: "영어로 수업하는 과정(영어트랙) 지원 시.", holder: "본인", issuer: "시험기관", form: "원본", validity: U, obtainDays: U },
 ];
 void U;

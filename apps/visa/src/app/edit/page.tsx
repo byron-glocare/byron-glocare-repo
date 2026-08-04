@@ -84,7 +84,6 @@ function DocEditor({ doc }: { doc: ChecklistDoc }) {
 
       <Row label="설명"><EditableText path={P("brief")} value={doc.brief} multiline /></Row>
       <Row label="상세 설명"><EditableText path={P("detailDesc")} value={doc.detailDesc ?? ""} multiline /></Row>
-      {doc.cond !== undefined && <Row label="조건·대체"><EditableText path={P("cond")} value={doc.cond} multiline /></Row>}
       {doc.ambiguous !== undefined && <Row label="확인 필요"><EditableText path={P("ambiguous")} value={doc.ambiguous} multiline /></Row>}
 
       <Divider>공용 속성 · 모든 조건 공통</Divider>
