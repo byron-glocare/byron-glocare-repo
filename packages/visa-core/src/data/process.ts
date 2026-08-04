@@ -5,9 +5,8 @@
  * 조회 조건(학위등급 × 어학등급 × 과정) → 조합(1~12) → 흐름(A~D / A'~D') → 단계별 프로세스.
  * (서로 다른 조회 조건 간 관계는 다루지 않고, 해당 조건의 흐름만 보여준다.)
  */
-import type { Tier } from "./checklist";
+import type { Course, Tier } from "./checklist";
 
-export type Course = "univ" | "hagwon";
 export type Track = "simplified" | "partial" | "full" | "blocked";
 
 export const PROCESS_STEPS = [

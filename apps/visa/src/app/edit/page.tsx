@@ -10,15 +10,17 @@
  */
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { DOCS, SECTIONS, docAttrRaws, CONDITIONAL_SLOTS, type ChecklistDoc, type Section } from "@/data/checklist";
-import { EditProvider, EditToolbar, EditableText, useEdit } from "@/lib/edits";
+import { DOCS, SECTIONS, docAttrRaws, CONDITIONAL_SLOTS, type ChecklistDoc, type Section, EditProvider, EditableText, useEdit } from "@glocare/visa-core";
+import { EditToolbar } from "@/lib/edit-toolbar";
+import overridesKo from "@/data/overrides.json";
+import overridesVi from "@/data/overrides.vi.json";
 
 const SECTION_EMOJI: Record<Section, string> = { "신분·공통": "🪪", 학력: "🎓", 재정: "💰", 건강: "🩺", 어학: "🗣️" };
 const nameOf = (id: string) => DOCS.find((d) => d.id === id)?.name ?? id;
 
 export default function EditPage() {
   return (
-    <EditProvider defaultOn>
+    <EditProvider overrides={{ ko: overridesKo as Record<string, string>, vi: overridesVi as Record<string, string> }} persistKey="visa" defaultOn>
       <main style={{ minHeight: "100vh", background: "var(--peach)" }}>
         <header style={{ background: "linear-gradient(135deg, var(--coral) 0%, var(--coral-d) 100%)", color: "#fff", padding: "22px 20px" }}>
           <div style={{ maxWidth: 900, margin: "0 auto" }}>

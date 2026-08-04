@@ -3,11 +3,16 @@
 import { useMemo, useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { Search, ChevronDown, ShieldAlert, Pencil, Building2, Check, X } from "lucide-react";
-import { D, ORIGIN_OPTIONS, EMPHASIZED_STATUS, type UnivRegion, type UnivTier, type SchoolType } from "@/data/engine";
-import { UNIVERSITIES } from "@/data/universities";
-import { judge, sectionNeeded, DOCS, SECTIONS, docAttrRaws, balanceTags, depositTags, UNVERIFIED, type Course, type Section, type ChecklistDoc, type Tier, type Region, type DynTag } from "@/data/checklist";
-import { flowOf, PROCESS_STEPS, TRACK_META, type FlowResult } from "@/data/process";
-import { EditProvider, useEdit, Bi, LanguageToggle, T, useTStr } from "@/lib/edits";
+import {
+  D, ORIGIN_OPTIONS, EMPHASIZED_STATUS, type UnivRegion, type UnivTier, type SchoolType,
+  UNIVERSITIES,
+  judge, sectionNeeded, DOCS, SECTIONS, docAttrRaws, balanceTags, depositTags, UNVERIFIED,
+  type Course, type Section, type ChecklistDoc, type Tier, type Region, type DynTag,
+  flowOf, PROCESS_STEPS, TRACK_META, type FlowResult,
+  EditProvider, useEdit, Bi, LanguageToggle, T, useTStr,
+} from "@glocare/visa-core";
+import overridesKo from "@/data/overrides.json";
+import overridesVi from "@/data/overrides.vi.json";
 
 /* ── 라벨 ─────────────────────────────────────────────── */
 const TIER_LABEL: Record<UnivTier, string> = {
@@ -106,7 +111,7 @@ export default function Page() {
   }
 
   return (
-    <EditProvider>
+    <EditProvider overrides={{ ko: overridesKo as Record<string, string>, vi: overridesVi as Record<string, string> }} persistKey="visa">
     <main style={{ minHeight: "100vh" }}>
       <header
         style={{

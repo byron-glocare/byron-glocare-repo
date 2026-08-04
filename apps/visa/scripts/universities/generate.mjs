@@ -14,7 +14,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const DIR = path.dirname(fileURLToPath(import.meta.url));
-const OUT = path.join(DIR, "..", "..", "src", "data", "universities.ts");
+// universities.ts 는 공유 패키지로 이동됨(@glocare/visa-core).
+const OUT = path.join(DIR, "..", "..", "..", "..", "packages", "visa-core", "src", "data", "universities.ts");
 const read = (f) => fs.readFileSync(path.join(DIR, f), "utf8");
 
 const base = (s) => s.replace(/\(.*?\)/g, "").replace(/\s+/g, "").replace(/남해캠퍼스|캠퍼스/g, "").trim();

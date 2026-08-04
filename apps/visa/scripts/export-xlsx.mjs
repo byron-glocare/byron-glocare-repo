@@ -7,9 +7,9 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import XLSX from "xlsx";
-import { DOCUMENTS_DATA } from "../src/data/documents.ts";
-import { UNIVERSITIES } from "../src/data/universities.ts";
-import { ANN } from "../src/data/annotations.ts";
+import { DOCUMENTS_DATA } from "../../../packages/visa-core/src/data/documents.ts";
+import { UNIVERSITIES } from "../../../packages/visa-core/src/data/universities.ts";
+import { ANN } from "../../../packages/visa-core/src/data/annotations.ts";
 
 const DIR = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(DIR, "..", "..", ".."); // repo root
