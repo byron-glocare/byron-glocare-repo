@@ -25,13 +25,13 @@ export function Hero({
           preserveAspectRatio="xMidYMid slice"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <circle cx="1200" cy="100" r="380" fill="rgba(242,92,92,0.04)" />
-          <circle cx="1200" cy="100" r="260" fill="rgba(242,92,92,0.05)" />
-          <circle cx="1200" cy="100" r="140" fill="rgba(242,92,92,0.06)" />
-          <circle cx="120" cy="700" r="200" fill="rgba(242,92,92,0.03)" />
+          <circle cx="1200" cy="100" r="380" fill="rgba(237,71,71,0.04)" />
+          <circle cx="1200" cy="100" r="260" fill="rgba(237,71,71,0.05)" />
+          <circle cx="1200" cy="100" r="140" fill="rgba(237,71,71,0.06)" />
+          <circle cx="120" cy="700" r="200" fill="rgba(237,71,71,0.03)" />
           <path
             d="M0 600 Q400 500 800 580 T1440 520 L1440 820 L0 820Z"
-            fill="rgba(255,240,240,0.4)"
+            fill="rgba(255,244,243,0.5)"
           />
         </svg>
       </div>
@@ -49,11 +49,11 @@ export function Hero({
             <span className="sub-line">{t["hero.subtitle"]}</span>
           </h1>
           <div className="hero-btns">
-            <Link href="/#apply" className="btn-coral">
-              {t["hero.cta.primary"]}
+            <Link href="/student" className="btn-coral">
+              {t["hero.cta.student"]}
             </Link>
-            <Link href="/about" className="btn-ghost">
-              {t["hero.cta.about"]}
+            <Link href="/#apply" className="btn-ghost">
+              {t["hero.cta.primary"]}
             </Link>
           </div>
         </div>

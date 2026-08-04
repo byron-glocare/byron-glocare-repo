@@ -33,7 +33,8 @@ const koDict = {
     "hero.title.line2": "— 졸업 후 바로 취업",
     "hero.subtitle":
       "상담부터 유학, 취업까지 — 글로케어가 최적의 대학과 유학센터를 연결합니다.",
-    "hero.cta.primary": "무료 상담 신청하기",
+    "hero.cta.student": "유학 지원 시작 →",
+    "hero.cta.primary": "무료 상담 신청",
     "hero.cta.about": "글로케어 소개",
 
     "section.cases.eyebrow": "취업 사례",
@@ -117,6 +118,7 @@ const viDict: DictShape = {
     "hero.title.line2": "— Có việc làm ngay khi tốt nghiệp",
     "hero.subtitle":
       "Từ tư vấn, du học đến việc làm ổn định tại Hàn Quốc — GLOCARE kết nối bạn với trường đại học và trung tâm du học phù hợp nhất.",
+    "hero.cta.student": "Bắt đầu đăng ký du học →",
     "hero.cta.primary": "Đăng ký tư vấn miễn phí",
     "hero.cta.about": "Giới thiệu GLOCARE",
 
