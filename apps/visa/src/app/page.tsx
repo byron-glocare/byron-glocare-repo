@@ -69,6 +69,7 @@ const REGION_OPTS: { value: RegionSel; label: string }[] = [
 export default function Page() {
   const [inst, setInst] = useState<InstKind>("univ");
   const [isChange, setIsChange] = useState(false);
+  const [sameUniv, setSameUniv] = useState(true); // 국내 변경 시 같은 대학 어학당→본과 여부
   const [univ, setUniv] = useState<UnivPick | null>(null);
   const [condTier, setCondTier] = useState<TierSel>("certified"); // 대학교 탭: 인증 등급
   const [condLangTier, setCondLangTier] = useState<TierSel>("certified"); // 어학당 탭: 어학 인증
@@ -134,7 +135,7 @@ export default function Page() {
         {!searched ? (
           <>
             <InputForm
-              {...{ inst, changeInst, isChange, setIsChange, univ, setUniv, condTier, setCondTier, condLangTier, setCondLangTier, condRegion, setCondRegion, origin, setOrigin, status, setStatus }}
+              {...{ inst, changeInst, isChange, setIsChange, sameUniv, setSameUniv, univ, setUniv, condTier, setCondTier, condLangTier, setCondLangTier, condRegion, setCondRegion, origin, setOrigin, status, setStatus }}
               canSearch={canSearch}
               onSearch={() => setSearched(true)}
             />
@@ -154,6 +155,7 @@ export default function Page() {
                 applicantRegion={(originOpt.ctx.applicantRegion ?? null) as string | null}
                 status={status}
                 isChange={isChange}
+                sameUniv={sameUniv}
               />
             )}
           </>
@@ -170,6 +172,8 @@ function InputForm(p: {
   changeInst: (v: InstKind) => void;
   isChange: boolean;
   setIsChange: (v: boolean) => void;
+  sameUniv: boolean;
+  setSameUniv: (v: boolean) => void;
   univ: UnivPick | null;
   setUniv: (v: UnivPick | null) => void;
   condTier: TierSel;
@@ -200,10 +204,25 @@ function InputForm(p: {
             ]}
           />
           {p.inst === "univ" && (
-            <label style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 10, fontSize: 13, color: "var(--ink-mid)", cursor: "pointer" }}>
-              <input type="checkbox" checked={p.isChange} onChange={(e) => p.setIsChange(e.target.checked)} style={{ width: 16, height: 16, accentColor: "var(--coral)" }} />
-              이미 한국에서 어학연수(D-4) 중 → D-2로 국내 변경
-            </label>
+            <>
+              <label style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 10, fontSize: 13, color: "var(--ink-mid)", cursor: "pointer" }}>
+                <input type="checkbox" checked={p.isChange} onChange={(e) => p.setIsChange(e.target.checked)} style={{ width: 16, height: 16, accentColor: "var(--coral)" }} />
+                <T ko="이미 한국에서 어학연수(D-4) 중 → D-2로 국내 변경" />
+              </label>
+              {p.isChange && (
+                <div style={{ marginTop: 8 }}>
+                  <RadioGroup
+                    value={p.sameUniv ? "same" : "other"}
+                    onChange={(v) => p.setSameUniv(v === "same")}
+                    options={[
+                      { value: "same", label: "같은 대학 어학당에서 진학", desc: "재정·서류 혜택" },
+                      { value: "other", label: "다른 대학 · 기타" },
+                    ]}
+                    small
+                  />
+                </div>
+              )}
+            </>
           )}
         </Field>
 
@@ -569,6 +588,7 @@ function Results({
   applicantRegion,
   status,
   isChange,
+  sameUniv,
 }: {
   course: Course;
   degreeTier: UnivTier;
@@ -578,6 +598,7 @@ function Results({
   applicantRegion: string | null;
   status: string;
   isChange: boolean;
+  sameUniv: boolean;
 }) {
   const v = useMemo(() => judge(course, degreeTier as Tier, langTier as Tier, region as Region, nationality, status), [course, degreeTier, langTier, region, nationality, status]);
   const flow = useMemo(() => flowOf(course, degreeTier as Tier, langTier as Tier), [course, degreeTier, langTier]);
@@ -642,7 +663,7 @@ function Results({
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {docs.map((d) => (
-                  <DocRow key={d.id} doc={d} docName={docName} ctx={{ course, region: region as Region, tier: degreeTier as Tier, langTier: langTier as Tier, isChange }} />
+                  <DocRow key={d.id} doc={d} docName={docName} ctx={{ course, region: region as Region, tier: degreeTier as Tier, langTier: langTier as Tier, isChange, sameUniv }} />
                 ))}
               </div>
             </div>
@@ -714,7 +735,7 @@ function StepLine({ text }: { text: string }) {
  * 편집값(이름·설명·속성·숨김·추가태그·조건별 값)은 편집 페이지(/edit)에서 저장한 값을 반영한다.
  * ★ 태그 = 조건별 값(조회 조건마다 달라짐). ★ 없는 태그 = 공용 값(모든 조건 공통).
  */
-function DocRow({ doc, docName, ctx }: { doc: ChecklistDoc; docName: (id: string) => string; ctx: { course: Course; region: Region; tier: Tier; langTier: Tier; isChange: boolean } }) {
+function DocRow({ doc, docName, ctx }: { doc: ChecklistDoc; docName: (id: string) => string; ctx: { course: Course; region: Region; tier: Tier; langTier: Tier; isChange: boolean; sameUniv: boolean } }) {
   const [open, setOpen] = useState(false);
   const { getKo } = useEdit();
   const tr = useTStr();
@@ -732,7 +753,7 @@ function DocRow({ doc, docName, ctx }: { doc: ChecklistDoc; docName: (id: string
   // ★ 조건별 값(조회 조건에 맞춰 계산 + 편집값 반영). 한국어 + 베트남어 병기.
   const dynTags: DynTag[] =
     doc.id === "balance"
-      ? balanceTags(ctx.course, ctx.region, ctx.tier, ctx.langTier, getKo, ctx.isChange)
+      ? balanceTags(ctx.course, ctx.region, ctx.tier, ctx.langTier, getKo, ctx.isChange, ctx.sameUniv)
       : doc.id === "deposit-confirm"
         ? depositTags(ctx.region, getKo)
         : [];

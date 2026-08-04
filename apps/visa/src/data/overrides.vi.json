@@ -99,10 +99,10 @@
   "dyn:deposit-confirm:metro": "Ký quỹ từ 10 triệu won trở lên",
   "dyn:deposit-confirm:nonmetro": "Ký quỹ từ 8 triệu won trở lên",
 
-  "dyn:balance:change:excellent:metro": "Số dư từ 20 triệu won trở lên · miễn duy trì",
-  "dyn:balance:change:excellent:nonmetro": "Số dư từ 16 triệu won trở lên · miễn duy trì",
-  "dyn:balance:change:certified:metro": "Số dư từ 20 triệu won trở lên · duy trì 3 tháng",
-  "dyn:balance:change:certified:nonmetro": "Số dư từ 16 triệu won trở lên · duy trì 3 tháng",
-  "dyn:balance:change:general:metro": "Số dư từ 20 triệu won trở lên · duy trì 6 tháng",
-  "dyn:balance:change:general:nonmetro": "Số dư từ 16 triệu won trở lên · duy trì 6 tháng"
+  "dyn:balance:change:other:excellent:metro": "Số dư từ 20 triệu won trở lên · miễn duy trì",
+  "dyn:balance:change:other:excellent:nonmetro": "Số dư từ 16 triệu won trở lên · miễn duy trì",
+  "dyn:balance:change:other:certified:metro": "Số dư từ 20 triệu won trở lên · duy trì 3 tháng",
+  "dyn:balance:change:other:certified:nonmetro": "Số dư từ 16 triệu won trở lên · duy trì 3 tháng",
+  "dyn:balance:change:other:general:metro": "Số dư từ 20 triệu won trở lên · duy trì 6 tháng",
+  "dyn:balance:change:other:general:nonmetro": "Số dư từ 16 triệu won trở lên · duy trì 6 tháng"
 }
