@@ -94,7 +94,7 @@ export default async function StudentApplicationsPage() {
           </p>
           <Link
             href="/student/universities"
-            className="mt-3 inline-block rounded-lg bg-slate-900 px-4 py-2 text-xs font-medium text-white hover:bg-slate-800"
+            className="mt-3 inline-block rounded-lg bg-coral px-4 py-2 text-xs font-medium text-white hover:bg-coral-d"
           >
             {tr(locale, "대학 찾기", "Tìm trường")}
           </Link>

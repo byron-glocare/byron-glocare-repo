@@ -185,7 +185,7 @@ export default async function StudentDocumentsPage() {
                 {g.formDocs.length > 0 ? (
                   <Link
                     href="/student/final"
-                    className="shrink-0 rounded-md bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-800"
+                    className="shrink-0 rounded-md bg-coral px-3 py-1.5 text-xs font-semibold text-white hover:bg-coral-d"
                   >
                     {tr(locale, "작성 서류로 이동 →", "Đến 'Hồ sơ soạn' →")}
                   </Link>

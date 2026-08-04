@@ -158,7 +158,7 @@ export function IssuanceClient({
           type="button"
           onClick={submit}
           disabled={selected.length === 0 || pending}
-          className="mt-3 w-full rounded-lg bg-slate-900 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-50"
+          className="mt-3 w-full rounded-lg bg-coral py-2.5 text-sm font-semibold text-white hover:bg-coral-d disabled:opacity-50"
         >
           {pending
             ? tr(locale, "신청 중…", "Đang gửi…")

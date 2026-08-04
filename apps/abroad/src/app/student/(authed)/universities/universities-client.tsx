@@ -282,7 +282,7 @@ function RequestBox({ locale }: { locale: Locale }) {
             <button
               type="submit"
               disabled={pending}
-              className="rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-medium text-white hover:bg-slate-800 disabled:opacity-50"
+              className="rounded-lg bg-coral px-3 py-1.5 text-xs font-medium text-white hover:bg-coral-d disabled:opacity-50"
             >
               {pending
                 ? tr(locale, "보내는 중…", "Đang gửi…")

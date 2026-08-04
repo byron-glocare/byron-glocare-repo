@@ -41,7 +41,7 @@ export function StudentNav({ locale }: { locale: Locale }) {
             href={it.href}
             className={`shrink-0 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
               active
-                ? "bg-slate-900 text-white"
+                ? "bg-coral text-white"
                 : "text-slate-600 hover:bg-slate-100"
             }`}
           >

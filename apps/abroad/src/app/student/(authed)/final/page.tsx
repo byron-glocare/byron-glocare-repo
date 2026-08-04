@@ -202,7 +202,7 @@ export default async function StudentFinalPage() {
                         <>
                           <a
                             href={fillUrl}
-                            className="rounded-md bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-800"
+                            className="rounded-md bg-coral px-3 py-1.5 text-xs font-semibold text-white hover:bg-coral-d"
                           >
                             {tr(locale, "초안 다운로드", "Tải bản nháp")}
                           </a>
