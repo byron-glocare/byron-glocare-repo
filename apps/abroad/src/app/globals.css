@@ -9,31 +9,33 @@
  *   'Noto Serif KR'  → var(--font-noto-serif-kr)
  * ===========================================================================*/
 
+/* GLOCARE 디자인 시스템 토큰 (design/GLOCARE Design System 기준)
+   폰트: Be Vietnam Pro(기본) + Noto Sans KR(한글). 코랄 #ED4747 + 웜그레이 뉴트럴. */
 :root {
-  --coral:      #F25C5C;
-  --coral-d:    #D94646;
+  --coral:      #ED4747;  /* primary */
+  --coral-d:    #C93333;  /* deep */
   --coral-l:    #FF8080;
-  --coral-pale: #FFF0F0;
-  --coral-soft: #FFE0E0;
-  --peach:      #FFF7F5;
+  --coral-pale: #FFF4F3;
+  --coral-soft: #FFE4E2;
+  --peach:      #F7F3F3;  /* warm surface */
   --white:      #FFFFFF;
-  --ink:        #1C1C1E;
-  --ink-mid:    #3A3A3C;
-  --ink-light:  #6E6E73;
-  --ink-xlight: #AEAEB2;
-  --border:     #F0EDED;
-  --border-d:   #E8E0DF;
-  --bdr:        #F0EDED;
+  --ink:        #1A1416;  /* warm 잉크(가장 진함) */
+  --ink-mid:    #3D3336;
+  --ink-light:  #6B5F62;
+  --ink-xlight: #8D8286;
+  --border:     #E8E1E2;
+  --border-d:   #F0EAEB;
+  --bdr:        #E8E1E2;
   --green:      #2D9E6B;
   --blue:       #3B82C4;
   --yellow:     #F5A623;
-  --navy:       #0F2D52;
-  --navy-mid:   #1C3D6E;
-  --bg:         #F9F7F5;
+  --navy:       #1A1416;  /* 디자인 시스템엔 네이비 없음 → 웜 다크로 통일(보조 CTA) */
+  --navy-mid:   #3D3336;
+  --bg:         #FDFAFA;  /* 페이지 배경 */
   --green-pale: #F0FFF8;
-  --ink2:       #3A3A3C;
-  --ink3:       #6E6E73;
-  --ink4:       #AEAEB2;
+  --ink2:       #3D3336;
+  --ink3:       #6B5F62;
+  --ink4:       #8D8286;
 }
 
 @theme inline {
@@ -125,13 +127,21 @@ nav{
 .nav-links a:hover{color:var(--coral);}
 .nav-cta{
   background:var(--coral)!important;color:var(--white)!important;
-  padding:8px 16px;border-radius:6px;
+  padding:8px 16px;border-radius:8px;
   font-weight:700!important;font-size:0.82rem!important;
   white-space:nowrap;
-  box-shadow:0 4px 14px rgba(242,92,92,0.3);
+  box-shadow:0 4px 14px rgba(237,71,71,0.28);
   transition:all 0.2s!important;
 }
-.nav-cta:hover{background:var(--coral-d)!important;transform:translateY(-1px);box-shadow:0 6px 18px rgba(242,92,92,0.4)!important;}
+.nav-cta:hover{background:var(--coral-d)!important;transform:translateY(-1px);box-shadow:0 6px 18px rgba(237,71,71,0.38)!important;}
+/* 보조 CTA(아웃라인) — 상담 신청 등 2순위 */
+.nav-secondary{
+  color:var(--ink-mid)!important;background:transparent!important;
+  padding:7px 14px;border-radius:8px;border:1.5px solid var(--border-d);
+  font-weight:700!important;font-size:0.82rem!important;white-space:nowrap;
+  transition:all 0.2s!important;
+}
+.nav-secondary:hover{border-color:var(--coral)!important;color:var(--coral)!important;}
 
 /* ── HERO VIDEOS ── */
 .hero-videos{
