@@ -746,9 +746,15 @@ function DocRow({ doc, docName, ctx }: { doc: ChecklistDoc; docName: (id: string
   const tr = useTStr();
 
   const attrs = docAttrRaws(doc, docName).map((a) => {
-    const path = `doc:${doc.id}:${a.key}`;
-    const val = getKo(path, a.raw);
-    return { ...a, path, val, missing: val === UNVERIFIED };
+    let raw = a.raw;
+    let path = `doc:${doc.id}:${a.key}`;
+    // 잔고증명서: D-4→D-2 국내 변경이면 발급기관이 한국 은행으로 좁혀짐(그 외는 베트남/한국).
+    if (doc.id === "balance" && a.key === "issuer" && ctx.isChange) {
+      raw = "한국 은행";
+      path = "doc:balance:issuer:change";
+    }
+    const val = getKo(path, raw);
+    return { ...a, raw, path, val, missing: val === UNVERIFIED };
   });
 
   const hidden: string[] = JSON.parse(getKo(`doc:${doc.id}:_hidden`, "[]"));

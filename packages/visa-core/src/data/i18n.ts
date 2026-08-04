@@ -201,6 +201,8 @@ export const VI: Record<string, string> = {
   "사본": "Bản sao",
   "원본 및 사본": "Bản gốc và bản sao",
   "은행": "Ngân hàng",
+  "베트남 은행 또는 한국은행": "Ngân hàng Việt Nam hoặc Hàn Quốc",
+  "한국 은행": "Ngân hàng Hàn Quốc",
   "번역 및 공증": "Dịch thuật và công chứng",
   "★확인불가": "★ Chưa xác định",
   "당일": "Trong ngày",
