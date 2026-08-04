@@ -62,6 +62,8 @@ export const NAV_GROUPS: NavGroup[] = [
       { href: "/study-channels", label: "SNS", icon: Radio },
       { href: "/study-invoices", label: "정산", icon: FileText },
       { href: "/pricing-plans", label: "유학센터 상품", icon: DollarSign },
+      { href: "/issuance-orders", label: "발급 대행 (개발중)", icon: Receipt },
+      { href: "/issuance-pricing", label: "발급 단가표 (개발중)", icon: DollarSign },
       // "유학센터 회사"(center-orgs) 메뉴는 유학센터(study_centers)로 통합되어 제거됨.
     ],
   },

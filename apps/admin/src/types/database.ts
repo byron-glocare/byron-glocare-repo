@@ -1248,6 +1248,109 @@ export type Database = {
         Relationships: [];
       };
 
+      study_issuance_pricing: {
+        Row: {
+          id: string;
+          std_key: string | null;
+          label_ko: string;
+          notarization: string;
+          unit_price: number;
+          proxy_unavailable_surcharge: number;
+          is_active: boolean;
+          sort_order: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          std_key?: string | null;
+          label_ko: string;
+          notarization?: string;
+          unit_price?: number;
+          proxy_unavailable_surcharge?: number;
+          is_active?: boolean;
+          sort_order?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["study_issuance_pricing"]["Insert"]
+        >;
+        Relationships: [];
+      };
+
+      study_issuance_orders: {
+        Row: {
+          id: string;
+          student_id: string;
+          university_id: number | null;
+          status: string;
+          subtotal: number;
+          payment_transaction_id: string | null;
+          toss_order_id: string | null;
+          paid_at: string | null;
+          contact_snapshot: unknown | null;
+          info_completed_at: string | null;
+          manager_note: string | null;
+          eta_date: string | null;
+          result_pdf_path: string | null;
+          shipped_at: string | null;
+          cancelled_at: string | null;
+          cancel_reason: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          student_id: string;
+          university_id?: number | null;
+          status?: string;
+          subtotal?: number;
+          paid_at?: string | null;
+          manager_note?: string | null;
+          eta_date?: string | null;
+          result_pdf_path?: string | null;
+          shipped_at?: string | null;
+          cancelled_at?: string | null;
+          cancel_reason?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["study_issuance_orders"]["Insert"]
+        >;
+        Relationships: [];
+      };
+
+      study_issuance_order_items: {
+        Row: {
+          id: string;
+          order_id: string;
+          pricing_id: string | null;
+          label_ko: string;
+          notarization: string;
+          unit_price: number;
+          proxy_surcharge: number;
+          qty: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          order_id: string;
+          pricing_id?: string | null;
+          label_ko: string;
+          notarization?: string;
+          unit_price?: number;
+          proxy_surcharge?: number;
+          qty?: number;
+          created_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["study_issuance_order_items"]["Insert"]
+        >;
+        Relationships: [];
+      };
+
       study_student_submission_files: {
         Row: {
           id: string;
