@@ -136,6 +136,13 @@ export const CONDITIONAL_SLOTS: Record<string, CondSlot[]> = {
     { slot: "hagwon:certified:nonmetro", group: "어학당(D-4)", label: "어학인증(본대학 인증) · 비수도권", value: "잔액 800만원 이상 · 3개월 유지" },
     { slot: "hagwon:general:metro", group: "어학당(D-4)", label: "어학일반 · 수도권", value: "잔액 1,000만원 이상 · 6개월 유지" },
     { slot: "hagwon:general:nonmetro", group: "어학당(D-4)", label: "어학일반 · 비수도권", value: "잔액 800만원 이상 · 6개월 유지" },
+    // 국내 변경(D-4→D-2, 본과 진학) — 잔고 요건이 별도. 값은 편집해서 채움.
+    { slot: "change:excellent:metro", group: "국내 변경(D-4→D-2)", label: "우수인증 · 수도권", value: "잔액 2,000만원 이상 · 유지기간 면제" },
+    { slot: "change:excellent:nonmetro", group: "국내 변경(D-4→D-2)", label: "우수인증 · 비수도권", value: "잔액 1,600만원 이상 · 유지기간 면제" },
+    { slot: "change:certified:metro", group: "국내 변경(D-4→D-2)", label: "인증 · 수도권", value: "잔액 2,000만원 이상 · 3개월 유지" },
+    { slot: "change:certified:nonmetro", group: "국내 변경(D-4→D-2)", label: "인증 · 비수도권", value: "잔액 1,600만원 이상 · 3개월 유지" },
+    { slot: "change:general:metro", group: "국내 변경(D-4→D-2)", label: "일반(미인증) · 수도권", value: "잔액 2,000만원 이상 · 6개월 유지" },
+    { slot: "change:general:nonmetro", group: "국내 변경(D-4→D-2)", label: "일반(미인증) · 비수도권", value: "잔액 1,600만원 이상 · 6개월 유지" },
   ],
   // 유학경비 예치확인서(D-4 어학당·일반) — 지역별 예치금.
   "deposit-confirm": [
@@ -157,13 +164,14 @@ export interface DynTag {
   path: string;
   value: string;
 }
-export function balanceTags(course: Course, region: Region, degreeTier: Tier, langTier: Tier, get?: Getter): DynTag[] {
+export function balanceTags(course: Course, region: Region, degreeTier: Tier, langTier: Tier, get?: Getter, isChange?: boolean): DynTag[] {
   const g = get ?? ((_p, d) => d);
   const slots = CONDITIONAL_SLOTS.balance;
   // 잔고 요건 등급: 학위=본대학 등급 / 어학당=어학 인증이면 본대학 등급, 어학 일반이면 일반.
   const effTier: Tier = course === "univ" ? degreeTier : langTier === "certified" ? degreeTier : "general";
   const tierKey = effTier === "excellent" || effTier === "certified" ? effTier : "general";
-  const slot = `${course}:${tierKey}:${region}`;
+  // D-4→D-2 국내 변경은 별도 케이스(change:*)를 사용.
+  const slot = isChange ? `change:${tierKey}:${region}` : `${course}:${tierKey}:${region}`;
   const def = slots.find((s) => s.slot === slot);
   const path = `dyn:balance:${slot}`;
   const value = g(path, def ? def.value : "");

@@ -642,7 +642,7 @@ function Results({
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {docs.map((d) => (
-                  <DocRow key={d.id} doc={d} docName={docName} ctx={{ course, region: region as Region, tier: degreeTier as Tier, langTier: langTier as Tier }} />
+                  <DocRow key={d.id} doc={d} docName={docName} ctx={{ course, region: region as Region, tier: degreeTier as Tier, langTier: langTier as Tier, isChange }} />
                 ))}
               </div>
             </div>
@@ -714,7 +714,7 @@ function StepLine({ text }: { text: string }) {
  * 편집값(이름·설명·속성·숨김·추가태그·조건별 값)은 편집 페이지(/edit)에서 저장한 값을 반영한다.
  * ★ 태그 = 조건별 값(조회 조건마다 달라짐). ★ 없는 태그 = 공용 값(모든 조건 공통).
  */
-function DocRow({ doc, docName, ctx }: { doc: ChecklistDoc; docName: (id: string) => string; ctx: { course: Course; region: Region; tier: Tier; langTier: Tier } }) {
+function DocRow({ doc, docName, ctx }: { doc: ChecklistDoc; docName: (id: string) => string; ctx: { course: Course; region: Region; tier: Tier; langTier: Tier; isChange: boolean } }) {
   const [open, setOpen] = useState(false);
   const { getKo } = useEdit();
   const tr = useTStr();
@@ -732,7 +732,7 @@ function DocRow({ doc, docName, ctx }: { doc: ChecklistDoc; docName: (id: string
   // ★ 조건별 값(조회 조건에 맞춰 계산 + 편집값 반영). 한국어 + 베트남어 병기.
   const dynTags: DynTag[] =
     doc.id === "balance"
-      ? balanceTags(ctx.course, ctx.region, ctx.tier, ctx.langTier, getKo)
+      ? balanceTags(ctx.course, ctx.region, ctx.tier, ctx.langTier, getKo, ctx.isChange)
       : doc.id === "deposit-confirm"
         ? depositTags(ctx.region, getKo)
         : [];
