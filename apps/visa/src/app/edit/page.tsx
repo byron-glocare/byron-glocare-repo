@@ -10,17 +10,16 @@
  */
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { DOCS, SECTIONS, docAttrRaws, CONDITIONAL_SLOTS, type ChecklistDoc, type Section, EditProvider, EditableText, useEdit } from "@glocare/visa-core";
+import { DOCS, SECTIONS, docAttrRaws, CONDITIONAL_SLOTS, type ChecklistDoc, type Section, EditableText, useEdit } from "@glocare/visa-core";
 import { EditToolbar } from "@/lib/edit-toolbar";
-import overridesKo from "@/data/overrides.json";
-import overridesVi from "@/data/overrides.vi.json";
+import { LiveEditProvider } from "@/lib/live-edit-provider";
 
 const SECTION_EMOJI: Record<Section, string> = { "신분·공통": "🪪", 학력: "🎓", 재정: "💰", 건강: "🩺", 어학: "🗣️" };
 const nameOf = (id: string) => DOCS.find((d) => d.id === id)?.name ?? id;
 
 export default function EditPage() {
   return (
-    <EditProvider overrides={{ ko: overridesKo as Record<string, string>, vi: overridesVi as Record<string, string> }} persistKey="visa" defaultOn>
+    <LiveEditProvider defaultOn>
       <main style={{ minHeight: "100vh", background: "var(--peach)" }}>
         <header style={{ background: "linear-gradient(135deg, var(--coral) 0%, var(--coral-d) 100%)", color: "#fff", padding: "22px 20px" }}>
           <div style={{ maxWidth: 900, margin: "0 auto" }}>
@@ -58,7 +57,7 @@ export default function EditPage() {
           </div>
         </div>
       </main>
-    </EditProvider>
+    </LiveEditProvider>
   );
 }
 
@@ -99,6 +98,14 @@ function DocEditor({ doc }: { doc: ChecklistDoc }) {
             <button onClick={() => setHidden([...hidden, a.key])} style={delBtn} title="이 항목 숨김">삭제</button>
           </div>
         ))}
+        {doc.id === "balance" && (
+          <div style={rowWrap}>
+            <span style={{ ...labelCell, color: "var(--coral-d)" }}>발급기관 (국내변경)</span>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <EditableText path="doc:balance:issuer:change" value="한국 은행" />
+            </div>
+          </div>
+        )}
         {extra.map((ex, i) => (
           <div key={`x${i}`} style={rowWrap}>
             <input value={ex.label} placeholder="항목명" onChange={(e) => setExtra(extra.map((v, j) => (j === i ? { ...v, label: e.target.value } : v)))} style={{ ...labelInput }} />

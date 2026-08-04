@@ -9,10 +9,9 @@ import {
   judge, sectionNeeded, DOCS, SECTIONS, docAttrRaws, balanceTags, depositTags, UNVERIFIED,
   type Course, type Section, type ChecklistDoc, type Tier, type Region, type DynTag,
   flowOf, PROCESS_STEPS, TRACK_META, type FlowResult,
-  EditProvider, useEdit, Bi, LanguageToggle, T, useTStr,
+  useEdit, Bi, LanguageToggle, T, useTStr,
 } from "@glocare/visa-core";
-import overridesKo from "@/data/overrides.json";
-import overridesVi from "@/data/overrides.vi.json";
+import { LiveEditProvider } from "@/lib/live-edit-provider";
 
 /* ── 라벨 ─────────────────────────────────────────────── */
 const TIER_LABEL: Record<UnivTier, string> = {
@@ -111,7 +110,7 @@ export default function Page() {
   }
 
   return (
-    <EditProvider overrides={{ ko: overridesKo as Record<string, string>, vi: overridesVi as Record<string, string> }} persistKey="visa">
+    <LiveEditProvider>
     <main style={{ minHeight: "100vh" }}>
       <header
         style={{
@@ -167,7 +166,7 @@ export default function Page() {
         )}
       </div>
     </main>
-    </EditProvider>
+    </LiveEditProvider>
   );
 }
 
