@@ -596,6 +596,7 @@ a.gc-card:hover {
 
 .nav-logo {
   display: flex; align-items: center; flex-shrink: 0;
+  min-height: 44px;
   text-decoration: none;
 }
 .nav-logo .logo-text {
@@ -674,6 +675,8 @@ a.gc-card:hover {
 .lang-btn {
   font-family: inherit;
   border: 0; background: transparent; cursor: pointer;
+  display: flex; align-items: center;
+  min-height: 44px;
   font-size: 12.5px; font-weight: 600;
   color: var(--gc-ink-500);
   padding: 7px 13px;
@@ -1129,9 +1132,14 @@ footer { background: var(--gc-ink-900); color: var(--gc-ink-300); }
   font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
   color: var(--gc-surface); margin-bottom: 14px;
 }
-.foot-ul { list-style: none; display: flex; flex-direction: column; gap: var(--gc-2); }
-.foot-ul li { font-size: 13.5px; line-height: 1.6; color: var(--gc-ink-300); }
-.foot-ul a { color: var(--gc-ink-300); text-decoration: none; }
+.foot-ul { list-style: none; display: flex; flex-direction: column; }
+.foot-ul li { font-size: 13.5px; line-height: 1.6; color: var(--gc-ink-300); padding: 4px 0; }
+.foot-ul a {
+  color: var(--gc-ink-300); text-decoration: none;
+  display: inline-flex; align-items: center; min-height: 36px;
+}
+/* 터치 환경에서는 목록 링크도 44px 이상 */
+@media (max-width: 899px) { .foot-ul a { min-height: 44px; } }
 .foot-ul a:hover { color: var(--gc-surface); text-decoration: none; }
 .foot-k { color: var(--gc-ink-500); margin-right: var(--gc-1); }
 .foot-v { font-family: var(--gc-font-mono); font-size: 12.5px; }
@@ -1144,7 +1152,10 @@ footer { background: var(--gc-ink-900); color: var(--gc-ink-300); }
   display: flex; gap: var(--gc-5); flex-wrap: wrap;
   font-size: 12.5px; color: var(--gc-ink-500);
 }
-.foot-bot a, .foot-bot span[role="link"] { color: var(--gc-ink-400); text-decoration: none; }
+.foot-bot a {
+  color: var(--gc-ink-400); text-decoration: none;
+  display: inline-flex; align-items: center; min-height: 44px;
+}
 .foot-bot a:hover { color: var(--gc-surface); }
 
 /* =============================================================================
