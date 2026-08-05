@@ -27,7 +27,9 @@ export default async function HomePage() {
     // Hero 영역: hero 가 'N' 이 아닌 것 (= '1', '2', ...) — 값 오름차순
     supabase
       .from("study_cases")
-      .select("id, title_ko, title_vi, tiktok_thumb, tiktok_url, hero")
+      .select(
+        "id, title_ko, title_vi, category_ko, category_vi, tiktok_thumb, tiktok_url, hero"
+      )
       .neq("hero", "N")
       .order("hero", { ascending: true }),
     // Cases 그리드: hero = 'N'
@@ -42,19 +44,19 @@ export default async function HomePage() {
     supabase
       .from("universities")
       .select(
-        "id, name_ko, name_vi, region_ko, region_vi, emoji, tags_ko, tags_vi, strengths"
+        "id, name_ko, name_vi, region_ko, region_vi, logo_url, tags_ko, tags_vi, strengths"
       )
       .order("id"),
     supabase
       .from("departments")
       .select(
-        "id, university_id, icon, name_ko, name_vi, badge, course, sort_order, degree_years, tuition_ko, tuition_vi, scholarship_ko, scholarship_vi, dept_url"
+        "id, university_id, name_ko, name_vi, badge, course, sort_order, degree_years, tuition_ko, tuition_vi, scholarship_ko, scholarship_vi, dept_url"
       )
       .order("sort_order"),
     supabase
       .from("study_centers")
       .select(
-        "id, flag, name_ko, name_vi, city_ko, city_vi, desc_ko, desc_vi, students_ko, students_vi, years_ko, years_vi"
+        "id, name_ko, name_vi, city_ko, city_vi, desc_ko, desc_vi, students_ko, students_vi, years_ko, years_vi"
       )
       .order("id"),
   ]);
@@ -66,6 +68,10 @@ export default async function HomePage() {
       locale === "vi"
         ? (c.title_vi ?? c.title_ko ?? "")
         : (c.title_ko ?? ""),
+    category:
+      locale === "vi"
+        ? (c.category_vi ?? c.category_ko ?? "")
+        : (c.category_ko ?? ""),
     thumb: c.tiktok_thumb,
     url: c.tiktok_url,
   }));
@@ -90,7 +96,6 @@ export default async function HomePage() {
       .map((d) => ({
         id: d.id,
         university_id: d.university_id,
-        icon: d.icon ?? "",
         name:
           locale === "vi"
             ? (d.name_vi ?? d.name_ko ?? "")
@@ -114,7 +119,7 @@ export default async function HomePage() {
       : [];
     return {
       id: u.id,
-      emoji: u.emoji ?? "🎓",
+      logoUrl: u.logo_url ?? null,
       name: locale === "vi" ? (u.name_vi ?? u.name_ko) : u.name_ko,
       region:
         locale === "vi"
@@ -128,7 +133,6 @@ export default async function HomePage() {
 
   const centerCards = (centers ?? []).map((c) => ({
     id: c.id,
-    flag: c.flag ?? "🇻🇳",
     name: locale === "vi" ? c.name_vi : (c.name_ko ?? c.name_vi),
     city:
       locale === "vi" ? (c.city_vi ?? c.city_ko ?? "") : (c.city_ko ?? ""),
@@ -146,7 +150,14 @@ export default async function HomePage() {
 
   return (
     <>
-      <Hero t={t} videos={heroVideos} />
+      <Hero
+        t={t}
+        videos={heroVideos}
+        stats={{
+          universities: uniCards.length,
+          centers: centerCards.length,
+        }}
+      />
       <Cases t={t} locale={locale} cases={caseCards} />
       <Universities universities={uniCards} strings={ss.universities} />
       <Apply strings={ss.apply} />

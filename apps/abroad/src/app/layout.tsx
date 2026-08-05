@@ -7,16 +7,17 @@
  */
 
 import type { Metadata } from "next";
-import { Be_Vietnam_Pro, Noto_Sans_KR, Noto_Serif_KR } from "next/font/google";
+import { Be_Vietnam_Pro, JetBrains_Mono, Noto_Sans_KR } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
 
 import { getLocale } from "@/lib/i18n";
 
+/* 디자인 시스템 폰트 — 본문·제목·UI 전체는 Be Vietnam Pro(한글 구간은 Noto Sans KR),
+   자리수를 세는 숫자(전화번호·금액·통계)만 JetBrains Mono. 세리프는 쓰지 않는다. */
 const beVietnam = Be_Vietnam_Pro({
   subsets: ["latin", "vietnamese"],
-  weight: ["300", "400", "600", "700", "800"],
-  style: ["normal", "italic"],
+  weight: ["400", "500", "600", "700", "800"],
   display: "swap",
   variable: "--font-be-vietnam",
 });
@@ -28,11 +29,11 @@ const notoSansKr = Noto_Sans_KR({
   variable: "--font-noto-kr",
 });
 
-const notoSerifKr = Noto_Serif_KR({
-  subsets: ["latin"],
-  weight: ["400", "700", "900"],
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin", "vietnamese"],
+  weight: ["400", "500", "700"],
   display: "swap",
-  variable: "--font-noto-serif-kr",
+  variable: "--font-jetbrains",
 });
 
 export const metadata: Metadata = {
@@ -50,7 +51,7 @@ export default async function RootLayout({
   return (
     <html
       lang={locale}
-      className={`${beVietnam.variable} ${notoSansKr.variable} ${notoSerifKr.variable}`}
+      className={`${beVietnam.variable} ${notoSansKr.variable} ${jetbrainsMono.variable}`}
     >
       <body>
         {children}

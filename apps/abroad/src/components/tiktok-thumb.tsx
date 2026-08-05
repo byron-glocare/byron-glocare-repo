@@ -8,7 +8,7 @@ import { useState } from "react";
  * 우선순위:
  *  1) videoUrl 이 있으면 → /api/tt-thumb?url=... 프록시 사용 (oEmbed 통해 자동 추출)
  *  2) src 만 있으면 → 직접 + referrerPolicy="no-referrer"
- *  3) 둘 다 실패하면 → 코랄 그라데이션 fallback
+ *  3) 둘 다 실패하면 → 연회색 단색 면 (디자인 시스템: 그라디언트·이모지 금지)
  */
 export function TikTokThumb({
   src,
@@ -31,18 +31,12 @@ export function TikTokThumb({
       <div
         style={{
           width: "100%",
-          aspectRatio: "9/16",
-          background:
-            "linear-gradient(135deg,var(--coral-pale),var(--coral-soft))",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontSize: "2.4rem",
+          height: "100%",
+          minHeight: 120,
+          background: "var(--gc-subtle)",
         }}
         aria-label={alt}
-      >
-        🎬
-      </div>
+      />
     );
   }
 

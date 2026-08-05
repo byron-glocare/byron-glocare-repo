@@ -1,7 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
+
+import { LangBar } from "@/components/lang-bar";
+import type { Locale } from "@/lib/i18n";
 
 type NavStrings = {
   cases: string;
@@ -10,97 +14,90 @@ type NavStrings = {
   centers: string;
   about: string;
   student: string;
+  studentShort: string;
   apply: string;
 };
 
-export function SiteNav({ strings }: { strings: NavStrings }) {
+/**
+ * 공개 사이트 헤더 — 디자인 시스템 골격.
+ *   68px sticky + blur / 컨테이너 1120 / pill 링크 13.5px
+ *   우측: 언어 토글(VI·KO) + 보조 CTA(상담) + 주 CTA(유학 지원)
+ *   1160px 미만은 햄버거 (전체 메뉴는 폭이 부족해 줄바꿈됨)
+ */
+export function SiteNav({
+  strings,
+  locale,
+}: {
+  strings: NavStrings;
+  locale: Locale;
+}) {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
   const close = () => setOpen(false);
+
+  const links = [
+    { href: "/#universities", label: strings.universities },
+    { href: "/#cases", label: strings.cases },
+    { href: "/#recruiting", label: strings.recruiting },
+    { href: "/#centers", label: strings.centers },
+    { href: "/about", label: strings.about },
+  ];
 
   return (
     <>
-      <nav>
-        <Link
-          href="/"
-          className="nav-logo"
-          aria-label="GLOCARE"
-          onClick={close}
-        >
-          <span className="logo-text">GLOCARE</span>
-        </Link>
-        <ul className="nav-links">
-          <li>
-            <Link href="/#cases">{strings.cases}</Link>
-          </li>
-          <li>
-            <Link href="/#universities">{strings.universities}</Link>
-          </li>
-          <li>
-            <Link href="/#recruiting">{strings.recruiting}</Link>
-          </li>
-          <li>
-            <Link href="/#centers">{strings.centers}</Link>
-          </li>
-          <li>
-            <Link
-              href="/about"
-              style={{
-                color: "var(--coral)",
-                fontWeight: 700,
-                border: "1.5px solid var(--coral)",
-                padding: "4px 12px",
-                borderRadius: "16px",
-              }}
-            >
-              {strings.about}
-            </Link>
-          </li>
-          <li>
-            <Link href="/#apply" className="nav-secondary">
-              {strings.apply}
-            </Link>
-          </li>
-          <li>
+      <header className="site-head">
+        <div className="site-head-inner">
+          <Link href="/" className="nav-logo" aria-label="GLOCARE" onClick={close}>
+            <span className="logo-text">GLOCARE</span>
+          </Link>
+
+          <ul className="nav-links">
+            {links.map((l) => (
+              <li key={l.href}>
+                <Link
+                  href={l.href}
+                  className={pathname === l.href ? "is-active" : undefined}
+                >
+                  {l.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          <div className="nav-tail">
+            <LangBar locale={locale} />
+            {/* 헤더의 채워진 CTA 는 하나만 — 상담 신청은 히어로·푸터·메뉴에서 접근 */}
             <Link href="/student" className="nav-cta">
-              {strings.student}
+              {strings.studentShort}
             </Link>
-          </li>
-        </ul>
-        <button
-          type="button"
-          className={`hamburger${open ? " open" : ""}`}
-          aria-label="Menu"
-          aria-expanded={open}
-          onClick={() => setOpen((v) => !v)}
-        >
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-      </nav>
-      <div className={`mob-menu${open ? " open" : ""}`}>
-        <Link href="/#cases" onClick={close}>
-          {strings.cases}
-        </Link>
-        <Link href="/#universities" onClick={close}>
-          {strings.universities}
-        </Link>
-        <Link href="/#recruiting" onClick={close}>
-          {strings.recruiting}
-        </Link>
-        <Link href="/#centers" onClick={close}>
-          {strings.centers}
-        </Link>
-        <Link href="/about" onClick={close}>
-          {strings.about}
-        </Link>
-        <Link href="/#apply" onClick={close} style={{ fontWeight: 700 }}>
+            <button
+              type="button"
+              className={`hamburger${open ? " open" : ""}`}
+              aria-label="Menu"
+              aria-expanded={open}
+              onClick={() => setOpen((v) => !v)}
+            >
+              <span />
+              <span />
+              <span />
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <nav className={`mob-menu${open ? " open" : ""}`} aria-label="Menu">
+        {links.map((l) => (
+          <Link key={l.href} href={l.href} onClick={close}>
+            {l.label}
+          </Link>
+        ))}
+        <Link href="/#apply" onClick={close}>
           {strings.apply}
         </Link>
         <Link href="/student" className="mob-cta" onClick={close}>
           {strings.student}
         </Link>
-      </div>
+      </nav>
     </>
   );
 }

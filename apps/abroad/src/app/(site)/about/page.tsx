@@ -68,25 +68,21 @@ const aboutStrings = {
     partner: {
       types: [
         {
-          ico: "🇻🇳",
           name: "유학센터",
           desc: "베트남 현지 유학센터",
           value: "유학센터 / Trung tâm du học",
         },
         {
-          ico: "🏛️",
           name: "대학교",
           desc: "외국인 유학생 유치 협력",
           value: "대학교 / Trường đại học",
         },
         {
-          ico: "🏢",
           name: "채용기업",
           desc: "베트남 인재 채용 연계",
           value: "채용기업 / Doanh nghiệp tuyển dụng",
         },
         {
-          ico: "🤝",
           name: "기타",
           desc: "기타 협력 문의",
           value: "기타 / Khác",
@@ -177,25 +173,21 @@ const aboutStrings = {
     partner: {
       types: [
         {
-          ico: "🇻🇳",
           name: "Trung tâm du học",
           desc: "Đại lý tuyển sinh tại Việt Nam",
           value: "유학센터 / Trung tâm du học",
         },
         {
-          ico: "🏛️",
           name: "Trường đại học",
           desc: "Hợp tác tuyển sinh nước ngoài",
           value: "대학교 / Trường đại học",
         },
         {
-          ico: "🏢",
           name: "Doanh nghiệp tuyển dụng",
           desc: "Kết nối nhân lực Việt Nam",
           value: "채용기업 / Doanh nghiệp tuyển dụng",
         },
         {
-          ico: "🤝",
           name: "Khác",
           desc: "Các hình thức hợp tác khác",
           value: "기타 / Khác",
@@ -220,13 +212,6 @@ const aboutStrings = {
       errEmpty: "Vui lòng nhập họ tên, công ty và email.",
     },
   },
-};
-
-const channelBgClass: Record<string, string> = {
-  tiktok: "ch-tiktok",
-  facebook: "ch-facebook",
-  instagram: "ch-instagram",
-  website: "ch-website",
 };
 
 export default async function AboutPage() {
@@ -329,7 +314,6 @@ export default async function AboutPage() {
           <div className="channel-grid">
             {(channels ?? []).map((ch) => {
               const type = (ch.type ?? "website").toLowerCase();
-              const bgClass = channelBgClass[type] ?? "ch-website";
               const name =
                 locale === "vi"
                   ? (ch.name_vi ?? ch.name_ko ?? "")
@@ -346,7 +330,7 @@ export default async function AboutPage() {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  <div className={`ch-ico ${bgClass}`}>{ch.icon ?? "🔗"}</div>
+                  <span className="chip">{type}</span>
                   <div className="ch-name">{name}</div>
                   <div className="ch-desc">{desc}</div>
                   {ch.handle && <div className="ch-handle">{ch.handle}</div>}

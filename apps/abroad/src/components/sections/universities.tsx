@@ -5,7 +5,6 @@ import { useState, useMemo } from "react";
 type Department = {
   id: number;
   university_id: number;
-  icon: string;
   name: string;
   badge: string | null;
   course: string | null;
@@ -17,9 +16,9 @@ type Department = {
 
 export type UniversityCard = {
   id: number;
-  emoji: string;
   name: string;
   region: string;
+  logoUrl: string | null;
   tags: string[];
   strengths: string;
   departments: Department[];
@@ -43,9 +42,18 @@ type Strings = {
   modalTuition: string;
   modalScholarship: string;
   modalDegree: string;
+  modalYearUnit: string;
   modalDeptLink: string;
   modalStrengths: string;
 };
+
+/** 대학 이름에서 로고 대체용 이니셜 2자 (이모지 대신). */
+function initials(name: string): string {
+  const words = name.trim().split(/\s+/).filter(Boolean);
+  if (words.length === 0) return "—";
+  if (words.length === 1) return words[0].slice(0, 2).toUpperCase();
+  return (words[0][0] + words[words.length - 1][0]).toUpperCase();
+}
 
 export function Universities({
   universities,
@@ -68,78 +76,101 @@ export function Universities({
       .filter((u) => u.departments.length > 0);
   }, [universities, course]);
 
-  const opened = openId == null ? null : universities.find((u) => u.id === openId) ?? null;
+  const opened =
+    openId == null ? null : universities.find((u) => u.id === openId) ?? null;
+
+  /* 탭 카드에는 지원 조건을, 그 아래 한 줄에는 코스 설명을 둔다. */
+  const activeNote =
+    course === "direct" ? strings.tabDirectSub : strings.tabLangSub;
 
   return (
-    <section id="universities" className="section">
+    <section id="universities" className="section on-surface">
       <div className="sec-inner">
-        <div className="hdr-row">
-          <div>
-            <div className="sec-eyebrow">{strings.eyebrow}</div>
-            <h2 className="sec-title">
-              {strings.titlePrefix}
-              <em>{strings.titleEm}</em>
-              {strings.titleSuffix}
-            </h2>
-            <p className="sec-desc">{strings.desc}</p>
-          </div>
+        <div className="sec-head">
+          <div className="sec-eyebrow">{strings.eyebrow}</div>
+          <h2 className="sec-title">
+            {strings.titlePrefix}
+            <em>{strings.titleEm}</em>
+            {strings.titleSuffix}
+          </h2>
+          <p className="sec-desc">{strings.desc}</p>
         </div>
 
-        <div
-          id="courseTabWrap"
-          style={{ display: "flex", gap: "1rem", marginBottom: "2.5rem" }}
-        >
+        {/* 입학 경로 — 카드형 탭 2개 */}
+        <div className="course-tabs" role="tablist">
           <button
             type="button"
+            role="tab"
+            aria-selected={course === "direct"}
             className={`course-tab${course === "direct" ? " on" : ""}`}
             onClick={() => setCourse("direct")}
           >
-            <div className="course-tab-desc">{strings.tabDirectDesc}</div>
             <div className="course-tab-title">{strings.tabDirectTitle}</div>
             <div className="course-tab-sub">{strings.tabDirectSub}</div>
           </button>
           <button
             type="button"
+            role="tab"
+            aria-selected={course === "language"}
             className={`course-tab${course === "language" ? " on" : ""}`}
             onClick={() => setCourse("language")}
           >
-            <div className="course-tab-desc">{strings.tabLangDesc}</div>
             <div className="course-tab-title">{strings.tabLangTitle}</div>
             <div className="course-tab-sub">{strings.tabLangSub}</div>
           </button>
         </div>
+        {activeNote && <p className="course-note">{activeNote}</p>}
 
         <div className="uni-grid">
-          {filtered.map((u) => (
-            <div
-              key={u.id}
-              className="uni-card"
-              onClick={() => setOpenId(u.id)}
-            >
-              <div className="uni-head">
-                <div className="uni-ico">{u.emoji}</div>
-                <div>
-                  <div className="uni-name">{u.name}</div>
-                  <div className="uni-region">{u.region}</div>
-                </div>
-              </div>
-              <div className="uni-body">
-                {u.departments.slice(0, 4).map((d) => (
-                  <div key={d.id} className="dept-row">
-                    <span className="dept-ico">{d.icon || "📚"}</span>
-                    <span>{d.name}</span>
-                    {d.badge && (
-                      <span
-                        className={`dept-badge ${d.badge === "hot" ? "hot" : "good"}`}
-                      >
-                        {d.badge === "hot" ? strings.badgeHot : strings.badgeGood}
-                      </span>
+          {filtered.map((u) => {
+            const hasHot = u.departments.some((d) => d.badge === "hot");
+            return (
+              <div
+                key={u.id}
+                className="uni-card"
+                role="button"
+                tabIndex={0}
+                onClick={() => setOpenId(u.id)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") setOpenId(u.id);
+                }}
+              >
+                <div className="uni-head">
+                  <div className="gc-logo">
+                    {u.logoUrl ? (
+                      /* eslint-disable-next-line @next/next/no-img-element */
+                      <img src={u.logoUrl} alt="" />
+                    ) : (
+                      initials(u.name)
                     )}
                   </div>
-                ))}
+                  {/* solid 배지는 카드당 1개 */}
+                  {hasHot && (
+                    <span className="gc-badge gc-badge-solid">
+                      {strings.badgeHot}
+                    </span>
+                  )}
+                </div>
+
+                <div>
+                  {u.region && <div className="uni-region">{u.region}</div>}
+                  <div className="uni-name">{u.name}</div>
+                </div>
+
+                <div className="gc-dotlist">
+                  {u.departments.slice(0, 4).map((d) => (
+                    <div key={d.id} className="gc-dotrow">
+                      <span
+                        className={`gc-dot${d.badge === "hot" ? " is-hot" : ""}`}
+                      />
+                      <span>{d.name}</span>
+                    </div>
+                  ))}
+                </div>
+
                 {u.tags.length > 0 && (
                   <div className="chip-row">
-                    {u.tags.slice(0, 4).map((tag, i) => (
+                    {u.tags.slice(0, 3).map((tag, i) => (
                       <span key={i} className="chip">
                         {tag}
                       </span>
@@ -147,8 +178,8 @@ export function Universities({
                   </div>
                 )}
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
@@ -159,49 +190,40 @@ export function Universities({
         }}
       >
         {opened && (
-          <div className="modal" style={{ maxWidth: 600 }}>
+          <div className="modal" role="dialog" aria-modal>
             <div className="modal-hd">
               <h3>
-                {opened.emoji} {opened.name} — {strings.modalTitle}
+                {opened.name} — {strings.modalTitle}
               </h3>
               <button
                 type="button"
                 className="modal-x"
                 onClick={() => setOpenId(null)}
+                aria-label="Close"
               >
-                ✕
+                ×
               </button>
             </div>
             <div className="modal-bd">
               {opened.strengths && (
-                <div
-                  style={{
-                    marginBottom: "1.2rem",
-                    padding: "0.9rem 1.1rem",
-                    background: "var(--coral-pale)",
-                    border: "1px solid var(--coral-soft)",
-                    borderRadius: 10,
-                    fontSize: "0.85rem",
-                    color: "var(--ink-mid)",
-                    lineHeight: 1.6,
-                  }}
-                >
-                  <strong style={{ color: "var(--coral-d)" }}>
-                    {strings.modalStrengths}:
-                  </strong>{" "}
-                  {opened.strengths}
+                <div className="gc-note gc-note-brand" style={{ marginBottom: 20 }}>
+                  <strong>{strings.modalStrengths}</strong> {opened.strengths}
                 </div>
               )}
 
               {opened.departments.map((d) => (
                 <div key={d.id} className="mdept">
-                  <div className="mdept-ico">{d.icon || "📚"}</div>
+                  <span
+                    className={`gc-dot${d.badge === "hot" ? " is-hot" : ""}`}
+                    style={{ marginTop: 10 }}
+                  />
                   <div style={{ flex: 1 }}>
                     <div className="mdept-name">{d.name}</div>
                     <div className="mdept-desc">
                       {d.degree_years != null && (
                         <div>
-                          {strings.modalDegree}: {d.degree_years}년
+                          {strings.modalDegree}: {d.degree_years}
+                          {strings.modalYearUnit}
                         </div>
                       )}
                       {d.tuition && (
@@ -215,21 +237,18 @@ export function Universities({
                         </div>
                       )}
                       {d.dept_url && (
-                        <div style={{ marginTop: "0.4rem" }}>
-                          <a
-                            href={d.dept_url}
-                            target="_blank"
-                            rel="noreferrer"
-                            style={{
-                              color: "var(--coral)",
-                              fontWeight: 600,
-                              textDecoration: "underline",
-                              fontSize: "0.78rem",
-                            }}
-                          >
-                            {strings.modalDeptLink} →
-                          </a>
-                        </div>
+                        <a
+                          href={d.dept_url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="gc-btn gc-btn-ghost"
+                          style={{ paddingLeft: 0 }}
+                        >
+                          {strings.modalDeptLink}
+                          <span className="arrow" aria-hidden>
+                            →
+                          </span>
+                        </a>
                       )}
                     </div>
                   </div>

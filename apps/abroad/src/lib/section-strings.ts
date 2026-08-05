@@ -40,14 +40,17 @@ const apply = {
     submit: "상담 신청하기 →",
     fnote:
       "입력하신 정보는 상담 목적으로만 사용되며 외부에 공개되지 않습니다.",
+    successEyebrow: "접수 완료",
     successTitle: "상담 신청이 정상 접수됐습니다",
     successDesc: "곧 담당자가 연락드리겠습니다.",
+    procTitle: "진행 절차 5단계",
+    contactLabel: "바로 연락하기",
     proc: [
-      { ico: "💬", lbl: "상담 신청", sub: "온라인 또는<br>유학센터 방문" },
-      { ico: "🏫", lbl: "유학센터 등록", sub: "협력 센터에서<br>공식 등록" },
-      { ico: "🎓", lbl: "한국 유학", sub: "제휴 대학<br>입학 및 수학" },
-      { ico: "💼", lbl: "취업 연계", sub: "졸업 전<br>취업처 매칭" },
-      { ico: "🇰🇷", lbl: "한국 취업", sub: "안정적인<br>한국 생활 시작" },
+      { lbl: "상담 신청", sub: "온라인 또는 유학센터 방문" },
+      { lbl: "유학센터 등록", sub: "협력 센터에서 공식 등록" },
+      { lbl: "한국 유학", sub: "제휴 대학 입학 및 수학" },
+      { lbl: "취업 연계", sub: "졸업 전 취업처 매칭" },
+      { lbl: "한국 취업", sub: "안정적인 한국 생활 시작" },
     ],
   },
   vi: {
@@ -91,29 +94,28 @@ const apply = {
     submit: "Đăng ký tư vấn →",
     fnote:
       "Thông tin của bạn chỉ được dùng cho mục đích tư vấn và sẽ không được chia sẻ với bên thứ ba.",
+    successEyebrow: "ĐÃ GỬI",
     successTitle: "Đăng ký đã được tiếp nhận",
     successDesc: "Chúng tôi sẽ sớm liên hệ với bạn.",
+    procTitle: "Quy trình 5 bước",
+    contactLabel: "Liên hệ trực tiếp",
     proc: [
-      { ico: "💬", lbl: "Tư vấn", sub: "Online hoặc<br>đến trung tâm" },
+      { lbl: "Tư vấn", sub: "Online hoặc đến trung tâm" },
       {
-        ico: "🏫",
         lbl: "Đăng ký",
-        sub: "Đăng ký chính thức<br>tại trung tâm",
+        sub: "Đăng ký chính thức tại trung tâm",
       },
       {
-        ico: "🎓",
         lbl: "Du học",
-        sub: "Nhập học và học tập<br>tại trường liên kết",
+        sub: "Nhập học và học tập tại trường liên kết",
       },
       {
-        ico: "💼",
         lbl: "Kết nối việc làm",
-        sub: "Kết nối nhà tuyển dụng<br>trước khi tốt nghiệp",
+        sub: "Kết nối nhà tuyển dụng trước khi tốt nghiệp",
       },
       {
-        ico: "🇰🇷",
         lbl: "Có việc làm",
-        sub: "Bắt đầu cuộc sống<br>ổn định tại Hàn Quốc",
+        sub: "Bắt đầu cuộc sống ổn định tại Hàn Quốc",
       },
     ],
   },
@@ -139,6 +141,7 @@ const universities = {
     modalTuition: "등록금",
     modalScholarship: "장학금",
     modalDegree: "수학 기간",
+    modalYearUnit: "년",
     modalDeptLink: "학과 홈페이지",
     modalStrengths: "특징",
   },
@@ -161,6 +164,7 @@ const universities = {
     modalTuition: "Học phí",
     modalScholarship: "Học bổng",
     modalDegree: "Thời gian học",
+    modalYearUnit: " năm",
     modalDeptLink: "Trang ngành học",
     modalStrengths: "Đặc điểm",
   },
@@ -169,7 +173,7 @@ const universities = {
 const recruiting = {
   ko: {
     eyebrow: "내 친구 소개하기 프로그램",
-    title: "나도 돈 벌고,<br><span style='opacity:0.85'>친구도 할인 받고!</span>",
+    title: "나도 돈 벌고, <em>친구도 할인 받고!</em>",
     desc: "글로케어에 친구를 소개하면, 소개자와 친구 모두 상품권(쿠팡, 스타벅스 등)으로 리워드를 받습니다.",
     steps: [
       {
@@ -190,33 +194,31 @@ const recruiting = {
     ],
     programs: [
       {
-        ico: "🔗",
         title: "리쿠르팅 프로그램",
         desc: "글로케어에 지인을 소개하면, 등록 완료 시 소개자와 등록자 모두 리워드를 받습니다.",
       },
       {
-        ico: "👫",
         title: "버디 프로그램",
         desc: "같은 기수·같은 프로그램에 지인과 함께 등록하면 버디 리워드가 추가 지급됩니다.",
       },
     ],
     rewards: [
-      { ico: "🎓", val: "최대 ₩200,000", lbl: "유학 리워드<br>소개자" },
-      { ico: "👫", val: "각 ₩100,000", lbl: "버디 리워드<br>양쪽 모두" },
-      { ico: "⭐", val: "각 ₩50,000", lbl: "스페셜<br>D4→D2 입학" },
+      { val: "최대 ₩200,000", lbl: "유학 리워드 · 소개자" },
+      { val: "각 ₩100,000", lbl: "버디 리워드 · 양쪽 모두" },
+      { val: "각 ₩50,000", lbl: "스페셜 · D4→D2 입학" },
     ],
-    giftHeader: "🎁 원하는 상품권을 직접 선택",
+    giftHeader: "원하는 상품권을 직접 선택",
     giftList:
       "쿠팡 · 네이버 · 신세계 · 이마트 · 올리브영 · GS25 · CU · 스타벅스 · 메가커피 · 배달의민족",
     ctaJoin: "지금 친구 소개하기",
     ctaDetails: "상세보기",
     footnote:
-      "※ 리워드는 등록일로부터 2개월 이내 지급됩니다.<br>※ 입학 리워드는 제휴 대학교에 한해 적용됩니다.<br>★ 엠버서더 프로그램 — 곧 출시 예정!",
+      "※ 리워드는 등록일로부터 2개월 이내 지급됩니다.<br>※ 입학 리워드는 제휴 대학교에 한해 적용됩니다.<br>※ 엠버서더 프로그램 — 곧 출시 예정!",
   },
   vi: {
     eyebrow: "Chương trình giới thiệu bạn bè",
     title:
-      "Tôi kiếm tiền,<br><span style='opacity:0.85'>bạn tôi được giảm giá!</span>",
+      "Tôi kiếm tiền, <em>bạn tôi được giảm giá!</em>",
     desc: "Giới thiệu bạn bè cho GLOCARE — cả hai cùng nhận thưởng bằng phiếu quà tặng (Coupang, Starbucks, v.v.).",
     steps: [
       {
@@ -237,28 +239,26 @@ const recruiting = {
     ],
     programs: [
       {
-        ico: "🔗",
         title: "Recruiting Program",
         desc: "Giới thiệu bạn bè cho GLOCARE — cả hai đều nhận thưởng khi đăng ký thành công.",
       },
       {
-        ico: "👫",
         title: "Buddy Program",
         desc: "Đăng ký cùng bạn bè trong cùng khóa — cả hai nhận thêm thưởng Buddy.",
       },
     ],
     rewards: [
-      { ico: "🎓", val: "200.000 ₩", lbl: "Du học<br>Recruiting" },
-      { ico: "👫", val: "100.000 ₩", lbl: "Buddy<br>cả hai người" },
-      { ico: "⭐", val: "50.000 ₩", lbl: "Special<br>D4 → D2" },
+      { val: "200.000 ₩", lbl: "Du học · Recruiting" },
+      { val: "100.000 ₩", lbl: "Buddy · cả hai người" },
+      { val: "50.000 ₩", lbl: "Special · D4 → D2" },
     ],
-    giftHeader: "🎁 Chọn phiếu quà tặng bạn muốn",
+    giftHeader: "Chọn phiếu quà tặng bạn muốn",
     giftList:
       "Coupang · Naver · Shinsegae · Emart · Olive Young · GS25 · CU · Starbucks · Mega Coffee · Baedal Minjok",
     ctaJoin: "Tham gia ngay",
     ctaDetails: "Xem chi tiết",
     footnote:
-      "※ Thưởng được gửi trong vòng 2 tháng kể từ ngày đăng ký.<br>※ Thưởng nhập học chỉ áp dụng cho trường đại học liên kết.<br>★ Chương trình Đại sứ — sắp ra mắt!",
+      "※ Thưởng được gửi trong vòng 2 tháng kể từ ngày đăng ký.<br>※ Thưởng nhập học chỉ áp dụng cho trường đại học liên kết.<br>※ Chương trình Đại sứ — sắp ra mắt!",
   },
 };
 

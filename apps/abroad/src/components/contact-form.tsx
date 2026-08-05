@@ -40,7 +40,7 @@ export function ContactForm() {
     return (
       <div className="rounded-lg border border-success/30 bg-success/5 p-6 text-sm">
         <p className="font-medium text-success mb-2">
-          ✓ Đăng ký thành công / 상담 신청 완료
+          Đăng ký thành công / 상담 신청 완료
         </p>
         <p className="text-muted-foreground">
           Chúng tôi sẽ sớm liên hệ với bạn.

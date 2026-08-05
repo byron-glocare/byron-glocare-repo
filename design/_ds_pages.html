@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="5890f242-f357-472e-9bbe-444392facf08"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<style>/* vietnamese */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("c1fc4495-b86e-49b1-9c1c-94f7d9143477") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("995aa64f-ba60-4b0e-a65b-41341462ea50") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("84b1f4c5-8205-4db4-b1d6-77f6bf8f994a") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("006055c7-9674-428e-9992-674007ac8de3") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("d2a499d3-1685-496d-ab7e-106f07fa3d7e") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("109db29d-dbd7-4751-af96-6589d2afe1b8") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("2726dde3-ed1e-40ca-8b67-a104d787aa36") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("57bfb686-d8ee-416f-b41e-538a45054657") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("40d7d323-7447-468f-84c5-d39752eb8b86") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("833561a4-c424-4961-9e89-022f09675cd3") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("d62865f7-f633-4dbd-a9c5-7e0c322faa74") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("d7f53336-1abd-44f4-8e51-4915f0f22740") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("b217019e-0a97-4d2c-ae10-3b107c89eaea") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("246c5662-1011-498d-be65-803ba1228305") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("98a2703c-90ef-444d-b9a5-8d571ddb93d7") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("2615c253-5257-4197-a46d-f584a756a694") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("84a8c3f8-ad53-4f2a-ac68-d07941d5f61e") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("f4b9dc8d-ce68-4ef3-8aa1-7ea00fb3a369") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("eb45b9a6-5b18-4075-96e8-0cefa1e4401e") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("5e08a544-70f4-4250-8916-eea0b66beec8") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("05c1e1f2-d378-47a8-8104-fc3a4020bf7f") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("2615c253-5257-4197-a46d-f584a756a694") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("84a8c3f8-ad53-4f2a-ac68-d07941d5f61e") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("f4b9dc8d-ce68-4ef3-8aa1-7ea00fb3a369") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("eb45b9a6-5b18-4075-96e8-0cefa1e4401e") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("5e08a544-70f4-4250-8916-eea0b66beec8") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("05c1e1f2-d378-47a8-8104-fc3a4020bf7f") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+</style>
+
+<style>
+  body { margin: 0; background: #FDFAFA; -webkit-font-smoothing: antialiased; }
+  * { box-sizing: border-box; }
+  a { color: #ED4747; text-decoration: none; }
+  a:hover { color: #C93333; text-decoration: underline; }
+  ::selection { background: #FFC9C6; }
+  input, select, textarea, button { font-family: inherit; }
+</style>
+</helmet>
+
+<div style="font-family: 'Be Vietnam Pro', Pretendard, system-ui, sans-serif; color: #3D3336; background: #FDFAFA">
+
+  <!-- 문서 안내 바 -->
+  <div style="background: #1A1416; color: #F0EAEB; padding: 14px 32px">
+    <div style="max-width: 1120px; margin: 0 auto; display: flex; align-items: center; gap: 16px; flex-wrap: wrap">
+      <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: #FFA4A1">적용 예시</span>
+      <span style="font-size: 13px; line-height: 1.5; color: #C4BBBD">Design System v1.0 을 히어로 · 대학 카드 · 상담 폼에 적용한 화면입니다. 실제 렌더 결과이므로 값을 그대로 옮겨 쓰면 됩니다.</span>
+      <a href="GLOCARE Design System.dc.html" style="margin-left: auto; font-size: 13px; font-weight: 600; color: #FFA4A1; white-space: nowrap">시스템 문서 열기 →</a>
+    </div>
+  </div>
+
+  <!-- 헤더 -->
+  <div style="position: sticky; top: 0; z-index: 40; background: rgba(255,255,255,0.94); backdrop-filter: blur(12px); border-bottom: 1px solid #E8E1E2">
+    <div style="max-width: 1120px; margin: 0 auto; padding: 0 32px; height: 68px; display: flex; align-items: center; gap: 28px">
+      <img src="774e8d30-e763-496e-a428-1128769fac5a" alt="GLOCARE" style="height: 22px; width: auto; display: block">
+      <div style="display: flex; gap: 2px; margin-left: 4px">
+        <a href="#cases" style="color: #6B5F62; font-size: 13.5px; font-weight: 500; padding: 12px 11px; border-radius: 999px; min-height: 44px; display: flex; align-items: center; text-decoration: none; white-space: nowrap" style-hover="color: #1A1416; background: #F7F3F3">Câu chuyện thành công</a>
+        <a href="#universities" style="color: #1A1416; font-size: 13.5px; font-weight: 600; padding: 12px 11px; border-radius: 999px; min-height: 44px; display: flex; align-items: center; text-decoration: none; white-space: nowrap" style-hover="background: #F7F3F3">Trường ĐH liên kết</a>
+        <a href="#centers" style="color: #6B5F62; font-size: 13.5px; font-weight: 500; padding: 12px 11px; border-radius: 999px; min-height: 44px; display: flex; align-items: center; text-decoration: none; white-space: nowrap" style-hover="color: #1A1416; background: #F7F3F3">Trung tâm du học</a>
+      </div>
+      <div style="margin-left: auto; display: flex; align-items: center; gap: 12px">
+        <div style="display: flex; border: 1px solid #E8E1E2; border-radius: 999px; padding: 3px; background: #FFFFFF">
+          <span style="font-size: 12.5px; font-weight: 700; color: #FFFFFF; background: #1A1416; padding: 7px 13px; border-radius: 999px; cursor: pointer">VI</span>
+          <span style="font-size: 12.5px; font-weight: 600; color: #6B5F62; padding: 7px 13px; border-radius: 999px; cursor: pointer">KO</span>
+        </div>
+        <a href="#apply" style="background: #FF6060; color: #FFFFFF; font-size: 14.5px; font-weight: 700; padding: 12px 22px; border-radius: 999px; min-height: 44px; display: flex; align-items: center; text-decoration: none; white-space: nowrap" style-hover="background: #ED4747; color: #FFFFFF; text-decoration: none">Đăng ký tư vấn →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 히어로 ───────────────────────────────────── -->
+  <div style="background: #FDFAFA; border-bottom: 1px solid #E8E1E2">
+    <div style="max-width: 1120px; margin: 0 auto; padding: 96px 32px">
+      <div style="display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 56px; align-items: center">
+        <div>
+          <div style="display: inline-block; border: 1px solid #C4BBBD; color: #6B5F62; font-size: 11.5px; font-weight: 600; padding: 5px 12px; border-radius: 999px; margin-bottom: 28px">Việt Nam → Hàn Quốc · Du học có việc làm đảm bảo</div>
+          <h1 style="font: 800 52px/1.14 inherit; letter-spacing: -0.025em; color: #1A1416; margin: 0 0 20px; max-width: 22ch; text-wrap: balance"><em style="font-style: normal; color: #ED4747">Học tại Hàn Quốc</em> — có việc làm ngay khi tốt nghiệp</h1>
+          <p style="font: 400 18px/1.65 inherit; color: #6B5F62; margin: 0 0 36px; max-width: 52ch; text-wrap: pretty">Từ tư vấn, du học đến việc làm ổn định tại Hàn Quốc — GLOCARE kết nối bạn với trường đại học và trung tâm du học phù hợp nhất.</p>
+          <div style="display: flex; gap: 12px; flex-wrap: wrap">
+            <a href="#apply" style="background: #FF6060; color: #FFFFFF; font-size: 16px; font-weight: 700; padding: 16px 28px; border-radius: 999px; min-height: 52px; display: inline-flex; align-items: center; gap: 8px; text-decoration: none" style-hover="background: #ED4747; color: #FFFFFF; text-decoration: none">Đăng ký tư vấn miễn phí</a>
+            <a href="#about" style="background: #FFFFFF; color: #1A1416; border: 1.5px solid #C4BBBD; font-size: 16px; font-weight: 600; padding: 15px 27px; border-radius: 999px; min-height: 52px; display: inline-flex; align-items: center; text-decoration: none" style-hover="border-color: #1A1416; color: #1A1416; text-decoration: none">Giới thiệu GLOCARE</a>
+          </div>
+          <div style="display: flex; gap: 40px; margin-top: 44px; padding-top: 28px; border-top: 1px solid #E8E1E2; flex-wrap: wrap">
+            <div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 26px; font-weight: 500; color: #1A1416; line-height: 1.2">5</div>
+              <div style="font: 500 12px/1.55 inherit; color: #8D8286; margin-top: 6px">Trường đại học liên kết</div>
+            </div>
+            <div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 26px; font-weight: 500; color: #1A1416; line-height: 1.2">5</div>
+              <div style="font: 500 12px/1.55 inherit; color: #8D8286; margin-top: 6px">Trung tâm tại Việt Nam</div>
+            </div>
+            <div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 26px; font-weight: 500; color: #1A1416; line-height: 1.2">100%</div>
+              <div style="font: 500 12px/1.55 inherit; color: #8D8286; margin-top: 6px">Hỗ trợ visa &amp; việc làm</div>
+            </div>
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px">
+          <div style="border: 1px solid #E8E1E2; border-radius: 14px; overflow: hidden; background: #FFFFFF" style-hover="border-color: #FFA4A1; box-shadow: 0 2px 8px rgba(26,20,22,0.06)">
+            <div style="aspect-ratio: 9 / 13; background: repeating-linear-gradient(135deg, #F7F3F3 0 8px, #FDFAFA 8px 16px); display: flex; align-items: center; justify-content: center; position: relative">
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: #8D8286; text-align: center; line-height: 1.6">틱톡 썸네일<br>9:13</span>
+              <span style="position: absolute; bottom: 10px; left: 10px; background: rgba(26,20,22,0.72); color: #FFFFFF; font-size: 10.5px; font-weight: 600; padding: 3px 7px; border-radius: 6px">0:38</span>
+            </div>
+            <div style="padding: 14px">
+              <div style="font: 600 11.5px/1.5 inherit; color: #ED4747; margin-bottom: 5px">Viện dưỡng lão</div>
+              <div style="font: 700 13.5px/1.45 inherit; color: #1A1416">Giám đốc rất thích nhân viên Việt Nam</div>
+            </div>
+          </div>
+          <div style="border: 1px solid #E8E1E2; border-radius: 14px; overflow: hidden; background: #FFFFFF; margin-top: 32px" style-hover="border-color: #FFA4A1; box-shadow: 0 2px 8px rgba(26,20,22,0.06)">
+            <div style="aspect-ratio: 9 / 13; background: repeating-linear-gradient(135deg, #F7F3F3 0 8px, #FDFAFA 8px 16px); display: flex; align-items: center; justify-content: center; position: relative">
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: #8D8286; text-align: center; line-height: 1.6">틱톡 썸네일<br>9:13</span>
+              <span style="position: absolute; bottom: 10px; left: 10px; background: rgba(26,20,22,0.72); color: #FFFFFF; font-size: 10.5px; font-weight: 600; padding: 3px 7px; border-radius: 6px">1:02</span>
+            </div>
+            <div style="padding: 14px">
+              <div style="font: 600 11.5px/1.5 inherit; color: #ED4747; margin-bottom: 5px">ĐH Hosan</div>
+              <div style="font: 700 13.5px/1.45 inherit; color: #1A1416">Phỏng vấn sinh viên đang theo học</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 대학 카드 ─────────────────────────────────── -->
+  <div id="universities" style="background: #FFFFFF; border-bottom: 1px solid #E8E1E2">
+    <div style="max-width: 1120px; margin: 0 auto; padding: 96px 32px">
+      <div style="font: 700 12px/1.4 inherit; letter-spacing: 0.1em; color: #ED4747; margin-bottom: 14px">TRƯỜNG ĐH &amp; NGÀNH HỌC</div>
+      <h2 style="font: 700 34px/1.22 inherit; letter-spacing: -0.02em; color: #1A1416; margin: 0 0 16px; max-width: 22ch">Trường đại học <em style="font-style: normal; color: #ED4747">chuyên về việc làm</em></h2>
+      <p style="font: 400 16px/1.65 inherit; color: #6B5F62; margin: 0 0 40px; max-width: 58ch; text-wrap: pretty">Chỉ những trường có hỗ trợ visa lao động, thực tập thực tế và chương trình kết nối việc làm đã được kiểm chứng.</p>
+
+      <!-- 입학 경로 탭 -->
+      <div style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap">
+        <div style="border: 1.5px solid #1A1416; background: #1A1416; color: #FFFFFF; border-radius: 12px; padding: 14px 20px; cursor: pointer; min-height: 44px">
+          <div style="font: 700 14.5px/1.4 inherit">Nhập học trực tiếp</div>
+          <div style="font: 400 12px/1.5 inherit; color: #C4BBBD; margin-top: 3px">23–35 tuổi · TOPIK 2+</div>
+        </div>
+        <div style="border: 1.5px solid #E8E1E2; background: #FFFFFF; color: #1A1416; border-radius: 12px; padding: 14px 20px; cursor: pointer; min-height: 44px" style-hover="border-color: #C4BBBD">
+          <div style="font: 600 14.5px/1.4 inherit">Qua trường ngôn ngữ</div>
+          <div style="font: 400 12px/1.5 inherit; color: #8D8286; margin-top: 3px">Dưới 23 tuổi · TOPIK 1+</div>
+        </div>
+      </div>
+      <p style="font: 400 13.5px/1.6 inherit; color: #8D8286; margin: 0 0 32px">Khóa học nhanh nhất — bỏ qua trường ngôn ngữ.</p>
+
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px">
+
+        <div style="background: #FFFFFF; border: 1px solid #E8E1E2; border-radius: 14px; padding: 24px; display: flex; flex-direction: column; gap: 16px" style-hover="border-color: #FFA4A1; box-shadow: 0 2px 8px rgba(26,20,22,0.06)">
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px">
+            <div style="width: 44px; height: 44px; border-radius: 10px; background: #F7F3F3; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #8D8286; text-align: center; line-height: 1.25; flex-shrink: 0">로고<br>44</div>
+            <span style="background: #FF6060; color: #FFFFFF; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; padding: 4px 9px; border-radius: 6px">HOT</span>
+          </div>
+          <div>
+            <div style="font: 500 12px/1.55 inherit; color: #8D8286; margin-bottom: 6px">TP. Suwon, Gyeonggi</div>
+            <div style="font: 700 19px/1.35 inherit; letter-spacing: -0.012em; color: #1A1416">Cao đẳng Y tế Dongnam</div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 9px; padding: 14px 0; border-top: 1px solid #F0EAEB; border-bottom: 1px solid #F0EAEB">
+            <div style="display: flex; align-items: baseline; gap: 9px; font: 400 14px/1.55 inherit"><span style="width: 5px; height: 5px; border-radius: 999px; background: #FF6060; flex-shrink: 0; transform: translateY(-3px)"></span><span style="color: #3D3336">Chăm sóc sức khỏe toàn cầu</span></div>
+          </div>
+          <div style="display: flex; gap: 6px; flex-wrap: wrap">
+            <span style="background: #F7F3F3; color: #3D3336; font-size: 11.5px; font-weight: 600; padding: 4px 9px; border-radius: 6px">hỗ trợ việc làm</span>
+            <span style="background: #F7F3F3; color: #3D3336; font-size: 11.5px; font-weight: 600; padding: 4px 9px; border-radius: 6px">hỗ trợ visa</span>
+          </div>
+        </div>
+
+        <div style="background: #FFFFFF; border: 1px solid #E8E1E2; border-radius: 14px; padding: 24px; display: flex; flex-direction: column; gap: 16px" style-hover="border-color: #FFA4A1; box-shadow: 0 2px 8px rgba(26,20,22,0.06)">
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px">
+            <div style="width: 44px; height: 44px; border-radius: 10px; background: #F7F3F3; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #8D8286; text-align: center; line-height: 1.25; flex-shrink: 0">로고<br>44</div>
+            <span style="background: #FF6060; color: #FFFFFF; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; padding: 4px 9px; border-radius: 6px">HOT</span>
+          </div>
+          <div>
+            <div style="font: 500 12px/1.55 inherit; color: #8D8286; margin-bottom: 6px">Gyeongsangbuk-do</div>
+            <div style="font: 700 19px/1.35 inherit; letter-spacing: -0.012em; color: #1A1416">Đại học Hosan</div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 9px; padding: 14px 0; border-top: 1px solid #F0EAEB; border-bottom: 1px solid #F0EAEB">
+            <div style="display: flex; align-items: baseline; gap: 9px; font: 400 14px/1.55 inherit"><span style="width: 5px; height: 5px; border-radius: 999px; background: #FF6060; flex-shrink: 0; transform: translateY(-3px)"></span><span style="color: #3D3336">Lắp ráp ô tô</span></div>
+            <div style="display: flex; align-items: baseline; gap: 9px; font: 400 14px/1.55 inherit"><span style="width: 5px; height: 5px; border-radius: 999px; background: #C4BBBD; flex-shrink: 0; transform: translateY(-3px)"></span><span style="color: #3D3336">Chăm sóc sức khỏe Korea</span></div>
+          </div>
+          <div style="display: flex; gap: 6px; flex-wrap: wrap">
+            <span style="background: #F7F3F3; color: #3D3336; font-size: 11.5px; font-weight: 600; padding: 4px 9px; border-radius: 6px">hỗ trợ việc làm</span>
+            <span style="background: #F7F3F3; color: #3D3336; font-size: 11.5px; font-weight: 600; padding: 4px 9px; border-radius: 6px">hỗ trợ visa</span>
+          </div>
+        </div>
+
+        <div style="background: #FFFFFF; border: 1px solid #E8E1E2; border-radius: 14px; padding: 24px; display: flex; flex-direction: column; gap: 16px" style-hover="border-color: #FFA4A1; box-shadow: 0 2px 8px rgba(26,20,22,0.06)">
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px">
+            <div style="width: 44px; height: 44px; border-radius: 10px; background: #F7F3F3; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #8D8286; text-align: center; line-height: 1.25; flex-shrink: 0">로고<br>44</div>
+            <span style="background: #E7F4F0; color: #0E6E56; font-size: 11px; font-weight: 700; padding: 4px 9px; border-radius: 6px">Tốt</span>
+          </div>
+          <div>
+            <div style="font: 500 12px/1.55 inherit; color: #8D8286; margin-bottom: 6px">TP. Mokpo, Jeollanam-do</div>
+            <div style="font: 700 19px/1.35 inherit; letter-spacing: -0.012em; color: #1A1416">Cao đẳng Khoa học Mokpo</div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 9px; padding: 14px 0; border-top: 1px solid #F0EAEB; border-bottom: 1px solid #F0EAEB">
+            <div style="display: flex; align-items: baseline; gap: 9px; font: 400 14px/1.55 inherit"><span style="width: 5px; height: 5px; border-radius: 999px; background: #C4BBBD; flex-shrink: 0; transform: translateY(-3px)"></span><span style="color: #3D3336">Phúc lợi xã hội — điều dưỡng dưỡng lão</span></div>
+            <div style="display: flex; align-items: baseline; gap: 9px; font: 400 14px/1.55 inherit"><span style="width: 5px; height: 5px; border-radius: 999px; background: #C4BBBD; flex-shrink: 0; transform: translateY(-3px)"></span><span style="color: #3D3336">Ngành đóng tàu</span></div>
+          </div>
+          <div style="display: flex; gap: 6px; flex-wrap: wrap">
+            <span style="background: #F7F3F3; color: #3D3336; font-size: 11.5px; font-weight: 600; padding: 4px 9px; border-radius: 6px">hỗ trợ việc làm</span>
+            <span style="background: #F7F3F3; color: #3D3336; font-size: 11.5px; font-weight: 600; padding: 4px 9px; border-radius: 6px">hỗ trợ visa</span>
+          </div>
+        </div>
+
+        <div style="background: #FFFFFF; border: 1px solid #E8E1E2; border-radius: 14px; padding: 24px; display: flex; flex-direction: column; gap: 16px" style-hover="border-color: #FFA4A1; box-shadow: 0 2px 8px rgba(26,20,22,0.06)">
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px">
+            <div style="width: 44px; height: 44px; border-radius: 10px; background: #F7F3F3; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #8D8286; text-align: center; line-height: 1.25; flex-shrink: 0">로고<br>44</div>
+            <span style="background: #FF6060; color: #FFFFFF; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; padding: 4px 9px; border-radius: 6px">HOT</span>
+          </div>
+          <div>
+            <div style="font: 500 12px/1.55 inherit; color: #8D8286; margin-bottom: 6px">Chungcheongnam-do</div>
+            <div style="font: 700 19px/1.35 inherit; letter-spacing: -0.012em; color: #1A1416">Cao học Joongbu</div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 9px; padding: 14px 0; border-top: 1px solid #F0EAEB; border-bottom: 1px solid #F0EAEB">
+            <div style="display: flex; align-items: baseline; gap: 9px; font: 400 14px/1.55 inherit"><span style="width: 5px; height: 5px; border-radius: 999px; background: #FF6060; flex-shrink: 0; transform: translateY(-3px)"></span><span style="color: #3D3336">Kỹ thuật ô tô tương lai</span></div>
+            <div style="display: flex; align-items: baseline; gap: 9px; font: 400 14px/1.55 inherit"><span style="width: 5px; height: 5px; border-radius: 999px; background: #C4BBBD; flex-shrink: 0; transform: translateY(-3px)"></span><span style="color: #3D3336">Chăm sóc sức khỏe toàn cầu</span></div>
+            <div style="display: flex; align-items: baseline; gap: 9px; font: 400 14px/1.55 inherit"><span style="width: 5px; height: 5px; border-radius: 999px; background: #C4BBBD; flex-shrink: 0; transform: translateY(-3px)"></span><span style="color: #3D3336">Thiết kế làm đẹp</span></div>
+          </div>
+          <div style="display: flex; gap: 6px; flex-wrap: wrap">
+            <span style="background: #F7F3F3; color: #3D3336; font-size: 11.5px; font-weight: 600; padding: 4px 9px; border-radius: 6px">hỗ trợ việc làm</span>
+            <span style="background: #F7F3F3; color: #3D3336; font-size: 11.5px; font-weight: 600; padding: 4px 9px; border-radius: 6px">hỗ trợ visa</span>
+          </div>
+        </div>
+
+        <div style="background: #FFFFFF; border: 1px solid #E8E1E2; border-radius: 14px; padding: 24px; display: flex; flex-direction: column; gap: 16px" style-hover="border-color: #FFA4A1; box-shadow: 0 2px 8px rgba(26,20,22,0.06)">
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px">
+            <div style="width: 44px; height: 44px; border-radius: 10px; background: #F7F3F3; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #8D8286; text-align: center; line-height: 1.25; flex-shrink: 0">로고<br>44</div>
+            <span style="background: #E7F4F0; color: #0E6E56; font-size: 11px; font-weight: 700; padding: 4px 9px; border-radius: 6px">Tốt</span>
+          </div>
+          <div>
+            <div style="font: 500 12px/1.55 inherit; color: #8D8286; margin-bottom: 6px">Busan</div>
+            <div style="font: 700 19px/1.35 inherit; letter-spacing: -0.012em; color: #1A1416">ĐH Khoa học &amp; Công nghệ Dong-eui</div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 9px; padding: 14px 0; border-top: 1px solid #F0EAEB; border-bottom: 1px solid #F0EAEB">
+            <div style="display: flex; align-items: baseline; gap: 9px; font: 400 14px/1.55 inherit"><span style="width: 5px; height: 5px; border-radius: 999px; background: #C4BBBD; flex-shrink: 0; transform: translateY(-3px)"></span><span style="color: #3D3336">Điều dưỡng</span></div>
+            <div style="display: flex; align-items: baseline; gap: 9px; font: 400 14px/1.55 inherit"><span style="width: 5px; height: 5px; border-radius: 999px; background: #C4BBBD; flex-shrink: 0; transform: translateY(-3px)"></span><span style="color: #3D3336">Điện — ô tô</span></div>
+          </div>
+          <div style="display: flex; gap: 6px; flex-wrap: wrap">
+            <span style="background: #F7F3F3; color: #3D3336; font-size: 11.5px; font-weight: 600; padding: 4px 9px; border-radius: 6px">hỗ trợ việc làm</span>
+            <span style="background: #F7F3F3; color: #3D3336; font-size: 11.5px; font-weight: 600; padding: 4px 9px; border-radius: 6px">hỗ trợ visa</span>
+          </div>
+        </div>
+
+        <div style="background: #FDFAFA; border: 1px dashed #C4BBBD; border-radius: 14px; padding: 24px; display: flex; flex-direction: column; justify-content: center; gap: 10px">
+          <div style="font: 700 15px/1.4 inherit; color: #3D3336">Trường mới đang cập nhật</div>
+          <div style="font: 400 13.5px/1.6 inherit; color: #8D8286">Chúng tôi liên tục mở rộng danh sách trường liên kết.</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 상담 신청 폼 ───────────────────────────────── -->
+  <div id="apply" style="background: #FDFAFA; border-bottom: 1px solid #E8E1E2">
+    <div style="max-width: 1120px; margin: 0 auto; padding: 96px 32px">
+      <div style="font: 700 12px/1.4 inherit; letter-spacing: 0.1em; color: #ED4747; margin-bottom: 14px">ĐĂNG KÝ TƯ VẤN</div>
+      <h2 style="font: 700 34px/1.22 inherit; letter-spacing: -0.02em; color: #1A1416; margin: 0 0 16px; max-width: 24ch">Bắt đầu hành trình của bạn <em style="font-style: normal; color: #ED4747">ngay hôm nay</em></h2>
+      <p style="font: 400 16px/1.65 inherit; color: #6B5F62; margin: 0 0 40px; max-width: 58ch">Điền thông tin bên dưới — nhân viên tư vấn sẽ liên hệ bạn sớm nhất.</p>
+
+      <div style="display: grid; grid-template-columns: 1.6fr 1fr; gap: 32px; align-items: start">
+
+        <div style="background: #FFFFFF; border: 1px solid #E8E1E2; border-radius: 14px; padding: 32px">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px">
+            <div>
+              <label style="display: block; font: 600 13px/1.5 inherit; color: #3D3336; margin-bottom: 8px">Họ và tên <span style="color: #ED4747">*</span></label>
+              <input type="text" placeholder="Nguyễn Thị Huyền" style="width: 100%; font-size: 15px; color: #1A1416; padding: 13px 14px; border: 1.5px solid #E8E1E2; border-radius: 10px; background: #FFFFFF; min-height: 48px; outline: none" style-focus="border-color: #FF6060; box-shadow: 0 0 0 3px #FFE4E2">
+            </div>
+            <div>
+              <label style="display: block; font: 600 13px/1.5 inherit; color: #3D3336; margin-bottom: 8px">Số điện thoại <span style="color: #ED4747">*</span></label>
+              <input type="text" placeholder="0977 456 324" style="width: 100%; font-family: 'JetBrains Mono', monospace; font-size: 15px; color: #1A1416; padding: 13px 14px; border: 1.5px solid #E8E1E2; border-radius: 10px; background: #FFFFFF; min-height: 48px; outline: none" style-focus="border-color: #FF6060; box-shadow: 0 0 0 3px #FFE4E2">
+            </div>
+            <div>
+              <label style="display: block; font: 600 13px/1.5 inherit; color: #3D3336; margin-bottom: 8px">Email hoặc SĐT</label>
+              <input type="text" placeholder="email@example.com" style="width: 100%; font-size: 15px; color: #1A1416; padding: 13px 14px; border: 1.5px solid #E8E1E2; border-radius: 10px; background: #FFFFFF; min-height: 48px; outline: none" style-focus="border-color: #FF6060; box-shadow: 0 0 0 3px #FFE4E2">
+            </div>
+            <div>
+              <label style="display: block; font: 600 13px/1.5 inherit; color: #3D3336; margin-bottom: 8px">Tuổi</label>
+              <input type="text" placeholder="24" style="width: 100%; font-family: 'JetBrains Mono', monospace; font-size: 15px; color: #1A1416; padding: 13px 14px; border: 1.5px solid #E8E1E2; border-radius: 10px; background: #FFFFFF; min-height: 48px; outline: none" style-focus="border-color: #FF6060; box-shadow: 0 0 0 3px #FFE4E2">
+            </div>
+            <div>
+              <label style="display: block; font: 600 13px/1.5 inherit; color: #3D3336; margin-bottom: 8px">Ngành học quan tâm</label>
+              <div style="position: relative">
+              <span style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #6B5F62; font-size: 12px; pointer-events: none">▾</span>
+              <sc-raw-select style="width: 100%; font-size: 15px; color: #8D8286; padding: 13px 40px 13px 14px; border: 1.5px solid #E8E1E2; border-radius: 10px; background: #FFFFFF; min-height: 48px; outline: none; appearance: none" style-focus="border-color: #FF6060; box-shadow: 0 0 0 3px #FFE4E2">
+                <option>Vui lòng chọn</option>
+                <option>Chăm sóc người cao tuổi</option>
+                <option>Kỹ thuật ô tô</option>
+                <option>Y tá điều dưỡng</option>
+                <option>Du lịch — Khách sạn</option>
+                <option>Chế biến thực phẩm</option>
+                <option>CNTT</option>
+                <option>Khác</option>
+              </sc-raw-select>
+              </div>
+            </div>
+            <div>
+              <label style="display: block; font: 600 13px/1.5 inherit; color: #3D3336; margin-bottom: 8px">Tỉnh / Thành phố cư trú</label>
+              <div style="position: relative">
+              <span style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #6B5F62; font-size: 12px; pointer-events: none">▾</span>
+              <sc-raw-select style="width: 100%; font-size: 15px; color: #8D8286; padding: 13px 40px 13px 14px; border: 1.5px solid #E8E1E2; border-radius: 10px; background: #FFFFFF; min-height: 48px; outline: none; appearance: none" style-focus="border-color: #FF6060; box-shadow: 0 0 0 3px #FFE4E2">
+                <option>Chọn tỉnh / thành phố</option>
+                <option>Hà Nội</option>
+                <option>TP. Hồ Chí Minh</option>
+                <option>Bắc Ninh</option>
+                <option>Đà Nẵng</option>
+              </sc-raw-select>
+              </div>
+            </div>
+            <div style="grid-column: 1 / -1">
+              <label style="display: block; font: 600 13px/1.5 inherit; color: #3D3336; margin-bottom: 8px">Câu hỏi / Yêu cầu <span style="color: #8D8286; font-weight: 500">(không bắt buộc)</span></label>
+              <textarea rows="3" placeholder="Ví dụ: Tôi muốn biết chi phí du học ngành điều dưỡng." style="width: 100%; font-family: inherit; font-size: 15px; line-height: 1.7; color: #1A1416; padding: 13px 14px; border: 1.5px solid #E8E1E2; border-radius: 10px; background: #FFFFFF; outline: none; resize: vertical" style-focus="border-color: #FF6060; box-shadow: 0 0 0 3px #FFE4E2"></textarea>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 4px; margin: 20px 0 24px; padding-top: 20px; border-top: 1px solid #F0EAEB">
+            <label style="display: flex; gap: 11px; align-items: flex-start; cursor: pointer; font: 400 14px/1.6 inherit; color: #3D3336; min-height: 44px; padding: 10px 0">
+              <span style="width: 20px; height: 20px; border-radius: 6px; border: 1.5px solid #C4BBBD; background: #FFFFFF; flex-shrink: 0; margin-top: 1px"></span>
+              <span>Tôi muốn tham gia chương trình giới thiệu bạn bè <span style="color: #8D8286">(nhận ưu đãi khi giới thiệu)</span></span>
+            </label>
+            <label style="display: flex; gap: 11px; align-items: flex-start; cursor: pointer; font: 400 14px/1.6 inherit; color: #3D3336; min-height: 44px; padding: 10px 0">
+              <span style="width: 20px; height: 20px; border-radius: 6px; background: #FF6060; display: flex; align-items: center; justify-content: center; color: #FFFFFF; font-size: 12px; font-weight: 700; flex-shrink: 0; margin-top: 1px">✓</span>
+              <span>Tôi đồng ý với việc thu thập và sử dụng thông tin cá nhân <span style="color: #ED4747">*</span></span>
+            </label>
+          </div>
+
+          <button style="width: 100%; border: 0; cursor: pointer; background: #FF6060; color: #FFFFFF; font-size: 16px; font-weight: 700; padding: 16px; border-radius: 999px; min-height: 52px; display: flex; align-items: center; justify-content: center; gap: 8px" style-hover="background: #ED4747">Đăng ký tư vấn →</button>
+          <div style="font: 400 12px/1.55 inherit; color: #8D8286; margin-top: 14px; text-align: center">Thông tin của bạn chỉ được dùng cho mục đích tư vấn và sẽ không được chia sẻ với bên thứ ba.</div>
+        </div>
+
+        <div style="background: #FFFFFF; border: 1px solid #E8E1E2; border-radius: 14px; padding: 28px 24px">
+          <div style="font: 700 15px/1.4 inherit; color: #1A1416; margin-bottom: 22px">Quy trình 5 bước</div>
+          <div style="display: flex; flex-direction: column">
+            <div style="display: grid; grid-template-columns: 30px 1fr; gap: 14px">
+              <div style="display: flex; flex-direction: column; align-items: center; gap: 4px">
+                <span style="width: 30px; height: 30px; border-radius: 999px; background: #FF6060; color: #FFFFFF; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0">1</span>
+                <span style="width: 2px; flex: 1; background: #F0EAEB; min-height: 20px"></span>
+              </div>
+              <div style="padding-bottom: 20px">
+                <div style="font: 700 14.5px/1.45 inherit; color: #1A1416">Tư vấn</div>
+                <div style="font: 400 13px/1.6 inherit; color: #6B5F62; margin-top: 4px">Online hoặc đến trung tâm</div>
+              </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 30px 1fr; gap: 14px">
+              <div style="display: flex; flex-direction: column; align-items: center; gap: 4px">
+                <span style="width: 30px; height: 30px; border-radius: 999px; background: #FFE4E2; color: #C93333; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0">2</span>
+                <span style="width: 2px; flex: 1; background: #F0EAEB; min-height: 20px"></span>
+              </div>
+              <div style="padding-bottom: 20px">
+                <div style="font: 700 14.5px/1.45 inherit; color: #1A1416">Đăng ký</div>
+                <div style="font: 400 13px/1.6 inherit; color: #6B5F62; margin-top: 4px">Đăng ký chính thức tại trung tâm</div>
+              </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 30px 1fr; gap: 14px">
+              <div style="display: flex; flex-direction: column; align-items: center; gap: 4px">
+                <span style="width: 30px; height: 30px; border-radius: 999px; background: #FFE4E2; color: #C93333; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0">3</span>
+                <span style="width: 2px; flex: 1; background: #F0EAEB; min-height: 20px"></span>
+              </div>
+              <div style="padding-bottom: 20px">
+                <div style="font: 700 14.5px/1.45 inherit; color: #1A1416">Du học</div>
+                <div style="font: 400 13px/1.6 inherit; color: #6B5F62; margin-top: 4px">Nhập học tại trường liên kết</div>
+              </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 30px 1fr; gap: 14px">
+              <div style="display: flex; flex-direction: column; align-items: center; gap: 4px">
+                <span style="width: 30px; height: 30px; border-radius: 999px; background: #FFE4E2; color: #C93333; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0">4</span>
+                <span style="width: 2px; flex: 1; background: #F0EAEB; min-height: 20px"></span>
+              </div>
+              <div style="padding-bottom: 20px">
+                <div style="font: 700 14.5px/1.45 inherit; color: #1A1416">Kết nối việc làm</div>
+                <div style="font: 400 13px/1.6 inherit; color: #6B5F62; margin-top: 4px">Kết nối nhà tuyển dụng trước khi tốt nghiệp</div>
+              </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 30px 1fr; gap: 14px">
+              <div><span style="width: 30px; height: 30px; border-radius: 999px; background: #FFE4E2; color: #C93333; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0">5</span></div>
+              <div>
+                <div style="font: 700 14.5px/1.45 inherit; color: #1A1416">Có việc làm</div>
+                <div style="font: 400 13px/1.6 inherit; color: #6B5F62; margin-top: 4px">Bắt đầu cuộc sống ổn định tại Hàn Quốc</div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid #F0EAEB">
+            <div style="font: 500 12px/1.55 inherit; color: #8D8286; margin-bottom: 6px">Liên hệ trực tiếp</div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #1A1416; line-height: 1.7">0977.456.324</div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #6B5F62; line-height: 1.7">Zalo +82-10-2256-8724</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 에러 상태 · 모바일 비교 ─────────────────────── -->
+  <div style="background: #FFFFFF">
+    <div style="max-width: 1120px; margin: 0 auto; padding: 96px 32px">
+      <div style="font: 700 12px/1.4 inherit; letter-spacing: 0.1em; color: #ED4747; margin-bottom: 14px">참고 — 상태 &amp; 모바일</div>
+      <h2 style="font: 700 34px/1.22 inherit; letter-spacing: -0.02em; color: #1A1416; margin: 0 0 40px">검증 상태와 375px 폭</h2>
+      <div style="display: grid; grid-template-columns: 1fr 375px; gap: 40px; align-items: start">
+
+        <div style="display: flex; flex-direction: column; gap: 24px">
+          <div style="background: #FFFFFF; border: 1px solid #E8E1E2; border-radius: 14px; padding: 24px">
+            <div style="font: 700 13px/1.4 inherit; color: #1A1416; margin-bottom: 18px">폼 검증 — blur 시점에 실행</div>
+            <div style="display: flex; flex-direction: column; gap: 20px">
+              <div>
+                <label style="display: block; font: 600 13px/1.5 inherit; color: #3D3336; margin-bottom: 8px">Số điện thoại <span style="color: #ED4747">*</span></label>
+                <input type="text" value="0977" style="width: 100%; font-family: 'JetBrains Mono', monospace; font-size: 15px; color: #1A1416; padding: 13px 14px; border: 2px solid #B32424; border-radius: 10px; background: #FCEDED; min-height: 48px; outline: none">
+                <div style="display: flex; gap: 7px; font: 500 12.5px/1.5 inherit; color: #B32424; margin-top: 7px"><span style="font-weight: 700">!</span><span>Số điện thoại phải có 10 chữ số.</span></div>
+              </div>
+              <div>
+                <label style="display: block; font: 600 13px/1.5 inherit; color: #3D3336; margin-bottom: 8px">Họ và tên <span style="color: #ED4747">*</span></label>
+                <input type="text" value="Nguyễn Thị Huyền" style="width: 100%; font-size: 15px; color: #1A1416; padding: 13px 14px; border: 1.5px solid #E8E1E2; border-radius: 10px; background: #FFFFFF; min-height: 48px; outline: none">
+                <div style="font: 400 12.5px/1.5 inherit; color: #8D8286; margin-top: 7px">통과한 필드는 초록 표시를 붙이지 않습니다 — 에러만 눈에 보이면 됩니다.</div>
+              </div>
+            </div>
+          </div>
+          <div style="background: #FFFFFF; border: 1px solid #E8E1E2; border-radius: 14px; padding: 24px">
+            <div style="font: 700 13px/1.4 inherit; color: #1A1416; margin-bottom: 8px">제출 성공 — 폼을 대체하는 블록</div>
+            <div style="background: #E7F4F0; border: 1px solid #C6E4DB; border-radius: 12px; padding: 22px; margin-top: 14px">
+              <div style="font: 700 11px/1.4 inherit; letter-spacing: 0.08em; color: #0E6E56; margin-bottom: 10px">ĐÃ GỬI</div>
+              <div style="font: 700 18px/1.45 inherit; color: #0B4F3E; margin-bottom: 8px">Cảm ơn bạn đã đăng ký</div>
+              <div style="font: 400 14px/1.65 inherit; color: #14705B">Nhân viên tư vấn sẽ liên hệ bạn qua Zalo trong vòng 24 giờ.</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div style="font: 700 11px/1.4 inherit; letter-spacing: 0.08em; color: #8D8286; margin-bottom: 12px">375PX — 1열 · 좌우 20PX</div>
+          <div style="width: 375px; border: 1px solid #E8E1E2; border-radius: 20px; overflow: hidden; background: #FDFAFA; position: relative">
+            <div style="height: 56px; border-bottom: 1px solid #E8E1E2; background: #FFFFFF; display: flex; align-items: center; padding: 0 20px; gap: 12px">
+              <img src="774e8d30-e763-496e-a428-1128769fac5a" alt="GLOCARE" style="height: 18px; width: auto; display: block">
+              <div style="margin-left: auto; display: flex; gap: 3px; border: 1px solid #E8E1E2; border-radius: 999px; padding: 2px">
+                <span style="font-size: 11px; font-weight: 700; color: #FFFFFF; background: #1A1416; padding: 6px 10px; border-radius: 999px">VI</span>
+                <span style="font-size: 11px; font-weight: 600; color: #6B5F62; padding: 6px 10px; border-radius: 999px">KO</span>
+              </div>
+              <div style="width: 24px; height: 16px; display: flex; flex-direction: column; justify-content: space-between; flex-shrink: 0">
+                <span style="height: 2px; background: #1A1416; border-radius: 2px"></span>
+                <span style="height: 2px; background: #1A1416; border-radius: 2px"></span>
+                <span style="height: 2px; background: #1A1416; border-radius: 2px"></span>
+              </div>
+            </div>
+            <div style="padding: 32px 20px 56px">
+              <div style="display: inline-block; border: 1px solid #C4BBBD; color: #6B5F62; font-size: 11px; font-weight: 600; padding: 5px 11px; border-radius: 999px; margin-bottom: 20px">Du học có việc làm đảm bảo</div>
+              <h1 style="font: 800 34px/1.2 inherit; letter-spacing: -0.02em; color: #1A1416; margin: 0 0 14px"><em style="font-style: normal; color: #ED4747">Học tại Hàn Quốc</em> — có việc làm ngay khi tốt nghiệp</h1>
+              <p style="font: 400 16px/1.65 inherit; color: #6B5F62; margin: 0 0 24px">Từ tư vấn, du học đến việc làm ổn định tại Hàn Quốc.</p>
+              <div style="display: flex; flex-direction: column; gap: 10px">
+                <a href="#apply" style="background: #FF6060; color: #FFFFFF; font-size: 15px; font-weight: 700; padding: 15px; border-radius: 999px; min-height: 52px; display: flex; align-items: center; justify-content: center; text-decoration: none" style-hover="background: #ED4747; color: #FFFFFF; text-decoration: none">Đăng ký tư vấn miễn phí</a>
+                <a href="#about" style="background: #FFFFFF; color: #1A1416; border: 1.5px solid #C4BBBD; font-size: 15px; font-weight: 600; padding: 14px; border-radius: 999px; min-height: 52px; display: flex; align-items: center; justify-content: center; text-decoration: none" style-hover="border-color: #1A1416; color: #1A1416; text-decoration: none">Giới thiệu GLOCARE</a>
+              </div>
+            </div>
+            <div style="border-top: 1px solid #E8E1E2; background: #FFFFFF; padding: 28px 20px">
+              <div style="font: 700 11px/1.4 inherit; letter-spacing: 0.1em; color: #ED4747; margin-bottom: 10px">TRƯỜNG ĐH &amp; NGÀNH HỌC</div>
+              <h2 style="font: 700 26px/1.28 inherit; letter-spacing: -0.02em; color: #1A1416; margin: 0 0 24px">Trường đại học <em style="font-style: normal; color: #ED4747">chuyên về việc làm</em></h2>
+              <div style="background: #FFFFFF; border: 1px solid #E8E1E2; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 14px">
+                <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px">
+                  <div style="width: 44px; height: 44px; border-radius: 10px; background: #F7F3F3; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #8D8286; text-align: center; line-height: 1.25; flex-shrink: 0">로고<br>44</div>
+                  <span style="background: #FF6060; color: #FFFFFF; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; padding: 4px 9px; border-radius: 6px">HOT</span>
+                </div>
+                <div>
+                  <div style="font: 500 12px/1.55 inherit; color: #8D8286; margin-bottom: 5px">TP. Suwon, Gyeonggi</div>
+                  <div style="font: 700 19px/1.38 inherit; letter-spacing: -0.012em; color: #1A1416">Cao đẳng Y tế Dongnam</div>
+                </div>
+                <div style="display: flex; align-items: baseline; gap: 9px; padding: 13px 0; border-top: 1px solid #F0EAEB; border-bottom: 1px solid #F0EAEB; font: 400 14px/1.55 inherit"><span style="width: 5px; height: 5px; border-radius: 999px; background: #FF6060; flex-shrink: 0; transform: translateY(-3px)"></span><span style="color: #3D3336">Chăm sóc sức khỏe toàn cầu</span></div>
+                <div style="display: flex; gap: 6px; flex-wrap: wrap">
+                  <span style="background: #F7F3F3; color: #3D3336; font-size: 11.5px; font-weight: 600; padding: 4px 9px; border-radius: 6px">hỗ trợ việc làm</span>
+                  <span style="background: #F7F3F3; color: #3D3336; font-size: 11.5px; font-weight: 600; padding: 4px 9px; border-radius: 6px">hỗ trợ visa</span>
+                </div>
+              </div>
+            </div>
+            <div style="position: absolute; bottom: 20px; right: 20px; width: 56px; height: 56px; border-radius: 999px; background: #FF6060; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; box-shadow: 0 12px 32px rgba(255,96,96,0.32)">Zalo</div>
+          </div>
+          <div style="font: 400 12.5px/1.6 inherit; color: #8D8286; margin-top: 14px">플로팅은 Zalo 하나만. 전화번호는 탭하면 그 위로 펼쳐집니다.</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- 푸터 -->
+  <div style="background: #1A1416; color: #C4BBBD">
+    <div style="max-width: 1120px; margin: 0 auto; padding: 56px 32px">
+      <div style="display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 32px">
+        <div>
+          <img src="774e8d30-e763-496e-a428-1128769fac5a" alt="GLOCARE" style="height: 20px; width: auto; display: block; margin-bottom: 16px">
+          <div style="font: 400 13.5px/1.7 inherit; color: #8D8286; max-width: 34ch">Chuyên kết nối các trường đại học Hàn Quốc chuyên về việc làm cho người nước ngoài với các trung tâm du học tại Việt Nam.</div>
+        </div>
+        <div>
+          <div style="font: 700 11px/1.4 inherit; letter-spacing: 0.08em; color: #FFFFFF; margin-bottom: 14px">DỊCH VỤ</div>
+          <div style="display: flex; flex-direction: column; gap: 10px; font-size: 13.5px">
+            <a href="#cases" style="color: #C4BBBD">Câu chuyện thành công</a>
+            <a href="#universities" style="color: #C4BBBD">Trường ĐH liên kết</a>
+            <a href="#apply" style="color: #C4BBBD">Đăng ký tư vấn</a>
+          </div>
+        </div>
+        <div>
+          <div style="font: 700 11px/1.4 inherit; letter-spacing: 0.08em; color: #FFFFFF; margin-bottom: 14px">CÔNG TY</div>
+          <div style="display: flex; flex-direction: column; gap: 10px; font-size: 13.5px">
+            <a href="#about" style="color: #C4BBBD">Giới thiệu GLOCARE</a>
+            <a href="#about" style="color: #C4BBBD">Hợp tác đối tác</a>
+          </div>
+        </div>
+        <div>
+          <div style="font: 700 11px/1.4 inherit; letter-spacing: 0.08em; color: #FFFFFF; margin-bottom: 14px">LIÊN HỆ</div>
+          <div style="display: flex; flex-direction: column; gap: 10px; font-size: 13.5px; color: #8D8286">
+            <div><span style="color: #6B5F62">Email</span> help@glocare.co.kr</div>
+            <div><span style="color: #6B5F62">Điện thoại</span> <span style="font-family: 'JetBrains Mono', monospace; font-size: 12.5px">0977.456.324</span></div>
+            <div><span style="color: #6B5F62">Zalo</span> <span style="font-family: 'JetBrains Mono', monospace; font-size: 12.5px">+82-10-2256-8724</span></div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top: 40px; padding-top: 24px; border-top: 1px solid #3D3336; display: flex; gap: 20px; flex-wrap: wrap; font-size: 12.5px; color: #6B5F62">
+        <span>© 2025 GLOCARE. Bảo lưu mọi quyền.</span>
+        <span style="margin-left: auto; display: flex; gap: 18px"><a href="#privacy" style="color: #8D8286">Chính sách bảo mật</a><a href="#terms" style="color: #8D8286">Điều khoản sử dụng</a></span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</x-dc>
+
+
+</body></html>

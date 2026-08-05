@@ -34,9 +34,18 @@ type Strings = {
   fnote: string;
   successTitle: string;
   successDesc: string;
-  proc: { ico: string; lbl: string; sub: string }[];
+  successEyebrow: string;
+  procTitle: string;
+  proc: { lbl: string; sub: string }[];
+  contactLabel: string;
 };
 
+/**
+ * 상담 신청 — 디자인 시스템 골격.
+ *   폼이 섹션의 첫 요소(스텝 다이어그램은 옆 카드로 내림).
+ *   필드 높이 48px · 간격 20px · 라벨은 항상 위 · 필수는 라벨 뒤 * 하나.
+ *   제출 성공은 alert 이 아니라 폼을 대체하는 블록.
+ */
 export function Apply({ strings }: { strings: Strings }) {
   const [pending, startTransition] = useTransition();
   const [done, setDone] = useState(false);
@@ -62,7 +71,6 @@ export function Apply({ strings }: { strings: Strings }) {
       const r = await submitContact(input);
       if (r.ok) {
         setDone(true);
-        toast.success(strings.successTitle);
       } else {
         toast.error(r.error);
       }
@@ -72,140 +80,179 @@ export function Apply({ strings }: { strings: Strings }) {
   return (
     <section id="apply" className="section">
       <div className="sec-inner">
-        <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
-          <div
-            className="sec-eyebrow"
-            style={{ margin: "0 auto 1rem" }}
-          >
-            {strings.eyebrow}
-          </div>
-          <h2 className="sec-title" style={{ marginBottom: "0.5rem" }}>
+        <div className="sec-head">
+          <div className="sec-eyebrow">{strings.eyebrow}</div>
+          <h2 className="sec-title">
             {strings.titlePrefix}
             <em>{strings.titleEm}</em>
             {strings.titleSuffix}
           </h2>
-          <p
-            className="sec-desc"
-            style={{ margin: "0 auto", textAlign: "center" }}
-          >
-            {strings.desc}
-          </p>
+          <p className="sec-desc">{strings.desc}</p>
         </div>
 
-        <div className="form-wrap" id="apply-contact">
-          <div className="form-ttl">{strings.formTitle}</div>
-          <div className="form-sub">{strings.formSub}</div>
-
-          {done ? (
-            <div className="ins-success">
-              <div className="ins-success-ico">✓</div>
-              <div className="ins-success-title">{strings.successTitle}</div>
-              <div className="ins-success-desc">{strings.successDesc}</div>
-            </div>
-          ) : (
-            <form onSubmit={onSubmit}>
-              <div className="form-grid">
-                <div className="fg">
-                  <label className="flbl">{strings.fName} *</label>
-                  <input
-                    name="name"
-                    className="finput"
-                    required
-                    placeholder={strings.fNamePh}
-                  />
-                </div>
-                <div className="fg">
-                  <label className="flbl">{strings.fPhone} *</label>
-                  <input
-                    name="phone"
-                    type="tel"
-                    className="finput"
-                    required
-                    placeholder={strings.fPhonePh}
-                  />
-                </div>
-                <div className="fg">
-                  <label className="flbl">{strings.fEmail}</label>
-                  <input
-                    name="email"
-                    className="finput"
-                    placeholder={strings.fEmailPh}
-                  />
-                </div>
-                <div className="fg">
-                  <label className="flbl">{strings.fAge}</label>
-                  <input
-                    name="age"
-                    type="number"
-                    className="finput"
-                    placeholder="22"
-                  />
-                </div>
-                <div className="fg">
-                  <label className="flbl">{strings.fDept}</label>
-                  <select name="dept" className="fsel" defaultValue="">
-                    <option value="">{strings.fDeptPh}</option>
-                    {strings.deptOptions.map((o) => (
-                      <option key={o.value} value={o.value}>
-                        {o.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="fg full">
-                  <label className="flbl">{strings.fCenter}</label>
-                  <select name="center" className="fsel" defaultValue="">
-                    <option value="">{strings.fCenterPh}</option>
-                    {VIETNAM_PROVINCES.map((p) => (
-                      <option key={p} value={p}>
-                        {p}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="fg full">
-                  <label className="flbl">{strings.fMessage}</label>
-                  <textarea
-                    name="message"
-                    className="ftxt"
-                    placeholder={strings.fMessagePh}
-                  />
-                </div>
-                <div className="fg full">
-                  <label className="fcheck">
-                    <input type="checkbox" name="recruiting" />
-                    <span>{strings.fRecruit}</span>
-                  </label>
-                </div>
-                <div className="fg full">
-                  <label className="fcheck">
-                    <input type="checkbox" name="agree" required />
-                    <span>{strings.fAgree} *</span>
-                  </label>
-                </div>
+        <div className="apply-grid">
+          <div className="form-wrap" id="apply-contact">
+            {done ? (
+              <div className="gc-success">
+                <div className="gc-success-eyebrow">{strings.successEyebrow}</div>
+                <div className="gc-success-title">{strings.successTitle}</div>
+                <div className="gc-success-desc">{strings.successDesc}</div>
               </div>
-              <button type="submit" className="fsub" disabled={pending}>
-                {pending ? "..." : strings.submit}
-              </button>
-              <p className="fnote">{strings.fnote}</p>
-            </form>
-          )}
-        </div>
+            ) : (
+              <>
+                <div className="form-ttl">{strings.formTitle}</div>
+                <div className="form-sub">{strings.formSub}</div>
 
-        <div className="process-strip">
-          {strings.proc.map((p, i) => (
-            <div key={i} className="proc-step">
-              <div className="proc-ico">{p.ico}</div>
-              <div className="proc-lbl">{p.lbl}</div>
-              <div
-                className="proc-sub"
-                dangerouslySetInnerHTML={{ __html: p.sub }}
-              />
-              {i < strings.proc.length - 1 && (
-                <div className="proc-arr">›</div>
-              )}
+                <form onSubmit={onSubmit}>
+                  <div className="form-grid">
+                    <div className="fg">
+                      <label className="flbl" htmlFor="ap-name">
+                        {strings.fName} <span className="gc-req">*</span>
+                      </label>
+                      <input
+                        id="ap-name"
+                        name="name"
+                        className="finput"
+                        required
+                        placeholder={strings.fNamePh}
+                      />
+                    </div>
+                    <div className="fg">
+                      <label className="flbl" htmlFor="ap-phone">
+                        {strings.fPhone} <span className="gc-req">*</span>
+                      </label>
+                      <input
+                        id="ap-phone"
+                        name="phone"
+                        type="tel"
+                        inputMode="tel"
+                        className="finput gc-mono"
+                        required
+                        placeholder={strings.fPhonePh}
+                      />
+                    </div>
+                    <div className="fg">
+                      <label className="flbl" htmlFor="ap-email">
+                        {strings.fEmail}
+                      </label>
+                      <input
+                        id="ap-email"
+                        name="email"
+                        className="finput"
+                        placeholder={strings.fEmailPh}
+                      />
+                    </div>
+                    <div className="fg">
+                      <label className="flbl" htmlFor="ap-age">
+                        {strings.fAge}
+                      </label>
+                      <input
+                        id="ap-age"
+                        name="age"
+                        type="number"
+                        inputMode="numeric"
+                        className="finput gc-mono"
+                        placeholder="22"
+                      />
+                    </div>
+                    <div className="fg">
+                      <label className="flbl" htmlFor="ap-dept">
+                        {strings.fDept}
+                      </label>
+                      <select
+                        id="ap-dept"
+                        name="dept"
+                        className="fsel"
+                        defaultValue=""
+                      >
+                        <option value="">{strings.fDeptPh}</option>
+                        {strings.deptOptions.map((o) => (
+                          <option key={o.value} value={o.value}>
+                            {o.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="fg">
+                      <label className="flbl" htmlFor="ap-center">
+                        {strings.fCenter}
+                      </label>
+                      <select
+                        id="ap-center"
+                        name="center"
+                        className="fsel"
+                        defaultValue=""
+                      >
+                        <option value="">{strings.fCenterPh}</option>
+                        {VIETNAM_PROVINCES.map((p) => (
+                          <option key={p} value={p}>
+                            {p}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="fg full">
+                      <label className="flbl" htmlFor="ap-msg">
+                        {strings.fMessage}
+                      </label>
+                      <textarea
+                        id="ap-msg"
+                        name="message"
+                        rows={3}
+                        className="ftxt"
+                        placeholder={strings.fMessagePh}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-consent">
+                    <label className="fcheck">
+                      <input type="checkbox" name="recruiting" />
+                      <span>{strings.fRecruit}</span>
+                    </label>
+                    <label className="fcheck">
+                      <input type="checkbox" name="agree" required />
+                      <span>
+                        {strings.fAgree} <span className="gc-req">*</span>
+                      </span>
+                    </label>
+                  </div>
+
+                  <button type="submit" className="fsub" disabled={pending}>
+                    {strings.submit}
+                  </button>
+                  <p className="fnote">{strings.fnote}</p>
+                </form>
+              </>
+            )}
+          </div>
+
+          {/* 절차 — 번호 원 1..N. 이모지 아이콘은 순서 정보를 담지 못한다. */}
+          <aside className="process-card">
+            <div className="process-card-ttl">{strings.procTitle}</div>
+            <div className="gc-steps">
+              {strings.proc.map((p, i) => (
+                <div key={i} className="gc-step">
+                  <div className="gc-step-rail">
+                    <span className="gc-step-num">{i + 1}</span>
+                    {i < strings.proc.length - 1 && (
+                      <span className="gc-step-line" />
+                    )}
+                  </div>
+                  <div className="gc-step-body">
+                    <div className="gc-step-title">{p.lbl}</div>
+                    <div className="gc-step-desc">{p.sub}</div>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+
+            <div className="process-contact">
+              <div className="process-contact-l">{strings.contactLabel}</div>
+              <div className="process-contact-v">0977.456.324</div>
+              <div className="process-contact-v sub">Zalo +82-10-2256-8724</div>
+            </div>
+          </aside>
         </div>
       </div>
     </section>

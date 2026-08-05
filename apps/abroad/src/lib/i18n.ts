@@ -26,16 +26,20 @@ const koDict = {
     "nav.centers": "협력 유학센터",
     "nav.about": "글로케어",
     "nav.student": "유학 지원 (학생)",
+    "nav.student.short": "유학 지원",
     "nav.apply": "상담 신청 →",
 
-    "hero.badge": "취업 보장 유학",
+    "hero.badge": "베트남 → 한국 · 취업 보장 유학",
     "hero.title.em": "한국에서 배우고",
     "hero.title.line2": "— 졸업 후 바로 취업",
     "hero.subtitle":
       "대학 찾기부터 지원·서류 작성까지 — 한국 유학을 직접 시작하세요.",
-    "hero.cta.student": "유학 지원 시작 →",
+    "hero.cta.student": "유학 지원 시작",
     "hero.cta.primary": "무료 상담 신청",
     "hero.cta.about": "글로케어 소개",
+    "hero.stat.universities": "제휴 대학",
+    "hero.stat.centers": "베트남 협력 센터",
+    "hero.stat.support": "비자 · 취업 지원",
 
     "section.cases.eyebrow": "취업 사례",
     "section.cases.title.prefix": "실제 ",
@@ -57,6 +61,7 @@ const koDict = {
     "section.centers.title.suffix": "",
     "section.centers.desc":
       "가까운 글로케어 협력 유학센터를 선택해 방문 상담을 진행하세요.",
+    "section.centers.updating": "정보 준비 중입니다.",
 
     "footer.tagline":
       "외국인 취업 특화 한국 대학·학과 선별 및 베트남 현지 유학센터 연결 전문 기업",
@@ -66,6 +71,8 @@ const koDict = {
     "footer.about": "글로케어 소개",
     "footer.partner": "파트너십 문의",
     "footer.copyright": "© 2025 글로케어(GloCare). All rights reserved.",
+    "footer.k.phone": "전화",
+    "footer.center": "관리자 센터",
     "footer.privacy": "개인정보처리방침",
     "footer.terms": "이용약관",
 
@@ -111,16 +118,20 @@ const viDict: DictShape = {
     "nav.centers": "Trung tâm du học",
     "nav.about": "Về GLOCARE",
     "nav.student": "Du học (Sinh viên)",
+    "nav.student.short": "Đăng ký du học",
     "nav.apply": "Đăng ký tư vấn →",
 
-    "hero.badge": "Du học có việc làm đảm bảo",
+    "hero.badge": "Việt Nam → Hàn Quốc · Du học có việc làm đảm bảo",
     "hero.title.em": "Học tại Hàn Quốc",
     "hero.title.line2": "— Có việc làm ngay khi tốt nghiệp",
     "hero.subtitle":
       "Từ tìm trường đến đăng ký & soạn hồ sơ — bắt đầu du học Hàn Quốc ngay hôm nay.",
-    "hero.cta.student": "Bắt đầu đăng ký du học →",
+    "hero.cta.student": "Bắt đầu đăng ký du học",
     "hero.cta.primary": "Đăng ký tư vấn miễn phí",
     "hero.cta.about": "Giới thiệu GLOCARE",
+    "hero.stat.universities": "Trường đại học liên kết",
+    "hero.stat.centers": "Trung tâm tại Việt Nam",
+    "hero.stat.support": "Hỗ trợ visa & việc làm",
 
     "section.cases.eyebrow": "Câu chuyện thành công",
     "section.cases.title.prefix": "Những người đã ",
@@ -142,6 +153,7 @@ const viDict: DictShape = {
     "section.centers.title.suffix": "",
     "section.centers.desc":
       "Hãy chọn trung tâm GLOCARE gần bạn nhất để được tư vấn trực tiếp.",
+    "section.centers.updating": "Đang cập nhật.",
 
     "footer.tagline":
       "Chuyên kết nối các trường đại học Hàn Quốc chuyên về việc làm cho người nước ngoài với các trung tâm du học tại Việt Nam.",
@@ -151,6 +163,8 @@ const viDict: DictShape = {
     "footer.about": "Giới thiệu GLOCARE",
     "footer.partner": "Hợp tác đối tác",
     "footer.copyright": "© 2025 GLOCARE. Bảo lưu mọi quyền.",
+    "footer.k.phone": "Điện thoại",
+    "footer.center": "Trung tâm quản trị",
     "footer.privacy": "Chính sách bảo mật",
     "footer.terms": "Điều khoản sử dụng",
 

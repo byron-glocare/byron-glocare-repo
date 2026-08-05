@@ -6,7 +6,6 @@ import { toast } from "sonner";
 import { submitContact } from "@/app/actions/contacts";
 
 type PartnerType = {
-  ico: string;
   name: string;
   desc: string;
   value: string;
@@ -73,20 +72,9 @@ export function PartnerForm({ strings }: { strings: Strings }) {
   if (done) {
     return (
       <div className="partner-form">
-        <div style={{ textAlign: "center", padding: "2.5rem" }}>
-          <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>🎉</div>
-          <div
-            style={{
-              fontSize: "1.2rem",
-              fontWeight: 700,
-              marginBottom: ".5rem",
-            }}
-          >
-            {strings.successTitle}
-          </div>
-          <div style={{ color: "var(--ink-light)", fontSize: ".9rem" }}>
-            {strings.successDesc}
-          </div>
+        <div className="gc-success">
+          <div className="gc-success-title">{strings.successTitle}</div>
+          <div className="gc-success-desc">{strings.successDesc}</div>
         </div>
       </div>
     );
@@ -101,7 +89,6 @@ export function PartnerForm({ strings }: { strings: Strings }) {
             className={`ptype-card${type === tp.value ? " on" : ""}`}
             onClick={() => setType(tp.value)}
           >
-            <div className="ptype-ico">{tp.ico}</div>
             <div className="ptype-name">{tp.name}</div>
             <div className="ptype-desc">{tp.desc}</div>
           </div>

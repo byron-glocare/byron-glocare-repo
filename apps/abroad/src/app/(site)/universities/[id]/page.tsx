@@ -1,9 +1,16 @@
 import { notFound } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
-import { getDict, getLocale } from "@/lib/i18n";
+import { getDict, getLocale, tr } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
+
+function initials(name: string): string {
+  const words = (name ?? "").trim().split(/\s+/).filter(Boolean);
+  if (words.length === 0) return "—";
+  if (words.length === 1) return words[0].slice(0, 2).toUpperCase();
+  return (words[0][0] + words[words.length - 1][0]).toUpperCase();
+}
 
 export default async function UniversityDetailPage({
   params,
@@ -30,129 +37,134 @@ export default async function UniversityDetailPage({
     .order("sort_order")
     .order("id");
 
-  const name = locale === "vi" ? (u.name_vi ?? u.name_ko) : u.name_ko;
+  const name = (locale === "vi" ? (u.name_vi ?? u.name_ko) : u.name_ko) ?? "";
   const region = locale === "vi" ? (u.region_vi ?? u.region_ko) : u.region_ko;
   const desc = locale === "vi" ? (u.desc_vi ?? u.desc_ko) : u.desc_ko;
 
+  const facts = [
+    { k: tr(locale, "강점", "Điểm mạnh"), v: u.strengths },
+    {
+      k: tr(locale, "교통", "Giao thông"),
+      v:
+        locale === "vi"
+          ? (u.transport_desc_vi ?? u.transport_desc_ko)
+          : u.transport_desc_ko,
+    },
+    {
+      k: tr(locale, "기숙사", "Ký túc xá"),
+      v: u.dormitory
+        ? locale === "vi"
+          ? (u.dormitory_desc_vi ?? u.dormitory_desc_ko)
+          : u.dormitory_desc_ko
+        : null,
+    },
+    {
+      k: tr(locale, "수업일", "Ngày học"),
+      v: locale === "vi" ? (u.class_days_vi ?? u.class_days_ko) : u.class_days_ko,
+    },
+  ].filter((f) => f.v);
+
   return (
-    <div className="mx-auto max-w-4xl px-4 py-12">
-      <header className="mb-10 text-center">
-        <div className="text-5xl mb-3">{u.emoji ?? "🎓"}</div>
-        <h1 className="text-3xl font-bold mb-1">{name}</h1>
-        <p className="text-muted-foreground">{region}</p>
-        {u.website_url && (
-          <a
-            href={u.website_url}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-block mt-3 text-sm text-primary hover:underline"
-          >
-            {u.website_url} ↗
-          </a>
-        )}
-      </header>
-
-      {desc && (
-        <section className="prose prose-sm max-w-none mb-10 whitespace-pre-line text-foreground">
-          {desc}
-        </section>
-      )}
-
-      <div className="grid gap-4 sm:grid-cols-2 mb-10">
-        <Card title="📚 강점 / Strengths">
-          {u.strengths || "—"}
-        </Card>
-        <Card title="🚉 교통 / Giao thông">
-          {locale === "vi"
-            ? (u.transport_desc_vi ?? u.transport_desc_ko)
-            : u.transport_desc_ko}
-        </Card>
-        <Card title="🏠 기숙사 / Ký túc xá">
-          {u.dormitory ? (
-            locale === "vi"
-              ? (u.dormitory_desc_vi ?? u.dormitory_desc_ko)
-              : u.dormitory_desc_ko
-          ) : (
-            "—"
+    <section className="section">
+      <div className="sec-inner">
+        <div className="sec-head">
+          <div className="gc-logo" style={{ marginBottom: 16 }}>
+            {u.logo_url ? (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img src={u.logo_url} alt="" />
+            ) : (
+              initials(name)
+            )}
+          </div>
+          {region && <div className="sec-eyebrow">{region}</div>}
+          <h1 className="sec-title">{name}</h1>
+          {desc && (
+            <p className="sec-desc" style={{ whiteSpace: "pre-line" }}>
+              {desc}
+            </p>
           )}
-        </Card>
-        <Card title="📅 수업일 / Ngày học">
-          {locale === "vi"
-            ? (u.class_days_vi ?? u.class_days_ko)
-            : u.class_days_ko}
-        </Card>
-      </div>
+          {u.website_url && (
+            <a
+              href={u.website_url}
+              target="_blank"
+              rel="noreferrer"
+              className="gc-btn gc-btn-ghost"
+              style={{ paddingLeft: 0, marginTop: 8 }}
+            >
+              {u.website_url}
+              <span className="arrow" aria-hidden>
+                →
+              </span>
+            </a>
+          )}
+        </div>
 
-      {depts && depts.length > 0 && (
-        <section>
-          <h2 className="text-xl font-bold mb-4">학과 / Ngành học</h2>
-          <div className="grid gap-3 sm:grid-cols-2">
-            {depts.map((d) => (
-              <div
-                key={d.id}
-                className="rounded-lg border border-border/60 bg-card p-4"
-              >
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xl">{d.icon ?? "📘"}</span>
-                  <div className="font-medium">
-                    {locale === "vi" ? (d.name_vi ?? d.name_ko) : d.name_ko}
-                  </div>
-                  {d.badge && (
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-warning/10 text-warning border border-warning/20">
-                      {d.badge}
-                    </span>
-                  )}
-                </div>
-                <div className="text-xs text-muted-foreground space-y-0.5">
-                  {d.degree_years && <div>학년: {d.degree_years}</div>}
-                  {d.tuition_ko && (
-                    <div>
-                      💰{" "}
-                      {locale === "vi"
-                        ? (d.tuition_vi ?? d.tuition_ko)
-                        : d.tuition_ko}
-                    </div>
-                  )}
-                  {d.scholarship_ko && (
-                    <div>
-                      🎓{" "}
-                      {locale === "vi"
-                        ? (d.scholarship_vi ?? d.scholarship_ko)
-                        : d.scholarship_ko}
-                    </div>
-                  )}
-                </div>
+        {facts.length > 0 && (
+          <div className="gc-grid gc-grid-2" style={{ marginBottom: 40 }}>
+            {facts.map((f) => (
+              <div key={f.k} className="gc-card">
+                <div className="gc-eyebrow-sm">{f.k}</div>
+                <div style={{ marginTop: 6 }}>{f.v}</div>
               </div>
             ))}
           </div>
-        </section>
-      )}
+        )}
 
-      <div className="text-center mt-12">
-        <a
-          href="/apply"
-          className="inline-flex h-11 items-center rounded-md bg-primary px-6 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
-        >
-          {t["nav.apply"]}
-        </a>
-      </div>
-    </div>
-  );
-}
+        {depts && depts.length > 0 && (
+          <>
+            <h2 className="sec-title" style={{ fontSize: 21, marginBottom: 16 }}>
+              {tr(locale, "학과", "Ngành học")}
+            </h2>
+            <div className="gc-grid gc-grid-2">
+              {depts.map((d) => (
+                <div key={d.id} className="gc-card">
+                  <div className="gc-card-head">
+                    <div className="gc-card-title" style={{ fontSize: 16 }}>
+                      {locale === "vi" ? (d.name_vi ?? d.name_ko) : d.name_ko}
+                    </div>
+                    {d.badge === "hot" && (
+                      <span className="gc-badge gc-badge-solid">
+                        {tr(locale, "인기", "HOT")}
+                      </span>
+                    )}
+                  </div>
+                  <div className="gc-step-desc" style={{ marginTop: 10 }}>
+                    {d.degree_years != null && (
+                      <div>
+                        {tr(locale, "수학 기간", "Thời gian học")}:{" "}
+                        {d.degree_years}
+                        {tr(locale, "년", " năm")}
+                      </div>
+                    )}
+                    {d.tuition_ko && (
+                      <div>
+                        {tr(locale, "등록금", "Học phí")}:{" "}
+                        {locale === "vi"
+                          ? (d.tuition_vi ?? d.tuition_ko)
+                          : d.tuition_ko}
+                      </div>
+                    )}
+                    {d.scholarship_ko && (
+                      <div>
+                        {tr(locale, "장학금", "Học bổng")}:{" "}
+                        {locale === "vi"
+                          ? (d.scholarship_vi ?? d.scholarship_ko)
+                          : d.scholarship_ko}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
 
-function Card({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="rounded-lg border border-border/60 bg-card p-4">
-      <div className="text-xs font-medium text-muted-foreground mb-1.5">
-        {title}
+        <div style={{ marginTop: 40 }}>
+          <a href="/#apply" className="btn-coral">
+            {t["nav.apply"]}
+          </a>
+        </div>
       </div>
-      <div className="text-sm">{children}</div>
-    </div>
+    </section>
   );
 }

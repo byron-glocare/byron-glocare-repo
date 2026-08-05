@@ -3,6 +3,14 @@ import { getDict, getLocale } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
+/** 센터 이름 이니셜 2자 — 국기 이모지 대체. */
+function initials(name: string): string {
+  const words = (name ?? "").trim().split(/\s+/).filter(Boolean);
+  if (words.length === 0) return "—";
+  if (words.length === 1) return words[0].slice(0, 2).toUpperCase();
+  return (words[0][0] + words[1][0]).toUpperCase();
+}
+
 export default async function CentersPage() {
   const supabase = await createClient();
   const t = await getDict();
@@ -14,47 +22,67 @@ export default async function CentersPage() {
     .order("id");
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-12">
-      <h1 className="text-3xl font-bold mb-8">{t["nav.centers"]}</h1>
-      <div className="grid gap-4 sm:grid-cols-2">
-        {(centers ?? []).map((c) => (
-          <div
-            key={c.id}
-            className="rounded-lg border border-border/60 bg-card p-5"
-          >
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-2xl">{c.flag ?? "🇻🇳"}</span>
-              <div className="font-bold">
-                {locale === "vi" ? c.name_vi : (c.name_ko ?? c.name_vi)}
+    <section className="section">
+      <div className="sec-inner">
+        <div className="sec-head">
+          <div className="sec-eyebrow">{t["section.centers.eyebrow"]}</div>
+          <h2 className="sec-title">{t["nav.centers"]}</h2>
+          <p className="sec-desc">{t["section.centers.desc"]}</p>
+        </div>
+
+        <div className="center-grid">
+          {(centers ?? []).map((c) => {
+            const name =
+              (locale === "vi" ? c.name_vi : (c.name_ko ?? c.name_vi)) ?? "";
+            const desc =
+              locale === "vi" ? (c.desc_vi ?? c.desc_ko) : c.desc_ko;
+            const years =
+              locale === "vi" ? (c.years_vi ?? c.years_ko) : c.years_ko;
+            const students =
+              locale === "vi" ? (c.students_vi ?? c.students_ko) : c.students_ko;
+
+            return (
+              <div key={c.id} className="center-card">
+                <div className="center-head">
+                  <div className="center-mark" aria-hidden>
+                    {initials(name)}
+                  </div>
+                  <div>
+                    <div className="center-name">{name}</div>
+                    {c.address && <div className="center-city">{c.address}</div>}
+                  </div>
+                </div>
+
+                <div className="center-desc">
+                  {desc || t["section.centers.updating"]}
+                </div>
+
+                <div className="gc-dotlist" style={{ gap: 6 }}>
+                  {c.phone && (
+                    <div className="cmeta">
+                      <span className="gc-k">{t["footer.k.phone"]}</span>
+                      <span className="gc-mono">{c.phone}</span>
+                    </div>
+                  )}
+                  {c.email && (
+                    <div className="cmeta">
+                      <span className="gc-k">Email</span>
+                      {c.email}
+                    </div>
+                  )}
+                </div>
+
+                {(students || years) && (
+                  <div className="center-meta">
+                    {students && <span className="cmeta">{students}</span>}
+                    {years && <span className="cmeta">{years}</span>}
+                  </div>
+                )}
               </div>
-            </div>
-            <div className="text-xs text-muted-foreground space-y-1">
-              {c.address && <div>📍 {c.address}</div>}
-              {c.phone && <div>📞 {c.phone}</div>}
-              {c.email && <div>✉ {c.email}</div>}
-              {c.years_ko && (
-                <div>
-                  📅{" "}
-                  {locale === "vi" ? (c.years_vi ?? c.years_ko) : c.years_ko}
-                </div>
-              )}
-              {c.students_ko && (
-                <div>
-                  👥{" "}
-                  {locale === "vi"
-                    ? (c.students_vi ?? c.students_ko)
-                    : c.students_ko}
-                </div>
-              )}
-            </div>
-            {c.desc_ko && (
-              <p className="mt-3 text-sm">
-                {locale === "vi" ? (c.desc_vi ?? c.desc_ko) : c.desc_ko}
-              </p>
-            )}
-          </div>
-        ))}
+            );
+          })}
+        </div>
       </div>
-    </div>
+    </section>
   );
 }
