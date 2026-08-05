@@ -71,10 +71,10 @@ export default async function StudentApplicationsPage() {
   return (
     <div className="space-y-5">
       <div>
-        <h1 className="text-xl font-bold text-slate-900">
+        <h1 className="gc-page-title">
           {tr(locale, "내 지원", "Hồ sơ của tôi")}
         </h1>
-        <p className="mt-1 text-sm text-slate-600">
+        <p className="gc-page-desc">
           {tr(
             locale,
             "지원한 대학의 서류를 작성하고 진행 상황을 확인하세요.",
@@ -84,8 +84,8 @@ export default async function StudentApplicationsPage() {
       </div>
 
       {rows.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50/60 px-4 py-10 text-center">
-          <p className="text-sm text-slate-500">
+        <div className="gc-card-dashed text-center">
+          <p className="text-sm text-ink-light">
             {tr(
               locale,
               "아직 지원한 대학이 없습니다.",
@@ -94,7 +94,7 @@ export default async function StudentApplicationsPage() {
           </p>
           <Link
             href="/student/universities"
-            className="mt-3 inline-block rounded-lg bg-coral px-4 py-2 text-xs font-medium text-white hover:bg-coral-d"
+            className="mt-3 gc-btn gc-btn-primary gc-btn-md"
           >
             {tr(locale, "대학 찾기", "Tìm trường")}
           </Link>
@@ -104,14 +104,14 @@ export default async function StudentApplicationsPage() {
           {rows.map((r) => (
             <li
               key={r.id}
-              className="rounded-xl border border-slate-200 bg-white p-4"
+              className="gc-card"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <div className="text-sm font-semibold text-slate-900">
+                  <div className="text-sm font-semibold text-ink">
                     {r.uniName}
                   </div>
-                  <div className="mt-0.5 text-xs text-slate-500">
+                  <div className="mt-0.5 text-xs text-ink-light">
                     {r.dept}
                     {r.term ? ` · ${r.term}` : ""}
                   </div>
@@ -127,26 +127,26 @@ export default async function StudentApplicationsPage() {
               <div className="mt-3 flex flex-wrap gap-2">
                 <Link
                   href="/student/data"
-                  className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
+                  className="gc-btn gc-btn-secondary gc-btn-md"
                 >
                   {tr(locale, "정보 입력", "Nhập thông tin")}
                 </Link>
                 <Link
                   href="/student/final"
-                  className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
+                  className="gc-btn gc-btn-secondary gc-btn-md"
                 >
                   {tr(locale, "작성 서류", "Hồ sơ soạn")}
                 </Link>
                 <Link
                   href="/student/documents"
-                  className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
+                  className="gc-btn gc-btn-secondary gc-btn-md"
                 >
                   {tr(locale, "서류 등록", "Tải giấy tờ")}
                 </Link>
                 {r.universityId && (
                   <Link
                     href={`/student/universities/${r.universityId}`}
-                    className="rounded-lg px-3 py-1.5 text-xs text-slate-400 hover:text-slate-600"
+                    className="gc-btn gc-btn-ghost text-ink-xlight"
                   >
                     {tr(locale, "대학 정보", "Thông tin trường")}
                   </Link>

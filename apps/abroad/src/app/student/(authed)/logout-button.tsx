@@ -16,7 +16,7 @@ export function StudentLogout({ locale }: { locale: Locale }) {
         await createClient().auth.signOut();
         window.location.href = "/student/login";
       }}
-      className="rounded-md border border-slate-300 px-2.5 py-1 text-xs text-slate-600 hover:bg-slate-50 disabled:opacity-60"
+      className="gc-btn gc-btn-secondary gc-btn-md"
     >
       {tr(locale, "로그아웃", "Đăng xuất")}
     </button>

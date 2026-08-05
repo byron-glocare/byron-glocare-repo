@@ -38,14 +38,14 @@ export default async function StudentDataPage() {
       <div>
         <Link
           href="/student/applications"
-          className="text-sm text-slate-500 hover:underline"
+          className="text-sm text-ink-light hover:underline"
         >
           {tr(locale, "← 내 지원", "← Hồ sơ của tôi")}
         </Link>
-        <h1 className="mt-2 text-xl font-bold text-slate-900">
+        <h1 className="mt-2 gc-page-title">
           {tr(locale, "정보 입력", "Nhập thông tin")}
         </h1>
-        <p className="mt-1 text-sm text-slate-600">
+        <p className="gc-page-desc">
           {tr(
             locale,
             "지원 서류에 필요한 정보입니다. 한 번 입력하면 여러 대학에 재사용됩니다. (첨부파일은 '서류 등록')",

@@ -51,10 +51,10 @@ export default async function StudentHomePage() {
   return (
     <div className="space-y-5">
       <div>
-        <h1 className="text-xl font-bold text-slate-900">
+        <h1 className="gc-page-title">
           {tr(locale, `${name}님, 환영합니다`, `Xin chào ${name}`)}
         </h1>
-        <p className="mt-1 text-sm text-slate-600">
+        <p className="gc-page-desc">
           {tr(
             locale,
             "무엇을 도와드릴까요?",
@@ -69,25 +69,25 @@ export default async function StudentHomePage() {
             <Link
               key={c.href}
               href={c.href}
-              className="rounded-xl border border-slate-200 bg-white p-5 transition hover:border-slate-300 hover:shadow-sm"
+              className="gc-card gc-card-hover"
             >
-              <h2 className="text-sm font-semibold text-slate-900">{c.title}</h2>
-              <p className="mt-1 text-xs text-slate-500">{c.desc}</p>
+              <h2 className="text-sm font-semibold text-ink">{c.title}</h2>
+              <p className="mt-1 text-xs text-ink-light">{c.desc}</p>
             </Link>
           ) : (
             <div
               key={c.href}
-              className="rounded-xl border border-dashed border-slate-200 bg-white/60 p-5"
+              className="gc-card-dashed"
             >
               <div className="flex items-center gap-2">
-                <h2 className="text-sm font-semibold text-slate-700">
+                <h2 className="text-sm font-semibold text-ink-mid">
                   {c.title}
                 </h2>
-                <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] text-slate-500">
+                <span className="gc-badge gc-badge-neutral">
                   {tr(locale, "준비 중", "Sắp có")}
                 </span>
               </div>
-              <p className="mt-1 text-xs text-slate-400">{c.desc}</p>
+              <p className="mt-1 text-xs text-ink-xlight">{c.desc}</p>
             </div>
           )
         )}

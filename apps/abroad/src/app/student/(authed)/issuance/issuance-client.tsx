@@ -59,7 +59,7 @@ export function IssuanceClient({
   return (
     <div className="space-y-4">
       {neededNames.length > 0 && (
-        <div className="rounded-lg border border-sky-200 bg-sky-50/60 px-4 py-3 text-xs text-sky-800">
+        <div className="gc-note gc-note-info">
           <span className="font-semibold">
             {tr(locale, "지원에 필요한 발급 서류: ", "Giấy tờ cần cho hồ sơ: ")}
           </span>
@@ -70,13 +70,13 @@ export function IssuanceClient({
       {/* 대학(선택) */}
       {universities.length > 0 && (
         <div>
-          <label className="mb-1 block text-xs font-medium text-slate-600">
+          <label className="mb-1 block text-xs font-medium text-ink-light">
             {tr(locale, "제출 대상 대학 (선택)", "Trường nộp (không bắt buộc)")}
           </label>
           <select
             value={uniId}
             onChange={(e) => setUniId(e.target.value)}
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            className="gc-input"
           >
             <option value="">
               {tr(locale, "공통 / 미지정", "Chung / chưa chọn")}
@@ -91,7 +91,7 @@ export function IssuanceClient({
       )}
 
       {/* 서류 카탈로그 */}
-      <ul className="divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white">
+      <ul className="gc-card gc-card-flush divide-y divide-line-soft">
         {rows.map((r) => {
           const n = qty[r.id] ?? 0;
           return (
@@ -101,16 +101,16 @@ export function IssuanceClient({
             >
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-sm font-medium text-slate-900">
+                  <span className="text-sm font-medium text-ink">
                     {r.labelKo}
                   </span>
                   {r.notarization !== "none" && (
-                    <span className="rounded bg-amber-50 px-1.5 py-0.5 text-[11px] text-amber-700">
+                    <span className="rounded bg-warning-bg px-1.5 py-0.5 text-[11px] text-warning">
                       {issuanceNotarizationLabel(locale, r.notarization)}
                     </span>
                   )}
                 </div>
-                <div className="mt-0.5 text-xs font-semibold text-slate-700">
+                <div className="mt-0.5 text-xs font-semibold text-ink-mid">
                   {won(r.unitPrice)}
                 </div>
               </div>
@@ -119,7 +119,7 @@ export function IssuanceClient({
                   type="button"
                   onClick={() => setQ(r.id, n - 1)}
                   disabled={n <= 0}
-                  className="flex size-7 items-center justify-center rounded-md border border-slate-300 text-slate-600 disabled:opacity-40"
+                  className="flex size-7 items-center justify-center rounded-tag border border-line text-ink-light disabled:opacity-40"
                 >
                   −
                 </button>
@@ -127,7 +127,7 @@ export function IssuanceClient({
                 <button
                   type="button"
                   onClick={() => setQ(r.id, n + 1)}
-                  className="flex size-7 items-center justify-center rounded-md border border-slate-300 text-slate-600"
+                  className="flex size-7 items-center justify-center rounded-tag border border-line text-ink-light"
                 >
                   +
                 </button>
@@ -138,16 +138,16 @@ export function IssuanceClient({
       </ul>
 
       {/* 견적 + 신청 */}
-      <div className="sticky bottom-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+      <div className="sticky bottom-4 gc-card shadow-sm">
         <div className="flex items-center justify-between">
-          <span className="text-sm text-slate-600">
+          <span className="text-sm text-ink-light">
             {tr(locale, "예상 금액", "Tạm tính")}
           </span>
-          <span className="text-lg font-bold text-slate-900">
+          <span className="gc-page-title">
             {won(subtotal)}
           </span>
         </div>
-        <p className="mt-1 text-[11px] text-slate-400">
+        <p className="mt-1 text-[11px] text-ink-xlight">
           {tr(
             locale,
             "현지 사정으로 대리 발급이 어려우면 서류별 추가금이 발생할 수 있습니다(담당자 안내).",
@@ -158,7 +158,7 @@ export function IssuanceClient({
           type="button"
           onClick={submit}
           disabled={selected.length === 0 || pending}
-          className="mt-3 w-full rounded-lg bg-coral py-2.5 text-sm font-semibold text-white hover:bg-coral-d disabled:opacity-50"
+          className="mt-3 gc-btn gc-btn-primary gc-btn-lg gc-btn-block"
         >
           {pending
             ? tr(locale, "신청 중…", "Đang gửi…")

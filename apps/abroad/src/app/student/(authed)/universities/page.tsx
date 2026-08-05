@@ -21,7 +21,7 @@ export default async function StudentUniversitiesPage() {
   const [{ data: universities }, { data: offerings }] = await Promise.all([
     supabase
       .from("universities")
-      .select("id, name_ko, name_vi, region_ko, region_vi, emoji, logo_url")
+      .select("id, name_ko, name_vi, region_ko, region_vi, logo_url")
       .order("id"),
     // 모집(offerings)에 등록된 대학 = 협약 대학. 지원 가능(published)은 뱃지용 카운트.
     supabase
@@ -47,7 +47,6 @@ export default async function StudentUniversitiesPage() {
     name: (locale === "vi" ? u.name_vi ?? u.name_ko : u.name_ko) ?? "",
     region:
       (locale === "vi" ? u.region_vi ?? u.region_ko : u.region_ko) ?? null,
-    emoji: u.emoji ?? null,
     logoUrl: u.logo_url ?? null,
     // 협약 = 모집에 등록됨. 그 외 카탈로그 대학 = 자유 지원.
     tier: inMojip.has(u.id) ? "partner" : "open",

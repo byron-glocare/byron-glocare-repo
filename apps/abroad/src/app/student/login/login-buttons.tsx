@@ -38,7 +38,7 @@ export function StudentLoginButtons({ locale }: { locale: Locale }) {
         type="button"
         onClick={google}
         disabled={busy}
-        className="flex w-full items-center justify-center gap-3 rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 disabled:opacity-60"
+        className="gc-btn gc-btn-secondary gc-btn-lg gc-btn-block"
       >
         <GoogleIcon />
         {busy
@@ -47,7 +47,7 @@ export function StudentLoginButtons({ locale }: { locale: Locale }) {
       </button>
 
       {errorParam === "no_student" ? (
-        <p className="text-xs text-amber-600">
+        <p className="text-xs text-warning">
           {tr(
             locale,
             "계정 정보를 준비 중입니다. 다시 시도해 주세요.",
@@ -55,11 +55,11 @@ export function StudentLoginButtons({ locale }: { locale: Locale }) {
           )}
         </p>
       ) : errorParam ? (
-        <p className="text-xs text-rose-600">
+        <p className="text-xs text-destructive">
           {tr(locale, "로그인에 실패했습니다.", "Đăng nhập thất bại.")} ({errorParam})
         </p>
       ) : null}
-      {err ? <p className="text-xs text-rose-600">{err}</p> : null}
+      {err ? <p className="text-xs text-destructive">{err}</p> : null}
     </div>
   );
 }

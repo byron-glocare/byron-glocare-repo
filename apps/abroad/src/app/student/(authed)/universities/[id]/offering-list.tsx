@@ -90,17 +90,17 @@ function OfferingRow({
   const pt = programTypeLabel(locale, item.programType);
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-4">
+    <div className="gc-card">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <div className="text-sm font-semibold text-slate-900">
+          <div className="text-sm font-semibold text-ink">
             {item.departmentName}
           </div>
           <div className="mt-1 flex flex-wrap gap-1.5">
             <Badge>{item.term}</Badge>
             {pt && <Badge>{pt}</Badge>}
             {item.languages.map((l) => (
-              <Badge key={l} tone="slate">
+              <Badge key={l}>
                 {languageLabel(locale, l)}
               </Badge>
             ))}
@@ -108,7 +108,7 @@ function OfferingRow({
         </div>
 
         {item.alreadyApplied ? (
-          <span className="shrink-0 rounded-lg bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700">
+          <span className="shrink-0 gc-badge gc-badge-tonal">
             {tr(locale, "지원함", "Đã đăng ký")}
           </span>
         ) : null}
@@ -140,13 +140,13 @@ function OfferingRow({
 
           {multiLang && (
             <div className="mb-2 flex items-center gap-3">
-              <span className="text-xs text-slate-500">
+              <span className="text-xs text-ink-light">
                 {tr(locale, "지원 언어", "Ngôn ngữ")}
               </span>
               {item.languages.map((l) => (
                 <label
                   key={l}
-                  className="flex items-center gap-1 text-xs text-slate-700"
+                  className="flex items-center gap-1 text-xs text-ink-mid"
                 >
                   <input
                     type="radio"
@@ -169,13 +169,13 @@ function OfferingRow({
           )}
 
           {state?.error && (
-            <p className="mb-2 text-xs text-rose-600">{state.error}</p>
+            <p className="mb-2 text-xs text-destructive">{state.error}</p>
           )}
 
           <button
             type="submit"
             disabled={pending}
-            className="rounded-lg bg-coral px-4 py-1.5 text-xs font-medium text-white hover:bg-coral-d disabled:opacity-50"
+            className="gc-btn gc-btn-primary gc-btn-md"
           >
             {pending
               ? tr(locale, "등록 중…", "Đang đăng ký…")
@@ -187,19 +187,10 @@ function OfferingRow({
   );
 }
 
-function Badge({
-  children,
-  tone = "indigo",
-}: {
-  children: React.ReactNode;
-  tone?: "indigo" | "slate";
-}) {
-  const cls =
-    tone === "slate"
-      ? "bg-slate-100 text-slate-600"
-      : "bg-indigo-50 text-indigo-700";
+/** 속성 나열 배지 — 모든 카드에 공통으로 붙는 정보라 회색 하나로 통일. */
+function Badge({ children }: { children: React.ReactNode }) {
   return (
-    <span className={`rounded-full px-2 py-0.5 text-[11px] ${cls}`}>
+    <span className="gc-badge gc-badge-neutral">
       {children}
     </span>
   );

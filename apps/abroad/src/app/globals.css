@@ -139,6 +139,14 @@
   --color-blue: var(--gc-info);
   --color-yellow: var(--gc-warning);
 
+  /* 면 · 선 — /student 등 유틸리티로 조립하는 화면에서 사용 */
+  --color-surface: var(--gc-surface);
+  --color-canvas: var(--gc-canvas);
+  --color-subtle: var(--gc-subtle);
+  --color-line: var(--gc-line);
+  --color-line-soft: var(--gc-line-soft);
+  --color-coral-hover: var(--gc-primary-300);
+
   /* 시맨틱(shadcn 계열 이름) — 내부 페이지에서 사용 */
   --color-background: var(--gc-canvas);
   --color-foreground: var(--gc-ink-900);
@@ -149,8 +157,23 @@
   --color-primary: var(--gc-primary-500);
   --color-primary-foreground: var(--gc-surface);
   --color-success: var(--gc-success);
+  --color-success-bg: var(--gc-success-bg);
+  --color-success-ink: var(--gc-success-ink);
   --color-warning: var(--gc-warning);
+  --color-warning-bg: var(--gc-warning-bg);
+  --color-info: var(--gc-info);
+  --color-info-bg: var(--gc-info-bg);
   --color-destructive: var(--gc-error);
+  --color-error-bg: var(--gc-error-bg);
+
+  /* 모서리 — 태그 6 · 입력 10 · 카드 14 · 모달 20 */
+  --radius-tag: var(--gc-r-tag);
+  --radius-input: var(--gc-r-input);
+  --radius-card: var(--gc-r-card);
+  --radius-modal: var(--gc-r-modal);
+
+  --shadow-sm: var(--gc-shadow-sm);
+  --shadow-lg: var(--gc-shadow-lg);
 
   --font-sans: var(--gc-font);
   --font-mono: var(--gc-font-mono);
@@ -745,6 +768,50 @@ a.gc-card:hover {
   .site-head-inner { height: 56px; gap: var(--gc-3); }
   .mob-menu { top: 56px; }
 }
+
+/* 앱 화면 페이지 헤더 — h3 스케일 */
+.gc-page-title {
+  font: var(--gc-h3);
+  letter-spacing: -0.012em;
+  color: var(--gc-ink-900);
+}
+.gc-page-desc {
+  margin-top: var(--gc-1);
+  font-size: 14px; line-height: 1.65;
+  color: var(--gc-ink-500);
+  max-width: 64ch;
+}
+
+/* ── 학생 포털 탭 (헤더 아래 고정 네비) ── */
+.student-tabs {
+  max-width: var(--gc-container);
+  margin: 0 auto;
+  padding: 0 var(--gc-gutter) var(--gc-2);
+  display: flex; gap: var(--gc-2);
+  overflow-x: auto;
+}
+.student-tab {
+  flex-shrink: 0;
+  display: flex; align-items: center;
+  min-height: 44px;
+  padding: 10px 16px;
+  border-radius: var(--gc-r-pill);
+  font-size: 13.5px; font-weight: 500;
+  color: var(--gc-ink-500);
+  white-space: nowrap;
+  text-decoration: none;
+  transition: background-color 0.16s ease, color 0.16s ease;
+}
+.student-tab:hover { background: var(--gc-subtle); color: var(--gc-ink-900); text-decoration: none; }
+.student-tab.on {
+  background: var(--gc-ink-900);
+  color: var(--gc-surface);
+  font-weight: 700;
+}
+.student-tab.on:hover { background: var(--gc-ink-900); color: var(--gc-surface); }
+
+/* 학생 포털 헤더는 탭까지 품으므로 높이를 고정하지 않는다 */
+.site-head:has(.student-tabs) .site-head-inner { border-bottom: 0; }
 
 /* =============================================================================
  * HERO

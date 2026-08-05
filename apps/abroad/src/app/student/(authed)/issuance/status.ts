@@ -52,19 +52,19 @@ export function issuanceStatusTone(status: string): string {
     case "done":
     case "shipped":
     case "issued":
-      return "bg-emerald-100 text-emerald-700";
+      return "bg-success-bg text-success-ink";
     case "paid":
     case "in_progress":
     case "scheduled":
     case "assigned":
     case "contacted":
-      return "bg-sky-100 text-sky-700";
+      return "bg-info-bg text-info";
     case "cancelled":
-      return "bg-rose-100 text-rose-700";
+      return "bg-error-bg text-destructive";
     case "payment_pending":
     case "info_needed":
-      return "bg-amber-100 text-amber-700";
+      return "bg-warning-bg text-warning";
     default:
-      return "bg-slate-100 text-slate-600";
+      return "bg-subtle text-ink-light";
   }
 }

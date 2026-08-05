@@ -16,11 +16,11 @@ export default async function StudentLoginPage() {
 
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-md flex-col justify-center px-6 py-12">
-      <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-        <h1 className="text-2xl font-bold text-slate-900">
+      <div className="gc-card">
+        <h1 className="gc-page-title">
           {tr(locale, "유학 지원 시작하기", "Bắt đầu đăng ký du học")}
         </h1>
-        <p className="mt-2 text-sm text-slate-600">
+        <p className="mt-2 text-sm text-ink-light">
           {tr(
             locale,
             "구글 계정으로 가입하면 대학 지원 서류를 바로 작성할 수 있습니다.",
@@ -34,7 +34,7 @@ export default async function StudentLoginPage() {
           </Suspense>
         </div>
 
-        <p className="mt-6 text-xs text-slate-400">
+        <p className="mt-6 text-xs text-ink-xlight">
           {tr(
             locale,
             "가입 시 서비스 이용약관 및 개인정보 처리방침에 동의하게 됩니다.",

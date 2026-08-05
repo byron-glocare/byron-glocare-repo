@@ -16,6 +16,14 @@ import { AppliedToast } from "./applied-toast";
 
 export const dynamic = "force-dynamic";
 
+/** 대학 이름 이니셜 2자 — 로고가 없을 때. 이모지는 쓰지 않는다. */
+function initials(name: string): string {
+  const words = (name ?? "").trim().split(/\s+/).filter(Boolean);
+  if (words.length === 0) return "—";
+  if (words.length === 1) return words[0].slice(0, 2).toUpperCase();
+  return (words[0][0] + words[words.length - 1][0]).toUpperCase();
+}
+
 export default async function StudentUniversityDetailPage({
   params,
   searchParams,
@@ -35,7 +43,7 @@ export default async function StudentUniversityDetailPage({
   const { data: u } = await supabase
     .from("universities")
     .select(
-      "id, name_ko, name_vi, region_ko, region_vi, desc_ko, desc_vi, emoji, logo_url"
+      "id, name_ko, name_vi, region_ko, region_vi, desc_ko, desc_vi, logo_url"
     )
     .eq("id", uniId)
     .maybeSingle();
@@ -146,7 +154,7 @@ export default async function StudentUniversityDetailPage({
     <div className="max-w-3xl space-y-6">
       <Link
         href="/student/universities"
-        className="text-sm text-slate-500 hover:underline"
+        className="text-sm text-ink-light hover:underline"
       >
         {tr(locale, "← 대학 목록", "← Danh sách trường")}
       </Link>
@@ -157,29 +165,27 @@ export default async function StudentUniversityDetailPage({
           <img
             src={u.logo_url}
             alt=""
-            className="h-14 w-14 shrink-0 rounded-xl border border-slate-100 object-cover"
+            className="h-14 w-14 shrink-0 rounded-input border border-line-soft object-cover"
           />
         ) : (
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-2xl">
-            {u.emoji ?? "🎓"}
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-input bg-subtle">
+            {initials(name)}
           </div>
         )}
         <div>
-          <h1 className="text-xl font-bold text-slate-900">{name}</h1>
-          {region && <p className="text-sm text-slate-500">{region}</p>}
+          <h1 className="gc-page-title">{name}</h1>
+          {region && <p className="text-sm text-ink-light">{region}</p>}
           <div className="mt-1.5">
             <span
-              className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-bold ${
-                isPartner
-                  ? "bg-emerald-100 text-emerald-800"
-                  : "bg-sky-100 text-sky-800"
+              className={`gc-badge ${
+                isPartner ? "gc-badge-tonal" : "gc-badge-neutral"
               }`}
             >
               {isPartner
                 ? tr(locale, "협약 대학", "Trường liên kết")
                 : tr(locale, "자유 지원 대학", "Trường tự do đăng ký")}
             </span>
-            <p className="mt-1 text-xs font-semibold text-slate-600">
+            <p className="mt-1 text-xs font-semibold text-ink-light">
               {isPartner
                 ? tr(
                     locale,
@@ -197,13 +203,13 @@ export default async function StudentUniversityDetailPage({
       </header>
 
       {applied && (
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3">
-          <span className="text-sm font-semibold text-emerald-800">
-            {tr(locale, "✓ 지원이 등록되었습니다", "✓ Đã đăng ký")}
+        <div className="gc-note bg-success-bg flex flex-wrap items-center justify-between gap-3">
+          <span className="text-sm font-semibold text-success-ink">
+            {tr(locale, "지원이 등록되었습니다", "Đã đăng ký")}
           </span>
           <Link
             href="/student/applications"
-            className="shrink-0 rounded-lg bg-emerald-600 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-700"
+            className="shrink-0 gc-btn gc-btn-primary gc-btn-md"
           >
             {tr(locale, "서류 작성하러 가기 →", "Đi soạn hồ sơ →")}
           </Link>
@@ -212,19 +218,19 @@ export default async function StudentUniversityDetailPage({
       )}
 
       {desc && (
-        <section className="whitespace-pre-line rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
+        <section className="gc-card whitespace-pre-line text-sm text-ink-mid">
           {desc}
         </section>
       )}
 
       <section>
-        <h2 className="mb-2 text-sm font-semibold text-slate-800">
+        <h2 className="mb-2 text-sm font-semibold text-ink-mid">
           {isPartner
             ? tr(locale, "모집 중인 과정", "Chương trình đang tuyển")
             : tr(locale, "지원 가능 학과", "Ngành có thể đăng ký")}
         </h2>
         {!isPartner && items.length > 0 && (
-          <p className="mb-2 text-xs text-slate-500">
+          <p className="mb-2 text-xs text-ink-light">
             {tr(
               locale,
               "자유 지원 대학입니다. 학과를 골라 지원을 시작하면 서류 작성을 도와드립니다.",
@@ -233,7 +239,7 @@ export default async function StudentUniversityDetailPage({
           </p>
         )}
         {items.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-slate-200 bg-slate-50/60 px-4 py-8 text-center text-sm text-slate-400">
+          <p className="gc-card-dashed text-center text-sm text-ink-xlight">
             {tr(
               locale,
               "아직 지원 가능한 모집요강이 없습니다. '대학 요청'으로 문의해 주세요.",

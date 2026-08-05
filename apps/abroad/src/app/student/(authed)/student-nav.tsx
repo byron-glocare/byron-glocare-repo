@@ -32,18 +32,15 @@ export function StudentNav({ locale }: { locale: Locale }) {
   ];
 
   return (
-    <nav className="flex gap-1 overflow-x-auto border-t border-slate-100 px-5 py-2">
+    <nav className="student-tabs" aria-label="Menu">
       {items.map((it) => {
         const active = it.match(pathname);
         return (
           <Link
             key={it.href}
             href={it.href}
-            className={`shrink-0 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-              active
-                ? "bg-coral text-white"
-                : "text-slate-600 hover:bg-slate-100"
-            }`}
+            className={`student-tab${active ? " on" : ""}`}
+            aria-current={active ? "page" : undefined}
           >
             {it.label}
           </Link>

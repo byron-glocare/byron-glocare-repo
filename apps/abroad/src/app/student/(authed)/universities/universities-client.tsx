@@ -14,11 +14,18 @@ export type UniversityCard = {
   id: number;
   name: string;
   region: string | null;
-  emoji: string | null;
   logoUrl: string | null;
   tier: "partner" | "open";
   offeringCount: number;
 };
+
+/** 대학 이름 이니셜 2자 — 로고가 없을 때. 이모지는 쓰지 않는다. */
+function initials(name: string): string {
+  const words = (name ?? "").trim().split(/\s+/).filter(Boolean);
+  if (words.length === 0) return "—";
+  if (words.length === 1) return words[0].slice(0, 2).toUpperCase();
+  return (words[0][0] + words[words.length - 1][0]).toUpperCase();
+}
 
 export function UniversitiesClient({
   locale,
@@ -45,10 +52,10 @@ export function UniversitiesClient({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-bold text-slate-900">
+        <h1 className="gc-page-title">
           {tr(locale, "대학 찾기", "Tìm trường")}
         </h1>
-        <p className="mt-1 text-sm text-slate-600">
+        <p className="gc-page-desc">
           {tr(
             locale,
             "지원할 대학을 선택하고 서류 작성을 시작하세요.",
@@ -66,7 +73,7 @@ export function UniversitiesClient({
           "대학 이름 · 지역 검색",
           "Tìm theo tên trường · khu vực"
         )}
-        className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm outline-none focus:border-slate-400"
+        className="gc-input"
       />
 
       <Section
@@ -94,7 +101,7 @@ export function UniversitiesClient({
       />
 
       {filtered.length === 0 && (
-        <p className="py-8 text-center text-sm text-slate-400">
+        <p className="py-8 text-center text-sm text-ink-xlight">
           {tr(
             locale,
             "검색 결과가 없습니다.",
@@ -122,19 +129,21 @@ function Section({
   list: UniversityCard[];
 }) {
   if (list.length === 0) return null;
-  const dot = accent === "emerald" ? "bg-emerald-500" : "bg-sky-500";
-  const titleColor =
-    accent === "emerald" ? "text-emerald-700" : "text-sky-700";
+  /* 구분은 색이 아니라 배지 하나로 — 섹션마다 새 색을 만들지 않는다. */
   return (
     <section>
-      <div className="mb-3">
-        <div className="flex items-center gap-2">
-          <span className={`inline-block h-2.5 w-2.5 rounded-full ${dot}`} />
-          <h2 className={`text-lg font-extrabold tracking-tight ${titleColor}`}>
-            {title}
-          </h2>
+      <div className="mb-4">
+        <div className="flex flex-wrap items-center gap-2">
+          <h2 className="gc-page-title">{title}</h2>
+          <span
+            className={`gc-badge ${
+              accent === "emerald" ? "gc-badge-tonal" : "gc-badge-neutral"
+            }`}
+          >
+            {list.length}
+          </span>
         </div>
-        <p className="mt-1 pl-4 text-xs font-semibold text-slate-600">{hint}</p>
+        <p className="gc-page-desc">{hint}</p>
       </div>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {list.map((u) => (
@@ -149,7 +158,7 @@ function Card({ locale, u }: { locale: Locale; u: UniversityCard }) {
   return (
     <Link
       href={`/student/universities/${u.id}`}
-      className="flex flex-col rounded-xl border border-slate-200 bg-white p-4 transition hover:border-slate-300 hover:shadow-sm"
+      className="gc-card gc-card-hover flex flex-col"
     >
       <div className="flex items-center gap-3">
         {u.logoUrl ? (
@@ -157,25 +166,25 @@ function Card({ locale, u }: { locale: Locale; u: UniversityCard }) {
           <img
             src={u.logoUrl}
             alt=""
-            className="h-10 w-10 shrink-0 rounded-lg border border-slate-100 object-cover"
+            className="h-10 w-10 shrink-0 rounded-input border border-line-soft object-cover"
           />
         ) : (
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-lg">
-            {u.emoji ?? "🎓"}
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-input bg-subtle">
+            {initials(u.name)}
           </div>
         )}
         <div className="min-w-0">
-          <div className="truncate text-sm font-semibold text-slate-900">
+          <div className="truncate text-sm font-semibold text-ink">
             {u.name}
           </div>
           {u.region && (
-            <div className="truncate text-xs text-slate-500">{u.region}</div>
+            <div className="truncate text-xs text-ink-light">{u.region}</div>
           )}
         </div>
       </div>
       <div className="mt-3">
         {u.offeringCount > 0 ? (
-          <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] text-slate-600">
+          <span className="gc-badge gc-badge-neutral">
             {tr(
               locale,
               `${u.offeringCount}개 과정 모집 중`,
@@ -183,7 +192,7 @@ function Card({ locale, u }: { locale: Locale; u: UniversityCard }) {
             )}
           </span>
         ) : (
-          <span className="rounded-full bg-slate-50 px-2 py-0.5 text-[11px] text-slate-400">
+          <span className="gc-badge gc-badge-neutral">
             {tr(locale, "모집 예정", "Sắp tuyển")}
           </span>
         )}
@@ -202,13 +211,13 @@ function RequestBox({ locale }: { locale: Locale }) {
   const done = state && "ok" in state && state.ok;
 
   return (
-    <section className="rounded-xl border border-dashed border-slate-300 bg-slate-50/60 p-4">
+    <section className="gc-card-dashed">
       <div className="flex items-center justify-between gap-2">
         <div>
-          <h2 className="text-sm font-semibold text-slate-800">
+          <h2 className="text-sm font-semibold text-ink-mid">
             {tr(locale, "찾는 대학이 없나요?", "Không thấy trường bạn cần?")}
           </h2>
-          <p className="mt-0.5 text-xs text-slate-500">
+          <p className="mt-0.5 text-xs text-ink-light">
             {tr(
               locale,
               "요청하시면 글로케어가 검토 후 추가해 드립니다.",
@@ -220,7 +229,7 @@ function RequestBox({ locale }: { locale: Locale }) {
           <button
             type="button"
             onClick={() => setOpen(true)}
-            className="shrink-0 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
+            className="shrink-0 gc-btn gc-btn-secondary gc-btn-md"
           >
             {tr(locale, "대학 요청", "Yêu cầu trường")}
           </button>
@@ -228,7 +237,7 @@ function RequestBox({ locale }: { locale: Locale }) {
       </div>
 
       {done && (
-        <p className="mt-3 rounded-lg bg-emerald-50 px-3 py-2 text-xs text-emerald-700">
+        <p className="mt-3 gc-note bg-success-bg text-success-ink">
           {tr(
             locale,
             "요청이 접수되었습니다. 검토 후 목록에 추가되면 알려드립니다.",
@@ -248,10 +257,10 @@ function RequestBox({ locale }: { locale: Locale }) {
                 "대학 이름 (필수)",
                 "Tên trường (bắt buộc)"
               )}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-400"
+              className="gc-input"
             />
             {state && "fieldErrors" in state && state.fieldErrors?.university_name && (
-              <p className="mt-1 text-xs text-rose-600">
+              <p className="mt-1 text-xs text-destructive">
                 {tr(locale, "대학 이름을 입력하세요", "Vui lòng nhập tên trường")}
               </p>
             )}
@@ -263,7 +272,7 @@ function RequestBox({ locale }: { locale: Locale }) {
               "홈페이지 주소 (선택)",
               "Website (không bắt buộc)"
             )}
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-400"
+            className="gc-input"
           />
           <textarea
             name="note"
@@ -273,16 +282,16 @@ function RequestBox({ locale }: { locale: Locale }) {
               "희망 학과·전달 사항 (선택)",
               "Ngành mong muốn · ghi chú (không bắt buộc)"
             )}
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-400"
+            className="gc-input"
           />
           {state && "error" in state && state.error && (
-            <p className="text-xs text-rose-600">{state.error}</p>
+            <p className="text-xs text-destructive">{state.error}</p>
           )}
           <div className="flex gap-2">
             <button
               type="submit"
               disabled={pending}
-              className="rounded-lg bg-coral px-3 py-1.5 text-xs font-medium text-white hover:bg-coral-d disabled:opacity-50"
+              className="gc-btn gc-btn-primary gc-btn-md"
             >
               {pending
                 ? tr(locale, "보내는 중…", "Đang gửi…")
@@ -291,7 +300,7 @@ function RequestBox({ locale }: { locale: Locale }) {
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="rounded-lg px-3 py-1.5 text-xs text-slate-500 hover:text-slate-700"
+              className="gc-btn gc-btn-ghost text-ink-light"
             >
               {tr(locale, "취소", "Hủy")}
             </button>

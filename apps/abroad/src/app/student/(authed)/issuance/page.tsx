@@ -91,10 +91,10 @@ export default async function StudentIssuancePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-bold text-slate-900">
+        <h1 className="gc-page-title">
           {tr(locale, "발급 서류 대행 신청", "Dịch vụ xin cấp giấy tờ")}
         </h1>
-        <p className="mt-1 text-sm text-slate-600">
+        <p className="gc-page-desc">
           {tr(
             locale,
             "졸업·성적·가족관계 등 발급 서류를 글로케어가 대신 발급·인증해 드립니다.",
@@ -106,7 +106,7 @@ export default async function StudentIssuancePage() {
       {/* 진행 중인 주문 */}
       {orders && orders.length > 0 && (
         <section>
-          <h2 className="mb-2 text-sm font-semibold text-slate-800">
+          <h2 className="mb-2 text-sm font-semibold text-ink-mid">
             {tr(locale, "내 신청 내역", "Đơn của tôi")}
           </h2>
           <ul className="space-y-2">
@@ -114,16 +114,16 @@ export default async function StudentIssuancePage() {
               <li key={o.id}>
                 <Link
                   href={`/student/issuance/${o.id}`}
-                  className="flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white px-4 py-3 hover:border-slate-300"
+                  className="gc-card gc-card-hover flex items-center justify-between gap-3"
                 >
                   <div className="min-w-0">
-                    <div className="text-sm font-medium text-slate-900">
+                    <div className="text-sm font-medium text-ink">
                       {o.university_id
                         ? uniNameById.get(o.university_id) ??
                           tr(locale, "발급 대행", "Xin cấp")
                         : tr(locale, "발급 대행", "Xin cấp")}
                     </div>
-                    <div className="text-xs text-slate-500">
+                    <div className="text-xs text-ink-light">
                       {o.subtotal.toLocaleString()}
                       {tr(locale, "원", " ₩")}
                     </div>
@@ -143,7 +143,7 @@ export default async function StudentIssuancePage() {
       )}
 
       {rows.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50/60 px-4 py-10 text-center text-sm text-slate-500">
+        <div className="gc-card-dashed text-center text-sm text-ink-light">
           {tr(
             locale,
             "현재 신청 가능한 발급 서류가 없습니다. 잠시 후 다시 확인해 주세요.",

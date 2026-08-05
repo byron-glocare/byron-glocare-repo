@@ -135,14 +135,14 @@ export default async function StudentFinalPage() {
       <div>
         <Link
           href="/student/applications"
-          className="text-sm text-slate-500 hover:underline"
+          className="text-sm text-ink-light hover:underline"
         >
           {tr(locale, "← 내 지원", "← Hồ sơ của tôi")}
         </Link>
-        <h1 className="mt-2 text-xl font-bold text-slate-900">
+        <h1 className="mt-2 gc-page-title">
           {tr(locale, "작성 서류 (초안)", "Hồ sơ soạn (bản nháp)")}
         </h1>
-        <p className="mt-1 text-sm text-slate-600">
+        <p className="gc-page-desc">
           {tr(
             locale,
             "입력한 정보로 채운 초안을 받아 서명·보정한 뒤 제출하세요.",
@@ -151,7 +151,7 @@ export default async function StudentFinalPage() {
         </p>
       </div>
 
-      <div className="rounded-lg border border-sky-200 bg-sky-50/60 px-4 py-3 text-xs leading-relaxed text-sky-800">
+      <div className="gc-note gc-note-info">
         {tr(
           locale,
           "초안은 '정보 입력'의 값으로 자동 채워집니다. 비어 있으면 먼저 정보 입력을 채워주세요.",
@@ -160,7 +160,7 @@ export default async function StudentFinalPage() {
       </div>
 
       {groups.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-slate-300 bg-white p-12 text-center text-sm text-slate-500">
+        <div className="gc-card-dashed py-12 text-center text-sm text-ink-light">
           {tr(
             locale,
             "지원한 대학이 없습니다. '대학 찾기'에서 먼저 지원하세요.",
@@ -171,20 +171,20 @@ export default async function StudentFinalPage() {
         groups.map(({ app, spec, writeRows }) => (
           <section
             key={app.id}
-            className="rounded-lg border border-slate-200 bg-white p-5"
+            className="gc-card"
           >
             <div className="mb-3">
-              <h2 className="text-base font-semibold text-slate-900">
+              <h2 className="text-base font-semibold text-ink">
                 {spec ? uniName(spec.university_id) : "—"}
                 {app.target_department_label
                   ? ` · ${app.target_department_label}`
                   : ""}
               </h2>
-              <p className="text-xs text-slate-500">{spec?.term ?? ""}</p>
+              <p className="text-xs text-ink-light">{spec?.term ?? ""}</p>
             </div>
 
             {writeRows.length === 0 ? (
-              <p className="pl-1 text-xs text-slate-400">
+              <p className="pl-1 text-xs text-ink-xlight">
                 {tr(locale, "작성 서류 없음", "Không có hồ sơ soạn")}
               </p>
             ) : (
@@ -192,9 +192,9 @@ export default async function StudentFinalPage() {
                 {writeRows.map(({ doc, file, canFill, fillUrl }) => (
                   <li
                     key={doc.key + doc.name_ko}
-                    className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-slate-100 bg-slate-50/50 px-3 py-2"
+                    className="flex flex-wrap items-center justify-between gap-2 rounded-tag border border-line-soft bg-canvas px-3 py-2"
                   >
-                    <span className="text-sm font-medium text-slate-800">
+                    <span className="text-sm font-medium text-ink-mid">
                       {doc.name_ko}
                     </span>
                     <div className="flex flex-wrap gap-2">
@@ -202,7 +202,7 @@ export default async function StudentFinalPage() {
                         <>
                           <a
                             href={fillUrl}
-                            className="rounded-md bg-coral px-3 py-1.5 text-xs font-semibold text-white hover:bg-coral-d"
+                            className="gc-btn gc-btn-primary gc-btn-md"
                           >
                             {tr(locale, "초안 다운로드", "Tải bản nháp")}
                           </a>
@@ -210,7 +210,7 @@ export default async function StudentFinalPage() {
                             href={`${fillUrl}${fillUrl.includes("?") ? "&" : "?"}preview=1`}
                             target="_blank"
                             rel="noreferrer"
-                            className="rounded-md border border-slate-300 px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-100"
+                            className="gc-btn gc-btn-secondary gc-btn-md"
                           >
                             {tr(locale, "미리보기", "Xem trước")}
                           </a>
@@ -218,12 +218,12 @@ export default async function StudentFinalPage() {
                       ) : file ? (
                         <a
                           href={file.file_url}
-                          className="rounded-md border border-slate-300 px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-100"
+                          className="gc-btn gc-btn-secondary gc-btn-md"
                         >
                           {tr(locale, "빈 양식 받기", "Tải mẫu trống")}
                         </a>
                       ) : (
-                        <span className="text-[11px] text-slate-400">
+                        <span className="text-[11px] text-ink-xlight">
                           {tr(locale, "양식 준비 중", "Đang chuẩn bị mẫu")}
                         </span>
                       )}
