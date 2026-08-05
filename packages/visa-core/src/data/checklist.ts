@@ -250,6 +250,7 @@ export interface ChecklistDoc {
   ambiguous?: string;
   onlyVN?: boolean;
   onlyNorth?: boolean;
+  onlyChange?: boolean; // D-4→D-2 국내 변경(어학당→본과)일 때만 노출
 }
 
 const U = UNVERIFIED;
@@ -273,9 +274,8 @@ export const DOCS: ChecklistDoc[] = [
   { id: "balance", name: "잔고증명서", section: "재정", courses: ["univ", "hagwon"], brief: "통장 잔액 증명.", holder: "본인 또는 부모(아버지·어머니 중 1명). 삼촌·지인 명의 원칙 불인정", issuer: "베트남 은행 또는 한국은행", form: "원본", bringOriginal: true, validity: "공관 제출용 10일 / 대학 제출용 30일 — 따로 발급", translation: "번역 및 공증", obtainDays: U, detailDesc: "학위: 수도권 2,000·비수도권 1,600만원 / 어학당: 수도권 1,000·비수도권 800만원 이상. 예치 3개월(어학당·컨설팅대학 6개월). 대학용(30일)과 공관용(10일)은 유효기간이 달라 같은 서류를 재사용할 수 없으니 따로 발급받으세요." },
   { id: "bankbook", name: "통장 사본", section: "재정", courses: ["univ", "hagwon"], brief: "잔고증명서와 같은 통장. 양도받은 통장 불인정.", holderSameAs: "balance", issuer: "은행", form: "사본", validity: U, bringOriginal: true, obtainDays: U },
   { id: "remittance", name: "국내송금 증명서", section: "재정", courses: ["univ", "hagwon"], brief: "잔고증명서 대신 한국으로 송금해 재정을 증명할 때.", holderSameAs: "balance", issuer: "은행", form: "원본", validity: U, obtainDays: U },
-  { id: "parent-support", name: "부모 재정지원 확인서", section: "재정", courses: ["univ", "hagwon"], brief: "부모가 유학 비용을 대는 경우 제출.", holder: "잔고 명의 부모", issuer: "부모 작성", form: "원본", validity: U, translation: "번역 및 공증", notarization: "관할 공안 확인 필수", obtainDays: U, onlyVN: true },
-  { id: "parent-income", name: "부모 소득·재직 증빙", section: "재정", courses: ["univ", "hagwon"], brief: "잔고 명의 부모 기준, 직업에 따라 준비.", holderSameAs: "parent-support", issuer: "회사·세무·공안 등", form: "원본·사본", validity: U, translation: "번역 및 공증", notarization: "관할 공안 확인", obtainDays: U, detailDesc: "보증인 1명(잔고 명의 부모) 기준이 원칙. 재정이 빠듯하면 두 분 소득을 함께 내면 유리.", ambiguous: "보증인 1명 기준인지 부모 공동인지 원문 불명확.", onlyVN: true },
-  { id: "guarantor-id", name: "재정보증인 신분증 사본", section: "재정", courses: ["univ", "hagwon"], brief: "부모 등 재정보증인의 신분증.", holderSameAs: "parent-support", issuer: "신분증 발급기관", form: "사본", validity: U, translation: "번역 및 공증", obtainDays: U, onlyVN: true },
+  { id: "parent-income", name: "부모 소득·재직 증빙", section: "재정", courses: ["univ", "hagwon"], brief: "잔고 명의 부모 기준, 직업에 따라 준비.", holder: "재정보증인", issuer: "회사·세무·공안 등", form: "원본·사본", validity: U, translation: "번역 및 공증", notarization: "관할 공안 확인", obtainDays: U, detailDesc: "보증인 1명(잔고 명의 부모) 기준이 원칙. 재정이 빠듯하면 두 분 소득을 함께 내면 유리.", ambiguous: "보증인 1명 기준인지 부모 공동인지 원문 불명확.", onlyVN: true },
+  { id: "guarantor-id", name: "재정보증인 신분증 사본", section: "재정", courses: ["univ", "hagwon"], brief: "부모 등 재정보증인의 신분증.", holder: "재정보증인", issuer: "신분증 발급기관", form: "사본", validity: U, translation: "번역 및 공증", obtainDays: U, onlyVN: true },
   { id: "cost-pledge", name: "유학경비 부담 서약서", section: "재정", courses: ["univ", "hagwon"], brief: "누가 유학 비용을 부담하는지 서약.", holder: "본인 또는 부모(재정보증인)", issuer: "본인 작성", form: "원본", validity: U, detailDesc: "보통 입학지원서에 포함됨." },
   { id: "deposit-confirm", name: "유학경비 예치확인서", section: "재정", courses: ["hagwon"], brief: "일반(비인증) 어학당의 유학경비 예치제 대상.", holder: "본인", issuer: "은행·지정기관", form: "원본", validity: U, obtainDays: U, detailDesc: "지정 방식으로 예치 후 확인서 제출. 잔고증명서 대신 제출하며, 학위과정(D-2)에는 없음." },
 
@@ -288,5 +288,9 @@ export const DOCS: ChecklistDoc[] = [
   { id: "korean-sejong", name: "한국어 능력 (세종학당 이수)", section: "어학", courses: ["univ", "hagwon"], brief: "세종학당 한국어연수 이수로 증빙.", holder: "본인", issuer: "세종학당", form: "원본", validity: U, obtainDays: U, detailDesc: "현지 오프라인 과정만 인정(온라인 제외)." },
   { id: "training-plan", name: "연수계획서", section: "어학", courses: ["hagwon"], brief: "어학당 지원 시.", holder: "대학·연수기관", issuer: "대학·연수기관", form: "원본", validity: U, obtainDays: U, detailDesc: "수업 시간표·강사·시설 등 연수 내용 포함." },
   { id: "english", name: "영어 성적", section: "어학", courses: ["univ"], brief: "영어로 수업하는 과정(영어트랙) 지원 시.", holder: "본인", issuer: "시험기관", form: "원본", validity: U, obtainDays: U },
+  // ── 어학연수 이력(한국 어학당 D-4 → 본과 D-2 국내 변경 시에만) ──
+  { id: "hagwon-attendance", name: "어학연수 출석증명서", section: "어학", courses: ["univ"], onlyChange: true, brief: "한국 어학당 재학 중 출석을 증명.", holder: "본인", issuer: "재학 중인 한국 어학당", form: "원본", validity: U, obtainDays: U, detailDesc: "D-4(어학연수)에서 D-2(학위과정)로 국내 변경 시 어학당 이수 실적으로 제출." },
+  { id: "hagwon-transcript", name: "어학연수 성적증명서", section: "어학", courses: ["univ"], onlyChange: true, brief: "한국 어학당 과정 성적을 증명.", holder: "본인", issuer: "재학 중인 한국 어학당", form: "원본", validity: U, obtainDays: U },
+  { id: "hagwon-completion", name: "어학연수 수료증", section: "어학", courses: ["univ"], onlyChange: true, brief: "한국 어학당 과정 수료를 증명.", holder: "본인", issuer: "재학 중인 한국 어학당", form: "원본", validity: U, obtainDays: U },
 ];
 void U;

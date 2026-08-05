@@ -47,8 +47,6 @@
   "doc:bankbook:detailDesc": "Sổ tài khoản được chuyển nhượng không được chấp nhận.",
   "doc:remittance:name": "Giấy xác nhận chuyển tiền vào Hàn Quốc",
   "doc:remittance:brief": "Khi chứng minh tài chính bằng cách chuyển tiền sang Hàn Quốc thay cho giấy xác nhận số dư.",
-  "doc:parent-support:name": "Giấy bảo lãnh tài chính",
-  "doc:parent-support:brief": "Mẫu do Đại sứ quán, văn phòng công chứng hoặc trung tâm du học cung cấp.",
   "doc:parent-income:name": "Chứng minh thu nhập · việc làm của người bảo lãnh",
   "doc:parent-income:brief": "Chuẩn bị theo nghề nghiệp của cha/mẹ đứng tên số dư.",
   "doc:parent-income:detailDesc": "Nguyên tắc theo 1 người bảo lãnh (cha/mẹ đứng tên số dư). Nếu tài chính eo hẹp, nộp thu nhập của cả hai sẽ có lợi. Người đi làm → giấy xác nhận công tác·bảng lương (3 tháng gần nhất)·bảo hiểm xã hội / Chủ kinh doanh → đăng ký kinh doanh·chứng từ nộp thuế / Nông dân → giấy xác nhận thu nhập·bất động sản (sổ đỏ). Dù nghề gì, nộp càng nhiều càng có lợi.",

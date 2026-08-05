@@ -631,9 +631,26 @@ function Results({
     );
   }
 
-  const sections = SECTIONS.filter((s) => sectionNeeded(s, v, course, nationality));
   // 예치제(유학경비 예치확인서) = D-4 어학당 + 어학 일반(비인증)만. 그 외엔 잔고증명서.
   const isDepositCase = course === "hagwon" && langTier === "general";
+
+  // 공통 필터(과정·국적·예치제·결핵). 섹션 필요 여부·변경전용은 아래에서 별도 판단.
+  const passesBase = (d: ChecklistDoc) =>
+    d.courses.includes(course) &&
+    (d.onlyVN ? nationality === "vn" : true) &&
+    (d.onlyNorth ? applicantRegion === "vn_north" : true) &&
+    !(isChange && d.id === "tb") &&
+    !(isDepositCase && ["balance", "bankbook", "remittance"].includes(d.id)) &&
+    !(!isDepositCase && d.id === "deposit-confirm");
+
+  // 변경전용(onlyChange) 서류는 섹션이 숨겨져도 isChange면 노출. 그 외는 섹션이 필요할 때만.
+  const docsFor = (sec: Section) =>
+    DOCS.filter((d) => {
+      if (d.section !== sec || !passesBase(d)) return false;
+      if (d.onlyChange) return isChange;
+      return sectionNeeded(sec, v, course, nationality);
+    });
+  const sections = SECTIONS.filter((s) => docsFor(s).length > 0);
 
   return (
     <div>
@@ -646,17 +663,7 @@ function Results({
 
       <div style={{ marginTop: 22, display: "flex", flexDirection: "column", gap: 24 }}>
         {sections.map((sec) => {
-          const docs = DOCS.filter(
-            (d) =>
-              d.section === sec &&
-              d.courses.includes(course) &&
-              (d.onlyVN ? nationality === "vn" : true) &&
-              (d.onlyNorth ? applicantRegion === "vn_north" : true) &&
-              !(isChange && d.id === "tb") &&
-              // 예치제 케이스: 잔고증명 계열 대신 예치확인서 / 그 외: 예치확인서 숨김
-              !(isDepositCase && ["balance", "bankbook", "remittance"].includes(d.id)) &&
-              !(!isDepositCase && d.id === "deposit-confirm")
-          );
+          const docs = docsFor(sec);
           if (!docs.length) return null;
           return (
             <div key={sec}>
