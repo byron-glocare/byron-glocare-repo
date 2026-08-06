@@ -877,8 +877,14 @@ a.gc-card:hover {
   margin-top: 6px;
 }
 
-/* 히어로 우측 사례 카드 2개 */
-.hero-videos { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gc-4); }
+/* 히어로 우측 사례 카드 2개 — 계단 배치.
+   align-items:start 가 없으면 그리드가 두 카드를 같은 행 높이로 늘려,
+   오프셋이 없는 쪽 카드 아래에 32px 빈 공간이 생긴다. */
+.hero-videos {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: var(--gc-4);
+  align-items: start;
+}
 .hero-vid-card {
   background: var(--gc-surface);
   border: 1px solid var(--gc-line);
@@ -894,7 +900,14 @@ a.gc-card:hover {
 .hero-vid-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .hero-vid-body { padding: 14px; }
 .hero-vid-cat { font-size: 11.5px; font-weight: 600; line-height: 1.5; color: var(--gc-primary-600); margin-bottom: 5px; }
-.hero-vid-ttl { font-size: 13.5px; font-weight: 700; line-height: 1.45; color: var(--gc-ink-900); }
+/* 제목은 두 줄까지. 한 줄짜리도 두 줄 높이를 확보해 카드 높이가 들쭉날쭉해지지 않게 한다. */
+.hero-vid-ttl {
+  font-size: 13.5px; font-weight: 700; line-height: 1.45;
+  color: var(--gc-ink-900);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.9em;
+}
 
 @media (max-width: 639px) {
   .hero-videos { gap: var(--gc-3); }
