@@ -24,10 +24,10 @@ export default async function StudentAuthedLayout({
     <div className="min-h-screen bg-canvas">
       <header className="site-head">
         <div className="site-head-inner">
-          <Link href="/student" className="nav-logo">
-            <span className="logo-text">
-              {tr(locale, "유학 지원", "Du học")}
-            </span>
+          <Link href="/student" className="nav-logo" aria-label="GLOCARE">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/glocare-logo.png" alt="GLOCARE" width={600} height={129} />
+            <span className="nav-logo-sub">{tr(locale, "유학 지원", "Du học")}</span>
           </Link>
           <div className="nav-tail">
             <span className="text-xs text-ink-light">

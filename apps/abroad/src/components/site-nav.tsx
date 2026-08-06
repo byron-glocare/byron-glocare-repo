@@ -48,7 +48,8 @@ export function SiteNav({
       <header className="site-head">
         <div className="site-head-inner">
           <Link href="/" className="nav-logo" aria-label="GLOCARE" onClick={close}>
-            <span className="logo-text">GLOCARE</span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/glocare-logo.png" alt="GLOCARE" width={600} height={129} />
           </Link>
 
           <ul className="nav-links">
