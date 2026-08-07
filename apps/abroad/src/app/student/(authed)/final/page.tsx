@@ -13,6 +13,7 @@ import {
   type RequiredDoc,
 } from "@/lib/admission/classify-documents";
 import { getLocale, tr } from "@/lib/i18n";
+import { downloadUrl } from "@/lib/storage-download";
 
 function normFormName(s: string): string {
   return s
@@ -217,7 +218,7 @@ export default async function StudentFinalPage() {
                         </>
                       ) : file ? (
                         <a
-                          href={file.file_url}
+                          href={downloadUrl(file.file_url, doc.name_ko, file.file_name)}
                           className="gc-btn gc-btn-secondary gc-btn-md"
                         >
                           {tr(locale, "빈 양식 받기", "Tải mẫu trống")}

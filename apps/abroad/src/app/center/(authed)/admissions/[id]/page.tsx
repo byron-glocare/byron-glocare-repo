@@ -8,6 +8,7 @@ import { notFound } from "next/navigation";
 
 import { verifyCenterSession } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
+import { downloadUrl } from "@/lib/storage-download";
 
 const PROGRAM_TYPE_LABEL: Record<string, string> = {
   language_program: "Khóa tiếng (D-4)",
@@ -881,10 +882,7 @@ function FormFilesList({
             {FORM_KEY_LABEL[f.key] ?? f.key}
           </span>
           <a
-            href={f.file_url}
-            target="_blank"
-            rel="noreferrer"
-            download={f.file_name}
+            href={downloadUrl(f.file_url, f.name_ko, f.file_name)}
             className="flex-1 text-emerald-700 hover:underline"
           >
             {f.name_ko}

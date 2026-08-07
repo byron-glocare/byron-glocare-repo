@@ -15,6 +15,7 @@ import {
 
 import { tr, type Locale } from "@/lib/i18n";
 import { createClient } from "@/lib/supabase/client";
+import { downloadUrl } from "@/lib/storage-download";
 import {
   createFinalUploadAction,
   recordFinalUploadAction,
@@ -169,9 +170,7 @@ export function WriteRowActions({
         {/* 빈 양식 다운로드 */}
         {blankFormUrl ? (
           <a
-            href={blankFormUrl}
-            target="_blank"
-            rel="noopener"
+            href={downloadUrl(blankFormUrl, docName)}
             className={BTN_OUTLINE}
           >
             <FileDown className="size-3.5" />
