@@ -49,15 +49,7 @@ const apply = {
     successEyebrow: "접수 완료",
     successTitle: "상담 신청이 정상 접수됐습니다",
     successDesc: "곧 담당자가 연락드리겠습니다.",
-    procTitle: "진행 절차 5단계",
     contactLabel: "바로 연락하기",
-    proc: [
-      { lbl: "상담 신청", sub: "온라인 또는 유학센터 방문" },
-      { lbl: "유학센터 등록", sub: "협력 센터에서 공식 등록" },
-      { lbl: "한국 유학", sub: "제휴 대학 입학 및 수학" },
-      { lbl: "취업 연계", sub: "졸업 전 취업처 매칭" },
-      { lbl: "한국 취업", sub: "안정적인 한국 생활 시작" },
-    ],
   },
   vi: {
     eyebrow: "Đăng ký du học",
@@ -109,27 +101,7 @@ const apply = {
     successEyebrow: "ĐÃ GỬI",
     successTitle: "Đăng ký đã được tiếp nhận",
     successDesc: "Chúng tôi sẽ sớm liên hệ với bạn.",
-    procTitle: "Quy trình 5 bước",
     contactLabel: "Liên hệ trực tiếp",
-    proc: [
-      { lbl: "Tư vấn", sub: "Online hoặc đến trung tâm" },
-      {
-        lbl: "Đăng ký",
-        sub: "Đăng ký chính thức tại trung tâm",
-      },
-      {
-        lbl: "Du học",
-        sub: "Nhập học và học tập tại trường liên kết",
-      },
-      {
-        lbl: "Kết nối việc làm",
-        sub: "Kết nối nhà tuyển dụng trước khi tốt nghiệp",
-      },
-      {
-        lbl: "Có việc làm",
-        sub: "Bắt đầu cuộc sống ổn định tại Hàn Quốc",
-      },
-    ],
   },
 };
 

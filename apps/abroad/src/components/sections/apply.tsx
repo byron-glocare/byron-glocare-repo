@@ -41,8 +41,6 @@ type Strings = {
   successTitle: string;
   successDesc: string;
   successEyebrow: string;
-  procTitle: string;
-  proc: { lbl: string; sub: string }[];
   contactLabel: string;
 };
 
@@ -253,31 +251,19 @@ export function Apply({ strings }: { strings: Strings }) {
             )}
           </div>
 
-          {/* 절차 — 번호 원 1..N. 이모지 아이콘은 순서 정보를 담지 못한다. */}
           <aside className="process-card">
-            <div className="process-card-ttl">{strings.procTitle}</div>
-            <div className="gc-steps">
-              {strings.proc.map((p, i) => (
-                <div key={i} className="gc-step">
-                  <div className="gc-step-rail">
-                    <span className="gc-step-num">{i + 1}</span>
-                    {i < strings.proc.length - 1 && (
-                      <span className="gc-step-line" />
-                    )}
-                  </div>
-                  <div className="gc-step-body">
-                    <div className="gc-step-title">{p.lbl}</div>
-                    <div className="gc-step-desc">{p.sub}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="process-contact">
-              <div className="process-contact-l">{strings.contactLabel}</div>
-              <div className="process-contact-v">0977.456.324</div>
-              <div className="process-contact-v sub">Zalo +82-10-2256-8724</div>
-            </div>
+            <div className="process-card-ttl">{strings.contactLabel}</div>
+            <a href="tel:0977456324" className="process-contact-v">
+              0977.456.324
+            </a>
+            <a
+              href="https://zalo.me/821022568724"
+              target="_blank"
+              rel="noreferrer"
+              className="process-contact-v sub"
+            >
+              Zalo +82-10-2256-8724
+            </a>
           </aside>
         </div>
       </div>

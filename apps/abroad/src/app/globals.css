@@ -1179,10 +1179,15 @@ a.gc-card:hover {
   border-radius: var(--gc-r-card);
   padding: 28px 24px;
 }
-.process-card-ttl { font-size: 15px; font-weight: 700; line-height: 1.4; color: var(--gc-ink-900); margin-bottom: 22px; }
-.process-contact { margin-top: var(--gc-6); padding-top: var(--gc-5); border-top: 1px solid var(--gc-line-soft); }
+.process-card-ttl { font-size: 15px; font-weight: 700; line-height: 1.4; color: var(--gc-ink-900); margin-bottom: var(--gc-3); }
 .process-contact-l { font-size: 12px; font-weight: 500; line-height: 1.55; color: var(--gc-ink-400); margin-bottom: 6px; }
-.process-contact-v { font-family: var(--gc-font-mono); font-size: 14px; line-height: 1.7; color: var(--gc-ink-900); }
+.process-contact-v {
+  display: block;
+  font-family: var(--gc-font-mono); font-size: 14px; line-height: 1.7;
+  color: var(--gc-ink-900); text-decoration: none;
+}
+a.process-contact-v { min-height: 32px; }
+a.process-contact-v:hover { color: var(--gc-primary-600); text-decoration: none; }
 .process-contact-v.sub { font-size: 13px; color: var(--gc-ink-500); }
 
 /* =============================================================================
