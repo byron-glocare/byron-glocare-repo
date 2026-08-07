@@ -9,13 +9,13 @@ export function SiteHeader({ locale }: { locale: Locale }) {
       locale={locale}
       strings={{
         cases: t["nav.cases"],
+        applySection: t["nav.applySection"],
         universities: t["nav.universities"],
         recruiting: t["nav.recruiting"],
         centers: t["nav.centers"],
         about: t["nav.about"],
         student: t["nav.student"],
         studentShort: t["nav.student.short"],
-        apply: t["nav.apply"],
       }}
     />
   );

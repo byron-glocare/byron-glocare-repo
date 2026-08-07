@@ -21,8 +21,9 @@ const koDict = {
     "center.logout": "로그아웃",
 
     "nav.cases": "취업 사례",
+    "nav.applySection": "유학 신청",
     "nav.universities": "제휴 대학",
-    "nav.recruiting": "리크루팅 혜택",
+    "nav.recruiting": "엠버서더",
     "nav.centers": "협력 유학센터",
     "nav.about": "글로케어",
     "nav.student": "유학 지원 (학생)",
@@ -30,8 +31,8 @@ const koDict = {
     "nav.apply": "상담 신청 →",
 
     "hero.badge": "베트남 → 한국 · 취업 보장 유학",
-    "hero.title.em": "한국에서 배우고",
-    "hero.title.line2": "— 졸업 후 바로 취업",
+    "hero.title.em": "한국 유학,",
+    "hero.title.line2": "스스로 준비하세요.",
     "hero.subtitle":
       "대학 찾기부터 지원·서류 작성까지 — 한국 유학을 직접 시작하세요.",
     "hero.cta.student": "유학 지원 시작",
@@ -113,8 +114,9 @@ const viDict: DictShape = {
     "center.logout": "Đăng xuất",
 
     "nav.cases": "Câu chuyện thành công",
+    "nav.applySection": "Đăng ký du học",
     "nav.universities": "Trường ĐH liên kết",
-    "nav.recruiting": "Ưu đãi giới thiệu",
+    "nav.recruiting": "Đại sứ",
     "nav.centers": "Trung tâm du học",
     "nav.about": "Về GLOCARE",
     "nav.student": "Du học (Sinh viên)",
@@ -122,8 +124,8 @@ const viDict: DictShape = {
     "nav.apply": "Đăng ký tư vấn →",
 
     "hero.badge": "Việt Nam → Hàn Quốc · Du học có việc làm đảm bảo",
-    "hero.title.em": "Học tại Hàn Quốc",
-    "hero.title.line2": "— Có việc làm ngay khi tốt nghiệp",
+    "hero.title.em": "Du học Hàn Quốc,",
+    "hero.title.line2": "tự mình chuẩn bị.",
     "hero.subtitle":
       "Từ tìm trường đến đăng ký & soạn hồ sơ — bắt đầu du học Hàn Quốc ngay hôm nay.",
     "hero.cta.student": "Bắt đầu đăng ký du học",

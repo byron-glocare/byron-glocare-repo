@@ -6,11 +6,17 @@ import type { Locale } from "@/lib/i18n";
 
 const apply = {
   ko: {
-    eyebrow: "신청 안내",
+    eyebrow: "유학 신청",
     titlePrefix: "지금 바로 ",
     titleEm: "시작하세요",
     titleSuffix: "",
-    desc: "상담부터 한국 취업 정착까지 글로케어가 단계별로 안내합니다.",
+    desc: "직접 준비하거나, 상담을 받고 함께 준비하세요. 두 가지 방법 모두 열려 있습니다.",
+    selfTitle: "셀프 유학 지원하기",
+    selfDesc:
+      "대학 찾기부터 지원·서류 작성까지 직접 진행합니다. 발급 서류는 대행 신청할 수 있습니다.",
+    selfCta: "셀프 유학 지원하기",
+    consultTitle: "상담받고 유학하기",
+    consultDesc: "담당자와 상담하고 유학센터와 함께 준비합니다.",
     formTitle: "무료 상담 신청",
     formSub: "아래 정보를 입력하시면 담당자가 빠르게 연락드립니다.",
     fName: "이름",
@@ -54,12 +60,18 @@ const apply = {
     ],
   },
   vi: {
-    eyebrow: "Quy trình đăng ký",
+    eyebrow: "Đăng ký du học",
     titlePrefix: "Bắt đầu hành trình của bạn ",
     titleEm: "ngay hôm nay",
     titleSuffix: "",
     desc:
-      "GLOCARE hướng dẫn bạn từng bước — từ tư vấn đến khi ổn định tại Hàn Quốc.",
+      "Tự mình chuẩn bị, hoặc được tư vấn và chuẩn bị cùng chúng tôi — cả hai cách đều sẵn sàng.",
+    selfTitle: "Tự đăng ký du học",
+    selfDesc:
+      "Bạn tự tìm trường, đăng ký và soạn hồ sơ. Giấy tờ cần xin cấp có thể đặt dịch vụ.",
+    selfCta: "Tự đăng ký du học",
+    consultTitle: "Du học cùng tư vấn viên",
+    consultDesc: "Trao đổi với nhân viên tư vấn và chuẩn bị cùng trung tâm du học.",
     formTitle: "Đăng ký tư vấn miễn phí",
     formSub:
       "Điền thông tin bên dưới — nhân viên tư vấn sẽ liên hệ bạn sớm nhất.",
@@ -172,7 +184,7 @@ const universities = {
 
 const recruiting = {
   ko: {
-    eyebrow: "내 친구 소개하기 프로그램",
+    eyebrow: "엠버서더",
     title: "나도 돈 벌고, <em>친구도 할인 받고!</em>",
     desc: "글로케어에 친구를 소개하면, 소개자와 친구 모두 상품권(쿠팡, 스타벅스 등)으로 리워드를 받습니다.",
     steps: [
@@ -216,7 +228,7 @@ const recruiting = {
       "※ 리워드는 등록일로부터 2개월 이내 지급됩니다.<br>※ 입학 리워드는 제휴 대학교에 한해 적용됩니다.<br>※ 엠버서더 프로그램 — 곧 출시 예정!",
   },
   vi: {
-    eyebrow: "Chương trình giới thiệu bạn bè",
+    eyebrow: "Đại sứ",
     title:
       "Tôi kiếm tiền, <em>bạn tôi được giảm giá!</em>",
     desc: "Giới thiệu bạn bè cho GLOCARE — cả hai cùng nhận thưởng bằng phiếu quà tặng (Coupang, Starbucks, v.v.).",

@@ -1101,6 +1101,38 @@ a.gc-card:hover {
  * ===========================================================================*/
 
 #apply { background: var(--gc-canvas); }
+
+/* 두 갈래 — 셀프 지원 / 상담 신청 */
+.apply-self {
+  background: var(--gc-surface);
+  border: 1px solid var(--gc-line);
+  border-radius: var(--gc-r-card);
+  padding: var(--gc-6);
+  margin-bottom: var(--gc-10);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--gc-6); flex-wrap: wrap;
+}
+.apply-path-head {
+  padding-top: var(--gc-6);
+  border-top: 1px solid var(--gc-line);
+  margin-bottom: var(--gc-6);
+}
+.apply-path-title {
+  font: var(--gc-h3);
+  letter-spacing: -0.012em;
+  color: var(--gc-ink-900);
+}
+.apply-path-desc {
+  font-size: 14px; line-height: 1.65;
+  color: var(--gc-ink-500);
+  margin-top: var(--gc-1);
+  max-width: 58ch;
+}
+@media (max-width: 639px) {
+  .apply-self { padding: var(--gc-5); }
+  .apply-self .gc-btn { width: 100%; }
+}
+
 .apply-grid { display: grid; grid-template-columns: 1fr; gap: var(--gc-8); align-items: start; }
 @media (min-width: 900px) { .apply-grid { grid-template-columns: 1.6fr 1fr; } }
 

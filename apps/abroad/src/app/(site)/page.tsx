@@ -159,8 +159,8 @@ export default async function HomePage() {
         }}
       />
       <Cases t={t} locale={locale} cases={caseCards} />
-      <Universities universities={uniCards} strings={ss.universities} />
       <Apply strings={ss.apply} />
+      <Universities universities={uniCards} strings={ss.universities} />
       <Recruiting strings={ss.recruiting} />
       <Centers t={t} centers={centerCards} />
       <FloatingButtons strings={ss.floating} />

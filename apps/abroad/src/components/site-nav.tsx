@@ -9,13 +9,13 @@ import type { Locale } from "@/lib/i18n";
 
 type NavStrings = {
   cases: string;
+  applySection: string;
   universities: string;
   recruiting: string;
   centers: string;
   about: string;
   student: string;
   studentShort: string;
-  apply: string;
 };
 
 /**
@@ -35,9 +35,11 @@ export function SiteNav({
   const pathname = usePathname();
   const close = () => setOpen(false);
 
+  /* 홈 섹션 순서와 동일하게(히어로 제외). 글로케어 소개만 별도 페이지라 끝에. */
   const links = [
-    { href: "/#universities", label: strings.universities },
     { href: "/#cases", label: strings.cases },
+    { href: "/#apply", label: strings.applySection },
+    { href: "/#universities", label: strings.universities },
     { href: "/#recruiting", label: strings.recruiting },
     { href: "/#centers", label: strings.centers },
     { href: "/about", label: strings.about },
@@ -92,9 +94,6 @@ export function SiteNav({
             {l.label}
           </Link>
         ))}
-        <Link href="/#apply" onClick={close}>
-          {strings.apply}
-        </Link>
         <Link href="/student" className="mob-cta" onClick={close}>
           {strings.student}
         </Link>

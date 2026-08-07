@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 
@@ -12,6 +13,11 @@ type Strings = {
   titleEm: string;
   titleSuffix: string;
   desc: string;
+  selfTitle: string;
+  selfDesc: string;
+  selfCta: string;
+  consultTitle: string;
+  consultDesc: string;
   formTitle: string;
   formSub: string;
   fName: string;
@@ -88,6 +94,26 @@ export function Apply({ strings }: { strings: Strings }) {
             {strings.titleSuffix}
           </h2>
           <p className="sec-desc">{strings.desc}</p>
+        </div>
+
+        {/* 경로 1 — 셀프. 채워진 CTA 는 이 섹션에서 하나만. */}
+        <div className="apply-self">
+          <div>
+            <div className="apply-path-title">{strings.selfTitle}</div>
+            <p className="apply-path-desc">{strings.selfDesc}</p>
+          </div>
+          <Link href="/student" className="gc-btn gc-btn-primary gc-btn-lg">
+            {strings.selfCta}
+            <span className="arrow" aria-hidden>
+              →
+            </span>
+          </Link>
+        </div>
+
+        {/* 경로 2 — 상담 */}
+        <div className="apply-path-head">
+          <div className="apply-path-title">{strings.consultTitle}</div>
+          <p className="apply-path-desc">{strings.consultDesc}</p>
         </div>
 
         <div className="apply-grid">
