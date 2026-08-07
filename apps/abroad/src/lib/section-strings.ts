@@ -185,9 +185,9 @@ const recruiting = {
       },
     ],
     rewards: [
-      { val: "최대 ₩200,000", lbl: "유학 리워드 · 소개자" },
-      { val: "각 ₩100,000", lbl: "버디 리워드 · 양쪽 모두" },
-      { val: "각 ₩50,000", lbl: "스페셜 · D4→D2 입학" },
+      { prefix: "최대", amount: "200,000", unit: "원", lbl: "유학 리워드 · 소개자" },
+      { prefix: "각", amount: "100,000", unit: "원", lbl: "버디 리워드 · 양쪽 모두" },
+      { prefix: "각", amount: "50,000", unit: "원", lbl: "스페셜 · D4→D2 입학" },
     ],
     giftHeader: "원하는 상품권을 직접 선택",
     giftList:
@@ -230,9 +230,9 @@ const recruiting = {
       },
     ],
     rewards: [
-      { val: "200.000 ₩", lbl: "Du học · Recruiting" },
-      { val: "100.000 ₩", lbl: "Buddy · cả hai người" },
-      { val: "50.000 ₩", lbl: "Special · D4 → D2" },
+      { prefix: "Tối đa", amount: "200.000", unit: "₩", lbl: "Du học · Recruiting" },
+      { prefix: "Mỗi người", amount: "100.000", unit: "₩", lbl: "Buddy · cả hai người" },
+      { prefix: "Mỗi người", amount: "50.000", unit: "₩", lbl: "Special · D4 → D2" },
     ],
     giftHeader: "Chọn phiếu quà tặng bạn muốn",
     giftList:

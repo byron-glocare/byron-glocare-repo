@@ -1088,11 +1088,26 @@ a.gc-card:hover {
   border-radius: var(--gc-r-card);
   padding: var(--gc-5);
 }
-.reward-val {
-  font-family: var(--gc-font-mono);
-  font-size: 28px; font-weight: 700; line-height: 1.2;
-  color: var(--gc-ink-900);
+/* 금액 — 자리수를 세는 숫자만 mono(400/500). 통화 기호와 수식어는 본문 서체로
+   작게 붙여, 숫자가 강조를 가져가되 화면이 시끄러워지지 않게 한다. */
+.reward-amt {
+  display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap;
   margin-bottom: var(--gc-2);
+}
+.reward-pre {
+  font-size: 13px; font-weight: 600;
+  color: var(--gc-ink-500);
+}
+.reward-num {
+  font-family: var(--gc-font-mono);
+  font-size: 22px; font-weight: 500; line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--gc-ink-900);
+  font-variant-numeric: tabular-nums;
+}
+.reward-unit {
+  font-size: 14px; font-weight: 600;
+  color: var(--gc-ink-500);
 }
 .reward-lbl { font-size: 13.5px; line-height: 1.6; color: var(--gc-ink-500); }
 

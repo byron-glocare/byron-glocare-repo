@@ -6,7 +6,7 @@ type RecruitingStrings = {
   desc: string;
   steps: { num: number; title: string; desc: string }[];
   programs: { title: string; desc: string }[];
-  rewards: { val: string; lbl: string }[];
+  rewards: { prefix: string; amount: string; unit: string; lbl: string }[];
   giftHeader: string;
   giftList: string;
   ctaJoin: string;
@@ -58,7 +58,11 @@ export function Recruiting({ strings }: { strings: RecruitingStrings }) {
             <div className="reward-grid">
               {strings.rewards.map((r, i) => (
                 <div key={i} className="reward-box">
-                  <div className="reward-val">{r.val}</div>
+                  <div className="reward-amt">
+                    {r.prefix && <span className="reward-pre">{r.prefix}</span>}
+                    <span className="reward-num">{r.amount}</span>
+                    <span className="reward-unit">{r.unit}</span>
+                  </div>
                   <div className="reward-lbl">{r.lbl}</div>
                 </div>
               ))}
