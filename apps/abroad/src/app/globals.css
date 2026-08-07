@@ -913,7 +913,7 @@ a.gc-card:hover {
   color: var(--gc-ink-900);
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
   overflow: hidden;
-  min-height: 2.9em;
+  min-height: calc(2 * 1.45em);
 }
 
 @media (max-width: 639px) {
@@ -1133,8 +1133,8 @@ a.gc-card:hover {
   .apply-self .gc-btn { width: 100%; }
 }
 
-.apply-grid { display: grid; grid-template-columns: 1fr; gap: var(--gc-8); align-items: start; }
-@media (min-width: 900px) { .apply-grid { grid-template-columns: 1.6fr 1fr; } }
+/* 폼 단독 — 2열 필드가 편한 폭까지만 */
+.apply-grid { max-width: 760px; }
 
 .form-wrap {
   background: var(--gc-surface);
@@ -1173,20 +1173,12 @@ a.gc-card:hover {
 }
 
 /* 프로세스 카드 (폼 옆) */
-.process-card {
-  background: var(--gc-surface);
-  border: 1px solid var(--gc-line);
-  border-radius: var(--gc-r-card);
-  padding: 28px 24px;
-}
-.process-card-ttl { font-size: 15px; font-weight: 700; line-height: 1.4; color: var(--gc-ink-900); margin-bottom: var(--gc-3); }
 .process-contact-l { font-size: 12px; font-weight: 500; line-height: 1.55; color: var(--gc-ink-400); margin-bottom: 6px; }
 .process-contact-v {
   display: block;
   font-family: var(--gc-font-mono); font-size: 14px; line-height: 1.7;
   color: var(--gc-ink-900); text-decoration: none;
 }
-a.process-contact-v { min-height: 32px; }
 a.process-contact-v:hover { color: var(--gc-primary-600); text-decoration: none; }
 .process-contact-v.sub { font-size: 13px; color: var(--gc-ink-500); }
 

@@ -49,7 +49,6 @@ const apply = {
     successEyebrow: "접수 완료",
     successTitle: "상담 신청이 정상 접수됐습니다",
     successDesc: "곧 담당자가 연락드리겠습니다.",
-    contactLabel: "바로 연락하기",
   },
   vi: {
     eyebrow: "Đăng ký du học",
@@ -101,7 +100,6 @@ const apply = {
     successEyebrow: "ĐÃ GỬI",
     successTitle: "Đăng ký đã được tiếp nhận",
     successDesc: "Chúng tôi sẽ sớm liên hệ với bạn.",
-    contactLabel: "Liên hệ trực tiếp",
   },
 };
 

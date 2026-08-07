@@ -41,7 +41,6 @@ type Strings = {
   successTitle: string;
   successDesc: string;
   successEyebrow: string;
-  contactLabel: string;
 };
 
 /**
@@ -251,20 +250,6 @@ export function Apply({ strings }: { strings: Strings }) {
             )}
           </div>
 
-          <aside className="process-card">
-            <div className="process-card-ttl">{strings.contactLabel}</div>
-            <a href="tel:0977456324" className="process-contact-v">
-              0977.456.324
-            </a>
-            <a
-              href="https://zalo.me/821022568724"
-              target="_blank"
-              rel="noreferrer"
-              className="process-contact-v sub"
-            >
-              Zalo +82-10-2256-8724
-            </a>
-          </aside>
         </div>
       </div>
     </section>
