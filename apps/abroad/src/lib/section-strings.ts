@@ -15,6 +15,7 @@ const apply = {
     selfDesc:
       "대학 찾기부터 지원·서류 작성까지 직접 진행합니다. 발급 서류는 대행 신청할 수 있습니다.",
     selfCta: "셀프 유학 지원하기",
+    serviceCta: "서비스 · 요금 보기",
     consultTitle: "상담받고 유학하기",
     consultDesc: "담당자와 상담하고 유학센터와 함께 준비합니다.",
     formTitle: "무료 상담 신청",
@@ -61,6 +62,7 @@ const apply = {
     selfDesc:
       "Bạn tự tìm trường, đăng ký và soạn hồ sơ. Giấy tờ cần xin cấp có thể đặt dịch vụ.",
     selfCta: "Tự đăng ký du học",
+    serviceCta: "Dịch vụ & bảng giá",
     consultTitle: "Du học cùng tư vấn viên",
     consultDesc: "Trao đổi với nhân viên tư vấn và chuẩn bị cùng trung tâm du học.",
     formTitle: "Đăng ký tư vấn miễn phí",

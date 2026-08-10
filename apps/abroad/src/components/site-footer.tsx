@@ -8,6 +8,7 @@ export async function SiteFooter() {
   const t = await getDict();
 
   const services = [
+    { href: "/service", label: t["nav.service"] },
     { href: "/#cases", label: t["nav.cases"] },
     { href: "/#apply", label: t["nav.applySection"] },
     { href: "/#universities", label: t["nav.universities"] },

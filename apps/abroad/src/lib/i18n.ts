@@ -22,6 +22,7 @@ const koDict = {
 
     "nav.cases": "취업 사례",
     "nav.applySection": "유학 신청",
+    "nav.service": "서비스 · 요금",
     "nav.universities": "제휴 대학",
     "nav.recruiting": "엠버서더",
     "nav.centers": "협력 유학센터",
@@ -124,6 +125,7 @@ const viDict: DictShape = {
 
     "nav.cases": "Câu chuyện thành công",
     "nav.applySection": "Đăng ký du học",
+    "nav.service": "Dịch vụ & bảng giá",
     "nav.universities": "Trường ĐH liên kết",
     "nav.recruiting": "Đại sứ",
     "nav.centers": "Trung tâm du học",

@@ -1199,6 +1199,56 @@ a.process-contact-v:hover { color: var(--gc-primary-600); text-decoration: none;
 .process-contact-v.sub { font-size: 13px; color: var(--gc-ink-500); }
 
 /* =============================================================================
+ * 판매 상품 (서비스 안내 · 상품 상세)
+ * ===========================================================================*/
+
+.product-price {
+  display: flex; align-items: baseline; gap: var(--gc-2); flex-wrap: wrap;
+  padding: var(--gc-3) 0;
+}
+.product-price-n {
+  font-size: 26px; font-weight: 500; line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--gc-ink-900);
+  font-variant-numeric: tabular-nums;
+}
+.product-price-vat { font-size: 13px; color: var(--gc-ink-400); }
+
+.product-meta {
+  margin-top: var(--gc-4);
+  font-size: 13px; line-height: 1.65; color: var(--gc-ink-500);
+}
+
+.product-detail { display: grid; grid-template-columns: 1fr; gap: var(--gc-6); align-items: start; }
+@media (min-width: 900px) {
+  .product-detail { grid-template-columns: 1.5fr 1fr; gap: var(--gc-8); }
+}
+
+.product-buy {
+  background: var(--gc-surface);
+  border: 1px solid var(--gc-line);
+  border-radius: var(--gc-r-card);
+  padding: var(--gc-6);
+}
+@media (min-width: 900px) { .product-buy { position: sticky; top: 92px; } }
+
+.product-terms {
+  margin-top: var(--gc-5);
+  padding-top: var(--gc-5);
+  border-top: 1px solid var(--gc-line-soft);
+  display: flex; flex-direction: column; gap: var(--gc-4);
+}
+.product-terms dt {
+  font-size: 12px; font-weight: 600; color: var(--gc-ink-400);
+  margin-bottom: 4px;
+}
+.product-terms dd {
+  margin: 0;
+  font-size: 13.5px; line-height: 1.7; color: var(--gc-ink-700);
+}
+.product-terms a { color: var(--gc-primary-600); text-decoration: underline; }
+
+/* =============================================================================
  * 약관 · 정책 문서 (이용약관 / 개인정보처리방침 / 취소·환불 규정)
  * ===========================================================================*/
 
@@ -1556,4 +1606,10 @@ footer { background: var(--gc-ink-900); color: var(--gc-ink-300); }
 @media (prefers-reduced-motion: reduce) {
   .fu { animation: none; }
   * { transition-duration: 0.01ms !important; }
+}
+
+/* 셀프 지원 카드의 버튼 두 개 — 좁은 화면에선 세로로 */
+.apply-self-cta { display: flex; gap: var(--gc-3); flex-wrap: wrap; }
+@media (max-width: 639px) {
+  .apply-self-cta { width: 100%; flex-direction: column; }
 }

@@ -16,6 +16,7 @@ type Strings = {
   selfTitle: string;
   selfDesc: string;
   selfCta: string;
+  serviceCta: string;
   consultTitle: string;
   consultDesc: string;
   formTitle: string;
@@ -99,12 +100,17 @@ export function Apply({ strings }: { strings: Strings }) {
             <div className="apply-path-title">{strings.selfTitle}</div>
             <p className="apply-path-desc">{strings.selfDesc}</p>
           </div>
-          <Link href="/student" className="gc-btn gc-btn-primary gc-btn-lg">
-            {strings.selfCta}
-            <span className="arrow" aria-hidden>
-              →
-            </span>
-          </Link>
+          <div className="apply-self-cta">
+            <Link href="/student" className="gc-btn gc-btn-primary gc-btn-lg">
+              {strings.selfCta}
+              <span className="arrow" aria-hidden>
+                →
+              </span>
+            </Link>
+            <Link href="/service" className="gc-btn gc-btn-secondary gc-btn-lg">
+              {strings.serviceCta}
+            </Link>
+          </div>
         </div>
 
         {/* 경로 2 — 상담 */}
