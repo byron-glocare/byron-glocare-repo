@@ -16,6 +16,8 @@ import {
   isFormImageDataType,
 } from "@/lib/center/student-data-context";
 import { seedStudentDataFromRecords } from "@/lib/center/seed-student-data";
+import { isFixedKey } from "@/lib/fixed-values";
+import { FixedValuesCard } from "@/components/fixed-values-card";
 import { StudentDataEditor } from "@/app/center/(authed)/students/[id]/data/student-data-editor";
 
 export const dynamic = "force-dynamic";
@@ -32,8 +34,17 @@ export default async function StudentDataPage() {
   const { dataTypes, valueMap, inputMap, requiredMap } =
     await loadStudentDataContext(supabase, studentId);
 
+  // 고정값(추천인 등)은 입력칸으로 두지 않는다 — 아래 안내 카드로만 보여준다.
+  const fixedLabels: Record<string, string> = {};
+  for (const d of dataTypes) {
+    if (isFixedKey(d.key)) {
+      fixedLabels[d.key] = locale === "ko" ? d.label_ko : d.label_vi;
+    }
+  }
+
   const nonFile = dataTypes
     .filter((d) => d.input_type !== "file" || isFormImageDataType(d))
+    .filter((d) => !isFixedKey(d.key))
     .map((d) => (isFormImageDataType(d) ? { ...d, category: "other" } : d));
   const nonFileKeys = new Set(nonFile.map((d) => d.key));
 
@@ -57,6 +68,8 @@ export default async function StudentDataPage() {
           )}
         </p>
       </div>
+
+      <FixedValuesCard locale={locale} labels={fixedLabels} />
 
       <StudentDataEditor
         locale={locale}

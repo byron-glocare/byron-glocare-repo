@@ -16,6 +16,8 @@ import {
   isFormImageDataType,
 } from "@/lib/center/student-data-context";
 import { seedStudentDataFromRecords } from "@/lib/center/seed-student-data";
+import { isFixedKey } from "@/lib/fixed-values";
+import { FixedValuesCard } from "@/components/fixed-values-card";
 import { StudentDataEditor } from "./student-data-editor";
 
 export default async function StudentDataPage({
@@ -44,8 +46,17 @@ export default async function StudentDataPage({
   // 첨부파일(파일 타입)은 '서류 등록' 탭으로 이동 → 여기선 제외.
   // 단, 양식에 직접 박히는 이미지(증명사진·서명)는 정보 입력에 포함하되
   // 서명과 함께 '기타' 그룹으로 묶는다.
+  // 고정값(추천인 등)은 입력칸으로 두지 않는다 — 아래 안내 카드로만 보여준다.
+  const fixedLabels: Record<string, string> = {};
+  for (const d of dataTypes) {
+    if (isFixedKey(d.key)) {
+      fixedLabels[d.key] = locale === "ko" ? d.label_ko : d.label_vi;
+    }
+  }
+
   const nonFile = dataTypes
     .filter((d) => d.input_type !== "file" || isFormImageDataType(d))
+    .filter((d) => !isFixedKey(d.key))
     .map((d) => (isFormImageDataType(d) ? { ...d, category: "other" } : d));
   const nonFileKeys = new Set(nonFile.map((d) => d.key));
 
@@ -63,6 +74,8 @@ export default async function StudentDataPage({
           )}
         </p>
       </header>
+
+      <FixedValuesCard locale={locale} labels={fixedLabels} />
 
       <StudentDataEditor
         locale={locale}

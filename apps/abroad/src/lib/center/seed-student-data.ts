@@ -12,6 +12,7 @@
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database, Json } from "@/types/database";
+import { FIXED_STUDENT_VALUES } from "@/lib/fixed-values";
 
 type Client = SupabaseClient<Database>;
 
@@ -118,6 +119,21 @@ export async function seedStudentDataFromRecords(
       data_type_key: key,
       value: String(val).trim() as unknown as Json,
     }));
+
+  // 고정값(추천인 등)은 "빈 항목만" 규칙에서 예외 — 항상 정해진 값으로 맞춘다.
+  // 사람이 입력하는 항목이 아니라서 다른 값이 들어가 있으면 그게 오류다.
+  const currentValue = new Map(
+    (values ?? []).map((v) => [v.data_type_key, v.value])
+  );
+  for (const [key, fixed] of Object.entries(FIXED_STUDENT_VALUES)) {
+    if (currentValue.get(key) !== fixed) {
+      rows.push({
+        student_id: studentId,
+        data_type_key: key,
+        value: fixed as unknown as Json,
+      });
+    }
+  }
 
   if (rows.length === 0) return { filled: [] };
 
