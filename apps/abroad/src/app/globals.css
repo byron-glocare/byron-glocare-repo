@@ -1613,3 +1613,17 @@ footer { background: var(--gc-ink-900); color: var(--gc-ink-300); }
 @media (max-width: 639px) {
   .apply-self-cta { width: 100%; flex-direction: column; }
 }
+
+/* 로그인 — 소셜/이메일 구분선 */
+.login-or {
+  display: flex; align-items: center; gap: var(--gc-3);
+  margin: var(--gc-5) 0 var(--gc-4);
+  color: var(--gc-ink-400); font-size: 12.5px;
+}
+.login-or::before, .login-or::after {
+  content: ""; flex: 1; height: 1px; background: var(--gc-line);
+}
+
+/* 주문·결제 — 주문내역 / 결제 2열 */
+.order-grid { display: grid; grid-template-columns: 1fr; gap: var(--gc-6); align-items: start; }
+@media (min-width: 900px) { .order-grid { grid-template-columns: 1.3fr 1fr; } }

@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useActionState, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/client";
 import { tr, type Locale } from "@/lib/i18n";
+
+import { emailLoginAction, type LoginState } from "./actions";
 
 export function StudentLoginButtons({ locale }: { locale: Locale }) {
   const [busy, setBusy] = useState(false);
@@ -46,6 +48,12 @@ export function StudentLoginButtons({ locale }: { locale: Locale }) {
           : tr(locale, "구글로 계속하기", "Tiếp tục với Google")}
       </button>
 
+      <div className="login-or">
+        <span>{tr(locale, "또는", "hoặc")}</span>
+      </div>
+
+      <EmailForm locale={locale} next={nextParam} />
+
       {errorParam === "no_student" ? (
         <p className="text-xs text-warning">
           {tr(
@@ -61,6 +69,89 @@ export function StudentLoginButtons({ locale }: { locale: Locale }) {
       ) : null}
       {err ? <p className="text-xs text-destructive">{err}</p> : null}
     </div>
+  );
+}
+
+/** 이메일·비밀번호 — 소셜 계정이 없어도 가입·로그인할 수 있는 축. */
+function EmailForm({ locale, next }: { locale: Locale; next: string }) {
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [state, formAction, pending] = useActionState<LoginState, FormData>(
+    emailLoginAction,
+    undefined
+  );
+
+  return (
+    <form action={formAction} className="space-y-3">
+      <input type="hidden" name="mode" value={mode} />
+      <input type="hidden" name="next" value={next} />
+
+      <div>
+        <label className="gc-label" htmlFor="lg-email">
+          {tr(locale, "이메일", "Email")}
+        </label>
+        <input
+          id="lg-email"
+          name="email"
+          type="email"
+          autoComplete="email"
+          required
+          className="gc-input"
+          placeholder="name@example.com"
+        />
+      </div>
+
+      <div>
+        <label className="gc-label" htmlFor="lg-pw">
+          {tr(locale, "비밀번호", "Mật khẩu")}
+        </label>
+        <input
+          id="lg-pw"
+          name="password"
+          type="password"
+          autoComplete={mode === "signup" ? "new-password" : "current-password"}
+          required
+          minLength={mode === "signup" ? 8 : undefined}
+          className="gc-input"
+          placeholder={
+            mode === "signup"
+              ? tr(locale, "8자 이상", "Từ 8 ký tự")
+              : undefined
+          }
+        />
+      </div>
+
+      {state && "error" in state ? (
+        <p className="gc-error-msg">
+          <span aria-hidden>!</span>
+          <span>{state.error}</span>
+        </p>
+      ) : null}
+      {state && "ok" in state ? (
+        <p className="text-xs text-success-ink">{state.message}</p>
+      ) : null}
+
+      <button
+        type="submit"
+        disabled={pending}
+        className="gc-btn gc-btn-primary gc-btn-lg gc-btn-block"
+      >
+        {pending
+          ? tr(locale, "처리 중...", "Đang xử lý...")
+          : mode === "signup"
+            ? tr(locale, "이메일로 가입하기", "Đăng ký bằng email")
+            : tr(locale, "이메일로 로그인", "Đăng nhập bằng email")}
+      </button>
+
+      <button
+        type="button"
+        onClick={() => setMode(mode === "signup" ? "signin" : "signup")}
+        className="gc-btn gc-btn-ghost gc-btn-block"
+      >
+        {mode === "signup"
+          ? tr(locale, "이미 계정이 있어요 — 로그인", "Đã có tài khoản — Đăng nhập")
+          : tr(locale, "계정이 없어요 — 가입하기", "Chưa có tài khoản — Đăng ký")}
+      </button>
+    </form>
   );
 }
 
