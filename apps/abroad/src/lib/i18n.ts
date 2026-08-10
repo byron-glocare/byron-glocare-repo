@@ -76,6 +76,15 @@ const koDict = {
     "footer.center": "관리자 센터",
     "footer.privacy": "개인정보처리방침",
     "footer.terms": "이용약관",
+    "footer.refund": "취소·환불 규정",
+
+    "biz.name": "상호명",
+    "biz.ceo": "대표자명",
+    "biz.no": "사업자등록번호",
+    "biz.mailOrder": "통신판매업신고번호",
+    "biz.tel": "유선전화번호",
+    "biz.address": "사업장주소",
+    "biz.preparing": "준비 중",
 
     "apply.title": "무료 상담 신청",
     "apply.description":
@@ -169,6 +178,15 @@ const viDict: DictShape = {
     "footer.center": "Trung tâm quản trị",
     "footer.privacy": "Chính sách bảo mật",
     "footer.terms": "Điều khoản sử dụng",
+    "footer.refund": "Chính sách hủy & hoàn tiền",
+
+    "biz.name": "Tên doanh nghiệp",
+    "biz.ceo": "Người đại diện",
+    "biz.no": "Mã số doanh nghiệp",
+    "biz.mailOrder": "Số đăng ký bán hàng qua mạng",
+    "biz.tel": "Điện thoại cố định",
+    "biz.address": "Địa chỉ trụ sở",
+    "biz.preparing": "Đang chuẩn bị",
 
     "apply.title": "Đăng ký tư vấn miễn phí",
     "apply.description":

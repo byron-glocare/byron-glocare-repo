@@ -644,7 +644,8 @@ a.gc-card:hover {
   display: flex; align-items: center;
   color: var(--gc-ink-500);
   font-size: 13.5px; font-weight: 500;
-  padding: 12px 11px;
+  /* 메뉴 6개 + 베트남어 라벨이 1120 컨테이너에 들어가야 한다 — 좌우 여백을 조인다. */
+  padding: 12px 9px;
   border-radius: var(--gc-r-pill);
   min-height: 44px;
   white-space: nowrap;
@@ -1198,6 +1199,76 @@ a.process-contact-v:hover { color: var(--gc-primary-600); text-decoration: none;
 .process-contact-v.sub { font-size: 13px; color: var(--gc-ink-500); }
 
 /* =============================================================================
+ * 약관 · 정책 문서 (이용약관 / 개인정보처리방침 / 취소·환불 규정)
+ * ===========================================================================*/
+
+.legal-body { max-width: 76ch; }
+.legal-lead {
+  font-size: 16px; line-height: 1.75;
+  color: var(--gc-ink-700);
+  padding-bottom: var(--gc-6);
+  border-bottom: 1px solid var(--gc-line);
+}
+.legal-art { padding: var(--gc-6) 0; border-bottom: 1px solid var(--gc-line-soft); }
+.legal-art:last-child { border-bottom: 0; }
+.legal-art h2 {
+  font: var(--gc-h3);
+  letter-spacing: -0.012em;
+  color: var(--gc-ink-900);
+  margin-bottom: var(--gc-3);
+}
+.legal-art p { font-size: 15px; line-height: 1.8; color: var(--gc-ink-700); }
+.legal-art p + p,
+.legal-art p + ol,
+.legal-art ol + p { margin-top: var(--gc-3); }
+.legal-art ol { margin: 0; padding-left: 1.35em; }
+.legal-art li {
+  font-size: 15px; line-height: 1.8; color: var(--gc-ink-700);
+  padding-left: var(--gc-1);
+}
+.legal-art li + li { margin-top: var(--gc-2); }
+.legal-art a { color: var(--gc-primary-600); text-decoration: underline; }
+.legal-note {
+  margin-top: var(--gc-4);
+  background: var(--gc-primary-50);
+  border: 1px solid var(--gc-primary-200);
+  border-radius: var(--gc-r-input);
+  padding: 14px 16px;
+  font-size: 13.5px; line-height: 1.7; color: var(--gc-primary-900);
+}
+
+/* 환불 기준 표 — 좁은 화면에서는 가로 스크롤 */
+.legal-table {
+  width: 100%;
+  margin-top: var(--gc-4);
+  border-collapse: collapse;
+  font-size: 14px;
+  display: block;
+  overflow-x: auto;
+}
+.legal-table th,
+.legal-table td {
+  border: 1px solid var(--gc-line);
+  padding: 12px 14px;
+  text-align: left;
+  line-height: 1.7;
+  vertical-align: top;
+}
+.legal-table th {
+  background: var(--gc-subtle);
+  font-weight: 700;
+  color: var(--gc-ink-900);
+  white-space: nowrap;
+}
+.legal-table td { color: var(--gc-ink-700); }
+
+.legal-dl { display: grid; grid-template-columns: 1fr; gap: var(--gc-2); }
+@media (min-width: 640px) { .legal-dl { grid-template-columns: repeat(2, 1fr); } }
+.legal-dl > div { display: flex; gap: var(--gc-3); font-size: 14px; line-height: 1.7; }
+.legal-dl dt { color: var(--gc-ink-400); flex-shrink: 0; min-width: 8em; }
+.legal-dl dd { color: var(--gc-ink-700); margin: 0; }
+
+/* =============================================================================
  * MODAL — 반경 20px, 그림자 lg
  * ===========================================================================*/
 
@@ -1273,6 +1344,27 @@ footer { background: var(--gc-ink-900); color: var(--gc-ink-300); }
 .foot-ul a:hover { color: var(--gc-surface); text-decoration: none; }
 .foot-k { color: var(--gc-ink-500); margin-right: var(--gc-1); }
 .foot-v { font-family: var(--gc-font-mono); font-size: 12.5px; }
+
+/* 사업자 정보 — 전자상거래법 고지. 라벨·값 쌍을 한 줄씩. */
+.foot-biz {
+  max-width: var(--gc-container);
+  margin: var(--gc-8) auto 0;
+  padding: var(--gc-5) var(--gc-gutter) 0;
+  border-top: 1px solid var(--gc-ink-700);
+}
+.foot-biz dl {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px var(--gc-6);
+  margin: 0;
+}
+@media (min-width: 640px) { .foot-biz dl { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 900px) { .foot-biz dl { grid-template-columns: repeat(3, 1fr); } }
+.foot-biz dl > div { display: flex; gap: var(--gc-2); font-size: 12.5px; line-height: 1.7; }
+.foot-biz dl > div.wide { grid-column: 1 / -1; }
+.foot-biz dt { color: var(--gc-ink-500); flex-shrink: 0; }
+.foot-biz dd { color: var(--gc-ink-300); margin: 0; }
+.foot-biz .foot-v { font-family: var(--gc-font-mono); font-size: 12px; }
 
 .foot-bot {
   max-width: var(--gc-container);
