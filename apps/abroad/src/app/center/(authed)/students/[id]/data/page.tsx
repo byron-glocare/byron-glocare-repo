@@ -15,6 +15,7 @@ import {
   pickRequired,
   isFormImageDataType,
 } from "@/lib/center/student-data-context";
+import { seedStudentDataFromRecords } from "@/lib/center/seed-student-data";
 import { StudentDataEditor } from "./student-data-editor";
 
 export default async function StudentDataPage({
@@ -33,6 +34,9 @@ export default async function StudentDataPage({
     .eq("id", id)
     .maybeSingle();
   if (!student) notFound();
+
+  // 학생 등록 때 받은 값·지원 대학에서 정해진 값을 빈 항목에만 미리 채운다(멱등).
+  await seedStudentDataFromRecords(supabase, id);
 
   const { dataTypes, valueMap, inputMap, requiredMap } =
     await loadStudentDataContext(supabase, id);
