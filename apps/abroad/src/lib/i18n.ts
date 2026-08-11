@@ -182,12 +182,14 @@ const viDict: DictShape = {
     "footer.terms": "Điều khoản sử dụng",
     "footer.refund": "Chính sách hủy & hoàn tiền",
 
-    "biz.name": "Tên doanh nghiệp",
-    "biz.ceo": "Người đại diện",
-    "biz.no": "Mã số doanh nghiệp",
-    "biz.mailOrder": "Số đăng ký bán hàng qua mạng",
-    "biz.tel": "Điện thoại cố định",
-    "biz.address": "Địa chỉ trụ sở",
+    // 사업자 정보는 전자상거래법 고지이자 카드사 심사 항목이라
+    // 베트남어 화면에서도 한국어 원문 라벨을 함께 보여준다.
+    "biz.name": "Tên doanh nghiệp (상호명)",
+    "biz.ceo": "Người đại diện (대표자명)",
+    "biz.no": "Mã số doanh nghiệp (사업자등록번호)",
+    "biz.mailOrder": "Số đăng ký bán hàng qua mạng (통신판매업신고번호)",
+    "biz.tel": "Điện thoại cố định (유선전화번호)",
+    "biz.address": "Địa chỉ trụ sở (사업장주소)",
     "biz.preparing": "Đang chuẩn bị",
 
     "apply.title": "Đăng ký tư vấn miễn phí",
