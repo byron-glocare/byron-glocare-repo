@@ -14,10 +14,17 @@ export const dynamic = "force-dynamic";
 export default async function NewFormDocPage({
   searchParams,
 }: {
-  searchParams: Promise<{ university_id?: string }>;
+  searchParams: Promise<{
+    university_id?: string;
+    key?: string;
+    name_ko?: string;
+  }>;
 }) {
   const sp = await searchParams;
   const preUni = sp.university_id ?? "";
+  // 모집요강 상세의 [양식 업로드] 에서 넘어오면 어느 서류의 양식인지 함께 온다.
+  const preKey = sp.key ?? "";
+  const preName = sp.name_ko ?? "";
 
   const supabaseUser = await createClient();
   const {
@@ -49,6 +56,8 @@ export default async function NewFormDocPage({
           universities={universities ?? []}
           departments={departments ?? []}
           preUniversityId={preUni}
+          preKey={preKey}
+          preName={preName}
         />
       </div>
     </>

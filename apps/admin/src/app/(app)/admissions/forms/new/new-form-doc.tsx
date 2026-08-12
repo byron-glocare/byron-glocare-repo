@@ -32,10 +32,15 @@ export function NewFormDoc({
   universities,
   departments,
   preUniversityId,
+  preKey = "",
+  preName = "",
 }: {
   universities: Uni[];
   departments: Dept[];
   preUniversityId: string;
+  /** 모집요강에서 넘어온 서류 종류 — 이 값이 곧 양식과 서류의 연결 고리다. */
+  preKey?: string;
+  preName?: string;
 }) {
   const router = useRouter();
   const [state, action, pending] = useActionState<UploadFormFileState, FormData>(
@@ -44,9 +49,14 @@ export function NewFormDoc({
   );
 
   const [uniId, setUniId] = useState(preUniversityId);
-  const [key, setKey] = useState("application_form");
+  // 기본값을 두지 않는다. 예전엔 '입학 지원서'가 미리 선택돼 있어서, 자기소개서
+  // 양식을 올려도 입학 지원서로 저장되고(→ 해당 서류는 계속 미등록) 기존 입학
+  // 지원서 양식까지 구버전으로 밀려났다.
+  const [key, setKey] = useState(
+    preKey && preKey in KEY_LABELS ? preKey : preKey ? "other" : ""
+  );
   const [deptName, setDeptName] = useState(""); // "" = 모든 학과
-  const [nameKo, setNameKo] = useState("");
+  const [nameKo, setNameKo] = useState(preName);
   const fileRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
   const submitted = useRef(false);
@@ -77,6 +87,7 @@ export function NewFormDoc({
 
   async function submit() {
     if (!uniId) return toast.error("대학을 선택하세요");
+    if (!key) return toast.error("양식 종류를 선택하세요");
     if (!file) return toast.error("파일을 선택하세요");
 
     const dataUrl = await new Promise<string>((res, rej) => {
@@ -131,6 +142,7 @@ export function NewFormDoc({
             onChange={(e) => setKey(e.target.value)}
             className="h-9 rounded-md border border-input bg-background px-3 text-sm"
           >
+            <option value="">선택하세요</option>
             {Object.entries(KEY_LABELS).map(([v, label]) => (
               <option key={v} value={v}>
                 {label}

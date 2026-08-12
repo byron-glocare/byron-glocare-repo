@@ -133,7 +133,7 @@ export default async function AdmissionDetailPage({
   // 이 대학의 현행 작성서류 양식 파일 (직접작성 서류 업로드 여부·편집 링크용)
   const { data: formFiles } = await supabase
     .from("study_admission_form_files")
-    .select("id, key, name_ko, file_name, file_url")
+    .select("id, key, name_ko, file_name, file_url, department_name")
     .eq("university_id", spec.university_id)
     .eq("is_current", true);
   const normFormName = (s: string) =>
@@ -142,14 +142,37 @@ export default async function AdmissionDetailPage({
       .replace(/^\s*\d+[.)]\s*/, "")
       .replace(/\s+/g, "")
       .toLowerCase();
-  const formByKey = new Map(
-    (formFiles ?? []).map((f) => [f.key as string, f] as const)
-  );
-  const formByName = new Map(
-    (formFiles ?? []).map((f) => [normFormName(f.name_ko), f] as const)
-  );
-  const formFileFor = (d: { key: string; name_ko: string }) =>
-    formByKey.get(d.key) ?? formByName.get(normFormName(d.name_ko));
+
+  type FormFile = NonNullable<typeof formFiles>[number];
+  const byKey = new Map<string, FormFile[]>();
+  for (const f of formFiles ?? []) {
+    const list = byKey.get(f.key) ?? [];
+    list.push(f);
+    byKey.set(f.key, list);
+  }
+  /** 서류명이 같은가 — 앞 번호·공백을 털고 한쪽이 다른 쪽을 품어도 같은 걸로 본다. */
+  const nameMatches = (f: FormFile, docName: string) => {
+    const a = normFormName(f.name_ko);
+    const b = normFormName(docName);
+    if (!a || !b) return false;
+    return a === b || (b.length >= 4 && (a.includes(b) || b.includes(a)));
+  };
+
+  const formFileFor = (d: { key: string; name_ko: string }) => {
+    const sameKey = byKey.get(d.key) ?? [];
+    if (sameKey.length === 1) return sameKey[0];
+    if (sameKey.length > 1) {
+      // 같은 종류가 여럿이면(학과별 양식 등) 이름 → 대학 전체 순으로 고른다.
+      return (
+        sameKey.find((f) => nameMatches(f, d.name_ko)) ??
+        sameKey.find((f) => f.department_name === null) ??
+        sameKey[0]
+      );
+    }
+    // 종류가 안 맞아도 이름이 같으면 같은 서류로 본다 — 과거에 잘못 분류돼
+    // 올라간 파일이 영영 '미등록'으로 남지 않도록 하는 구제 경로.
+    return (formFiles ?? []).find((f) => nameMatches(f, d.name_ko));
+  };
 
   // 제출서류 = required_documents → 직접작성/발급 분류
   const { forms: formDocs, issued: issuedDocs } = classifyRequiredDocs(
@@ -418,7 +441,13 @@ export default async function AdmissionDetailPage({
                         href={
                           file
                             ? `/admissions/forms/${file.id}`
-                            : `/admissions/forms/new?university_id=${spec.university_id}`
+                            : // 어느 서류의 양식인지 넘겨준다. 안 넘기면 업로드 화면이
+                              // 양식종류를 '입학 지원서'로 기본 선택해 버려서, 올린 파일이
+                              // 이 서류와 연결되지 않고(=계속 미등록) 엉뚱한 양식을
+                              // 밀어내기까지 한다.
+                              `/admissions/forms/new?university_id=${spec.university_id}` +
+                              `&key=${encodeURIComponent(doc.key)}` +
+                              `&name_ko=${encodeURIComponent(doc.name_ko)}`
                         }
                         className={buttonVariants({ variant: "outline", size: "sm" })}
                       >
