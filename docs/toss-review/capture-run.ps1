@@ -1,4 +1,4 @@
-# 토스 결제경로 캡처 — 7장을 순서대로 받아 shots/ 에 저장한다.
+﻿# 토스 결제경로 캡처 — 7장을 순서대로 받아 shots/ 에 저장한다.
 #
 #   powershell -ExecutionPolicy Bypass -File docs\toss-review\capture-run.ps1
 #

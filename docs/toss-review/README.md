@@ -54,10 +54,13 @@ TOSS_TEST_ID=아이디 TOSS_TEST_PW=비밀번호 node docs/toss-review/build.js
 
 ## 아직 막혀 있는 것
 
-| # | 항목 | 없으면 생기는 일 | 조치 |
-| --- | --- | --- | --- |
-| 1 | 토스 키 미설정 | 주문서에 "결제 모듈이 설정되지 않았습니다" 만 뜨고 결제창이 안 열림 | Vercel 환경변수에 `NEXT_PUBLIC_TOSS_CLIENT_KEY`, `TOSS_SECRET_KEY` 추가 후 재배포. 가이드 4쪽 6항에 따라 **테스트 키로 충분** |
-| 2 | 테스트 계정 없음 | 로그인·주문서·결제창 캡처 불가 + 표지 (9)(10) 공란 | `/student/login` 에서 이메일로 가입 |
+전부 해결됐다. 캡처 7장이 `shots/` 에 있고 PPT 도 조립돼 있다.
+남은 건 표지의 **Test PW** 한 칸뿐 — 비밀번호를 거치지 않으려고 빈칸으로 뒀다.
+아래 명령으로 채워 최종본을 만든다.
+
+```powershell
+$env:TOSS_TEST_ID="toss@test.com"; $env:TOSS_TEST_PW="비밀번호"; node docs/toss-review/build.js
+```
 
 SQL `0050`~`0053` 은 실행 완료됐고, 상품 금액은 공개 페이지에 정상 노출됩니다.
 ⚠ `0047_seed_issuance_pricing.sql` 은 실행하지 마세요 — 서류 10종을 개별 상품으로 넣는
