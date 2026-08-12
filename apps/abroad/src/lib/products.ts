@@ -15,10 +15,12 @@ export type ProductKey = (typeof PRODUCT_KEYS)[number];
 
 /**
  * 서비스 제공기간 — 결제일부터 결과물 전달까지의 **최대** 기간.
- * 토스 정책상 배송 6주 초과 시 입점 불가, 서비스 6개월 초과 시 입점 불가라
- * 최장 케이스(현지 발급 + 영사확인 지연)를 6주로 잡는다.
+ *
+ * 토스 정책상 무형 서비스는 제공기간 6개월 초과 시 입점 불가다. 종합 컨설팅은
+ * 지원 학기 일정을 따라가느라 몇 주로 끊기지 않아 최장 3개월로 고지한다.
+ * (통상은 훨씬 짧다 — 상품별 duration 문구에 실제 소요를 함께 적는다.)
  */
-export const MAX_SERVICE_WEEKS = 6;
+export const MAX_SERVICE_MONTHS = 3;
 
 export type ProductCopy = {
   key: ProductKey;
@@ -60,7 +62,7 @@ export const PRODUCTS: Record<ProductKey, ProductCopy> = {
       "대학 지원서·자기소개서 등 작성 서류 대행",
       "발급기관이 요구하는 별도 실비가 추가로 발생하는 경우 (사전 안내 후 진행)",
     ],
-    duration: `결제일로부터 최대 ${MAX_SERVICE_WEEKS}주 이내 (통상 2~4주, 현지 발급기관 사정에 따라 달라질 수 있습니다)`,
+    duration: `결제일로부터 최대 ${MAX_SERVICE_MONTHS}개월 이내 (통상 2~4주, 현지 발급기관 사정에 따라 달라질 수 있습니다)`,
   },
 
   full_consulting: {
@@ -84,7 +86,7 @@ export const PRODUCTS: Record<ProductKey, ProductCopy> = {
       "대학 입학 허가 및 비자 발급 보증 (최종 심사는 대학·출입국관서 권한입니다)",
       "대학 등록금·기숙사비 등 학교에 직접 납부하는 비용",
     ],
-    duration: `결제일로부터 최대 ${MAX_SERVICE_WEEKS}주 이내 (지원 학기 일정에 따라 협의)`,
+    duration: `결제일로부터 최대 ${MAX_SERVICE_MONTHS}개월 이내 (지원 학기 일정에 따라 협의)`,
   },
 };
 
