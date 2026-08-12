@@ -95,6 +95,10 @@ export async function saveOfferingAction(
 
   // U5: 노출 게이트 — 승인된 모집요강이 없으면 노출 불가
   let publishWarnings: string[] = [];
+  // 노출하는데 모집요강이 연결돼 있지 않으면, 게이트가 찾아낸 승인 요강을 그대로 건다.
+  // 유학센터의 지원 가능 목록은 source_spec_id 가 있는 것만 뽑기 때문에, 연결이
+  // 비어 있으면 "노출했는데 센터엔 안 보이는" 상태가 된다.
+  let sourceSpecId = data.source_spec_id;
   if (data.status === "published") {
     const readiness = await assessOfferingReadiness(
       data.university_id,
@@ -104,6 +108,7 @@ export async function saveOfferingAction(
       return { error: readiness.reason };
     }
     publishWarnings = readiness.warnings;
+    if (!sourceSpecId) sourceSpecId = readiness.approvedSpecId;
   }
 
   if (id) {
@@ -113,7 +118,7 @@ export async function saveOfferingAction(
       term: data.term,
       intake_quota: data.intake_quota,
       status: data.status,
-      source_spec_id: data.source_spec_id,
+      source_spec_id: sourceSpecId,
       sort_order: data.sort_order,
       notes: data.notes,
     };
@@ -137,7 +142,7 @@ export async function saveOfferingAction(
       term: data.term,
       intake_quota: data.intake_quota,
       status: data.status,
-      source_spec_id: data.source_spec_id,
+      source_spec_id: sourceSpecId,
       sort_order: data.sort_order,
       notes: data.notes,
       created_by: user.id,
@@ -191,10 +196,11 @@ export async function updateOfferingStatusAction(
   const supabase = createAdminClient();
 
   let warnings: string[] = [];
+  const patch: OfferingUpdate = { status };
   if (status === "published") {
     const { data: row } = await supabase
       .from("study_offerings")
-      .select("intake_quota, university_id, term")
+      .select("intake_quota, university_id, term, source_spec_id")
       .eq("id", id)
       .maybeSingle();
     if (!row) return { ok: false, error: "모집을 찾을 수 없습니다" };
@@ -210,9 +216,12 @@ export async function updateOfferingStatusAction(
       return { ok: false, error: readiness.reason };
     }
     warnings = readiness.warnings;
+    // 연결이 비어 있으면 게이트가 찾은 승인 요강을 건다. 안 걸면 노출은 됐는데
+    // 유학센터의 지원 가능 목록에는 안 나오는 상태가 된다.
+    if (!row.source_spec_id) patch.source_spec_id = readiness.approvedSpecId;
   }
 
-  await supabase.from("study_offerings").update({ status }).eq("id", id);
+  await supabase.from("study_offerings").update(patch).eq("id", id);
   revalidatePath("/offerings");
   return { ok: true, warnings };
 }

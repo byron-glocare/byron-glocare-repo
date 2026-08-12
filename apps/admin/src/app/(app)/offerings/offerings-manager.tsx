@@ -212,7 +212,16 @@ export function OfferingsManager({
                               <span className="text-[10px] text-muted-foreground">
                                 · 모집요강 연결됨
                               </span>
-                            ) : null}
+                            ) : (
+                              // 연결이 비면 노출해도 유학센터 지원 목록에 안 나온다.
+                              // 노출 시 자동 연결되지만, 그 전까진 눈에 보이게 둔다.
+                              <Badge
+                                variant="outline"
+                                className="border-amber-300 text-[10px] text-amber-600"
+                              >
+                                모집요강 미연결
+                              </Badge>
+                            )}
                           </div>
                           {o.notes ? (
                             <div className="mt-1 text-xs text-muted-foreground">

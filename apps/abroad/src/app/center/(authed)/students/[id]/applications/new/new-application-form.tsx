@@ -100,10 +100,10 @@ export function NewApplicationForm({
   >(boundAction, undefined);
 
   const hasOfferings = offerings.length > 0;
-  // 모집(offering)이 있으면 그것을 기본 경로로. 없으면 모집요강 직접 선택으로 폴백.
-  const [mode, setMode] = useState<"offering" | "spec">(
-    hasOfferings ? "offering" : "spec"
-  );
+  // 언제나 모집(offering)이 기본이다. 예전엔 모집이 비면 자동으로 "모집요강 직접
+  // 선택"으로 넘어갔는데, 그러면 승인된 모집요강이 전부(= 모집에 넣지 않은 대학까지)
+  // 지원 가능 목록처럼 보였다. 직접 선택은 아래 버튼으로 명시적으로 들어간다.
+  const [mode, setMode] = useState<"offering" | "spec">("offering");
 
   // --- offering 모드 상태 ---
   const [offeringId, setOfferingId] = useState<string>("");
@@ -154,8 +154,9 @@ export function NewApplicationForm({
       ? !!offeringId && !!selectedLanguage
       : !!specId && !!deptLabel;
 
-  // 아무 데이터도 없음
-  if (!hasOfferings && specs.length === 0) {
+  // 모집 중인 학과가 없음 — 승인된 모집요강이 있어도 여기서 멈춘다.
+  // 모집요강 전체를 지원 가능 목록처럼 흘려보내지 않기 위해서다.
+  if (mode === "offering" && !hasOfferings) {
     return (
       <div className="rounded-md border border-dashed border-slate-300 p-8 text-center">
         <p className="text-sm text-slate-600">
@@ -172,6 +173,19 @@ export function NewApplicationForm({
             "GLOCARE đang chuẩn bị. Vui lòng thử lại sau."
           )}
         </p>
+        {specs.length > 0 ? (
+          <button
+            type="button"
+            onClick={() => setMode("spec")}
+            className="mt-4 block w-full text-xs text-slate-500 underline hover:text-slate-700"
+          >
+            {tr(
+              locale,
+              "모집요강에서 직접 선택 (모집 중이 아닌 학과 포함)",
+              "Chọn trực tiếp từ hồ sơ tuyển sinh (gồm cả ngành chưa mở tuyển)"
+            )}
+          </button>
+        ) : null}
         <Link
           href={`/center/students/${studentId}`}
           className="mt-4 inline-block text-sm text-slate-700 underline"
@@ -299,15 +313,21 @@ export function NewApplicationForm({
                 </option>
               ))}
             </select>
-            {hasOfferings ? (
-              <button
-                type="button"
-                onClick={() => setMode("offering")}
-                className="self-start text-xs text-slate-500 underline hover:text-slate-700"
-              >
-                {tr(locale, "← 모집 중 학과에서 선택", "← Chọn từ ngành đang tuyển")}
-              </button>
-            ) : null}
+            <span className="text-xs text-amber-600">
+              {tr(
+                locale,
+                "모집 중이 아닌 학과도 포함된 목록입니다.",
+                "Danh sách này gồm cả ngành chưa mở tuyển."
+              )}
+            </span>
+            {/* 모집이 0건일 때도 돌아갈 길은 남긴다 — 없으면 갇힌다. */}
+            <button
+              type="button"
+              onClick={() => setMode("offering")}
+              className="self-start text-xs text-slate-500 underline hover:text-slate-700"
+            >
+              {tr(locale, "← 모집 중 학과에서 선택", "← Chọn từ ngành đang tuyển")}
+            </button>
             {fieldError("admission_spec_id") ? (
               <span className={errorTextClass}>
                 {fieldError("admission_spec_id")}
