@@ -54,7 +54,7 @@ const SLIDES = [
     url: `${COMPANY.url}/  (페이지 맨 아래 사업자 정보 영역)`,
     checks: [
       "사업자등록증과 같은 값이 모두 보일 것",
-      "통신판매업신고번호가 '준비 중'이면 심사 반려 — 번호 발급 후 캡처",
+      "통신판매업신고번호는 '준비 중'으로 표시 — 구매안전서비스 이용확인증 발급 후 신고 예정",
     ],
   },
   {
@@ -185,14 +185,17 @@ async function fitImage(file) {
 }
 
 function coverSlide() {
-  const row = (k, v, warn = false) => ({
+  const row = (k, v, color = INK) => ({
     runs: [
       { t: `${k}  `, size: 1500, bold: true, color: BLUE },
-      { t: v, size: 1500, color: warn ? RED : INK },
+      { t: v, size: 1500, color },
     ],
   });
-  const missing = (v, what) => (v ? [v, false] : [`(${what} 발급 후 기재)`, true]);
-  const [mail, mailWarn] = missing(COMPANY.mailOrderNo, "통신판매업신고번호");
+  // 통신판매업신고번호는 순서상 뒤에 온다 — PG 심사 통과 → 구매안전서비스
+  // 이용확인증 발급 → 구청 신고. 그래서 결격이 아니라 진행 상태로 적는다.
+  const mail = COMPANY.mailOrderNo || "신고 예정 (구매안전서비스 이용확인증 발급 후 신고)";
+  const mailColor = COMPANY.mailOrderNo ? INK : GRAY;
+  const missing = (v, what) => (v ? [v, INK] : [`(${what} 발급 후 기재)`, RED]);
   const [tid, tidWarn] = missing(TEST_ACCOUNT.id, "테스트 계정 ID");
   const [tpw, tpwWarn] = missing(TEST_ACCOUNT.pw, "테스트 계정 PW");
 
@@ -220,7 +223,7 @@ function coverSlide() {
           row("(1) 상호명", COMPANY.name),
           row("(2) 사업자등록번호", COMPANY.businessNo),
           row("(3) 대표자명", COMPANY.ceo),
-          row("(4) 통신판매업신고번호", mail, mailWarn),
+          row("(4) 통신판매업신고번호", mail, mailColor),
           row("(5) 사업장주소", COMPANY.address),
           row("(6) 유선전화번호", COMPANY.tel),
           row("(7) 가맹점 URL", COMPANY.url),
