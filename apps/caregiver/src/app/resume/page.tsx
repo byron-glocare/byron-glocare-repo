@@ -84,7 +84,6 @@ export default async function ResumeLandingPage() {
 
       <h2
         style={{
-          fontFamily: "var(--font-noto-serif-kr), serif",
           fontSize: "1.1rem",
           fontWeight: 800,
           marginBottom: "1rem",

@@ -50,7 +50,6 @@ export default async function PricingPage() {
           >
             <div
               style={{
-                fontFamily: "var(--font-noto-serif-kr), serif",
                 fontWeight: 800,
                 fontSize: "1.1rem",
                 color: "var(--ink)",
@@ -62,7 +61,7 @@ export default async function PricingPage() {
             <div
               style={{
                 fontSize: "1.5rem",
-                fontWeight: 900,
+                fontWeight: 800,
                 color: "var(--coral)",
                 marginBottom: "0.4rem",
               }}

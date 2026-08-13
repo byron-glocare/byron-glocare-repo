@@ -80,7 +80,6 @@ export default async function PartnersPage({
             <div key={c.id} className="card">
               <div
                 style={{
-                  fontFamily: "var(--font-noto-serif-kr), serif",
                   fontSize: "1rem",
                   fontWeight: 800,
                   color: "var(--ink)",
@@ -134,7 +133,6 @@ export default async function PartnersPage({
             <div key={c.id} className="card">
               <div
                 style={{
-                  fontFamily: "var(--font-noto-serif-kr), serif",
                   fontSize: "1rem",
                   fontWeight: 800,
                   color: "var(--ink)",
@@ -177,7 +175,6 @@ export default async function PartnersPage({
               <div key={u.id} className="card">
                 <div
                   style={{
-                    fontFamily: "var(--font-noto-serif-kr), serif",
                     fontSize: "1rem",
                     fontWeight: 800,
                     color: "var(--ink)",

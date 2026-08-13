@@ -47,7 +47,6 @@
 
   /* type */
   --gc-font: var(--font-be-vietnam), var(--font-noto-kr), -apple-system, system-ui, sans-serif;
-  --gc-font-serif: var(--font-noto-serif-kr), serif;
 
   --gc-display: 800 52px/1.14 var(--gc-font);
   --gc-h2:      700 34px/1.22 var(--gc-font);
@@ -160,7 +159,6 @@
   --shadow-lg: var(--gc-shadow-lg);
 
   --font-sans: var(--gc-font);
-  --font-serif: var(--gc-font-serif);
 }
 
 /* =============================================================================
@@ -225,8 +223,8 @@ nav.site-nav {
   padding: 4px 0;
 }
 .nav-logo .logo-text {
-  font-family: var(--gc-font-serif);
-  font-size: 1.4rem; font-weight: 900;
+  font-family: var(--gc-font);
+  font-size: 1.4rem; font-weight: 800;
   color: var(--coral); letter-spacing: -0.5px;
 }
 .nav-tabs {
@@ -278,9 +276,9 @@ nav.site-nav {
   padding: 2.5rem 20px;
 }
 .page-title {
-  font-family: var(--gc-font-serif);
+  font-family: var(--gc-font);
   font-size: clamp(1.8rem, 3vw, 2.4rem);
-  font-weight: 900;
+  font-weight: 800;
   color: var(--ink);
   margin-bottom: 0.4rem;
   line-height: 1.25;
@@ -357,8 +355,8 @@ footer.site-footer {
   gap: 3rem;
 }
 .foot-logo .logo-text {
-  font-family: var(--gc-font-serif);
-  font-size: 1.2rem; font-weight: 900;
+  font-family: var(--gc-font);
+  font-size: 1.2rem; font-weight: 800;
   color: var(--white); letter-spacing: -0.5px;
   margin-bottom: 0.9rem; display: inline-block;
 }

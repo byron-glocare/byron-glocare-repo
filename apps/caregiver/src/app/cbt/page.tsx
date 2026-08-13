@@ -94,7 +94,6 @@ export default async function CbtLandingPage() {
       {/* 최근 응시 */}
       <h2
         style={{
-          fontFamily: "var(--font-noto-serif-kr), serif",
           fontSize: "1.1rem",
           fontWeight: 800,
           marginTop: "3rem",
@@ -151,9 +150,8 @@ export default async function CbtLandingPage() {
               </div>
               <div
                 style={{
-                  fontFamily: "var(--font-noto-serif-kr), serif",
                   fontSize: "1.4rem",
-                  fontWeight: 900,
+                  fontWeight: 800,
                   color:
                     (a.score ?? 0) >= a.total * 0.7
                       ? "var(--green)"
@@ -191,16 +189,14 @@ export default async function CbtLandingPage() {
           background: var(--coral-pale);
         }
         .chapter-num {
-          font-family: var(--font-noto-serif-kr), serif;
           font-size: 0.95rem;
           font-weight: 800;
           color: var(--ink);
           margin-bottom: 0.4rem;
         }
         .chapter-count {
-          font-family: var(--font-noto-serif-kr), serif;
           font-size: 1.5rem;
-          font-weight: 900;
+          font-weight: 800;
           color: var(--coral);
           line-height: 1;
         }

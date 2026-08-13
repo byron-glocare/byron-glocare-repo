@@ -40,7 +40,6 @@ export default async function AboutPage() {
         <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
           <h2
             style={{
-              fontFamily: "var(--font-noto-serif-kr), serif",
               fontSize: "1.6rem",
               fontWeight: 800,
               color: "var(--ink)",
@@ -145,9 +144,8 @@ export default async function AboutPage() {
           <div className="eyebrow">{t["about.ceo.eyebrow"]}</div>
           <h2
             style={{
-              fontFamily: "var(--font-noto-serif-kr), serif",
               fontSize: "1.6rem",
-              fontWeight: 900,
+              fontWeight: 800,
               color: "var(--ink)",
               marginBottom: "1.4rem",
             }}
@@ -188,9 +186,8 @@ export default async function AboutPage() {
       >
         <h2
           style={{
-            fontFamily: "var(--font-noto-serif-kr), serif",
             fontSize: "1.5rem",
-            fontWeight: 900,
+            fontWeight: 800,
             marginBottom: "0.7rem",
           }}
         >

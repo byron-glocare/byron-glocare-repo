@@ -57,7 +57,6 @@ export default async function ServicePage() {
             <div>
               <div
                 style={{
-                  fontFamily: "var(--font-noto-serif-kr), serif",
                   fontWeight: 800,
                   color: "var(--ink)",
                   marginBottom: "0.25rem",
@@ -89,7 +88,6 @@ export default async function ServicePage() {
       >
         <div
           style={{
-            fontFamily: "var(--font-noto-serif-kr), serif",
             fontWeight: 800,
             color: "var(--ink)",
             marginBottom: "0.4rem",

@@ -95,10 +95,10 @@ export default async function HomePage() {
       {/* HERO */}
       <section
         style={{
-          background:
-            "linear-gradient(135deg, var(--peach) 0%, var(--coral-pale) 100%)",
+          background: "var(--coral-pale)",
           padding: "5rem 20px 4rem",
           textAlign: "center",
+          borderBottom: "1px solid var(--gc-line)",
         }}
       >
         <div className="page-wrap" style={{ padding: 0, maxWidth: 760 }}>
@@ -182,7 +182,6 @@ export default async function HomePage() {
                   padding: "0.8rem 1.6rem",
                   fontWeight: 800,
                   color: "var(--ink)",
-                  fontFamily: "var(--font-noto-serif-kr), serif",
                 }}
               >
                 {s}
@@ -208,7 +207,14 @@ export default async function HomePage() {
       </section>
 
       {/* KPI STRIP */}
-      <section style={{ background: "var(--ink)", padding: "2.5rem 20px" }}>
+      <section
+        style={{
+          background: "var(--gc-subtle)",
+          padding: "2.5rem 20px",
+          borderTop: "1px solid var(--gc-line)",
+          borderBottom: "1px solid var(--gc-line)",
+        }}
+      >
         <div className="page-wrap" style={{ padding: 0 }}>
           <div
             style={{
@@ -222,10 +228,9 @@ export default async function HomePage() {
               <div key={k.label}>
                 <div
                   style={{
-                    fontFamily: "var(--font-noto-serif-kr), serif",
                     fontSize: "2.2rem",
-                    fontWeight: 900,
-                    color: "var(--white)",
+                    fontWeight: 800,
+                    color: "var(--ink)",
                     lineHeight: 1,
                     marginBottom: "0.4rem",
                   }}
@@ -236,7 +241,7 @@ export default async function HomePage() {
                 <div
                   style={{
                     fontSize: "0.78rem",
-                    color: "rgba(255,255,255,0.55)",
+                    color: "var(--ink-light)",
                     lineHeight: 1.4,
                   }}
                 >
@@ -291,7 +296,6 @@ export default async function HomePage() {
                 </div>
                 <div
                   style={{
-                    fontFamily: "var(--font-noto-serif-kr), serif",
                     fontSize: "1rem",
                     fontWeight: 700,
                     marginBottom: "0.3rem",
@@ -348,7 +352,6 @@ export default async function HomePage() {
               </div>
               <div
                 style={{
-                  fontFamily: "var(--font-noto-serif-kr), serif",
                   fontSize: "1.05rem",
                   fontWeight: 800,
                   color: "var(--ink)",
@@ -396,16 +399,17 @@ export default async function HomePage() {
       {/* 고객센터 */}
       <section
         style={{
-          background: "var(--coral-l)",
+          background: "var(--gc-subtle)",
           padding: "2.5rem 20px",
           textAlign: "center",
-          color: "var(--white)",
+          color: "var(--ink)",
+          borderTop: "1px solid var(--gc-line)",
         }}
       >
         <p style={{ fontWeight: 800, fontSize: "1.1rem", marginBottom: "0.4rem" }}>
           {t["brand.tagline"]}
         </p>
-        <p style={{ opacity: 0.85, fontSize: "0.9rem", lineHeight: 1.7 }}>
+        <p style={{ color: "var(--ink-light)", fontSize: "0.9rem", lineHeight: 1.7 }}>
           {t["footer.contact"]}
         </p>
       </section>

@@ -61,9 +61,7 @@ export default async function CbtResultPage({
           textAlign: "center",
           padding: "2.5rem",
           background:
-            pct >= 70
-              ? "linear-gradient(135deg, var(--green) 0%, #57c399 100%)"
-              : "linear-gradient(135deg, var(--coral) 0%, var(--coral-l) 100%)",
+            pct >= 70 ? "var(--green)" : "var(--coral)",
           color: "var(--white)",
           border: "none",
         }}
@@ -77,9 +75,8 @@ export default async function CbtResultPage({
         </div>
         <div
           style={{
-            fontFamily: "var(--font-noto-serif-kr), serif",
             fontSize: "4rem",
-            fontWeight: 900,
+            fontWeight: 800,
             lineHeight: 1,
           }}
         >

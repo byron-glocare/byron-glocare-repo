@@ -106,7 +106,6 @@ export default async function VideoPlayerPage({
         <div style={{ flex: 1, minWidth: 240 }}>
           <h1
             style={{
-              fontFamily: "var(--font-noto-serif-kr), serif",
               fontSize: "1.4rem",
               fontWeight: 800,
               color: "var(--ink)",

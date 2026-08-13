@@ -37,8 +37,7 @@ export default async function AmbassadorPage() {
         <div
           className="card"
           style={{
-            background:
-              "linear-gradient(135deg, var(--coral) 0%, var(--coral-l) 100%)",
+            background: "var(--coral)",
             color: "var(--white)",
             textAlign: "center",
             padding: "2rem",
@@ -61,7 +60,7 @@ export default async function AmbassadorPage() {
             style={{
               fontFamily: "monospace",
               fontSize: "2.4rem",
-              fontWeight: 900,
+              fontWeight: 800,
               letterSpacing: "0.3em",
               userSelect: "all",
             }}
@@ -131,7 +130,6 @@ export default async function AmbassadorPage() {
         <div style={{ marginTop: "2.5rem" }}>
           <h2
             style={{
-              fontFamily: "var(--font-noto-serif-kr), serif",
               fontSize: "1.2rem",
               fontWeight: 800,
               marginBottom: "1rem",

@@ -107,7 +107,6 @@ export default async function MyPage() {
             </div>
             <div
               style={{
-                fontFamily: "var(--font-noto-serif-kr), serif",
                 fontSize: "1.05rem",
                 fontWeight: 800,
                 color: "var(--ink)",
@@ -140,7 +139,6 @@ export default async function MyPage() {
       >
         <div
           style={{
-            fontFamily: "var(--font-noto-serif-kr), serif",
             fontWeight: 800,
             color: "var(--ink)",
             marginBottom: "0.35rem",
@@ -178,7 +176,6 @@ export default async function MyPage() {
         <div className="card" style={{ marginTop: "1.2rem" }}>
           <div
             style={{
-              fontFamily: "var(--font-noto-serif-kr), serif",
               fontWeight: 800,
               color: "var(--ink)",
               marginBottom: "0.35rem",

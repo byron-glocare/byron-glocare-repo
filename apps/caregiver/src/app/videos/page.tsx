@@ -240,7 +240,6 @@ export default async function VideosListPage({
                 <div style={{ padding: "1rem" }}>
                   <div
                     style={{
-                      fontFamily: "var(--font-noto-serif-kr), serif",
                       fontSize: "0.95rem",
                       fontWeight: 700,
                       color: "var(--ink)",

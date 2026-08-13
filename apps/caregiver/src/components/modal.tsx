@@ -65,15 +65,13 @@ export function Modal({
             alignItems: "center",
             padding: "1.2rem 1.6rem",
             borderBottom: "1px solid var(--border)",
-            background:
-              "linear-gradient(135deg,var(--coral),var(--coral-l))",
+            background: "var(--coral)",
             color: "var(--white)",
             borderRadius: "18px 18px 0 0",
           }}
         >
           <h3
             style={{
-              fontFamily: "var(--font-noto-serif-kr), serif",
               fontSize: "1.05rem",
               fontWeight: 700,
             }}
