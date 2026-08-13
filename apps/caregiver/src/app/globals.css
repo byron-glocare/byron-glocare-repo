@@ -227,6 +227,7 @@ nav.site-nav {
   font-size: 1.4rem; font-weight: 800;
   color: var(--coral); letter-spacing: -0.5px;
 }
+.nav-logo img { height: 30px; width: auto; display: block; }
 .nav-tabs {
   display: flex; gap: 0.4rem; list-style: none; align-items: center;
   justify-content: center; flex-wrap: wrap;
@@ -360,6 +361,7 @@ footer.site-footer {
   color: var(--white); letter-spacing: -0.5px;
   margin-bottom: 0.9rem; display: inline-block;
 }
+.foot-logo img { height: 24px; width: auto; display: block; margin-bottom: 0.9rem; }
 .foot-p { font-size: 0.81rem; color: rgba(255,255,255,0.35); line-height: 1.75; }
 .foot-h { font-size: 0.77rem; font-weight: 800; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 0.9rem; }
 .foot-ul { list-style: none; }

@@ -10,7 +10,8 @@ export async function SiteFooter() {
         {/* 좌측 로고 + 정책 */}
         <div>
           <div className="foot-logo">
-            <span className="logo-text">GLOCARE</span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/glocare-logo.png" alt="GLOCARE" width={600} height={129} />
           </div>
           <div
             style={{

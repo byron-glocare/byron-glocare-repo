@@ -25,7 +25,8 @@ export function SiteNav({
   return (
     <nav className="site-nav">
       <Link href="/" className="nav-logo" aria-label="GLOCARE">
-        <span className="logo-text">GLOCARE</span>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/glocare-logo.png" alt="GLOCARE" width={600} height={129} />
       </Link>
       <ul className="nav-tabs">
         {tabs.map((t) => (
