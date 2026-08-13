@@ -41,7 +41,12 @@ export function SiteNav({
             <Link
               href="/login"
               className={isActive("/login") ? "active" : ""}
-              style={{ background: "var(--coral-pale)", color: "var(--coral)" }}
+              style={{
+                background: "var(--gc-surface)",
+                color: "var(--gc-ink-900)",
+                border: "1.5px solid var(--gc-ink-300)",
+                fontWeight: 600,
+              }}
             >
               {loginLabel}
             </Link>
@@ -51,7 +56,11 @@ export function SiteNav({
           <li>
             <Link
               href={applyHref}
-              style={{ background: "var(--coral)", color: "var(--white)" }}
+              style={{
+                background: "var(--gc-primary-500)",
+                color: "var(--gc-surface)",
+                fontWeight: 700,
+              }}
             >
               {applyLabel}
             </Link>

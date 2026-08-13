@@ -232,43 +232,44 @@ nav.site-nav {
   display: flex; gap: 0.4rem; list-style: none; align-items: center;
   justify-content: center; flex-wrap: wrap;
 }
+/* 네비 링크 — abroad .nav-links (활성 = 코랄 채움 아님, 진한 텍스트) */
 .nav-tabs a {
-  color: var(--ink-mid);
-  font-size: 0.82rem; font-weight: 600;
-  padding: 7px 14px;
-  border-radius: var(--gc-r-tag);
-  transition: all 0.2s;
+  color: var(--gc-ink-500);
+  font-size: 13.5px; font-weight: 500;
+  padding: 12px 12px;
+  border-radius: var(--gc-r-pill);
+  transition: background-color 0.16s ease, color 0.16s ease;
   white-space: nowrap;
 }
-.nav-tabs a:hover { background: var(--coral-pale); color: var(--coral); }
+.nav-tabs a:hover { background: var(--gc-subtle); color: var(--gc-ink-900); }
 .nav-tabs a.active {
-  background: var(--coral); color: var(--white);
-  box-shadow: var(--gc-shadow-sm);
+  color: var(--gc-ink-900); font-weight: 600;
+  background: transparent; box-shadow: none;
 }
 
 /* ── BUTTONS ── */
+/* 버튼 — abroad 스펙: pill · primary-500 면 · 52px · 그림자 없음 */
 .btn-coral {
-  background: var(--coral); color: var(--white);
-  padding: 12px 28px; border-radius: var(--gc-r-input);
-  font-weight: 700; font-size: 0.92rem;
-  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-  box-shadow: var(--gc-shadow-sm);
-  border: none; cursor: pointer; font-family: inherit;
-  transition: all 0.2s;
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--gc-2);
+  font-family: inherit; border: 0; cursor: pointer; text-decoration: none;
+  background: var(--gc-primary-500); color: var(--gc-surface);
+  font-size: 16px; font-weight: 700; padding: 16px 28px;
+  border-radius: var(--gc-r-pill); min-height: 52px;
+  transition: background-color 0.16s ease;
 }
-.btn-coral:hover { background: var(--coral-d); transform: translateY(-2px); box-shadow: var(--gc-shadow-lg); }
-.btn-coral:disabled { background: var(--ink-xlight); cursor: not-allowed; box-shadow: none; transform: none; }
+.btn-coral:hover { background: var(--gc-primary-600); color: var(--gc-surface); }
+.btn-coral:disabled { background: var(--gc-primary-200); cursor: not-allowed; }
 
 .btn-ghost {
-  border: 1.5px solid var(--gc-line);
-  color: var(--ink-mid);
-  padding: 12px 28px; border-radius: var(--gc-r-input);
-  font-weight: 600; font-size: 0.92rem;
-  background: transparent; cursor: pointer; font-family: inherit;
-  transition: all 0.2s;
-  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--gc-2);
+  font-family: inherit; cursor: pointer; text-decoration: none;
+  background: var(--gc-surface); color: var(--gc-ink-900);
+  border: 1.5px solid var(--gc-ink-300);
+  font-size: 16px; font-weight: 600; padding: 15px 27px;
+  border-radius: var(--gc-r-pill); min-height: 52px;
+  transition: border-color 0.16s ease;
 }
-.btn-ghost:hover { border-color: var(--coral); color: var(--coral); }
+.btn-ghost:hover { border-color: var(--gc-ink-900); color: var(--gc-ink-900); }
 
 /* ── PAGE / SECTION ── */
 .page-wrap {
@@ -276,32 +277,30 @@ nav.site-nav {
   margin: 0 auto;
   padding: 2.5rem 20px;
 }
+/* 제목 — abroad .sec-title (h2 토큰, sans, 좌측정렬) */
 .page-title {
-  font-family: var(--gc-font);
-  font-size: clamp(1.8rem, 3vw, 2.4rem);
-  font-weight: 800;
-  color: var(--ink);
-  margin-bottom: 0.4rem;
-  line-height: 1.25;
+  font: var(--gc-h2);
   letter-spacing: -0.02em;
+  color: var(--gc-ink-900);
+  margin-bottom: var(--gc-4);
+  text-wrap: balance;
 }
-.page-title em { color: var(--coral); font-style: normal; }
+.page-title em { color: var(--gc-primary-600); font-style: normal; }
+/* 설명 — abroad .sec-desc */
 .page-desc {
-  font-size: 0.95rem;
-  color: var(--ink-light);
-  line-height: 1.7;
-  margin-bottom: 2rem;
-  max-width: 720px;
+  font-size: 16px;
+  color: var(--gc-ink-500);
+  line-height: 1.65;
+  margin-bottom: var(--gc-8);
+  max-width: 58ch;
 }
+/* eyebrow — abroad .sec-eyebrow (채운 pill 아님, 컬러 텍스트 라벨) */
 .eyebrow {
   display: inline-flex; align-items: center; gap: 6px;
-  background: var(--coral-pale);
-  color: var(--coral-d);
-  font-size: 0.72rem; font-weight: 800;
-  letter-spacing: 1.5px; text-transform: uppercase;
-  padding: 5px 14px; border-radius: var(--gc-r-pill);
-  margin-bottom: 1rem;
-  border: 1px solid var(--coral-soft);
+  color: var(--gc-primary-600);
+  font-size: 12px; font-weight: 700;
+  letter-spacing: 0.1em;
+  margin-bottom: var(--gc-3);
 }
 
 /* ── CARDS ── */
@@ -361,7 +360,7 @@ footer.site-footer {
   color: var(--white); letter-spacing: -0.5px;
   margin-bottom: 0.9rem; display: inline-block;
 }
-.foot-logo img { height: 24px; width: auto; display: block; margin-bottom: 0.9rem; }
+.foot-logo img { height: 22px; width: auto; display: block; margin-bottom: 0.9rem; }
 .foot-p { font-size: 0.81rem; color: rgba(255,255,255,0.35); line-height: 1.75; }
 .foot-h { font-size: 0.77rem; font-weight: 800; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 0.9rem; }
 .foot-ul { list-style: none; }
