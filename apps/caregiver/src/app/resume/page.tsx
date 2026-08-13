@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Lock } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { getAuthState, hasFeatureAccess } from "@/lib/auth";
@@ -32,12 +33,12 @@ export default async function ResumeLandingPage() {
         <div
           className="eyebrow"
           style={{
-            background: "#FFF8E1",
-            color: "#7E5C00",
-            borderColor: "#FFE082",
+            background: "var(--gc-warning-bg)",
+            color: "var(--gc-warning)",
+            borderColor: "var(--gc-warning)",
           }}
         >
-          🔒 {t["resume.locked.title"]}
+<Lock size={13} /> {t["resume.locked.title"]}
         </div>
         <h1 className="page-title">{t["resume.title"]}</h1>
         <p className="page-desc">{t["resume.locked.desc"]}</p>

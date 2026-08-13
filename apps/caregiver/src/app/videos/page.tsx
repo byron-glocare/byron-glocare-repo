@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Check, Film, Lock } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { getAuthState, hasFeatureAccess } from "@/lib/auth";
@@ -164,7 +165,7 @@ export default async function VideosListPage({
                         fontSize: "2.4rem",
                       }}
                     >
-                      🎬
+                      <Film size={28} />
                     </div>
                   )}
                   {/* play overlay */}
@@ -215,7 +216,7 @@ export default async function VideosListPage({
                         fontWeight: 700,
                       }}
                     >
-                      ✓ {t["videos.watched"]}
+                      <Check size={13} /> {t["videos.watched"]}
                     </div>
                   )}
                   {/* duration */}
@@ -352,12 +353,12 @@ function LockedView({ t }: { t: Awaited<ReturnType<typeof getDict>> }) {
       <div
         className="eyebrow"
         style={{
-          background: "#FFF8E1",
-          color: "#7E5C00",
-          borderColor: "#FFE082",
+          background: "var(--gc-warning-bg)",
+          color: "var(--gc-warning)",
+          borderColor: "var(--gc-warning)",
         }}
       >
-        🔒 {t["videos.locked.title"]}
+<Lock size={13} /> {t["videos.locked.title"]}
       </div>
       <h1 className="page-title">{t["videos.title"]}</h1>
       <p className="page-desc">{t["videos.locked.desc"]}</p>

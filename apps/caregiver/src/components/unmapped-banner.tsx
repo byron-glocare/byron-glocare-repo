@@ -10,12 +10,12 @@ export function UnmappedBanner({ locale }: { locale: Locale }) {
   return (
     <div
       style={{
-        background: "#FFF8E1",
-        borderBottom: "1px solid #FFE082",
+        background: "var(--gc-warning-bg)",
+        borderBottom: "1px solid var(--gc-warning)",
         padding: "10px 20px",
         textAlign: "center",
         fontSize: "0.85rem",
-        color: "#7E5C00",
+        color: "var(--gc-warning)",
       }}
     >
       ⚠️{" "}

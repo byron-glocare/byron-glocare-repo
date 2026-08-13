@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Check } from "lucide-react";
 
 import { getDict } from "@/lib/i18n";
 
@@ -105,7 +106,7 @@ export default async function PricingPage() {
                       fontWeight: 800,
                     }}
                   >
-                    ✓
+                    <Check size={13} />
                   </span>
                   {f}
                 </li>

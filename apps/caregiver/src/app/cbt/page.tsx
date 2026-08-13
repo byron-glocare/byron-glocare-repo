@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Lock } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { getAuthState, hasFeatureAccess } from "@/lib/auth";
@@ -238,8 +239,8 @@ function LockedView({ t }: { t: Awaited<ReturnType<typeof getDict>> }) {
       className="page-wrap"
       style={{ textAlign: "center", maxWidth: 480 }}
     >
-      <div className="eyebrow" style={{ background: "#FFF8E1", color: "#7E5C00", borderColor: "#FFE082" }}>
-        🔒 {t["cbt.locked.title"]}
+      <div className="eyebrow" style={{ background: "var(--gc-warning-bg)", color: "var(--gc-warning)", borderColor: "var(--gc-warning)" }}>
+<Lock size={13} /> {t["cbt.locked.title"]}
       </div>
       <h1 className="page-title">{t["cbt.title"]}</h1>
       <p className="page-desc">{t["cbt.locked.desc"]}</p>

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { GraduationCap, FileText, User } from "lucide-react";
+import { GraduationCap, FileText, User, Check } from "lucide-react";
 
 import { confirmEnrollment, setKakaoConsent } from "@/app/actions/my";
 import { getAuthState } from "@/lib/auth";
@@ -195,7 +195,7 @@ export default async function MyPage() {
           </div>
           {confirmed ? (
             <span style={{ color: "var(--coral)", fontWeight: 700 }}>
-              ✓ {t["my.enroll.done"]}
+<Check size={13} /> {t["my.enroll.done"]}
             </span>
           ) : (
             <form action={confirmEnrollment}>

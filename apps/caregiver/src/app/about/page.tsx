@@ -136,7 +136,7 @@ export default async function AboutPage() {
       {/* CEO 인사말 */}
       <section
         style={{
-          background: "#FFF8E1",
+          background: "var(--gc-warning-bg)",
           padding: "4rem 20px",
         }}
       >

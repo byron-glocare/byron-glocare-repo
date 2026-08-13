@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { Check } from "lucide-react";
 import { toast } from "sonner";
 
 import { toggleWatched } from "@/app/actions/videos";
@@ -39,11 +40,15 @@ export function WatchedToggle({
         fontSize: "0.85rem",
       }}
     >
-      {pending
-        ? "..."
-        : watched
-          ? `✓ ${labels.unmark}`
-          : labels.mark}
+      {pending ? (
+        "..."
+      ) : watched ? (
+        <>
+          <Check size={13} /> {labels.unmark}
+        </>
+      ) : (
+        labels.mark
+      )}
     </button>
   );
 }
