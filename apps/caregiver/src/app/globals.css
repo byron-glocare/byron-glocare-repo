@@ -1,61 +1,192 @@
 @import "tailwindcss";
 
 /* =============================================================================
- * Glocare Caregiver — 디자인 토큰 (유학 사이트와 동일 시스템)
+ * GLOCARE Design System v1.0 — 요양보호사 앱
+ * 출처: design/GLOCARE Design System (standalone).html · 참고 적용: apps/abroad
+ *
+ * 규칙 4가지
+ *   1. 색은 하나  — 브랜드 레드 한 계열 + 중성 회색. 섹션마다 새 색을 만들지 않는다.
+ *   2. 위계는 크기 — 중요도는 글자 크기·굵기·여백으로. 색과 이모지로 표현하지 않는다.
+ *   3. 면은 흰색  — 배경은 surface/canvas/subtle 3종. 그라디언트 배경 금지.
+ *   4. 간격은 4배수 — 모든 padding·margin·gap 은 --gc-* 스케일에서만 고른다.
+ *
+ * 하드코딩 hex 를 새로 추가하지 말 것. 모든 값은 아래 토큰을 참조한다.
+ * 기존 컴포넌트 클래스(page-wrap/card/eyebrow…)는 레거시 별칭으로 리스킨된다.
  * ===========================================================================*/
 
 :root {
-  --coral:      #F25C5C;
-  --coral-d:    #D94646;
-  --coral-l:    #FF8080;
-  --coral-pale: #FFF0F0;
-  --coral-soft: #FFE0E0;
-  --peach:      #FFF7F5;
-  --white:      #FFFFFF;
-  --ink:        #1C1C1E;
-  --ink-mid:    #3A3A3C;
-  --ink-light:  #6E6E73;
-  --ink-xlight: #AEAEB2;
-  --border:     #F0EDED;
-  --border-d:   #E8E0DF;
-  --green:      #2D9E6B;
-  --blue:       #3B82C4;
-  --yellow:     #F5A623;
-  --navy:       #0F2D52;
-  --bg:         #F9F7F5;
+  /* brand */
+  --gc-primary-50:  #FFF4F3;
+  --gc-primary-100: #FFE4E2;
+  --gc-primary-200: #FFC9C6;
+  --gc-primary-300: #FFA4A1;
+  --gc-primary-400: #FF8080;
+  --gc-primary-500: #FF6060;  /* 로고 실측 · 면 전용 */
+  --gc-primary-600: #ED4747;  /* 텍스트·아이콘 */
+  --gc-primary-700: #C93333;
+  --gc-primary-800: #A22A2A;
+  --gc-primary-900: #7A2222;
+
+  /* neutral (warm) */
+  --gc-surface:   #FFFFFF;
+  --gc-canvas:    #FDFAFA;
+  --gc-subtle:    #F7F3F3;
+  --gc-line:      #E8E1E2;
+  --gc-line-soft: #F0EAEB;
+  --gc-ink-300:   #C4BBBD;
+  --gc-ink-400:   #8D8286;
+  --gc-ink-500:   #6B5F62;
+  --gc-ink-700:   #3D3336;
+  --gc-ink-900:   #1A1416;
+
+  /* semantic — 상태 표시 전용, 장식으로 쓰지 않음 */
+  --gc-success:    #12876A;  --gc-success-bg: #E7F4F0;  --gc-success-ink: #0E6E56;
+  --gc-warning:    #B46A00;  --gc-warning-bg: #FDF3E3;
+  --gc-info:       #2563A8;  --gc-info-bg:    #EAF1F9;
+  --gc-error:      #B32424;  --gc-error-bg:   #FCEDED;
+
+  /* type */
+  --gc-font: var(--font-be-vietnam), var(--font-noto-kr), -apple-system, system-ui, sans-serif;
+  --gc-font-serif: var(--font-noto-serif-kr), serif;
+
+  --gc-display: 800 52px/1.14 var(--gc-font);
+  --gc-h2:      700 34px/1.22 var(--gc-font);
+  --gc-h3:      700 21px/1.35 var(--gc-font);
+  --gc-lead:    400 18px/1.65 var(--gc-font);
+  --gc-body:    400 15px/1.70 var(--gc-font);
+  --gc-small:   400 13.5px/1.6 var(--gc-font);
+  --gc-caption: 500 12px/1.55 var(--gc-font);
+
+  /* space */
+  --gc-1: 4px;   --gc-2: 8px;   --gc-3: 12px;  --gc-4: 16px;
+  --gc-5: 20px;  --gc-6: 24px;  --gc-8: 32px;  --gc-10: 40px;
+  --gc-14: 56px; --gc-18: 72px; --gc-24: 96px;
+
+  /* radius */
+  --gc-r-tag: 6px;   --gc-r-input: 10px;
+  --gc-r-card: 14px; --gc-r-modal: 20px; --gc-r-pill: 999px;
+
+  /* elevation */
+  --gc-shadow-sm: 0 2px 8px rgba(26, 20, 22, 0.06);
+  --gc-shadow-lg: 0 12px 32px rgba(26, 20, 22, 0.12);
+  --gc-focus:     0 0 0 3px var(--gc-primary-100);
+  --gc-dim:       rgba(26, 20, 22, 0.48);
+
+  /* layout */
+  --gc-container: 1120px;
+  --gc-gutter: 20px;
+  --gc-section-y: 56px;
+}
+
+@media (min-width: 900px) {
+  :root { --gc-gutter: 32px; --gc-section-y: 96px; }
+}
+
+@media (max-width: 639px) {
+  :root {
+    --gc-display: 800 34px/1.2 var(--gc-font);
+    --gc-h2:      700 26px/1.28 var(--gc-font);
+    --gc-h3:      700 19px/1.38 var(--gc-font);
+    --gc-lead:    400 16px/1.65 var(--gc-font);
+  }
+}
+
+/* ── 레거시 변수 별칭 ──────────────────────────────────────────────────────
+   기존 caregiver 코드(인라인 style·컴포넌트 클래스)가 참조하는 이름들.
+   값은 전부 위 --gc-* 토큰으로 수렴한다. 새 코드에서는 --gc-* 를 직접 쓴다. */
+:root {
+  --coral:      var(--gc-primary-600);
+  --coral-d:    var(--gc-primary-700);
+  --coral-l:    var(--gc-primary-400);
+  --coral-pale: var(--gc-primary-50);
+  --coral-soft: var(--gc-primary-100);
+  --peach:      var(--gc-subtle);
+  --white:      var(--gc-surface);
+  --bg:         var(--gc-canvas);
+  --ink:        var(--gc-ink-900);
+  --ink-mid:    var(--gc-ink-700);
+  --ink-light:  var(--gc-ink-500);
+  --ink-xlight: var(--gc-ink-400);
+  --border:     var(--gc-line);
+  --border-d:   var(--gc-line-soft);
+  --green:      var(--gc-success);
+  --blue:       var(--gc-info);
+  --yellow:     var(--gc-warning);
+  --navy:       var(--gc-ink-900);
 }
 
 @theme inline {
-  --color-coral: var(--coral);
-  --color-coral-d: var(--coral-d);
-  --color-coral-l: var(--coral-l);
-  --color-coral-pale: var(--coral-pale);
-  --color-coral-soft: var(--coral-soft);
-  --color-peach: var(--peach);
-  --color-ink: var(--ink);
-  --color-ink-mid: var(--ink-mid);
-  --color-ink-light: var(--ink-light);
-  --color-ink-xlight: var(--ink-xlight);
-  --color-border-soft: var(--border);
-  --color-border-deep: var(--border-d);
-  --color-green: var(--green);
-  --color-blue: var(--blue);
-  --color-yellow: var(--yellow);
-  --color-navy: var(--navy);
-  --font-sans: var(--font-be-vietnam), var(--font-noto-kr), sans-serif;
-  --font-serif: var(--font-noto-serif-kr), serif;
+  /* 브랜드 */
+  --color-coral: var(--gc-primary-600);
+  --color-coral-d: var(--gc-primary-700);
+  --color-coral-l: var(--gc-primary-400);
+  --color-coral-pale: var(--gc-primary-50);
+  --color-coral-soft: var(--gc-primary-100);
+  --color-peach: var(--gc-subtle);
+  --color-ink: var(--gc-ink-900);
+  --color-ink-mid: var(--gc-ink-700);
+  --color-ink-light: var(--gc-ink-500);
+  --color-ink-xlight: var(--gc-ink-400);
+  --color-border-soft: var(--gc-line);
+  --color-border-deep: var(--gc-line-soft);
+  --color-green: var(--gc-success);
+  --color-blue: var(--gc-info);
+  --color-yellow: var(--gc-warning);
+  --color-navy: var(--gc-ink-900);
+
+  /* 면 · 선 · 시맨틱 */
+  --color-surface: var(--gc-surface);
+  --color-canvas: var(--gc-canvas);
+  --color-subtle: var(--gc-subtle);
+  --color-line: var(--gc-line);
+  --color-background: var(--gc-canvas);
+  --color-foreground: var(--gc-ink-900);
+  --color-card: var(--gc-surface);
+  --color-muted: var(--gc-subtle);
+  --color-muted-foreground: var(--gc-ink-500);
+  --color-border: var(--gc-line);
+  --color-primary: var(--gc-primary-500);
+  --color-success: var(--gc-success);
+  --color-warning: var(--gc-warning);
+  --color-info: var(--gc-info);
+  --color-destructive: var(--gc-error);
+
+  /* 모서리 · 그림자 */
+  --radius-tag: var(--gc-r-tag);
+  --radius-input: var(--gc-r-input);
+  --radius-card: var(--gc-r-card);
+  --radius-modal: var(--gc-r-modal);
+  --shadow-sm: var(--gc-shadow-sm);
+  --shadow-lg: var(--gc-shadow-lg);
+
+  --font-sans: var(--gc-font);
+  --font-serif: var(--gc-font-serif);
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+/* =============================================================================
+ * BASE
+ * ===========================================================================*/
+@layer base {
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+}
 html { scroll-behavior: smooth; }
 body {
-  font-family: var(--font-be-vietnam), var(--font-noto-kr), sans-serif;
-  background: var(--white);
-  color: var(--ink);
+  font: var(--gc-body);
+  color: var(--gc-ink-700);
+  background: var(--gc-canvas);
+  text-wrap: pretty;
+  -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
-
+h1, h2, h3 { color: var(--gc-ink-900); letter-spacing: -0.02em; }
 a { text-decoration: none; color: inherit; }
+::selection { background: var(--gc-primary-200); }
+:focus-visible { outline: none; box-shadow: var(--gc-focus); border-color: var(--gc-primary-500); }
+
+/* =============================================================================
+ * 컴포넌트 — caregiver 기존 클래스 어휘 유지, 값만 디자인시스템 토큰으로 재조정
+ * (그림자 = 중성 --gc-shadow-*, 모서리 = --gc-r-*, 포커스 = --gc-focus)
+ * ===========================================================================*/
 
 /* ── LANG BAR ── */
 .lang-bar {
@@ -65,9 +196,9 @@ a { text-decoration: none; color: inherit; }
 }
 .lang-btn {
   background: transparent; border: 1.5px solid rgba(255,255,255,0.5);
-  color: rgba(255,255,255,0.8);
+  color: rgba(255,255,255,0.85);
   font-size: 0.75rem; font-weight: 700; letter-spacing: 0.5px;
-  padding: 4px 12px; border-radius: 20px; cursor: pointer;
+  padding: 4px 12px; border-radius: var(--gc-r-pill); cursor: pointer;
   transition: all 0.2s; font-family: inherit;
 }
 .lang-btn.on {
@@ -81,7 +212,7 @@ nav.site-nav {
   position: sticky; top: 0; z-index: 500;
   background: rgba(255,255,255,0.96);
   backdrop-filter: blur(16px);
-  border-bottom: 1.5px solid var(--border);
+  border-bottom: 1px solid var(--gc-line);
   padding: 8px 20px;
   display: flex; align-items: center; justify-content: space-between;
   flex-wrap: wrap;
@@ -94,7 +225,7 @@ nav.site-nav {
   padding: 4px 0;
 }
 .nav-logo .logo-text {
-  font-family: var(--font-noto-serif-kr), serif;
+  font-family: var(--gc-font-serif);
   font-size: 1.4rem; font-weight: 900;
   color: var(--coral); letter-spacing: -0.5px;
 }
@@ -106,32 +237,33 @@ nav.site-nav {
   color: var(--ink-mid);
   font-size: 0.82rem; font-weight: 600;
   padding: 7px 14px;
-  border-radius: 8px;
+  border-radius: var(--gc-r-tag);
   transition: all 0.2s;
   white-space: nowrap;
 }
 .nav-tabs a:hover { background: var(--coral-pale); color: var(--coral); }
 .nav-tabs a.active {
   background: var(--coral); color: var(--white);
-  box-shadow: 0 2px 8px rgba(242,92,92,0.25);
+  box-shadow: var(--gc-shadow-sm);
 }
 
 /* ── BUTTONS ── */
 .btn-coral {
   background: var(--coral); color: var(--white);
-  padding: 12px 28px; border-radius: 8px;
+  padding: 12px 28px; border-radius: var(--gc-r-input);
   font-weight: 700; font-size: 0.92rem;
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-  box-shadow: 0 6px 20px rgba(242,92,92,0.28);
+  box-shadow: var(--gc-shadow-sm);
   border: none; cursor: pointer; font-family: inherit;
   transition: all 0.2s;
 }
-.btn-coral:hover { background: var(--coral-d); transform: translateY(-2px); box-shadow: 0 10px 28px rgba(242,92,92,0.35); }
+.btn-coral:hover { background: var(--coral-d); transform: translateY(-2px); box-shadow: var(--gc-shadow-lg); }
 .btn-coral:disabled { background: var(--ink-xlight); cursor: not-allowed; box-shadow: none; transform: none; }
 
 .btn-ghost {
-  border: 2px solid var(--border-d); color: var(--ink-mid);
-  padding: 12px 28px; border-radius: 8px;
+  border: 1.5px solid var(--gc-line);
+  color: var(--ink-mid);
+  padding: 12px 28px; border-radius: var(--gc-r-input);
   font-weight: 600; font-size: 0.92rem;
   background: transparent; cursor: pointer; font-family: inherit;
   transition: all 0.2s;
@@ -141,17 +273,18 @@ nav.site-nav {
 
 /* ── PAGE / SECTION ── */
 .page-wrap {
-  max-width: 1160px;
+  max-width: var(--gc-container);
   margin: 0 auto;
   padding: 2.5rem 20px;
 }
 .page-title {
-  font-family: var(--font-noto-serif-kr), serif;
+  font-family: var(--gc-font-serif);
   font-size: clamp(1.8rem, 3vw, 2.4rem);
   font-weight: 900;
   color: var(--ink);
   margin-bottom: 0.4rem;
   line-height: 1.25;
+  letter-spacing: -0.02em;
 }
 .page-title em { color: var(--coral); font-style: normal; }
 .page-desc {
@@ -167,7 +300,7 @@ nav.site-nav {
   color: var(--coral-d);
   font-size: 0.72rem; font-weight: 800;
   letter-spacing: 1.5px; text-transform: uppercase;
-  padding: 5px 14px; border-radius: 20px;
+  padding: 5px 14px; border-radius: var(--gc-r-pill);
   margin-bottom: 1rem;
   border: 1px solid var(--coral-soft);
 }
@@ -175,12 +308,12 @@ nav.site-nav {
 /* ── CARDS ── */
 .card {
   background: var(--white);
-  border: 1.5px solid var(--border);
-  border-radius: 14px;
+  border: 1px solid var(--gc-line);
+  border-radius: var(--gc-r-card);
   padding: 1.5rem;
   transition: all 0.2s;
 }
-.card:hover { box-shadow: 0 10px 32px rgba(242,92,92,0.08); border-color: var(--coral-soft); }
+.card:hover { box-shadow: var(--gc-shadow-lg); border-color: var(--coral-soft); }
 
 /* ── FORMS ── */
 .field-label {
@@ -193,38 +326,38 @@ nav.site-nav {
 .field-input, .field-select, .field-textarea {
   width: 100%;
   background: var(--white);
-  border: 1.5px solid var(--border-d);
-  border-radius: 8px;
+  border: 1.5px solid var(--gc-line);
+  border-radius: var(--gc-r-input);
   padding: 11px 14px;
   font-size: 0.88rem;
   color: var(--ink);
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
   font-family: inherit;
 }
 .field-input::placeholder { color: var(--ink-xlight); }
 .field-input:focus, .field-select:focus, .field-textarea:focus {
   border-color: var(--coral);
-  box-shadow: 0 0 0 3px rgba(242,92,92,0.1);
+  box-shadow: var(--gc-focus);
 }
 .field-textarea { resize: vertical; min-height: 90px; }
 .field-hint { font-size: 0.72rem; color: var(--ink-xlight); margin-top: 4px; }
 
 /* ── FOOTER ── */
 footer.site-footer {
-  background: var(--ink);
+  background: var(--gc-ink-900);
   padding: 3rem 20px;
   margin-top: 4rem;
 }
 .foot-inner {
-  max-width: 1160px;
+  max-width: var(--gc-container);
   margin: 0 auto;
   display: grid;
   grid-template-columns: 1.6fr 1fr 1fr;
   gap: 3rem;
 }
 .foot-logo .logo-text {
-  font-family: var(--font-noto-serif-kr), serif;
+  font-family: var(--gc-font-serif);
   font-size: 1.2rem; font-weight: 900;
   color: var(--white); letter-spacing: -0.5px;
   margin-bottom: 0.9rem; display: inline-block;
@@ -235,7 +368,7 @@ footer.site-footer {
 .foot-ul li { font-size: 0.81rem; color: rgba(255,255,255,0.35); padding: 4px 0; cursor: pointer; transition: color 0.2s; }
 .foot-ul li:hover { color: var(--coral-l); }
 .foot-bot {
-  max-width: 1160px;
+  max-width: var(--gc-container);
   margin: 2rem auto 0;
   padding-top: 1.5rem;
   border-top: 1px solid rgba(255,255,255,0.07);
