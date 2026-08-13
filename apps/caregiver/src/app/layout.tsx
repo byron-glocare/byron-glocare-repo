@@ -3,7 +3,6 @@ import { Be_Vietnam_Pro, Noto_Sans_KR } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
 
-import { LangBar } from "@/components/lang-bar";
 import { SiteNav } from "@/components/site-nav";
 import { SiteFooter } from "@/components/site-footer";
 import { UnmappedBanner } from "@/components/unmapped-banner";
@@ -59,9 +58,9 @@ export default async function RootLayout({
       className={`${beVietnam.variable} ${notoSansKr.variable}`}
     >
       <body>
-        <LangBar locale={locale} />
         <SiteNav
           tabs={tabs}
+          locale={locale}
           loginLabel={t["nav.login"]}
           authed={authed}
           applyLabel={t["nav.apply"]}

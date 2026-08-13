@@ -88,11 +88,11 @@ export default async function ApplyPage() {
         <button
           type="submit"
           style={{
-            background: "var(--coral)",
+            background: "var(--gc-primary-500)",
             color: "var(--white)",
             fontWeight: 700,
             padding: "0.85rem",
-            borderRadius: 12,
+            borderRadius: 999,
             border: "none",
             cursor: "pointer",
             marginTop: "0.5rem",

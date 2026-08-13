@@ -50,11 +50,11 @@ export function PhoneLogin({
   };
   const btnStyle: React.CSSProperties = {
     width: "100%",
-    background: "var(--coral)",
+    background: "var(--gc-primary-500)",
     color: "var(--white)",
     fontWeight: 700,
     padding: "0.8rem",
-    borderRadius: 10,
+    borderRadius: 999,
     border: "none",
     cursor: "pointer",
     marginTop: "0.6rem",

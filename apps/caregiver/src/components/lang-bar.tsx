@@ -23,7 +23,7 @@ export function LangBar({ locale }: { locale: Locale }) {
         onClick={() => pick("vi")}
         disabled={pending}
       >
-        🇻🇳 Tiếng Việt
+        Tiếng Việt
       </button>
       <button
         type="button"
@@ -31,7 +31,7 @@ export function LangBar({ locale }: { locale: Locale }) {
         onClick={() => pick("ko")}
         disabled={pending}
       >
-        🇰🇷 한국어
+        한국어
       </button>
     </div>
   );

@@ -132,11 +132,11 @@ export default async function PricingPage() {
           href="/apply"
           style={{
             display: "inline-block",
-            background: "var(--coral)",
+            background: "var(--gc-primary-500)",
             color: "var(--white)",
             fontWeight: 700,
             padding: "0.85rem 2rem",
-            borderRadius: 12,
+            borderRadius: 999,
           }}
         >
           {t["pricing.cta"]}

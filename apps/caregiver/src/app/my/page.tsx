@@ -160,11 +160,11 @@ export default async function MyPage() {
           href={`/pay?kind=${depositKind}`}
           style={{
             display: "inline-block",
-            background: "var(--coral)",
+            background: "var(--gc-primary-500)",
             color: "var(--white)",
             fontWeight: 700,
             padding: "0.7rem 1.6rem",
-            borderRadius: 10,
+            borderRadius: 999,
           }}
         >
           {t["my.pay.cta"]}
@@ -202,11 +202,11 @@ export default async function MyPage() {
               <button
                 type="submit"
                 style={{
-                  background: "var(--coral)",
+                  background: "var(--gc-primary-500)",
                   color: "var(--white)",
                   fontWeight: 700,
                   padding: "0.7rem 1.6rem",
-                  borderRadius: 10,
+                  borderRadius: 999,
                   border: "none",
                   cursor: "pointer",
                 }}
@@ -228,11 +228,11 @@ export default async function MyPage() {
             <Link
               href="/pay?kind=welcomepack_interim"
               style={{
-                background: "var(--coral)",
+                background: "var(--gc-primary-500)",
                 color: "var(--white)",
                 fontWeight: 700,
                 padding: "0.7rem 1.4rem",
-                borderRadius: 10,
+                borderRadius: 999,
               }}
             >
               {t["my.balance.visa"]}
@@ -242,11 +242,11 @@ export default async function MyPage() {
             <Link
               href="/pay?kind=welcomepack_balance"
               style={{
-                background: "var(--coral)",
+                background: "var(--gc-primary-500)",
                 color: "var(--white)",
                 fontWeight: 700,
                 padding: "0.7rem 1.4rem",
-                borderRadius: 10,
+                borderRadius: 999,
               }}
             >
               {t["my.balance.final"]}

@@ -19,11 +19,11 @@ export default async function PayFailPage({
         style={{
           display: "inline-block",
           marginTop: "1.5rem",
-          background: "var(--coral)",
+          background: "var(--gc-primary-500)",
           color: "var(--white)",
           fontWeight: 700,
           padding: "0.8rem 2rem",
-          borderRadius: 12,
+          borderRadius: 999,
         }}
       >
         마이페이지로

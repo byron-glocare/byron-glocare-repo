@@ -129,10 +129,10 @@ export default async function HomePage() {
                 display: "inline-flex",
                 alignItems: "center",
                 padding: "0.7rem 1.6rem",
-                background: "var(--coral)",
+                background: "var(--gc-primary-500)",
                 color: "var(--white)",
                 fontWeight: 700,
-                borderRadius: 12,
+                borderRadius: 999,
               }}
             >
               {t["home.hero.cta"]}

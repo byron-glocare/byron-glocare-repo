@@ -187,23 +187,25 @@ a { text-decoration: none; color: inherit; }
  * ===========================================================================*/
 
 /* ── LANG BAR ── */
+/* 언어 토글 — abroad 스펙: 네비 안 pill 토글, 국기 없음 */
 .lang-bar {
-  background: var(--coral);
-  padding: 6px 20px;
-  display: flex; justify-content: flex-end; align-items: center; gap: 8px;
+  display: inline-flex; align-items: center;
+  border: 1px solid var(--gc-line);
+  border-radius: var(--gc-r-pill);
+  padding: 3px;
+  background: var(--gc-surface);
 }
 .lang-btn {
-  background: transparent; border: 1.5px solid rgba(255,255,255,0.5);
-  color: rgba(255,255,255,0.85);
-  font-size: 0.75rem; font-weight: 700; letter-spacing: 0.5px;
-  padding: 4px 12px; border-radius: var(--gc-r-pill); cursor: pointer;
-  transition: all 0.2s; font-family: inherit;
+  font-family: inherit; border: 0; background: transparent; cursor: pointer;
+  display: flex; align-items: center;
+  font-size: 12.5px; font-weight: 600;
+  color: var(--gc-ink-500);
+  padding: 6px 12px;
+  border-radius: var(--gc-r-pill);
+  transition: background-color 0.16s ease, color 0.16s ease;
 }
-.lang-btn.on {
-  background: var(--white); color: var(--coral);
-  border-color: var(--white);
-}
-.lang-btn:hover:not(.on) { color: var(--white); border-color: var(--white); }
+.lang-btn.on { background: var(--gc-ink-900); color: var(--gc-surface); font-weight: 700; }
+.lang-btn:hover:not(.on) { color: var(--gc-ink-900); }
 
 /* ── NAV (sticky tabs) ── */
 nav.site-nav {

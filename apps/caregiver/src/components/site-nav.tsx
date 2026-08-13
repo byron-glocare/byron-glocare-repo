@@ -3,16 +3,21 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { LangBar } from "@/components/lang-bar";
+import type { Locale } from "@/lib/i18n";
+
 type Tab = { href: string; label: string };
 
 export function SiteNav({
   tabs,
+  locale,
   loginLabel,
   authed,
   applyLabel,
   applyHref = "/service",
 }: {
   tabs: Tab[];
+  locale: Locale;
   loginLabel: string;
   authed: boolean;
   applyLabel?: string;
@@ -36,6 +41,9 @@ export function SiteNav({
             </Link>
           </li>
         ))}
+        <li style={{ display: "flex", alignItems: "center", marginLeft: "0.3rem" }}>
+          <LangBar locale={locale} />
+        </li>
         {!authed && (
           <li>
             <Link

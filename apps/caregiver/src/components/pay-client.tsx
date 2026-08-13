@@ -102,11 +102,11 @@ export function PayClient() {
           onClick={onPay}
           style={{
             width: "100%",
-            background: "var(--coral)",
+            background: "var(--gc-primary-500)",
             color: "var(--white)",
             fontWeight: 700,
             padding: "0.9rem",
-            borderRadius: 12,
+            borderRadius: 999,
             border: "none",
             cursor: "pointer",
             marginTop: "1rem",
