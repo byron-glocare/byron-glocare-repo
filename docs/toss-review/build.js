@@ -29,7 +29,7 @@ const BOX = "F3F5F8";
 
 // 사업자 정보 — apps/abroad/src/lib/company.ts 와 같은 값이어야 한다.
 const COMPANY = {
-  name: "주식회사 글로케어",
+  name: "주식회사 글로케어 (Glocare Corp.)",
   ceo: "홍강식",
   businessNo: "239-87-03310",
   mailOrderNo: "", // 신고 진행 중 — 채워야 심사 통과
