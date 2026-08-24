@@ -23,12 +23,18 @@ export default async function CareWorkersPage() {
   const supabase = await createClient();
   const today = new Date().toISOString().slice(0, 10);
 
-  const { data: workers, error } = await supabase
-    .from("customers")
-    .select("id, code, name_kr, name_vi, work_start_date")
-    .not("work_start_date", "is", null)
-    .or(`work_end_date.is.null,work_end_date.gt.${today}`)
-    .order("work_start_date", { ascending: true });
+  const [{ data: workers, error }, { data: homes }] = await Promise.all([
+    supabase
+      .from("customers")
+      .select(
+        "id, code, name_kr, name_vi, gender, care_home_id, work_start_date"
+      )
+      .not("work_start_date", "is", null)
+      .or(`work_end_date.is.null,work_end_date.gt.${today}`)
+      .order("work_start_date", { ascending: true }),
+    supabase.from("care_homes").select("id, name, region"),
+  ]);
+  const homeMap = new Map((homes ?? []).map((h) => [h.id, h]));
 
   return (
     <>
@@ -50,26 +56,37 @@ export default async function CareWorkersPage() {
                   <TableRow>
                     <TableHead className="w-20">번호</TableHead>
                     <TableHead>이름</TableHead>
+                    <TableHead className="w-16">성별</TableHead>
+                    <TableHead>요양원</TableHead>
+                    <TableHead className="w-28">지역</TableHead>
                     <TableHead className="w-40">근무 시작일</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {workers.map((w, i) => (
-                    <TableRow key={w.id}>
-                      <TableCell className="font-semibold whitespace-nowrap">
-                        {i + 1}호
-                      </TableCell>
-                      <TableCell>
-                        <Link
-                          href={`/customers/${w.id}`}
-                          className="font-medium hover:text-primary"
-                        >
-                          {dash(w.name_kr || w.name_vi)}
-                        </Link>
-                      </TableCell>
-                      <TableCell>{formatDate(w.work_start_date)}</TableCell>
-                    </TableRow>
-                  ))}
+                  {workers.map((w, i) => {
+                    const home = w.care_home_id
+                      ? homeMap.get(w.care_home_id)
+                      : null;
+                    return (
+                      <TableRow key={w.id}>
+                        <TableCell className="font-semibold whitespace-nowrap">
+                          {i + 1}호
+                        </TableCell>
+                        <TableCell>
+                          <Link
+                            href={`/customers/${w.id}`}
+                            className="font-medium hover:text-primary"
+                          >
+                            {dash(w.name_kr || w.name_vi)}
+                          </Link>
+                        </TableCell>
+                        <TableCell>{dash(w.gender)}</TableCell>
+                        <TableCell>{home ? home.name : "—"}</TableCell>
+                        <TableCell>{home ? dash(home.region) : "—"}</TableCell>
+                        <TableCell>{formatDate(w.work_start_date)}</TableCell>
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
             </div>
