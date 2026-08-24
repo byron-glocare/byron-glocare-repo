@@ -19,6 +19,7 @@ import {
   School,
   Settings,
   ShieldCheck,
+  Stethoscope,
   Users,
   type LucideIcon,
 } from "lucide-react";
@@ -46,6 +47,7 @@ export const NAV_GROUPS: NavGroup[] = [
     label: "요양보호",
     items: [
       { href: "/customers", label: "교육생", icon: Users },
+      { href: "/care-workers", label: "요양보호사", icon: Stethoscope },
       { href: "/training-centers", label: "교육원", icon: GraduationCap },
       { href: "/care-homes", label: "요양원", icon: Hospital },
       { href: "/sms", label: "알림 발송", icon: MessageSquare },
