@@ -648,6 +648,79 @@ export type Database = {
       };
 
       // -----------------------------------------------------------------------
+      auto_sms_rules: {
+        Row: {
+          id: string;
+          name: string;
+          title: string | null;
+          anchor_field: string;
+          offset_days: number;
+          send_time: string | null;
+          body: string;
+          image_path: string | null;
+          is_active: boolean;
+          created_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          title?: string | null;
+          anchor_field: string;
+          offset_days?: number;
+          send_time?: string | null;
+          body: string;
+          image_path?: string | null;
+          is_active?: boolean;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["auto_sms_rules"]["Insert"]>;
+        Relationships: [];
+      };
+
+      // -----------------------------------------------------------------------
+      auto_sms_sends: {
+        Row: {
+          id: string;
+          rule_id: string;
+          customer_id: string;
+          due_at: string;
+          status: string;
+          error: string | null;
+          sent_at: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          rule_id: string;
+          customer_id: string;
+          due_at: string;
+          status?: string;
+          error?: string | null;
+          sent_at?: string | null;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["auto_sms_sends"]["Insert"]>;
+        Relationships: [
+          {
+            foreignKeyName: "auto_sms_sends_rule_id_fkey";
+            columns: ["rule_id"];
+            referencedRelation: "auto_sms_rules";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "auto_sms_sends_customer_id_fkey";
+            columns: ["customer_id"];
+            referencedRelation: "customers";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+
+      // -----------------------------------------------------------------------
       sms_messages: {
         Row: {
           id: string;

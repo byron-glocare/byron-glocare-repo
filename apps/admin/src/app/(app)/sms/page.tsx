@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Clock, GraduationCap, Receipt } from "lucide-react";
+import { ArrowRight, Clock, GraduationCap, Receipt, Timer } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/page-header";
@@ -81,8 +81,8 @@ export default async function SmsPage() {
         breadcrumbs={[{ label: "알림발송" }]}
       />
       <div className="p-6 space-y-6">
-        {/* 진입 카드 2개 */}
-        <div className="grid gap-4 md:grid-cols-2">
+        {/* 진입 카드 */}
+        <div className="grid gap-4 md:grid-cols-3">
           <Link
             href="/sms/new-student"
             className="group block rounded-lg border border-border bg-card p-6 transition-colors hover:border-primary/50 hover:bg-accent/30"
@@ -119,6 +119,26 @@ export default async function SmsPage() {
                 <p className="text-sm text-muted-foreground mt-1">
                   교육원별 정산 안내문 본문 미리보기 + 정산서 PDF (브라우저
                   인쇄로 저장) — 카카오톡/이메일로 직접 전송
+                </p>
+              </div>
+            </div>
+          </Link>
+
+          <Link
+            href="/sms/auto"
+            className="group block rounded-lg border border-border bg-card p-6 transition-colors hover:border-primary/50 hover:bg-accent/30"
+          >
+            <div className="flex items-start gap-4">
+              <div className="size-10 rounded-md bg-warning/10 text-warning flex items-center justify-center shrink-0">
+                <Timer className="size-5" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="font-medium flex items-center gap-2">
+                  자동 문자
+                  <ArrowRight className="size-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  가입·교육·취업 등 생애주기 날짜 기준으로 교육생에게 자동 발송
                 </p>
               </div>
             </div>
