@@ -31,7 +31,6 @@ import {
 import {
   computeSettlementSummary,
   computeWelcomePackAmounts,
-  suggestWelcomePackInterim,
   type SettlementFlag,
 } from "@/lib/settlement";
 import type {
@@ -199,7 +198,6 @@ export function CustomerSettlementTab({
       <WelcomePackPaymentCard
         customer={customer}
         payment={welcomePackPayment}
-        trainingCenters={trainingCenters}
         defaultTotalPrice={welcomePackPrice}
         defaultDiscount={welcomePackEarlyDiscount}
         defaultReservation={welcomePackReservationFee}
@@ -910,17 +908,12 @@ function EventPaymentsCard({
 function WelcomePackPaymentCard({
   customer,
   payment,
-  trainingCenters,
   defaultTotalPrice,
   defaultDiscount,
   defaultReservation,
 }: {
   customer: Customer;
   payment: WelcomePackPayment | null;
-  trainingCenters: Pick<
-    TrainingCenter,
-    "id" | "name" | "region" | "tuition_fee_2026" | "deduct_reservation_by_default"
-  >[];
   defaultTotalPrice: number;
   defaultDiscount: number;
   defaultReservation: number;
@@ -928,10 +921,8 @@ function WelcomePackPaymentCard({
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 
-  const targetCenter = trainingCenters.find(
-    (c) => c.id === customer.training_center_id
-  );
-  const suggested = suggestWelcomePackInterim(targetCenter?.region ?? null);
+  // 2회차(잔금1)는 지역별 프리셋(25/30/35만) 대신 25만원 기본값 + 자유 입력으로 운영.
+  // 기존에 저장된 금액은 그대로 유지된다.
 
   // 상태 (초기값: 기존 payment or default)
   const [totalPrice, setTotalPrice] = useState<number>(
@@ -947,7 +938,7 @@ function WelcomePackPaymentCard({
     payment?.reservation_date ?? ""
   );
   const [interim, setInterim] = useState<number>(
-    payment?.interim_amount ?? suggested ?? 0
+    payment?.interim_amount ?? 250000
   );
   const [interimDate, setInterimDate] = useState<string>(
     payment?.interim_date ?? ""
@@ -1090,44 +1081,15 @@ function WelcomePackPaymentCard({
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-medium">
-                  2회차 (잔금1)
-                  {suggested && suggested !== interim && (
-                    <div className="text-xs text-muted-foreground mt-0.5">
-                      추천: {formatCurrency(suggested)}
-                      <button
-                        type="button"
-                        onClick={() => setInterim(suggested)}
-                        className="ml-2 text-primary hover:underline"
-                      >
-                        적용
-                      </button>
-                    </div>
-                  )}
-                </TableCell>
+                <TableCell className="font-medium">2회차 (잔금1)</TableCell>
                 <TableCell>
-                  <Select
-                    value={String(interim)}
-                    onValueChange={(v) => setInterim(Number(v))}
-                  >
-                    <SelectTrigger className="h-8">
-                      <SelectValueMap
-                        map={{
-                          "0": "0원",
-                          "250000": "250,000원 (서울권)",
-                          "300000": "300,000원 (충청권)",
-                          "350000": "350,000원 (원거리)",
-                        }}
-                        placeholder="선택"
-                      />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="0">0원</SelectItem>
-                      <SelectItem value="250000">250,000원 (서울권)</SelectItem>
-                      <SelectItem value="300000">300,000원 (충청권)</SelectItem>
-                      <SelectItem value="350000">350,000원 (원거리)</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Input
+                    type="number"
+                    value={interim}
+                    onChange={(e) => setInterim(Number(e.target.value) || 0)}
+                    min={0}
+                    className="h-8"
+                  />
                 </TableCell>
                 <TableCell>
                   <Input
