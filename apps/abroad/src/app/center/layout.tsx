@@ -1,8 +1,7 @@
 /**
  * 외부 어드민(/center/*) root layout.
  *
- * 베트남어 디폴트 — 본 layout 안에선 cookie locale 무시하고 항상 vi 컨텍스트.
- * (외부 어드민 한국어 토글은 후속 단계에 보강. PLAN_B Decision #5)
+ * 화면 언어는 cookie locale 을 따른다(상단 VI/KO 토글). 기본값은 vi.
  *
  * 인증·org 검증은 (authed) 하위 layout 에서. /center/login·set-password 는 비인증 통과.
  *
@@ -11,21 +10,23 @@
 
 import type { Metadata } from "next";
 
+import { getLocale } from "@/lib/i18n";
+
 export const metadata: Metadata = {
-  title: "GLOCARE Center — Quản lý sinh viên du học",
-  description:
-    "Trung tâm du học đối tác — quản lý sinh viên, hồ sơ tuyển sinh, thanh toán",
+  title: "GLOCARE Center — 유학센터 포털",
+  description: "유학센터 파트너 포털 — 학생·모집요강·청구 관리",
   robots: { index: false, follow: false }, // 검색엔진 색인 차단
 };
 
-export default function CenterRootLayout({
+export default async function CenterRootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const locale = await getLocale();
   return (
     <div
-      lang="vi"
+      lang={locale}
       className="min-h-screen bg-slate-50 text-slate-900 antialiased"
     >
       {children}

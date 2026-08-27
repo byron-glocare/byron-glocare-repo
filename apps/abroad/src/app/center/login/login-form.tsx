@@ -2,14 +2,18 @@
 
 import { useActionState } from "react";
 
+import { tr, type Locale } from "@/lib/i18n";
+
 import { signInCenter, type SignInState } from "./actions";
 
 export function LoginForm({
   from,
   initialError,
+  locale,
 }: {
   from?: string;
   initialError?: string;
+  locale: Locale;
 }) {
   const [state, action, pending] = useActionState<SignInState, FormData>(
     signInCenter,
@@ -38,7 +42,7 @@ export function LoginForm({
       </label>
 
       <label className="flex flex-col gap-1.5">
-        <span className="text-sm font-medium text-slate-700">Mật khẩu</span>
+        <span className="text-sm font-medium text-slate-700">{tr(locale, "비밀번호", "Mật khẩu")}</span>
         <input
           type="password"
           name="password"
@@ -64,7 +68,9 @@ export function LoginForm({
         disabled={pending}
         className="mt-2 rounded-md bg-slate-900 px-4 py-2.5 text-base font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {pending ? "Đang đăng nhập..." : "Đăng nhập"}
+        {pending
+          ? tr(locale, "로그인 중…", "Đang đăng nhập...")
+          : tr(locale, "로그인", "Đăng nhập")}
       </button>
     </form>
   );

@@ -4,16 +4,27 @@
 
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getLocale, tr, type Locale } from "@/lib/i18n";
 
 import { verifyCenterSession } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
 
-const STATUS_LABEL: Record<string, string> = {
-  draft: "Bản nháp",
-  sent: "Đã gửi",
-  paid: "Đã thanh toán",
-  cancelled: "Đã hủy",
+const STATUS_LABEL: Record<string, [string, string]> = {
+  draft: ["작성 중", "Bản nháp"],
+  sent: ["발송됨", "Đã gửi"],
+  paid: ["결제 완료", "Đã thanh toán"],
+  cancelled: ["취소됨", "Đã hủy"],
 };
+
+/** 라벨 맵에서 화면 언어에 맞는 쪽을 고른다. */
+function L(
+  map: Record<string, [string, string]>,
+  key: string | null | undefined,
+  locale: Locale
+): string {
+  const v = key ? map[key] : undefined;
+  return v ? (locale === "ko" ? v[0] : v[1]) : (key ?? "—");
+}
 
 const STATUS_BG: Record<string, string> = {
   draft: "bg-slate-100 text-slate-700",
@@ -28,6 +39,7 @@ export default async function CenterInvoiceDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const session = await verifyCenterSession();
+  const locale = await getLocale();
   const { id } = await params;
   const supabase = await createCenterClient();
 
@@ -68,12 +80,12 @@ export default async function CenterInvoiceDetailPage({
           href="/center/invoices"
           className="text-sm text-slate-500 hover:text-slate-700"
         >
-          ← Quay lại danh sách
+          ← {tr(locale, "목록으로", "Quay lại danh sách")}
         </Link>
         <div className="mt-2 flex items-start justify-between gap-3">
           <div>
             <h1 className="text-2xl font-bold text-slate-900">
-              Hóa đơn {inv.period_start} ~ {inv.period_end}
+              {tr(locale, "청구서", "Hóa đơn")} {inv.period_start} ~ {inv.period_end}
             </h1>
             <p className="mt-1 text-sm text-slate-600">{session.org.name_vi}</p>
           </div>
@@ -82,36 +94,36 @@ export default async function CenterInvoiceDetailPage({
               STATUS_BG[inv.status] ?? "bg-slate-100 text-slate-700"
             }`}
           >
-            {STATUS_LABEL[inv.status] ?? inv.status}
+            {L(STATUS_LABEL, inv.status, locale)}
           </span>
         </div>
       </div>
 
       {/* 요약 */}
       <section className="rounded-lg border border-slate-200 bg-white p-6">
-        <h2 className="mb-3 text-base font-semibold text-slate-900">Tóm tắt</h2>
+        <h2 className="mb-3 text-base font-semibold text-slate-900">{tr(locale, "요약", "Tóm tắt")}</h2>
         <dl className="grid grid-cols-1 gap-x-6 gap-y-2 text-sm md:grid-cols-3">
-          <Info label="Kỳ" value={`${inv.period_start} ~ ${inv.period_end}`} />
+          <Info label={tr(locale, "기간", "Kỳ")} value={`${inv.period_start} ~ ${inv.period_end}`} />
           <Info
-            label="Tổng tiền"
+            label={tr(locale, "총액", "Tổng tiền")}
             value={`${total.toLocaleString("vi-VN")} ${inv.currency}`}
           />
           <Info
-            label="Đã thanh toán"
+            label={tr(locale, "입금액", "Đã thanh toán")}
             value={`${paid.toLocaleString("vi-VN")} ${inv.currency}`}
           />
           <Info
-            label="Còn lại"
+            label={tr(locale, "잔액", "Còn lại")}
             value={
               balance > 0
                 ? `${balance.toLocaleString("vi-VN")} ${inv.currency}`
                 : balance === 0
-                  ? "Đã hoàn tất"
+                  ? tr(locale, "완납", "Đã hoàn tất")
                   : `Dư ${Math.abs(balance).toLocaleString("vi-VN")} ${inv.currency}`
             }
           />
           <Info
-            label="Ngày phát hành"
+            label={tr(locale, "발행일", "Ngày phát hành")}
             value={
               inv.sent_at
                 ? new Date(inv.sent_at).toLocaleDateString("vi-VN")
@@ -119,7 +131,7 @@ export default async function CenterInvoiceDetailPage({
             }
           />
           <Info
-            label="Ngày thanh toán"
+            label={tr(locale, "결제일", "Ngày thanh toán")}
             value={
               inv.paid_at
                 ? new Date(inv.paid_at).toLocaleDateString("vi-VN")
@@ -135,7 +147,7 @@ export default async function CenterInvoiceDetailPage({
               rel="noreferrer"
               className="text-emerald-700 hover:underline"
             >
-              Tải hóa đơn VAT (PDF)
+              {tr(locale, "세금계산서 내려받기 (PDF)", "Tải hóa đơn VAT (PDF)")}
             </a>
           </div>
         ) : null}
@@ -144,19 +156,19 @@ export default async function CenterInvoiceDetailPage({
       {/* 라인 아이템 */}
       <section className="rounded-lg border border-slate-200 bg-white p-6">
         <h2 className="mb-3 text-base font-semibold text-slate-900">
-          Chi tiết khoản phí
+          {tr(locale, "청구 내역", "Chi tiết khoản phí")}
         </h2>
         {lineItems.length === 0 ? (
-          <p className="text-sm text-slate-500">Không có khoản nào</p>
+          <p className="text-sm text-slate-500">{tr(locale, "내역 없음", "Không có khoản nào")}</p>
         ) : (
           <div className="overflow-hidden rounded-md border border-slate-200">
             <table className="w-full text-sm">
               <thead className="bg-slate-50">
                 <tr className="text-left">
-                  <th className="px-3 py-2 font-medium">Nội dung</th>
+                  <th className="px-3 py-2 font-medium">{tr(locale, "항목", "Nội dung")}</th>
                   <th className="w-20 px-3 py-2 text-right font-medium">SL</th>
-                  <th className="w-32 px-3 py-2 text-right font-medium">Đơn giá</th>
-                  <th className="w-32 px-3 py-2 text-right font-medium">Thành tiền</th>
+                  <th className="w-32 px-3 py-2 text-right font-medium">{tr(locale, "단가", "Đơn giá")}</th>
+                  <th className="w-32 px-3 py-2 text-right font-medium">{tr(locale, "금액", "Thành tiền")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -180,7 +192,7 @@ export default async function CenterInvoiceDetailPage({
               <tfoot className="bg-slate-50">
                 <tr className="border-t">
                   <td colSpan={3} className="px-3 py-2 text-right font-medium">
-                    Tổng cộng
+                    {tr(locale, "합계", "Tổng cộng")}
                   </td>
                   <td className="px-3 py-2 text-right font-bold">
                     {total.toLocaleString("vi-VN")} {inv.currency}
@@ -195,21 +207,21 @@ export default async function CenterInvoiceDetailPage({
       {/* 송금 내역 */}
       <section className="rounded-lg border border-slate-200 bg-white p-6">
         <h2 className="mb-3 text-base font-semibold text-slate-900">
-          Lịch sử thanh toán ({settlements?.length ?? 0})
+          {tr(locale, "입금 내역", "Lịch sử thanh toán")} ({settlements?.length ?? 0})
         </h2>
         {!settlements || settlements.length === 0 ? (
           <p className="text-sm text-slate-500">
-            Chưa có thanh toán nào được ghi nhận.
+            {tr(locale, "기록된 입금이 없습니다.", "Chưa có thanh toán nào được ghi nhận.")}
           </p>
         ) : (
           <div className="overflow-hidden rounded-md border border-slate-200">
             <table className="w-full text-sm">
               <thead className="bg-slate-50">
                 <tr className="text-left">
-                  <th className="px-3 py-2 font-medium">Ngày nhận</th>
-                  <th className="px-3 py-2 text-right font-medium">Số tiền</th>
-                  <th className="px-3 py-2 font-medium">Tham chiếu</th>
-                  <th className="px-3 py-2 font-medium">Ghi chú</th>
+                  <th className="px-3 py-2 font-medium">{tr(locale, "입금일", "Ngày nhận")}</th>
+                  <th className="px-3 py-2 text-right font-medium">{tr(locale, "금액", "Số tiền")}</th>
+                  <th className="px-3 py-2 font-medium">{tr(locale, "참조", "Tham chiếu")}</th>
+                  <th className="px-3 py-2 font-medium">{tr(locale, "비고", "Ghi chú")}</th>
                 </tr>
               </thead>
               <tbody>
