@@ -921,7 +921,7 @@ function WelcomePackPaymentCard({
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 
-  // 2회차(잔금1)는 지역별 프리셋(25/30/35만) 대신 25만원 기본값 + 자유 입력으로 운영.
+  // 2회차(잔금1)는 지역별 프리셋(25/30/35만) 대신 35만원 기본값 + 자유 입력으로 운영.
   // 기존에 저장된 금액은 그대로 유지된다.
 
   // 상태 (초기값: 기존 payment or default)
@@ -938,7 +938,7 @@ function WelcomePackPaymentCard({
     payment?.reservation_date ?? ""
   );
   const [interim, setInterim] = useState<number>(
-    payment?.interim_amount ?? 250000
+    payment?.interim_amount ?? 350000
   );
   const [interimDate, setInterimDate] = useState<string>(
     payment?.interim_date ?? ""
