@@ -1,5 +1,7 @@
 "use server";
 
+import { trAsync } from "@/lib/i18n";
+
 import { verifyCenterSession } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
 import {
@@ -62,7 +64,7 @@ export async function extractStudentDataAction(
     .select("id")
     .eq("id", studentId)
     .maybeSingle();
-  if (!student) return { ok: false, error: "Không có quyền với sinh viên này." };
+  if (!student) return { ok: false, error: await trAsync("이 학생에 대한 권한이 없습니다.", "Không có quyền với sinh viên này.") };
 
   // 1) 추출 대상 카탈로그 + 현재값 로드
   const [{ data: dataTypes }, { data: values }] = await Promise.all([

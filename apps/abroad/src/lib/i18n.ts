@@ -250,3 +250,13 @@ export function t(locale: Locale, key: DictKey): string {
 export function tr(locale: Locale, ko: string, vi: string): string {
   return locale === "ko" ? ko : vi;
 }
+
+/**
+ * 서버 액션의 오류 문구용 — 그 자리에서 화면 언어를 읽어 고른다.
+ *
+ * 액션은 요청마다 실행되므로 여기서 읽으면 된다. 함수 앞에 locale 을 따로
+ * 받아 두지 않아도 되고, 호출부는 `await trAsync("한국어", "Tiếng Việt")` 한 줄이다.
+ */
+export async function trAsync(ko: string, vi: string): Promise<string> {
+  return tr(await getLocale(), ko, vi);
+}

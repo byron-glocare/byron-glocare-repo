@@ -1,5 +1,7 @@
 "use server";
 
+import { trAsync } from "@/lib/i18n";
+
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
@@ -60,7 +62,7 @@ export async function createStudentAction(
       return {
         fieldErrors: {
           target_study_center_id: [
-            "Vui lòng chọn trung tâm du học (소속 유학센터를 선택하세요)",
+            await trAsync("소속 유학센터를 선택하세요", "Vui lòng chọn trung tâm du học"),
           ],
         },
       };
@@ -117,7 +119,7 @@ async function resolveOrgForStudyCenter(
   if (!center) {
     return {
       ok: false,
-      error: "Không tìm thấy trung tâm (유학센터를 찾을 수 없습니다)",
+      error: await trAsync("유학센터를 찾을 수 없습니다", "Không tìm thấy trung tâm"),
     };
   }
 

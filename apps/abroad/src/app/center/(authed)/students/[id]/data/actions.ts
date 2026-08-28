@@ -1,5 +1,7 @@
 "use server";
 
+import { trAsync } from "@/lib/i18n";
+
 import { verifyCenterSession } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
 import {
@@ -151,13 +153,13 @@ export async function uploadStudentFileAction(
   const file = formData.get("file");
 
   if (!studentId || !dataTypeKey) {
-    return { ok: false, error: "Thiếu thông tin." };
+    return { ok: false, error: await trAsync("필수 정보가 없습니다.", "Thiếu thông tin.") };
   }
   if (!(file instanceof File) || file.size === 0) {
-    return { ok: false, error: "Tệp không hợp lệ." };
+    return { ok: false, error: await trAsync("올바르지 않은 파일입니다.", "Tệp không hợp lệ.") };
   }
   if (file.size > MAX_FILE_BYTES) {
-    return { ok: false, error: "Tệp quá lớn (tối đa 20MB)." };
+    return { ok: false, error: await trAsync("파일이 너무 큽니다 (최대 20MB).", "Tệp quá lớn (tối đa 20MB).") };
   }
 
   // 권한: 학생 소유 확인 (RLS — 안 보이면 거부). 셀프/센터 자동 판별.
@@ -165,7 +167,7 @@ export async function uploadStudentFileAction(
   try {
     access = await resolveDataAccess(studentId);
   } catch {
-    return { ok: false, error: "Không có quyền với sinh viên này." };
+    return { ok: false, error: await trAsync("이 학생에 대한 권한이 없습니다.", "Không có quyền với sinh viên này.") };
   }
   const { data: student } = await access.supabase
     .from("study_managed_students")
@@ -173,7 +175,7 @@ export async function uploadStudentFileAction(
     .eq("id", studentId)
     .maybeSingle();
   if (!student) {
-    return { ok: false, error: "Không có quyền với sinh viên này." };
+    return { ok: false, error: await trAsync("이 학생에 대한 권한이 없습니다.", "Không có quyền với sinh viên này.") };
   }
 
   // 검증 끝 → service-role 로 업로드 (Storage RLS 정책 불필요)
@@ -206,17 +208,17 @@ export async function getStudentFileSignedUrlAction(
   try {
     access = await resolveDataAccess();
   } catch {
-    return { ok: false, error: "Không có quyền." };
+    return { ok: false, error: await trAsync("권한이 없습니다.", "Không có quyền.") };
   }
   if (!path || !access.ownsPath(path)) {
-    return { ok: false, error: "Không có quyền." };
+    return { ok: false, error: await trAsync("권한이 없습니다.", "Không có quyền.") };
   }
   const svc = createServiceClient();
   const { data, error } = await svc.storage
     .from(STUDENT_FILES_BUCKET)
     .createSignedUrl(path, 60 * 10);
   if (error || !data) {
-    return { ok: false, error: error?.message ?? "Không tạo được liên kết." };
+    return { ok: false, error: error?.message ?? (await trAsync("링크를 만들지 못했습니다.", "Không tạo được liên kết.")) };
   }
   return { ok: true, url: data.signedUrl };
 }
@@ -236,7 +238,7 @@ export async function removeStudentFileAction(input: {
   try {
     access = await resolveDataAccess(input.studentId);
   } catch {
-    return { ok: false, error: "Không có quyền với sinh viên này." };
+    return { ok: false, error: await trAsync("이 학생에 대한 권한이 없습니다.", "Không có quyền với sinh viên này.") };
   }
   const rls = access.supabase;
   const { data: student } = await rls
@@ -245,7 +247,7 @@ export async function removeStudentFileAction(input: {
     .eq("id", input.studentId)
     .maybeSingle();
   if (!student) {
-    return { ok: false, error: "Không có quyền với sinh viên này." };
+    return { ok: false, error: await trAsync("이 학생에 대한 권한이 없습니다.", "Không có quyền với sinh viên này.") };
   }
 
   // 보관함 파일 삭제 (best-effort — 학생 소유 확인됐으므로 경로 무관)

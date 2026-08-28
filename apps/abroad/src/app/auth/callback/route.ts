@@ -8,6 +8,7 @@
  */
 
 import { NextResponse } from "next/server";
+import { syncLocaleCookie } from "@/lib/account-locale";
 
 import { createClient } from "@/lib/supabase/server";
 import { createServiceClient } from "@/lib/supabase/service";
@@ -65,6 +66,9 @@ export async function GET(req: Request): Promise<Response> {
       return fail(`create:${insErr.message}`);
     }
   }
+
+  // 계정에 저장된 화면 언어를 쿠키로 옮긴다 (Route Handler 라 쿠키 쓰기 가능)
+  await syncLocaleCookie();
 
   return NextResponse.redirect(`${origin}${next}`);
 }

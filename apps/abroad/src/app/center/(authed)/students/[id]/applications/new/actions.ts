@@ -1,5 +1,7 @@
 "use server";
 
+import { getLocale, tr } from "@/lib/i18n";
+
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -10,8 +12,10 @@ import { createCenterClient } from "@/lib/supabase/center";
 const emptyToUndef = <T extends z.ZodTypeAny>(s: T) =>
   z.preprocess((v) => (v === "" || v === null ? undefined : v), s);
 
-const createApplicationSchema = z.object({
-  admission_spec_id: z.string().uuid("Chọn hồ sơ tuyển sinh hợp lệ"),
+type T = (ko: string, vi: string) => string;
+const createApplicationSchema = (t: T) =>
+  z.object({
+  admission_spec_id: z.string().uuid(t("모집요강을 선택하세요", "Chọn hồ sơ tuyển sinh hợp lệ")),
   // 모집(offering) 경로 — 희망 = 대학/학과/학기. 모집요강 직접 선택 시엔 없음.
   offering_id: emptyToUndef(z.string().uuid().optional()),
   // 실제 학과 FK (offering 경로면 채워짐)
@@ -22,7 +26,7 @@ const createApplicationSchema = z.object({
   ),
   target_department_label: z
     .string()
-    .min(1, "Chọn ngành học")
+    .min(1, t("학과를 선택하세요", "Chọn ngành học"))
     .max(200),
   next_action: emptyToUndef(z.string().max(200).optional()),
   next_deadline: emptyToUndef(
@@ -45,7 +49,9 @@ export async function createApplicationAction(
   await verifyCenterSession();
 
   const raw = Object.fromEntries(formData.entries());
-  const parsed = createApplicationSchema.safeParse(raw);
+  const locale = await getLocale();
+  const t: T = (ko, vi) => tr(locale, ko, vi);
+  const parsed = createApplicationSchema(t).safeParse(raw);
 
   if (!parsed.success) {
     return { fieldErrors: parsed.error.flatten().fieldErrors };
@@ -68,7 +74,7 @@ export async function createApplicationAction(
   });
 
   if (error) {
-    return { error: `Lỗi đăng ký nguyện vọng: ${error.message}` };
+    return { error: `${t("지원 등록 실패", "Lỗi đăng ký nguyện vọng")}: ${error.message}` };
   }
 
   revalidatePath(`/center/students/${studentId}`);

@@ -1,5 +1,7 @@
 "use server";
 
+import { getLocale, tr } from "@/lib/i18n";
+
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -10,10 +12,12 @@ import { createCenterClient } from "@/lib/supabase/center";
 const emptyToUndef = <T extends z.ZodTypeAny>(s: T) =>
   z.preprocess((v) => (v === "" || v === null ? undefined : v), s);
 
-const updateSchema = z.object({
+type T = (ko: string, vi: string) => string;
+const updateSchema = (t: T) =>
+  z.object({
   target_department_label: z
     .string()
-    .min(1, "Vui lòng nhập ngành học")
+    .min(1, t("학과를 입력하세요", "Vui lòng nhập ngành học"))
     .max(200),
   next_action: emptyToUndef(z.string().max(200).optional()),
   next_deadline: emptyToUndef(
@@ -37,7 +41,9 @@ export async function updateApplicationAction(
   await verifyCenterSession();
 
   const raw = Object.fromEntries(formData.entries());
-  const parsed = updateSchema.safeParse(raw);
+  const locale = await getLocale();
+  const t: T = (ko, vi) => tr(locale, ko, vi);
+  const parsed = updateSchema(t).safeParse(raw);
 
   if (!parsed.success) {
     return { fieldErrors: parsed.error.flatten().fieldErrors };
@@ -56,7 +62,7 @@ export async function updateApplicationAction(
     .eq("id", applicationId);
 
   if (error) {
-    return { error: `Lỗi cập nhật: ${error.message}` };
+    return { error: `${t("수정 실패", "Lỗi cập nhật")}: ${error.message}` };
   }
 
   revalidatePath(`/center/students/${studentId}`);

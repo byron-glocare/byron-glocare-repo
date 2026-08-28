@@ -1,5 +1,7 @@
 "use server";
 
+import { trAsync } from "@/lib/i18n";
+
 import { revalidatePath } from "next/cache";
 import * as XLSX from "xlsx";
 
@@ -50,13 +52,13 @@ export async function uploadStudentsAction(
 
   const file = formData.get("file");
   if (!file || !(file instanceof File) || file.size === 0) {
-    return { error: "Vui lòng chọn file Excel (.xlsx)" };
+    return { error: await trAsync("엑셀 파일(.xlsx)을 선택하세요", "Vui lòng chọn file Excel (.xlsx)") };
   }
   if (file.size > MAX_FILE_SIZE) {
-    return { error: `File quá lớn (>${MAX_FILE_SIZE / 1024 / 1024}MB)` };
+    return { error: await trAsync(`파일이 너무 큽니다 (>${MAX_FILE_SIZE / 1024 / 1024}MB)`, `File quá lớn (>${MAX_FILE_SIZE / 1024 / 1024}MB)`) };
   }
   if (!file.name.toLowerCase().endsWith(".xlsx")) {
-    return { error: "Chỉ chấp nhận file .xlsx" };
+    return { error: await trAsync(".xlsx 파일만 올릴 수 있습니다", "Chỉ chấp nhận file .xlsx") };
   }
 
   // 1. 파싱 — SheetJS (xlsx) 사용. exceljs 의 load() 호환성 문제 회피.
@@ -124,7 +126,7 @@ export async function uploadStudentsAction(
   }));
 
   if (rawRows.length === 0) {
-    return { error: "File không có dữ liệu (chỉ có dòng tiêu đề)." };
+    return { error: await trAsync("데이터가 없습니다 (머리글만 있습니다).", "File không có dữ liệu (chỉ có dòng tiêu đề).") };
   }
   if (rawRows.length > MAX_ROWS) {
     return {
@@ -145,7 +147,7 @@ export async function uploadStudentsAction(
       results.push({
         rowNumber: r.rowNumber,
         status: "skipped",
-        message: "Dòng ví dụ (đã bỏ qua tự động)",
+        message: await trAsync("예시 행 (자동으로 건너뜀)", "Dòng ví dụ (đã bỏ qua tự động)"),
         name: r.name,
       });
       skippedCount++;
@@ -167,7 +169,7 @@ export async function uploadStudentsAction(
       results.push({
         rowNumber: r.rowNumber,
         status: "skipped",
-        message: "Dòng trống",
+        message: await trAsync("빈 행", "Dòng trống"),
       });
       skippedCount++;
       continue;
@@ -184,7 +186,7 @@ export async function uploadStudentsAction(
       results.push({
         rowNumber: r.rowNumber,
         status: "error",
-        message: msgs || "Dữ liệu không hợp lệ",
+        message: msgs || (await trAsync("올바르지 않은 데이터", "Dữ liệu không hợp lệ")),
         name: r.name || undefined,
       });
       errorCount++;

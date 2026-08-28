@@ -111,6 +111,8 @@ export type StudyCenterOrg = {
 // 3. study_center_users
 // =============================================================================
 export type StudyCenterUser = {
+  /** 화면 언어(ko/vi). null 이면 미선택 — 기본값 vi (0055) */
+  locale?: "ko" | "vi" | null;
   id: string;
   org_id: string;
   auth_user_id: string;
@@ -126,6 +128,8 @@ export type StudyCenterUser = {
 // 4. study_managed_students
 // =============================================================================
 export type StudyManagedStudent = {
+  /** 화면 언어(ko/vi). null 이면 미선택 — 기본값 vi (0055) */
+  locale?: "ko" | "vi" | null;
   id: string;
   /** 셀프가입(B2C) 학생은 null (0046). 센터 등록 학생은 org 소속. */
   org_id: string | null;

@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
 import { ensureStudentRow } from "@/lib/student/ensure-student";
+import { syncLocaleCookie } from "@/lib/account-locale";
 
 /**
  * 이메일·비밀번호 로그인 / 가입.
@@ -69,6 +70,8 @@ export async function emailLoginAction(
     if (!ensured.ok) return { error: ensured.error };
   }
 
+  // 계정에 저장된 화면 언어를 쿠키로 옮긴다
+  await syncLocaleCookie();
   redirect(next);
 }
 
