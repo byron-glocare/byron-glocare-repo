@@ -83,13 +83,11 @@ function departmentLabel(d: SpecOption["departments"][number]): string {
 export function NewApplicationForm({
   locale,
   studentId,
-  studentName,
   specs,
   offerings,
 }: {
   locale: Locale;
   studentId: string;
-  studentName: string;
   specs: SpecOption[];
   offerings: OfferingOption[];
 }) {
@@ -376,40 +374,6 @@ export function NewApplicationForm({
         </>
       )}
 
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-        <label className={labelClass}>
-          <span className={labelTextClass}>{tr(locale, "다음 할 일", "Việc tiếp theo")}</span>
-          <input
-            type="text"
-            name="next_action"
-            maxLength={200}
-            className={inputClass}
-            placeholder={tr(locale, "예: 추천서 받기", "VD: Nhận thư giới thiệu")}
-          />
-          <span className={helpTextClass}>{tr(locale, "선택", "Tùy chọn")}</span>
-        </label>
-
-        <label className={labelClass}>
-          <span className={labelTextClass}>{tr(locale, "마감일", "Hạn chót")}</span>
-          <input
-            type="date" min="1900-01-01" max="2100-12-31"
-            name="next_deadline"
-            className={inputClass}
-          />
-          <span className={helpTextClass}>{tr(locale, "선택", "Tùy chọn")}</span>
-        </label>
-      </div>
-
-      <div className="rounded-md bg-slate-50 px-3 py-2 text-xs text-slate-600">
-        {tr(locale, "초기 상태", "Trạng thái ban đầu")}:{" "}
-        <strong>{tr(locale, "준비 중", "Đang chuẩn bị")}</strong>{" "}
-        {tr(
-          locale,
-          "(서류 검토 시 업데이트됩니다)",
-          "(sẽ cập nhật khi kiểm tra hồ sơ)"
-        )}
-      </div>
-
       {state?.error ? (
         <div className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
           {state.error}
@@ -426,8 +390,8 @@ export function NewApplicationForm({
             ? tr(locale, "저장 중...", "Đang lưu...")
             : tr(
                 locale,
-                `${studentName} 지원 등록`,
-                `Đăng ký nguyện vọng cho ${studentName}`
+                "지원 등록",
+                "Đăng ký nguyện vọng"
               )}
         </button>
         <Link

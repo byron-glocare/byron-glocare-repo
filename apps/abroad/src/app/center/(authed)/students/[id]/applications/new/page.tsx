@@ -160,8 +160,7 @@ export default async function NewApplicationPage({
       <div className="rounded-lg border border-slate-200 bg-white p-6">
         <NewApplicationForm
           locale={locale}
-          studentId={id}
-          studentName={student.name}
+          studentId={id}
           specs={specOptions}
           offerings={offeringOptions}
         />
