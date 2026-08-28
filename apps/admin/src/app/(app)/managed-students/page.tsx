@@ -1,9 +1,12 @@
 import Link from "next/link";
+import { Search } from "lucide-react";
 
 import { createAdminClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/page-header";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { buttonVariants } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -28,7 +31,18 @@ const LOC_LABEL: Record<string, string> = {
   other: "기타",
 };
 
-export default async function ManagedStudentsPage() {
+type SearchParams = Promise<{ q?: string; org?: string; loc?: string }>;
+
+export default async function ManagedStudentsPage({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}) {
+  const sp = await searchParams;
+  const q = (sp.q ?? "").trim();
+  const orgFilter = (sp.org ?? "").trim();
+  const locFilter = (sp.loc ?? "").trim();
+
   // service-role 로 모든 org 학생 조회 (admin = glocare_admin, 읽기 전용)
   const admin = createAdminClient();
 
@@ -51,7 +65,30 @@ export default async function ManagedStudentsPage() {
   for (const f of files ?? [])
     fileCount.set(f.student_id, (fileCount.get(f.student_id) ?? 0) + 1);
 
-  const rows = students ?? [];
+  // 유학센터 필터는 "본사 직접(B2C)" 도 고를 수 있어야 해서 self 를 특수값으로 둔다.
+  const norm = (v: string) => v.toLowerCase();
+  const needle = norm(q);
+  const rows = (students ?? []).filter((s) => {
+    if (needle) {
+      const hay = norm(
+        [s.name, s.phone, s.email].filter(Boolean).join(" ")
+      );
+      if (!hay.includes(needle)) return false;
+    }
+    if (orgFilter) {
+      if (orgFilter === "self") {
+        if (s.source !== "self") return false;
+      } else if (String(s.org_id ?? "") !== orgFilter) return false;
+    }
+    if (locFilter && (s.location ?? "") !== locFilter) return false;
+    return true;
+  });
+
+  const orgOptions = [...orgMap.entries()].sort((a, b) =>
+    String(a[1]).localeCompare(String(b[1]), "ko")
+  );
+  const hasFilter = !!(q || orgFilter || locFilter);
+  const total = (students ?? []).length;
 
   return (
     <>
@@ -61,12 +98,75 @@ export default async function ManagedStudentsPage() {
         breadcrumbs={[{ label: "유학생" }]}
       />
       <div className="p-6 space-y-4">
+        <form method="get" className="flex flex-wrap items-end gap-2">
+          <div className="min-w-60 flex-1">
+            <label className="mb-1 block text-xs text-muted-foreground">
+              검색 (이름 · 연락처 · 이메일)
+            </label>
+            <div className="relative">
+              <Search className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                name="q"
+                defaultValue={q}
+                placeholder="이름 / 010... / 이메일"
+                className="pl-8"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="mb-1 block text-xs text-muted-foreground">
+              유학센터
+            </label>
+            <select
+              name="org"
+              defaultValue={orgFilter}
+              className="h-8 min-w-44 rounded-md border border-input bg-background px-2 text-sm"
+            >
+              <option value="">전체</option>
+              <option value="self">본사 직접 (B2C)</option>
+              {orgOptions.map(([id, name]) => (
+                <option key={id} value={String(id)}>
+                  {name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="mb-1 block text-xs text-muted-foreground">
+              위치
+            </label>
+            <select
+              name="loc"
+              defaultValue={locFilter}
+              className="h-8 min-w-28 rounded-md border border-input bg-background px-2 text-sm"
+            >
+              <option value="">전체</option>
+              {Object.entries(LOC_LABEL).map(([v, label]) => (
+                <option key={v} value={v}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <button type="submit" className={buttonVariants()}>
+            적용
+          </button>
+          {hasFilter ? (
+            <Link
+              href="/managed-students"
+              className={buttonVariants({ variant: "ghost" })}
+            >
+              초기화
+            </Link>
+          ) : null}
+        </form>
+
         <p className="text-sm text-muted-foreground">
-          총 {rows.length}명
+          {hasFilter ? `${rows.length}명 / 총 ${total}명` : `총 ${total}명`}
         </p>
         {rows.length === 0 ? (
           <Card className="p-12 text-center text-sm text-muted-foreground">
-            등록된 유학생이 없습니다.
+            {hasFilter ? "조건에 맞는 유학생이 없습니다." : "등록된 유학생이 없습니다."}
           </Card>
         ) : (
           <Card className="overflow-hidden p-0">
