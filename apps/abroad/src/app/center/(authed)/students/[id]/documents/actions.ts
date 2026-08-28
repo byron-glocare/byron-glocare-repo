@@ -182,7 +182,7 @@ export async function importSubmissionFileAction(input: {
     .maybeSingle();
   if (!src?.file_path)
     return { ok: false, error: "가져올 파일이 없습니다." };
-  if (!access.ownsPath(src.file_path))
+  if (!(await access.ownsPath(src.file_path)))
     return { ok: false, error: "권한이 없습니다." };
 
   const safeKey = toDocKey.replace(/[^\w.\-]+/g, "_").slice(0, 80);
@@ -237,7 +237,7 @@ export async function getSubmissionFileSignedUrlAction(
   } catch {
     return { ok: false, error: "권한이 없습니다." };
   }
-  if (!path || !access.ownsPath(path))
+  if (!path || !(await access.ownsPath(path)))
     return { ok: false, error: "권한이 없습니다." };
   const svc = createServiceClient();
   const { data, error } = await svc.storage
@@ -260,7 +260,7 @@ export async function removeSubmissionFileAction(input: {
   } catch {
     return { ok: false, error: "권한이 없습니다." };
   }
-  if (!access.ownsPath(input.path))
+  if (!(await access.ownsPath(input.path)))
     return { ok: false, error: "권한이 없습니다." };
 
   const svc = createServiceClient();

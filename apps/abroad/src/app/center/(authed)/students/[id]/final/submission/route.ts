@@ -46,8 +46,9 @@ export async function GET(
     ]);
 
   if (!student || !fileRow || !sub) return new Response("Not Found", { status: 404 });
-  // 경로 org 검증
-  if (!fileRow.file_path.startsWith(`${session.org.id}/`))
+  // 경로의 학생 구간만 확인한다. 학생을 다른 센터로 옮겨도 파일 경로에는 옛 org 가
+  // 남아 있어 접두사로 판별하면 정상 파일이 막힌다. 소속 확인은 위 student 조회(RLS)가 한다.
+  if (fileRow.file_path.split("/")[1] !== student.id)
     return new Response("Forbidden", { status: 403 });
 
   const { data: spec } = app

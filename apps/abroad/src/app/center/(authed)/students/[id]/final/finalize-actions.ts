@@ -96,9 +96,10 @@ export async function recordFinalUploadAction(input: {
   sizeBytes: number;
 }): Promise<FinalizeResult> {
   const session = await verifyCenterSession();
-  if (
-    !input.path.startsWith(`${session.org.id}/${input.studentId}/final/`)
-  )
+  // 경로의 학생 구간만 확인한다. org 접두사는 학생 이관 시 옛 값이 남아 못 쓴다.
+  // 이 학생이 내 센터 학생인지는 바로 아래 RLS 조회로 확인한다.
+  const seg = input.path.split("/");
+  if (seg[1] !== input.studentId || seg[2] !== "final")
     return { ok: false, error: "권한이 없습니다." };
 
   const rls = await createCenterClient();
@@ -233,9 +234,14 @@ export async function submitAllForAppAction(input: {
 export async function getFinalDocSignedUrlAction(
   path: string
 ): Promise<{ ok: true; url: string } | { ok: false; error: string }> {
-  const session = await verifyCenterSession();
-  if (!path.startsWith(`${session.org.id}/`))
-    return { ok: false, error: "권한이 없습니다." };
+  await verifyCenterSession();
+  // 경로의 학생이 내 센터 학생인지 RLS 로 확인한다(접두사 판별은 이관 시 깨진다).
+  const sid = path.split("/")[1];
+  const rls = await createCenterClient();
+  const { data: owned } = sid
+    ? await rls.from("study_managed_students").select("id").eq("id", sid).maybeSingle()
+    : { data: null };
+  if (!owned) return { ok: false, error: "권한이 없습니다." };
   const svc = createServiceClient();
   const { data, error } = await svc.storage
     .from(STUDENT_FILES_BUCKET)

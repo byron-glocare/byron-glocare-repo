@@ -183,7 +183,7 @@ export async function extractStudentDataAction(
 
   // org 경로 검증 + 캡
   const safeRefs = fileRefs
-    .filter((r) => r.path.startsWith(`${session.org.id}/`))
+    .filter((r) => r.path.split("/")[1] === studentId)
     .slice(0, MAX_DOCS);
 
   // 3) 비공개 버킷에서 다운로드 (service-role).

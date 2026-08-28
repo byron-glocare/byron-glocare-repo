@@ -25,8 +25,15 @@ export type DataAccess = {
   authUserId: string;
   /** 스토리지 업로드 디렉터리 접두(끝에 / 없음). `${dir}/${key}/...` 로 사용. */
   storageDir: (studentId: string) => string;
-  /** 서명 URL·삭제 시 이 사용자가 접근 가능한 경로인지 */
-  ownsPath: (path: string) => boolean;
+  /**
+   * 서명 URL·삭제 시 이 사용자가 접근 가능한 경로인지.
+   *
+   * 경로 접두사(orgId)로 판별하지 않는다. 학생을 다른 센터로 옮겨도 이미 올라간
+   * 파일의 경로는 그대로라, 접두사로 보면 이관된 학생의 예전 파일을 새 센터가
+   * 못 받는다. 경로에서 학생 id 만 뽑아 "그 학생이 내게 보이는가"로 판별한다
+   * (센터는 RLS 로 자기 org 학생만 보인다).
+   */
+  ownsPath: (path: string) => Promise<boolean>;
   /** 정보 입력 페이지 캐시 무효화 */
   revalidateData: (studentId: string) => void;
   /** 서류 등록 페이지 캐시 무효화 */
@@ -60,7 +67,7 @@ export async function resolveDataAccess(studentId?: string): Promise<DataAccess>
         supabase: authed,
         authUserId: user.id,
         storageDir: (sid) => `self/${sid}`,
-        ownsPath: (p) => p.startsWith(`self/${selfRow.id}/`),
+        ownsPath: async (p) => p.startsWith(`self/${selfRow.id}/`),
         revalidateData: () => revalidatePath("/student/data"),
         revalidateDocuments: () => revalidatePath("/student/documents"),
       };
@@ -75,7 +82,16 @@ export async function resolveDataAccess(studentId?: string): Promise<DataAccess>
     supabase,
     authUserId: session.authUserId,
     storageDir: (sid) => `${session.org.id}/${sid}`,
-    ownsPath: (p) => p.startsWith(`${session.org.id}/`),
+    ownsPath: async (p) => {
+      const sid = p.split("/")[1];
+      if (!sid) return false;
+      const { data } = await supabase
+        .from("study_managed_students")
+        .select("id")
+        .eq("id", sid)
+        .maybeSingle();
+      return !!data;
+    },
     revalidateData: (sid) => revalidatePath(`/center/students/${sid}/data`),
     revalidateDocuments: (sid) =>
       revalidatePath(`/center/students/${sid}/documents`),

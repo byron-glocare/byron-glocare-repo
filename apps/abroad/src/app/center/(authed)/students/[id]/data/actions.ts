@@ -210,7 +210,7 @@ export async function getStudentFileSignedUrlAction(
   } catch {
     return { ok: false, error: await trAsync("권한이 없습니다.", "Không có quyền.") };
   }
-  if (!path || !access.ownsPath(path)) {
+  if (!path || !(await access.ownsPath(path))) {
     return { ok: false, error: await trAsync("권한이 없습니다.", "Không có quyền.") };
   }
   const svc = createServiceClient();
