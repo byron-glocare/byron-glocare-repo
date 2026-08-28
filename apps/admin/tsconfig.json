@@ -19,8 +19,7 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"],
-      "@glocare/ui": ["../../packages/ui/src/index.ts"]
+      "@/*": ["./src/*"]
     }
   },
   "include": [

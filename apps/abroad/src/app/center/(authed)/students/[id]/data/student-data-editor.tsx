@@ -667,7 +667,7 @@ function ValueInput({
     case "date":
       return (
         <input
-          type="date"
+          type="date" min="1900-01-01" max="2100-12-31"
           defaultValue={typeof value === "string" ? value : ""}
           onBlur={(e) => onCommit(e.target.value || null)}
           className={baseClass}

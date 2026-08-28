@@ -385,7 +385,7 @@ function ReservationPaymentsCard({
             </div>
             <div>
               <Label className="text-xs">입금일</Label>
-              <Input type="date" name="payment_date" />
+              <Input type="date" min="1900-01-01" max="2100-12-31" name="payment_date" />
             </div>
             <Button type="submit" disabled={pending}>
               {pending && <Loader2 className="size-4 animate-spin" />}
@@ -430,7 +430,7 @@ function ReservationPaymentsCard({
                     </TableCell>
                     <TableCell>
                       <Input
-                        type="date"
+                        type="date" min="1900-01-01" max="2100-12-31"
                         defaultValue={p.payment_date ?? ""}
                         className="h-8"
                         onBlur={(e) => {
@@ -498,7 +498,7 @@ function ReservationPaymentsCard({
                     </TableCell>
                     <TableCell>
                       <Input
-                        type="date"
+                        type="date" min="1900-01-01" max="2100-12-31"
                         defaultValue={p.refund_date ?? ""}
                         className="h-8"
                         onBlur={(e) => {
@@ -1073,7 +1073,7 @@ function WelcomePackPaymentCard({
                 </TableCell>
                 <TableCell>
                   <Input
-                    type="date"
+                    type="date" min="1900-01-01" max="2100-12-31"
                     value={reservationDate}
                     onChange={(e) => setReservationDate(e.target.value)}
                     className="h-8"
@@ -1093,7 +1093,7 @@ function WelcomePackPaymentCard({
                 </TableCell>
                 <TableCell>
                   <Input
-                    type="date"
+                    type="date" min="1900-01-01" max="2100-12-31"
                     value={interimDate}
                     onChange={(e) => setInterimDate(e.target.value)}
                     className="h-8"
@@ -1118,7 +1118,7 @@ function WelcomePackPaymentCard({
                 </TableCell>
                 <TableCell>
                   <Input
-                    type="date"
+                    type="date" min="1900-01-01" max="2100-12-31"
                     value={balanceDate}
                     onChange={(e) => setBalanceDate(e.target.value)}
                     className="h-8"
@@ -1157,7 +1157,7 @@ function WelcomePackPaymentCard({
                   </TableCell>
                   <TableCell>
                     <Input
-                      type="date"
+                      type="date" min="1900-01-01" max="2100-12-31"
                       value={installment4Date}
                       onChange={(e) => setInstallment4Date(e.target.value)}
                       className="h-8"
@@ -1194,7 +1194,7 @@ function WelcomePackPaymentCard({
                   </TableCell>
                   <TableCell>
                     <Input
-                      type="date"
+                      type="date" min="1900-01-01" max="2100-12-31"
                       value={installment5Date}
                       onChange={(e) => setInstallment5Date(e.target.value)}
                       className="h-8"
@@ -1252,7 +1252,7 @@ function WelcomePackPaymentCard({
             <div className="flex items-center gap-2">
               <Label className="text-xs">보고일</Label>
               <Input
-                type="date"
+                type="date" min="1900-01-01" max="2100-12-31"
                 value={salesReportedDate}
                 onChange={(e) => setSalesReportedDate(e.target.value)}
                 className="h-8 w-40"

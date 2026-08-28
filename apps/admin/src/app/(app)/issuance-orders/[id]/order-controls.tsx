@@ -88,7 +88,7 @@ export function OrderControls({
             발급 완료 예정일 (고객 노출)
           </span>
           <Input
-            type="date"
+            type="date" min="1900-01-01" max="2100-12-31"
             value={eta}
             onChange={(e) => setEta(e.target.value)}
           />

@@ -150,7 +150,7 @@ export function InvoiceForm({
 
           <Field label="기간 시작" error={fieldErr("period_start")} required>
             <input
-              type="date"
+              type="date" min="1900-01-01" max="2100-12-31"
               name="period_start"
               required
               defaultValue={invoice?.period_start ?? ""}
@@ -160,7 +160,7 @@ export function InvoiceForm({
 
           <Field label="기간 종료" error={fieldErr("period_end")} required>
             <input
-              type="date"
+              type="date" min="1900-01-01" max="2100-12-31"
               name="period_end"
               required
               defaultValue={invoice?.period_end ?? ""}

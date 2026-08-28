@@ -392,7 +392,7 @@ export function NewApplicationForm({
         <label className={labelClass}>
           <span className={labelTextClass}>{tr(locale, "마감일", "Hạn chót")}</span>
           <input
-            type="date"
+            type="date" min="1900-01-01" max="2100-12-31"
             name="next_deadline"
             className={inputClass}
           />

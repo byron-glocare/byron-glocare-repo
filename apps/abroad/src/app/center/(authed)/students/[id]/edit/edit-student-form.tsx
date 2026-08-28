@@ -70,7 +70,7 @@ export function EditStudentForm({
         <label className={labelClass}>
           <span className={labelTextClass}>{tr(locale, "생년월일", "Ngày sinh")}</span>
           <input
-            type="date"
+            type="date" min="1900-01-01" max="2100-12-31"
             name="dob"
             defaultValue={student.dob ?? ""}
             className={inputClass}

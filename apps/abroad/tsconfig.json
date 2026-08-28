@@ -21,8 +21,7 @@
     "paths": {
       "@/*": ["./src/*"],
       "@glocare/visa-core": ["../../packages/visa-core/src/index.ts"],
-      "@glocare/visa-core/*": ["../../packages/visa-core/src/*"],
-      "@glocare/ui": ["../../packages/ui/src/index.ts"]
+      "@glocare/visa-core/*": ["../../packages/visa-core/src/*"]
     }
   },
   "include": [

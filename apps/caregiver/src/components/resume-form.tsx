@@ -159,7 +159,7 @@ export function ResumeForm({
         </Grid>
         <Grid cols={2}>
           <Field label={strings.birth}>
-            <input name="birth_date" className="field-input" type="date" />
+            <input name="birth_date" className="field-input" type="date" min="1900-01-01" max="2100-12-31" />
           </Field>
           <Field label={strings.phone} required>
             <input

@@ -216,7 +216,7 @@ export function PlanForm({ plan }: { plan?: EditablePlan }) {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <Field label="효력 시작">
             <input
-              type="date"
+              type="date" min="1900-01-01" max="2100-12-31"
               name="effective_from"
               defaultValue={plan?.effective_from ?? ""}
               className="rounded-md border border-input bg-background px-3 py-2 text-sm"
@@ -224,7 +224,7 @@ export function PlanForm({ plan }: { plan?: EditablePlan }) {
           </Field>
           <Field label="효력 종료">
             <input
-              type="date"
+              type="date" min="1900-01-01" max="2100-12-31"
               name="effective_to"
               defaultValue={plan?.effective_to ?? ""}
               className="rounded-md border border-input bg-background px-3 py-2 text-sm"

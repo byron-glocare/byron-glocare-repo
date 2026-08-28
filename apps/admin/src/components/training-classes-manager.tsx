@@ -253,7 +253,7 @@ export function TrainingClassesManager({ centerId, classes }: Props) {
                   </FormLabel>
                   <FormControl>
                     <Input
-                      type="date"
+                      type="date" min="1900-01-01" max="2100-12-31"
                       {...field}
                       value={field.value ?? ""}
                     />
@@ -275,7 +275,7 @@ export function TrainingClassesManager({ centerId, classes }: Props) {
                   </FormLabel>
                   <FormControl>
                     <Input
-                      type="date"
+                      type="date" min="1900-01-01" max="2100-12-31"
                       {...field}
                       value={field.value ?? ""}
                     />

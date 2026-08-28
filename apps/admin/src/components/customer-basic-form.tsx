@@ -829,7 +829,7 @@ export function CustomerBasicForm({
                     <FormLabel>면접일</FormLabel>
                     <FormControl>
                       <Input
-                        type="date"
+                        type="date" min="1900-01-01" max="2100-12-31"
                         {...field}
                         value={field.value ?? ""}
                         disabled={careHomeLocked}
@@ -847,7 +847,7 @@ export function CustomerBasicForm({
                     <FormLabel>근무 시작일</FormLabel>
                     <FormControl>
                       <Input
-                        type="date"
+                        type="date" min="1900-01-01" max="2100-12-31"
                         {...field}
                         value={field.value ?? ""}
                         disabled={careHomeLocked}
@@ -865,7 +865,7 @@ export function CustomerBasicForm({
                     <FormLabel>근무 종료일</FormLabel>
                     <FormControl>
                       <Input
-                        type="date"
+                        type="date" min="1900-01-01" max="2100-12-31"
                         {...field}
                         value={field.value ?? ""}
                         disabled={careHomeLocked}
@@ -883,7 +883,7 @@ export function CustomerBasicForm({
                     <FormLabel>비자 변경 접수일</FormLabel>
                     <FormControl>
                       <Input
-                        type="date"
+                        type="date" min="1900-01-01" max="2100-12-31"
                         {...field}
                         value={field.value ?? ""}
                         disabled={careHomeLocked}
@@ -901,7 +901,7 @@ export function CustomerBasicForm({
                     <FormLabel>비자 변경일</FormLabel>
                     <FormControl>
                       <Input
-                        type="date"
+                        type="date" min="1900-01-01" max="2100-12-31"
                         {...field}
                         value={field.value ?? ""}
                         disabled={careHomeLocked}

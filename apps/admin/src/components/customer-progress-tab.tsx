@@ -646,7 +646,7 @@ export function CustomerProgressTab({
             <>
               <ItemBox label="재연락일">
                 <Input
-                  type="date"
+                  type="date" min="1900-01-01" max="2100-12-31"
                   value={state.recontact_date ?? ""}
                   onChange={(e) => setRecontactDate(e.target.value)}
                   disabled={pending || waitingLocked}

@@ -289,7 +289,7 @@ function FieldDate({
     <label className="flex flex-col gap-1">
       <span className="text-xs text-muted-foreground">{label}</span>
       <input
-        type="date"
+        type="date" min="1900-01-01" max="2100-12-31"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="rounded-md border border-input bg-background px-2 py-1.5 text-sm"
@@ -314,7 +314,7 @@ function FieldDateRange({
       <span className="text-xs text-muted-foreground">{label}</span>
       <div className="flex items-center gap-1">
         <input
-          type="date"
+          type="date" min="1900-01-01" max="2100-12-31"
           value={start}
           onChange={(e) => {
             const v = e.target.value;
@@ -325,7 +325,7 @@ function FieldDateRange({
         />
         <span className="text-xs text-muted-foreground">~</span>
         <input
-          type="date"
+          type="date" min="1900-01-01" max="2100-12-31"
           value={end}
           onChange={(e) => {
             const v = e.target.value;

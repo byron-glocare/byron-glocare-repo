@@ -173,7 +173,7 @@ export function CustomerRemindersPanel({ customerId, reminders }: Props) {
           <div>
             <Label className="text-xs text-muted-foreground">날짜</Label>
             <Input
-              type="date"
+              type="date" max="2100-12-31"
               value={newDate}
               onChange={(e) => setNewDate(e.target.value)}
               disabled={pending}
@@ -244,7 +244,7 @@ export function CustomerRemindersPanel({ customerId, reminders }: Props) {
                     <>
                       <div className="flex-1 grid grid-cols-[10rem_1fr] gap-2">
                         <Input
-                          type="date"
+                          type="date" min="1900-01-01" max="2100-12-31"
                           value={editDate}
                           onChange={(e) => setEditDate(e.target.value)}
                           disabled={pending}
