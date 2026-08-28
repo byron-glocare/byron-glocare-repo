@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   // 비자 서류 조회 공유 코어(모노레포 워크스페이스 패키지)
-  transpilePackages: ["@glocare/visa-core"],
+  transpilePackages: ["@glocare/visa-core", "@glocare/ui"],
   experimental: {
     // Node 24 + 이 Next dev 의 jest-worker child_process 가 스폰 직후 죽어
     // 동적 [id] 라우트(학생 상세 등)가 WorkerError 로 500. worker_threads 로 회피.

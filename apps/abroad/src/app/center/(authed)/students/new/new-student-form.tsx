@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useActionState } from "react";
 
 import { tr, type Locale } from "@/lib/i18n";
+import { DateInput, dateOrderFor } from "@glocare/ui";
 
 import { createStudentAction, type CreateStudentState } from "./actions";
 
@@ -103,9 +104,9 @@ export function NewStudentForm({
         {/* 생년월일 */}
         <label className={labelClass}>
           <span className={labelTextClass}>{tr(locale, "생년월일", "Ngày sinh")}</span>
-          <input
-            type="date"
+          <DateInput
             name="dob"
+            order={dateOrderFor(locale)}
             className={inputClass}
           />
           {fieldError("dob") ? (

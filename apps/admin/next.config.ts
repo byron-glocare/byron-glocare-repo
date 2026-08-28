@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  transpilePackages: ["@glocare/ui"],
   // Vercel serverless 번들에 templates/*.docx 포함 (이력서 양식)
   outputFileTracingIncludes: {
     "/api/customers/[id]/resume/route": ["./templates/**/*.docx"],
