@@ -194,6 +194,11 @@ body {
   color: var(--gc-ink-700);
   background: var(--gc-canvas);
   text-wrap: pretty;
+  /* 한국어는 기본값이면 음절 사이에서 끊긴다 — "스스로" 가 "스스/로" 로 갈라진다.
+     keep-all 로 어절을 지키고, 넘칠 때만 강제로 끊는다.
+     라틴 문자(베트남어)에는 영향이 없다. */
+  word-break: keep-all;
+  overflow-wrap: break-word;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
