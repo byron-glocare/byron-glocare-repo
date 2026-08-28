@@ -76,13 +76,14 @@ export default async function ManagedStudentDetailPage({
       .order("submitted_at", { ascending: false }),
     admin
       .from("study_centers")
-      .select("id, name_ko, name_vi")
-      .eq("active", true)
+      .select("id, name_ko, name_vi, active")
       .order("name_vi"),
   ]);
+  // 어드민은 숨김 센터도 고를 수 있어야 한다 (예: 비활성 센터로 잘못 등록된 학생 이관).
+  // 목록에서 빼는 대신 "(숨김)" 으로 표시만 한다.
   const centerOptions = (centers ?? []).map((c) => ({
     id: c.id,
-    name: c.name_ko || c.name_vi,
+    name: `${c.name_ko || c.name_vi}${c.active ? "" : " (숨김)"}`,
   }));
 
   // 업로드 서류 다운로드용 서명 URL (1시간)
