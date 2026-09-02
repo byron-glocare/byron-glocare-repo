@@ -384,6 +384,86 @@ async function resolveOrgForStudyCenter(
   return { ok: true, data: org.id };
 }
 
+/**
+ * 기존 계정(어드민 등)에 유학센터 소속 붙이기 (온).
+ * auth 계정은 그대로 두고 study_center_users 매핑만 추가한다.
+ * 계정당 매핑 1개 (auth_user_id unique).
+ */
+export async function attachCenterToUser(input: {
+  userId: string;
+  studyCenterId: number;
+  name: string;
+  role: "admin" | "user";
+}): Promise<ActionResult> {
+  const guard = await requireGlocareAdmin();
+  if (!guard.ok) return guard;
+  const name = input.name.trim();
+  if (!input.userId) return { ok: false, error: "계정을 선택하세요." };
+  if (!input.studyCenterId)
+    return { ok: false, error: "유학센터를 선택하세요." };
+  if (!name) return { ok: false, error: "담당자 이름은 필수입니다." };
+
+  try {
+    const admin = createAdminClient();
+
+    const orgResult = await resolveOrgForStudyCenter(input.studyCenterId);
+    if (!orgResult.ok) return orgResult;
+
+    const { data: userRes, error: userErr } =
+      await admin.auth.admin.getUserById(input.userId);
+    if (userErr || !userRes?.user)
+      return { ok: false, error: "계정을 찾을 수 없습니다." };
+
+    const { error: mapErr } = await admin.from("study_center_users").insert({
+      org_id: orgResult.data,
+      auth_user_id: input.userId,
+      email: userRes.user.email ?? "",
+      name,
+      role: input.role,
+      status: "active",
+    });
+    if (mapErr) {
+      if (mapErr.code === "23505")
+        return { ok: false, error: "이 계정에는 이미 유학센터 소속이 있습니다." };
+      return { ok: false, error: `소속 추가 실패: ${mapErr.message}` };
+    }
+
+    revalidatePath("/accounts");
+    return { ok: true, data: null };
+  } catch (e) {
+    return {
+      ok: false,
+      error: e instanceof Error ? e.message : "소속 추가 실패",
+    };
+  }
+}
+
+/**
+ * 유학센터 소속 해제 (오프).
+ * 매핑(study_center_users)만 삭제 — 로그인 계정과 어드민 권한은 그대로 남는다.
+ */
+export async function detachCenterFromUser(
+  centerUserId: string
+): Promise<ActionResult> {
+  const guard = await requireGlocareAdmin();
+  if (!guard.ok) return guard;
+  try {
+    const admin = createAdminClient();
+    const { error } = await admin
+      .from("study_center_users")
+      .delete()
+      .eq("id", centerUserId);
+    if (error) return { ok: false, error: error.message };
+    revalidatePath("/accounts");
+    return { ok: true, data: null };
+  } catch (e) {
+    return {
+      ok: false,
+      error: e instanceof Error ? e.message : "소속 해제 실패",
+    };
+  }
+}
+
 /** 유학센터 계정 활성/정지 (study_center_users.status) */
 export async function setCenterUserStatus(
   centerUserId: string,

@@ -3,12 +3,14 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { KeyRound, Loader2, Plus, UserPlus } from "lucide-react";
+import { KeyRound, Link2, Link2Off, Loader2, Plus, UserPlus } from "lucide-react";
 
 import {
   createCenterUser,
   setCenterUserStatus,
   resetUserPassword,
+  attachCenterToUser,
+  detachCenterFromUser,
   type AccountRow,
 } from "@/app/(app)/accounts/actions";
 import { Button } from "@/components/ui/button";
@@ -82,6 +84,25 @@ export function CenterAccounts({
       const r = await setCenterUserStatus(a.centerUserId!, next);
       if (r.ok) {
         toast.success(next === "active" ? "활성화했습니다." : "정지했습니다.");
+        router.refresh();
+      } else {
+        toast.error("실패", { description: r.error });
+      }
+    });
+  }
+
+  function onDetach(a: AccountRow) {
+    if (!a.centerUserId) return;
+    if (
+      !confirm(
+        `${a.email} 의 유학센터 소속을 해제할까요?\n로그인 계정과 어드민 권한은 그대로 남고, 유학센터 목록에서만 빠집니다.\n(나중에 "기존 계정에 유학센터 소속 붙이기"로 다시 켤 수 있습니다.)`
+      )
+    )
+      return;
+    startTransition(async () => {
+      const r = await detachCenterFromUser(a.centerUserId!);
+      if (r.ok) {
+        toast.success("유학센터 소속을 해제했습니다.");
         router.refresh();
       } else {
         toast.error("실패", { description: r.error });
@@ -214,7 +235,16 @@ export function CenterAccounts({
                   const active = a.centerStatus === "active";
                   return (
                     <TableRow key={a.id}>
-                      <TableCell className="text-sm">{a.email ?? "—"}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm">{a.email ?? "—"}</span>
+                          {a.isAdmin && (
+                            <Badge variant="outline" className="text-xs">
+                              어드민 겸
+                            </Badge>
+                          )}
+                        </div>
+                      </TableCell>
                       <TableCell className="text-sm">
                         {a.centerName ?? "—"}
                       </TableCell>
@@ -266,6 +296,17 @@ export function CenterAccounts({
                           >
                             {active ? "정지" : "활성화"}
                           </Button>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => onDetach(a)}
+                            disabled={pending}
+                            className="text-destructive hover:bg-destructive/5 hover:text-destructive"
+                          >
+                            <Link2Off className="size-3" />
+                            소속 해제
+                          </Button>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -275,7 +316,123 @@ export function CenterAccounts({
             </TableBody>
           </Table>
         </div>
+
+        <AttachCenter
+          accounts={accounts}
+          centers={centers}
+          onDone={() => router.refresh()}
+        />
       </CardContent>
     </Card>
+  );
+}
+
+/** 기존 계정(어드민 등)에 유학센터 소속 붙이기 — 온오프의 "온" */
+function AttachCenter({
+  accounts,
+  centers,
+  onDone,
+}: {
+  accounts: AccountRow[];
+  centers: Center[];
+  onDone: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const candidates = accounts.filter((a) => !a.centerUserId);
+  const centerLabel = (c: Center) => c.name_ko || c.name_vi;
+
+  function onAttach(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const form = new FormData(e.currentTarget);
+    const userId = String(form.get("userId") || "");
+    const studyCenterId = Number(form.get("studyCenterId") || 0);
+    const name = String(form.get("name") || "").trim();
+    const role = String(form.get("role") || "user") as "admin" | "user";
+    startTransition(async () => {
+      const r = await attachCenterToUser({ userId, studyCenterId, name, role });
+      if (r.ok) {
+        toast.success("유학센터 소속을 붙였습니다. 이제 위아래 양쪽에 표시됩니다.");
+        setOpen(false);
+        onDone();
+      } else {
+        toast.error("실패", { description: r.error });
+      }
+    });
+  }
+
+  return (
+    <div className="rounded-md border border-dashed border-border p-3">
+      <button
+        type="button"
+        className="text-xs font-medium text-muted-foreground hover:text-foreground"
+        onClick={() => setOpen((v) => !v)}
+      >
+        <Link2 className="mr-1 inline size-3" />
+        기존 계정에 유학센터 소속 붙이기 (어드민 겸용) {open ? "▲" : "▼"}
+      </button>
+      {open && (
+        <form
+          onSubmit={onAttach}
+          className="mt-3 grid items-end gap-3 sm:grid-cols-2 lg:grid-cols-5"
+        >
+          <div className="lg:col-span-2">
+            <Label className="text-xs">계정 선택</Label>
+            <select
+              name="userId"
+              required
+              className="h-9 w-full rounded-md border border-input bg-background px-2 text-sm"
+            >
+              <option value="">— 계정 선택 —</option>
+              {candidates.map((a) => (
+                <option key={a.id} value={a.id}>
+                  {a.email ?? a.id}
+                  {a.isAdmin ? " (어드민)" : ""}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <Label className="text-xs">유학센터</Label>
+            <select
+              name="studyCenterId"
+              required
+              className="h-9 w-full rounded-md border border-input bg-background px-2 text-sm"
+            >
+              <option value="">— 선택 —</option>
+              {centers.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {centerLabel(c)}
+                  {!c.active ? " (숨김)" : ""}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <Label className="text-xs">담당자 이름</Label>
+            <Input name="name" required />
+          </div>
+          <div>
+            <Label className="text-xs">센터 내 역할</Label>
+            <select
+              name="role"
+              defaultValue="user"
+              className="h-9 w-full rounded-md border border-input bg-background px-2 text-sm"
+            >
+              <option value="user">담당자</option>
+              <option value="admin">센터 관리자</option>
+            </select>
+          </div>
+          <Button type="submit" size="sm" disabled={isPending} className="lg:col-span-5">
+            {isPending ? (
+              <Loader2 className="size-3 animate-spin" />
+            ) : (
+              <Link2 className="size-3" />
+            )}
+            소속 붙이기
+          </Button>
+        </form>
+      )}
+    </div>
   );
 }
