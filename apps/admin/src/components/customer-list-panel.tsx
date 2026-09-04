@@ -22,7 +22,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
-import { dash } from "@/lib/format";
+import { dash, formatDate } from "@/lib/format";
 import {
   computeCustomerStatus,
   type StageSummary,
@@ -155,7 +155,7 @@ export type CustomerListProps = {
    * 컬럼 프리셋:
    *  - "default" (기본): 베트남 이름·한국 이름·단계·나이·전화·비자·지역·교육원·요양원
    *  - "centerDetail": 교육원 상세에서 사용. 지역·나이·교육원 제거,
-   *                     상품·예약금·정산완료 추가
+   *                     강의일자·정산완료 추가
    */
   columnPreset?: "default" | "centerDetail";
 };
@@ -801,10 +801,7 @@ export async function CustomerListPanel({
                     <TableHead className="w-40">요양원</TableHead>
                     {columnPreset === "centerDetail" && (
                       <>
-                        <TableHead className="w-24">상품</TableHead>
-                        <TableHead className="w-20 text-center">
-                          예약금
-                        </TableHead>
+                        <TableHead className="w-28">강의일자</TableHead>
                         <TableHead className="w-28 text-center">
                           소개비 정산
                         </TableHead>
@@ -823,10 +820,6 @@ export async function CustomerListPanel({
                     const age = c.birth_year
                       ? new Date().getFullYear() - c.birth_year
                       : null;
-                    const reservationPaid =
-                      (reservationsByCustomer.get(c.id) ?? []).some(
-                        (r) => r.payment_date && r.payment_date.trim()
-                      );
                     const commissionStatus =
                       commissionStatusByCustomer.get(c.id) ?? null;
                     return (
@@ -907,39 +900,12 @@ export async function CustomerListPanel({
                         </TableCell>
                         {columnPreset === "centerDetail" && (
                           <>
-                            <TableCell className="text-xs">
+                            <TableCell className="text-sm">
                               <Link
                                 href={`/customers/${c.id}`}
                                 className="block"
                               >
-                                {c.product_type ? (
-                                  <Badge
-                                    variant="outline"
-                                    className="text-[10px] py-0"
-                                  >
-                                    {c.product_type}
-                                  </Badge>
-                                ) : (
-                                  <span className="text-muted-foreground/60">
-                                    —
-                                  </span>
-                                )}
-                              </Link>
-                            </TableCell>
-                            <TableCell className="text-center">
-                              <Link
-                                href={`/customers/${c.id}`}
-                                className="block"
-                              >
-                                {reservationPaid ? (
-                                  <Badge className="bg-success/10 text-success border-success/20">
-                                    입금
-                                  </Badge>
-                                ) : (
-                                  <span className="text-xs text-muted-foreground">
-                                    —
-                                  </span>
-                                )}
+                                {formatDate(c.class_start_date)}
                               </Link>
                             </TableCell>
                             <TableCell className="text-center">
