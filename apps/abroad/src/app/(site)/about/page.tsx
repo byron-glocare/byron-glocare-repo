@@ -109,7 +109,7 @@ const aboutStrings = {
   },
   vi: {
     heroTag: "GLOCARE",
-    heroTitleHtml: "Du học, <em>hơn cả học tập</em>",
+    heroTitleHtml: "BẠN HỌC TẬP, <em>GLOCARER SÁT CÁNH</em>",
     heroDesc:
       "Từ nhập học đến định cư — GLOCARE đồng hành cùng bạn trong mọi bước đường.",
     stats: [

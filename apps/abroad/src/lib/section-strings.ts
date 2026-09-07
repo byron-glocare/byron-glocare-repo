@@ -201,8 +201,7 @@ const recruiting = {
   },
   vi: {
     eyebrow: "Đại sứ",
-    title:
-      "Tôi kiếm tiền, <em>bạn tôi được giảm giá!</em>",
+    title: "KẾT NỐI BẠN BÈ - <em>CÙNG THÊM THU NHẬP</em>",
     desc: "Giới thiệu bạn bè cho GLOCARE — cả hai cùng nhận thưởng bằng phiếu quà tặng (Coupang, Starbucks, v.v.).",
     steps: [
       {

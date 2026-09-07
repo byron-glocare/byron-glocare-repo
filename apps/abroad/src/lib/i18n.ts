@@ -147,8 +147,8 @@ const viDict: DictShape = {
     "hero.stat.support": "Hỗ trợ visa & việc làm",
 
     "section.cases.eyebrow": "Câu chuyện thành công",
-    "section.cases.title.prefix": "Những người đã ",
-    "section.cases.title.em": "thành công",
+    "section.cases.title.prefix": "BẠN LÀM VIỆC - ",
+    "section.cases.title.em": "GLOCARE ĐỒNG HÀNH",
     "section.cases.title.suffix": "",
     "section.cases.desc":
       "Câu chuyện của những du học sinh đã tìm được việc làm tại Hàn Quốc qua chương trình GLOCARE.",

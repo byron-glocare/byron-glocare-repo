@@ -36,13 +36,14 @@ export function SiteNav({
   const close = () => setOpen(false);
 
   /* 홈 섹션 순서와 동일하게(히어로 제외). 글로케어 소개만 별도 페이지라 끝에. */
+  // 순서: 글로케어 소개가 맨 앞, 엠버서더가 맨 뒤 (운영자 지정)
   const links = [
+    { href: "/about", label: strings.about },
     { href: "/#cases", label: strings.cases },
     { href: "/#apply", label: strings.applySection },
     { href: "/#universities", label: strings.universities },
-    { href: "/#recruiting", label: strings.recruiting },
     { href: "/#centers", label: strings.centers },
-    { href: "/about", label: strings.about },
+    { href: "/#recruiting", label: strings.recruiting },
   ];
 
   return (
