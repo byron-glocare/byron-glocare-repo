@@ -38,7 +38,7 @@ export default async function UniversitiesPage({
       supabase
         .from("universities")
         .select(
-          "id, active, name_ko, name_vi, region_ko, region_vi, website_url, categories, emoji"
+          "id, active, name_ko, name_vi, region_ko, region_vi, website_url, emoji"
         )
         .order("id", { ascending: true }),
       supabase.from("departments").select("university_id, active"),
@@ -178,7 +178,6 @@ export default async function UniversitiesPage({
                     <TableHead>이름 (한)</TableHead>
                     <TableHead>이름 (베)</TableHead>
                     <TableHead className="w-32">지역</TableHead>
-                    <TableHead className="w-40">카테고리</TableHead>
                     <TableHead className="w-20 text-center">학과</TableHead>
                     <TableHead className="w-20 text-center">모집</TableHead>
                     <TableHead className="w-20 text-center">상태</TableHead>
@@ -203,11 +202,6 @@ export default async function UniversitiesPage({
                         <TableCell className="text-sm">
                           <Link href={href} className="block">
                             {dash(u.region_ko)}
-                          </Link>
-                        </TableCell>
-                        <TableCell className="text-xs text-muted-foreground">
-                          <Link href={href} className="block">
-                            {dash(u.categories)}
                           </Link>
                         </TableCell>
                         <TableCell className="text-center">

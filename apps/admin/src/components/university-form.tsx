@@ -294,23 +294,10 @@ export function UniversityForm({
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="categories"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>카테고리</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        value={field.value ?? ""}
-                        placeholder="쉼표 구분: 자동차, 요양보호, 호텔"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              {/* 분류(categories) 입력칸 제거 — 홈페이지에 노출되는 자리가 없어
+                  적어도 아무 데도 안 쓰였다(운영자 결정). 컬럼과 기존 값은 보존한다:
+                  validators.ts 는 append-only 라 스키마에 남아 있고, 폼 기본값으로
+                  들어와 그대로 통과하므로 저장해도 값이 지워지지 않는다. */}
             </CardContent>
           </Card>
 
@@ -471,53 +458,9 @@ export function UniversityForm({
 
             <div>
               <FormLabel className="block mb-2">교통편</FormLabel>
-              <div className="flex gap-4 items-center mb-2">
-                <FormField
-                  control={form.control}
-                  name="transport_bus"
-                  render={({ field }) => (
-                    <label className="flex items-center gap-2 text-sm">
-                      <input
-                        type="checkbox"
-                        checked={field.value ?? false}
-                        onChange={(e) => field.onChange(e.target.checked)}
-                        className="size-4"
-                      />
-                      🚌 버스
-                    </label>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="transport_subway"
-                  render={({ field }) => (
-                    <label className="flex items-center gap-2 text-sm">
-                      <input
-                        type="checkbox"
-                        checked={field.value ?? false}
-                        onChange={(e) => field.onChange(e.target.checked)}
-                        className="size-4"
-                      />
-                      🚇 지하철
-                    </label>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="transport_train"
-                  render={({ field }) => (
-                    <label className="flex items-center gap-2 text-sm">
-                      <input
-                        type="checkbox"
-                        checked={field.value ?? false}
-                        onChange={(e) => field.onChange(e.target.checked)}
-                        className="size-4"
-                      />
-                      🚆 기차
-                    </label>
-                  )}
-                />
-              </div>
+              {/* 교통편 체크(버스·지하철·기차) 입력칸 제거 — 홈페이지에 노출 자리가
+                  없고, 노출한다 해도 특징 체크의 "편리한 교통"과 겹친다(운영자 결정).
+                  컬럼과 기존 값은 보존 — 폼 기본값으로 들어와 그대로 통과한다. */}
               <div className="grid sm:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}

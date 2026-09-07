@@ -103,6 +103,23 @@ export default async function UniversityDetailPage({
               {desc}
             </p>
           )}
+          {/* 대표 사진 — 어드민에 올린 경우에만. 없으면 자리도 만들지 않는다. */}
+          {u.photo_url && (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img
+              src={u.photo_url}
+              alt=""
+              style={{
+                display: "block",
+                width: "100%",
+                maxWidth: 720,
+                margin: "var(--gc-6, 24px) auto 0",
+                borderRadius: "var(--gc-r-card, 14px)",
+                boxShadow: "var(--gc-shadow-sm)",
+                objectFit: "cover",
+              }}
+            />
+          )}
           {u.website_url && (
             <a
               href={u.website_url}
