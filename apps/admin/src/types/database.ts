@@ -1631,6 +1631,8 @@ export type Database = {
           is_active: boolean;
           scope: "university_info" | "document_fill";
           aliases: string[];
+          /** 0058: 작성서류(학교 양식에 채워 제출) 여부. false=발급서류 */
+          is_form_doc: boolean;
           /** 연결성: 독립 | 참조(선택 기반 파생) */
           link_type: "independent" | "reference";
           is_derived: boolean;
@@ -1674,6 +1676,7 @@ export type Database = {
           is_active?: boolean;
           scope?: "university_info" | "document_fill";
           aliases?: string[];
+          is_form_doc?: boolean;
           link_type?: "independent" | "reference";
           is_derived?: boolean;
           derived_role?: string | null;

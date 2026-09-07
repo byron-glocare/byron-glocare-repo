@@ -36,7 +36,7 @@ export default async function EditAdmissionPage({
         .order("name_ko", { ascending: true }),
       supabase
         .from("study_student_data_types")
-        .select("key, label_ko, label_vi, aliases")
+        .select("key, label_ko, label_vi, aliases, is_form_doc")
         .eq("is_active", true)
         .eq("category", "document")
         .order("sort_order"),

@@ -43,12 +43,34 @@ const optionSchema = z.object({
   label_vi: z.string().min(1),
 });
 
+/**
+ * 식별자 key 생성 — 서버 전용. 운영자는 입력하지 않는다.
+ *
+ *   왜 자동인가: key 는 양식·슬롯매핑·PDF오버레이·서술형 기반키·학생이 올린 값·
+ *   요강 std_key 가 가리키는 **불변 식별자**인데 외래키가 없다. 손으로 지으면
+ *   같은 서류가 여러 키로 갈라지고(0057 에서 22개 병합), 바꾸면 조용히 끊어진다.
+ *
+ *   왜 뜻을 안 담나: 카테고리·라벨은 바뀔 수 있는데 key 는 못 바꾼다.
+ *   뜻을 담으면 나중에 거짓말이 된다 (실제로 document_birth_cert 가
+ *   가족관계증명서에 5건 붙어 있었다).
+ */
+async function generateDataTypeKey(
+  supabase: Awaited<ReturnType<typeof createClient>>
+): Promise<string> {
+  for (let attempt = 0; attempt < 10; attempt++) {
+    const key = "dt_" + Math.random().toString(36).slice(2, 9);
+    const { data } = await supabase
+      .from("study_student_data_types")
+      .select("id")
+      .eq("key", key)
+      .maybeSingle();
+    if (!data) return key;
+  }
+  // 사실상 도달 불가 — 그래도 충돌 없이 끝나게 시각 기반으로
+  return "dt_" + Date.now().toString(36);
+}
+
 const schema = z.object({
-  key: z
-    .string()
-    .min(1)
-    .max(100)
-    .regex(/^[a-z][a-z0-9_]*$/, "snake_case 만 허용 (소문자/숫자/언더스코어)"),
   label_ko: z.string().min(1).max(200),
   label_vi: z.string().min(1).max(200),
   category: z.enum(CATEGORIES),
@@ -89,7 +111,7 @@ export async function saveDataTypeAction(
   if (!user) return { error: "로그인이 필요합니다" };
 
   const raw = {
-    key: formData.get("key"),
+
     label_ko: formData.get("label_ko"),
     label_vi: formData.get("label_vi"),
     category: formData.get("category"),
@@ -159,9 +181,12 @@ export async function saveDataTypeAction(
   };
 
   if (id) {
-    // UPDATE (key 변경 허용 — 클라이언트에서 경고 후 제출)
+    // UPDATE — **key 는 절대 바꾸지 않는다.**
+    //   양식(required_data_type_keys)·슬롯매핑·PDF오버레이·서술형 기반키·
+    //   학생이 올린 값(data_type_key)·요강의 std_key 가 전부 이 키로 가리키는데
+    //   외래키가 없다. 바꾸면 DB 가 막아주지 않고 조용히 끊어진다.
+    //   (예전엔 "경고 후 허용" 이었다. 화면에서도 입력칸을 잠갔다.)
     const patch: StudyStudentDataTypeUpdate = {
-      key: data.key,
       label_ko: data.label_ko,
       label_vi: data.label_vi,
       category: data.category,
@@ -188,9 +213,9 @@ export async function saveDataTypeAction(
       return { error: `DB UPDATE 실패: ${error.message}` };
     }
   } else {
-    // INSERT
+    // INSERT — key 는 서버가 만든다. 폼에서 받지 않는다.
     const ins: StudyStudentDataTypeInsert = {
-      key: data.key,
+      key: await generateDataTypeKey(supabase),
       label_ko: data.label_ko,
       label_vi: data.label_vi,
       category: data.category,

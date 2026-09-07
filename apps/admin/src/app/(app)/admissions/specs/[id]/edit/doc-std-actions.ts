@@ -57,7 +57,7 @@ export async function addDocumentDataTypeAction(input: {
   // 이미 같은 이름/별칭이 있으면 재사용
   const { data: existing } = await admin
     .from("study_student_data_types")
-    .select("key, label_ko, label_vi, aliases")
+    .select("key, label_ko, label_vi, aliases, is_form_doc")
     .eq("category", "document")
     .eq("is_active", true);
   const n = norm(name_ko);
@@ -98,14 +98,14 @@ export async function addDocumentDataTypeAction(input: {
       is_active: true,
       sort_order: sortOrder,
     })
-    .select("key, label_ko, label_vi, aliases")
+    .select("key, label_ko, label_vi, aliases, is_form_doc")
     .single();
   if (error || !inserted) {
     // key 충돌(이미 존재) 시 그 행 반환
     if (error?.code === "23505") {
       const { data: row } = await admin
         .from("study_student_data_types")
-        .select("key, label_ko, label_vi, aliases")
+        .select("key, label_ko, label_vi, aliases, is_form_doc")
         .eq("key", key)
         .maybeSingle();
       if (row) {
@@ -149,7 +149,7 @@ export async function addAliasToDataTypeAction(input: {
   const admin = createAdminClient();
   const { data: row } = await admin
     .from("study_student_data_types")
-    .select("key, label_ko, label_vi, aliases")
+    .select("key, label_ko, label_vi, aliases, is_form_doc")
     .eq("key", input.key)
     .maybeSingle();
   if (!row) return { ok: false, error: "표준 서류를 찾을 수 없습니다." };

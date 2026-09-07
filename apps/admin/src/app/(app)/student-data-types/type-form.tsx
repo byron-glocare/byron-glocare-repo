@@ -147,19 +147,21 @@ export function DataTypeForm({
         className="space-y-5"
       >
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <Field label="식별자 key" error={fieldErr("key")} required>
+          {/* 식별자 key — 자동 생성이고 바꿀 수 없다.
+              양식·슬롯매핑·PDF오버레이·서술형 기반키·학생이 올린 값이 전부 이 키로
+              가리키는데 외래키가 없어서, 키를 바꾸면 DB가 막아주지 않고 조용히 끊어진다.
+              손으로 짓다 보니 같은 서류가 여러 키로 갈라지기도 했다(0057에서 22개 병합). */}
+          <Field label="식별자 key">
             <input
               type="text"
-              name="key"
-              required
-              maxLength={100}
-              defaultValue={dataType?.key ?? ""}
-              placeholder="예: highschool_gpa"
-              pattern="[a-z][a-z0-9_]*"
-              className="rounded-md border border-input bg-background px-3 py-2 font-mono text-sm"
+              value={dataType?.key ?? "저장할 때 자동 생성됩니다"}
+              readOnly
+              disabled
+              className="cursor-not-allowed rounded-md border border-input bg-muted px-3 py-2 font-mono text-sm text-muted-foreground"
             />
             <span className="text-xs text-muted-foreground">
-              snake_case. 변경 가능하나, 바꾸면 연결된 양식·값이 깨질 수 있습니다.
+              내부 식별자입니다. 화면에 보이는 건 라벨이니 라벨만 신경 쓰시면 됩니다.
+              {dataType ? " 이 값은 변경할 수 없습니다 — 연결된 양식·값이 끊어집니다." : ""}
             </span>
           </Field>
 

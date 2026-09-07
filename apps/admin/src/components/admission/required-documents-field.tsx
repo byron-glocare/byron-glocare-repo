@@ -31,6 +31,8 @@ export type DocCatalogOption = {
   label_ko: string;
   label_vi?: string | null;
   aliases?: string[] | null;
+  /** 0058: 작성서류(학교 양식에 채워 제출) 여부. false/undefined = 발급서류 */
+  is_form_doc?: boolean | null;
 };
 
 // ── 이름 정규화·매칭 ─────────────────────────────────────────────
@@ -71,46 +73,6 @@ function exactMatch(
   return null;
 }
 
-const KEY_OPTIONS: Array<{ value: string; label: string }> = [
-  // 신원
-  { value: "photo", label: "사진" },
-  { value: "passport_copy", label: "여권 사본" },
-  { value: "national_id_copy", label: "신분증 사본" },
-  { value: "parents_id_copy", label: "부모 신분증 사본" },
-  { value: "alien_registration_card", label: "외국인등록증" },
-  { value: "nationality_proof", label: "국적증명서" },
-  // 학력
-  { value: "highschool_diploma", label: "고등학교 졸업증명서" },
-  { value: "highschool_transcript", label: "고등학교 성적증명서" },
-  // 가족
-  { value: "birth_certificate", label: "출생증명서" },
-  { value: "family_relations_certificate", label: "가족관계증명서" },
-  // 재정
-  { value: "bank_balance", label: "은행 잔고증명서" },
-  { value: "financial_proof", label: "재정증명서" },
-  { value: "parents_employment_proof", label: "부모 재직증명서" },
-  { value: "parents_income_proof", label: "부모 소득증명서" },
-  // 건강
-  { value: "tb_certificate", label: "결핵 진단서" },
-  { value: "health_certificate", label: "건강진단서" },
-  // 학교 양식
-  { value: "application_form", label: "입학원서 (학교 양식)" },
-  { value: "self_intro", label: "자기소개서" },
-  { value: "study_plan", label: "학업계획서" },
-  { value: "financial_pledge_form", label: "재정보증서 (학교 양식)" },
-  { value: "privacy_consent", label: "개인정보 동의서" },
-  { value: "academic_record_release", label: "학적정보 제공 동의서" },
-  // 어학·자격
-  { value: "topik_certificate", label: "TOPIK 성적증명서" },
-  { value: "language_alt_certificate", label: "어학 대체 증명서" },
-  { value: "korean_proof", label: "한국어 능력 증명" },
-  { value: "career_certificate", label: "경력증명서" },
-  { value: "license_copy", label: "자격증 사본" },
-  // 비자
-  { value: "visa_application_form", label: "비자 신청서" },
-  // 기타
-  { value: "other", label: "기타" },
-];
 
 const LANGUAGE_OPTIONS: Array<{ value: string; label: string }> = [
   { value: "", label: "—" },
@@ -176,6 +138,31 @@ export function RequiredDocumentsField({
     const m = new Map<string, DocCatalogOption>();
     for (const t of cat) m.set(t.key, t);
     return m;
+  }, [cat]);
+
+  // 작성/발급 분류의 정본 — 0058 이후 카탈로그의 is_form_doc.
+  const formDocKeys = useMemo(
+    () => new Set(cat.filter((t) => t.is_form_doc).map((t) => t.key)),
+    [cat]
+  );
+
+  /**
+   * "서류 종류" 선택지 = 표준 카탈로그.
+   *   예전엔 코드에 하드코딩된 24개(KEY_OPTIONS)였다. 목록에 없는 서류는
+   *   비슷한 걸 억지로 고를 수밖에 없었고("최종학력 졸업증명서" → "고등학교 졸업증명서"),
+   *   운영자가 표준데이터를 추가해도 여기 뜨지 않았다. 이제 카탈로그가 정본이다.
+   */
+  const catChoices = useMemo(() => {
+    const label = (t: DocCatalogOption) =>
+      `${t.is_form_doc ? "[작성] " : "[발급] "}${t.label_ko}`;
+    const sorted = [...cat].sort((a, b) => {
+      if (!!a.is_form_doc !== !!b.is_form_doc) return a.is_form_doc ? -1 : 1;
+      return a.label_ko.localeCompare(b.label_ko, "ko");
+    });
+    return [
+      { value: "", label: "— 서류 선택 —" },
+      ...sorted.map((t) => ({ value: t.key, label: label(t) })),
+    ];
   }, [cat]);
 
   // 발급 서류의 표준 정본 키: 명시적 해제(__none__) → 없음, 저장값 우선, 없으면 이름·별칭 정확 매칭
@@ -255,6 +242,8 @@ export function RequiredDocumentsField({
   // 직렬화 — 빈 string 은 null 로 변환. 발급 서류는 std_key(저장값|자동제안) 캡처.
   const serialized = JSON.stringify(
     items.map((d) => ({
+      // key = AI 추출용 고정 enum(studentDocumentTypeEnum). 이제 운영자가 고르지
+      // 않는다 — 추출이 채운 값을 그대로 보존만 한다. 화면에는 안 나온다.
       key: d.key,
       name_ko: d.name_ko,
       name_vi: d.name_vi || null,
@@ -264,7 +253,8 @@ export function RequiredDocumentsField({
       notarization: d.notarization || null,
       group: d.group || null,
       notes: d.notes || null,
-      std_key: isFormDoc(d) ? null : effectiveStd(d) || null,
+      // 작성서류도 std_key 를 갖는다(0058). 예전엔 발급서류만 채웠다.
+      std_key: effectiveStd(d) || null,
     }))
   );
 
@@ -281,7 +271,7 @@ export function RequiredDocumentsField({
               <div className="mb-2 flex items-center justify-between">
                 <span className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
                   #{idx + 1}
-                  {isFormDoc(d) ? (
+                  {isFormDoc(d, formDocKeys) ? (
                     <Badge variant="secondary" className="text-[10px]">
                       직접작성
                     </Badge>
@@ -305,9 +295,21 @@ export function RequiredDocumentsField({
               <div className="grid grid-cols-1 gap-2 text-sm md:grid-cols-3">
                 <FieldSelect
                   label="서류 종류"
-                  value={d.key}
-                  onChange={(v) => update(idx, "key", v)}
-                  options={KEY_OPTIONS}
+                  value={effectiveStd(d)}
+                  onChange={(v) =>
+                    patch(idx, {
+                      // 빈 값 = 명시적 해제. 자동매칭이 되살아나지 않게 __none__ 로 남긴다.
+                      std_key: v || "__none__",
+                      // 이름이 비어 있으면 고른 표준의 이름을 채워준다(대부분 그대로 쓴다).
+                      ...(d.name_ko.trim() === "" && catByKey.get(v)
+                        ? {
+                            name_ko: catByKey.get(v)!.label_ko,
+                            name_vi: catByKey.get(v)!.label_vi ?? null,
+                          }
+                        : {}),
+                    })
+                  }
+                  options={catChoices}
                 />
                 <FieldText
                   label="서류명 (한국어)"
@@ -369,39 +371,39 @@ export function RequiredDocumentsField({
                 />
               </div>
 
-              {/* 발급 서류 표준 매핑 — 이름 자동 매칭(직접작성은 불필요) */}
-              {!isFormDoc(d) ? (
+              {/* 표준 매핑 보조 — 위 '서류 종류'가 비었을 때 후보 제안 / 새 표준 추가,
+                  골랐지만 서류명이 표준명과 다를 때 '표준명으로 통일'.
+                  작성서류도 이제 std_key 를 가지므로 구분 없이 보여준다(0058). */}
+              {true ? (
                 <div className="mt-2">
                   {(() => {
                     const std = effectiveStd(d);
                     const matched = std ? catByKey.get(std) : null;
                     const isBusy = pending && busyIdx === idx;
                     if (matched) {
-                      const sameName =
-                        norm(d.name_ko) === norm(matched.label_ko);
+                      // 표준을 이미 골랐고 서류명도 표준명과 같으면 더 보여줄 게 없다
+                      // (무엇을 골랐는지는 위 '서류 종류'에 나온다).
+                      if (norm(d.name_ko) === norm(matched.label_ko)) return null;
                       return (
                         <div className="flex flex-wrap items-center gap-2 rounded-md border border-emerald-200 bg-emerald-50 px-2.5 py-1.5 text-xs">
                           <Check className="size-3.5 shrink-0 text-emerald-600" />
                           <span>
-                            표준 발급서류:{" "}
-                            <strong>{matched.label_ko}</strong>
+                            표준: <strong>{matched.label_ko}</strong>
+                            <span className="text-muted-foreground">
+                              {" "}
+                              — 서류명이 다릅니다
+                            </span>
                           </span>
-                          {!sameName ? (
-                            <button
-                              type="button"
-                              onClick={() => applyStandard(idx, matched)}
-                              className="rounded border border-emerald-300 bg-white px-1.5 py-0.5 text-emerald-700 hover:bg-emerald-100"
-                            >
-                              표준명으로 통일
-                            </button>
-                          ) : null}
                           <button
                             type="button"
-                            onClick={() => patch(idx, { std_key: "__none__" })}
-                            className="ml-auto text-muted-foreground hover:underline"
+                            onClick={() => applyStandard(idx, matched)}
+                            className="rounded border border-emerald-300 bg-white px-1.5 py-0.5 text-emerald-700 hover:bg-emerald-100"
                           >
-                            해제
+                            표준명으로 통일
                           </button>
+                          <span className="ml-auto text-muted-foreground">
+                            대학이 쓴 이름 그대로 둬도 됩니다
+                          </span>
                         </div>
                       );
                     }
