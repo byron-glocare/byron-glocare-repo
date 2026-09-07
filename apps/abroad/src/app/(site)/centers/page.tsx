@@ -19,6 +19,7 @@ export default async function CentersPage() {
   const { data: centers } = await supabase
     .from("study_centers")
     .select("*")
+    .eq("active", true)
     .order("id");
 
   return (

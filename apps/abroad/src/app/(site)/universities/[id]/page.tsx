@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
 import { getDict, getLocale, tr } from "@/lib/i18n";
+import { universityFeatures } from "@/lib/university-features";
 
 export const dynamic = "force-dynamic";
 
@@ -22,11 +23,16 @@ export default async function UniversityDetailPage({
   const locale = await getLocale();
   const t = await getDict();
 
+  // active 필터를 코드에서 명시한다.
+  //   RLS 의 anon 정책은 active=true 만 주지만, 이 앱은 같은 도메인에 학생/센터
+  //   로그인이 있어서 로그인한 방문자는 authenticated 로 붙는다. 그쪽 정책은
+  //   using(true) 라 비공개 대학까지 보였다 — 어드민 설정과 어긋나던 원인.
   const { data: u } = await supabase
     .from("universities")
     .select("*")
     .eq("id", Number(id))
-    .single();
+    .eq("active", true)
+    .maybeSingle();
 
   if (!u) notFound();
 
@@ -34,12 +40,15 @@ export default async function UniversityDetailPage({
     .from("departments")
     .select("*")
     .eq("university_id", u.id)
+    .eq("active", true)
     .order("sort_order")
     .order("id");
 
   const name = (locale === "vi" ? (u.name_vi ?? u.name_ko) : u.name_ko) ?? "";
   const region = locale === "vi" ? (u.region_vi ?? u.region_ko) : u.region_ko;
   const desc = locale === "vi" ? (u.desc_vi ?? u.desc_ko) : u.desc_ko;
+  // 어드민 '홈페이지 노출 정보'의 특징/강점 체크
+  const features = universityFeatures(u, locale);
 
   const facts = [
     { k: tr(locale, "강점", "Điểm mạnh"), v: u.strengths },
@@ -78,6 +87,15 @@ export default async function UniversityDetailPage({
           </div>
           {region && <div className="sec-eyebrow">{region}</div>}
           <h1 className="sec-title">{name}</h1>
+          {features.length > 0 && (
+            <div className="chip-row" style={{ justifyContent: "center" }}>
+              {features.map((f) => (
+                <span key={f} className="chip">
+                  {f}
+                </span>
+              ))}
+            </div>
+          )}
           {desc && (
             <p className="sec-desc" style={{ whiteSpace: "pre-line" }}>
               {desc}

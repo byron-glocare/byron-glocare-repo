@@ -222,6 +222,7 @@ export default async function AboutPage() {
   const { data: channels } = await supabase
     .from("study_channels")
     .select("*")
+    .eq("active", true)
     .order("sort_order")
     .order("id");
 

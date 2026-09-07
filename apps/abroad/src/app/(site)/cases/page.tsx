@@ -11,6 +11,7 @@ export default async function CasesPage() {
   const { data: cases } = await supabase
     .from("study_cases")
     .select("*")
+    .eq("active", true)
     .order("hero", { ascending: false })
     .order("id", { ascending: false });
 

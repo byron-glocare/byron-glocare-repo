@@ -6,6 +6,7 @@ import { Recruiting } from "@/components/sections/recruiting";
 import { Universities, type UniversityCard } from "@/components/sections/universities";
 import { FloatingButtons } from "@/components/floating-buttons";
 import { createClient } from "@/lib/supabase/server";
+import { universityFeatures } from "@/lib/university-features";
 import { getDict, getLocale } from "@/lib/i18n";
 import { getSectionStrings } from "@/lib/section-strings";
 
@@ -30,6 +31,7 @@ export default async function HomePage() {
       .select(
         "id, title_ko, title_vi, category_ko, category_vi, tiktok_thumb, tiktok_url, hero"
       )
+      .eq("active", true)
       .neq("hero", "N")
       .order("hero", { ascending: true }),
     // Cases 그리드: hero = 'N'
@@ -38,26 +40,30 @@ export default async function HomePage() {
       .select(
         "id, title_ko, title_vi, category_ko, category_vi, tiktok_thumb, tiktok_url"
       )
+      .eq("active", true)
       .eq("hero", "N")
       .order("id", { ascending: false })
       .limit(8),
     supabase
       .from("universities")
       .select(
-        "id, name_ko, name_vi, region_ko, region_vi, logo_url, tags_ko, tags_vi, strengths"
+        "id, name_ko, name_vi, region_ko, region_vi, logo_url, tags_ko, tags_vi, strengths, feature_transport, feature_parttime, feature_housing, feature_dormitory"
       )
+      .eq("active", true)
       .order("id"),
     supabase
       .from("departments")
       .select(
         "id, university_id, name_ko, name_vi, badge, course, sort_order, degree_years, tuition_ko, tuition_vi, scholarship_ko, scholarship_vi, dept_url"
       )
+      .eq("active", true)
       .order("sort_order"),
     supabase
       .from("study_centers")
       .select(
         "id, name_ko, name_vi, city_ko, city_vi, desc_ko, desc_vi, students_ko, students_vi, years_ko, years_vi"
       )
+      .eq("active", true)
       .order("id"),
   ]);
 
@@ -114,9 +120,13 @@ export default async function HomePage() {
         dept_url: d.dept_url,
       }));
     const tagsRaw = locale === "vi" ? u.tags_vi : u.tags_ko;
-    const tags = tagsRaw
-      ? tagsRaw.split(",").map((s) => s.trim()).filter(Boolean)
-      : [];
+    // 어드민 '홈페이지 노출 정보'의 특징/강점 체크를 태그 앞에 함께 보여준다
+    const tags = [
+      ...universityFeatures(u, locale),
+      ...(tagsRaw
+        ? tagsRaw.split(",").map((s) => s.trim()).filter(Boolean)
+        : []),
+    ];
     return {
       id: u.id,
       logoUrl: u.logo_url ?? null,

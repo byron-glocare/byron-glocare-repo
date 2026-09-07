@@ -618,6 +618,11 @@ export type Database = {
           dormitory_desc_ko: string | null;
           dormitory_desc_vi: string | null;
           strengths: string | null;
+          /** 0025: 홈페이지 노출용 특징·강점 4종 (dormitory 불리언과는 별개) */
+          feature_transport: boolean;
+          feature_parttime: boolean;
+          feature_housing: boolean;
+          feature_dormitory: boolean;
           tags_ko: string | null;
           tags_vi: string | null;
           categories: string | null;
@@ -649,6 +654,10 @@ export type Database = {
           dormitory_desc_ko?: string | null;
           dormitory_desc_vi?: string | null;
           strengths?: string | null;
+          feature_transport?: boolean;
+          feature_parttime?: boolean;
+          feature_housing?: boolean;
+          feature_dormitory?: boolean;
           tags_ko?: string | null;
           tags_vi?: string | null;
           categories?: string | null;

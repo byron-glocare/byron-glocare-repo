@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { createClient } from "@/lib/supabase/server";
 import { getDict, getLocale } from "@/lib/i18n";
+import { universityFeatures } from "@/lib/university-features";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +22,7 @@ export default async function UniversitiesPage() {
   const { data: universities } = await supabase
     .from("universities")
     .select("*")
+    .eq("active", true)
     .order("id");
 
   return (
@@ -44,6 +46,8 @@ export default async function UniversitiesPage() {
               .map((s) => s.trim())
               .filter(Boolean)
               .slice(0, 3);
+            // 어드민 '홈페이지 노출 정보'의 특징/강점 체크 — 지금까지 어디에도 안 나왔다
+            const features = universityFeatures(u, locale);
 
             return (
               <Link key={u.id} href={`/universities/${u.id}`} className="uni-card">
@@ -65,10 +69,15 @@ export default async function UniversitiesPage() {
 
                 {desc && <p className="center-desc">{desc}</p>}
 
-                {tags && tags.length > 0 && (
+                {(features.length > 0 || (tags && tags.length > 0)) && (
                   <div className="chip-row">
-                    {tags.map((tag, i) => (
-                      <span key={i} className="chip">
+                    {features.map((f) => (
+                      <span key={f} className="chip">
+                        {f}
+                      </span>
+                    ))}
+                    {tags?.map((tag, i) => (
+                      <span key={`t${i}`} className="chip">
                         {tag}
                       </span>
                     ))}
