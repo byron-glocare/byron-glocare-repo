@@ -448,13 +448,15 @@ export function ReviewForm({
               <AlertTriangle className="mt-0.5 size-5 shrink-0 text-amber-500" />
               <div className="flex-1">
                 <p className="font-medium text-amber-900">
-                  이미 같은 대학 · {state.duplicate.term} 승인본이{" "}
+                  이미 같은 대학 · {state.duplicate.term} ·{" "}
+                  {state.duplicate.programLabel} 승인본이{" "}
                   {state.duplicate.count}건 있습니다.
                 </p>
                 <p className="mt-0.5 text-xs text-amber-800">
                   갱신하면 <strong>기존 승인본은 보관(archived) 처리</strong>되고
                   이 내용이 새 승인본이 됩니다. 잘못된 내용으로 덮어쓰지 않도록
-                  한 번 더 확인하세요.
+                  한 번 더 확인하세요. (같은 학기라도 <strong>다른 과정</strong>
+                  요강 — 예: 어학연수 ↔ 학위과정 — 은 그대로 유지됩니다.)
                 </p>
                 <div className="mt-2 flex items-center gap-2">
                   <Button

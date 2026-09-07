@@ -49,6 +49,8 @@ const SYSTEM_PROMPT = `당신은 한국 대학의 외국인 입학 모집요강�
    - 날짜: ISO 8601 (YYYY-MM-DD)
    - 금액: 정수 (원화 KRW, 단위 표기 제거)
    - TOPIK 등급: 정수 (1~6)
+   - 나이: "만 N세"는 min_age/max_age 정수로, "YYYY년 이후 출생"은 birth_date_from/to 로.
+     원문이 쓴 방식만 채우고 나머지는 null (만나이↔출생일 임의 환산 금지)
    - 다단계 모집(1차/2차/수시1차 등): schedule.rounds[] 배열
 
 5. **multi-department** — 모집요강이 여러 학과를 포함하면 departments[] 배열에 각각.
@@ -92,6 +94,14 @@ const SYSTEM_PROMPT = `당신은 한국 대학의 외국인 입학 모집요강�
   ],
   "eligibility": {
     "applicant_categories": ["베트남 순수외국인 카테고리만"],
+    "age_requirement": {
+      "min_age": "number | null (만 나이 하한. '만 18세 이상' → 18)",
+      "max_age": "number | null (만 나이 상한. '만 30세 이하' → 30)",
+      "birth_date_from": "YYYY-MM-DD | null ('1996년 1월 1일 이후 출생자' 처럼 출생일로 적힌 경우만)",
+      "birth_date_to": "YYYY-MM-DD | null",
+      "reference_date": "YYYY-MM-DD | null (나이 계산 기준일이 명시된 경우만. 없으면 null)",
+      "notes": "string | null (예외·단서. 예: '학과별 상한 상이')"
+    },
     "education_required": "high_school | high_school_12yrs | health_related_bachelor | bachelor | master",
     "education_paths": ["string"],
     "education_exclusions": ["string (예: '검정고시·홈스쿨링·사이버학습 불인정')"],

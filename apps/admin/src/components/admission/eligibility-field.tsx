@@ -19,8 +19,22 @@ export type AlternativePath = {
   notes?: string | null;
 };
 
+/**
+ * 나이 요건 — 모집요강 원문이 "만 N세"로 쓰기도, "YYYY년 이후 출생"으로 쓰기도 한다.
+ * 원문이 쓴 방식만 채운다(임의 환산 금지). 표시·안내용이며 자동 검증은 하지 않는다.
+ */
+export type AgeRequirement = {
+  min_age?: number | null;
+  max_age?: number | null;
+  birth_date_from?: string | null;
+  birth_date_to?: string | null;
+  reference_date?: string | null;
+  notes?: string | null;
+};
+
 export type Eligibility = {
   applicant_categories?: string[];
+  age_requirement?: AgeRequirement | null;
   education_required:
     | "high_school"
     | "high_school_12yrs"
@@ -121,6 +135,30 @@ export function EligibilityField({
     initial?.gpa_min == null ? "" : String(initial.gpa_min)
   );
   const [gpaScale, setGpaScale] = useState<string>(initial?.gpa_scale ?? "");
+
+  // 나이
+  const [minAge, setMinAge] = useState<string>(
+    initial?.age_requirement?.min_age == null
+      ? ""
+      : String(initial.age_requirement.min_age)
+  );
+  const [maxAge, setMaxAge] = useState<string>(
+    initial?.age_requirement?.max_age == null
+      ? ""
+      : String(initial.age_requirement.max_age)
+  );
+  const [birthFrom, setBirthFrom] = useState<string>(
+    initial?.age_requirement?.birth_date_from ?? ""
+  );
+  const [birthTo, setBirthTo] = useState<string>(
+    initial?.age_requirement?.birth_date_to ?? ""
+  );
+  const [ageRefDate, setAgeRefDate] = useState<string>(
+    initial?.age_requirement?.reference_date ?? ""
+  );
+  const [ageNotes, setAgeNotes] = useState<string>(
+    initial?.age_requirement?.notes ?? ""
+  );
 
   // korean
   const [topikDefault, setTopikDefault] = useState<string>(
@@ -238,8 +276,27 @@ export function EligibilityField({
       }
     : null;
 
+  // 하나라도 입력됐을 때만 객체를 만든다 — 아무것도 없으면 null(요건 없음).
+  const ageRequirement =
+    minAge !== "" ||
+    maxAge !== "" ||
+    birthFrom !== "" ||
+    birthTo !== "" ||
+    ageRefDate !== "" ||
+    ageNotes !== ""
+      ? {
+          min_age: toNum(minAge),
+          max_age: toNum(maxAge),
+          birth_date_from: birthFrom || null,
+          birth_date_to: birthTo || null,
+          reference_date: ageRefDate || null,
+          notes: ageNotes || null,
+        }
+      : null;
+
   const serialized = JSON.stringify({
     applicant_categories: splitCsv(applicantCategories),
+    age_requirement: ageRequirement,
     education_required: educationRequired,
     education_paths:
       educationPaths.trim() !== "" ? splitCsv(educationPaths) : undefined,
@@ -299,6 +356,54 @@ export function EligibilityField({
             value={gpaScale}
             onChange={setGpaScale}
             options={[...GPA_SCALE_OPTIONS]}
+          />
+        </div>
+      </div>
+
+      {/* 나이 */}
+      <div className="space-y-2 rounded-md border bg-muted/20 p-3">
+        <div className="text-sm font-medium">나이 요건</div>
+        <p className="text-xs text-muted-foreground">
+          모집요강에 적힌 방식대로만 채우세요. &ldquo;만 18세 이상&rdquo;은 만
+          나이에, &ldquo;1996년 이후 출생&rdquo;은 출생일에. 서로 환산하지 마세요.
+          비워두면 &ldquo;나이 제한 없음&rdquo;으로 표시됩니다.
+        </p>
+        <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+          <FieldNumber
+            label="만 나이 하한 (이상)"
+            value={minAge}
+            onChange={setMinAge}
+            placeholder="예: 18"
+          />
+          <FieldNumber
+            label="만 나이 상한 (이하)"
+            value={maxAge}
+            onChange={setMaxAge}
+            placeholder="예: 30"
+          />
+          <FieldText
+            label="출생일 하한 (이 날짜 이후 출생)"
+            type="date"
+            value={birthFrom}
+            onChange={setBirthFrom}
+          />
+          <FieldText
+            label="출생일 상한 (이 날짜 이전 출생)"
+            type="date"
+            value={birthTo}
+            onChange={setBirthTo}
+          />
+          <FieldText
+            label="나이 기준일 (명시된 경우만)"
+            type="date"
+            value={ageRefDate}
+            onChange={setAgeRefDate}
+          />
+          <FieldText
+            label="나이 메모"
+            value={ageNotes}
+            onChange={setAgeNotes}
+            placeholder="예: 요양보호 학과는 상한 없음"
           />
         </div>
       </div>
@@ -558,17 +663,21 @@ function FieldText({
   value,
   onChange,
   placeholder,
+  type = "text",
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;
+  /** "date" 면 달력 입력 — 저장값은 그대로 YYYY-MM-DD */
+  type?: "text" | "date";
 }) {
   return (
     <label className="flex flex-col gap-1">
       <span className="text-xs text-muted-foreground">{label}</span>
       <input
-        type="text"
+        type={type}
+        {...(type === "date" ? { min: "1900-01-01", max: "2100-12-31" } : {})}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}

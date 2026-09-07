@@ -102,7 +102,8 @@ export async function saveOfferingAction(
   if (data.status === "published") {
     const readiness = await assessOfferingReadiness(
       data.university_id,
-      data.term
+      data.term,
+      sourceSpecId
     );
     if (readiness.blocked) {
       return { error: readiness.reason };
@@ -210,7 +211,8 @@ export async function updateOfferingStatusAction(
     // U5: 노출 게이트 — 승인된 모집요강 필수
     const readiness = await assessOfferingReadiness(
       row.university_id,
-      row.term
+      row.term,
+      row.source_spec_id
     );
     if (readiness.blocked) {
       return { ok: false, error: readiness.reason };

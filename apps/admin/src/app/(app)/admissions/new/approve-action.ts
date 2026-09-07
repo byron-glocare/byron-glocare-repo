@@ -9,6 +9,7 @@ import {
   ensureUniversityAndDepartments,
   type SpecDepartment,
 } from "@/lib/admission/ensure-records";
+import { programTypeLabel } from "@/lib/admission/program-type";
 
 const PROGRAM_TYPES = [
   "language_program",
@@ -51,8 +52,8 @@ export type ApproveSpecState =
   | {
       error?: string;
       fieldErrors?: Record<string, string>;
-      /** 같은 대학+학기 승인본이 이미 있어 갱신 확인이 필요 */
-      duplicate?: { count: number; term: string };
+      /** 같은 (대학+학기+전형+과정) 승인본이 이미 있어 갱신 확인이 필요 */
+      duplicate?: { count: number; term: string; programLabel: string };
     }
   | undefined;
 
@@ -136,16 +137,26 @@ export async function approveSpecAction(
   }
   const universityId = ensured.result.universityId;
 
-  // 4-1. 중복 승인 보호 — 같은 (대학, 학기) 승인본이 이미 있으면
+  // 4-1. 중복 승인 보호 — 같은 자리에 승인본이 이미 있으면
   //   바로 덮어쓰지 않고 운영자에게 "갱신할까요?" 확인을 받는다.
   //   confirm_replace=true 로 다시 제출해야만 기존을 보관(archived) 처리.
+  //
+  //   "같은 자리" = DB 유일키와 동일하게 (대학, 학기, 전형, 과정) 4개로 본다(0056).
+  //   과정(program_type)을 빼면 어학연수 요강을 승인할 때 같은 학기 학위과정 요강까지
+  //   함께 보관 처리돼 버린다 — 둘은 공존해야 하는 별개 요강이다.
   const confirmReplace = formData.get("confirm_replace") === "true";
-  const { data: existingApproved, error: dupErr } = await supabase
+  const sameSlotQuery = supabase
     .from("study_admission_specs")
     .select("id")
     .eq("university_id", universityId)
     .eq("term", meta.term)
+    .eq("program_type", meta.program_type)
     .eq("status", "approved");
+  const { data: existingApproved, error: dupErr } = await (
+    meta.admission_category == null
+      ? sameSlotQuery.is("admission_category", null)
+      : sameSlotQuery.eq("admission_category", meta.admission_category)
+  );
   if (dupErr) {
     return { error: `중복 확인 실패: ${dupErr.message}` };
   }
@@ -153,17 +164,26 @@ export async function approveSpecAction(
 
   if (dupCount > 0 && !confirmReplace) {
     // 아직 확인 전 — 저장하지 않고 확인 요청 반환
-    return { duplicate: { count: dupCount, term: meta.term } };
+    return {
+      duplicate: {
+        count: dupCount,
+        term: meta.term,
+        programLabel: programTypeLabel(meta.program_type),
+      },
+    };
   }
 
   if (dupCount > 0 && confirmReplace) {
     // 갱신 확정 — 기존 승인본 보관 처리 후 새로 저장
+    // 위에서 찾은 "같은 자리" 승인본만 정확히 보관 — 조건을 다시 쓰면
+    // 유일키와 어긋날 위험이 있어 id 목록을 그대로 쓴다.
     const { error: archiveErr } = await supabase
       .from("study_admission_specs")
       .update({ status: "archived" })
-      .eq("university_id", universityId)
-      .eq("term", meta.term)
-      .eq("status", "approved");
+      .in(
+        "id",
+        (existingApproved ?? []).map((r) => (r as { id: string }).id)
+      );
     if (archiveErr) {
       return { error: `기존 승인본 보관 처리 실패: ${archiveErr.message}` };
     }

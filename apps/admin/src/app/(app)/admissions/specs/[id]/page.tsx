@@ -17,6 +17,10 @@ import {
   classifyRequiredDocs,
   type RequiredDoc as ClassifyDoc,
 } from "@/lib/admission/classify-documents";
+import {
+  formatAgeRequirement,
+  type AgeRequirementLike,
+} from "@/lib/admission/age-requirement";
 import { DeleteSpecButton } from "./delete-spec-button";
 import { CloneSpecButton } from "./clone-spec-button";
 
@@ -184,6 +188,7 @@ export default async function AdmissionDetailPage({
   const departments = (Array.isArray(spec.departments) ? spec.departments : []) as Dept[];
   const eligibility = (spec.eligibility ?? {}) as {
     applicant_categories?: string[];
+    age_requirement?: AgeRequirementLike | null;
     education_required?: string;
     education_paths?: string[];
     education_exclusions?: string[];
@@ -564,6 +569,16 @@ export default async function AdmissionDetailPage({
                     : null
                 }
               />
+              <Info
+                label="나이"
+                value={formatAgeRequirement(eligibility.age_requirement)}
+              />
+              {eligibility.age_requirement?.notes ? (
+                <Info
+                  label="나이 메모"
+                  value={eligibility.age_requirement.notes}
+                />
+              ) : null}
               {eligibility.applicant_categories &&
               eligibility.applicant_categories.length > 0 ? (
                 <Info

@@ -8,6 +8,12 @@
  *     (= 승인 상태 일관화 — 노출되는 모집은 반드시 승인된 요강에 근거)
  *   - warnings(경고): 일정/학비 미입력, 직접작성 양식 미업로드, 발급서류 미등록.
  *     노출은 허용하되 운영자에게 미완료 항목을 알린다.
+ *
+ *   0056 이후: 한 대학·학기에 승인된 요강이 **여럿일 수 있다**
+ *   (어학연수 D-4 / 학위과정이 공존). 그래서 "최신 것 하나"를 임의로 고르면
+ *   학위 모집에 어학연수 요강이 조용히 걸릴 수 있다.
+ *   → preferredSpecId 가 있으면 그것을, 없고 후보가 1건이면 그것을 쓰고,
+ *     후보가 2건 이상인데 지정이 없으면 **막고 운영자에게 고르게** 한다.
  */
 
 import "server-only";
@@ -17,6 +23,7 @@ import {
   classifyRequiredDocs,
   type RequiredDoc,
 } from "./classify-documents";
+import { programTypeLabel } from "./program-type";
 
 export type ReadinessCheck = {
   key: string;
@@ -29,37 +36,73 @@ export type OfferingReadiness =
   | { ok: false; blocked: true; reason: string; checks: ReadinessCheck[] }
   | { ok: true; blocked: false; approvedSpecId: string; checks: ReadinessCheck[]; warnings: string[] };
 
+type ApprovedSpecRow = {
+  id: string;
+  program_type: string;
+  admission_category: string | null;
+  required_documents: unknown;
+  schedule: unknown;
+  tuition: unknown;
+};
+
 export async function assessOfferingReadiness(
   universityId: number,
-  term: string
+  term: string,
+  /** 이 모집에 이미 연결돼 있거나 운영자가 고른 요강. 있으면 이것으로 평가한다. */
+  preferredSpecId?: string | null
 ): Promise<OfferingReadiness> {
   const supabase = createAdminClient();
 
   // 1) 승인된 모집요강 (게이트)
   const { data: specs } = await supabase
     .from("study_admission_specs")
-    .select("id, status, required_documents, schedule, tuition")
+    .select(
+      "id, status, program_type, admission_category, required_documents, schedule, tuition"
+    )
     .eq("university_id", universityId)
     .eq("term", term)
     .eq("status", "approved")
     .order("updated_at", { ascending: false });
 
-  const approved = (specs ?? [])[0] as
-    | {
-        id: string;
-        required_documents: unknown;
-        schedule: unknown;
-        tuition: unknown;
-      }
-    | undefined;
+  const candidates = (specs ?? []) as ApprovedSpecRow[];
 
-  if (!approved) {
+  if (candidates.length === 0) {
     return {
       ok: false,
       blocked: true,
       reason: `${term} 학기에 승인된 모집요강이 없습니다. 모집요강을 승인한 뒤 노출하세요.`,
       checks: [
         { key: "approved_spec", label: "승인된 모집요강", ok: false },
+      ],
+    };
+  }
+
+  // 어느 요강으로 평가할지 결정 — 임의로 최신 것을 고르지 않는다.
+  const approved =
+    (preferredSpecId
+      ? candidates.find((c) => c.id === preferredSpecId)
+      : undefined) ?? (candidates.length === 1 ? candidates[0] : undefined);
+
+  if (!approved) {
+    const list = candidates
+      .map((c) => {
+        const label = programTypeLabel(c.program_type);
+        return c.admission_category ? `${label}(${c.admission_category})` : label;
+      })
+      .join(", ");
+    return {
+      ok: false,
+      blocked: true,
+      reason:
+        `${term} 학기에 승인된 모집요강이 ${candidates.length}건입니다 (${list}). ` +
+        `어느 요강으로 모집할지 이 모집의 '모집요강'에서 직접 선택한 뒤 노출하세요.`,
+      checks: [
+        {
+          key: "approved_spec",
+          label: "승인된 모집요강",
+          ok: false,
+          detail: `요강 ${candidates.length}건 — 직접 선택 필요`,
+        },
       ],
     };
   }

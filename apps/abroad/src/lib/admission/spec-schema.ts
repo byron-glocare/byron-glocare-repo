@@ -203,8 +203,28 @@ export const koreanAlternativePathSchema = z.discriminatedUnion("type", [
   }),
 ]);
 
+/**
+ * 나이 요건.
+ *
+ *   모집요강 원문이 두 가지로 쓰인다 —
+ *     "만 18세 이상 30세 이하"  → min_age / max_age
+ *     "1996-01-01 이후 출생자"   → birth_date_from / birth_date_to
+ *   둘 중 적힌 대로 받는다(둘 다 optional). 기준일이 명시된 경우만 reference_date.
+ *
+ *   ⚠ 표시·안내용이다. 학생 dob 로 자동 검증하지 않는다(별건).
+ */
+export const ageRequirementSchema = z.object({
+  min_age: z.number().int().min(0).max(120).nullable().optional(),
+  max_age: z.number().int().min(0).max(120).nullable().optional(),
+  birth_date_from: isoDateOrNull.optional(),   // 이 날짜 **이후** 출생
+  birth_date_to: isoDateOrNull.optional(),     // 이 날짜 **이전** 출생
+  reference_date: isoDateOrNull.optional(),    // 나이 계산 기준일 (없으면 입학일 기준)
+  notes: z.string().nullable().optional(),     // 예외·단서 (예: 요양보호 학과는 상한 없음)
+});
+
 export const eligibilitySchema = z.object({
   applicant_categories: z.array(z.string()).default([]),
+  age_requirement: ageRequirementSchema.nullable().optional(),
   education_required: educationLevelEnum,
   education_paths: z.array(z.string()).optional(),
   education_exclusions: z.array(z.string()).optional(),  // 예: 검정고시·홈스쿨링 불가
@@ -483,6 +503,7 @@ export type Identity = z.infer<typeof identitySchema>;
 export type DepartmentItem = z.infer<typeof departmentItemSchema>;
 export type RequiredDocument = z.infer<typeof requiredDocumentSchema>;
 export type Eligibility = z.infer<typeof eligibilitySchema>;
+export type AgeRequirement = z.infer<typeof ageRequirementSchema>;
 export type Schedule = z.infer<typeof scheduleSchema>;
 export type AdmissionRound = z.infer<typeof admissionRoundSchema>;
 export type Tuition = z.infer<typeof tuitionSchema>;

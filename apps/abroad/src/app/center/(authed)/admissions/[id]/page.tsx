@@ -10,6 +10,10 @@ import { verifyCenterSession } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
 import { downloadUrl } from "@/lib/storage-download";
 import { getLocale, tr, type Locale } from "@/lib/i18n";
+import {
+  formatAgeRequirement,
+  type AgeRequirementLike,
+} from "@/lib/admission/age-requirement";
 
 /** 라벨 맵에서 화면 언어에 맞는 쪽을 고른다. 없는 키는 원문 그대로. */
 function L(
@@ -217,6 +221,7 @@ export default async function CenterAdmissionDetailPage({
 
   const eligibility = (spec.eligibility ?? {}) as {
     applicant_categories?: string[];
+    age_requirement?: AgeRequirementLike | null;
     education_required?: string;
     education_paths?: string[];
     education_exclusions?: string[];
@@ -428,6 +433,16 @@ export default async function CenterAdmissionDetailPage({
                     : null
                 }
               />
+              <Info
+                label={tr(locale, "나이", "Độ tuổi")}
+                value={formatAgeRequirement(eligibility.age_requirement, locale)}
+              />
+              {eligibility.age_requirement?.notes ? (
+                <Info
+                  label={tr(locale, "나이 단서", "Ghi chú độ tuổi")}
+                  value={eligibility.age_requirement.notes}
+                />
+              ) : null}
               {eligibility.education_exclusions &&
               eligibility.education_exclusions.length > 0 ? (
                 <Info
