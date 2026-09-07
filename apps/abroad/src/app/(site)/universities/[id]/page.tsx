@@ -50,8 +50,14 @@ export default async function UniversityDetailPage({
   // 어드민 '홈페이지 노출 정보'의 특징/강점 체크
   const features = universityFeatures(u, locale);
 
+  // 어드민에서 실제로 입력할 수 있는 항목만 노출한다.
+  //   빠져 있던 두 줄:
+  //     · 강점(strengths)  — 0025 에서 특징 체크 4종으로 대체되며 어드민 입력칸이 사라졌다
+  //                          (컬럼은 내부 메모로 보존). 위 features 칩이 그 자리를 대신한다.
+  //     · 수업일(class_days) — 어드민에 입력칸이 아예 없다.
+  //   둘 다 값이 없어 filter 로 걸러지긴 했지만, 채울 방법이 없는 자리를 코드에
+  //   남겨두면 다음 사람이 또 "왜 안 나오지" 를 겪는다.
   const facts = [
-    { k: tr(locale, "강점", "Điểm mạnh"), v: u.strengths },
     {
       k: tr(locale, "교통", "Giao thông"),
       v:
@@ -66,10 +72,6 @@ export default async function UniversityDetailPage({
           ? (u.dormitory_desc_vi ?? u.dormitory_desc_ko)
           : u.dormitory_desc_ko
         : null,
-    },
-    {
-      k: tr(locale, "수업일", "Ngày học"),
-      v: locale === "vi" ? (u.class_days_vi ?? u.class_days_ko) : u.class_days_ko,
     },
   ].filter((f) => f.v);
 

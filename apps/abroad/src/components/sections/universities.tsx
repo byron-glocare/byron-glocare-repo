@@ -20,7 +20,7 @@ export type UniversityCard = {
   region: string;
   logoUrl: string | null;
   tags: string[];
-  strengths: string;
+
   departments: Department[];
 };
 
@@ -44,7 +44,6 @@ type Strings = {
   modalDegree: string;
   modalYearUnit: string;
   modalDeptLink: string;
-  modalStrengths: string;
 };
 
 /** 대학 이름에서 로고 대체용 이니셜 2자 (이모지 대신). */
@@ -205,12 +204,9 @@ export function Universities({
               </button>
             </div>
             <div className="modal-bd">
-              {opened.strengths && (
-                <div className="gc-note gc-note-brand" style={{ marginBottom: 20 }}>
-                  <strong>{strings.modalStrengths}</strong> {opened.strengths}
-                </div>
-              )}
-
+              {/* 강점(strengths) 안내를 걷어냈다 — 0025 에서 특징 체크 4종으로
+                  대체되며 어드민 입력칸이 사라져(컬럼은 내부 메모로 보존) 운영자가
+                  채울 수 없는 자리였다. 특징은 카드의 태그 칩으로 노출된다. */}
               {opened.departments.map((d) => (
                 <div key={d.id} className="mdept">
                   <span
