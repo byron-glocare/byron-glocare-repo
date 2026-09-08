@@ -187,7 +187,9 @@ export function Universities({
         {/* 더보기 — /universities 목록으로. 그 페이지는 지금까지 사이트 어디에도
             링크가 없어 도달 불가였다(네비의 '제휴 대학'도 이 홈 섹션을 가리킨다). */}
         <div style={{ marginTop: "var(--gc-8)", textAlign: "center" }}>
-          <a href="/universities" className="gc-btn gc-btn-secondary">
+          {/* 크기 클래스(gc-btn-lg)가 padding·font-size 를 준다 — 빼면 여백 없이
+              글자에 딱 붙어 버튼처럼 안 보인다. 유학 신청 섹션 CTA 와 같은 크기. */}
+          <a href="/universities" className="gc-btn gc-btn-secondary gc-btn-lg">
             {strings.moreCta}
             <span className="arrow" aria-hidden>
               →
