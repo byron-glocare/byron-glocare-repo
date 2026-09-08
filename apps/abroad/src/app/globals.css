@@ -1500,15 +1500,24 @@ footer { background: var(--gc-ink-900); color: var(--gc-ink-300); }
 .about-hero {
   background: var(--gc-canvas);
   border-bottom: 1px solid var(--gc-line);
-  padding: var(--gc-section-y) var(--gc-gutter);
+  /* 좌우 여백은 안쪽 래퍼가 갖는다 — .sec-inner / .stats-grid 와 같은 박스라야
+     세로 기준선이 맞는다. 예전엔 여기서 gutter 를 먹고 래퍼가 그 안에서 다시
+     가운데 정렬돼, 히어로만 아래 섹션들보다 gutter 만큼 왼쪽으로 밀려 있었다. */
+  padding: var(--gc-section-y) 0;
   text-align: left;
 }
-.about-hero > * { max-width: var(--gc-container); margin-left: auto; margin-right: auto; }
+.about-hero > * {
+  max-width: var(--gc-container);
+  margin: 0 auto;
+  padding: 0 var(--gc-gutter);
+}
 .about-hero h1 {
   font: var(--gc-display);
   letter-spacing: -0.025em;
   color: var(--gc-ink-900);
-  margin: var(--gc-5) auto var(--gc-5);
+  /* margin auto 를 쓰면 max-width 22ch 안에서 가운데로 몰려, 태그·설명문과
+     시작점이 어긋난다. 왼쪽 기준선을 공유하도록 0 으로 둔다. */
+  margin: var(--gc-5) 0;
   max-width: 22ch;
   text-wrap: balance;
 }
