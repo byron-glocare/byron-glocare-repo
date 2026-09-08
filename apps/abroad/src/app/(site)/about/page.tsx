@@ -111,7 +111,7 @@ const aboutStrings = {
     heroTag: "GLOCARE",
     heroTitleHtml: "BẠN HỌC TẬP, <em>GLOCARER SÁT CÁNH</em>",
     heroDesc:
-      "Từ nhập học đến định cư — GLOCARE đồng hành cùng bạn trong mọi bước đường.",
+      "Từ du học đến định cư — GLOCARE đồng hành cùng bạn trên mọi bước đường.",
     stats: [
       { n: "8", suffix: "%", l: "Tỷ lệ có việc làm sau tốt nghiệp (hiện tại)" },
       { n: "50", suffix: "K+", l: "Sinh viên Việt Nam tại Hàn Quốc" },

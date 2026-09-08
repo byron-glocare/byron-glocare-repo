@@ -46,6 +46,7 @@ type Strings = {
   modalYearUnit: string;
   modalDeptLink: string;
   modalMore: string;
+  moreCta: string;
 };
 
 /** 대학 이름에서 로고 대체용 이니셜 2자 (이모지 대신). */
@@ -181,6 +182,17 @@ export function Universities({
               </div>
             );
           })}
+        </div>
+
+        {/* 더보기 — /universities 목록으로. 그 페이지는 지금까지 사이트 어디에도
+            링크가 없어 도달 불가였다(네비의 '제휴 대학'도 이 홈 섹션을 가리킨다). */}
+        <div style={{ marginTop: "var(--gc-8)", textAlign: "center" }}>
+          <a href="/universities" className="gc-btn gc-btn-secondary">
+            {strings.moreCta}
+            <span className="arrow" aria-hidden>
+              →
+            </span>
+          </a>
         </div>
       </div>
 
