@@ -127,6 +127,7 @@ const universities = {
     modalDegree: "수학 기간",
     modalYearUnit: "년",
     modalDeptLink: "학과 홈페이지",
+    modalMore: "학교 자세히 보기",
   },
   vi: {
     eyebrow: "Trường ĐH & Ngành học",
@@ -149,6 +150,7 @@ const universities = {
     modalDegree: "Thời gian học",
     modalYearUnit: " năm",
     modalDeptLink: "Trang ngành học",
+    modalMore: "Xem chi tiết trường",
   },
 };
 

@@ -20,7 +20,8 @@ export type UniversityCard = {
   region: string;
   logoUrl: string | null;
   tags: string[];
-
+  /** 어드민 '상세 설명' — 모달에 노출 */
+  desc: string;
   departments: Department[];
 };
 
@@ -44,6 +45,7 @@ type Strings = {
   modalDegree: string;
   modalYearUnit: string;
   modalDeptLink: string;
+  modalMore: string;
 };
 
 /** 대학 이름에서 로고 대체용 이니셜 2자 (이모지 대신). */
@@ -204,9 +206,19 @@ export function Universities({
               </button>
             </div>
             <div className="modal-bd">
-              {/* 강점(strengths) 안내를 걷어냈다 — 0025 에서 특징 체크 4종으로
-                  대체되며 어드민 입력칸이 사라져(컬럼은 내부 메모로 보존) 운영자가
-                  채울 수 없는 자리였다. 특징은 카드의 태그 칩으로 노출된다. */}
+              {/* 어드민 '상세 설명'(desc). 지금까지 홈 섹션에 이걸 그리는 자리가
+                  없어서, 운영자가 길게 적어둔 설명이 어디에도 안 보였다.
+                  (설명을 그리던 /universities 목록·상세 페이지는 사이트 어디에서도
+                   링크가 없어 사실상 도달 불가였다 — 아래 '자세히 보기'로 연결.) */}
+              {opened.desc && (
+                <p
+                  className="modal-desc"
+                  style={{ whiteSpace: "pre-line", marginBottom: 20 }}
+                >
+                  {opened.desc}
+                </p>
+              )}
+
               {opened.departments.map((d) => (
                 <div key={d.id} className="mdept">
                   <span
@@ -250,6 +262,19 @@ export function Universities({
                   </div>
                 </div>
               ))}
+
+              {/* 대학 상세 페이지로 — 사진·교통·기숙사 등 나머지 정보가 거기 있다.
+                  이 링크가 없으면 /universities/[id] 에 도달할 길이 없다. */}
+              <a
+                href={`/universities/${opened.id}`}
+                className="gc-btn gc-btn-ghost"
+                style={{ paddingLeft: 0, marginTop: 8 }}
+              >
+                {strings.modalMore}
+                <span className="arrow" aria-hidden>
+                  →
+                </span>
+              </a>
             </div>
           </div>
         )}

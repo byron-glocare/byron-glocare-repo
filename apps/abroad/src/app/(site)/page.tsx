@@ -47,7 +47,7 @@ export default async function HomePage() {
     supabase
       .from("universities")
       .select(
-        "id, name_ko, name_vi, region_ko, region_vi, logo_url, tags_ko, tags_vi, feature_transport, feature_parttime, feature_housing, feature_dormitory"
+        "id, name_ko, name_vi, region_ko, region_vi, logo_url, desc_ko, desc_vi, tags_ko, tags_vi, feature_transport, feature_parttime, feature_housing, feature_dormitory"
       )
       .eq("active", true)
       .order("id"),
@@ -136,6 +136,7 @@ export default async function HomePage() {
           ? (u.region_vi ?? u.region_ko ?? "")
           : (u.region_ko ?? ""),
       tags,
+      desc: (locale === "vi" ? (u.desc_vi ?? u.desc_ko) : u.desc_ko) ?? "",
       departments: uniDepts,
     };
   });

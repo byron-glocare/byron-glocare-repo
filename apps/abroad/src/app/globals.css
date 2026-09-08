@@ -1357,6 +1357,10 @@ a.process-contact-v:hover { color: var(--gc-primary-600); text-decoration: none;
 }
 .modal-x:hover { background: var(--gc-subtle); color: var(--gc-ink-900); }
 .modal-bd { padding: var(--gc-6); }
+.modal-desc {
+  font-size: 14.5px; line-height: 1.75; color: var(--ink-mid);
+  padding-bottom: var(--gc-5); border-bottom: 1px solid var(--bdr);
+}
 
 .mdept {
   display: flex; gap: var(--gc-3);
