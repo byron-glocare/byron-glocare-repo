@@ -12,7 +12,10 @@ import {
   Send,
 } from "lucide-react";
 
-import { sendNewStudentSms } from "@/app/(app)/sms/actions";
+import {
+  sendNewStudentSms,
+  sendClassInquirySms,
+} from "@/app/(app)/sms/actions";
 import { setClassIntakeSmsSent } from "@/app/(app)/customers/actions";
 
 import {
@@ -36,6 +39,7 @@ import {
 } from "@/components/ui/dialog";
 import {
   buildNewStudentMessage,
+  pickClassInquiryMessage,
   type NewStudentTemplateStudent,
 } from "@/lib/sms-templates";
 import { pickCenterSmsPhone, SMS_RECIPIENT_LABEL } from "@/lib/sms-recipient";
@@ -230,6 +234,11 @@ function CenterGroupCard({
     : "대표 연락처";
   const [editedPhone, setEditedPhone] = useState<string>(defaultSmsPhone);
   const [pending, startTransition] = useTransition();
+  // 강의 정보 문의 — 랜덤 템플릿, 모달에서 편집 후 발송
+  const [inquiryOpen, setInquiryOpen] = useState(false);
+  const [inquiryBody, setInquiryBody] = useState("");
+  const [inquiryPhone, setInquiryPhone] = useState("");
+  const [inquiryPending, startInquiryTransition] = useTransition();
   // 발송 후 "강의 접수 메시지 발송 플래그 ON 으로 변경할까요?" 확인 다이얼로그
   const [sentPromptIds, setSentPromptIds] = useState<string[] | null>(null);
   const [flagPending, startFlagTransition] = useTransition();
@@ -440,6 +449,19 @@ function CenterGroupCard({
           <Button
             type="button"
             size="sm"
+            variant="outline"
+            onClick={() => {
+              setInquiryBody(pickClassInquiryMessage());
+              setInquiryPhone(defaultSmsPhone);
+              setInquiryOpen(true);
+            }}
+          >
+            <Send className="size-3" />
+            강의 문의
+          </Button>
+          <Button
+            type="button"
+            size="sm"
             onClick={() => {
               if (!expanded) setExpanded(true);
               setPreviewOpen(true);
@@ -526,6 +548,104 @@ function CenterGroupCard({
           </details>
         )}
       </CardContent>
+
+      {/* 강의 정보 문의 다이얼로그 */}
+      <Dialog open={inquiryOpen} onOpenChange={setInquiryOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>강의 정보 문의 — {center.name}</DialogTitle>
+            <DialogDescription className="text-xs">
+              이번 달/다음 달 개강 일정 확인 요청. 문구는 5종 중 랜덤으로
+              선택되며 발송 전 수정할 수 있습니다.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div>
+              <label className="text-xs text-muted-foreground block mb-1">
+                수신 전화번호 (기본값: 교육원 {defaultSmsLabel}
+                {defaultSmsPhone ? ` ${defaultSmsPhone}` : " 없음"})
+              </label>
+              <Input
+                type="tel"
+                value={inquiryPhone}
+                onChange={(e) => setInquiryPhone(e.target.value)}
+                placeholder="010-0000-0000"
+                disabled={inquiryPending}
+              />
+            </div>
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-xs text-muted-foreground">
+                  본문 {new TextEncoder().encode(inquiryBody).length} byte /
+                  2000 byte
+                </span>
+                <button
+                  type="button"
+                  className="text-[11px] text-muted-foreground underline hover:text-foreground"
+                  onClick={() => setInquiryBody(pickClassInquiryMessage())}
+                  disabled={inquiryPending}
+                >
+                  다른 문구로 바꾸기
+                </button>
+              </div>
+              <Textarea
+                value={inquiryBody}
+                onChange={(e) => setInquiryBody(e.target.value)}
+                rows={7}
+                className="text-sm leading-relaxed"
+                disabled={inquiryPending}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setInquiryOpen(false)}
+              disabled={inquiryPending}
+            >
+              취소
+            </Button>
+            <Button
+              type="button"
+              onClick={() => {
+                const phone = inquiryPhone.trim();
+                if (!phone) {
+                  toast.error("수신 전화번호를 입력하세요.");
+                  return;
+                }
+                if (!inquiryBody.trim()) {
+                  toast.error("본문이 비어있습니다.");
+                  return;
+                }
+                startInquiryTransition(async () => {
+                  const r = await sendClassInquirySms({
+                    centerId: center.id,
+                    bodyOverride: inquiryBody,
+                    phoneOverride: phone,
+                  });
+                  if (r.ok) {
+                    toast.success(`${center.name} 에 강의 문의를 발송했습니다.`, {
+                      description: r.warning,
+                    });
+                    setInquiryOpen(false);
+                  } else {
+                    toast.error("발송 실패", { description: r.error });
+                  }
+                });
+              }}
+              disabled={inquiryPending}
+            >
+              {inquiryPending ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                <Send className="size-4" />
+              )}
+              발송
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
         <DialogContent className="max-w-2xl">

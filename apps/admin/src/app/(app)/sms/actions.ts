@@ -2,7 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { buildNewStudentMessage } from "@/lib/sms-templates";
+import {
+  buildNewStudentMessage,
+  pickClassInquiryMessage,
+} from "@/lib/sms-templates";
 import { pickCenterSmsPhone } from "@/lib/sms-recipient";
 
 export type SmsActionResult =
@@ -72,6 +75,73 @@ async function sendNhnLms(params: {
     };
   }
   return { ok: true };
+}
+
+// =============================================================================
+// 발송 셀프 알림 — 운영자 본인 번호로 "언제/누구에게/무슨 문자" 짧은 노티
+// =============================================================================
+
+/**
+ * 시스템 문자 발송 성공 직후 운영자에게 보내는 확인 노티.
+ * 수신 번호: NHN_SMS_NOTIFY_NO (없으면 발신번호 NHN_SMS_SEND_NO = 본인 번호).
+ * 짧은 본문이라 SMS(단문) 엔드포인트를 쓰고, 실패해도 원 발송 결과에는
+ * 영향을 주지 않는다 (best-effort).
+ */
+async function sendSelfNotifySms(params: {
+  targetName: string;
+  recipientPhone: string;
+  kindLabel: string;
+}): Promise<void> {
+  const appKey = process.env.NHN_SMS_APP_KEY;
+  const secretKey = process.env.NHN_SMS_SECRET_KEY;
+  const sendNo = process.env.NHN_SMS_SEND_NO;
+  const notifyNo = (process.env.NHN_SMS_NOTIFY_NO ?? sendNo ?? "").replace(
+    /[^0-9]/g,
+    ""
+  );
+  if (!appKey || !secretKey || !sendNo || !notifyNo) return;
+
+  // KST 기준 "YYYY-MM-DD HH:mm"
+  const sentAt = new Date()
+    .toLocaleString("sv-SE", { timeZone: "Asia/Seoul" })
+    .slice(0, 16);
+
+  const body = [
+    "[알림]",
+    sentAt,
+    params.targetName,
+    params.recipientPhone,
+    params.kindLabel,
+  ].join("\n");
+
+  const baseUrl = (
+    process.env.NHN_SMS_API_URL ?? "https://sms.api.nhncloudservice.com"
+  ).replace(/\/+$/, "");
+
+  try {
+    // 단문(SMS) 시도 — 90 byte(EUC-KR) 초과 등으로 실패하면 MMS 로 재시도
+    const res = await fetch(
+      `${baseUrl}/sms/v3.0/appKeys/${encodeURIComponent(appKey)}/sender/sms`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Secret-Key": secretKey,
+        },
+        body: JSON.stringify({
+          body,
+          sendNo: sendNo.replace(/[^0-9]/g, ""),
+          recipientList: [{ recipientNo: notifyNo, countryCode: "82" }],
+        }),
+      }
+    );
+    const json = await res.json().catch(() => null);
+    if (res.ok && json?.header?.isSuccessful) return;
+
+    await sendNhnLms({ phone: notifyNo, title: "[알림]", body });
+  } catch {
+    // 노티 실패는 무시 — 원 발송이 성공했으면 그걸로 충분
+  }
 }
 
 // =============================================================================
@@ -229,6 +299,12 @@ export async function sendNewStudentSms(input: {
   });
   if (!send.ok) return { ok: false, error: `발송 실패: ${send.error}` };
 
+  await sendSelfNotifySms({
+    targetName: center.name,
+    recipientPhone,
+    kindLabel: "신규 교육생 안내 문자",
+  });
+
   // 이력 기록 — 각 학생별로 1 row + center 전체 1 row
   const rows = [
     {
@@ -248,6 +324,81 @@ export async function sendNewStudentSms(input: {
   ];
 
   const { error: insertError } = await supabase.from("sms_messages").insert(rows);
+  if (insertError) {
+    return {
+      ok: true,
+      warning: `SMS 발송 완료. 이력 저장 중 오류: ${insertError.message}`,
+    };
+  }
+
+  revalidatePath("/sms");
+  revalidatePath("/sms/new-student");
+  return { ok: true };
+}
+
+// =============================================================================
+// 강의 정보 문의 (교육원에 이번 달/다음 달 개강 일정 확인 요청)
+// =============================================================================
+
+export async function sendClassInquirySms(input: {
+  centerId: string;
+  /** 미리보기에서 편집한 본문. 없으면 서버에서 랜덤 템플릿 선택. */
+  bodyOverride?: string;
+  /** 미리보기에서 편집한 수신 번호. 없으면 교육원 선택 번호 → 대표 연락처. */
+  phoneOverride?: string;
+}): Promise<SmsActionResult> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "Unauthorized" };
+
+  const { data: center, error: centerError } = await supabase
+    .from("training_centers")
+    .select("id, name, phone, director_phone, contact_phone, sms_recipient")
+    .eq("id", input.centerId)
+    .single();
+  if (centerError || !center) {
+    return { ok: false, error: "교육원을 찾을 수 없습니다." };
+  }
+
+  const selected = pickCenterSmsPhone(center);
+  const recipientPhone = (
+    input.phoneOverride ??
+    selected?.phone ??
+    center.phone ??
+    ""
+  ).trim();
+  if (!recipientPhone) {
+    return {
+      ok: false,
+      error:
+        "수신 전화번호가 비어있습니다. 교육원 정보에서 문자 발송 번호를 선택하거나 직접 입력하세요.",
+    };
+  }
+
+  const body = input.bodyOverride?.trim() || pickClassInquiryMessage();
+
+  const send = await sendNhnLms({
+    phone: recipientPhone,
+    title: "[글로케어] 강의 일정 문의",
+    body,
+  });
+  if (!send.ok) return { ok: false, error: `발송 실패: ${send.error}` };
+
+  await sendSelfNotifySms({
+    targetName: center.name,
+    recipientPhone,
+    kindLabel: "강의 정보 문의 문자",
+  });
+
+  const { error: insertError } = await supabase.from("sms_messages").insert({
+    message_type: "class_inquiry",
+    target_center_id: center.id,
+    target_customer_id: null,
+    content: body,
+    sent_by: user.id,
+  });
   if (insertError) {
     return {
       ok: true,
@@ -294,6 +445,19 @@ export async function sendCommissionSms(input: {
     body: input.body,
   });
   if (!send.ok) return { ok: false, error: `발송 실패: ${send.error}` };
+
+  {
+    const { data: notifyCenter } = await supabase
+      .from("training_centers")
+      .select("name")
+      .eq("id", input.centerId)
+      .maybeSingle();
+    await sendSelfNotifySms({
+      targetName: notifyCenter?.name ?? "교육원",
+      recipientPhone: phone,
+      kindLabel: "정산 내역 문자",
+    });
+  }
 
   // 이력 — center 단위 1 row 만. (실제 NHN 발송도 1회 — 각 customer 별로
   // row 만들면 이력 화면이 부풀려져 보이고, target_center_id 가 있으면 화면에
