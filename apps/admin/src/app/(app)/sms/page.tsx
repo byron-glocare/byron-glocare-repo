@@ -1,5 +1,12 @@
 import Link from "next/link";
-import { ArrowRight, Clock, GraduationCap, Receipt, Timer } from "lucide-react";
+import {
+  ArrowRight,
+  CalendarSearch,
+  Clock,
+  GraduationCap,
+  Receipt,
+  Timer,
+} from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/page-header";
@@ -82,7 +89,7 @@ export default async function SmsPage() {
       />
       <div className="p-6 space-y-6">
         {/* 진입 카드 */}
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <Link
             href="/sms/new-student"
             className="group block rounded-lg border border-border bg-card p-6 transition-colors hover:border-primary/50 hover:bg-accent/30"
@@ -119,6 +126,27 @@ export default async function SmsPage() {
                 <p className="text-sm text-muted-foreground mt-1">
                   교육원별 정산 안내문 본문 미리보기 + 정산서 PDF (브라우저
                   인쇄로 저장) — 카카오톡/이메일로 직접 전송
+                </p>
+              </div>
+            </div>
+          </Link>
+
+          <Link
+            href="/sms/class-inquiry"
+            className="group block rounded-lg border border-border bg-card p-6 transition-colors hover:border-primary/50 hover:bg-accent/30"
+          >
+            <div className="flex items-start gap-4">
+              <div className="size-10 rounded-md bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                <CalendarSearch className="size-5" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="font-medium flex items-center gap-2">
+                  강의 정보 문의
+                  <ArrowRight className="size-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  제휴중 교육원에 이번 달/다음 달 개강 일정 확인 문자 발송
+                  (문구 5종 랜덤)
                 </p>
               </div>
             </div>
