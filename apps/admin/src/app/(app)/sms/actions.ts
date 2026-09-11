@@ -92,6 +92,14 @@ async function sendSelfNotifySms(params: {
   recipientPhone: string;
   kindLabel: string;
 }): Promise<void> {
+  await sendSelfNotifyRaw([
+    params.targetName,
+    params.recipientPhone,
+    params.kindLabel,
+  ]);
+}
+
+async function sendSelfNotifyRaw(lines: string[]): Promise<void> {
   const appKey = process.env.NHN_SMS_APP_KEY;
   const secretKey = process.env.NHN_SMS_SECRET_KEY;
   const sendNo = process.env.NHN_SMS_SEND_NO;
@@ -106,13 +114,7 @@ async function sendSelfNotifySms(params: {
     .toLocaleString("sv-SE", { timeZone: "Asia/Seoul" })
     .slice(0, 16);
 
-  const body = [
-    "[알림]",
-    sentAt,
-    params.targetName,
-    params.recipientPhone,
-    params.kindLabel,
-  ].join("\n");
+  const body = ["[알림]", sentAt, ...lines].join("\n");
 
   const baseUrl = (
     process.env.NHN_SMS_API_URL ?? "https://sms.api.nhncloudservice.com"
@@ -346,6 +348,8 @@ export async function sendClassInquirySms(input: {
   bodyOverride?: string;
   /** 미리보기에서 편집한 수신 번호. 없으면 교육원 선택 번호 → 대표 연락처. */
   phoneOverride?: string;
+  /** false 면 건별 셀프 알림 생략 — 일괄 발송에서 요약 1건으로 대체. */
+  selfNotify?: boolean;
 }): Promise<SmsActionResult> {
   const supabase = await createClient();
   const {
@@ -386,11 +390,13 @@ export async function sendClassInquirySms(input: {
   });
   if (!send.ok) return { ok: false, error: `발송 실패: ${send.error}` };
 
-  await sendSelfNotifySms({
-    targetName: center.name,
-    recipientPhone,
-    kindLabel: "강의 정보 문의 문자",
-  });
+  if (input.selfNotify !== false) {
+    await sendSelfNotifySms({
+      targetName: center.name,
+      recipientPhone,
+      kindLabel: "강의 정보 문의 문자",
+    });
+  }
 
   const { error: insertError } = await supabase.from("sms_messages").insert({
     message_type: "class_inquiry",
@@ -409,6 +415,22 @@ export async function sendClassInquirySms(input: {
   revalidatePath("/sms");
   revalidatePath("/sms/new-student");
   return { ok: true };
+}
+
+/** 강의 문의 일괄 발송 완료 후 — 요약 셀프 알림 1건 */
+export async function notifyClassInquiryBulkDone(input: {
+  total: number;
+  failed: number;
+}): Promise<void> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+  await sendSelfNotifyRaw([
+    "강의 정보 문의 일괄 발송",
+    `성공 ${input.total - input.failed}건 / 실패 ${input.failed}건`,
+  ]);
 }
 
 // =============================================================================
