@@ -38,6 +38,7 @@ import {
   buildNewStudentMessage,
   type NewStudentTemplateStudent,
 } from "@/lib/sms-templates";
+import { pickCenterSmsPhone, SMS_RECIPIENT_LABEL } from "@/lib/sms-recipient";
 import { formatDate } from "@/lib/format";
 
 type Center = {
@@ -46,6 +47,9 @@ type Center = {
   region: string | null;
   director_name: string | null;
   phone: string | null;
+  director_phone: string | null;
+  contact_phone: string | null;
+  sms_recipient: "phone" | "director" | "contact" | null;
 };
 
 type Customer = {
@@ -217,8 +221,14 @@ function CenterGroupCard({
   const [previewOpen, setPreviewOpen] = useState(false);
   // 미리보기에서 운영자가 직접 본문을 수정할 수 있도록 — 열때마다 템플릿으로 reset
   const [editedBody, setEditedBody] = useState<string>("");
-  // 수신자 전화번호 — 기본값은 교육원 전화번호, 다이얼로그 열때마다 reset
-  const [editedPhone, setEditedPhone] = useState<string>(center.phone ?? "");
+  // 수신자 전화번호 — 기본값은 교육원에서 선택한 문자 발송 번호(sms_recipient),
+  // 선택 없으면 기존 로직(대표 연락처). 다이얼로그 열때마다 reset
+  const smsSelected = pickCenterSmsPhone(center);
+  const defaultSmsPhone = smsSelected?.phone ?? center.phone ?? "";
+  const defaultSmsLabel = smsSelected
+    ? SMS_RECIPIENT_LABEL[smsSelected.source]
+    : "대표 연락처";
+  const [editedPhone, setEditedPhone] = useState<string>(defaultSmsPhone);
   const [pending, startTransition] = useTransition();
   // 발송 후 "강의 접수 메시지 발송 플래그 ON 으로 변경할까요?" 확인 다이얼로그
   const [sentPromptIds, setSentPromptIds] = useState<string[] | null>(null);
@@ -311,9 +321,9 @@ function CenterGroupCard({
   useEffect(() => {
     if (previewOpen) {
       setEditedBody(generatedMessage);
-      setEditedPhone(center.phone ?? "");
+      setEditedPhone(defaultSmsPhone);
     }
-  }, [previewOpen, generatedMessage, center.phone]);
+  }, [previewOpen, generatedMessage, defaultSmsPhone]);
 
   function toggleSelect(id: string) {
     setSelectedIds((prev) =>
@@ -529,8 +539,8 @@ function CenterGroupCard({
             {/* 수신자 전화번호 — 편집 가능 */}
             <div>
               <label className="text-xs text-muted-foreground block mb-1">
-                수신 전화번호 (기본값: 교육원 대표 연락처
-                {center.phone ? ` ${center.phone}` : " 없음"})
+                수신 전화번호 (기본값: 교육원 {defaultSmsLabel}
+                {defaultSmsPhone ? ` ${defaultSmsPhone}` : " 없음"})
               </label>
               <input
                 type="tel"
@@ -539,8 +549,8 @@ function CenterGroupCard({
                 placeholder="010-0000-0000"
                 className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-ring"
               />
-              {center.phone && editedPhone.replace(/[^0-9]/g, "") !==
-                center.phone.replace(/[^0-9]/g, "") && (
+              {defaultSmsPhone && editedPhone.replace(/[^0-9]/g, "") !==
+                defaultSmsPhone.replace(/[^0-9]/g, "") && (
                 <div className="mt-1 flex items-center gap-2">
                   <span className="text-[11px] text-warning">
                     교육원에 등록된 번호와 다릅니다.
@@ -548,9 +558,9 @@ function CenterGroupCard({
                   <button
                     type="button"
                     className="text-[11px] text-muted-foreground underline hover:text-foreground"
-                    onClick={() => setEditedPhone(center.phone ?? "")}
+                    onClick={() => setEditedPhone(defaultSmsPhone)}
                   >
-                    원장님 번호로 되돌리기
+                    기본 번호로 되돌리기
                   </button>
                 </div>
               )}

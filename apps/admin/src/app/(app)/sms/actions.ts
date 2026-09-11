@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { buildNewStudentMessage } from "@/lib/sms-templates";
+import { pickCenterSmsPhone } from "@/lib/sms-recipient";
 
 export type SmsActionResult =
   | { ok: true; warning?: string }
@@ -104,15 +105,22 @@ export async function sendNewStudentSms(input: {
   // 교육원
   const { data: center, error: centerError } = await supabase
     .from("training_centers")
-    .select("id, name, phone")
+    .select("id, name, phone, director_phone, contact_phone, sms_recipient")
     .eq("id", input.centerId)
     .single();
   if (centerError || !center) {
     return { ok: false, error: "교육원을 찾을 수 없습니다." };
   }
 
-  // 수신 전화번호 — phoneOverride 우선, 없으면 교육원 대표 연락처
-  const recipientPhone = (input.phoneOverride ?? center.phone ?? "").trim();
+  // 수신 전화번호 — phoneOverride 우선 → 교육원의 문자 발송 선택 번호
+  // (sms_recipient) → 기존 로직(대표 연락처)
+  const selected = pickCenterSmsPhone(center);
+  const recipientPhone = (
+    input.phoneOverride ??
+    selected?.phone ??
+    center.phone ??
+    ""
+  ).trim();
   if (!recipientPhone) {
     return {
       ok: false,

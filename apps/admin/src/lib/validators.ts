@@ -73,6 +73,8 @@ export const trainingCenterSchema = z.object({
   deduct_reservation_by_default: z.boolean().default(true),
   website_url: optionalString,
   notes: optionalString,
+  // 문자 발송 수신 번호 선택 — null 이면 기존 로직(흐름별 fallback) 유지
+  sms_recipient: z.enum(["phone", "director", "contact"]).nullable().default(null),
 });
 
 export type TrainingCenterInput = z.input<typeof trainingCenterSchema>;

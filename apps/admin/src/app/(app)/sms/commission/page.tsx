@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/page-header";
 import { buildCommissionNotificationMessage } from "@/lib/sms-templates";
+import { pickCenterSmsPhone } from "@/lib/sms-recipient";
 import { SmsCommissionView } from "@/components/sms-commission-view";
 
 export const dynamic = "force-dynamic";
@@ -26,7 +27,7 @@ export default async function SmsCommissionPage() {
     supabase
       .from("training_centers")
       .select(
-        "id, name, region, business_number, director_name, director_phone, phone, email, tuition_fee_2026"
+        "id, name, region, business_number, director_name, director_phone, phone, contact_phone, sms_recipient, email, tuition_fee_2026"
       ),
     supabase
       .from("customers")
@@ -64,12 +65,13 @@ export default async function SmsCommissionPage() {
     mainPhone: string;
     /**
      * 실제 발송에 사용되는 수신자 번호.
+     *   - 0순위: 교육원에서 선택한 문자 발송 번호 (sms_recipient)
      *   - 1순위: director_phone
      *   - 2순위: phone (대표 번호)
-     *   - 둘 다 없음: 빈 문자열
+     *   - 모두 없음: 빈 문자열
      */
     recipientPhone: string;
-    phoneSource: "director" | "main" | "none";
+    phoneSource: "director" | "main" | "contact" | "none";
     /** 대표자 이름 — 표시용 */
     directorName: string;
     /** 발행 이메일 — 표시용 */
@@ -118,12 +120,17 @@ export default async function SmsCommissionPage() {
     } else {
       const director = center.director_phone?.trim() ?? "";
       const main = center.phone?.trim() ?? "";
-      const recipientPhone = director || main || "";
-      const phoneSource: "director" | "main" | "none" = director
-        ? "director"
-        : main
+      const selected = pickCenterSmsPhone(center);
+      const recipientPhone = selected?.phone ?? (director || main || "");
+      const phoneSource: "director" | "main" | "contact" | "none" = selected
+        ? selected.source === "phone"
           ? "main"
-          : "none";
+          : selected.source
+        : director
+          ? "director"
+          : main
+            ? "main"
+            : "none";
       groupsMap.set(key, {
         centerId: center.id,
         centerName: center.name,

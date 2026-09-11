@@ -91,6 +91,7 @@ export type Database = {
           deduct_reservation_by_default: boolean;
           website_url: string | null;
           notes: string | null;
+          sms_recipient: "phone" | "director" | "contact" | null;
           created_at: string;
           updated_at: string;
         };
@@ -119,6 +120,7 @@ export type Database = {
           deduct_reservation_by_default?: boolean;
           website_url?: string | null;
           notes?: string | null;
+          sms_recipient?: "phone" | "director" | "contact" | null;
           created_at?: string;
           updated_at?: string;
         };

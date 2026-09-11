@@ -60,7 +60,7 @@ type Group = {
   mainPhone: string;
   /** 실제 발송에 사용되는 번호 (director_phone > phone fallback) */
   recipientPhone: string;
-  phoneSource: "director" | "main" | "none";
+  phoneSource: "director" | "main" | "contact" | "none";
   directorName: string;
   email: string;
   settlementMonth: string; // YYYY-MM-01
@@ -452,8 +452,9 @@ function GroupRow({ group }: { group: Group }) {
           <DialogHeader>
             <DialogTitle>문자 발송 — {group.centerName}</DialogTitle>
             <DialogDescription className="text-xs">
-              발신: 010-2825-4849 (글로케어). 수신자 기본값 = 교육원 대표자
-              번호 → (없으면) 대표 번호. 둘 다 없으면 아래에서 직접 입력하세요.
+              발신: 010-2825-4849 (글로케어). 수신자 기본값 = 교육원 정보에서
+              선택한 문자 발송 번호 → (미선택 시) 대표자 번호 → 대표 번호.
+              모두 없으면 아래에서 직접 입력하세요.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-3">
@@ -474,7 +475,12 @@ function GroupRow({ group }: { group: Group }) {
               )}
               {group.phoneSource === "main" && (
                 <p className="text-[11px] text-warning mt-1">
-                  기본값: 교육원 <strong>대표 번호</strong> (대표자 번호 미등록 — fallback)
+                  기본값: 교육원 <strong>대표 번호</strong>
+                </p>
+              )}
+              {group.phoneSource === "contact" && (
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  기본값: 교육원 <strong>담당자 번호</strong> (교육원 정보에서 선택됨)
                 </p>
               )}
               {group.phoneSource === "none" && (

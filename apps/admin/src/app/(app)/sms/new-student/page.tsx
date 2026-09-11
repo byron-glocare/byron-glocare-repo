@@ -19,7 +19,9 @@ export default async function SmsNewStudentPage() {
   ] = await Promise.all([
     supabase
       .from("training_centers")
-      .select("id, name, region, director_name, phone"),
+      .select(
+        "id, name, region, director_name, phone, director_phone, contact_phone, sms_recipient"
+      ),
     supabase
       .from("customers")
       .select("*")

@@ -79,6 +79,7 @@ const EMPTY: TrainingCenterInput = {
   deduct_reservation_by_default: true,
   website_url: null,
   notes: null,
+  sms_recipient: null,
 };
 
 export function TrainingCenterForm({
@@ -93,8 +94,35 @@ export function TrainingCenterForm({
 
   const form = useForm<TrainingCenterInput, unknown, TrainingCenterOutput>({
     resolver: zodResolver(trainingCenterSchema),
-    defaultValues: { ...EMPTY, ...defaultValues },
+    defaultValues: {
+      ...EMPTY,
+      ...defaultValues,
+      // 미선택(null) 이면 기존 발송 로직(대표자 → 대표) 기준으로 기본 선택
+      sms_recipient:
+        defaultValues?.sms_recipient ??
+        (defaultValues?.director_phone ? "director" : "phone"),
+    },
   });
+
+  const smsRecipient = form.watch("sms_recipient");
+
+  /** 연락처 필드 라벨 오른쪽에 붙는 "문자 발송" 라디오 */
+  function smsRadio(value: "phone" | "director" | "contact") {
+    return (
+      <label className="flex items-center gap-1.5 text-xs font-normal text-muted-foreground cursor-pointer select-none">
+        <input
+          type="radio"
+          name="sms-recipient-choice"
+          className="accent-primary"
+          checked={smsRecipient === value}
+          onChange={() =>
+            form.setValue("sms_recipient", value, { shouldDirty: true })
+          }
+        />
+        문자 발송
+      </label>
+    );
+  }
 
   function onSubmit(values: TrainingCenterOutput) {
     startTransition(async () => {
@@ -324,7 +352,10 @@ export function TrainingCenterForm({
                 name="phone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>대표 연락처</FormLabel>
+                    <div className="flex items-center justify-between">
+                      <FormLabel>대표 연락처</FormLabel>
+                      {smsRadio("phone")}
+                    </div>
                     <FormControl>
                       <Input
                         {...field}
@@ -356,7 +387,10 @@ export function TrainingCenterForm({
                   name="director_phone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>대표자 연락처</FormLabel>
+                      <div className="flex items-center justify-between">
+                        <FormLabel>대표자 연락처</FormLabel>
+                        {smsRadio("director")}
+                      </div>
                       <FormControl>
                         <Input
                           {...field}
@@ -389,7 +423,10 @@ export function TrainingCenterForm({
                   name="contact_phone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>담당자 연락처</FormLabel>
+                      <div className="flex items-center justify-between">
+                        <FormLabel>담당자 연락처</FormLabel>
+                        {smsRadio("contact")}
+                      </div>
                       <FormControl>
                         <Input
                           {...field}
