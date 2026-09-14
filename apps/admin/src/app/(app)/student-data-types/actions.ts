@@ -81,6 +81,7 @@ const schema = z.object({
   is_essay_basis: z.boolean(),
   is_default_required: z.boolean(),
   is_active: z.boolean(),
+  is_form_doc: z.boolean(),
   sort_order: z.coerce.number().int().min(0).max(9999),
 });
 
@@ -122,6 +123,7 @@ export async function saveDataTypeAction(
     is_essay_basis: formData.get("is_essay_basis") === "on",
     is_default_required: formData.get("is_default_required") === "on",
     is_active: formData.get("is_active") === "on",
+    is_form_doc: formData.get("is_form_doc") === "on",
     sort_order: formData.get("sort_order") || "0",
   };
 
@@ -197,6 +199,8 @@ export async function saveDataTypeAction(
       is_essay_basis: data.is_essay_basis,
       is_default_required: data.is_default_required,
       is_active: data.is_active,
+      // 작성서류 여부는 "서류" 카테고리에서만 의미가 있다. 다른 카테고리로 옮기면 false.
+      is_form_doc: data.category === "document" && data.is_form_doc,
       sort_order: data.sort_order,
       scope: data.scope,
       aliases,
@@ -226,6 +230,8 @@ export async function saveDataTypeAction(
       is_essay_basis: data.is_essay_basis,
       is_default_required: data.is_default_required,
       is_active: data.is_active,
+      // 작성서류 여부는 "서류" 카테고리에서만 의미가 있다. 다른 카테고리로 옮기면 false.
+      is_form_doc: data.category === "document" && data.is_form_doc,
       sort_order: data.sort_order,
       scope: data.scope,
       aliases,

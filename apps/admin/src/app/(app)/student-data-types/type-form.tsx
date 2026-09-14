@@ -65,6 +65,8 @@ export type EditableDataType = {
   is_default_required: boolean;
   sort_order: number;
   is_active: boolean;
+  /** 0058: 작성서류(학교 양식) 여부 — 카테고리가 "서류"일 때만 의미 */
+  is_form_doc?: boolean;
   scope: string;
   aliases: string[];
 };
@@ -106,6 +108,9 @@ export function DataTypeForm({
     if (inline && state?.ok) onSaved?.();
   }, [inline, state, onSaved]);
 
+  const [category, setCategory] = useState<string>(
+    dataType?.category ?? "identity"
+  );
   const [inputType, setInputType] = useState<string>(
     dataType?.input_type ?? "text"
   );
@@ -152,7 +157,8 @@ export function DataTypeForm({
             <select
               name="category"
               required
-              defaultValue={dataType?.category ?? "identity"}
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
               className="rounded-md border border-input bg-background px-3 py-2 text-sm"
             >
               {CATEGORY_OPTIONS.map((o) => (
@@ -239,6 +245,18 @@ export function DataTypeForm({
             />
             <span>활성</span>
           </label>
+          {category === "document" && (
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                name="is_form_doc"
+                defaultChecked={dataType?.is_form_doc ?? false}
+              />
+              <span>
+                <strong>작성서류</strong> — 학교 양식에 채워 내는 서류 (체크 안 하면 발급서류)
+              </span>
+            </label>
+          )}
         </div>
 
         {/* 입력 안내 (한/베) — 반반 한 줄 */}
