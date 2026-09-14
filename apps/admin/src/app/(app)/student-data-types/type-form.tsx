@@ -24,7 +24,7 @@ const CATEGORY_OPTIONS = [
   { value: "contact", label: "연락처" },
   { value: "career", label: "경력·자격" },
   { value: "essay", label: "서술형 (작문 기초)" },
-  { value: "document", label: "발급 서류" },
+  { value: "document", label: "서류 (작성서류 및 발급서류)" },
   { value: "other", label: "기타" },
 ] as const;
 
@@ -126,26 +126,9 @@ export function DataTypeForm({
 
   return (
     <Card className="p-6">
-      <form
-        action={action}
-        onSubmit={(e) => {
-          // key 를 전혀 다른 값으로 바꾸면 연결된 양식·값이 깨질 수 있음 → 경고
-          if (!isEdit) return;
-          const fd = new FormData(e.currentTarget);
-          const newKey = String(fd.get("key") ?? "").trim();
-          if (
-            newKey !== dataType!.key &&
-            !window.confirm(
-              `식별자 key 를 "${dataType!.key}" → "${newKey}" 로 바꿉니다.\n\n` +
-                "전혀 다른 key 로 변경하면 이 항목과 이미 연결된 양식·학생 값이 깨질 수 있습니다. " +
-                "계속하시겠습니까?"
-            )
-          ) {
-            e.preventDefault();
-          }
-        }}
-        className="space-y-5"
-      >
+      {/* key 변경 확인창 제거 — key 는 이제 자동 생성·수정 불가라 폼이 key 를 보내지
+          않는다. 확인창이 남아 있으면 빈 key 로 바뀐다고 매번 잘못 경고했다. */}
+      <form action={action} className="space-y-5">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {/* 식별자 key — 자동 생성이고 바꿀 수 없다.
               양식·슬롯매핑·PDF오버레이·서술형 기반키·학생이 올린 값이 전부 이 키로
