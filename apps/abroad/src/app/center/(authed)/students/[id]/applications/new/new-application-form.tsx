@@ -13,6 +13,8 @@ import {
 export type SpecOption = {
   id: string;
   universityNameKo: string | null;
+  /** 화면 표시용 — 베트남어 화면이면 name_vi(없으면 한국어) */
+  universityName: string | null;
   term: string;
   admissionCategory: string | null;
   programType: string;
@@ -28,8 +30,13 @@ export type OfferingOption = {
   id: string;
   sourceSpecId: string;
   universityNameKo: string | null;
+  /** 화면 표시용 — 베트남어 화면이면 name_vi(없으면 한국어) */
+  universityName: string | null;
   departmentId: number;
+  /** 저장값(target_department_label) — 양식 매칭이 한국어로 비교하므로 번역 금지 */
   departmentNameKo: string;
+  /** 화면 표시용 학과명 */
+  departmentName: string;
   term: string;
   intakeQuota: number | null;
   availableLanguages: string[];
@@ -228,7 +235,7 @@ export function NewApplicationForm({
             </option>
             {offerings.map((o) => (
               <option key={o.id} value={o.id}>
-                {o.universityNameKo ?? "?"} · {o.departmentNameKo} · {o.term}
+                {o.universityName ?? o.universityNameKo ?? "?"} · {o.departmentName} · {o.term}
                 {o.intakeQuota != null
                   ? ` · ${tr(locale, "모집", "tuyển")} ${o.intakeQuota}${tr(locale, "명", " SV")}`
                   : ""}
@@ -307,7 +314,7 @@ export function NewApplicationForm({
               </option>
               {specs.map((s) => (
                 <option key={s.id} value={s.id}>
-                  {s.universityNameKo ?? "?"} · {programTypeLabel(locale, s.programType)} · {s.term}
+                  {s.universityName ?? s.universityNameKo ?? "?"} · {programTypeLabel(locale, s.programType)} · {s.term}
                 </option>
               ))}
             </select>

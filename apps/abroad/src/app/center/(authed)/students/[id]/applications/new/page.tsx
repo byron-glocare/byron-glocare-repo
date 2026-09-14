@@ -75,12 +75,20 @@ export default async function NewApplicationPage({
     universityIds.length > 0
       ? await supabase
           .from("universities")
-          .select("id, name_ko")
+          .select("id, name_ko, name_vi")
           .in("id", universityIds)
-      : { data: [] as Array<{ id: number; name_ko: string }> };
+      : { data: [] as Array<{ id: number; name_ko: string; name_vi: string | null }> };
 
   const universityMap = new Map(
     (universities ?? []).map((u) => [u.id, u.name_ko])
+  );
+  // 화면 표시용 — 베트남어 화면이면 name_vi, 비어 있으면 한국어로 폴백.
+  // (어드민 대학 편집에 '대학명 (VN)' 입력칸이 이미 있다)
+  const universityDisplayMap = new Map(
+    (universities ?? []).map((u) => [
+      u.id,
+      locale === "vi" ? (u.name_vi || u.name_ko) : u.name_ko,
+    ])
   );
 
   // offering 학과명 join
@@ -91,10 +99,19 @@ export default async function NewApplicationPage({
     offeringDeptIds.length > 0
       ? await supabase
           .from("departments")
-          .select("id, name_ko")
+          .select("id, name_ko, name_vi")
           .in("id", offeringDeptIds)
-      : { data: [] as Array<{ id: number; name_ko: string }> };
+      : { data: [] as Array<{ id: number; name_ko: string; name_vi: string | null }> };
+  // 한국어 학과명 — 저장값(target_department_label)과 언어 도출에 쓴다.
+  //   양식파일 매칭이 한국어 department_name 과 비교하므로 절대 번역하면 안 된다.
   const deptMap = new Map((offeringDepts ?? []).map((d) => [d.id, d.name_ko]));
+  // 화면 표시용 학과명 (어드민 학과 편집의 '학과명 (VN)')
+  const deptDisplayMap = new Map(
+    (offeringDepts ?? []).map((d) => [
+      d.id,
+      locale === "vi" ? (d.name_vi || d.name_ko) : d.name_ko,
+    ])
+  );
 
   const offeringOptions: OfferingOption[] = (offerings ?? [])
     .filter((o) => o.source_spec_id) // 지원 가능 = 모집요강 연결 (admission_spec_id NOT NULL 충족)
@@ -104,8 +121,10 @@ export default async function NewApplicationPage({
         id: o.id,
         sourceSpecId: o.source_spec_id as string,
         universityNameKo: universityMap.get(o.university_id) ?? null,
+        universityName: universityDisplayMap.get(o.university_id) ?? null,
         departmentId: o.department_id,
         departmentNameKo: deptName,
+        departmentName: deptDisplayMap.get(o.department_id) ?? deptName,
         term: o.term,
         intakeQuota: o.intake_quota,
         // 언어는 모집요강 자격요건에서 도출 (offering 에 따로 입력 안 함)
@@ -127,6 +146,7 @@ export default async function NewApplicationPage({
     return {
       id: s.id,
       universityNameKo: universityMap.get(s.university_id) ?? null,
+      universityName: universityDisplayMap.get(s.university_id) ?? null,
       term: s.term,
       admissionCategory: s.admission_category,
       programType: s.program_type,
@@ -160,7 +180,7 @@ export default async function NewApplicationPage({
       <div className="rounded-lg border border-slate-200 bg-white p-6">
         <NewApplicationForm
           locale={locale}
-          studentId={id}
+          studentId={id}
           specs={specOptions}
           offerings={offeringOptions}
         />
