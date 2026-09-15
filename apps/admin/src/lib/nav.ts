@@ -55,6 +55,17 @@ export const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
+    label: "대학",
+    items: [
+      { href: "/universities", label: "대학교", icon: School },
+      { href: "/departments", label: "학과", icon: BookOpen },
+      { href: "/offerings", label: "모집", icon: Megaphone },
+      { href: "/university-requests", label: "대학 요청 (개발중)", icon: Inbox },
+      { href: "/admissions", label: "입학서류", icon: ClipboardList },
+      { href: "/student-data-types", label: "데이터", icon: Database },
+    ],
+  },
+  {
     label: "유학",
     items: [
       { href: "/managed-students", label: "유학생", icon: Plane },
@@ -67,17 +78,6 @@ export const NAV_GROUPS: NavGroup[] = [
       { href: "/issuance-orders", label: "발급 대행 (개발중)", icon: Receipt },
       { href: "/issuance-pricing", label: "발급 단가표 (개발중)", icon: DollarSign },
       // "유학센터 회사"(center-orgs) 메뉴는 유학센터(study_centers)로 통합되어 제거됨.
-    ],
-  },
-  {
-    label: "대학",
-    items: [
-      { href: "/universities", label: "대학교", icon: School },
-      { href: "/departments", label: "학과", icon: BookOpen },
-      { href: "/offerings", label: "모집", icon: Megaphone },
-      { href: "/university-requests", label: "대학 요청 (개발중)", icon: Inbox },
-      { href: "/admissions", label: "입학서류", icon: ClipboardList },
-      { href: "/student-data-types", label: "데이터", icon: Database },
     ],
   },
   {

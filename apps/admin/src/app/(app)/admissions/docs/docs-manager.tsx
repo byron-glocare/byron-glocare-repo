@@ -339,10 +339,10 @@ function ItemEditor({
         <div className="min-w-0 flex-1 space-y-2">
           <div className="grid gap-2 sm:grid-cols-2">
             <Field label="항목 이름 (한국어)">
-              <Input id={`item-name-ko-${item.key}`} value={nameKo} onChange={(e) => { setNameKo(e.target.value); setDirty(true); }} />
+              <Input id={`item-name-ko-${item.key}`} disabled={!!single} title={single ? "서류 1개짜리 항목 — 서류 칩을 눌러 서류 이름을 고치세요" : undefined} value={nameKo} onChange={(e) => { setNameKo(e.target.value); setDirty(true); }} />
             </Field>
             <Field label="항목 이름 (베트남어)">
-              <Input id={`item-name-vi-${item.key}`} value={nameVi} onChange={(e) => { setNameVi(e.target.value); setDirty(true); }} />
+              <Input id={`item-name-vi-${item.key}`} disabled={!!single} value={nameVi} onChange={(e) => { setNameVi(e.target.value); setDirty(true); }} />
             </Field>
           </div>
           <p className="text-xs text-muted-foreground">
