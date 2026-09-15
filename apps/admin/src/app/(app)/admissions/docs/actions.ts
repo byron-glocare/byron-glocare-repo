@@ -169,10 +169,10 @@ async function validateVariants(
           options.push({ item: o.item });
         }
       }
-      if (options.length === 0) return { ok: false, error: "선택지가 비어 있는 칸이 있습니다." };
+      if (options.length === 0) return { ok: false, error: "서류를 고르지 않은 줄이 있습니다." };
       slots.push({ target: trimOrNull(s.target), required: s.required !== false, options });
     }
-    if (slots.length === 0) return { ok: false, error: "칸이 없는 구성이 있습니다." };
+    if (slots.length === 0) return { ok: false, error: "서류가 하나도 없는 나라가 있습니다." };
     cleaned.push({ when: { nationality, ...(sponsor ? { sponsor } : {}) }, slots });
   }
   if (!hasBase) return { ok: false, error: "베트남 구성은 지울 수 없습니다." };
@@ -385,5 +385,253 @@ export async function linkSpecDocAction(input: {
     revalidatePath("/admissions");
     revalidatePath(`/admissions/specs/${input.specId}`);
     return { ok: true, data: { itemKey } };
+  });
+}
+
+// ── 삭제 · 교체 ───────────────────────────────────────────────────────
+//   항목·서류를 지울 때 그것을 가리키는 곳(요강↔항목 행, 다른 항목의 선택지, 요강 JSONB 의
+//   std_key, 학생이 올린 파일 키)이 깨지지 않도록 **대신할 것**으로 옮긴 뒤 지운다.
+//   운영자 요청(2026-09-15): 일시적 정리용이 아니라 앞으로 계속 쓰는 기능이므로 영향 범위를
+//   먼저 보여주고, 쓰이는 곳이 있으면 교체 대상 없이는 지우지 못한다.
+
+export type DocImpact = {
+  /** 이 항목/서류를 쓰는 모집요강 — 대학·학기 */
+  specs: { id: string; label: string }[];
+  /** 이 항목/서류를 선택지로 가진 다른 항목 */
+  items: { key: string; name_ko: string }[];
+  /** (서류만) 학생이 이 서류 키로 올린 파일 수 */
+  files: number;
+};
+
+type Admin = ReturnType<typeof createAdminClient>;
+
+async function specLabels(admin: Admin, specIds: string[]): Promise<{ id: string; label: string }[]> {
+  if (specIds.length === 0) return [];
+  const { data: specs } = await admin
+    .from("study_admission_specs")
+    .select("id, term, university_id, admission_category")
+    .in("id", specIds);
+  const uniIds = Array.from(new Set((specs ?? []).map((s) => s.university_id).filter((v): v is number => v != null)));
+  const { data: unis } = uniIds.length
+    ? await admin.from("universities").select("id, name_ko").in("id", uniIds)
+    : { data: [] as { id: number; name_ko: string }[] };
+  const uniName = new Map((unis ?? []).map((u) => [u.id, u.name_ko]));
+  return (specs ?? []).map((s) => ({
+    id: s.id,
+    label: `${s.university_id != null ? uniName.get(s.university_id) ?? `대학 #${s.university_id}` : "대학 미정"} ${s.term ?? ""}${s.admission_category ? ` · ${s.admission_category}` : ""}`.trim(),
+  }));
+}
+
+function variantsRefItem(variants: unknown, itemKey: string): boolean {
+  return (Array.isArray(variants) ? (variants as DocVariant[]) : []).some((v) =>
+    (v.slots ?? []).some((s) => (s.options ?? []).some((o) => o.item === itemKey))
+  );
+}
+function variantsRefStandard(variants: unknown, stdKey: string): boolean {
+  return (Array.isArray(variants) ? (variants as DocVariant[]) : []).some((v) =>
+    (v.slots ?? []).some((s) => (s.options ?? []).some((o) => o.standard === stdKey))
+  );
+}
+
+/** 선택지에서 from → to 로 바꾸고, 한 줄 안의 중복·자기참조를 없앤다. */
+function rewriteOptions(
+  variants: DocVariant[],
+  map: (o: DocOption) => DocOption,
+  selfKey: string
+): DocVariant[] {
+  return variants.map((v) => ({
+    ...v,
+    slots: (v.slots ?? []).map((s) => {
+      const seen = new Set<string>();
+      const options: DocOption[] = [];
+      for (const raw of s.options ?? []) {
+        const o = map(raw);
+        if (o.item === selfKey) continue;
+        const sig = o.standard ? `s:${o.standard}` : o.item ? `i:${o.item}` : "";
+        if (!sig || seen.has(sig)) continue;
+        seen.add(sig);
+        options.push(o);
+      }
+      return { ...s, options };
+    }),
+  }));
+}
+
+export async function getDocImpactAction(kind: "item" | "standard", key: string): Promise<ActionResult<DocImpact>> {
+  return safely(async () => {
+    const g = await guard();
+    if (!g.ok) return g;
+    const admin = createAdminClient();
+    const { data: allItems } = await admin.from("study_doc_items").select("key, name_ko, variants");
+
+    if (kind === "item") {
+      const { data: rows } = await admin.from("study_spec_doc_items").select("spec_id").eq("item_key", key);
+      const specs = await specLabels(admin, Array.from(new Set((rows ?? []).map((r) => r.spec_id))));
+      const items = (allItems ?? []).filter((i) => i.key !== key && variantsRefItem(i.variants, key)).map((i) => ({ key: i.key, name_ko: i.name_ko }));
+      return { ok: true, data: { specs, items, files: 0 } };
+    }
+
+    const items = (allItems ?? []).filter((i) => variantsRefStandard(i.variants, key)).map((i) => ({ key: i.key, name_ko: i.name_ko }));
+    const { data: specRows } = await admin.from("study_admission_specs").select("id, required_documents");
+    const specIds = (specRows ?? [])
+      .filter((s) => Array.isArray(s.required_documents) && (s.required_documents as Record<string, unknown>[]).some((d) => d.std_key === key))
+      .map((s) => s.id);
+    const specs = await specLabels(admin, specIds);
+    const { count } = await admin
+      .from("study_student_submission_files")
+      .select("id", { count: "exact", head: true })
+      .like("doc_key", `std::${key}::%`);
+    return { ok: true, data: { specs, items, files: count ?? 0 } };
+  });
+}
+
+/**
+ * 항목을 가리키는 곳을 전부 to 로 옮기고 from 을 지운다.
+ *   · 요강↔항목 행: 그 요강에 to 가 이미 있으면 from 행은 지우고, 없으면 to 로 바꾼다.
+ *   · 다른 항목의 선택지 {item: from} → {item: to}
+ */
+async function retargetAndDeleteItem(admin: Admin, from: string, to: string | null): Promise<string | null> {
+  const { data: specRows } = await admin.from("study_spec_doc_items").select("id, spec_id").eq("item_key", from);
+  const { data: allItems } = await admin.from("study_doc_items").select("key, variants");
+  const referencing = (allItems ?? []).filter((i) => i.key !== from && variantsRefItem(i.variants, from));
+
+  if ((specRows?.length ?? 0) > 0 || referencing.length > 0) {
+    if (!to) return "쓰는 곳이 있어 대신할 항목 없이는 지울 수 없습니다.";
+    const { data: existing } = await admin.from("study_spec_doc_items").select("spec_id").eq("item_key", to);
+    const have = new Set((existing ?? []).map((r) => r.spec_id));
+    for (const r of specRows ?? []) {
+      const { error } = have.has(r.spec_id)
+        ? await admin.from("study_spec_doc_items").delete().eq("id", r.id)
+        : await admin.from("study_spec_doc_items").update({ item_key: to }).eq("id", r.id);
+      if (error) return `요강 연결 옮기기 실패: ${error.message}`;
+    }
+    for (const i of referencing) {
+      const variants = rewriteOptions(
+        (Array.isArray(i.variants) ? i.variants : []) as DocVariant[],
+        (o) => (o.item === from ? { item: to } : o),
+        i.key
+      );
+      const { error } = await admin.from("study_doc_items").update({ variants }).eq("key", i.key);
+      if (error) return `항목 선택지 옮기기 실패: ${error.message}`;
+    }
+  }
+  const { error } = await admin.from("study_doc_items").delete().eq("key", from);
+  return error ? `삭제 실패: ${error.message}` : null;
+}
+
+export async function deleteDocItemAction(input: { key: string; replaceWith?: string | null }): Promise<ActionResult> {
+  return safely(async () => {
+    const g = await guard();
+    if (!g.ok) return g;
+    const admin = createAdminClient();
+    const to = (input.replaceWith ?? "").trim() || null;
+    if (to === input.key) return { ok: false, error: "자기 자신으로는 교체할 수 없습니다." };
+    if (to) {
+      const { data: target } = await admin.from("study_doc_items").select("key, variants").eq("key", to).maybeSingle();
+      if (!target) return { ok: false, error: "대신할 항목이 없습니다." };
+      if (variantsRefItem(target.variants, input.key)) {
+        // 대신할 항목이 지울 항목을 선택지로 갖고 있으면 그 선택지만 먼저 뺀다
+        const variants = rewriteOptions((target.variants ?? []) as DocVariant[], (o) => o, to).map((v) => ({
+          ...v, slots: v.slots.map((s) => ({ ...s, options: s.options.filter((o) => o.item !== input.key) })),
+        }));
+        if (variants.some((v) => v.slots.some((s) => s.options.length === 0)))
+          return { ok: false, error: "대신할 항목이 지울 항목만으로 된 줄을 갖고 있습니다. 먼저 그 항목을 고치세요." };
+        await admin.from("study_doc_items").update({ variants }).eq("key", to);
+      }
+    }
+    const err = await retargetAndDeleteItem(admin, input.key, to);
+    if (err) return { ok: false, error: err };
+    revalidatePath("/admissions");
+    return { ok: true, data: undefined };
+  });
+}
+
+/**
+ * 서류 삭제. 대신할 서류가 있으면:
+ *   · 항목 선택지 {standard: from} → {standard: to}
+ *   · 요강 JSONB 의 std_key from → to (코드 전환 전까지 살아 있는 옛 경로)
+ *   · 학생 파일 키 std::from::… → std::to::… (같은 학생에 같은 키가 이미 있으면 그대로 둔다)
+ *   · 자동 생성 항목 item_from[__대상자] 은 item_to[__대상자] 가 있으면 그리로 옮기고 지운다
+ */
+export async function deleteDocStandardAction(input: { key: string; replaceWith?: string | null }): Promise<ActionResult> {
+  return safely(async () => {
+    const g = await guard();
+    if (!g.ok) return g;
+    const admin = createAdminClient();
+    const from = input.key;
+    const to = (input.replaceWith ?? "").trim() || null;
+    if (to === from) return { ok: false, error: "자기 자신으로는 교체할 수 없습니다." };
+    if (to) {
+      const { data: target } = await admin.from("study_doc_standards").select("key").eq("key", to).maybeSingle();
+      if (!target) return { ok: false, error: "대신할 서류가 없습니다." };
+    }
+
+    const { data: allItems } = await admin.from("study_doc_items").select("key, variants");
+    const referencing = (allItems ?? []).filter((i) => variantsRefStandard(i.variants, from));
+    const { data: specRows } = await admin.from("study_admission_specs").select("id, required_documents");
+    const specsUsing = (specRows ?? []).filter(
+      (s) => Array.isArray(s.required_documents) && (s.required_documents as Record<string, unknown>[]).some((d) => d.std_key === from)
+    );
+    const { data: files } = await admin
+      .from("study_student_submission_files")
+      .select("id, student_id, doc_key")
+      .like("doc_key", `std::${from}::%`);
+
+    const autoItemKeys = (allItems ?? []).map((i) => i.key).filter((k) => k === `item_${from}` || k.startsWith(`item_${from}__`));
+    // 자동 항목이 아닌 항목이 쓰거나, 요강·파일이 쓰면 교체 대상이 필요하다
+    const otherRefs = referencing.filter((i) => !autoItemKeys.includes(i.key));
+    if (!to && (otherRefs.length > 0 || specsUsing.length > 0 || (files?.length ?? 0) > 0))
+      return { ok: false, error: "쓰는 곳이 있어 대신할 서류 없이는 지울 수 없습니다." };
+
+    if (to) {
+      for (const i of referencing) {
+        const variants = rewriteOptions(
+          (Array.isArray(i.variants) ? i.variants : []) as DocVariant[],
+          (o) => (o.standard === from ? { standard: to } : o),
+          i.key
+        );
+        const { error } = await admin.from("study_doc_items").update({ variants }).eq("key", i.key);
+        if (error) return { ok: false, error: `항목 선택지 옮기기 실패: ${error.message}` };
+      }
+      for (const s of specsUsing) {
+        const docs = (s.required_documents as Record<string, unknown>[]).map((d) => (d.std_key === from ? { ...d, std_key: to } : d));
+        const { error } = await admin.from("study_admission_specs").update({ required_documents: docs }).eq("id", s.id);
+        if (error) return { ok: false, error: `요강 서류 옮기기 실패: ${error.message}` };
+      }
+      for (const f of files ?? []) {
+        if (!f.doc_key) continue;
+        const newKey = f.doc_key.replace(`std::${from}::`, `std::${to}::`);
+        const { data: dup } = await admin
+          .from("study_student_submission_files")
+          .select("id")
+          .eq("student_id", f.student_id)
+          .eq("doc_key", newKey)
+          .maybeSingle();
+        if (dup) continue; // 같은 학생이 새 키로 이미 올렸다 — 옛 파일은 그대로 둔다
+        const { error } = await admin.from("study_student_submission_files").update({ doc_key: newKey }).eq("id", f.id);
+        if (error) return { ok: false, error: `학생 파일 키 옮기기 실패: ${error.message}` };
+      }
+    }
+
+    // 자동 생성 항목 정리
+    for (const k of autoItemKeys) {
+      const counterpart = to ? k.replace(`item_${from}`, `item_${to}`) : null;
+      const { data: cp } = counterpart
+        ? await admin.from("study_doc_items").select("key").eq("key", counterpart).maybeSingle()
+        : { data: null };
+      if (cp) {
+        const err = await retargetAndDeleteItem(admin, k, cp.key);
+        if (err) return { ok: false, error: err };
+      } else if (!to) {
+        const err = await retargetAndDeleteItem(admin, k, null);
+        if (err) return { ok: false, error: `자동 생성 항목(${k})을 지우지 못했습니다: ${err}` };
+      }
+      // to 는 있는데 짝이 없으면 그 항목은 이제 대신할 서류를 가리키므로 그대로 둔다
+    }
+
+    const { error } = await admin.from("study_doc_standards").delete().eq("key", from);
+    if (error) return { ok: false, error: `삭제 실패: ${error.message}` };
+    revalidatePath("/admissions");
+    return { ok: true, data: undefined };
   });
 }

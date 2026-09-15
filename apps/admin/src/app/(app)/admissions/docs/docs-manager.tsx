@@ -3,18 +3,21 @@
 /**
  * 제출서류 관리 화면.
  *
- *   왼쪽: 항목 → 서류 트리 (어드민 메뉴처럼, 늘 펼쳐져 있다). 항목을 누르면 항목 편집,
- *         서류를 누르면 서류 편집이 오른쪽에 열린다. 서류 편집 창(dialog)은 없다.
- *   항목 편집: 이름, 나라별 구성(칸 = 대상자 · 필수 · 선택지). "기본 구성"은 없다 —
- *         베트남이 기준이고 지울 수 없다. 나라 추가 시 다른 나라 설정을 복사할 수 있다.
+ *   왼쪽: 항목 ▸ 서류 2단 트리(접었다 펼 수 있다). 항목 아래에는 베트남 기준 구성의 서류가
+ *         "서류명 - 대상자" 로 나온다(같은 서류가 본인·아버지·어머니로 세 번 들어가는 식).
+ *         항목을 누르면 항목 편집, 서류를 누르면 서류 편집이 오른쪽에 열린다.
+ *   항목 편집: 이름, 나라별 서류 표(서류 · 대상자 · 필수). 베트남이 기준이고 지울 수 없다.
+ *         나라는 드롭다운에서 골라 추가하고, 다른 나라 설정을 복사할 수 있다.
+ *         재정보증인 축은 쓰지 않는다(운영자 결정 2026-09-15 — 보증인이 바뀌어도 서류 종류는 같다).
  *   서류 편집: 서류 상세(조건 입력칸·안내문·다른 표기)와 이 서류가 든 항목.
+ *   삭제: 항목·서류 모두 "쓰는 곳"을 먼저 보여주고, 쓰는 곳이 있으면 대신할 것을 골라야 지워진다.
  *   작성서류는 여기 없다 — 작성서류 탭이 관리한다.
  */
 
-import { useMemo, useState, useTransition, type ReactNode } from "react";
+import { useEffect, useMemo, useState, useTransition, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Plus, Search, X } from "lucide-react";
+import { ChevronDown, ChevronRight, Plus, Search, Trash2, X } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -31,9 +34,13 @@ import {
 } from "@/components/ui/dialog";
 
 import {
+  deleteDocItemAction,
+  deleteDocStandardAction,
+  getDocImpactAction,
   saveDocItemAction,
   saveDocStandardAction,
   setDocItemActiveAction,
+  type DocImpact,
   type DocVariant,
   type DocSlot,
   type DocOption,
@@ -86,8 +93,8 @@ const TARGET_LABEL: Record<string, string> = {
   father: "아버지",
   mother: "어머니",
   sponsor: "재정보증인",
+  other: "기타",
 };
-/** 순서가 곧 "나라 추가" 때 초기값 순서다. 베트남이 기준. */
 const NATIONALITIES: Array<[string, string]> = [
   ["vn", "베트남"],
   ["cn", "중국"],
@@ -97,11 +104,6 @@ const NATIONALITIES: Array<[string, string]> = [
   ["other", "기타 국가"],
 ];
 const NATIONALITY_LABEL: Record<string, string> = Object.fromEntries(NATIONALITIES);
-const SPONSOR_LABEL: Record<string, string> = {
-  parent: "부모",
-  relative: "친인척",
-  company: "회사",
-};
 const NOTA_LABEL: Record<string, string> = {
   none: "인증 없음",
   translation_notarization: "번역 공증",
@@ -111,13 +113,10 @@ const NOTA_LABEL: Record<string, string> = {
   apostille_or_consul: "아포스티유 또는 영사확인",
 };
 
-/** 옛 데이터(when=null)는 베트남으로 읽는다 */
+/** 옛 데이터(when=null)는 베트남으로 읽는다. 재정보증인 축은 버린다. */
 function normalize(variants: DocVariant[]): DocVariant[] {
   return variants.map((v) => ({
-    when: {
-      nationality: (v.when?.nationality ?? "").trim() || BASE_NATIONALITY,
-      ...(v.when?.sponsor ? { sponsor: v.when.sponsor } : {}),
-    },
+    when: { nationality: (v.when?.nationality ?? "").trim() || BASE_NATIONALITY },
     slots: (v.slots ?? []).map((s) => ({
       target: s.target ?? null,
       required: s.required !== false,
@@ -126,7 +125,7 @@ function normalize(variants: DocVariant[]): DocVariant[] {
   }));
 }
 const nationalityOf = (v: DocVariant) => v.when?.nationality ?? BASE_NATIONALITY;
-const isBaseVariant = (v: DocVariant) => nationalityOf(v) === BASE_NATIONALITY && !v.when?.sponsor;
+const isBaseVariant = (v: DocVariant) => nationalityOf(v) === BASE_NATIONALITY;
 
 /** 서류 1개짜리 항목인가 — 이름이 서류를 따라가는 것 */
 function singleStandardOf(item: DocItem): string | null {
@@ -153,12 +152,37 @@ const selectClass = "h-8 rounded-md border border-input bg-background px-2 text-
 
 type Selection = { type: "item"; key: string } | { type: "standard"; key: string };
 
+/** 왼쪽 트리의 항목 아래 줄 — 베트남 기준 구성의 서류를 "서류명 - 대상자" 로 */
+type TreeLeaf = { id: string; label: string; sel: Selection; alt: boolean; isItem: boolean; inactive: boolean };
+function leavesOf(item: DocItem, stdByKey: Map<string, DocStandard>, itemByKey: Map<string, DocItem>): TreeLeaf[] {
+  const vs = normalize(item.variants);
+  const base = vs.find(isBaseVariant) ?? vs[0];
+  if (!base) return [];
+  const multi = base.slots.length > 1;
+  const out: TreeLeaf[] = [];
+  base.slots.forEach((slot, si) => {
+    const target = slot.target && slot.target !== "self" ? slot.target : null;
+    const suffix = target ? ` - ${TARGET_LABEL[target] ?? target}` : multi ? " - 본인" : "";
+    slot.options.forEach((o, oi) => {
+      if (o.standard) {
+        const s = stdByKey.get(o.standard);
+        out.push({ id: `${si}-${oi}`, label: `${s?.name_ko ?? o.standard}${suffix}`, sel: { type: "standard", key: o.standard }, alt: oi > 0, isItem: false, inactive: !!s && !s.is_active });
+      } else if (o.item) {
+        const i = itemByKey.get(o.item);
+        out.push({ id: `${si}-${oi}`, label: `${i?.name_ko ?? o.item}${suffix}`, sel: { type: "item", key: o.item }, alt: oi > 0, isItem: true, inactive: !!i && !i.is_active });
+      }
+    });
+  });
+  return out;
+}
+
 // ── 화면 ─────────────────────────────────────────────────────────────
 
 export function DocsManager({ standards, items, usage, overridden }: DocsManagerProps) {
   const [query, setQuery] = useState("");
   const [showInactive, setShowInactive] = useState(false);
   const [sel, setSel] = useState<Selection | null>(items[0] ? { type: "item", key: items[0].key } : null);
+  const [expanded, setExpanded] = useState<Set<string>>(() => new Set(items[0] ? [items[0].key] : []));
   const [newStdOpen, setNewStdOpen] = useState(false);
   const [newItemOpen, setNewItemOpen] = useState(false);
 
@@ -178,12 +202,24 @@ export function DocsManager({ standards, items, usage, overridden }: DocsManager
     });
   }, [items, query, showInactive, stdByKey]);
 
+  const searching = query.trim() !== "";
   const selectedItem = sel?.type === "item" ? itemByKey.get(sel.key) ?? null : null;
   const selectedStd = sel?.type === "standard" ? stdByKey.get(sel.key) ?? null : null;
 
+  const select = (s: Selection | null) => {
+    setSel(s);
+    if (s?.type === "item") setExpanded((cur) => new Set(cur).add(s.key));
+  };
+  const toggle = (key: string) =>
+    setExpanded((cur) => {
+      const n = new Set(cur);
+      if (n.has(key)) n.delete(key); else n.add(key);
+      return n;
+    });
+
   return (
     <div className="grid gap-4 lg:grid-cols-[320px_1fr]">
-      {/* 왼쪽 — 항목 → 서류 트리 */}
+      {/* 왼쪽 — 항목 ▸ 서류 트리 */}
       <Card className="flex flex-col p-0">
         <div className="space-y-2 border-b p-3">
           <div className="relative">
@@ -204,45 +240,54 @@ export function DocsManager({ standards, items, usage, overridden }: DocsManager
             <li className="p-4 text-center text-sm text-muted-foreground">해당하는 항목이 없습니다.</li>
           ) : (
             filtered.map((i) => {
-              const stds = standardsIn(i);
+              const leaves = leavesOf(i, stdByKey, itemByKey);
               const nations = normalize(i.variants).length;
               const onItem = sel?.type === "item" && sel.key === i.key;
+              const open = searching || expanded.has(i.key);
               return (
-                <li key={i.key} className="mb-1">
-                  <button
-                    type="button"
-                    onClick={() => setSel({ type: "item", key: i.key })}
-                    className={`flex w-full items-center justify-between gap-2 rounded-md px-2.5 py-1.5 text-left text-sm font-medium ${
-                      onItem ? "bg-primary/10 text-primary" : "hover:bg-muted"
-                    } ${i.is_active ? "" : "opacity-50"}`}
+                <li key={i.key} className="mb-0.5">
+                  <div
+                    className={`flex items-center rounded-md ${onItem ? "bg-primary/10 text-primary" : "hover:bg-muted"} ${i.is_active ? "" : "opacity-50"}`}
                   >
-                    <span className="truncate">{i.name_ko}</span>
-                    <span className="flex shrink-0 gap-1">
-                      {stds.length > 1 ? <Badge variant="outline" className="px-1.5 text-[10px]">서류 {stds.length}</Badge> : null}
-                      {nations > 1 ? <Badge variant="outline" className="px-1.5 text-[10px]">나라 {nations}</Badge> : null}
-                      {!i.is_active ? <Badge variant="outline" className="px-1.5 text-[10px]">비활성</Badge> : null}
-                    </span>
-                  </button>
-                  <ul className="ml-3 border-l pl-2">
-                    {stds.map((k) => {
-                      const s = stdByKey.get(k);
-                      const onStd = sel?.type === "standard" && sel.key === k;
-                      return (
-                        <li key={k}>
-                          <button
-                            type="button"
-                            onClick={() => setSel({ type: "standard", key: k })}
-                            className={`flex w-full items-center gap-2 rounded-md px-2 py-1 text-left text-[13px] ${
-                              onStd ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                            }`}
-                          >
-                            <span className="truncate">{s?.name_ko ?? k}</span>
-                            {s && !s.is_active ? <span className="text-[10px]">비활성</span> : null}
-                          </button>
-                        </li>
-                      );
-                    })}
-                  </ul>
+                    <button type="button" aria-label={open ? "접기" : "펼치기"} className="shrink-0 p-1.5 text-muted-foreground hover:text-foreground" onClick={() => toggle(i.key)}>
+                      {open ? <ChevronDown className="size-4" /> : <ChevronRight className="size-4" />}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => select({ type: "item", key: i.key })}
+                      className="flex min-w-0 flex-1 items-center justify-between gap-2 py-1.5 pr-2 text-left text-sm font-medium"
+                    >
+                      <span className="truncate">{i.name_ko}</span>
+                      <span className="flex shrink-0 gap-1">
+                        {leaves.length > 1 ? <Badge variant="outline" className="px-1.5 text-[10px]">서류 {leaves.length}</Badge> : null}
+                        {nations > 1 ? <Badge variant="outline" className="px-1.5 text-[10px]">나라 {nations}</Badge> : null}
+                        {!i.is_active ? <Badge variant="outline" className="px-1.5 text-[10px]">비활성</Badge> : null}
+                      </span>
+                    </button>
+                  </div>
+                  {open ? (
+                    <ul className="ml-4 border-l pl-2">
+                      {leaves.map((leaf) => {
+                        const on = sel?.type === leaf.sel.type && sel.key === leaf.sel.key;
+                        return (
+                          <li key={leaf.id}>
+                            <button
+                              type="button"
+                              onClick={() => select(leaf.sel)}
+                              className={`flex w-full items-center gap-1.5 rounded-md px-2 py-1 text-left text-[13px] ${
+                                on ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                              }`}
+                              title={leaf.isItem ? "다른 항목을 통째로 넣은 것" : undefined}
+                            >
+                              {leaf.alt ? <span className="shrink-0 text-[10px]">또는</span> : null}
+                              <span className={`truncate ${leaf.isItem ? "underline decoration-dotted" : ""}`}>{leaf.label}</span>
+                              {leaf.inactive ? <span className="shrink-0 text-[10px]">비활성</span> : null}
+                            </button>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  ) : null}
                 </li>
               );
             })
@@ -260,18 +305,47 @@ export function DocsManager({ standards, items, usage, overridden }: DocsManager
             items={items}
             usage={usage[selectedItem.key] ?? 0}
             overridden={overridden[selectedItem.key] ?? 0}
-            onSelect={setSel}
+            onSelect={select}
           />
         ) : selectedStd ? (
-          <StandardEditor key={selectedStd.key} standard={selectedStd} items={items} onSelect={setSel} />
+          <StandardEditor key={selectedStd.key} standard={selectedStd} standards={standards} items={items} onSelect={select} />
         ) : (
           <div className="p-8 text-center text-sm text-muted-foreground">왼쪽에서 항목이나 서류를 고르세요.</div>
         )}
       </Card>
 
-      <NewStandardDialog open={newStdOpen} onClose={() => setNewStdOpen(false)} onCreated={(itemKey) => itemKey && setSel({ type: "item", key: itemKey })} />
-      <NewItemDialog open={newItemOpen} standards={standards} onClose={() => setNewItemOpen(false)} onCreated={(key) => setSel({ type: "item", key })} />
+      <NewStandardDialog open={newStdOpen} onClose={() => setNewStdOpen(false)} onCreated={(itemKey) => itemKey && select({ type: "item", key: itemKey })} />
+      <NewItemDialog open={newItemOpen} standards={standards} onClose={() => setNewItemOpen(false)} onCreated={(key) => select({ type: "item", key })} />
     </div>
+  );
+}
+
+// ── 서류 고르는 드롭다운 (서류 / 항목 2단) ────────────────────────────
+
+const encodeOption = (o: DocOption) => (o.standard ? `s:${o.standard}` : o.item ? `i:${o.item}` : "");
+const decodeOption = (v: string): DocOption => (v.startsWith("s:") ? { standard: v.slice(2) } : v.startsWith("i:") ? { item: v.slice(2) } : {});
+
+function OptionSelect({
+  value, standards, items, excludeItem, id, className, onChange, allowItems = true,
+}: {
+  value: DocOption; standards: DocStandard[]; items: DocItem[]; excludeItem?: string; id?: string; className?: string;
+  onChange: (o: DocOption) => void; allowItems?: boolean;
+}) {
+  const cur = encodeOption(value);
+  const stds = standards.filter((s) => s.is_active || s.key === value.standard);
+  const its = allowItems ? items.filter((i) => i.key !== excludeItem && !singleStandardOf(i) && (i.is_active || i.key === value.item)) : [];
+  return (
+    <select id={id} className={`${selectClass} max-w-full ${className ?? ""}`} value={cur} onChange={(e) => onChange(decodeOption(e.target.value))}>
+      <option value="">서류 선택</option>
+      <optgroup label="서류">
+        {stds.map((s) => <option key={s.key} value={`s:${s.key}`}>{s.name_ko}{s.is_active ? "" : " (비활성)"}</option>)}
+      </optgroup>
+      {its.length > 0 ? (
+        <optgroup label="항목 (여러 서류를 통째로)">
+          {its.map((i) => <option key={i.key} value={`i:${i.key}`}>{i.name_ko}{i.is_active ? "" : " (비활성)"}</option>)}
+        </optgroup>
+      ) : null}
+    </select>
   );
 }
 
@@ -281,7 +355,7 @@ function ItemEditor({
   item, standards, items, usage, overridden, onSelect,
 }: {
   item: DocItem; standards: DocStandard[]; items: DocItem[]; usage: number; overridden: number;
-  onSelect: (s: Selection) => void;
+  onSelect: (s: Selection | null) => void;
 }) {
   const router = useRouter();
   const [pending, start] = useTransition();
@@ -291,30 +365,34 @@ function ItemEditor({
   const [guideVi, setGuideVi] = useState(item.guide_vi ?? "");
   const [variants, setVariants] = useState<DocVariant[]>(() => normalize(clone(item.variants)));
   const [dirty, setDirty] = useState(false);
-  const [picker, setPicker] = useState<{ vi: number; si: number } | null>(null);
+  const [deleting, setDeleting] = useState(false);
   // 나라 추가
+  const usedNations = new Set(variants.map(nationalityOf));
+  const unusedNations = NATIONALITIES.filter(([k]) => !usedNations.has(k));
+  const [newNation, setNewNation] = useState(unusedNations[0]?.[0] ?? "");
   const [copyFrom, setCopyFrom] = useState(true);
   const [copySource, setCopySource] = useState(BASE_NATIONALITY);
 
-  const stdByKey = useMemo(() => new Map(standards.map((s) => [s.key, s])), [standards]);
-  const itemByKey = useMemo(() => new Map(items.map((i) => [i.key, i])), [items]);
   const single = singleStandardOf(item);
-  const usedNations = new Set(variants.map(nationalityOf));
-  const nextNation = NATIONALITIES.map(([k]) => k).find((k) => !usedNations.has(k)) ?? null;
+  const nationToAdd = unusedNations.some(([k]) => k === newNation) ? newNation : unusedNations[0]?.[0] ?? "";
 
   const mutate = (fn: (v: DocVariant[]) => void) => {
     setVariants((cur) => { const n = clone(cur); fn(n); return n; });
     setDirty(true);
   };
 
-  const save = () =>
+  const save = () => {
+    // 비어 있는 선택지는 버리고, 서류가 하나도 없는 줄이 있으면 막는다
+    const cleaned = variants.map((v) => ({ ...v, slots: v.slots.map((s) => ({ ...s, options: s.options.filter((o) => o.standard || o.item) })) }));
+    if (cleaned.some((v) => v.slots.some((s) => s.options.length === 0))) return void toast.error("서류를 고르지 않은 줄이 있습니다.");
     start(async () => {
-      const r = await saveDocItemAction({ key: item.key, name_ko: nameKo, name_vi: nameVi, guide_ko: guideKo, guide_vi: guideVi, variants, is_active: item.is_active });
+      const r = await saveDocItemAction({ key: item.key, name_ko: nameKo, name_vi: nameVi, guide_ko: guideKo, guide_vi: guideVi, variants: cleaned, is_active: item.is_active });
       if (!r.ok) return void toast.error(r.error);
       toast.success("저장했습니다.");
       setDirty(false);
       router.refresh();
     });
+  };
 
   const toggleActive = () =>
     start(async () => {
@@ -325,12 +403,12 @@ function ItemEditor({
     });
 
   const addNation = () => {
-    if (!nextNation) return;
+    if (!nationToAdd) return;
     mutate((n) => {
-      const src = copyFrom ? n.find((v) => nationalityOf(v) === copySource && !v.when?.sponsor) : undefined;
-      n.push({ when: { nationality: nextNation }, slots: src ? clone(src.slots) : [{ target: null, required: true, options: [] }] });
-      if (!src) setPicker({ vi: n.length - 1, si: 0 });
+      const src = copyFrom ? n.find((v) => nationalityOf(v) === copySource) : undefined;
+      n.push({ when: { nationality: nationToAdd }, slots: src ? clone(src.slots) : [{ target: null, required: true, options: [{}] }] });
     });
+    setNewNation("");
   };
 
   return (
@@ -352,6 +430,7 @@ function ItemEditor({
           </p>
         </div>
         <div className="flex shrink-0 gap-2">
+          <Button variant="outline" size="sm" className="text-destructive hover:text-destructive" onClick={() => setDeleting(true)} disabled={pending}><Trash2 className="size-4" /> 삭제</Button>
           <Button variant="outline" size="sm" onClick={toggleActive} disabled={pending}>{item.is_active ? "비활성화" : "활성화"}</Button>
           <Button size="sm" onClick={save} disabled={pending || !dirty}>저장</Button>
         </div>
@@ -368,86 +447,92 @@ function ItemEditor({
         </div>
       ) : null}
 
-      {/* 나라별 구성 */}
+      {/* 나라별 서류 표 */}
       <div className="space-y-3">
         {variants.map((v, vi) => {
           const base = isBaseVariant(v);
           const nation = nationalityOf(v);
           return (
-            <div key={vi} className="rounded-lg border">
+            <div key={nation} className="rounded-lg border">
               <div className="flex flex-wrap items-center justify-between gap-2 rounded-t-lg bg-muted/40 px-3 py-2">
-                <div className="flex flex-wrap items-center gap-2 text-sm font-medium">
+                <div className="flex items-center gap-2 text-sm font-medium">
                   <span>{NATIONALITY_LABEL[nation] ?? nation} 학생</span>
-                  <select
-                    className={`${selectClass} font-normal`}
-                    value={v.when?.sponsor ?? ""}
-                    onChange={(e) => mutate((n) => { n[vi].when = { nationality: nation, ...(e.target.value ? { sponsor: e.target.value } : {}) }; })}
-                    title="재정보증인 유형에 따라 서류가 달라질 때만"
-                  >
-                    <option value="">재정보증인 무관</option>
-                    {Object.entries(SPONSOR_LABEL).map(([k, l]) => <option key={k} value={k}>재정보증인 = {l}</option>)}
-                  </select>
-                  {base ? <span className="text-xs font-normal text-muted-foreground">기준 — 지울 수 없음</span> : null}
+                  {base ? <Badge variant="outline" className="px-1.5 text-[10px] font-normal">기준</Badge> : null}
                 </div>
                 {!base ? (
-                  <button type="button" className="text-xs text-muted-foreground hover:text-destructive" onClick={() => mutate((n) => { n.splice(vi, 1); })}>구성 삭제</button>
+                  <button type="button" className="text-xs text-muted-foreground hover:text-destructive" onClick={() => mutate((n) => { n.splice(vi, 1); })}>이 나라 삭제</button>
                 ) : null}
               </div>
 
-              {v.slots.map((s, si) => (
-                <SlotRow
-                  key={si}
-                  slot={s}
-                  stdByKey={stdByKey}
-                  itemByKey={itemByKey}
-                  removable={v.slots.length > 1}
-                  onTarget={(t) => mutate((n) => { n[vi].slots[si].target = t; })}
-                  onRequired={(r) => mutate((n) => { n[vi].slots[si].required = r; })}
-                  onRemoveOption={(oi) => mutate((n) => { n[vi].slots[si].options.splice(oi, 1); })}
-                  onRemoveSlot={() => mutate((n) => { n[vi].slots.splice(si, 1); })}
-                  onAddOption={() => setPicker({ vi, si })}
-                  onOpen={(o) => (o.item ? onSelect({ type: "item", key: o.item }) : onSelect({ type: "standard", key: o.standard! }))}
-                />
-              ))}
-              <div className="px-3 py-2">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-t text-left text-xs text-muted-foreground">
+                    <th className="px-3 py-1.5 font-medium">서류</th>
+                    <th className="w-32 px-2 py-1.5 font-medium">대상자</th>
+                    <th className="w-16 px-2 py-1.5 font-medium">필수</th>
+                    <th className="w-10 px-2 py-1.5"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {v.slots.map((s, si) => (
+                    <SlotRow
+                      key={si}
+                      slot={s}
+                      standards={standards}
+                      items={items}
+                      excludeItem={item.key}
+                      idPrefix={`slot-${item.key}-${nation}-${si}`}
+                      removable={v.slots.length > 1}
+                      onOption={(oi, o) => mutate((n) => { n[vi].slots[si].options[oi] = o; })}
+                      onAddOption={() => mutate((n) => { n[vi].slots[si].options.push({}); })}
+                      onRemoveOption={(oi) => mutate((n) => { n[vi].slots[si].options.splice(oi, 1); })}
+                      onTarget={(t) => mutate((n) => { n[vi].slots[si].target = t; })}
+                      onRequired={(r) => mutate((n) => { n[vi].slots[si].required = r; })}
+                      onRemoveSlot={() => mutate((n) => { n[vi].slots.splice(si, 1); })}
+                    />
+                  ))}
+                </tbody>
+              </table>
+              <div className="border-t px-3 py-2">
                 <button
                   type="button"
                   className="text-xs text-muted-foreground hover:text-foreground"
-                  onClick={() => mutate((n) => { n[vi].slots.push({ target: null, required: true, options: [] }); setPicker({ vi, si: n[vi].slots.length - 1 }); })}
+                  onClick={() => mutate((n) => { n[vi].slots.push({ target: null, required: true, options: [{}] }); })}
                 >
-                  + 칸 추가 <span className="text-muted-foreground/70">(같이 내야 하는 서류가 하나 더 있을 때)</span>
+                  + 서류 추가
                 </button>
               </div>
             </div>
           );
         })}
 
-        <div className="flex flex-wrap items-center gap-3 text-sm">
-          <Button type="button" variant="outline" size="sm" onClick={addNation} disabled={!nextNation}>
-            <Plus className="size-4" /> 나라 추가{nextNation ? ` — ${NATIONALITY_LABEL[nextNation]}` : ""}
-          </Button>
-          <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <input type="checkbox" id={`copy-from-${item.key}`} checked={copyFrom} onChange={(e) => setCopyFrom(e.target.checked)} />
-            다음 나라의 설정을 그대로 복사해서 생성
-          </label>
-          <select id={`copy-src-${item.key}`} className={selectClass} value={copySource} onChange={(e) => setCopySource(e.target.value)} disabled={!copyFrom}>
-            {NATIONALITIES.filter(([k]) => usedNations.has(k)).map(([k, l]) => <option key={k} value={k}>{l}</option>)}
-          </select>
-        </div>
-        <p className="text-xs text-muted-foreground">칸은 모두 내야 하고, 한 칸 안의 선택지 중에서는 하나만 냅니다. 선택지에 다른 항목을 넣으면 점선으로 보입니다.</p>
+        {unusedNations.length > 0 ? (
+          <div className="flex flex-wrap items-center gap-3 text-sm">
+            <select id={`new-nation-${item.key}`} className={selectClass} value={nationToAdd} onChange={(e) => setNewNation(e.target.value)}>
+              {unusedNations.map(([k, l]) => <option key={k} value={k}>{l}</option>)}
+            </select>
+            <Button type="button" variant="outline" size="sm" onClick={addNation} disabled={!nationToAdd}>
+              <Plus className="size-4" /> 나라 추가
+            </Button>
+            <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <input type="checkbox" id={`copy-from-${item.key}`} checked={copyFrom} onChange={(e) => setCopyFrom(e.target.checked)} />
+              다음 나라의 설정을 그대로 복사해서 생성
+            </label>
+            <select id={`copy-src-${item.key}`} className={selectClass} value={usedNations.has(copySource) ? copySource : BASE_NATIONALITY} onChange={(e) => setCopySource(e.target.value)} disabled={!copyFrom}>
+              {NATIONALITIES.filter(([k]) => usedNations.has(k)).map(([k, l]) => <option key={k} value={k}>{l}</option>)}
+            </select>
+          </div>
+        ) : null}
       </div>
 
-      {picker ? (
-        <OptionPicker
+      {deleting ? (
+        <DeleteDialog
+          kind="item"
+          target={{ key: item.key, name: item.name_ko }}
           standards={standards}
           items={items}
-          excludeItem={item.key}
-          already={variants[picker.vi]?.slots[picker.si]?.options ?? []}
-          onPick={(o) => { mutate((n) => { n[picker.vi].slots[picker.si].options.push(o); }); setPicker(null); }}
-          onClose={() => {
-            mutate((n) => { const sl = n[picker.vi]?.slots; if (sl && sl[picker.si] && sl[picker.si].options.length === 0 && sl.length > 1) sl.splice(picker.si, 1); });
-            setPicker(null);
-          }}
+          onClose={() => setDeleting(false)}
+          onDeleted={() => { setDeleting(false); onSelect(null); }}
         />
       ) : null}
     </div>
@@ -455,101 +540,140 @@ function ItemEditor({
 }
 
 function SlotRow({
-  slot, stdByKey, itemByKey, removable, onTarget, onRequired, onRemoveOption, onRemoveSlot, onAddOption, onOpen,
+  slot, standards, items, excludeItem, idPrefix, removable, onOption, onAddOption, onRemoveOption, onTarget, onRequired, onRemoveSlot,
 }: {
-  slot: DocSlot; stdByKey: Map<string, DocStandard>; itemByKey: Map<string, DocItem>; removable: boolean;
-  onTarget: (t: string | null) => void; onRequired: (r: boolean) => void; onRemoveOption: (oi: number) => void;
-  onRemoveSlot: () => void; onAddOption: () => void; onOpen: (o: DocOption) => void;
+  slot: DocSlot; standards: DocStandard[]; items: DocItem[]; excludeItem: string; idPrefix: string; removable: boolean;
+  onOption: (oi: number, o: DocOption) => void; onAddOption: () => void; onRemoveOption: (oi: number) => void;
+  onTarget: (t: string | null) => void; onRequired: (r: boolean) => void; onRemoveSlot: () => void;
 }) {
+  const options = slot.options.length > 0 ? slot.options : [{}];
   return (
-    <div className="grid grid-cols-1 items-center gap-2 border-t px-3 py-2 sm:grid-cols-[120px_auto_1fr_auto]">
-      <select className={selectClass} value={slot.target ?? ""} onChange={(e) => onTarget(e.target.value || null)}>
-        <option value="">본인</option>
-        {Object.entries(TARGET_LABEL).filter(([k]) => k !== "self").map(([k, l]) => <option key={k} value={k}>{l}</option>)}
-      </select>
-      <label className="flex items-center gap-1 text-xs text-muted-foreground">
-        <input type="checkbox" checked={slot.required !== false} onChange={(e) => onRequired(e.target.checked)} /> 필수
-      </label>
-      <div className="flex flex-wrap items-center gap-1.5">
-        {slot.options.map((o, oi) => {
-          const label = o.standard ? stdByKey.get(o.standard)?.name_ko ?? o.standard : itemByKey.get(o.item ?? "")?.name_ko ?? o.item;
-          const isItem = !!o.item;
-          return (
-            <span key={`${o.standard ?? o.item}-${oi}`} className="flex items-center">
-              {oi > 0 ? <span className="mx-1 text-[11px] text-muted-foreground">또는</span> : null}
-              <span className={`inline-flex items-center gap-1 rounded-full border bg-background px-2.5 py-1 text-xs ${isItem ? "border-dashed" : ""}`}>
-                <button type="button" className="hover:underline" onClick={() => onOpen(o)} title={isItem ? "이 항목으로 이동" : "서류 편집"}>{label}</button>
-                <button type="button" aria-label="선택지 제거" className="text-muted-foreground hover:text-destructive" onClick={() => onRemoveOption(oi)}><X className="size-3" /></button>
-              </span>
+    <tr className="border-t align-top">
+      <td className="px-3 py-2">
+        <div className="flex flex-wrap items-center gap-1.5">
+          {options.map((o, oi) => (
+            <span key={oi} className="flex items-center gap-1">
+              {oi > 0 ? <span className="text-[11px] text-muted-foreground">또는</span> : null}
+              <OptionSelect id={`${idPrefix}-${oi}`} value={o} standards={standards} items={items} excludeItem={excludeItem} onChange={(n) => onOption(oi, n)} />
+              {options.length > 1 ? (
+                <button type="button" aria-label="이 선택지 빼기" className="text-muted-foreground hover:text-destructive" onClick={() => onRemoveOption(oi)}><X className="size-3.5" /></button>
+              ) : null}
             </span>
-          );
-        })}
-        <button type="button" className="rounded-full border border-dashed px-2.5 py-1 text-xs text-muted-foreground hover:text-foreground" onClick={onAddOption}>+ 선택지</button>
-      </div>
-      <div className="text-right">
-        {removable ? <button type="button" className="text-xs text-muted-foreground hover:text-destructive" onClick={onRemoveSlot}>칸 삭제</button> : null}
-      </div>
-    </div>
+          ))}
+          <button type="button" className="text-xs text-muted-foreground hover:text-foreground" title="이 줄에서 학생이 둘 중 하나만 내면 될 때" onClick={onAddOption}>+ 대체 가능 서류</button>
+        </div>
+      </td>
+      <td className="px-2 py-2">
+        <select id={`${idPrefix}-target`} className={`${selectClass} w-full`} value={slot.target ?? ""} onChange={(e) => onTarget(e.target.value || null)}>
+          <option value="">본인</option>
+          {Object.entries(TARGET_LABEL).filter(([k]) => k !== "self").map(([k, l]) => <option key={k} value={k}>{l}</option>)}
+        </select>
+      </td>
+      <td className="px-2 py-2">
+        <input type="checkbox" id={`${idPrefix}-required`} className="mt-2" checked={slot.required !== false} onChange={(e) => onRequired(e.target.checked)} />
+      </td>
+      <td className="px-2 py-2 text-right">
+        {removable ? (
+          <button type="button" aria-label="이 줄 삭제" title="이 줄 삭제" className="mt-1 text-muted-foreground hover:text-destructive" onClick={onRemoveSlot}><Trash2 className="size-4" /></button>
+        ) : null}
+      </td>
+    </tr>
   );
 }
 
-// ── 선택지 고르기 ────────────────────────────────────────────────────
+// ── 삭제 (영향 확인 → 대신할 것 고르기) ─────────────────────────────
 
-function OptionPicker({
-  standards, items, excludeItem, already, onPick, onClose,
+function DeleteDialog({
+  kind, target, standards, items, onClose, onDeleted,
 }: {
-  standards: DocStandard[]; items: DocItem[]; excludeItem: string; already: DocOption[];
-  onPick: (o: DocOption) => void; onClose: () => void;
+  kind: "item" | "standard"; target: { key: string; name: string }; standards: DocStandard[]; items: DocItem[];
+  onClose: () => void; onDeleted: () => void;
 }) {
-  const [q, setQ] = useState("");
-  const has = (o: DocOption) => already.some((a) => (o.standard && a.standard === o.standard) || (o.item && a.item === o.item));
-  const ql = q.trim().toLowerCase();
-  const stds = standards.filter((s) => s.is_active && !has({ standard: s.key }) && (!ql || `${s.name_ko} ${s.name_vi ?? ""} ${s.aliases.join(" ")}`.toLowerCase().includes(ql)));
-  const its = items.filter((i) => i.is_active && i.key !== excludeItem && !singleStandardOf(i) && !has({ item: i.key }) && (!ql || `${i.name_ko} ${i.name_vi ?? ""}`.toLowerCase().includes(ql)));
+  const router = useRouter();
+  const [pending, start] = useTransition();
+  const [impact, setImpact] = useState<DocImpact | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [replaceWith, setReplaceWith] = useState("");
+  const noun = kind === "item" ? "항목" : "서류";
+
+  useEffect(() => {
+    let alive = true;
+    getDocImpactAction(kind, target.key).then((r) => {
+      if (!alive) return;
+      if (r.ok) setImpact(r.data); else setLoadError(r.error);
+    });
+    return () => { alive = false; };
+  }, [kind, target.key]);
+
+  const used = !!impact && (impact.specs.length > 0 || impact.items.length > 0 || impact.files > 0);
+  const canDelete = !!impact && (!used || replaceWith !== "");
+
+  const run = () =>
+    start(async () => {
+      const r = kind === "item"
+        ? await deleteDocItemAction({ key: target.key, replaceWith: replaceWith || null })
+        : await deleteDocStandardAction({ key: target.key, replaceWith: replaceWith || null });
+      if (!r.ok) return void toast.error(r.error);
+      toast.success(replaceWith ? `${noun}를 지우고 쓰던 곳은 대신할 ${noun}로 옮겼습니다.` : `${noun}를 지웠습니다.`);
+      router.refresh();
+      onDeleted();
+    });
+
+  const candidates = kind === "item"
+    ? items.filter((i) => i.key !== target.key && i.is_active).map((i) => ({ key: i.key, label: i.name_ko }))
+    : standards.filter((s) => s.key !== target.key && s.is_active).map((s) => ({ key: s.key, label: s.name_ko }));
+
   return (
     <Dialog open onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle>선택지 추가</DialogTitle>
-          <DialogDescription>이 칸에서 학생이 낼 수 있는 서류. 여러 개면 그중 하나만 내면 됩니다.</DialogDescription>
+          <DialogTitle>{noun} 삭제 — {target.name}</DialogTitle>
+          <DialogDescription>
+            {kind === "item"
+              ? "이 항목을 쓰는 모집요강과 다른 항목의 선택지는 대신할 항목으로 옮겨집니다."
+              : "이 서류를 쓰는 항목·모집요강·학생이 올린 파일은 대신할 서류로 옮겨집니다. 이 서류로 자동 생성된 항목도 같이 정리됩니다."}
+          </DialogDescription>
         </DialogHeader>
-        <Input id="option-picker-search" autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder="서류 또는 항목 이름" />
-        <div className="max-h-80 space-y-3 overflow-y-auto">
-          <PickGroup title="서류" empty="맞는 서류가 없습니다. 먼저 새 서류로 등록하세요.">
-            {stds.map((s) => (
-              <PickRow key={s.key} onClick={() => onPick({ standard: s.key })}>
-                <span>{s.name_ko}</span>
-                <span className="text-xs text-muted-foreground">{s.issuing_country ? NATIONALITY_LABEL[s.issuing_country] ?? s.issuing_country : "범용"}</span>
-              </PickRow>
-            ))}
-          </PickGroup>
-          <PickGroup title="항목 (여러 서류 묶음을 통째로)" empty="">
-            {its.map((i) => (
-              <PickRow key={i.key} onClick={() => onPick({ item: i.key })}>
-                <span>{i.name_ko}</span>
-                <span className="text-xs text-muted-foreground">서류 {standardsIn(i).length}</span>
-              </PickRow>
-            ))}
-          </PickGroup>
-        </div>
+
+        {loadError ? (
+          <p className="text-sm text-destructive">{loadError}</p>
+        ) : !impact ? (
+          <p className="text-sm text-muted-foreground">쓰는 곳을 확인하는 중…</p>
+        ) : !used ? (
+          <p className="text-sm text-muted-foreground">쓰는 곳이 없습니다. 바로 지울 수 있습니다.</p>
+        ) : (
+          <div className="space-y-2 text-sm">
+            <div className="text-xs font-medium text-muted-foreground">쓰는 곳</div>
+            <ul className="space-y-1 rounded-md border p-2 text-[13px]">
+              {impact.specs.length > 0 ? (
+                <li>
+                  모집요강 <b>{impact.specs.length}건</b>
+                  <span className="text-muted-foreground"> — {impact.specs.slice(0, 6).map((s) => s.label).join(", ")}{impact.specs.length > 6 ? " 외" : ""}</span>
+                </li>
+              ) : null}
+              {impact.items.length > 0 ? (
+                <li>
+                  {kind === "item" ? "선택지로 가진 항목" : "이 서류가 든 항목"} <b>{impact.items.length}개</b>
+                  <span className="text-muted-foreground"> — {impact.items.map((i) => i.name_ko).join(", ")}</span>
+                </li>
+              ) : null}
+              {impact.files > 0 ? <li>학생이 올린 파일 <b>{impact.files}건</b></li> : null}
+            </ul>
+            <Field label={`대신할 ${noun} (필수)`}>
+              <select id={`replace-${kind}-${target.key}`} className={`${selectClass} w-full`} value={replaceWith} onChange={(e) => setReplaceWith(e.target.value)}>
+                <option value="">— 고르세요 —</option>
+                {candidates.map((c) => <option key={c.key} value={c.key}>{c.label}</option>)}
+              </select>
+            </Field>
+          </div>
+        )}
+
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose} disabled={pending}>취소</Button>
+          <Button variant="destructive" onClick={run} disabled={pending || !canDelete}>{used ? "옮기고 삭제" : "삭제"}</Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
-}
-
-function PickGroup({ title, empty, children }: { title: string; empty: string; children: ReactNode[] }) {
-  if (children.length === 0 && !empty) return null;
-  return (
-    <div>
-      <div className="mb-1 text-xs font-medium text-muted-foreground">{title}</div>
-      {children.length === 0 ? <p className="px-2 py-1 text-xs text-muted-foreground">{empty}</p> : <div className="space-y-0.5">{children}</div>}
-    </div>
-  );
-}
-
-function PickRow({ onClick, children }: { onClick: () => void; children: ReactNode }) {
-  return (
-    <button type="button" onClick={onClick} className="flex w-full items-center justify-between rounded-md px-2 py-1.5 text-left text-sm hover:bg-muted">{children}</button>
   );
 }
 
@@ -637,11 +761,12 @@ function StandardFields({ d, set, idPrefix }: { d: StdDraft; set: <K extends key
   );
 }
 
-function StandardEditor({ standard, items, onSelect }: { standard: DocStandard; items: DocItem[]; onSelect: (s: Selection) => void }) {
+function StandardEditor({ standard, standards, items, onSelect }: { standard: DocStandard; standards: DocStandard[]; items: DocItem[]; onSelect: (s: Selection | null) => void }) {
   const router = useRouter();
   const [pending, start] = useTransition();
   const [d, setD] = useState<StdDraft>(() => draftFrom(standard));
   const [dirty, setDirty] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const set = <K extends keyof StdDraft>(k: K, v: StdDraft[K]) => { setD((c) => ({ ...c, [k]: v })); setDirty(true); };
   const usedBy = items.filter((i) => standardsIn(i).includes(standard.key));
   const save = () =>
@@ -657,7 +782,7 @@ function StandardEditor({ standard, items, onSelect }: { standard: DocStandard; 
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <div className="text-xs text-muted-foreground">서류 편집</div>
-          <h3 className="text-base font-semibold">{standard.name_ko}</h3>
+          <h3 className="text-base font-semibold">{standard.name_ko}{standard.is_active ? "" : <Badge variant="outline" className="ml-2 px-1.5 text-[10px] font-normal">비활성</Badge>}</h3>
           <p className="mt-1 text-xs text-muted-foreground">
             이 서류가 든 항목 {usedBy.length}개:{" "}
             {usedBy.map((i, idx) => (
@@ -669,10 +794,24 @@ function StandardEditor({ standard, items, onSelect }: { standard: DocStandard; 
             {usedBy.length === 0 ? "없음" : null}
           </p>
         </div>
-        <Button size="sm" onClick={save} disabled={pending || !dirty}>저장</Button>
+        <div className="flex shrink-0 gap-2">
+          <Button variant="outline" size="sm" className="text-destructive hover:text-destructive" onClick={() => setDeleting(true)} disabled={pending}><Trash2 className="size-4" /> 삭제</Button>
+          <Button size="sm" onClick={save} disabled={pending || !dirty}>저장</Button>
+        </div>
       </div>
       <StandardFields d={d} set={set} idPrefix={`std-${standard.key}`} />
       <p className="text-xs text-muted-foreground">여기서 고치면 이 서류를 쓰는 모든 대학에 바로 반영됩니다. 대학이 따로 설정한 값만 그대로 남습니다.</p>
+
+      {deleting ? (
+        <DeleteDialog
+          kind="standard"
+          target={{ key: standard.key, name: standard.name_ko }}
+          standards={standards}
+          items={items}
+          onClose={() => setDeleting(false)}
+          onDeleted={() => { setDeleting(false); onSelect(null); }}
+        />
+      ) : null}
     </div>
   );
 }
@@ -715,8 +854,8 @@ function NewItemDialog({ open, standards, onClose, onCreated }: { open: boolean;
   const [nameKo, setNameKo] = useState("");
   const [nameVi, setNameVi] = useState("");
   const [firstStd, setFirstStd] = useState("");
-  // 빈 항목은 저장할 수 없다(칸마다 선택지가 있어야 함). 첫 서류를 여기서 받아
-  // 베트남 구성 한 칸으로 만들고, 나머지 칸·나라는 편집 화면에서 이어간다.
+  // 빈 항목은 저장할 수 없다(줄마다 서류가 있어야 함). 첫 서류를 여기서 받아
+  // 베트남 구성 한 줄로 만들고, 나머지 줄·나라는 편집 화면에서 이어간다.
   const save = () =>
     start(async () => {
       const r = await saveDocItemAction({
@@ -724,7 +863,7 @@ function NewItemDialog({ open, standards, onClose, onCreated }: { open: boolean;
         variants: [{ when: { nationality: BASE_NATIONALITY }, slots: [{ target: null, required: true, options: [{ standard: firstStd }] }] }],
       });
       if (!r.ok) return void toast.error(r.error);
-      toast.success("항목을 만들었습니다. 이어서 칸과 나라를 채우세요.");
+      toast.success("항목을 만들었습니다. 이어서 서류와 나라를 채우세요.");
       setNameKo(""); setNameVi(""); setFirstStd("");
       router.refresh();
       onCreated(r.data.key);
@@ -735,12 +874,12 @@ function NewItemDialog({ open, standards, onClose, onCreated }: { open: boolean;
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>새 항목</DialogTitle>
-          <DialogDescription>여러 서류 중 하나를 내거나, 나라마다 다른 서류를 내는 항목. 예: 가족관계 입증, 재산 입증.</DialogDescription>
+          <DialogDescription>여러 서류를 같이 내거나 그중 하나를 내는 묶음. 예: 가족관계 입증, 재산 입증.</DialogDescription>
         </DialogHeader>
         <div className="grid gap-2">
           <Field label="항목 이름 (한국어)"><Input id="new-item-name-ko" value={nameKo} onChange={(e) => setNameKo(e.target.value)} placeholder="예: 가족관계 입증" /></Field>
           <Field label="항목 이름 (베트남어)"><Input id="new-item-name-vi" value={nameVi} onChange={(e) => setNameVi(e.target.value)} /></Field>
-          <Field label="첫 서류 (베트남 구성의 첫 칸)">
+          <Field label="첫 서류 (베트남 학생의 첫 줄)">
             <select id="new-item-first-std" className={`${selectClass} w-full`} value={firstStd} onChange={(e) => setFirstStd(e.target.value)}>
               <option value="">서류 선택</option>
               {standards.filter((s) => s.is_active).map((s) => <option key={s.key} value={s.key}>{s.name_ko}</option>)}

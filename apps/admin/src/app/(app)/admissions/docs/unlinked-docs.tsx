@@ -140,7 +140,7 @@ function StandardPicker({ doc, standards, onClose }: { doc: UnlinkedDoc; standar
         <Input id="unlinked-picker-search" autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder="서류 이름 또는 다른 표기" />
         <div className="max-h-80 space-y-0.5 overflow-y-auto">
           {list.length === 0 ? (
-            <p className="px-2 py-3 text-sm text-muted-foreground">맞는 서류가 없습니다. 닫고 "새 서류로 등록"을 누르세요.</p>
+            <p className="px-2 py-3 text-sm text-muted-foreground">맞는 서류가 없습니다. 닫고 [새 서류로 등록]을 누르세요.</p>
           ) : (
             list.map((s) => (
               <button
