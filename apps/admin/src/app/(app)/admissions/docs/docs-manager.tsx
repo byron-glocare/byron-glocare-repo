@@ -137,14 +137,17 @@ export function DocsManager({ standards, items, usage, overridden }: DocsManager
   const [selectedKey, setSelectedKey] = useState<string | null>(items[0]?.key ?? null);
   const [newStdOpen, setNewStdOpen] = useState(false);
   const [newBundleOpen, setNewBundleOpen] = useState(false);
+  // 옛 데이터 탭에서 비활성이던 것도 키 보존을 위해 같이 옮겨졌다(0060). 기본은 숨긴다.
+  const [showInactive, setShowInactive] = useState(false);
 
   const stdByKey = useMemo(() => new Map(standards.map((s) => [s.key, s])), [standards]);
   const itemByKey = useMemo(() => new Map(items.map((i) => [i.key, i])), [items]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return items;
-    return items.filter((i) => {
+    const base = showInactive ? items : items.filter((i) => i.is_active);
+    if (!q) return base;
+    return base.filter((i) => {
       const inName = `${i.name_ko} ${i.name_vi ?? ""}`.toLowerCase().includes(q);
       if (inName) return true;
       // 서류 이름으로 찾아도 그 서류가 든 항목이 뜬다
@@ -157,7 +160,7 @@ export function DocsManager({ standards, items, usage, overridden }: DocsManager
           }
       return false;
     });
-  }, [items, query, stdByKey]);
+  }, [items, query, stdByKey, showInactive]);
 
   const selected = selectedKey ? itemByKey.get(selectedKey) ?? null : null;
 
@@ -176,6 +179,10 @@ export function DocsManager({ standards, items, usage, overridden }: DocsManager
               className="pl-8"
             />
           </div>
+          <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <input type="checkbox" id="docs-show-inactive" checked={showInactive} onChange={(e) => setShowInactive(e.target.checked)} />
+            비활성 항목도 보기 ({items.filter((i) => !i.is_active).length})
+          </label>
           <div className="flex gap-2">
             <Button size="sm" className="flex-1" onClick={() => setNewStdOpen(true)}>
               <Plus className="size-4" /> 새 서류
