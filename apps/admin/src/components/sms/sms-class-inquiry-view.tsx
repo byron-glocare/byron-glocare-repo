@@ -204,7 +204,7 @@ export function SmsClassInquiryView({ centers }: { centers: CenterRow[] }) {
                           type="checkbox"
                           checked={selectedIds.includes(c.id)}
                           onChange={() => toggleOne(c.id)}
-                          disabled={!!bulk || !phone.trim()}
+                          disabled={!!bulk || !hasMainPhone}
                           aria-label={`${c.name} 선택`}
                         />
                       </TableCell>
