@@ -245,17 +245,31 @@ export function DataTypeForm({
             />
             <span>활성</span>
           </label>
+          {/* 서류 종류 — 둘 중 하나. 모집요강에서 이 데이터를 붙인 서류는
+              전부 이 값을 따라 [작성]/[발급]으로 분류된다. */}
           {category === "document" && (
-            <label className="flex items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                name="is_form_doc"
-                defaultChecked={dataType?.is_form_doc ?? false}
-              />
-              <span>
-                <strong>작성서류</strong> — 학교 양식에 채워 내는 서류 (체크 안 하면 발급서류)
-              </span>
-            </label>
+            <fieldset className="flex flex-wrap items-center gap-3 rounded-md border px-3 py-1.5 text-sm">
+              <legend className="sr-only">서류 종류</legend>
+              <span className="font-medium">서류 종류</span>
+              <label className="flex items-center gap-1.5">
+                <input
+                  type="radio"
+                  name="doc_kind"
+                  value="form"
+                  defaultChecked={dataType?.is_form_doc === true}
+                />
+                <span>작성서류 <span className="text-muted-foreground">(학교 양식에 채워 제출)</span></span>
+              </label>
+              <label className="flex items-center gap-1.5">
+                <input
+                  type="radio"
+                  name="doc_kind"
+                  value="issued"
+                  defaultChecked={dataType?.is_form_doc !== true}
+                />
+                <span>발급서류 <span className="text-muted-foreground">(기관에서 발급받아 제출)</span></span>
+              </label>
+            </fieldset>
           )}
         </div>
 

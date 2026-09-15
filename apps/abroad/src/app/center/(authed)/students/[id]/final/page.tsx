@@ -15,6 +15,7 @@ import {
   classifyRequiredDocs,
   type RequiredDoc,
 } from "@/lib/admission/classify-documents";
+import { loadFormDocKeys } from "@/lib/admission/form-doc-keys";
 import { getLocale, tr } from "@/lib/i18n";
 import { WriteRowActions } from "./write-row-actions";
 import { AppSubmitBar } from "./app-submit-bar";
@@ -37,6 +38,7 @@ export default async function FinalPage({
   await verifyCenterSession();
   const locale = await getLocale();
   const supabase = await createCenterClient();
+  const formDocKeys = await loadFormDocKeys(supabase);
   const base = `/center/students/${id}`;
 
   const { data: student } = await supabase
@@ -157,7 +159,8 @@ export default async function FinalPage({
       uniForms.map((f) => [normFormName(f.name_ko), f] as const)
     );
     const { forms: docForms } = classifyRequiredDocs(
-      (spec?.required_documents as RequiredDoc[]) ?? []
+      (spec?.required_documents as RequiredDoc[]) ?? [],
+      formDocKeys
     );
     const writeRows = docForms.map((doc) => {
       const file =

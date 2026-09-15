@@ -395,6 +395,8 @@ export type StudyStudentDataType = {
   // B5 — 표준데이터 재설계 컬럼
   scope: StudentDataScope;
   aliases: string[] | null;
+  /** 0058: 작성서류(학교 양식) 여부. false = 발급서류. category=document 에서만 의미 */
+  is_form_doc: boolean;
   // 연결성(독립/참조) — 0030, 0031(동일 제거)
   link_type: "independent" | "reference" | null;
   is_derived: boolean;

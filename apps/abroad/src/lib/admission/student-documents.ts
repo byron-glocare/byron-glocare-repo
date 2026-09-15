@@ -17,6 +17,7 @@ import {
   type ClassifiedDoc,
   type RequiredDoc,
 } from "@/lib/admission/classify-documents";
+import { loadFormDocKeys } from "@/lib/admission/form-doc-keys";
 import type { Database } from "@/types/database";
 
 type Client = SupabaseClient<Database>;
@@ -119,6 +120,7 @@ export async function loadDocumentGroups(
         }),
   ]);
   const uniMap = new Map((unis ?? []).map((u) => [u.id, u]));
+  const formDocKeys = await loadFormDocKeys(supabase);
   const uniName = (uid: number) => {
     const u = uniMap.get(uid);
     return (locale === "ko" ? u?.name_ko : u?.name_vi) ?? u?.name_ko ?? `#${uid}`;
@@ -153,7 +155,8 @@ export async function loadDocumentGroups(
       : app.target_department_label ?? "—";
 
     const { forms: formDocs, issued: specIssued } = classifyRequiredDocs(
-      (spec?.required_documents as RequiredDoc[]) ?? []
+      (spec?.required_documents as RequiredDoc[]) ?? [],
+      formDocKeys
     );
 
     const items = new Map<string, IssuedItem>();

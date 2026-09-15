@@ -24,6 +24,7 @@ import {
   type RequiredDoc,
 } from "./classify-documents";
 import { programTypeLabel } from "./program-type";
+import { loadFormDocKeys } from "./form-doc-keys";
 
 export type ReadinessCheck = {
   key: string;
@@ -52,6 +53,7 @@ export async function assessOfferingReadiness(
   preferredSpecId?: string | null
 ): Promise<OfferingReadiness> {
   const supabase = createAdminClient();
+  const formDocKeys = await loadFormDocKeys(supabase);
 
   // 1) 승인된 모집요강 (게이트)
   const { data: specs } = await supabase
@@ -108,7 +110,8 @@ export async function assessOfferingReadiness(
   }
 
   const { forms } = classifyRequiredDocs(
-    (approved.required_documents as RequiredDoc[]) ?? []
+    (approved.required_documents as RequiredDoc[]) ?? [],
+    formDocKeys
   );
 
   // 2) 직접작성 양식 업로드 여부

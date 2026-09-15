@@ -17,6 +17,7 @@ import {
   classifyRequiredDocs,
   type RequiredDoc as ClassifyDoc,
 } from "@/lib/admission/classify-documents";
+import { loadFormDocKeys } from "@/lib/admission/form-doc-keys";
 import {
   formatAgeRequirement,
   type AgeRequirementLike,
@@ -119,6 +120,7 @@ export default async function AdmissionDetailPage({
 }) {
   const { id } = await params;
   const supabase = await createClient();
+  const formDocKeys = await loadFormDocKeys(supabase);
 
   const { data: spec, error } = await supabase
     .from("study_admission_specs")
@@ -182,7 +184,8 @@ export default async function AdmissionDetailPage({
   const { forms: formDocs, issued: issuedDocs } = classifyRequiredDocs(
     (Array.isArray(spec.required_documents)
       ? spec.required_documents
-      : []) as ClassifyDoc[]
+      : []) as ClassifyDoc[],
+      formDocKeys
   );
 
   const departments = (Array.isArray(spec.departments) ? spec.departments : []) as Dept[];

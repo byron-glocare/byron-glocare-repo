@@ -12,6 +12,7 @@ import {
   classifyRequiredDocs,
   type RequiredDoc,
 } from "@/lib/admission/classify-documents";
+import { loadFormDocKeys } from "@/lib/admission/form-doc-keys";
 import { getLocale, tr } from "@/lib/i18n";
 import { downloadUrl } from "@/lib/storage-download";
 
@@ -29,6 +30,7 @@ export default async function StudentFinalPage() {
   const session = await verifyStudentSession();
   const locale = await getLocale();
   const supabase = await createClient();
+  const formDocKeys = await loadFormDocKeys(supabase);
   const studentId = session.student.id;
 
   const { data: apps } = await supabase
@@ -100,7 +102,8 @@ export default async function StudentFinalPage() {
       uniForms.map((f) => [normFormName(f.name_ko), f] as const)
     );
     const { forms: docForms } = classifyRequiredDocs(
-      (spec?.required_documents as RequiredDoc[]) ?? []
+      (spec?.required_documents as RequiredDoc[]) ?? [],
+      formDocKeys
     );
     const writeRows = docForms.map((doc) => {
       const file =

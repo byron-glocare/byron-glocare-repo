@@ -123,7 +123,8 @@ export async function saveDataTypeAction(
     is_essay_basis: formData.get("is_essay_basis") === "on",
     is_default_required: formData.get("is_default_required") === "on",
     is_active: formData.get("is_active") === "on",
-    is_form_doc: formData.get("is_form_doc") === "on",
+    // 서류 카테고리의 라디오(작성서류/발급서류). 다른 카테고리에선 필드가 없어 false.
+    is_form_doc: formData.get("doc_kind") === "form",
     sort_order: formData.get("sort_order") || "0",
   };
 

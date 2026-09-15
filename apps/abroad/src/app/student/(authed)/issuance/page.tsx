@@ -13,6 +13,7 @@ import {
   classifyRequiredDocs,
   type RequiredDoc,
 } from "@/lib/admission/classify-documents";
+import { loadFormDocKeys } from "@/lib/admission/form-doc-keys";
 import {
   issuanceStatusLabel,
   issuanceStatusTone,
@@ -25,6 +26,7 @@ export default async function StudentIssuancePage() {
   const session = await verifyStudentSession();
   const locale = await getLocale();
   const supabase = await createClient();
+  const formDocKeys = await loadFormDocKeys(supabase);
   const studentId = session.student.id;
 
   const [{ data: pricing }, { data: orders }, { data: apps }] =
@@ -62,7 +64,8 @@ export default async function StudentIssuancePage() {
   const neededNames = new Set<string>();
   for (const s of specs ?? []) {
     const { issued } = classifyRequiredDocs(
-      (s.required_documents as RequiredDoc[]) ?? []
+      (s.required_documents as RequiredDoc[]) ?? [],
+      formDocKeys
     );
     for (const d of issued) neededNames.add(d.name_ko);
   }
