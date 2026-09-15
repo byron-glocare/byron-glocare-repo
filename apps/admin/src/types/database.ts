@@ -2158,6 +2158,124 @@ export type Database = {
           }
         ];
       };
+      // 0060 — 서류 항목 구조 (설계: https://claude.ai/artifact/Xqr35jUhQ2JEMHyaSoH17P)
+      study_doc_standards: {
+        Row: {
+          key: string;
+          name_ko: string;
+          name_vi: string | null;
+          is_form_doc: boolean;
+          issuing_country: string | null;
+          issuer_ko: string | null;
+          issuer_vi: string | null;
+          validity_days: number | null;
+          notarization: string | null;
+          original_required: boolean | null;
+          issued_within_days: number | null;
+          guide_ko: string | null;
+          guide_vi: string | null;
+          aliases: string[];
+          data_type_keys: string[];
+          sort_order: number;
+          is_active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          key: string;
+          name_ko: string;
+          name_vi?: string | null;
+          is_form_doc?: boolean;
+          issuing_country?: string | null;
+          issuer_ko?: string | null;
+          issuer_vi?: string | null;
+          validity_days?: number | null;
+          notarization?: string | null;
+          original_required?: boolean | null;
+          issued_within_days?: number | null;
+          guide_ko?: string | null;
+          guide_vi?: string | null;
+          aliases?: string[];
+          data_type_keys?: string[];
+          sort_order?: number;
+          is_active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["study_doc_standards"]["Insert"]>;
+        Relationships: [];
+      };
+      study_doc_items: {
+        Row: {
+          key: string;
+          name_ko: string;
+          name_vi: string | null;
+          guide_ko: string | null;
+          guide_vi: string | null;
+          /** JSONB — DocVariant[] (칸은 모두, 칸 안은 하나만) */
+          variants: unknown;
+          sort_order: number;
+          is_active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          key: string;
+          name_ko: string;
+          name_vi?: string | null;
+          guide_ko?: string | null;
+          guide_vi?: string | null;
+          variants?: unknown;
+          sort_order?: number;
+          is_active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["study_doc_items"]["Insert"]>;
+        Relationships: [];
+      };
+      study_spec_doc_items: {
+        Row: {
+          id: string;
+          spec_id: string;
+          item_key: string;
+          required: boolean;
+          sort_order: number;
+          guide_override_ko: string | null;
+          guide_override_vi: string | null;
+          /** JSONB — { standards: { [key]: {...} }, allowed_options?: string[] } */
+          overrides: unknown;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          spec_id: string;
+          item_key: string;
+          required?: boolean;
+          sort_order?: number;
+          guide_override_ko?: string | null;
+          guide_override_vi?: string | null;
+          overrides?: unknown;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["study_spec_doc_items"]["Insert"]>;
+        Relationships: [
+          {
+            foreignKeyName: "study_spec_doc_items_spec_id_fkey";
+            columns: ["spec_id"];
+            referencedRelation: "study_admission_specs";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "study_spec_doc_items_item_key_fkey";
+            columns: ["item_key"];
+            referencedRelation: "study_doc_items";
+            referencedColumns: ["key"];
+          }
+        ];
+      };
     };
     Views: {
       // 입학서류 통합 뷰 (B5) — specs + form_files + required_submissions UNION

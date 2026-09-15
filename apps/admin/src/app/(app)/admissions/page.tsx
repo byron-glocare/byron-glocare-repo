@@ -23,10 +23,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
+import { DocsManager, type DocItem, type DocStandard } from "./docs/docs-manager";
+import type { DocVariant } from "./docs/actions";
 
 export const dynamic = "force-dynamic";
 
-type Tab = "forms" | "guidelines";
+type Tab = "forms" | "docs" | "guidelines";
 
 export default async function AdmissionsPage({
   searchParams,
@@ -34,7 +36,8 @@ export default async function AdmissionsPage({
   searchParams: Promise<{ tab?: string; q?: string; uni?: string }>;
 }) {
   const sp = await searchParams;
-  const tab: Tab = sp.tab === "guidelines" ? "guidelines" : "forms";
+  const tab: Tab =
+    sp.tab === "guidelines" ? "guidelines" : sp.tab === "docs" ? "docs" : "forms";
   const q = (sp.q ?? "").trim().toLowerCase();
   const uniFilter = (sp.uni ?? "").trim();
 
@@ -65,6 +68,35 @@ export default async function AdmissionsPage({
       .order("created_at", { ascending: false }),
   ]);
 
+  // 제출서류 탭 — 서류 카탈로그 · 서류 항목 · 요강별 사용 수 (0060)
+  const [{ data: docStdRows }, { data: docItemRows }, { data: specItemRows }] =
+    tab === "docs"
+      ? await Promise.all([
+          supabase.from("study_doc_standards").select("*").order("sort_order").order("name_ko"),
+          supabase.from("study_doc_items").select("*").order("sort_order").order("name_ko"),
+          supabase.from("study_spec_doc_items").select("item_key, guide_override_ko, guide_override_vi, overrides"),
+        ])
+      : [{ data: null }, { data: null }, { data: null }];
+  const docStandards: DocStandard[] = (docStdRows ?? []).map((r) => ({
+    key: r.key, name_ko: r.name_ko, name_vi: r.name_vi, is_form_doc: r.is_form_doc,
+    issuing_country: r.issuing_country, issuer_ko: r.issuer_ko, issuer_vi: r.issuer_vi,
+    validity_days: r.validity_days, notarization: r.notarization, original_required: r.original_required,
+    issued_within_days: r.issued_within_days, guide_ko: r.guide_ko, guide_vi: r.guide_vi,
+    aliases: r.aliases ?? [], is_active: r.is_active,
+  }));
+  const docItems: DocItem[] = (docItemRows ?? []).map((r) => ({
+    key: r.key, name_ko: r.name_ko, name_vi: r.name_vi, guide_ko: r.guide_ko, guide_vi: r.guide_vi,
+    variants: (Array.isArray(r.variants) ? r.variants : []) as DocVariant[], is_active: r.is_active,
+  }));
+  const docUsage: Record<string, number> = {};
+  const docOverridden: Record<string, number> = {};
+  for (const r of specItemRows ?? []) {
+    docUsage[r.item_key] = (docUsage[r.item_key] ?? 0) + 1;
+    const ov = (r.overrides ?? {}) as Record<string, unknown>;
+    if (r.guide_override_ko || r.guide_override_vi || Object.keys(ov).length > 0)
+      docOverridden[r.item_key] = (docOverridden[r.item_key] ?? 0) + 1;
+  }
+
   const uniName = new Map((universities ?? []).map((u) => [u.id, u.name_ko]));
   const nameOf = (uid: number | null) =>
     uid == null ? "공용" : uniName.get(uid) ?? `대학 #${uid}`;
@@ -85,10 +117,12 @@ export default async function AdmissionsPage({
   const counts = {
     forms: (forms ?? []).length,
     guidelines: (specs ?? []).length,
+    docs: docItems.length,
   };
 
   const tabs: Array<{ key: Tab; label: string; count: number }> = [
     { key: "forms", label: "작성 서류 양식", count: counts.forms },
+    { key: "docs", label: "제출서류", count: counts.docs },
     { key: "guidelines", label: "모집요강 서류", count: counts.guidelines },
   ];
 
@@ -105,10 +139,10 @@ export default async function AdmissionsPage({
     <>
       <PageHeader
         title="입학서류"
-        description="작성 서류 양식 · 모집요강 서류"
+        description="작성 서류 양식 · 제출서류 · 모집요강 서류"
         breadcrumbs={[{ label: "입학서류" }]}
         actions={
-          tab === "forms" ? (
+          tab === "docs" ? null : tab === "forms" ? (
             <Link href="/admissions/forms/new" className={buttonVariants()}>
               <Plus className="size-4" />
               양식 추가
@@ -147,6 +181,7 @@ export default async function AdmissionsPage({
         </div>
 
         {/* 검색 + 대학 필터 */}
+        {tab !== "docs" ? (
         <form method="get" action="/admissions" className="flex flex-wrap items-end gap-2">
           <input type="hidden" name="tab" value={tab} />
           <div className="min-w-60 flex-1">
@@ -185,8 +220,12 @@ export default async function AdmissionsPage({
             </Link>
           )}
         </form>
+        ) : null}
 
         {/* 탭별 리스트 */}
+        {tab === "docs" ? (
+          <DocsManager standards={docStandards} items={docItems} usage={docUsage} overridden={docOverridden} />
+        ) : null}
         {tab === "forms" ? (
           <Card className="overflow-hidden p-0">
             {formRows.length === 0 ? (
