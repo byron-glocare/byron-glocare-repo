@@ -25,6 +25,7 @@ export type RequiredDoc = {
   language?: string | null;
   group?: string | null;
   std_key?: string | null;
+  target_person?: string | null;
 };
 
 export type ClassifiedDoc = {
@@ -37,6 +38,8 @@ export type ClassifiedDoc = {
   kind: "form" | "issued";
   /** 공용 표준 연결 (있으면 대학 간 같은 서류로 취급 가능) */
   std_key: string | null;
+  /** 누구의 서류인지 (self/father/mother/other). 같은 표준이라도 대상자가 다르면 다른 칸·다른 파일 */
+  target_person: string | null;
 };
 
 const FORM_NOTE_RE = /(본교\s*양식|학교\s*양식|소정\s*양식|본교양식)/;
@@ -100,6 +103,7 @@ export function classifyRequiredDocs(
       required: d.required !== false,
       kind: isFormDoc(d, formDocKeys) ? "form" : "issued",
       std_key: (d.std_key ?? "").trim() || null,
+      target_person: (d.target_person ?? "").trim() || null,
     };
     (item.kind === "form" ? forms : issued).push(item);
   }
@@ -127,10 +131,18 @@ export function docShareKey(d: {
   name_ko: string;
   std_key: string | null;
   notarization: string | null;
+  target_person?: string | null;
 }): string {
   if (d.std_key) {
     const sig = (d.notarization ?? "").trim() || "none";
-    return `std::${d.std_key}::${sig}`;
+    // 대상자(아버지/어머니/재정보증인)가 다르면 다른 파일이다.
+    //   0057 에서 '아버지 신분증'과 '어머니 신분증'이 같은 표준으로 합쳐지면서
+    //   키가 같아져 한 번 올린 파일이 두 칸을 채웠다 → 대상자를 키에 넣는다.
+    //   본인(self)·미지정은 접미사 없이 예전 키 그대로 — 기존 업로드가 그대로 맞는다.
+    const target = (d.target_person ?? "").trim();
+    return target && target !== "self"
+      ? `std::${d.std_key}::${sig}::${target}`
+      : `std::${d.std_key}::${sig}`;
   }
   return docUploadKey(d);
 }

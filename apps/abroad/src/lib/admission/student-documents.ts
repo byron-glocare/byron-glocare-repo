@@ -139,6 +139,7 @@ export async function loadDocumentGroups(
     shareKey: string;
     legacyKey: string | null;
     std_key: string | null;
+    target_person: string | null;
     name_ko: string;
     name_vi: string | null;
     notes: string | null;
@@ -161,12 +162,13 @@ export async function loadDocumentGroups(
 
     const items = new Map<string, IssuedItem>();
     const dedupKeyOf = (d: ClassifiedDoc) =>
-      d.std_key ? `s:${d.std_key}` : `l:${docUploadKey(d)}`;
+      d.std_key ? `s:${d.std_key}:${d.target_person ?? ""}` : `l:${docUploadKey(d)}`;
     for (const d of specIssued) {
       items.set(dedupKeyOf(d), {
         shareKey: docShareKey(d),
         legacyKey: docUploadKey(d),
         std_key: d.std_key,
+        target_person: d.target_person,
         name_ko: d.name_ko,
         name_vi: d.name_vi,
         notes: d.notes,
@@ -192,12 +194,13 @@ export async function loadDocumentGroups(
       for (const key of fileKeys) {
         const dt = dataTypeMap.get(key);
         if (!dt || dt.input_type !== "file" || isFormImageDataType(dt)) continue;
-        const dedupKey = `s:${key}`;
+        const dedupKey = `s:${key}:`;
         if (items.has(dedupKey)) continue;
         items.set(dedupKey, {
           shareKey: `std::${key}::none`,
           legacyKey: null,
           std_key: key,
+          target_person: null,
           name_ko: dt.label_ko,
           name_vi: dt.label_vi || null,
           notes: null,
@@ -245,6 +248,8 @@ export async function loadDocumentGroups(
   };
 
   // std_key → 업로드 출처 목록
+  // 표준 + 대상자로 묶는다 — 어머니 신분증이 아버지 칸의 "가져오기" 후보로 뜨지 않게
+  const stdTargetOf = (it: IssuedItem) => `${it.std_key}:${it.target_person ?? ""}`;
   const uploadedByStd = new Map<
     string,
     Array<{ docKey: string; fileName: string; sourceLabel: string }>
@@ -254,8 +259,8 @@ export async function loadDocumentGroups(
       if (!it.std_key) continue;
       const { key, file } = resolveFile(it);
       if (!file) continue;
-      if (!uploadedByStd.has(it.std_key)) uploadedByStd.set(it.std_key, []);
-      const list = uploadedByStd.get(it.std_key)!;
+      if (!uploadedByStd.has(stdTargetOf(it))) uploadedByStd.set(stdTargetOf(it), []);
+      const list = uploadedByStd.get(stdTargetOf(it))!;
       if (!list.some((c) => c.docKey === key))
         list.push({ docKey: key, fileName: file.file_name, sourceLabel: g.label });
     }
@@ -266,7 +271,7 @@ export async function loadDocumentGroups(
       const { key: usedKey, file } = resolveFile(it);
       const importCandidates =
         !file && it.std_key
-          ? (uploadedByStd.get(it.std_key) ?? []).filter(
+          ? (uploadedByStd.get(stdTargetOf(it)) ?? []).filter(
               (c) => c.docKey !== it.shareKey
             )
           : [];

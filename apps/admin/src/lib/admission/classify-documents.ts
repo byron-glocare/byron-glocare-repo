@@ -40,6 +40,8 @@ export type ClassifiedDoc = {
   notarization: string | null;
   required: boolean;
   std_key: string | null;
+  /** 누구의 서류인지 (self/father/mother/other) */
+  target_person: string | null;
   kind: "form" | "issued";
 };
 
@@ -101,6 +103,7 @@ export function classifyRequiredDocs(
       notarization: d.notarization ?? null,
       required: d.required !== false,
       std_key: (d.std_key ?? "").trim() || null,
+      target_person: (d.target_person ?? "").trim() || null,
       kind: isFormDoc(d, formDocKeys) ? "form" : "issued",
     };
     (item.kind === "form" ? forms : issued).push(item);
