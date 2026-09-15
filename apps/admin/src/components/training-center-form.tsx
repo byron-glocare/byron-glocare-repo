@@ -77,6 +77,7 @@ const EMPTY: TrainingCenterInput = {
   partnership_terminated: false,
   schedule_update_needed: false,
   deduct_reservation_by_default: true,
+  schedule_on_website: false,
   website_url: null,
   notes: null,
   sms_recipient: null,
@@ -247,6 +248,29 @@ export function TrainingCenterForm({
                       />
                     </FormControl>
                     <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="schedule_on_website"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-md border border-border p-3">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-sm">
+                        홈페이지에서 모집일정 확인 가능
+                      </FormLabel>
+                      <div className="text-xs text-muted-foreground">
+                        ON = 개강 일정을 자체 홈페이지에서 확인 가능 → 강의 정보
+                        문의 문자를 보낼 필요 없음
+                      </div>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
                   </FormItem>
                 )}
               />

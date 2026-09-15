@@ -71,6 +71,8 @@ export const trainingCenterSchema = z.object({
   partnership_terminated: z.boolean().default(false),
   schedule_update_needed: z.boolean().default(false),
   deduct_reservation_by_default: z.boolean().default(true),
+  // 개강 일정을 교육원 자체 홈페이지에서 확인 가능 → 강의 정보 문의 문자 불필요
+  schedule_on_website: z.boolean().default(false),
   website_url: optionalString,
   notes: optionalString,
   // 문자 발송 수신 번호 선택 — null 이면 기존 로직(흐름별 fallback) 유지

@@ -89,6 +89,7 @@ export type Database = {
           partnership_terminated: boolean;
           schedule_update_needed: boolean;
           deduct_reservation_by_default: boolean;
+          schedule_on_website: boolean;
           website_url: string | null;
           notes: string | null;
           sms_recipient: "phone" | "director" | "contact" | null;
@@ -118,6 +119,7 @@ export type Database = {
           partnership_terminated?: boolean;
           schedule_update_needed?: boolean;
           deduct_reservation_by_default?: boolean;
+          schedule_on_website?: boolean;
           website_url?: string | null;
           notes?: string | null;
           sms_recipient?: "phone" | "director" | "contact" | null;

@@ -31,6 +31,7 @@ import {
 type CenterRow = InquiryCenter & {
   region: string | null;
   website_url: string | null;
+  schedule_on_website: boolean;
   lastSentAt: string | null;
   lastClassIso: string | null;
   lastClassLabel: string | null;
@@ -178,6 +179,7 @@ export function SmsClassInquiryView({ centers }: { centers: CenterRow[] }) {
                 <TableHead>교육원</TableHead>
                 <TableHead>지역</TableHead>
                 <TableHead>홈페이지</TableHead>
+                <TableHead>모집일정 공개</TableHead>
                 <TableHead>마지막 강의</TableHead>
                 <TableHead>대표번호</TableHead>
                 <TableHead>최근 문의 발송</TableHead>
@@ -188,7 +190,7 @@ export function SmsClassInquiryView({ centers }: { centers: CenterRow[] }) {
               {filtered.length === 0 ? (
                 <TableRow>
                   <TableCell
-                    colSpan={8}
+                    colSpan={9}
                     className="py-8 text-center text-sm text-muted-foreground"
                   >
                     검색 결과가 없습니다.
@@ -225,6 +227,17 @@ export function SmsClassInquiryView({ centers }: { centers: CenterRow[] }) {
                             <ExternalLink className="size-3" />
                             열기
                           </a>
+                        ) : (
+                          <span className="text-sm text-muted-foreground">
+                            —
+                          </span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {c.schedule_on_website ? (
+                          <Badge className="border-success/20 bg-success/10 text-success">
+                            홈페이지 공개
+                          </Badge>
                         ) : (
                           <span className="text-sm text-muted-foreground">
                             —
