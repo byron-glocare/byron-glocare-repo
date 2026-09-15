@@ -56,17 +56,9 @@ update public.study_admission_specs s
  );
 
 -- 2. 작성서류 표준 연결 — std_key 비었고 A key 가 작성서류면 0058 표준으로
-drop table if exists public._form_link_0061;
-create table public._form_link_0061(a_key text primary key, std_key text not null);
-insert into public._form_link_0061 values
-  ('application_form',        'doc_form_application'),
-  ('self_intro',              'doc_form_self_intro'),
-  ('study_plan',              'doc_form_study_plan'),
-  ('financial_pledge_form',   'doc_form_financial_pledge'),
-  ('privacy_consent',         'doc_form_privacy_consent'),
-  ('academic_record_release', 'doc_form_record_release'),
-  ('recommendation_letter',   'doc_form_recommendation');
-
+--    ⚠ 매핑을 보조 테이블로 만들지 않고 문장 안(VALUES)에 둔다. Supabase 에디터는
+--      스크립트 전체를 먼저 파싱하므로 같은 스크립트에서 만든 테이블을 뒤 문장이 참조하면
+--      실행 전에 "relation does not exist" 로 죽는다(0057 에서 겪고 여기서 또 겪음).
 update public.study_admission_specs s
    set required_documents = (
          select coalesce(jsonb_agg(
@@ -75,15 +67,25 @@ update public.study_admission_specs s
                 else d.value end
            order by d.ordinality), '[]'::jsonb)
            from jsonb_array_elements(s.required_documents) with ordinality as d(value, ordinality)
-           left join public._form_link_0061 m on m.a_key = d.value->>'key'
+           left join (values
+             ('application_form',        'doc_form_application'),
+             ('self_intro',              'doc_form_self_intro'),
+             ('study_plan',              'doc_form_study_plan'),
+             ('financial_pledge_form',   'doc_form_financial_pledge'),
+             ('privacy_consent',         'doc_form_privacy_consent'),
+             ('academic_record_release', 'doc_form_record_release'),
+             ('recommendation_letter',   'doc_form_recommendation')
+           ) as m(a_key, std_key) on m.a_key = d.value->>'key'
        ),
        updated_at = timezone('utc', now())
  where exists (
    select 1 from jsonb_array_elements(s.required_documents) x
-   join public._form_link_0061 m2 on m2.a_key = x->>'key'
+   join (values
+     ('application_form'), ('self_intro'), ('study_plan'), ('financial_pledge_form'),
+     ('privacy_consent'), ('academic_record_release'), ('recommendation_letter')
+   ) as m2(a_key) on m2.a_key = x->>'key'
    where coalesce(x->>'std_key','') in ('', '__none__')
  );
-drop table public._form_link_0061;
 
 -- 3. 자동 생성된 요강↔항목 행을 비운다 (0060 재실행이 다시 만든다)
 delete from public.study_spec_doc_items;
