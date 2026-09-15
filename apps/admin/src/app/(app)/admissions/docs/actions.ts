@@ -296,3 +296,86 @@ export async function setDocItemActiveAction(
   revalidatePath("/admissions");
   return { ok: true, data: undefined };
 }
+
+// ── 미연결 요강 서류 연결 ─────────────────────────────────────────────
+//   0060 이 옮기지 못한 서류(표준 미연결)를 운영자가 서류에 붙인다.
+//   과도기라 두 곳에 같이 쓴다: 옛 required_documents JSONB 의 std_key 와
+//   새 study_spec_doc_items 행. 0060 의 변환 규칙(item_<서류키>[__대상자])과 똑같이 만든다.
+
+export async function linkSpecDocAction(input: {
+  specId: string;
+  docIndex: number;
+  /** 그 자리의 서류명 — 화면이 본 것과 DB 가 같은지 확인용 */
+  docName: string;
+  standardKey: string;
+}): Promise<ActionResult<{ itemKey: string }>> {
+  const g = await guard();
+  if (!g.ok) return g;
+  const admin = createAdminClient();
+
+  const { data: std } = await admin
+    .from("study_doc_standards")
+    .select("key, name_ko, name_vi, sort_order, is_active")
+    .eq("key", input.standardKey)
+    .maybeSingle();
+  if (!std) return { ok: false, error: "없는 서류입니다." };
+
+  const { data: spec } = await admin
+    .from("study_admission_specs")
+    .select("id, required_documents")
+    .eq("id", input.specId)
+    .maybeSingle();
+  if (!spec) return { ok: false, error: "모집요강을 찾을 수 없습니다." };
+  const docs = Array.isArray(spec.required_documents)
+    ? ([...(spec.required_documents as Record<string, unknown>[])])
+    : [];
+  const doc = docs[input.docIndex];
+  if (!doc || String(doc.name_ko ?? "").trim() !== input.docName.trim())
+    return { ok: false, error: "요강이 그새 바뀌었습니다. 화면을 새로고침하세요." };
+
+  // 1) 옛 JSONB 에 std_key
+  docs[input.docIndex] = { ...doc, std_key: std.key };
+  const { error: e1 } = await admin
+    .from("study_admission_specs")
+    .update({ required_documents: docs })
+    .eq("id", input.specId);
+  if (e1) return { ok: false, error: `요강 저장 실패: ${e1.message}` };
+
+  // 2) 항목 키 — 대상자가 있으면 대상자별 항목(없으면 만든다)
+  const target = String(doc.target_person ?? "").trim();
+  const withTarget = target !== "" && target !== "self";
+  const itemKey = withTarget ? `item_${std.key}__${target}` : `item_${std.key}`;
+  const { data: item } = await admin.from("study_doc_items").select("key").eq("key", itemKey).maybeSingle();
+  if (!item) {
+    const TL: Record<string, [string, string]> = { father: ["아버지", "bố"], mother: ["어머니", "mẹ"], other: ["기타", "khác"] };
+    const [ko, vi] = TL[target] ?? [target, target];
+    const { error: e2 } = await admin.from("study_doc_items").insert({
+      key: itemKey,
+      name_ko: withTarget ? `${std.name_ko} (${ko})` : std.name_ko,
+      name_vi: std.name_vi ? (withTarget ? `${std.name_vi} (${vi})` : std.name_vi) : null,
+      variants: [{ when: null, slots: [{ target: withTarget ? target : null, options: [{ standard: std.key }] }] }],
+      sort_order: std.sort_order,
+      is_active: std.is_active,
+    });
+    if (e2) return { ok: false, error: `항목 생성 실패: ${e2.message}` };
+  }
+
+  // 3) 새 구조의 요강↔항목 행 (있으면 그대로)
+  const notarization = String(doc.notarization ?? "").trim();
+  const { error: e3 } = await admin.from("study_spec_doc_items").upsert(
+    {
+      spec_id: input.specId,
+      item_key: itemKey,
+      required: doc.required !== false,
+      sort_order: input.docIndex + 1,
+      guide_override_ko: String(doc.notes ?? "").trim() || null,
+      overrides: notarization ? { standards: { [std.key]: { notarization } } } : {},
+    },
+    { onConflict: "spec_id,item_key", ignoreDuplicates: true }
+  );
+  if (e3) return { ok: false, error: `항목 연결 실패: ${e3.message}` };
+
+  revalidatePath("/admissions");
+  revalidatePath(`/admissions/specs/${input.specId}`);
+  return { ok: true, data: { itemKey } };
+}

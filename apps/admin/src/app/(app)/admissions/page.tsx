@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
 import { DocsManager, type DocItem, type DocStandard } from "./docs/docs-manager";
+import { UnlinkedDocsPanel, type UnlinkedDoc } from "./docs/unlinked-docs";
 import type { DocVariant } from "./docs/actions";
 
 export const dynamic = "force-dynamic";
@@ -98,6 +99,34 @@ export default async function AdmissionsPage({
   }
 
   const uniName = new Map((universities ?? []).map((u) => [u.id, u.name_ko]));
+
+  // 제출서류 탭 — 표준에 연결되지 않은 요강 서류 (0060 이 못 옮긴 것). 운영자가 붙인다.
+  const { data: specDocRows } =
+    tab === "docs"
+      ? await supabase
+          .from("study_admission_specs")
+          .select("id, university_id, term, required_documents")
+          .order("university_id")
+      : { data: null };
+  const unlinkedDocs: UnlinkedDoc[] = [];
+  for (const s of specDocRows ?? []) {
+    const arr = Array.isArray(s.required_documents) ? (s.required_documents as Record<string, unknown>[]) : [];
+    arr.forEach((d, i) => {
+      const std = String(d.std_key ?? "").trim();
+      const name = String(d.name_ko ?? "").trim();
+      if (!name || (std && std !== "__none__")) return;
+      unlinkedDocs.push({
+        specId: s.id,
+        universityName: uniName.get(s.university_id) ?? `대학 #${s.university_id}`,
+        term: s.term,
+        docIndex: i,
+        key: String(d.key ?? "other"),
+        name_ko: name,
+        notes: String(d.notes ?? "").trim() || null,
+        target_person: String(d.target_person ?? "").trim() || null,
+      });
+    });
+  }
   const nameOf = (uid: number | null) =>
     uid == null ? "공용" : uniName.get(uid) ?? `대학 #${uid}`;
 
@@ -224,7 +253,10 @@ export default async function AdmissionsPage({
 
         {/* 탭별 리스트 */}
         {tab === "docs" ? (
-          <DocsManager standards={docStandards} items={docItems} usage={docUsage} overridden={docOverridden} />
+          <div className="space-y-4">
+            <UnlinkedDocsPanel docs={unlinkedDocs} standards={docStandards} />
+            <DocsManager standards={docStandards} items={docItems} usage={docUsage} overridden={docOverridden} />
+          </div>
         ) : null}
         {tab === "forms" ? (
           <Card className="overflow-hidden p-0">

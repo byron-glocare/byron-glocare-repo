@@ -733,10 +733,10 @@ function StandardDialog({ standard, onClose }: { standard: DocStandard | null; o
   );
 }
 
-function NewStandardDialog({ open, onClose, onCreated }: { open: boolean; onClose: () => void; onCreated: (itemKey: string | null) => void }) {
+export function NewStandardDialog({ open, initialName, onClose, onCreated }: { open: boolean; initialName?: string; onClose: () => void; onCreated: (itemKey: string | null, stdKey: string) => void }) {
   const router = useRouter();
   const [pending, start] = useTransition();
-  const [d, setD] = useState<StdDraft>(() => draftFrom(null));
+  const [d, setD] = useState<StdDraft>(() => ({ ...draftFrom(null), name_ko: initialName ?? "" }));
   const set = <K extends keyof StdDraft>(k: K, v: StdDraft[K]) => setD((c) => ({ ...c, [k]: v }));
   const save = () =>
     start(async () => {
@@ -745,7 +745,7 @@ function NewStandardDialog({ open, onClose, onCreated }: { open: boolean; onClos
       toast.success("서류를 등록했습니다. 모집요강에서 바로 고를 수 있습니다.");
       setD(draftFrom(null));
       router.refresh();
-      onCreated(r.data.itemKey);
+      onCreated(r.data.itemKey, r.data.key);
       onClose();
     });
   return (
