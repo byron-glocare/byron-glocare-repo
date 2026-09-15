@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Loader2, Search, Send } from "lucide-react";
+import { ExternalLink, Loader2, Search, Send } from "lucide-react";
 
 import {
   sendClassInquirySms,
@@ -13,7 +13,7 @@ import {
   ClassInquiryDialog,
   type InquiryCenter,
 } from "@/components/sms/class-inquiry-dialog";
-import { pickCenterSmsPhone, SMS_RECIPIENT_LABEL } from "@/lib/sms-recipient";
+import { pickCenterSmsPhone } from "@/lib/sms-recipient";
 import { formatDateTime } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -30,6 +30,7 @@ import {
 
 type CenterRow = InquiryCenter & {
   region: string | null;
+  website_url: string | null;
   lastSentAt: string | null;
   lastClassIso: string | null;
   lastClassLabel: string | null;
@@ -176,8 +177,9 @@ export function SmsClassInquiryView({ centers }: { centers: CenterRow[] }) {
                 </TableHead>
                 <TableHead>교육원</TableHead>
                 <TableHead>지역</TableHead>
+                <TableHead>홈페이지</TableHead>
                 <TableHead>마지막 강의</TableHead>
-                <TableHead>수신 번호</TableHead>
+                <TableHead>대표번호</TableHead>
                 <TableHead>최근 문의 발송</TableHead>
                 <TableHead className="w-24" />
               </TableRow>
@@ -186,7 +188,7 @@ export function SmsClassInquiryView({ centers }: { centers: CenterRow[] }) {
               {filtered.length === 0 ? (
                 <TableRow>
                   <TableCell
-                    colSpan={7}
+                    colSpan={8}
                     className="py-8 text-center text-sm text-muted-foreground"
                   >
                     검색 결과가 없습니다.
@@ -194,11 +196,7 @@ export function SmsClassInquiryView({ centers }: { centers: CenterRow[] }) {
                 </TableRow>
               ) : (
                 filtered.map((c) => {
-                  const selected = pickCenterSmsPhone(c);
-                  const phone = selected?.phone ?? c.phone ?? "";
-                  const label = selected
-                    ? SMS_RECIPIENT_LABEL[selected.source]
-                    : "대표 연락처";
+                  const hasMainPhone = !!c.phone?.trim();
                   return (
                     <TableRow key={c.id}>
                       <TableCell>
@@ -216,23 +214,40 @@ export function SmsClassInquiryView({ centers }: { centers: CenterRow[] }) {
                       <TableCell className="text-sm text-muted-foreground">
                         {c.region ?? "—"}
                       </TableCell>
+                      <TableCell>
+                        {c.website_url ? (
+                          <a
+                            href={c.website_url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1 text-sm text-info hover:underline"
+                          >
+                            <ExternalLink className="size-3" />
+                            열기
+                          </a>
+                        ) : (
+                          <span className="text-sm text-muted-foreground">
+                            —
+                          </span>
+                        )}
+                      </TableCell>
                       <TableCell className="text-sm">
                         {c.lastClassLabel ?? (
                           <span className="text-warning">등록된 강의 없음</span>
                         )}
                       </TableCell>
                       <TableCell>
-                        {phone ? (
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-mono">{phone}</span>
-                            <Badge variant="outline" className="text-xs">
-                              {label}
-                            </Badge>
-                          </div>
+                        {hasMainPhone ? (
+                          <Badge className="border-success/20 bg-success/10 text-success">
+                            있음
+                          </Badge>
                         ) : (
-                          <span className="text-sm text-destructive">
-                            번호 없음
-                          </span>
+                          <Badge
+                            variant="outline"
+                            className="border-destructive/20 bg-destructive/10 text-destructive"
+                          >
+                            없음
+                          </Badge>
                         )}
                       </TableCell>
                       <TableCell className="text-sm text-muted-foreground">

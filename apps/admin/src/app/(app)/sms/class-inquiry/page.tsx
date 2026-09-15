@@ -12,7 +12,7 @@ export default async function SmsClassInquiryPage() {
       supabase
         .from("training_centers")
         .select(
-          "id, name, region, phone, director_phone, contact_phone, sms_recipient"
+          "id, name, region, phone, director_phone, contact_phone, sms_recipient, website_url"
         )
         .eq("partnership_terminated", false)
         .order("name"),
