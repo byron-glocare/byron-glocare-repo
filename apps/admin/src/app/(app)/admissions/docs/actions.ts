@@ -16,6 +16,7 @@ import { revalidatePath } from "next/cache";
 
 import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { isGlocareAdmin } from "@/lib/admin-guard";
+import { BASE_NATIONALITY, NOTARIZATIONS } from "./constants";
 
 // ── 타입 (클라이언트와 공유) ────────────────────────────────────────────
 
@@ -32,16 +33,6 @@ export type DocVariant = {
   slots: DocSlot[];
 };
 
-export const BASE_NATIONALITY = "vn";
-
-export const NOTARIZATIONS = [
-  "none",
-  "translation_notarization",
-  "consul",
-  "consul_for_vietnam",
-  "apostille",
-  "apostille_or_consul",
-] as const;
 
 export type DocStandardInput = {
   key?: string | null; // 없으면 새 서류 (+ 서류 1개짜리 항목 자동 생성)

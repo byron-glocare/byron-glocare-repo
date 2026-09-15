@@ -31,7 +31,6 @@ import {
 } from "@/components/ui/dialog";
 
 import {
-  BASE_NATIONALITY,
   saveDocItemAction,
   saveDocStandardAction,
   setDocItemActiveAction,
@@ -39,6 +38,7 @@ import {
   type DocSlot,
   type DocOption,
 } from "./actions";
+import { BASE_NATIONALITY } from "./constants";
 
 // ── 데이터 타입 (page.tsx 가 넘긴다) ─────────────────────────────────
 
