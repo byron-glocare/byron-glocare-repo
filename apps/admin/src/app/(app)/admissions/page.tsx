@@ -71,13 +71,11 @@ export default async function AdmissionsPage({
 
   // 제출서류 탭 — 서류 카탈로그 · 서류 항목 · 요강별 사용 수 (0060)
   const [{ data: docStdRows }, { data: docItemRows }, { data: specItemRows }] =
-    tab === "docs"
-      ? await Promise.all([
+    await Promise.all([
           supabase.from("study_doc_standards").select("*").order("sort_order").order("name_ko"),
           supabase.from("study_doc_items").select("*").order("sort_order").order("name_ko"),
           supabase.from("study_spec_doc_items").select("item_key, guide_override_ko, guide_override_vi, overrides"),
-        ])
-      : [{ data: null }, { data: null }, { data: null }];
+        ]);
   const docStandards: DocStandard[] = (docStdRows ?? []).map((r) => ({
     key: r.key, name_ko: r.name_ko, name_vi: r.name_vi, is_form_doc: r.is_form_doc,
     issuing_country: r.issuing_country, issuer_ko: r.issuer_ko, issuer_vi: r.issuer_vi,
@@ -89,6 +87,12 @@ export default async function AdmissionsPage({
     key: r.key, name_ko: r.name_ko, name_vi: r.name_vi, guide_ko: r.guide_ko, guide_vi: r.guide_vi,
     variants: (Array.isArray(r.variants) ? r.variants : []) as DocVariant[], is_active: r.is_active,
   }));
+  // 작성서류는 이 탭에서 다루지 않는다(0062 로 지웠고, 남아 있어도 숨긴다) — 작성서류 탭 몫.
+  const formStdKeys = new Set(docStandards.filter((s) => s.is_form_doc).map((s) => s.key));
+  const docStandardsShown = docStandards.filter((s) => !s.is_form_doc);
+  const docItemsShown = docItems.filter(
+    (i) => !i.variants.some((v) => (v.slots ?? []).some((sl) => (sl.options ?? []).some((o) => !!o.standard && formStdKeys.has(o.standard))))
+  );
   const docUsage: Record<string, number> = {};
   const docOverridden: Record<string, number> = {};
   for (const r of specItemRows ?? []) {
@@ -146,11 +150,11 @@ export default async function AdmissionsPage({
   const counts = {
     forms: (forms ?? []).length,
     guidelines: (specs ?? []).length,
-    docs: docItems.length,
+    docs: docItemsShown.length,
   };
 
   const tabs: Array<{ key: Tab; label: string; count: number }> = [
-    { key: "forms", label: "작성 서류 양식", count: counts.forms },
+    { key: "forms", label: "작성서류", count: counts.forms },
     { key: "docs", label: "제출서류", count: counts.docs },
     { key: "guidelines", label: "모집요강 서류", count: counts.guidelines },
   ];
@@ -168,7 +172,7 @@ export default async function AdmissionsPage({
     <>
       <PageHeader
         title="입학서류"
-        description="작성 서류 양식 · 제출서류 · 모집요강 서류"
+        description="작성서류 · 제출서류 · 모집요강 서류"
         breadcrumbs={[{ label: "입학서류" }]}
         actions={
           tab === "docs" ? null : tab === "forms" ? (
@@ -254,8 +258,8 @@ export default async function AdmissionsPage({
         {/* 탭별 리스트 */}
         {tab === "docs" ? (
           <div className="space-y-4">
-            <UnlinkedDocsPanel docs={unlinkedDocs} standards={docStandards} />
-            <DocsManager standards={docStandards} items={docItems} usage={docUsage} overridden={docOverridden} />
+            <UnlinkedDocsPanel docs={unlinkedDocs} standards={docStandardsShown} />
+            <DocsManager standards={docStandardsShown} items={docItemsShown} usage={docUsage} overridden={docOverridden} />
           </div>
         ) : null}
         {tab === "forms" ? (
