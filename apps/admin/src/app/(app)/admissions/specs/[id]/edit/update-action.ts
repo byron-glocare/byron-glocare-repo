@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import { createClient, createAdminClient } from "@/lib/supabase/server";
 import type { StudyAdmissionSpecUpdate } from "@/types/database";
+import { saveSpecDocuments, type LegacyDoc, type SpecDocItemRow } from "@/lib/admission/spec-doc-items";
 
 const PROGRAM_TYPES = [
   "language_program",
@@ -93,6 +94,25 @@ export async function updateSpecAction(
         },
       };
     }
+  }
+
+  // 제출서류 — 항목 행이 정본. 옛 JSONB 발급서류 줄은 항목에서 다시 그린다.
+  //   (spec_doc_items 가 없는 옛 폼이면 JSONB 를 그대로 둔다.)
+  const rowsRaw = formData.get("spec_doc_items");
+  if (typeof rowsRaw === "string" && rowsRaw.trim() !== "") {
+    let rows: SpecDocItemRow[];
+    try {
+      rows = JSON.parse(rowsRaw);
+      if (!Array.isArray(rows)) throw new Error("배열이 아닙니다");
+    } catch (e) {
+      return { fieldErrors: { spec_doc_items: `항목 JSON parse 실패: ${e instanceof Error ? e.message : String(e)}` } };
+    }
+    const saved = await saveSpecDocuments(createAdminClient(), specId, {
+      rows,
+      legacyDocs: (Array.isArray(jsonAreas.required_documents) ? jsonAreas.required_documents : []) as LegacyDoc[],
+    });
+    if (!saved.ok) return { error: saved.error };
+    jsonAreas.required_documents = saved.required_documents;
   }
 
   // 온라인 접수 + 가이드(새 파일 업로드 시에만 교체)

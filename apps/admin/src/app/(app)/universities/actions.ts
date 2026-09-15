@@ -14,6 +14,7 @@ import {
   ensureUniversityAndDepartments,
   type SpecDepartment,
 } from "@/lib/admission/ensure-records";
+import { syncSpecDocItemsFromLegacy } from "@/lib/admission/spec-doc-items";
 
 export type ActionResult<T = unknown> =
   | { ok: true; data: T }
@@ -174,6 +175,9 @@ export async function createSpecFromExtraction(input: {
   if (error || !inserted) {
     return { ok: false, error: error?.message ?? "모집요강 저장 실패" };
   }
+
+  // AI 가 표준에 연결한 발급서류 → 요강↔항목 행
+  await syncSpecDocItemsFromLegacy(supabase, inserted.id as string);
 
   // 학과 active=false 자동 생성 (실패해도 spec 은 유지)
   await ensureUniversityAndDepartments({

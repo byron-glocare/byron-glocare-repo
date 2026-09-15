@@ -8,6 +8,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
+import { loadFormDocKeys } from "@/lib/admission/form-doc-keys";
+import { loadDocCatalog, loadSpecDocItemRows, splitLegacyDocs, type LegacyDoc } from "@/lib/admission/spec-doc-items";
 import { PageHeader } from "@/components/page-header";
 
 import {
@@ -44,6 +46,22 @@ export default async function EditAdmissionPage({
 
   if (!spec) notFound();
 
+  // 제출서류 정본은 요강↔항목 행. 옛 JSONB 는 작성서류·미연결 줄만 옛 필드로 보낸다.
+  const [docItemRows, docCatalog, formDocKeys] = await Promise.all([
+    loadSpecDocItemRows(supabase, id),
+    loadDocCatalog(supabase),
+    loadFormDocKeys(supabase),
+  ]);
+  const legacyAll = (Array.isArray(spec.required_documents) ? spec.required_documents : []) as LegacyDoc[];
+  const { keep: legacyDocs } = splitLegacyDocs(legacyAll, formDocKeys);
+  // 옛 필드의 "서류 종류" 선택지: 작성서류(데이터 탭) + 발급서류(서류 카탈로그)
+  const docTypesMerged = [
+    ...(docTypes ?? []).filter((t) => t.is_form_doc),
+    ...docCatalog.standards
+      .filter((s) => s.is_active)
+      .map((s) => ({ key: s.key, label_ko: s.name_ko, label_vi: s.name_vi, aliases: [] as string[], is_form_doc: false })),
+  ];
+
   return (
     <>
       <PageHeader
@@ -62,7 +80,10 @@ export default async function EditAdmissionPage({
         <EditSpecForm
           spec={spec as EditableSpec}
           universities={(universities ?? []) as UniversityOption[]}
-          docTypes={docTypes ?? []}
+          docTypes={docTypesMerged}
+          docItemRows={docItemRows}
+          docCatalog={docCatalog}
+          legacyDocs={legacyDocs as never}
         />
       </div>
     </>

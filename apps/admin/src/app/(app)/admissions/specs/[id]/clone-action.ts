@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import { createClient, createAdminClient } from "@/lib/supabase/server";
 import type { Database } from "@/types/database";
+import { loadSpecDocItemRows, syncSpecDocItemsFromLegacy, writeSpecDocItemRows } from "@/lib/admission/spec-doc-items";
 
 type SpecInsert = Database["public"]["Tables"]["study_admission_specs"]["Insert"];
 
@@ -103,6 +104,12 @@ export async function cloneSpecToTermAction(
     .select("id")
     .single();
   if (error) return { ok: false, error: `복제 실패: ${error.message}` };
+
+  // 요강↔항목 행도 그대로 복제(덮어쓰기 설정 포함). 원본에 행이 없던 연결 서류는 JSONB 에서 만든다.
+  const srcRows = await loadSpecDocItemRows(supabase, specId);
+  const rowErr = await writeSpecDocItemRows(supabase, created.id, srcRows);
+  if (rowErr) return { ok: false, error: rowErr };
+  await syncSpecDocItemsFromLegacy(supabase, created.id);
 
   revalidatePath("/admissions");
   revalidatePath(`/admissions/${src.university_id}`);

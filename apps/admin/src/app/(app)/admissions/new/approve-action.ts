@@ -10,6 +10,7 @@ import {
   type SpecDepartment,
 } from "@/lib/admission/ensure-records";
 import { programTypeLabel } from "@/lib/admission/program-type";
+import { syncSpecDocItemsFromLegacy } from "@/lib/admission/spec-doc-items";
 
 const PROGRAM_TYPES = [
   "language_program",
@@ -246,6 +247,9 @@ export async function approveSpecAction(
       error: `DB INSERT 실패: ${insertErr?.message ?? "unknown"}`,
     };
   }
+
+  // 연결된 발급서류 → 요강↔항목 행 (미연결은 제출서류 탭의 연결 UI 몫)
+  await syncSpecDocItemsFromLegacy(supabase, inserted.id);
 
   revalidatePath("/admissions");
   if (ensured.result.createdUniversity) revalidatePath("/universities");

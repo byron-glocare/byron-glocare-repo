@@ -15,9 +15,16 @@ import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import {
   classifyRequiredDocs,
+  isFormDoc,
   type RequiredDoc as ClassifyDoc,
 } from "@/lib/admission/classify-documents";
 import { loadFormDocKeys } from "@/lib/admission/form-doc-keys";
+import {
+  expandItem,
+  loadDocCatalog,
+  loadSpecDocItemRows,
+  TARGET_LABEL_KO,
+} from "@/lib/admission/spec-doc-items";
 import {
   formatAgeRequirement,
   type AgeRequirementLike,
@@ -120,7 +127,12 @@ export default async function AdmissionDetailPage({
 }) {
   const { id } = await params;
   const supabase = await createClient();
-  const formDocKeys = await loadFormDocKeys(supabase);
+  const [formDocKeys, docItemRows, docCatalog] = await Promise.all([
+    loadFormDocKeys(supabase),
+    loadSpecDocItemRows(supabase, id),
+    loadDocCatalog(supabase),
+  ]);
+  const docItemByKey = new Map(docCatalog.items.map((i) => [i.key, i]));
 
   const { data: spec, error } = await supabase
     .from("study_admission_specs")
@@ -180,8 +192,13 @@ export default async function AdmissionDetailPage({
     return (formFiles ?? []).find((f) => nameMatches(f, d.name_ko));
   };
 
+  // 발급서류의 정본은 요강↔항목 행. 옛 JSONB 의 발급 줄은 아직 표준에 안 붙은 것만 따로 보여준다.
+  const unlinkedIssued = (Array.isArray(spec.required_documents) ? (spec.required_documents as ClassifyDoc[]) : []).filter((d) => {
+    const std = String(d.std_key ?? "").trim();
+    return !isFormDoc(d, formDocKeys) && (std === "" || std === "__none__");
+  });
   // 제출서류 = required_documents → 직접작성/발급 분류
-  const { forms: formDocs, issued: issuedDocs } = classifyRequiredDocs(
+  const { forms: formDocs } = classifyRequiredDocs(
     (Array.isArray(spec.required_documents)
       ? spec.required_documents
       : []) as ClassifyDoc[],
@@ -392,7 +409,7 @@ export default async function AdmissionDetailPage({
         {/* 제출 서류 — 직접작성(학교 양식) / 발급 서류 분류 + 양식 업로드 여부 */}
         <Card className="p-6 space-y-5">
           <h2 className="text-base font-semibold">
-            제출 서류 ({formDocs.length + issuedDocs.length})
+            제출 서류 ({formDocs.length + docItemRows.length + unlinkedIssued.length})
           </h2>
 
           {/* 1) 직접작성 서류 — 입학서류 양식 매핑·업로드 여부·편집 링크 */}
@@ -490,61 +507,95 @@ export default async function AdmissionDetailPage({
             )}
           </section>
 
-          {/* 2) 발급 서류 — 학생이 기관에서 발급받아 제출 */}
+          {/* 2) 발급 서류 — 요강이 고른 항목(정본). 서류·조건은 표준을 따르고 따로 설정한 것만 다르다. */}
           <section>
             <div className="mb-2 flex items-center gap-2">
-              <h3 className="text-sm font-semibold">발급 서류</h3>
+              <h3 className="text-sm font-semibold">발급 서류 (항목)</h3>
               <Badge variant="secondary" className="text-[10px]">
-                {issuedDocs.length}
+                {docItemRows.length}
               </Badge>
             </div>
-            {issuedDocs.length === 0 ? (
-              <p className="text-xs text-muted-foreground">발급 서류가 없습니다.</p>
+            {docItemRows.length === 0 ? (
+              <p className="text-xs text-muted-foreground">고른 항목이 없습니다. 편집에서 항목을 추가하세요.</p>
             ) : (
               <ul className="space-y-2 text-sm">
-                {issuedDocs.map((doc, i) => (
-                  <li
-                    key={`issued-${i}`}
-                    className="flex items-start gap-3 rounded-md border p-3"
-                  >
-                    <div className="flex-1">
-                      <div className="font-medium">
-                        {doc.name_ko}
-                        {doc.required === false ? (
-                          <Badge variant="outline" className="ml-2 text-[10px]">
-                            선택
-                          </Badge>
+                {docItemRows.map((r) => {
+                  const item = docItemByKey.get(r.item_key);
+                  const slots = item ? expandItem(item, docCatalog) : [];
+                  const ov = r.overrides?.standards ?? {};
+                  const guide = r.guide_override_ko?.trim() || item?.guide_ko?.trim() || null;
+                  return (
+                    <li key={r.item_key} className="rounded-md border p-3">
+                      <div className="flex flex-wrap items-center gap-2 font-medium">
+                        {item?.name_ko ?? r.item_key}
+                        {r.required === false ? (
+                          <Badge variant="outline" className="text-[10px]">선택</Badge>
                         ) : (
-                          <Badge variant="secondary" className="ml-2 text-[10px]">
-                            필수
-                          </Badge>
+                          <Badge variant="secondary" className="text-[10px]">필수</Badge>
                         )}
-                        {doc.std_key ? (
-                          <Badge
-                            variant="outline"
-                            className="ml-2 text-[10px] text-primary"
-                          >
-                            표준
-                          </Badge>
+                        {r.guide_override_ko || Object.keys(ov).length > 0 ? (
+                          <Badge variant="outline" className="text-[10px] text-primary">따로 설정</Badge>
                         ) : null}
+                        {!item ? <Badge variant="outline" className="text-[10px] text-destructive">없는 항목</Badge> : null}
                       </div>
-                      {doc.notarization && doc.notarization !== "none" ? (
-                        <div className="mt-0.5 text-xs text-muted-foreground">
-                          인증:{" "}
-                          {NOTARIZATION_LABEL[doc.notarization] ?? doc.notarization}
-                        </div>
+                      {slots.length > 0 ? (
+                        <ul className="mt-1 space-y-0.5 text-xs text-muted-foreground">
+                          {slots.map((sl, i) => {
+                            const o = ov[sl.standard.key] ?? {};
+                            const nota = o.notarization ?? sl.standard.notarization;
+                            const validity = o.validity_days ?? sl.standard.validity_days;
+                            const within = o.issued_within_days ?? sl.standard.issued_within_days;
+                            const original = o.original_required ?? sl.standard.original_required;
+                            const conds = [
+                              nota && nota !== "none" ? `인증: ${NOTARIZATION_LABEL[nota] ?? nota}` : null,
+                              validity != null ? `유효기간 ${validity}일` : null,
+                              within != null ? `발급 후 ${within}일 이내` : null,
+                              original === true ? "원본" : null,
+                            ].filter(Boolean);
+                            return (
+                              <li key={i}>
+                                {sl.standard.name_ko}
+                                {sl.target ? ` - ${TARGET_LABEL_KO[sl.target] ?? sl.target}` : ""}
+                                {sl.alternatives.length ? ` (또는 ${sl.alternatives.map((a) => a.name_ko).join(", ")})` : ""}
+                                {!sl.required ? " · 선택" : ""}
+                                {conds.length ? ` · ${conds.join(" · ")}` : ""}
+                              </li>
+                            );
+                          })}
+                        </ul>
                       ) : null}
-                      {doc.notes ? (
-                        <div className="mt-1 whitespace-pre-wrap text-xs text-muted-foreground">
-                          {doc.notes}
-                        </div>
+                      {guide ? (
+                        <div className="mt-1 whitespace-pre-wrap text-xs text-muted-foreground">{guide}</div>
                       ) : null}
-                    </div>
-                  </li>
-                ))}
+                    </li>
+                  );
+                })}
               </ul>
             )}
           </section>
+
+          {/* 3) 표준에 연결되지 않은 발급 서류 — 연결 UI 에서 붙이면 위 항목으로 올라간다 */}
+          {unlinkedIssued.length > 0 ? (
+            <section>
+              <div className="mb-2 flex items-center gap-2">
+                <h3 className="text-sm font-semibold">표준에 연결되지 않은 서류</h3>
+                <Badge variant="outline" className="text-[10px] text-amber-600">
+                  {unlinkedIssued.length}
+                </Badge>
+                <Link href="/admissions?tab=docs" className="text-xs text-primary underline">
+                  제출서류 탭에서 연결
+                </Link>
+              </div>
+              <ul className="space-y-1 text-sm">
+                {unlinkedIssued.map((doc, i) => (
+                  <li key={`unlinked-${i}`} className="rounded-md border border-dashed px-3 py-2">
+                    {doc.name_ko}
+                    {doc.notes ? <span className="ml-2 text-xs text-muted-foreground">{doc.notes}</span> : null}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
         </Card>
 
         {/* 자격 */}

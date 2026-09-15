@@ -14,6 +14,8 @@ import {
   RequiredDocumentsField,
   type RequiredDocument,
 } from "@/components/admission/required-documents-field";
+import { SpecDocItemsField } from "@/components/admission/spec-doc-items-field";
+import type { DocCatalog, SpecDocItemRow } from "@/lib/admission/spec-doc-items";
 import {
   ScholarshipsField,
   type Scholarship,
@@ -85,6 +87,9 @@ export function EditSpecForm({
   spec,
   universities,
   docTypes = [],
+  docItemRows = [],
+  docCatalog = { items: [], standards: [] },
+  legacyDocs,
 }: {
   spec: EditableSpec;
   universities: UniversityOption[];
@@ -93,7 +98,13 @@ export function EditSpecForm({
     label_ko: string;
     label_vi?: string | null;
     aliases?: string[] | null;
+    is_form_doc?: boolean | null;
   }>;
+  /** 이 요강이 고른 서류 항목 (study_spec_doc_items) — 발급서류의 정본 */
+  docItemRows?: SpecDocItemRow[];
+  docCatalog?: DocCatalog;
+  /** 옛 JSONB 중 항목으로 안 옮긴 줄(작성서류·미연결)만. 없으면 JSONB 전체. */
+  legacyDocs?: RequiredDocument[];
 }) {
   const bound = updateSpecAction.bind(null, spec.id);
   const [state, action, pending] = useActionState<UpdateSpecState, FormData>(
@@ -136,10 +147,11 @@ export function EditSpecForm({
   );
   const initialDocuments: RequiredDocument[] = useMemo(
     () =>
-      Array.isArray(spec.required_documents)
+      legacyDocs ??
+      (Array.isArray(spec.required_documents)
         ? (spec.required_documents as RequiredDocument[])
-        : [],
-    [spec.required_documents]
+        : []),
+    [spec.required_documents, legacyDocs]
   );
   const initialScholarships: Scholarship[] = useMemo(
     () =>
@@ -360,11 +372,21 @@ export function EditSpecForm({
           />
         </Section>
 
-        {/* 제출 서류 */}
+        {/* 제출 서류 — 발급서류는 항목으로 고른다(정본). 작성서류·미연결 줄은 옛 필드. */}
         <Section
-          title={`제출 서류 (${initialDocuments.length})`}
+          title={`제출 서류 — 발급 (항목 ${docItemRows.length})`}
+          open
+          error={fieldErr("spec_doc_items")}
+        >
+          <SpecDocItemsField name="spec_doc_items" initial={docItemRows} catalog={docCatalog} />
+        </Section>
+        <Section
+          title={`제출 서류 — 작성서류·미연결 (${initialDocuments.length})`}
           error={fieldErr("spec_required_documents")}
         >
+          <p className="mb-2 text-xs text-muted-foreground">
+            작성서류(학교 양식)와 아직 표준에 연결되지 않은 서류입니다. 미연결 서류에 서류 종류를 고르면 저장할 때 위 항목으로 옮겨집니다.
+          </p>
           <RequiredDocumentsField
             name="spec_required_documents"
             initial={initialDocuments}
