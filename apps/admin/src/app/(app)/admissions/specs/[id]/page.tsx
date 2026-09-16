@@ -151,7 +151,7 @@ export default async function AdmissionDetailPage({
   // 이 대학의 현행 작성서류 양식 파일 (직접작성 서류 업로드 여부·편집 링크용)
   const { data: formFiles } = await supabase
     .from("study_admission_form_files")
-    .select("id, key, name_ko, file_name, file_url, department_name")
+    .select("id, key, name_ko, file_name, file_url, department_name, applies_to_terms, applies_to_department_ids")
     .eq("university_id", spec.university_id)
     .eq("is_current", true);
   const normFormName = (s: string) =>
@@ -163,7 +163,18 @@ export default async function AdmissionDetailPage({
 
   type FormFile = NonNullable<typeof formFiles>[number];
   const byKey = new Map<string, FormFile[]>();
-  for (const f of formFiles ?? []) {
+  // 이 요강의 학기에 적용되는 양식만 — 적용 학기가 비어 있으면 전체 학기.
+  //   (군장대처럼 어학연수·일반학과 양식이 한 대학에 같이 있을 때 남의 양식을 집지 않게)
+  const specDeptNames = new Set(
+    (Array.isArray(spec.departments) ? (spec.departments as { name?: string }[]) : [])
+      .map((d) => (d.name ?? "").trim())
+      .filter(Boolean)
+  );
+  const termOk = (f: FormFile) => {
+    const terms = (f.applies_to_terms ?? []) as string[];
+    return terms.length === 0 || terms.includes(spec.term);
+  };
+  for (const f of (formFiles ?? []).filter(termOk)) {
     const list = byKey.get(f.key) ?? [];
     list.push(f);
     byKey.set(f.key, list);
@@ -183,6 +194,7 @@ export default async function AdmissionDetailPage({
       // 같은 종류가 여럿이면(학과별 양식 등) 이름 → 대학 전체 순으로 고른다.
       return (
         sameKey.find((f) => nameMatches(f, d.name_ko)) ??
+        sameKey.find((f) => !!f.department_name && specDeptNames.has(f.department_name)) ??
         sameKey.find((f) => f.department_name === null) ??
         sameKey[0]
       );
