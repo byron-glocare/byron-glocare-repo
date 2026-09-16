@@ -1267,6 +1267,130 @@ export type Database = {
           }
         ];
       };
+      study_doc_standards: {
+        Row: {
+          key: string;
+          name_ko: string;
+          name_vi: string | null;
+          is_form_doc: boolean;
+          issuing_country: string | null;
+          issuer_ko: string | null;
+          issuer_vi: string | null;
+          validity_days: number | null;
+          notarization: string | null;
+          original_required: boolean | null;
+          issued_within_days: number | null;
+          guide_ko: string | null;
+          guide_vi: string | null;
+          aliases: string[];
+          data_type_keys: string[];
+          sort_order: number;
+          is_active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["study_doc_standards"]["Row"]> & { key: string; name_ko: string };
+        Update: Partial<Database["public"]["Tables"]["study_doc_standards"]["Row"]>;
+        Relationships: [];
+      };
+      study_doc_items: {
+        Row: {
+          key: string;
+          name_ko: string;
+          name_vi: string | null;
+          guide_ko: string | null;
+          guide_vi: string | null;
+          /** JSONB — DocVariant[] */
+          variants: unknown;
+          sort_order: number;
+          is_active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["study_doc_items"]["Row"]> & { key: string; name_ko: string };
+        Update: Partial<Database["public"]["Tables"]["study_doc_items"]["Row"]>;
+        Relationships: [];
+      };
+      study_spec_doc_items: {
+        Row: {
+          id: string;
+          spec_id: string;
+          spec_department_id: string | null;
+          item_key: string;
+          required: boolean;
+          sort_order: number;
+          guide_override_ko: string | null;
+          guide_override_vi: string | null;
+          /** JSONB — { standards: { [key]: {...} } } */
+          overrides: unknown;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["study_spec_doc_items"]["Row"]> & { spec_id: string; item_key: string };
+        Update: Partial<Database["public"]["Tables"]["study_spec_doc_items"]["Row"]>;
+        Relationships: [];
+      };
+      study_spec_departments: {
+        Row: {
+          id: string;
+          spec_id: string;
+          department_id: number;
+          kind: "language" | "regular";
+          /** JSONB — 옛 departments JSONB 항목 (faculty·track·years·capacity·korean_min_topik·notes …) */
+          info: unknown;
+          /** JSONB — Tuition */
+          tuition: unknown;
+          /** JSONB — Scholarship[] */
+          scholarships: unknown;
+          /** JSONB — Eligibility. null = 요강 공통 */
+          eligibility: unknown | null;
+          is_active: boolean;
+          sort_order: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          spec_id: string;
+          department_id: number;
+          kind: "language" | "regular";
+          info?: unknown;
+          tuition?: unknown;
+          scholarships?: unknown;
+          eligibility?: unknown | null;
+          is_active?: boolean;
+          sort_order?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["study_spec_departments"]["Insert"]>;
+        Relationships: [];
+      };
+      study_spec_terms: {
+        Row: {
+          id: string;
+          spec_id: string;
+          term: string;
+          /** JSONB — Schedule */
+          schedule: unknown;
+          notes: string | null;
+          sort_order: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          spec_id: string;
+          term: string;
+          schedule?: unknown;
+          notes?: string | null;
+          sort_order?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["study_spec_terms"]["Insert"]>;
+        Relationships: [];
+      };
     };
     Views: { [_ in never]: never };
     Functions: { [_ in never]: never };

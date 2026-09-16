@@ -1303,6 +1303,7 @@ export type Database = {
           selected_language: string | null;
           target_department_id: number | null;
           target_department_label: string | null;
+          term: string | null;
           status: string;
           created_at: string;
           updated_at: string;
@@ -1315,6 +1316,7 @@ export type Database = {
           selected_language?: string | null;
           target_department_id?: number | null;
           target_department_label?: string | null;
+          term?: string | null;
           status?: string;
           created_at?: string;
           updated_at?: string;
@@ -1810,6 +1812,7 @@ export type Database = {
           required_data_type_keys: string[];
           applies_to_terms: string[];
           applies_to_department_ids: number[];
+          spec_department_id: string | null;
           essay_questions: Array<{
             question_ko: string;
             question_vi?: string;
@@ -1879,6 +1882,7 @@ export type Database = {
           required_data_type_keys?: string[];
           applies_to_terms?: string[];
           applies_to_department_ids?: number[];
+          spec_department_id?: string | null;
           essay_questions?: Array<{
             question_ko: string;
             question_vi?: string;
@@ -2240,6 +2244,7 @@ export type Database = {
         Row: {
           id: string;
           spec_id: string;
+          spec_department_id: string | null;
           item_key: string;
           required: boolean;
           sort_order: number;
@@ -2253,6 +2258,7 @@ export type Database = {
         Insert: {
           id?: string;
           spec_id: string;
+          spec_department_id?: string | null;
           item_key: string;
           required?: boolean;
           sort_order?: number;
@@ -2277,6 +2283,67 @@ export type Database = {
             referencedColumns: ["key"];
           }
         ];
+      };
+      study_spec_departments: {
+        Row: {
+          id: string;
+          spec_id: string;
+          department_id: number;
+          kind: "language" | "regular";
+          /** JSONB — 옛 departments JSONB 항목 (faculty·track·years·capacity·korean_min_topik·notes …) */
+          info: unknown;
+          /** JSONB — Tuition */
+          tuition: unknown;
+          /** JSONB — Scholarship[] */
+          scholarships: unknown;
+          /** JSONB — Eligibility. null = 요강 공통 */
+          eligibility: unknown | null;
+          is_active: boolean;
+          sort_order: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          spec_id: string;
+          department_id: number;
+          kind: "language" | "regular";
+          info?: unknown;
+          tuition?: unknown;
+          scholarships?: unknown;
+          eligibility?: unknown | null;
+          is_active?: boolean;
+          sort_order?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["study_spec_departments"]["Insert"]>;
+        Relationships: [];
+      };
+      study_spec_terms: {
+        Row: {
+          id: string;
+          spec_id: string;
+          term: string;
+          /** JSONB — Schedule */
+          schedule: unknown;
+          notes: string | null;
+          sort_order: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          spec_id: string;
+          term: string;
+          schedule?: unknown;
+          notes?: string | null;
+          sort_order?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["study_spec_terms"]["Insert"]>;
+        Relationships: [];
       };
     };
     Views: {

@@ -249,6 +249,8 @@ export type AdmissionFormFileKey =
   | "other";
 
 export type StudyAdmissionFormFile = {
+  /** 0067: 이 양식이 속한 요강 학과 (study_spec_departments.id). 옛 행은 null. */
+  spec_department_id?: string | null;
   id: string;
   university_id: number;
   department_name: string | null;
@@ -502,6 +504,8 @@ export type StudyOffering = {
 // 6. study_applications
 // =============================================================================
 export type StudyApplication = {
+  /** 0067: 지원 학기 */
+  term?: string | null;
   id: string;
   student_id: string;
   admission_spec_id: string;
