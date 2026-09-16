@@ -10,6 +10,10 @@ import { notFound } from "next/navigation";
 
 import { verifyCenterSession } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
+import {
+  formFileAppliesTo,
+  loadApplicationDepartments,
+} from "@/lib/admission/spec-documents";
 import { getLocale, tr } from "@/lib/i18n";
 import { EssaysClient } from "./essays-client";
 import type { EssaySection } from "@/types/study";
@@ -34,7 +38,7 @@ export default async function StudentEssaysPage({
   // 지원 의향 → spec → university → 양식 (essay_questions 있는 것만)
   const { data: apps } = await supabase
     .from("study_applications")
-    .select("id, admission_spec_id, target_department_label")
+    .select("id, admission_spec_id, target_department_id, target_department_label")
     .eq("student_id", id);
 
   type FormWithQuestions = {
@@ -52,10 +56,14 @@ export default async function StudentEssaysPage({
 
   if ((apps ?? []).length > 0) {
     const specIds = (apps ?? []).map((a) => a.admission_spec_id);
-    const { data: specs } = await supabase
-      .from("study_admission_specs")
-      .select("id, university_id")
-      .in("id", specIds);
+    const [{ data: specs }, { deptByApp }] = await Promise.all([
+      supabase
+        .from("study_admission_specs")
+        .select("id, university_id")
+        .in("id", specIds),
+      // 0067: 지원 → 요강 학과 (양식은 spec_department_id 로 고른다)
+      loadApplicationDepartments(supabase, apps ?? []),
+    ]);
 
     const specToUni = new Map(
       (specs ?? []).map((s) => [s.id, s.university_id])
@@ -73,7 +81,7 @@ export default async function StudentEssaysPage({
         supabase
           .from("study_admission_form_files")
           .select(
-            "id, university_id, department_name, name_ko, is_essay, essay_sections"
+            "id, university_id, spec_department_id, department_name, name_ko, is_essay, essay_sections"
           )
           .in("university_id", universityIds)
           .eq("is_current", true),
@@ -89,14 +97,13 @@ export default async function StudentEssaysPage({
         const uniId = specToUni.get(app.admission_spec_id);
         if (uniId == null) continue;
         const applicable = (formRows ?? []).filter((f) => {
-          if (f.university_id !== uniId) return false;
           const secs = (f.essay_sections ?? []) as EssaySection[];
           if (!f.is_essay || secs.length === 0) return false; // 서술형 문서만
-          if (f.department_name === null) return true;
-          return (
-            app.target_department_label &&
-            f.department_name === app.target_department_label
-          );
+          return formFileAppliesTo(f, {
+            dept: deptByApp.get(app.id),
+            universityId: uniId,
+            departmentLabel: app.target_department_label,
+          });
         });
         for (const f of applicable) {
           const existing = collectedForms.get(f.id);

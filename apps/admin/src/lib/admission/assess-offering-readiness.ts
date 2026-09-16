@@ -1,30 +1,20 @@
 /**
- * U5: 모집(offering) 오픈(판매) 준비도 평가 + 승인 일관화 게이트.
+ * 모집(offering) 오픈 준비도 평가 게이트 (0067 학과 모델).
  *
- *   플로우: 대학 → 모집요강(approved) → 일정/서류 → 오픈/판매(offering published).
- *   offering 을 published 로 올리기 전에 아래를 점검한다.
+ *   모집 단위 = (대학, 학과, 학기) = study_offerings 행. 대학당 요강은 1개(status <> archived)이고
+ *   학과는 study_spec_departments, 학기 일정은 study_spec_terms 에 있다.
  *
- *   - blocking(게이트): 해당 대학·학기에 '승인된 모집요강'이 없으면 노출 불가.
- *     (= 승인 상태 일관화 — 노출되는 모집은 반드시 승인된 요강에 근거)
- *   - warnings(경고): 일정/학비 미입력, 직접작성 양식 미업로드, 발급서류 미등록.
- *     노출은 허용하되 운영자에게 미완료 항목을 알린다.
+ *   - blocking(게이트): 요강이 없거나, 학과가 요강에 없거나, 요강 학과가 비활성이면 오픈 불가.
+ *   - warnings(경고): 학기 일정 없음 / 발급서류 항목 없음 / 현행 작성서류 양식 없음 / 학비 미입력 /
+ *     요강 미승인. 오픈은 허용하되 운영자에게 미완료 항목을 알린다.
  *
- *   0056 이후: 한 대학·학기에 승인된 요강이 **여럿일 수 있다**
- *   (어학연수 D-4 / 학위과정이 공존). 그래서 "최신 것 하나"를 임의로 고르면
- *   학위 모집에 어학연수 요강이 조용히 걸릴 수 있다.
- *   → preferredSpecId 가 있으면 그것을, 없고 후보가 1건이면 그것을 쓰고,
- *     후보가 2건 이상인데 지정이 없으면 **막고 운영자에게 고르게** 한다.
+ *   요강 연결(source_spec_id)은 대학의 유일한 요강이므로 여기서 찾아 돌려준다 — 호출부가 자동으로 건다.
  */
 
 import "server-only";
 
 import { createAdminClient } from "@/lib/supabase/server";
-import {
-  classifyRequiredDocs,
-  type RequiredDoc,
-} from "./classify-documents";
-import { programTypeLabel } from "./program-type";
-import { loadFormDocKeys } from "./form-doc-keys";
+import { KIND_LABEL, type SpecDepartmentKind } from "./spec-departments";
 
 export type ReadinessCheck = {
   key: string;
@@ -34,144 +24,150 @@ export type ReadinessCheck = {
 };
 
 export type OfferingReadiness =
-  | { ok: false; blocked: true; reason: string; checks: ReadinessCheck[] }
-  | { ok: true; blocked: false; approvedSpecId: string; checks: ReadinessCheck[]; warnings: string[] };
+  | { ok: false; blocked: true; reason: string; checks: ReadinessCheck[]; specId: string | null }
+  | {
+      ok: true;
+      blocked: false;
+      specId: string;
+      specDepartmentId: string;
+      checks: ReadinessCheck[];
+      warnings: string[];
+    };
 
-type ApprovedSpecRow = {
-  id: string;
-  program_type: string;
-  admission_category: string | null;
-  required_documents: unknown;
-  schedule: unknown;
-  tuition: unknown;
+type ScheduleJson = {
+  rounds?: Array<Record<string, unknown>> | null;
+  semester_start?: string | null;
 };
+
+function hasSchedule(schedule: unknown): boolean {
+  const s = (schedule ?? {}) as ScheduleJson;
+  if (s.semester_start) return true;
+  if (!Array.isArray(s.rounds) || s.rounds.length === 0) return false;
+  return s.rounds.some((r) => r && Object.values(r).some((v) => v != null && String(v).trim() !== ""));
+}
+
+function hasTuition(tuition: unknown): boolean {
+  const t = (tuition ?? {}) as Record<string, unknown>;
+  for (const v of Object.values(t)) {
+    if (v == null) continue;
+    if (typeof v === "number") return true;
+    if (typeof v === "string" && v.trim() !== "") return true;
+    if (Array.isArray(v) && v.length > 0) return true;
+    if (typeof v === "object" && Object.keys(v as object).length > 0) return true;
+  }
+  return false;
+}
 
 export async function assessOfferingReadiness(
   universityId: number,
-  term: string,
-  /** 이 모집에 이미 연결돼 있거나 운영자가 고른 요강. 있으면 이것으로 평가한다. */
-  preferredSpecId?: string | null
+  departmentId: number,
+  term: string
 ): Promise<OfferingReadiness> {
   const supabase = createAdminClient();
-  const formDocKeys = await loadFormDocKeys(supabase);
 
-  // 1) 승인된 모집요강 (게이트)
-  const { data: specs } = await supabase
+  // 1) 대학의 요강 (보관되지 않은 것 1개)
+  const { data: spec } = await supabase
     .from("study_admission_specs")
-    .select(
-      "id, status, program_type, admission_category, required_documents, schedule, tuition"
-    )
+    .select("id, status")
     .eq("university_id", universityId)
-    .eq("term", term)
-    .eq("status", "approved")
-    .order("updated_at", { ascending: false });
+    .neq("status", "archived")
+    .order("updated_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
 
-  const candidates = (specs ?? []) as ApprovedSpecRow[];
-
-  if (candidates.length === 0) {
+  if (!spec) {
     return {
       ok: false,
       blocked: true,
-      reason: `${term} 학기에 승인된 모집요강이 없습니다. 모집요강을 승인한 뒤 노출하세요.`,
+      specId: null,
+      reason: "이 대학의 모집요강이 없습니다. 모집요강을 먼저 등록하세요.",
+      checks: [{ key: "spec", label: "모집요강", ok: false }],
+    };
+  }
+
+  // 2) 요강 학과
+  const { data: specDept } = await supabase
+    .from("study_spec_departments")
+    .select("id, kind, is_active, tuition, departments(name_ko)")
+    .eq("spec_id", spec.id)
+    .eq("department_id", departmentId)
+    .maybeSingle();
+  const sd = specDept as unknown as
+    | { id: string; kind: SpecDepartmentKind; is_active: boolean; tuition: unknown; departments: { name_ko: string } | null }
+    | null;
+
+  if (!sd) {
+    return {
+      ok: false,
+      blocked: true,
+      specId: spec.id,
+      reason: "이 학과가 모집요강에 없습니다. 모집요강에서 학과를 추가한 뒤 오픈하세요.",
       checks: [
-        { key: "approved_spec", label: "승인된 모집요강", ok: false },
+        { key: "spec", label: "모집요강", ok: true },
+        { key: "spec_department", label: "요강 학과", ok: false, detail: "요강에 학과 없음" },
+      ],
+    };
+  }
+  if (!sd.is_active) {
+    return {
+      ok: false,
+      blocked: true,
+      specId: spec.id,
+      reason: `요강에서 이 학과(${sd.departments?.name_ko ?? ""}, ${KIND_LABEL[sd.kind]})가 비활성입니다. 요강에서 학과를 활성화한 뒤 오픈하세요.`,
+      checks: [
+        { key: "spec", label: "모집요강", ok: true },
+        { key: "spec_department", label: "요강 학과", ok: false, detail: "비활성 학과" },
       ],
     };
   }
 
-  // 어느 요강으로 평가할지 결정 — 임의로 최신 것을 고르지 않는다.
-  const approved =
-    (preferredSpecId
-      ? candidates.find((c) => c.id === preferredSpecId)
-      : undefined) ?? (candidates.length === 1 ? candidates[0] : undefined);
-
-  if (!approved) {
-    const list = candidates
-      .map((c) => {
-        const label = programTypeLabel(c.program_type);
-        return c.admission_category ? `${label}(${c.admission_category})` : label;
-      })
-      .join(", ");
-    return {
-      ok: false,
-      blocked: true,
-      reason:
-        `${term} 학기에 승인된 모집요강이 ${candidates.length}건입니다 (${list}). ` +
-        `어느 요강으로 모집할지 이 모집의 '모집요강'에서 직접 선택한 뒤 노출하세요.`,
-      checks: [
-        {
-          key: "approved_spec",
-          label: "승인된 모집요강",
-          ok: false,
-          detail: `요강 ${candidates.length}건 — 직접 선택 필요`,
-        },
-      ],
-    };
-  }
-
-  const { forms } = classifyRequiredDocs(
-    (approved.required_documents as RequiredDoc[]) ?? [],
-    formDocKeys
-  );
-
-  // 2) 직접작성 양식 업로드 여부
-  const { data: formFiles } = await supabase
-    .from("study_admission_form_files")
-    .select("key")
-    .eq("university_id", universityId)
-    .eq("is_current", true);
-  const formKeys = new Set(
-    (formFiles ?? []).map((f) => (f as { key: string }).key)
-  );
-  const missingForms = forms.filter((f) => !formKeys.has(f.key));
-
-  // 발급서류는 모집요강 required_documents 로 통합됨(별도 마스터 없음) — 등록 체크 제거.
-
-  // 3) 일정 / 4) 학비
-  const schedule = (approved.schedule ?? {}) as {
-    rounds?: Array<{ application_open?: string | null; document_submission_close?: string | null }>;
-    semester_start?: string | null;
-  };
-  const hasSchedule =
-    !!schedule.semester_start ||
-    (Array.isArray(schedule.rounds) &&
-      schedule.rounds.some(
-        (r) => r?.application_open || r?.document_submission_close
-      ));
-
-  const tuition = (approved.tuition ?? {}) as {
-    tuition_per_semester?: number | null;
-    tuition_by_faculty?: Record<string, number>;
-  };
-  const hasTuition =
-    tuition.tuition_per_semester != null ||
-    (tuition.tuition_by_faculty &&
-      Object.keys(tuition.tuition_by_faculty).length > 0);
+  // 3) 경고 항목 — 학기 일정 / 발급서류 항목 / 현행 양식 / 학비
+  const [{ data: termRow }, { count: docItemCount }, { count: formCount }] = await Promise.all([
+    supabase.from("study_spec_terms").select("schedule").eq("spec_id", spec.id).eq("term", term).maybeSingle(),
+    supabase
+      .from("study_spec_doc_items")
+      .select("id", { count: "exact", head: true })
+      .eq("spec_department_id", sd.id),
+    supabase
+      .from("study_admission_form_files")
+      .select("id", { count: "exact", head: true })
+      .eq("spec_department_id", sd.id)
+      .eq("is_current", true),
+  ]);
 
   const checks: ReadinessCheck[] = [
-    { key: "approved_spec", label: "승인된 모집요강", ok: true },
+    { key: "spec", label: "모집요강", ok: true },
+    { key: "spec_department", label: "요강 학과", ok: true },
+    {
+      key: "spec_status",
+      label: "모집요강 승인",
+      ok: spec.status === "approved",
+      detail: spec.status === "approved" ? undefined : `현재 상태: ${spec.status}`,
+    },
+    {
+      key: "schedule",
+      label: `${term} 학기 일정`,
+      ok: !!termRow && hasSchedule(termRow.schedule),
+      detail: !termRow ? "요강에 학기 없음" : hasSchedule(termRow.schedule) ? undefined : "일정 미입력",
+    },
+    {
+      key: "doc_items",
+      label: "발급서류 항목",
+      ok: (docItemCount ?? 0) > 0,
+      detail: (docItemCount ?? 0) > 0 ? undefined : "학과에 발급서류 항목 없음",
+    },
     {
       key: "forms",
-      label: "직접작성 양식 업로드",
-      ok: missingForms.length === 0,
-      detail:
-        missingForms.length > 0
-          ? `미업로드: ${missingForms.map((f) => f.name_ko).join(", ")}`
-          : undefined,
+      label: "작성서류 양식",
+      ok: (formCount ?? 0) > 0,
+      detail: (formCount ?? 0) > 0 ? undefined : "학과에 현행 양식 없음",
     },
-    { key: "schedule", label: "모집 일정 입력", ok: !!hasSchedule },
-    { key: "tuition", label: "학비 정보 입력", ok: !!hasTuition },
+    { key: "tuition", label: "학비 정보", ok: hasTuition(sd.tuition), detail: hasTuition(sd.tuition) ? undefined : "미입력" },
   ];
 
   const warnings = checks
     .filter((c) => !c.ok)
     .map((c) => (c.detail ? `${c.label} — ${c.detail}` : `${c.label} 미완료`));
 
-  return {
-    ok: true,
-    blocked: false,
-    approvedSpecId: approved.id,
-    checks,
-    warnings,
-  };
+  return { ok: true, blocked: false, specId: spec.id, specDepartmentId: sd.id, checks, warnings };
 }

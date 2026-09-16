@@ -44,7 +44,7 @@ export default async function FormDocDetailPage({
   const { data: form } = await supabase
     .from("study_admission_form_files")
     .select(
-      "id, university_id, key, name_ko, file_url, file_name, mime_type, notes, uploaded_at, is_current, department_name, required_data_type_keys, applies_to_terms, applies_to_department_ids, essay_questions, field_overlays, label_mapping, slot_mapping, is_essay, essay_sections"
+      "id, university_id, key, name_ko, file_url, file_name, mime_type, notes, uploaded_at, is_current, department_name, spec_department_id, required_data_type_keys, applies_to_terms, applies_to_department_ids, essay_questions, field_overlays, label_mapping, slot_mapping, is_essay, essay_sections"
     )
     .eq("id", formFileId)
     .maybeSingle();
@@ -64,8 +64,9 @@ export default async function FormDocDetailPage({
         .order("sort_order"),
       supabase
         .from("study_admission_specs")
-        .select("required_documents, status, updated_at")
+        .select("id, required_documents, status, updated_at")
         .eq("university_id", form.university_id)
+        .neq("status", "archived")
         .order("updated_at", { ascending: false }),
       supabase
         .from("study_student_data_types")
@@ -75,9 +76,28 @@ export default async function FormDocDetailPage({
         .order("sort_order"),
     ]);
 
-  // 서류명 후보 = 최신 모집요강(승인 우선)의 required_documents 이름들
+  // 대학의 요강(보관 아님 1개) — 양식이 속할 수 있는 요강 학과 목록
   const repSpec =
     (specs ?? []).find((s) => s.status === "approved") ?? (specs ?? [])[0];
+  const { data: specDeptRows } = repSpec
+    ? await supabase
+        .from("study_spec_departments")
+        .select("id, department_id, kind, is_active, sort_order")
+        .eq("spec_id", repSpec.id)
+        .order("sort_order")
+    : { data: [] as Array<{ id: string; department_id: number; kind: "language" | "regular"; is_active: boolean; sort_order: number }> };
+  const deptNameById = new Map((depts ?? []).map((d) => [d.id, d.name_ko]));
+  const specDepartments = (specDeptRows ?? [])
+    .map((sd) => ({
+      id: sd.id,
+      name_ko: deptNameById.get(sd.department_id) ?? `학과 #${sd.department_id}`,
+      kind: sd.kind,
+      is_active: sd.is_active,
+      sort_order: sd.sort_order,
+    }))
+    .sort((a, b) => (a.kind === b.kind ? a.sort_order - b.sort_order : a.kind === "language" ? -1 : 1));
+
+  // 서류명 후보 = 요강의 required_documents 이름들
   const docNameOptions = (() => {
     const out = new Set<string>();
     const reqs = Array.isArray(repSpec?.required_documents)
@@ -155,17 +175,13 @@ export default async function FormDocDetailPage({
             file_url: form.file_url,
             file_name: form.file_name,
             department_name: form.department_name,
+            spec_department_id: form.spec_department_id ?? null,
+            is_current: form.is_current,
             notes: form.notes,
             uploaded_at: form.uploaded_at,
             required_data_type_keys: form.required_data_type_keys ?? [],
-            applies_to_terms: form.applies_to_terms ?? [],
-            applies_to_department_ids: form.applies_to_department_ids ?? [],
           }}
-          departments={(depts ?? []).map((d) => ({
-            id: d.id,
-            name_ko: d.name_ko,
-            active: d.active,
-          }))}
+          specDepartments={specDepartments}
           docNameOptions={docNameOptions}
         />
 

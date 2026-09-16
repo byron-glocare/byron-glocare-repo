@@ -10,6 +10,7 @@ import {
   type EssaySubQuestion,
 } from "@/lib/admission/call-analyze-form";
 import type {
+  Database,
   StudyAdmissionFormFileInsert,
 } from "@/types/database";
 
@@ -30,7 +31,10 @@ const MAX_SIZE = 30 * 1024 * 1024; // 30MB
 
 const uploadSchema = z.object({
   university_id: z.coerce.number().int().positive(),
+  /** 옛 컬럼 — 표시용으로만 남긴다. 버전 묶음에는 쓰지 않는다. */
   department_name: z.string().max(200).nullable(),
+  /** 요강 학과(0067). 버전 묶음 = (대학, 종류, 요강 학과). */
+  spec_department_id: z.string().uuid().nullable(),
   key: z.enum(FORM_KEYS),
   name_ko: z.string().min(1).max(500),
   notes: z.string().max(1000).nullable(),
@@ -54,6 +58,8 @@ export type UploadFormFileState =
       analyzedQuestions?: number;
       /** AI 가 제안한 신규 카탈로그 항목 — 운영자가 1클릭 추가 가능 */
       missingDataTypes?: SuggestedMissingDataType[];
+      /** 요강 학과 없이 올라와 기존 양식을 내리지 않았을 때 등 — 성공했지만 알릴 것 */
+      warning?: string;
     }
   | undefined;
 
@@ -107,6 +113,7 @@ export async function uploadFormFileAction(
   const raw = {
     university_id: formData.get("university_id"),
     department_name: emptyToNull(formData.get("department_name")),
+    spec_department_id: emptyToNull(formData.get("spec_department_id")),
     key: formData.get("key"),
     name_ko: formData.get("name_ko"),
     notes: emptyToNull(formData.get("notes")),
@@ -217,28 +224,35 @@ export async function uploadFormFileAction(
   }
 
   // 5. 기존 현행 양식 archive (분석 완료 후 — insert 직전에 실행해 공백 최소화)
-  let archiveQuery = supabase
-    .from("study_admission_form_files")
-    .update({ is_current: false })
-    .eq("university_id", data.university_id)
-    .eq("key", data.key)
-    .eq("is_current", true);
-  if (data.department_name === null) {
-    archiveQuery = archiveQuery.is("department_name", null);
+  //    버전 묶음 = (대학, 종류, 요강 학과). 옛 department_name 으로 묶지 않는다 —
+  //    어학당 입학원서를 올리면서 일반학과 입학원서를 내려버린 사고의 원인이었다.
+  //    요강 학과가 없으면(옛 호출) 아무것도 내리지 않고 새 현행 행으로만 넣는다.
+  let archivedIds: string[] = [];
+  let warning: string | undefined;
+  if (data.spec_department_id) {
+    const { data: archivedRows, error: archErr } = await supabase
+      .from("study_admission_form_files")
+      .update({ is_current: false })
+      .eq("university_id", data.university_id)
+      .eq("key", data.key)
+      .eq("spec_department_id", data.spec_department_id)
+      .eq("is_current", true)
+      .select("id");
+    if (archErr) {
+      await supabase.storage.from(BUCKET).remove([path]);
+      return { error: `기존 양식 archive 실패: ${archErr.message}` };
+    }
+    archivedIds = (archivedRows ?? []).map((r) => r.id);
   } else {
-    archiveQuery = archiveQuery.eq("department_name", data.department_name);
+    warning =
+      "요강 학과 없이 올라갔습니다. 기존 양식은 그대로 두고 새 양식을 추가했습니다 — 양식 상세에서 학과를 지정하세요.";
   }
-  const { data: archivedRows, error: archErr } = await archiveQuery.select("id");
-  if (archErr) {
-    await supabase.storage.from(BUCKET).remove([path]);
-    return { error: `기존 양식 archive 실패: ${archErr.message}` };
-  }
-  const archivedIds = (archivedRows ?? []).map((r) => r.id);
 
   // 6. 새 row INSERT (AI 결과 포함)
   const ins: StudyAdmissionFormFileInsert = {
     university_id: data.university_id,
     department_name: data.department_name,
+    spec_department_id: data.spec_department_id,
     key: data.key,
     name_ko: data.name_ko,
     file_url: publicUrl,
@@ -269,12 +283,80 @@ export async function uploadFormFileAction(
   revalidatePath(`/universities/${data.university_id}/forms`);
   revalidatePath("/admissions");
   revalidatePath(`/admissions/${data.university_id}`);
+  revalidatePath("/admissions/specs", "layout");
   return {
     analyzeNotes,
     analyzedKeys,
     analyzedQuestions,
     missingDataTypes,
+    warning,
   };
+}
+
+/**
+ * 양식이 속한 요강 학과 변경 — 옛 행(spec_department_id null)을 고치는 경로이기도 하다.
+ *   새 학과에 같은 종류의 현행 양식이 이미 있으면 거부한다 (조용히 내리지 않는다).
+ */
+export async function setFormFileDepartmentAction(
+  formFileId: string,
+  specDepartmentId: string | null
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const supabaseUser = await createClient();
+  const {
+    data: { user },
+  } = await supabaseUser.auth.getUser();
+  if (!user) return { ok: false, error: "로그인이 필요합니다" };
+  const supabase = createAdminClient();
+
+  const { data: form } = await supabase
+    .from("study_admission_form_files")
+    .select("id, university_id, key, is_current, spec_department_id")
+    .eq("id", formFileId)
+    .maybeSingle();
+  if (!form) return { ok: false, error: "양식을 찾을 수 없습니다." };
+  if ((form.spec_department_id ?? null) === (specDepartmentId ?? null)) return { ok: true };
+
+  if (specDepartmentId) {
+    const { data: sd } = await supabase
+      .from("study_spec_departments")
+      .select("id, spec_id")
+      .eq("id", specDepartmentId)
+      .maybeSingle();
+    const { data: spec } = sd
+      ? await supabase.from("study_admission_specs").select("university_id").eq("id", sd.spec_id).maybeSingle()
+      : { data: null };
+    if (!sd || spec?.university_id !== form.university_id) return { ok: false, error: "이 대학의 요강 학과가 아닙니다." };
+
+    if (form.is_current) {
+      const { data: clash } = await supabase
+        .from("study_admission_form_files")
+        .select("id, name_ko")
+        .eq("university_id", form.university_id)
+        .eq("key", form.key)
+        .eq("spec_department_id", specDepartmentId)
+        .eq("is_current", true)
+        .neq("id", form.id)
+        .limit(1);
+      if (clash && clash.length > 0) {
+        return {
+          ok: false,
+          error: `그 학과에 같은 종류의 현행 양식("${clash[0].name_ko}")이 이미 있습니다. 그 양식을 삭제하거나 다른 학과를 고르세요.`,
+        };
+      }
+    }
+  }
+
+  const { error } = await supabase
+    .from("study_admission_form_files")
+    .update({ spec_department_id: specDepartmentId })
+    .eq("id", formFileId);
+  if (error) return { ok: false, error: `저장 실패: ${error.message}` };
+
+  revalidatePath(`/admissions/forms/${formFileId}`);
+  revalidatePath("/admissions");
+  revalidatePath(`/admissions/${form.university_id}`);
+  revalidatePath("/admissions/specs", "layout");
+  return { ok: true };
 }
 
 /**
@@ -485,10 +567,12 @@ export async function replaceRequiredKeysAction(
  * 양식 메타데이터 수정 (업로드 이후 표시명·종류·적용범위·메모·필요데이터 편집).
  *   파일 자체는 재업로드로 교체 (버전 관리). 여기서는 메타만 수정.
  *
- *   적용범위(department_name) 또는 양식종류(key) 변경 = scope 변경:
- *     - 같은 (대학, 새 key, 새 학과) 에 이미 다른 current 양식이 있으면 충돌 → 거부.
- *     - 버전 그룹핑이 (university_id, key, department_name) 기준이므로
+ *   양식종류(key) 변경:
+ *     - 같은 (대학, 새 key, 요강 학과) 에 이미 다른 current 양식이 있으면 충돌 → 거부.
+ *     - 버전 그룹핑이 (university_id, key, spec_department_id) 기준이므로
  *       이전 버전(archive)까지 같은 그룹 전체에 cascade.
+ *   department_name 은 옛 표시용 컬럼 — 그대로 저장만 하고 묶음에는 쓰지 않는다.
+ *   요강 학과 변경은 setFormFileDepartmentAction.
  */
 const updateMetaSchema = z.object({
   form_file_id: z.string().uuid(),
@@ -555,7 +639,7 @@ export async function updateFormFileMetaAction(
   // 대상 row 조회
   const { data: orig, error: origErr } = await supabase
     .from("study_admission_form_files")
-    .select("id, university_id, key, department_name")
+    .select("id, university_id, key, department_name, spec_department_id")
     .eq("id", data.form_file_id)
     .maybeSingle();
   if (origErr || !orig) return { error: "양식을 찾을 수 없습니다" };
@@ -563,59 +647,54 @@ export async function updateFormFileMetaAction(
     return { error: "대학교 정보가 일치하지 않습니다" };
   }
 
-  const scopeChanged =
-    orig.key !== data.key || (orig.department_name ?? null) !== data.department_name;
-
-  if (scopeChanged) {
-    // 1) 기존 버전 체인 id 수집 (원래 그룹)
-    let chainQuery = supabase
-      .from("study_admission_form_files")
-      .select("id")
-      .eq("university_id", orig.university_id)
-      .eq("key", orig.key);
-    chainQuery =
-      orig.department_name === null
-        ? chainQuery.is("department_name", null)
-        : chainQuery.eq("department_name", orig.department_name);
-    const { data: chainRows } = await chainQuery;
-    const chainIds = new Set((chainRows ?? []).map((r) => r.id));
-
-    // 2) 새 그룹에 다른 current 양식이 있는지 충돌 검사
-    let collideQuery = supabase
-      .from("study_admission_form_files")
-      .select("id")
-      .eq("university_id", data.university_id)
-      .eq("key", data.key)
-      .eq("is_current", true);
-    collideQuery =
-      data.department_name === null
-        ? collideQuery.is("department_name", null)
-        : collideQuery.eq("department_name", data.department_name);
-    const { data: collideRows } = await collideQuery;
-    const conflict = (collideRows ?? []).some((r) => !chainIds.has(r.id));
-    if (conflict) {
-      const scopeLabel = data.department_name ?? "대학 전체";
-      return {
-        error: `이미 "${scopeLabel}" 범위에 같은 종류의 양식이 있습니다. 먼저 기존 양식을 삭제하거나 다른 범위를 선택하세요.`,
-      };
+  // 버전 묶음은 (대학, 종류, 요강 학과). department_name 은 표시용 옛 컬럼 — 묶음에 쓰지 않는다.
+  if (orig.key !== data.key) {
+    // 1) 기존 버전 체인 id 수집 (요강 학과가 없으면 이 행 하나)
+    const chainIds = new Set<string>([orig.id]);
+    if (orig.spec_department_id) {
+      const { data: chainRows } = await supabase
+        .from("study_admission_form_files")
+        .select("id")
+        .eq("university_id", orig.university_id)
+        .eq("key", orig.key)
+        .eq("spec_department_id", orig.spec_department_id);
+      for (const r of chainRows ?? []) chainIds.add(r.id);
     }
 
-    // 3) 그룹 전체 cascade (이전 버전까지 key/department 동기화)
+    // 2) 같은 학과에 새 종류의 current 양식이 있는지 충돌 검사
+    if (orig.spec_department_id) {
+      const { data: collideRows } = await supabase
+        .from("study_admission_form_files")
+        .select("id")
+        .eq("university_id", data.university_id)
+        .eq("key", data.key)
+        .eq("spec_department_id", orig.spec_department_id)
+        .eq("is_current", true);
+      const conflict = (collideRows ?? []).some((r) => !chainIds.has(r.id));
+      if (conflict) {
+        return {
+          error: "이 학과에 같은 종류의 양식이 이미 있습니다. 먼저 기존 양식을 삭제하거나 다른 종류를 선택하세요.",
+        };
+      }
+    }
+
+    // 3) 그룹 전체 cascade (이전 버전까지 key 동기화)
     const { error: cascadeErr } = await supabase
       .from("study_admission_form_files")
-      .update({ key: data.key, department_name: data.department_name })
+      .update({ key: data.key })
       .in("id", Array.from(chainIds));
     if (cascadeErr) {
-      return { error: `적용범위 변경 실패: ${cascadeErr.message}` };
+      return { error: `양식 종류 변경 실패: ${cascadeErr.message}` };
     }
   }
 
-  // 4) 현재 row 메타 수정
+  // 4) 현재 row 메타 수정 (department_name 은 표시용 그대로 저장)
   const { error: updErr } = await supabase
     .from("study_admission_form_files")
     .update({
       name_ko: data.name_ko,
       notes: data.notes,
+      department_name: data.department_name,
       required_data_type_keys: data.required_data_type_keys,
     })
     .eq("id", data.form_file_id);
@@ -645,43 +724,54 @@ export async function deleteFormFileAction(
 
   const { data: row } = await supabase
     .from("study_admission_form_files")
-    .select("university_id, department_name, key")
+    .select("id, university_id, key, spec_department_id")
     .eq("id", formFileId)
     .maybeSingle();
   if (!row) return;
 
-  let query = supabase
-    .from("study_admission_form_files")
-    .select("id, file_url")
-    .eq("university_id", row.university_id)
-    .eq("key", row.key);
-  if (row.department_name === null) {
-    query = query.is("department_name", null);
+  // 버전 묶음 = (대학, 종류, 요강 학과). 요강 학과가 없으면 이 행 하나만.
+  let allVersions: Array<{ id: string; file_url: string }> = [];
+  if (row.spec_department_id) {
+    const { data } = await supabase
+      .from("study_admission_form_files")
+      .select("id, file_url")
+      .eq("university_id", row.university_id)
+      .eq("key", row.key)
+      .eq("spec_department_id", row.spec_department_id);
+    allVersions = data ?? [];
   } else {
-    query = query.eq("department_name", row.department_name);
+    const { data } = await supabase
+      .from("study_admission_form_files")
+      .select("id, file_url")
+      .eq("id", row.id);
+    allVersions = data ?? [];
   }
-  const { data: allVersions } = await query;
+  const deleteIds = allVersions.map((v) => v.id);
+  const urls = Array.from(new Set(allVersions.map((v) => v.file_url)));
+
+  // Storage 파일은 다른 행(학과 간 복사본 — 같은 file_url 을 공유)이 참조하지 않을 때만 지운다.
+  const { data: sharedRows } = urls.length
+    ? await supabase
+        .from("study_admission_form_files")
+        .select("id, file_url")
+        .in("file_url", urls)
+        .not("id", "in", `(${deleteIds.join(",")})`)
+    : { data: [] as Array<{ id: string; file_url: string }> };
+  const stillUsed = new Set((sharedRows ?? []).map((r) => r.file_url));
 
   const paths: string[] = [];
-  for (const v of allVersions ?? []) {
-    const m = v.file_url.match(/admission-form-files\/(.+)$/);
+  for (const url of urls) {
+    if (stillUsed.has(url)) continue;
+    const m = url.match(/admission-form-files\/(.+)$/);
     if (m) paths.push(m[1]);
   }
   if (paths.length > 0) {
     await supabase.storage.from(BUCKET).remove(paths);
   }
 
-  let delQuery = supabase
-    .from("study_admission_form_files")
-    .delete()
-    .eq("university_id", row.university_id)
-    .eq("key", row.key);
-  if (row.department_name === null) {
-    delQuery = delQuery.is("department_name", null);
-  } else {
-    delQuery = delQuery.eq("department_name", row.department_name);
+  if (deleteIds.length > 0) {
+    await supabase.from("study_admission_form_files").delete().in("id", deleteIds);
   }
-  await delQuery;
 
   revalidatePath(`/universities/${universityId}/forms`);
   revalidatePath("/admissions");
@@ -728,21 +818,27 @@ export async function updateFormFileDetailAction(
     }
   };
 
-  const applies_to_terms = parseStrArr("applies_to_terms");
-  const applies_to_department_ids = parseStrArr("applies_to_department_ids")
-    .map(Number)
-    .filter((n) => Number.isFinite(n));
+  // 옛 컬럼(applies_to_*)은 폼에 들어 있을 때만 그대로 저장 — 묶음·판단에는 쓰지 않는다.
+  const patch: Database["public"]["Tables"]["study_admission_form_files"]["Update"] = { name_ko, notes };
+  if (formData.has("applies_to_terms")) patch.applies_to_terms = parseStrArr("applies_to_terms");
+  if (formData.has("applies_to_department_ids")) {
+    patch.applies_to_department_ids = parseStrArr("applies_to_department_ids")
+      .map(Number)
+      .filter((n) => Number.isFinite(n));
+  }
+
+  // 요강 학과 변경은 충돌 검사가 있는 별도 경로로
+  if (formData.has("spec_department_id")) {
+    const sdRaw = String(formData.get("spec_department_id") ?? "").trim();
+    const res = await setFormFileDepartmentAction(id, sdRaw || null);
+    if (!res.ok) return { error: res.error };
+  }
 
   // 양식 종류(key)·필요 표준데이터(required_data_type_keys)는 여기서 건드리지 않는다.
   //   key=생성 시 고정 / reqKeys=문서 자동화 설정의 좌표 저장에서 자동 도출.
   const { error } = await supabase
     .from("study_admission_form_files")
-    .update({
-      name_ko,
-      notes,
-      applies_to_terms,
-      applies_to_department_ids,
-    })
+    .update(patch)
     .eq("id", id);
   if (error) return { error: `저장 실패: ${error.message}` };
 
@@ -876,23 +972,21 @@ export async function restoreFormFileAction(
 
   const { data: target } = await supabase
     .from("study_admission_form_files")
-    .select("university_id, department_name, key, is_current")
+    .select("university_id, key, is_current, spec_department_id")
     .eq("id", formFileId)
     .maybeSingle();
   if (!target || target.is_current) return;
 
-  let archiveQuery = supabase
-    .from("study_admission_form_files")
-    .update({ is_current: false })
-    .eq("university_id", target.university_id)
-    .eq("key", target.key)
-    .eq("is_current", true);
-  if (target.department_name === null) {
-    archiveQuery = archiveQuery.is("department_name", null);
-  } else {
-    archiveQuery = archiveQuery.eq("department_name", target.department_name);
+  // 같은 묶음(대학, 종류, 요강 학과)의 현행만 내린다. 요강 학과가 없으면 아무것도 내리지 않는다.
+  if (target.spec_department_id) {
+    await supabase
+      .from("study_admission_form_files")
+      .update({ is_current: false })
+      .eq("university_id", target.university_id)
+      .eq("key", target.key)
+      .eq("spec_department_id", target.spec_department_id)
+      .eq("is_current", true);
   }
-  await archiveQuery;
 
   await supabase
     .from("study_admission_form_files")

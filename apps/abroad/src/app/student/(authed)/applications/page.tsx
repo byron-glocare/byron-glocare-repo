@@ -23,7 +23,7 @@ export default async function StudentApplicationsPage() {
   const { data: apps } = await supabase
     .from("study_applications")
     .select(
-      "id, admission_spec_id, offering_id, target_department_label, selected_language, status, created_at"
+      "id, admission_spec_id, offering_id, term, target_department_label, selected_language, status, created_at"
     )
     .eq("student_id", session.student.id)
     .order("created_at", { ascending: false });
@@ -36,9 +36,9 @@ export default async function StudentApplicationsPage() {
     specIds.length > 0
       ? await supabase
           .from("study_admission_specs")
-          .select("id, university_id, term, program_type")
+          .select("id, university_id, term")
           .in("id", specIds)
-      : { data: [] as Array<{ id: string; university_id: number; term: string; program_type: string }> };
+      : { data: [] as Array<{ id: string; university_id: number; term: string }> };
   const specById = new Map((specs ?? []).map((s) => [s.id, s]));
 
   const uniIds = Array.from(
@@ -63,7 +63,7 @@ export default async function StudentApplicationsPage() {
       universityId: spec?.university_id ?? null,
       uniName,
       dept: a.target_department_label ?? "",
-      term: spec?.term ?? "",
+      term: a.term ?? spec?.term ?? "",
       status: a.status,
     };
   });

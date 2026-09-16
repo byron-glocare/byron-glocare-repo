@@ -28,6 +28,8 @@ const createApplicationSchema = (t: T) =>
     .string()
     .min(1, t("학과를 선택하세요", "Chọn ngành học"))
     .max(200),
+  // 0067 — 지원 학기 (offering.term / 요강 학기)
+  term: emptyToUndef(z.string().trim().max(40).optional()),
   next_action: emptyToUndef(z.string().max(200).optional()),
   next_deadline: emptyToUndef(
     z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional()
@@ -68,6 +70,7 @@ export async function createApplicationAction(
     selected_language: data.selected_language ?? null,
     target_department_id: data.target_department_id ?? null,
     target_department_label: data.target_department_label,
+    term: data.term ?? null,
     status: "payment_pending",
     next_action: data.next_action ?? null,
     next_deadline: data.next_deadline ?? null,

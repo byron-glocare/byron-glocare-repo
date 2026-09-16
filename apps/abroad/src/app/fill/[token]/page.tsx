@@ -5,6 +5,10 @@
  */
 
 import { createServiceClient } from "@/lib/supabase/service";
+import {
+  formFileAppliesTo,
+  loadApplicationDepartments,
+} from "@/lib/admission/spec-documents";
 import { PublicDataEditor, type PublicFieldMeta } from "./public-data-editor";
 
 export const dynamic = "force-dynamic";
@@ -73,36 +77,29 @@ export default async function FillPage({
   // 지원 대학 직접작성서류가 요구하는 키만 수집 (있으면 그 범위로 좁힘)
   const { data: apps } = await svc
     .from("study_applications")
-    .select("admission_spec_id, target_department_label")
+    .select("id, admission_spec_id, target_department_id, target_department_label")
     .eq("student_id", studentId);
   const requiredKeys = new Set<string>();
-  const specIds = Array.from(
-    new Set((apps ?? []).map((a) => a.admission_spec_id).filter(Boolean))
-  );
-  if (specIds.length > 0) {
-    const { data: specs } = await svc
-      .from("study_admission_specs")
-      .select("id, university_id")
-      .in("id", specIds);
-    const specToUni = new Map(
-      (specs ?? []).map((s) => [s.id, s.university_id])
-    );
-    const uniIds = Array.from(
-      new Set((specs ?? []).map((s) => s.university_id))
-    );
+  const applications = (apps ?? []).filter((a) => a.admission_spec_id);
+  if (applications.length > 0) {
+    // 0067: 지원 → 요강 학과. 양식은 spec_department_id 로 고른다 (학과 없는 옛 지원만 학과명 매칭)
+    const { specs, deptByApp } = await loadApplicationDepartments(svc, applications);
+    const uniIds = Array.from(new Set(Array.from(specs.values()).map((s) => s.university_id)));
     if (uniIds.length > 0) {
       const { data: forms } = await svc
         .from("study_admission_form_files")
-        .select("university_id, department_name, required_data_type_keys")
+        .select("university_id, spec_department_id, department_name, required_data_type_keys")
         .in("university_id", uniIds)
         .eq("is_current", true);
-      for (const a of apps ?? []) {
-        const uni = specToUni.get(a.admission_spec_id);
+      for (const a of applications) {
+        const uni = specs.get(a.admission_spec_id)?.university_id;
         for (const f of forms ?? []) {
-          if (f.university_id !== uni) continue;
           if (
-            f.department_name !== null &&
-            f.department_name !== a.target_department_label
+            !formFileAppliesTo(f, {
+              dept: deptByApp.get(a.id),
+              universityId: uni,
+              departmentLabel: a.target_department_label,
+            })
           )
             continue;
           for (const k of f.required_data_type_keys ?? []) requiredKeys.add(k);

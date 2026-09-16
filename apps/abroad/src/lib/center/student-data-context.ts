@@ -9,6 +9,10 @@
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database, Json } from "@/types/database";
+import {
+  formFileAppliesTo,
+  loadApplicationDepartments,
+} from "@/lib/admission/spec-documents";
 
 // 유학센터 RLS 클라이언트와 셀프 학생 authed 클라이언트 모두 수용(구조적 타입).
 type CenterClient = SupabaseClient<Database>;
@@ -52,7 +56,7 @@ export async function loadStudentDataContext(
         .eq("student_id", studentId),
       supabase
         .from("study_applications")
-        .select("id, admission_spec_id, target_department_label")
+        .select("id, admission_spec_id, target_department_id, term, target_department_label")
         .eq("student_id", studentId),
     ]);
 
@@ -72,25 +76,16 @@ export async function loadStudentDataContext(
 
   // 필요 데이터 키 수집
   const requiredMap = new Map<string, string[]>();
-  const specIds = (apps ?? []).map((a) => a.admission_spec_id);
-  if (specIds.length > 0) {
-    const { data: specs } = await supabase
-      .from("study_admission_specs")
-      .select("id, university_id, term")
-      .in("id", specIds);
-    const specToUni = new Map<string, number>(
-      (specs ?? []).map((s) => [s.id, s.university_id])
-    );
-    const specToTerm = new Map<string, string>(
-      (specs ?? []).map((s) => [s.id, s.term])
-    );
-    const universityIds = Array.from(new Set((specs ?? []).map((s) => s.university_id)));
+  if ((apps ?? []).length > 0) {
+    // 0067: 지원 → 요강 학과. 양식은 spec_department_id 로 고른다 (학과 없는 옛 지원만 학과명·학기 매칭)
+    const { specs, deptByApp } = await loadApplicationDepartments(supabase, apps ?? []);
+    const universityIds = Array.from(new Set(Array.from(specs.values()).map((s) => s.university_id)));
 
     if (universityIds.length > 0) {
       const { data: forms } = await supabase
         .from("study_admission_form_files")
         .select(
-          "university_id, department_name, name_ko, required_data_type_keys, applies_to_terms"
+          "university_id, spec_department_id, department_name, name_ko, required_data_type_keys, applies_to_terms"
         )
         .in("university_id", universityIds)
         .eq("is_current", true);
@@ -102,19 +97,16 @@ export async function loadStudentDataContext(
       }
 
       for (const app of apps ?? []) {
-        const uniId = specToUni.get(app.admission_spec_id);
-        if (uniId == null) continue;
-        const term = specToTerm.get(app.admission_spec_id);
-        // 적용 양식 = (학과: 전체 or 일치) AND (학기: 전체 or 일치)
-        const applicable = (formsByUni.get(uniId) ?? []).filter((f) => {
-          const deptOk =
-            f.department_name === null ||
-            (!!app.target_department_label &&
-              f.department_name === app.target_department_label);
-          const terms = (f.applies_to_terms ?? []) as string[];
-          const termOk = terms.length === 0 || (!!term && terms.includes(term));
-          return deptOk && termOk;
-        });
+        const spec = specs.get(app.admission_spec_id);
+        if (!spec) continue;
+        const applicable = (formsByUni.get(spec.university_id) ?? []).filter((f) =>
+          formFileAppliesTo(f, {
+            dept: deptByApp.get(app.id),
+            universityId: spec.university_id,
+            departmentLabel: app.target_department_label,
+            term: app.term ?? spec.term,
+          })
+        );
         for (const f of applicable) {
           const sourceLabel = `${f.name_ko}${
             app.target_department_label ? ` · ${app.target_department_label}` : ""

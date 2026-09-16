@@ -1,82 +1,148 @@
-import Link from "next/link";
-import { Plus } from "lucide-react";
+/**
+ * /offerings — 모집 (0067 학과 모델).
+ *   대학마다 격자: 행 = 요강 학과(어학당 먼저, 일반학과), 열 = 학기.
+ *   칸 = 그 학과가 그 학기에 모집하는지(study_offerings 행) + 상태(초안/오픈/마감) + 정원.
+ *   요강 연결은 대학의 요강(보관 아님 1개)으로 자동 — 운영자가 고르지 않는다.
+ */
 
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/page-header";
-import { buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { OfferingsManager } from "./offerings-manager";
+import { OfferingsManager, type OfferingRow, type UniversityBlock, type GridRow } from "./offerings-manager";
 
 export const dynamic = "force-dynamic";
 
 export default async function OfferingsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ new?: string }>;
+  searchParams: Promise<{ u?: string }>;
 }) {
-  const adding = (await searchParams).new === "1";
+  const sp = await searchParams;
+  const filterUni = sp.u ? Number(sp.u) : null;
   const supabase = await createClient();
 
   const [
     { data: universities },
     { data: departments },
     { data: specs },
+    { data: specDepts },
+    { data: specTerms },
     { data: offerings, error },
   ] = await Promise.all([
-    supabase
-      .from("universities")
-      .select("id, name_ko")
-      .order("name_ko", { ascending: true }),
-    supabase
-      .from("departments")
-      .select("id, university_id, name_ko, active")
-      .order("sort_order", { ascending: true }),
+    supabase.from("universities").select("id, name_ko, active").order("name_ko", { ascending: true }),
+    supabase.from("departments").select("id, university_id, name_ko, active").order("sort_order", { ascending: true }),
     supabase
       .from("study_admission_specs")
-      .select("id, university_id, term, status")
-      .order("term", { ascending: false }),
+      .select("id, university_id, status, updated_at")
+      .neq("status", "archived")
+      .order("updated_at", { ascending: false }),
+    supabase
+      .from("study_spec_departments")
+      .select("id, spec_id, department_id, kind, is_active, sort_order")
+      .order("sort_order", { ascending: true }),
+    supabase.from("study_spec_terms").select("spec_id, term"),
     supabase
       .from("study_offerings")
       .select(
-        "id, university_id, department_id, term, intake_quota, status, source_spec_id, sort_order, notes"
+        "id, university_id, department_id, term, intake_quota, status, source_spec_id, available_languages, location_options, sort_order, notes"
       )
       .order("created_at", { ascending: false }),
   ]);
+
+  // 대학 → 요강 (대학당 1개. 혹시 여럿이면 최신 것)
+  const specByUni = new Map<number, { id: string; status: string }>();
+  for (const s of specs ?? []) {
+    if (!specByUni.has(s.university_id)) specByUni.set(s.university_id, { id: s.id, status: s.status });
+  }
+  const deptById = new Map((departments ?? []).map((d) => [d.id, d]));
+  const specDeptsBySpec = new Map<string, NonNullable<typeof specDepts>>();
+  for (const sd of specDepts ?? []) {
+    const list = specDeptsBySpec.get(sd.spec_id) ?? [];
+    list.push(sd);
+    specDeptsBySpec.set(sd.spec_id, list);
+  }
+  const termsBySpec = new Map<string, Set<string>>();
+  for (const t of specTerms ?? []) {
+    const set = termsBySpec.get(t.spec_id) ?? new Set<string>();
+    set.add(t.term);
+    termsBySpec.set(t.spec_id, set);
+  }
+  const offeringsByUni = new Map<number, OfferingRow[]>();
+  for (const o of offerings ?? []) {
+    const list = offeringsByUni.get(o.university_id) ?? [];
+    list.push(o as OfferingRow);
+    offeringsByUni.set(o.university_id, list);
+  }
+
+  const blocks: UniversityBlock[] = [];
+  for (const u of universities ?? []) {
+    const spec = specByUni.get(u.id) ?? null;
+    const uniOfferings = offeringsByUni.get(u.id) ?? [];
+    if (!spec && uniOfferings.length === 0) continue;
+    if (filterUni && u.id !== filterUni) continue;
+
+    const rows: GridRow[] = [];
+    const seen = new Set<number>();
+    const sds = spec ? (specDeptsBySpec.get(spec.id) ?? []) : [];
+    // 어학당 먼저, 그 다음 일반학과(sort_order)
+    const sorted = [...sds].sort((a, b) =>
+      a.kind === b.kind ? a.sort_order - b.sort_order : a.kind === "language" ? -1 : 1
+    );
+    for (const sd of sorted) {
+      const d = deptById.get(sd.department_id);
+      seen.add(sd.department_id);
+      rows.push({
+        department_id: sd.department_id,
+        name_ko: d?.name_ko ?? `학과 #${sd.department_id}`,
+        kind: sd.kind,
+        spec_department_id: sd.id,
+        in_spec: true,
+        is_active: sd.is_active,
+      });
+    }
+    // 요강 밖의 학과는 이미 모집이 있을 때만 (읽기·상태변경 가능, 새 칸 추가는 불가)
+    for (const o of uniOfferings) {
+      if (seen.has(o.department_id)) continue;
+      seen.add(o.department_id);
+      const d = deptById.get(o.department_id);
+      rows.push({
+        department_id: o.department_id,
+        name_ko: d?.name_ko ?? `학과 #${o.department_id}`,
+        kind: null,
+        spec_department_id: null,
+        in_spec: false,
+        is_active: d?.active ?? false,
+      });
+    }
+
+    const termSet = new Set<string>(spec ? termsBySpec.get(spec.id) ?? [] : []);
+    for (const o of uniOfferings) termSet.add(o.term);
+    const terms = Array.from(termSet).sort((a, b) => b.localeCompare(a));
+
+    blocks.push({
+      university: { id: u.id, name_ko: u.name_ko, active: u.active },
+      spec,
+      rows,
+      terms,
+      offerings: uniOfferings,
+    });
+  }
 
   return (
     <>
       <PageHeader
         title="모집"
-        description="현재 유학센터 및 학생들이 지원할 수 있는 대학/학과/학기를 설정"
+        description="학과별로 어느 학기에 모집하는지 — 오픈하면 유학센터·학생이 지원할 수 있습니다"
         breadcrumbs={[{ label: "모집" }]}
-        actions={
-          adding ? (
-            <Link
-              href="/offerings"
-              className={buttonVariants({ variant: "outline" })}
-            >
-              취소
-            </Link>
-          ) : (
-            <Link href="/offerings?new=1" className={buttonVariants()}>
-              <Plus className="size-4" />
-              모집 추가
-            </Link>
-          )
-        }
       />
       <div className="p-6">
         {error ? (
-          <Card className="p-6 text-sm text-destructive">
-            데이터를 불러오지 못했습니다: {error.message}
-          </Card>
+          <Card className="p-6 text-sm text-destructive">데이터를 불러오지 못했습니다: {error.message}</Card>
         ) : (
           <OfferingsManager
-            universities={universities ?? []}
-            departments={(departments ?? []).filter((d) => d.active)}
-            specs={specs ?? []}
-            offerings={offerings ?? []}
-            adding={adding}
+            blocks={blocks}
+            universities={(universities ?? []).map((u) => ({ id: u.id, name_ko: u.name_ko }))}
+            filterUniversityId={filterUni}
           />
         )}
       </div>

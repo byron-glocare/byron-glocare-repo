@@ -11,11 +11,14 @@ import Link from "next/link";
 import { verifyCenterSession } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
 import { residenceFromStudentLocation } from "@/lib/admission/offering-languages";
-import {
-  classifyRequiredDocs,
-  type RequiredDoc,
-} from "@/lib/admission/classify-documents";
+import { classifyRequiredDocs } from "@/lib/admission/classify-documents";
 import { loadFormDocKeys } from "@/lib/admission/form-doc-keys";
+import {
+  FORM_FILE_COLUMNS,
+  formFileAppliesTo,
+  loadApplicationDocuments,
+  type SpecFormFile,
+} from "@/lib/admission/spec-documents";
 import { getLocale, tr } from "@/lib/i18n";
 import { WriteRowActions } from "./write-row-actions";
 import { AppSubmitBar } from "./app-submit-bar";
@@ -38,7 +41,6 @@ export default async function FinalPage({
   await verifyCenterSession();
   const locale = await getLocale();
   const supabase = await createCenterClient();
-  const formDocKeys = await loadFormDocKeys(supabase);
   const base = `/center/students/${id}`;
 
   const { data: student } = await supabase
@@ -54,35 +56,22 @@ export default async function FinalPage({
   const { data: apps } = await supabase
     .from("study_applications")
     .select(
-      "id, admission_spec_id, target_department_id, target_department_label, selected_language"
+      "id, admission_spec_id, target_department_id, term, target_department_label, selected_language"
     )
     .eq("student_id", id);
   const applications = apps ?? [];
-  const specIds = Array.from(
-    new Set(applications.map((a) => a.admission_spec_id))
-  );
 
-  const [{ data: specs }, { data: files }] = await Promise.all([
-    specIds.length > 0
-      ? supabase
-          .from("study_admission_specs")
-          .select("id, university_id, term, required_documents")
-          .in("id", specIds)
-      : Promise.resolve({
-          data: [] as Array<{
-            id: string;
-            university_id: number;
-            term: string;
-            required_documents: unknown;
-          }>,
-        }),
+  // 0067: 작성서류 양식은 지원의 요강 학과(spec_department_id)에서. 학과 없는 옛 지원만 이름 매칭 폴백.
+  const [{ specs: specMap, deptByApp, byApp }, { data: files }] = await Promise.all([
+    loadApplicationDocuments(supabase, applications),
     supabase
       .from("study_student_submission_files")
       .select("submission_id")
       .eq("student_id", id),
   ]);
-  const specMap = new Map((specs ?? []).map((s) => [s.id, s]));
   const uploadedSubs = new Set((files ?? []).map((f) => f.submission_id));
+  const needsLegacy = applications.some((a) => !byApp.get(a.id));
+  const formDocKeys = needsLegacy ? await loadFormDocKeys(supabase) : new Set<string>();
 
   // 작성서류 완성본/제출 상태 — (form_file_id::application_id) → {path, fileName, uploadedAt, submittedAt}
   const { data: finalDocs } = await supabase
@@ -101,35 +90,18 @@ export default async function FinalPage({
     ])
   );
 
-  const uniIds = Array.from(new Set((specs ?? []).map((s) => s.university_id)));
-  const [{ data: unis }, { data: forms }, { data: subs }] = await Promise.all([
+  const uniIds = Array.from(new Set(Array.from(specMap.values()).map((s) => s.university_id)));
+  const [{ data: unis }, { data: legacyForms }, { data: subs }] = await Promise.all([
     uniIds.length > 0
       ? supabase.from("universities").select("id, name_ko, name_vi").in("id", uniIds)
       : Promise.resolve({ data: [] as Array<{ id: number; name_ko: string; name_vi: string | null }> }),
-    uniIds.length > 0
+    needsLegacy && uniIds.length > 0
       ? supabase
           .from("study_admission_form_files")
-          .select(
-            "id, university_id, department_name, name_ko, key, required_data_type_keys, field_overlays, mime_type, file_name, file_url, is_essay, essay_sections"
-          )
+          .select(FORM_FILE_COLUMNS)
           .in("university_id", uniIds)
           .eq("is_current", true)
-      : Promise.resolve({
-          data: [] as Array<{
-            id: string;
-            university_id: number;
-            department_name: string | null;
-            name_ko: string;
-            key: string;
-            required_data_type_keys: string[] | null;
-            field_overlays: unknown;
-            mime_type: string | null;
-            file_name: string;
-            file_url: string;
-            is_essay: boolean | null;
-            essay_sections: unknown;
-          }>,
-        }),
+      : Promise.resolve({ data: [] as unknown[] }),
     supabase
       .from("study_required_submissions")
       .select("id, university_id, department_id, name_ko, applies_to_languages, applies_to_locations")
@@ -142,29 +114,38 @@ export default async function FinalPage({
     return (locale === "ko" ? u?.name_ko : u?.name_vi) ?? u?.name_ko ?? `#${uid}`;
   };
 
+  const legacyFormFiles = (legacyForms ?? []) as unknown as SpecFormFile[];
+
   // 지원별 묶음
   const groups = applications.map((a) => {
     const spec = specMap.get(a.admission_spec_id);
     const uni = spec?.university_id ?? null;
+    const docs = byApp.get(a.id) ?? null;
 
-    // 직접작성 = 모집요강에서 파생(자동분류·중복제거) → 현재 양식파일에 key|이름으로 매칭
-    const uniForms = (forms ?? []).filter(
-      (f) =>
-        f.university_id === uni &&
-        (f.department_name == null ||
-          f.department_name === a.target_department_label)
-    );
-    const byKey = new Map(uniForms.map((f) => [f.key, f] as const));
-    const byName = new Map(
-      uniForms.map((f) => [normFormName(f.name_ko), f] as const)
-    );
-    const { forms: docForms } = classifyRequiredDocs(
-      (spec?.required_documents as RequiredDoc[]) ?? [],
-      formDocKeys
-    );
-    const writeRows = docForms.map((doc) => {
-      const file =
-        byKey.get(doc.key) ?? byName.get(normFormName(doc.name_ko)) ?? null;
+    // 직접작성 행: {doc(키·이름), file(양식파일)}
+    //   학과가 풀리면 학과의 현행 양식 파일이 곧 목록. 옛 지원은 JSONB 작성서류 → 양식파일에 key|이름 매칭.
+    let pairs: Array<{ doc: { key: string; name_ko: string }; file: SpecFormFile | null }>;
+    if (docs) {
+      pairs = docs.formFiles.map((file) => ({ doc: { key: file.key, name_ko: file.name_ko }, file }));
+    } else {
+      const uniForms = legacyFormFiles.filter((f) =>
+        formFileAppliesTo(f, {
+          dept: deptByApp.get(a.id),
+          universityId: uni,
+          departmentLabel: a.target_department_label,
+        })
+      );
+      const byKey = new Map(uniForms.map((f) => [f.key, f] as const));
+      const byName = new Map(
+        uniForms.map((f) => [normFormName(f.name_ko), f] as const)
+      );
+      const { forms: docForms } = classifyRequiredDocs(spec?.required_documents ?? [], formDocKeys);
+      pairs = docForms.map((doc) => ({
+        doc,
+        file: byKey.get(doc.key) ?? byName.get(normFormName(doc.name_ko)) ?? null,
+      }));
+    }
+    const writeRows = pairs.map(({ doc, file }) => {
       const overlayCount = Array.isArray(file?.field_overlays)
         ? (file!.field_overlays as unknown[]).length
         : 0;
@@ -206,7 +187,7 @@ export default async function FinalPage({
       const locOk = locs.length === 0 || locs.includes(residence);
       return uniMatch && deptMatch && langOk && locOk;
     });
-    return { app: a, spec, writeRows, submitDocs, readyCount };
+    return { app: a, spec, term: a.term ?? spec?.term ?? "", writeRows, submitDocs, readyCount };
   });
 
   return (
@@ -241,7 +222,7 @@ export default async function FinalPage({
           )}
         </div>
       ) : (
-        groups.map(({ app, spec, writeRows, submitDocs, readyCount }) => (
+        groups.map(({ app, spec, term, writeRows, submitDocs, readyCount }) => (
           <section
             key={app.id}
             className="rounded-lg border border-slate-200 bg-white p-6"
@@ -251,7 +232,7 @@ export default async function FinalPage({
                 {spec ? uniName(spec.university_id) : "—"}
                 {app.target_department_label ? ` · ${app.target_department_label}` : ""}
               </h2>
-              <p className="text-xs text-slate-500">{spec?.term ?? ""}</p>
+              <p className="text-xs text-slate-500">{term}</p>
             </div>
 
             {/* 작성서류 */}

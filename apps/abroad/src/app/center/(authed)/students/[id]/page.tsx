@@ -10,6 +10,10 @@ import { notFound } from "next/navigation";
 import { verifyCenterSession } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
 import { residenceFromStudentLocation } from "@/lib/admission/offering-languages";
+import {
+  formFileAppliesTo,
+  loadApplicationDepartments,
+} from "@/lib/admission/spec-documents";
 import { getLocale, tr, type Locale } from "@/lib/i18n";
 
 import { updateApplicationStatusAction } from "./applications/actions";
@@ -105,7 +109,7 @@ export default async function StudentOverviewPage({
 
   // 부속 데이터 (지원 있을 때만)
   const specIds = Array.from(new Set(applications.map((a) => a.admission_spec_id)));
-  const [{ data: specs }, { data: vals }] = await Promise.all([
+  const [{ data: specs }, { data: vals }, { deptByApp }] = await Promise.all([
     specIds.length > 0
       ? supabase
           .from("study_admission_specs")
@@ -116,6 +120,8 @@ export default async function StudentOverviewPage({
       .from("study_student_data_values")
       .select("data_type_key")
       .eq("student_id", id),
+    // 0067: 지원 → 요강 학과 (양식은 spec_department_id 로 고른다)
+    loadApplicationDepartments(supabase, applications),
   ]);
   const specMap = new Map((specs ?? []).map((s) => [s.id, s]));
   const filledKeys = new Set((vals ?? []).map((v) => v.data_type_key));
@@ -134,10 +140,10 @@ export default async function StudentOverviewPage({
       uniIds.length > 0
         ? supabase
             .from("study_admission_form_files")
-            .select("id, university_id, department_name, name_ko, required_data_type_keys, is_essay, essay_sections")
+            .select("id, university_id, spec_department_id, department_name, name_ko, required_data_type_keys, is_essay, essay_sections")
             .in("university_id", uniIds)
             .eq("is_current", true)
-        : Promise.resolve({ data: [] as Array<{ id: string; university_id: number; department_name: string | null; name_ko: string; required_data_type_keys: string[] | null; is_essay: boolean | null; essay_sections: unknown }> }),
+        : Promise.resolve({ data: [] as Array<{ id: string; university_id: number; spec_department_id: string | null; department_name: string | null; name_ko: string; required_data_type_keys: string[] | null; is_essay: boolean | null; essay_sections: unknown }> }),
       uniIds.length > 0
         ? supabase
             .from("study_required_submissions")
@@ -156,12 +162,13 @@ export default async function StudentOverviewPage({
 
   // 작성서류(form files) — 지원 대학/학과에 해당하는 현행 양식
   const applicableForms = (formFiles ?? []).filter((f) => {
-    return applications.some((a) => {
-      const uni = specMap.get(a.admission_spec_id)?.university_id;
-      if (f.university_id !== uni) return false;
-      if (f.department_name == null) return true;
-      return a.target_department_label === f.department_name;
-    });
+    return applications.some((a) =>
+      formFileAppliesTo(f, {
+        dept: deptByApp.get(a.id),
+        universityId: specMap.get(a.admission_spec_id)?.university_id,
+        departmentLabel: a.target_department_label,
+      })
+    );
   });
   // 제출서류 — 공용 + 지원 대학, 거주지·언어 분기
   const applicableSubs = (subs ?? []).filter((s) => {

@@ -17,6 +17,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { UniversityInput } from "@/lib/validators";
+import { loadSpecTerms } from "@/lib/admission/spec-departments";
 
 export const dynamic = "force-dynamic";
 
@@ -62,6 +63,7 @@ export default async function UniversityEditPage({
         .from("study_admission_specs")
         .select("id, term, program_type, admission_category, status, departments, required_documents, updated_at")
         .eq("university_id", numericId)
+        .neq("status", "archived")
         .order("updated_at", { ascending: false }),
       supabase
         .from("study_offerings")
@@ -85,6 +87,12 @@ export default async function UniversityEditPage({
   // 학과 ↔ 모집요강 연결: 승인 모집요강의 학과명(JSON)으로 매칭.
   //   학과 테이블의 '과정'(study_period 없을 때)·'모집학기'를 모집요강에서 파생해 둘을 잇는다.
   const normDept = (s: string) => s.trim().replace(/\s+/g, "").toLowerCase();
+  // 대학당 요강 1개 · 학기는 study_spec_terms (0067) — 요강의 학기 전부를 그 요강의 학과에 붙인다
+  const termsBySpec = new Map<string, string[]>();
+  for (const s of specs ?? []) {
+    const ts = await loadSpecTerms(supabase, s.id);
+    termsBySpec.set(s.id, ts.length ? ts.map((t) => t.term) : [s.term]);
+  }
   const specTermsByDeptName = new Map<string, Set<string>>();
   const programTypeByDeptName = new Map<string, string>();
   for (const s of specs ?? []) {
@@ -96,7 +104,7 @@ export default async function UniversityEditPage({
       if (!d?.name) continue;
       const key = normDept(d.name);
       if (!specTermsByDeptName.has(key)) specTermsByDeptName.set(key, new Set());
-      specTermsByDeptName.get(key)!.add(s.term);
+      for (const t of termsBySpec.get(s.id) ?? []) specTermsByDeptName.get(key)!.add(t);
       if (!programTypeByDeptName.has(key))
         programTypeByDeptName.set(key, s.program_type);
     }
@@ -124,9 +132,11 @@ export default async function UniversityEditPage({
     type Spec = NonNullable<typeof specs>[number];
     const byTerm = new Map<string, Spec[]>();
     for (const s of specs ?? []) {
-      const arr = byTerm.get(s.term) ?? [];
-      arr.push(s);
-      byTerm.set(s.term, arr);
+      for (const t of termsBySpec.get(s.id) ?? [s.term]) {
+        const arr = byTerm.get(t) ?? [];
+        arr.push(s);
+        byTerm.set(t, arr);
+      }
     }
     return Array.from(byTerm.entries())
       .map(([term, list]) => {

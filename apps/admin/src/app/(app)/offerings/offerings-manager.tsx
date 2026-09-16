@@ -1,38 +1,30 @@
 "use client";
 
-import {
-  useActionState,
-  useEffect,
-  useMemo,
-  useState,
-  useTransition,
-} from "react";
+import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, Pencil, Save, Trash2, X, Eye, EyeOff } from "lucide-react";
+import Link from "next/link";
+import { AlertTriangle, Loader2, Plus, Settings2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
-  saveOfferingAction,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  checkOfferingReadinessAction,
+  createOfferingAction,
   deleteOfferingAction,
+  updateOfferingOptionsAction,
+  updateOfferingQuotaAction,
   updateOfferingStatusAction,
-  type SaveOfferingState,
 } from "./actions";
-
-// ---------------------------------------------------------------------------
-// 라벨 / 옵션
-// ---------------------------------------------------------------------------
-const STATUS_OPTIONS = [
-  { value: "draft", label: "초안 (센터 비노출)" },
-  { value: "published", label: "노출 (모집중)" },
-  { value: "closed", label: "마감" },
-  { value: "archived", label: "보관" },
-] as const;
-const STATUS_LABEL: Record<string, string> = Object.fromEntries(
-  STATUS_OPTIONS.map((o) => [o.value, o.label])
-);
 
 // ---------------------------------------------------------------------------
 // 타입
@@ -43,545 +35,700 @@ export type OfferingRow = {
   department_id: number;
   term: string;
   intake_quota: number | null;
-  status: string;
+  status: "draft" | "published" | "closed" | "archived";
   source_spec_id: string | null;
+  available_languages: string[];
+  location_options: string[];
   sort_order: number;
   notes: string | null;
 };
 
-export type UniversityOption = { id: number; name_ko: string };
-export type DepartmentOption = {
-  id: number;
-  university_id: number;
+export type GridRow = {
+  department_id: number;
   name_ko: string;
+  /** null = 요강에 없는 학과(옛 모집만 있음) */
+  kind: "language" | "regular" | null;
+  spec_department_id: string | null;
+  in_spec: boolean;
+  is_active: boolean;
 };
-export type SpecOption = {
-  id: string;
-  university_id: number;
-  term: string;
-  status: string;
+
+export type UniversityBlock = {
+  university: { id: number; name_ko: string; active: boolean };
+  spec: { id: string; status: string } | null;
+  rows: GridRow[];
+  /** 최신 학기 먼저 */
+  terms: string[];
+  offerings: OfferingRow[];
 };
 
 // ---------------------------------------------------------------------------
-// 메인 매니저
+// 라벨
+// ---------------------------------------------------------------------------
+const STATUS_LABEL: Record<OfferingRow["status"], string> = {
+  draft: "초안",
+  published: "오픈",
+  closed: "마감",
+  archived: "보관",
+};
+const SPEC_STATUS_LABEL: Record<string, string> = {
+  draft: "초안",
+  reviewing: "검토중",
+  approved: "승인",
+  archived: "보관",
+};
+const LANGUAGE_OPTIONS = [
+  { value: "korean", label: "한국어" },
+  { value: "english", label: "영어" },
+  { value: "other", label: "기타" },
+];
+const LOCATION_OPTIONS = [
+  { value: "domestic", label: "국내(한국 체류)" },
+  { value: "overseas", label: "해외(베트남 등)" },
+];
+
+function StatusBadge({ status }: { status: OfferingRow["status"] }) {
+  if (status === "published") {
+    return <Badge className="border-success/20 bg-success/10 text-[10px] text-success">오픈</Badge>;
+  }
+  if (status === "closed") {
+    return (
+      <Badge variant="outline" className="border-amber-300 text-[10px] text-amber-700">
+        마감
+      </Badge>
+    );
+  }
+  return (
+    <Badge variant="secondary" className="text-[10px]">
+      {STATUS_LABEL[status] ?? status}
+    </Badge>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// 메인
 // ---------------------------------------------------------------------------
 export function OfferingsManager({
+  blocks,
   universities,
-  departments,
-  specs,
-  offerings,
-  adding,
+  filterUniversityId,
 }: {
-  universities: UniversityOption[];
-  departments: DepartmentOption[];
-  specs: SpecOption[];
-  offerings: OfferingRow[];
-  /** 상단 '모집 추가' 버튼(URL ?new=1)으로 제어 */
-  adding: boolean;
+  blocks: UniversityBlock[];
+  universities: Array<{ id: number; name_ko: string }>;
+  filterUniversityId: number | null;
 }) {
   const router = useRouter();
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [togglePending, startToggle] = useTransition();
-  const closeAdd = () => router.push("/offerings");
-
-  // U5: 노출/숨김 토글 — 노출 게이트(승인 요강 필수) 결과를 토스트로 안내
-  const toggleStatus = (id: string, status: "published" | "draft") => {
-    startToggle(async () => {
-      const res = await updateOfferingStatusAction(id, status);
-      if (!res.ok) {
-        toast.error("노출할 수 없습니다", { description: res.error });
-        return;
-      }
-      if (status === "published") {
-        if (res.warnings && res.warnings.length > 0) {
-          toast.warning("노출했지만 미완료 항목이 있습니다", {
-            description: res.warnings.join(" / "),
-          });
-        } else {
-          toast.success("센터에 노출했습니다.");
-        }
-      } else {
-        toast.success("노출을 중지했습니다.");
-      }
-      router.refresh();
-    });
-  };
-
-  const uniName = (id: number) =>
-    universities.find((u) => u.id === id)?.name_ko ?? `대학 #${id}`;
-  const deptName = (id: number) =>
-    departments.find((d) => d.id === id)?.name_ko ?? `학과 #${id}`;
-
-  // 대학 → 학기 → offering 으로 그룹핑
-  const grouped = useMemo(() => {
-    const byUni = new Map<number, OfferingRow[]>();
-    for (const o of offerings) {
-      if (!byUni.has(o.university_id)) byUni.set(o.university_id, []);
-      byUni.get(o.university_id)!.push(o);
-    }
-    return Array.from(byUni.entries()).sort(([a], [b]) =>
-      uniName(a).localeCompare(uniName(b), "ko")
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [offerings, universities]);
-
-  // term datalist (specs + offerings 의 알려진 학기들)
-  const knownTerms = useMemo(() => {
-    const s = new Set<string>();
-    for (const sp of specs) s.add(sp.term);
-    for (const o of offerings) s.add(o.term);
-    return Array.from(s).sort().reverse();
-  }, [specs, offerings]);
-
   return (
     <div className="space-y-4">
-      {adding ? (
-        <Card className="p-4">
-          <OfferingForm
-            universities={universities}
-            departments={departments}
-            specs={specs}
-            knownTerms={knownTerms}
-            onDone={closeAdd}
-          />
-        </Card>
-      ) : null}
+      <div className="flex flex-wrap items-center gap-2">
+        <label className="text-xs text-muted-foreground">대학</label>
+        <select
+          value={filterUniversityId ? String(filterUniversityId) : ""}
+          onChange={(e) => router.push(e.target.value ? `/offerings?u=${e.target.value}` : "/offerings")}
+          className="h-8 min-w-48 rounded-md border border-input bg-background px-2 text-sm"
+        >
+          <option value="">전체</option>
+          {universities.map((u) => (
+            <option key={u.id} value={String(u.id)}>
+              {u.name_ko}
+            </option>
+          ))}
+        </select>
+        <span className="text-xs text-muted-foreground">
+          오픈 = 유학센터·학생 지원 가능 · 마감 = 지원 종료 · 초안 = 비노출
+        </span>
+      </div>
 
-      {offerings.length === 0 ? (
+      {blocks.length === 0 ? (
         <Card className="p-12 text-center text-sm text-muted-foreground">
-          아직 등록된 모집이 없습니다. 우측 상단 “모집 추가”로 시작하세요.
+          모집요강이 등록된 대학이 없습니다. 모집요강을 먼저 등록하면 여기서 학과·학기별로 오픈할 수 있습니다.
         </Card>
       ) : (
-        grouped.map(([universityId, rows]) => (
-          <Card key={universityId} className="overflow-hidden p-0">
-            <div className="border-b bg-muted/30 px-4 py-2 text-sm font-semibold">
-              {uniName(universityId)}
-              <span className="ml-2 text-xs font-normal text-muted-foreground">
-                {rows.length}개 모집
-              </span>
-            </div>
-            <div className="divide-y divide-border">
-              {rows
-                .slice()
-                .sort(
-                  (a, b) =>
-                    b.term.localeCompare(a.term) ||
-                    a.sort_order - b.sort_order ||
-                    deptName(a.department_id).localeCompare(
-                      deptName(b.department_id),
-                      "ko"
-                    )
-                )
-                .map((o) => {
-                  const isEditing = editingId === o.id;
-                  const canPublish =
-                    o.intake_quota != null && o.status !== "published";
-                  return (
-                    <div key={o.id}>
-                      <div className="flex items-start gap-3 px-4 py-3">
-                        <div className="min-w-0 flex-1">
-                          <div className="flex flex-wrap items-center gap-1.5">
-                            <span className="font-medium">
-                              {deptName(o.department_id)}
-                            </span>
-                            <Badge variant="outline" className="text-[10px]">
-                              {o.term}
-                            </Badge>
-                            {o.intake_quota != null ? (
-                              <Badge variant="secondary" className="text-[10px]">
-                                모집 {o.intake_quota}명
-                              </Badge>
-                            ) : (
-                              <Badge
-                                variant="outline"
-                                className="border-amber-300 text-[10px] text-amber-600"
-                              >
-                                모집수 미정
-                              </Badge>
-                            )}
-                            {o.status === "published" ? (
-                              <Badge className="border-success/20 bg-success/10 text-[10px] text-success">
-                                {STATUS_LABEL[o.status]}
-                              </Badge>
-                            ) : (
-                              <Badge variant="secondary" className="text-[10px]">
-                                {STATUS_LABEL[o.status] ?? o.status}
-                              </Badge>
-                            )}
-                            {o.source_spec_id ? (
-                              <span className="text-[10px] text-muted-foreground">
-                                · 모집요강 연결됨
-                              </span>
-                            ) : (
-                              // 연결이 비면 노출해도 유학센터 지원 목록에 안 나온다.
-                              // 노출 시 자동 연결되지만, 그 전까진 눈에 보이게 둔다.
-                              <Badge
-                                variant="outline"
-                                className="border-amber-300 text-[10px] text-amber-600"
-                              >
-                                모집요강 미연결
-                              </Badge>
-                            )}
-                          </div>
-                          {o.notes ? (
-                            <div className="mt-1 text-xs text-muted-foreground">
-                              {o.notes}
-                            </div>
-                          ) : null}
-                        </div>
-
-                        <div className="flex shrink-0 items-center gap-1">
-                          {canPublish ? (
-                            <Button
-                              type="button"
-                              variant="outline"
-                              size="sm"
-                              title="센터에 노출"
-                              disabled={togglePending}
-                              onClick={() => toggleStatus(o.id, "published")}
-                            >
-                              <Eye className="size-3" />
-                              노출
-                            </Button>
-                          ) : null}
-                          {o.status === "published" ? (
-                            <Button
-                              type="button"
-                              variant="outline"
-                              size="sm"
-                              title="노출 중지"
-                              disabled={togglePending}
-                              onClick={() => toggleStatus(o.id, "draft")}
-                            >
-                              <EyeOff className="size-3" />
-                              숨김
-                            </Button>
-                          ) : null}
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() =>
-                              setEditingId((cur) => (cur === o.id ? null : o.id))
-                            }
-                          >
-                            <Pencil className="size-3" />
-                          </Button>
-                          <form
-                            action={deleteOfferingAction.bind(null, o.id)}
-                            onSubmit={(e) => {
-                              if (
-                                !confirm(
-                                  `"${deptName(o.department_id)} · ${o.term}" 모집을 삭제하시겠습니까?`
-                                )
-                              ) {
-                                e.preventDefault();
-                              }
-                            }}
-                          >
-                            <Button
-                              type="submit"
-                              variant="outline"
-                              size="sm"
-                              className="text-destructive hover:bg-destructive/10"
-                            >
-                              <Trash2 className="size-3" />
-                            </Button>
-                          </form>
-                        </div>
-                      </div>
-
-                      {isEditing ? (
-                        <div className="border-t bg-muted/20 p-4">
-                          <OfferingForm
-                            universities={universities}
-                            departments={departments}
-                            specs={specs}
-                            knownTerms={knownTerms}
-                            offering={o}
-                            onDone={() => setEditingId(null)}
-                          />
-                        </div>
-                      ) : null}
-                    </div>
-                  );
-                })}
-            </div>
-          </Card>
-        ))
+        blocks.map((b) => <UniversityGrid key={b.university.id} block={b} />)
       )}
     </div>
   );
 }
 
 // ---------------------------------------------------------------------------
-// 생성/수정 폼
+// 대학 격자
 // ---------------------------------------------------------------------------
-function OfferingForm({
-  universities,
-  departments,
-  specs,
-  knownTerms,
-  offering,
-  onDone,
-}: {
-  universities: UniversityOption[];
-  departments: DepartmentOption[];
-  specs: SpecOption[];
-  knownTerms: string[];
-  offering?: OfferingRow;
-  onDone: () => void;
-}) {
-  const isEdit = !!offering?.id;
-  const bound = saveOfferingAction.bind(null, offering?.id || null);
-  const [state, action, pending] = useActionState<SaveOfferingState, FormData>(
-    bound,
-    undefined
-  );
+type PublishConfirm = { id: string; label: string; warnings: string[] };
 
-  const [universityId, setUniversityId] = useState<string>(
-    offering?.university_id != null ? String(offering.university_id) : ""
-  );
-  const [departmentId, setDepartmentId] = useState<string>(
-    offering?.department_id != null ? String(offering.department_id) : ""
-  );
-  const [term, setTerm] = useState(offering?.term ?? "");
-  const [intakeQuota, setIntakeQuota] = useState<string>(
-    offering?.intake_quota != null ? String(offering.intake_quota) : ""
-  );
-  const [status, setStatus] = useState(offering?.status ?? "draft");
-  const [sourceSpecId, setSourceSpecId] = useState<string>(
-    offering?.source_spec_id ?? ""
-  );
-  const [sortOrder, setSortOrder] = useState<string>(
-    String(offering?.sort_order ?? 0)
-  );
-  const [notes, setNotes] = useState(offering?.notes ?? "");
+function UniversityGrid({ block }: { block: UniversityBlock }) {
+  const router = useRouter();
+  const [extraTerms, setExtraTerms] = useState<string[]>([]);
+  const [newTerm, setNewTerm] = useState("");
+  const [confirm, setConfirm] = useState<PublishConfirm | null>(null);
+  const [detail, setDetail] = useState<OfferingRow | null>(null);
+  const [pending, startTransition] = useTransition();
 
-  useEffect(() => {
-    if (state?.success) {
-      if (state.warnings && state.warnings.length > 0) {
-        toast.warning("저장했지만 미완료 항목이 있습니다", {
-          description: state.warnings.join(" / "),
-        });
-      }
-      onDone();
+  const terms = useMemo(() => {
+    const set = new Set<string>([...block.terms, ...extraTerms]);
+    return Array.from(set).sort((a, b) => b.localeCompare(a));
+  }, [block.terms, extraTerms]);
+
+  const byCell = useMemo(() => {
+    const m = new Map<string, OfferingRow>();
+    for (const o of block.offerings) m.set(`${o.department_id}|${o.term}`, o);
+    return m;
+  }, [block.offerings]);
+
+  const publishedCount = block.offerings.filter((o) => o.status === "published").length;
+
+  const addTerm = () => {
+    const t = newTerm.trim();
+    if (!t) return;
+    if (terms.includes(t)) {
+      toast.info(`${t} 학기는 이미 있습니다.`);
+      setNewTerm("");
+      return;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state]);
+    setExtraTerms((cur) => [...cur, t]);
+    setNewTerm("");
+  };
 
-  const fieldErr = (k: string) => state?.fieldErrors?.[k];
+  const rowLabel = (o: OfferingRow) => {
+    const r = block.rows.find((x) => x.department_id === o.department_id);
+    return `${r?.name_ko ?? `학과 #${o.department_id}`} · ${o.term}`;
+  };
 
-  const uniId = universityId ? Number(universityId) : null;
-  const deptOptions = departments.filter((d) => d.university_id === uniId);
-  // 같은 대학의 모집요강 (학기 일치 우선 정렬)
-  const specOptions = specs
-    .filter((s) => s.university_id === uniId)
-    .sort((a, b) => {
-      const am = a.term === term ? 0 : 1;
-      const bm = b.term === term ? 0 : 1;
-      return am - bm || b.term.localeCompare(a.term);
+  // 오픈: 준비도 확인 → 경고 있으면 확인창, 없으면 바로
+  const requestPublish = (o: OfferingRow) => {
+    startTransition(async () => {
+      const r = await checkOfferingReadinessAction(o.id);
+      if (r.blocked) {
+        toast.error("오픈할 수 없습니다", { description: r.reason });
+        return;
+      }
+      if (r.warnings.length > 0) {
+        setConfirm({ id: o.id, label: rowLabel(o), warnings: r.warnings });
+        return;
+      }
+      await doStatus(o.id, "published");
     });
+  };
+
+  const doStatus = async (id: string, status: OfferingRow["status"]) => {
+    const res = await updateOfferingStatusAction(id, status);
+    if (!res.ok) {
+      toast.error("상태 변경 실패", { description: res.error });
+      return;
+    }
+    if (status === "published") {
+      if (res.warnings && res.warnings.length > 0) {
+        toast.warning("오픈했지만 미완료 항목이 있습니다", { description: res.warnings.join(" / ") });
+      } else {
+        toast.success("오픈했습니다.");
+      }
+    } else if (status === "closed") {
+      toast.success("마감했습니다.");
+    } else {
+      toast.success("초안으로 돌렸습니다.");
+    }
+    router.refresh();
+  };
+
+  const setStatus = (id: string, status: OfferingRow["status"]) => {
+    startTransition(() => doStatus(id, status));
+  };
+
+  const confirmPublish = () => {
+    if (!confirm) return;
+    const id = confirm.id;
+    setConfirm(null);
+    startTransition(() => doStatus(id, "published"));
+  };
 
   return (
-    <form
-      action={(fd: FormData) => {
-        fd.set("university_id", universityId);
-        fd.set("department_id", departmentId);
-        fd.set("source_spec_id", sourceSpecId);
-        action(fd);
-      }}
-      className="space-y-3"
-    >
-      <div className="text-sm font-semibold">
-        {isEdit ? "모집 수정" : "새 모집"}
-      </div>
-
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-        <Field label="대학교" error={fieldErr("university_id")} required>
-          <select
-            value={universityId}
-            onChange={(e) => {
-              setUniversityId(e.target.value);
-              setDepartmentId(""); // 대학 바뀌면 학과 초기화
-              setSourceSpecId("");
-            }}
-            required
-            className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+    <Card className="overflow-hidden p-0">
+      <div className="flex flex-wrap items-center gap-2 border-b bg-muted/30 px-4 py-2">
+        <span className="text-sm font-semibold">{block.university.name_ko}</span>
+        {!block.university.active ? (
+          <Badge variant="outline" className="text-[10px] text-muted-foreground">
+            대학 숨김
+          </Badge>
+        ) : null}
+        {block.spec ? (
+          <Link
+            href={`/admissions/specs/${block.spec.id}`}
+            className="text-[11px] text-muted-foreground hover:text-primary hover:underline"
           >
-            <option value="">— 선택 —</option>
-            {universities.map((u) => (
-              <option key={u.id} value={String(u.id)}>
-                {u.name_ko}
-              </option>
-            ))}
-          </select>
-        </Field>
-
-        <Field label="학과" error={fieldErr("department_id")} required>
-          <select
-            value={departmentId}
-            onChange={(e) => setDepartmentId(e.target.value)}
-            required
-            disabled={!uniId}
-            className="rounded-md border border-input bg-background px-3 py-2 text-sm disabled:opacity-50"
-          >
-            <option value="">
-              {uniId ? "— 선택 —" : "먼저 대학을 선택하세요"}
-            </option>
-            {deptOptions.map((d) => (
-              <option key={d.id} value={String(d.id)}>
-                {d.name_ko}
-              </option>
-            ))}
-          </select>
-        </Field>
-
-        <Field label="학기" error={fieldErr("term")} required>
+            모집요강 · {SPEC_STATUS_LABEL[block.spec.status] ?? block.spec.status}
+          </Link>
+        ) : (
+          <Badge variant="outline" className="border-amber-300 text-[10px] text-amber-700">
+            모집요강 없음 — 요강을 등록해야 모집을 추가·오픈할 수 있습니다
+          </Badge>
+        )}
+        <span className="text-xs text-muted-foreground">오픈 {publishedCount}개</span>
+        <div className="ml-auto flex items-center gap-1">
           <input
             type="text"
-            name="term"
-            list="offering-terms"
-            required
+            value={newTerm}
+            onChange={(e) => setNewTerm(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                addTerm();
+              }
+            }}
+            placeholder="학기 추가 (예: 2027-Spring)"
             maxLength={100}
-            value={term}
-            onChange={(e) => setTerm(e.target.value)}
-            placeholder="예: 2026-Spring"
-            className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+            list={`terms-${block.university.id}`}
+            className="h-7 w-44 rounded-md border border-input bg-background px-2 text-xs"
           />
-          <datalist id="offering-terms">
-            {knownTerms.map((t) => (
+          <datalist id={`terms-${block.university.id}`}>
+            {suggestTerms().map((t) => (
               <option key={t} value={t} />
             ))}
           </datalist>
-        </Field>
-
-        <Field
-          label="학기별 모집수 (글로케어 운영 인원)"
-          error={fieldErr("intake_quota")}
-        >
-          <input
-            type="number"
-            name="intake_quota"
-            min="0"
-            max="100000"
-            value={intakeQuota}
-            onChange={(e) => setIntakeQuota(e.target.value)}
-            placeholder="예: 5"
-            className="rounded-md border border-input bg-background px-3 py-2 text-sm"
-          />
-          <span className="text-[11px] text-muted-foreground">
-            노출(모집중) 상태에는 필수. 모집요강 정원과 별개인 실제 모집 인원.
-          </span>
-        </Field>
-
-        <Field label="상태" error={fieldErr("status")}>
-          <select
-            name="status"
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            className="rounded-md border border-input bg-background px-3 py-2 text-sm"
-          >
-            {STATUS_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
-        </Field>
-
-        <Field label="모집요강 연결 (선택)">
-          <select
-            value={sourceSpecId}
-            onChange={(e) => setSourceSpecId(e.target.value)}
-            disabled={!uniId}
-            className="rounded-md border border-input bg-background px-3 py-2 text-sm disabled:opacity-50"
-          >
-            <option value="">— 연결 안 함 —</option>
-            {specOptions.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.term} · {s.status}
-                {s.term === term ? " (학기 일치)" : ""}
-              </option>
-            ))}
-          </select>
-        </Field>
-      </div>
-
-      <Field label="메모">
-        <textarea
-          name="notes"
-          rows={2}
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-          placeholder="큐레이션 메모 (내부용)"
-          className="rounded-md border border-input bg-background px-3 py-2 text-sm"
-        />
-      </Field>
-
-      <div className="flex items-center gap-3">
-        <label className="flex items-center gap-2 text-sm">
-          <span className="text-muted-foreground">정렬</span>
-          <input
-            type="number"
-            name="sort_order"
-            min="0"
-            max="9999"
-            value={sortOrder}
-            onChange={(e) => setSortOrder(e.target.value)}
-            className="w-20 rounded-md border border-input bg-background px-2 py-1.5 text-sm"
-          />
-        </label>
-      </div>
-
-      {state?.error ? (
-        <div className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
-          {state.error}
+          <Button type="button" size="xs" variant="outline" onClick={addTerm} disabled={!newTerm.trim()}>
+            <Plus className="size-3" />
+            학기 추가
+          </Button>
         </div>
-      ) : null}
-
-      <div className="flex items-center gap-2">
-        <Button type="submit" size="sm" disabled={pending}>
-          {pending ? (
-            <>
-              <Loader2 className="size-4 animate-spin" />
-              저장 중...
-            </>
-          ) : (
-            <>
-              <Save className="size-4" />
-              {isEdit ? "저장" : "등록"}
-            </>
-          )}
-        </Button>
-        <Button type="button" variant="outline" size="sm" onClick={onDone}>
-          <X className="size-4" />
-          취소
-        </Button>
       </div>
-    </form>
+
+      {block.rows.length === 0 ? (
+        <div className="p-6 text-sm text-muted-foreground">
+          요강에 학과가 없습니다. 모집요강에서 학과를 추가하세요.
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b bg-muted/10 text-xs text-muted-foreground">
+                <th className="sticky left-0 z-10 bg-background px-4 py-2 text-left font-medium">학과</th>
+                {terms.map((t) => (
+                  <th key={t} className="min-w-44 px-3 py-2 text-left font-medium">
+                    {t}
+                    {!block.terms.includes(t) ? (
+                      <span className="ml-1 text-[10px] font-normal text-amber-700">(새 학기)</span>
+                    ) : null}
+                  </th>
+                ))}
+                {terms.length === 0 ? (
+                  <th className="px-3 py-2 text-left font-normal">
+                    학기가 없습니다 — 우측 상단에서 학기를 추가하세요.
+                  </th>
+                ) : null}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {block.rows.map((r) => (
+                <tr key={r.department_id} className={!r.is_active ? "opacity-60" : undefined}>
+                  <td className="sticky left-0 z-10 bg-background px-4 py-2 align-top">
+                    <div className="flex flex-wrap items-center gap-1">
+                      <span className="font-medium">{r.name_ko}</span>
+                      {r.kind === "language" ? (
+                        <Badge variant="outline" className="text-[10px]">
+                          어학당
+                        </Badge>
+                      ) : r.kind === "regular" ? (
+                        <Badge variant="outline" className="text-[10px] text-muted-foreground">
+                          일반학과
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline" className="border-amber-300 text-[10px] text-amber-700">
+                          요강에 없음
+                        </Badge>
+                      )}
+                      {r.in_spec && !r.is_active ? (
+                        <Badge variant="outline" className="text-[10px] text-muted-foreground">
+                          비활성
+                        </Badge>
+                      ) : null}
+                    </div>
+                  </td>
+                  {terms.map((t) => {
+                    const o = byCell.get(`${r.department_id}|${t}`);
+                    return (
+                      <td key={t} className="px-3 py-2 align-top">
+                        <OfferingCell
+                          block={block}
+                          row={r}
+                          term={t}
+                          offering={o}
+                          pending={pending}
+                          onPublish={requestPublish}
+                          onStatus={setStatus}
+                          onDetail={setDetail}
+                        />
+                      </td>
+                    );
+                  })}
+                  {terms.length === 0 ? <td /> : null}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* 오픈 확인 (경고 목록) */}
+      <Dialog open={!!confirm} onOpenChange={(open) => (!open ? setConfirm(null) : undefined)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>미완료 항목이 있습니다</DialogTitle>
+            <DialogDescription>{confirm?.label} — 그래도 오픈하시겠습니까?</DialogDescription>
+          </DialogHeader>
+          <ul className="space-y-1 text-sm">
+            {(confirm?.warnings ?? []).map((w) => (
+              <li key={w} className="flex items-start gap-1.5">
+                <AlertTriangle className="mt-0.5 size-3.5 shrink-0 text-amber-600" />
+                <span>{w}</span>
+              </li>
+            ))}
+          </ul>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setConfirm(null)}>
+              취소
+            </Button>
+            <Button type="button" onClick={confirmPublish} disabled={pending}>
+              그래도 오픈
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* 상세 옵션 */}
+      {detail ? (
+        <OfferingDetailDialog
+          offering={detail}
+          label={rowLabel(detail)}
+          onClose={() => setDetail(null)}
+          onStatus={(status) => {
+            setDetail(null);
+            setStatus(detail.id, status);
+          }}
+        />
+      ) : null}
+    </Card>
   );
 }
 
-function Field({
-  label,
-  error,
-  required,
-  children,
+/** 학기 입력 자동완성 후보 — 올해~+2년 × 4분기 */
+function suggestTerms(): string[] {
+  const y = new Date().getFullYear();
+  const out: string[] = [];
+  for (let yy = y; yy <= y + 2; yy++) for (const q of ["Spring", "Summer", "Fall", "Winter"]) out.push(`${yy}-${q}`);
+  return out;
+}
+
+// ---------------------------------------------------------------------------
+// 칸
+// ---------------------------------------------------------------------------
+function OfferingCell({
+  block,
+  row,
+  term,
+  offering,
+  pending,
+  onPublish,
+  onStatus,
+  onDetail,
 }: {
-  label: string;
-  error?: string;
-  required?: boolean;
-  children: React.ReactNode;
+  block: UniversityBlock;
+  row: GridRow;
+  term: string;
+  offering: OfferingRow | undefined;
+  pending: boolean;
+  onPublish: (o: OfferingRow) => void;
+  onStatus: (id: string, status: OfferingRow["status"]) => void;
+  onDetail: (o: OfferingRow) => void;
 }) {
+  const router = useRouter();
+  const [adding, startAdd] = useTransition();
+
+  if (!offering) {
+    const disabledReason = !block.spec
+      ? "모집요강이 없어 추가할 수 없습니다"
+      : !row.in_spec
+        ? "요강에 없는 학과 — 모집요강에서 학과를 추가하세요"
+        : null;
+    return (
+      <Button
+        type="button"
+        size="xs"
+        variant="ghost"
+        className="text-muted-foreground"
+        disabled={!!disabledReason || adding}
+        title={disabledReason ?? `${row.name_ko} · ${term} 모집 추가 (초안)`}
+        onClick={() =>
+          startAdd(async () => {
+            const res = await createOfferingAction({
+              university_id: block.university.id,
+              department_id: row.department_id,
+              term,
+            });
+            if (!res.ok) {
+              toast.error("추가 실패", { description: res.error });
+              return;
+            }
+            router.refresh();
+          })
+        }
+      >
+        {adding ? <Loader2 className="size-3 animate-spin" /> : <Plus className="size-3" />}
+        추가
+      </Button>
+    );
+  }
+
+  const o = offering;
   return (
-    <label className="flex flex-col gap-1.5">
-      <span className="text-xs font-medium">
-        {label}
-        {required ? <span className="ml-0.5 text-destructive">*</span> : null}
-      </span>
-      {children}
-      {error ? <span className="text-xs text-destructive">{error}</span> : null}
+    <div className="space-y-1">
+      <div className="flex items-center gap-1.5">
+        <StatusBadge status={o.status} />
+        <QuotaInput offering={o} />
+        {o.status !== "published" && !o.source_spec_id && block.spec ? (
+          <span className="text-[10px] text-muted-foreground" title="오픈 시 대학 요강으로 자동 연결됩니다">
+            ·
+          </span>
+        ) : null}
+      </div>
+      <div className="flex flex-wrap items-center gap-1">
+        {o.status !== "published" ? (
+          <Button
+            type="button"
+            size="xs"
+            variant="outline"
+            disabled={pending}
+            title="유학센터·학생에게 노출하고 지원을 받습니다"
+            onClick={() => onPublish(o)}
+          >
+            오픈
+          </Button>
+        ) : (
+          <Button
+            type="button"
+            size="xs"
+            variant="outline"
+            disabled={pending}
+            title="지원 종료 (목록엔 마감으로 표시)"
+            onClick={() => onStatus(o.id, "closed")}
+          >
+            마감
+          </Button>
+        )}
+        {o.status === "closed" || o.status === "archived" ? (
+          <Button type="button" size="xs" variant="ghost" disabled={pending} onClick={() => onStatus(o.id, "draft")}>
+            초안으로
+          </Button>
+        ) : null}
+        <Button
+          type="button"
+          size="icon-xs"
+          variant="ghost"
+          title="언어·위치·메모"
+          onClick={() => onDetail(o)}
+        >
+          <Settings2 className="size-3" />
+        </Button>
+      </div>
+      {o.notes ? <div className="max-w-44 truncate text-[10px] text-muted-foreground" title={o.notes}>{o.notes}</div> : null}
+    </div>
+  );
+}
+
+function QuotaInput({ offering }: { offering: OfferingRow }) {
+  const router = useRouter();
+  const [value, setValue] = useState(offering.intake_quota != null ? String(offering.intake_quota) : "");
+  const [saving, startSave] = useTransition();
+
+  const commit = () => {
+    const trimmed = value.trim();
+    const next = trimmed === "" ? null : Number(trimmed);
+    if (next === (offering.intake_quota ?? null)) return;
+    if (next != null && !Number.isInteger(next)) {
+      toast.error("정원은 정수로 입력하세요");
+      return;
+    }
+    startSave(async () => {
+      const res = await updateOfferingQuotaAction(offering.id, next);
+      if (!res.ok) {
+        toast.error("정원 저장 실패", { description: res.error });
+        setValue(offering.intake_quota != null ? String(offering.intake_quota) : "");
+        return;
+      }
+      router.refresh();
+    });
+  };
+
+  const missing = offering.intake_quota == null;
+  return (
+    <label className="flex items-center gap-1 text-xs" title="정원 (글로케어 운영 모집 인원). 오픈에 필수.">
+      <span className="text-muted-foreground">정원</span>
+      <input
+        type="number"
+        min={0}
+        max={100000}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        onBlur={commit}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            (e.target as HTMLInputElement).blur();
+          }
+        }}
+        placeholder="—"
+        className={`h-6 w-14 rounded-md border bg-background px-1.5 text-xs ${
+          missing ? "border-amber-300" : "border-input"
+        }`}
+      />
+      {saving ? <Loader2 className="size-3 animate-spin text-muted-foreground" /> : null}
     </label>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// 상세 옵션 (언어 · 위치 · 메모 · 초안으로/삭제)
+// ---------------------------------------------------------------------------
+function OfferingDetailDialog({
+  offering,
+  label,
+  onClose,
+  onStatus,
+}: {
+  offering: OfferingRow;
+  label: string;
+  onClose: () => void;
+  onStatus: (status: OfferingRow["status"]) => void;
+}) {
+  const router = useRouter();
+  const [langs, setLangs] = useState<string[]>(offering.available_languages ?? []);
+  const [locs, setLocs] = useState<string[]>(offering.location_options ?? []);
+  const [notes, setNotes] = useState(offering.notes ?? "");
+  const [pending, startTransition] = useTransition();
+
+  const toggle = (arr: string[], v: string) => (arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
+
+  const save = () => {
+    startTransition(async () => {
+      const res = await updateOfferingOptionsAction(offering.id, {
+        available_languages: langs,
+        location_options: locs,
+        notes: notes || null,
+      });
+      if (!res.ok) {
+        toast.error("저장 실패", { description: res.error });
+        return;
+      }
+      toast.success("저장했습니다.");
+      router.refresh();
+      onClose();
+    });
+  };
+
+  const remove = () => {
+    if (!window.confirm(`"${label}" 모집(초안)을 삭제하시겠습니까?`)) return;
+    startTransition(async () => {
+      const res = await deleteOfferingAction(offering.id);
+      if (!res.ok) {
+        toast.error("삭제 실패", { description: res.error });
+        return;
+      }
+      toast.success("삭제했습니다.");
+      router.refresh();
+      onClose();
+    });
+  };
+
+  return (
+    <Dialog open onOpenChange={(open) => (!open ? onClose() : undefined)}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>{label}</DialogTitle>
+          <DialogDescription>
+            <StatusBadge status={offering.status} />
+            <span className="ml-2">정원 {offering.intake_quota ?? "미정"}</span>
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-3">
+          <div>
+            <div className="mb-1 text-xs font-medium">수업 언어</div>
+            <div className="flex flex-wrap gap-1.5">
+              {LANGUAGE_OPTIONS.map((opt) => {
+                const on = langs.includes(opt.value);
+                return (
+                  <button
+                    type="button"
+                    key={opt.value}
+                    onClick={() => setLangs((cur) => toggle(cur, opt.value))}
+                    className={`rounded-md border px-2 py-1 text-xs ${
+                      on ? "border-primary bg-primary/10 text-primary" : "border-input hover:bg-muted"
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+          <div>
+            <div className="mb-1 text-xs font-medium">지원 가능 위치</div>
+            <div className="flex flex-wrap gap-1.5">
+              {LOCATION_OPTIONS.map((opt) => {
+                const on = locs.includes(opt.value);
+                return (
+                  <button
+                    type="button"
+                    key={opt.value}
+                    onClick={() => setLocs((cur) => toggle(cur, opt.value))}
+                    className={`rounded-md border px-2 py-1 text-xs ${
+                      on ? "border-primary bg-primary/10 text-primary" : "border-input hover:bg-muted"
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+          <label className="flex flex-col gap-1">
+            <span className="text-xs font-medium">메모 (내부용)</span>
+            <textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              rows={2}
+              maxLength={2000}
+              className="rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+            />
+          </label>
+        </div>
+
+        <DialogFooter className="sm:justify-between">
+          <div className="flex gap-1">
+            {offering.status === "published" ? (
+              <Button type="button" variant="ghost" size="sm" disabled={pending} onClick={() => onStatus("draft")}>
+                초안으로
+              </Button>
+            ) : null}
+            {offering.status === "draft" ? (
+              <Button type="button" variant="ghost" size="sm" className="text-destructive" disabled={pending} onClick={remove}>
+                <Trash2 className="size-3.5" />
+                삭제
+              </Button>
+            ) : (
+              <span className={buttonVariants({ variant: "ghost", size: "sm" }) + " cursor-default text-muted-foreground"} title="초안만 삭제할 수 있습니다">
+                삭제 불가
+              </span>
+            )}
+          </div>
+          <div className="flex gap-2">
+            <Button type="button" variant="outline" size="sm" onClick={onClose}>
+              취소
+            </Button>
+            <Button type="button" size="sm" disabled={pending} onClick={save}>
+              {pending ? <Loader2 className="size-3.5 animate-spin" /> : null}
+              저장
+            </Button>
+          </div>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

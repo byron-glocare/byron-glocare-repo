@@ -137,6 +137,7 @@ function OfferingRow({
             name="target_department_label"
             value={item.departmentLabelKo}
           />
+          <input type="hidden" name="term" value={item.term} />
 
           {multiLang && (
             <div className="mb-2 flex items-center gap-3">

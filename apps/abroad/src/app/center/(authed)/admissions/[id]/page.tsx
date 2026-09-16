@@ -14,6 +14,12 @@ import {
   formatAgeRequirement,
   type AgeRequirementLike,
 } from "@/lib/admission/age-requirement";
+import {
+  loadSpecDocuments,
+  loadSpecTerms,
+  type SpecDepartmentRow,
+  type SpecIssuedDoc,
+} from "@/lib/admission/spec-documents";
 
 /** 라벨 맵에서 화면 언어에 맞는 쪽을 고른다. 없는 키는 원문 그대로. */
 function L(
@@ -25,11 +31,9 @@ function L(
   return v ? (locale === "ko" ? v[0] : v[1]) : (key ?? "—");
 }
 
-const PROGRAM_TYPE_LABEL: Record<string, [string, string]> = {
-  language_program: ["어학연수 (D-4)", "Khóa tiếng (D-4)"],
-  associate_2yr: ["전문학사 2년", "Cao đẳng 2 năm"],
-  bachelor_3yr_extension: ["학사편입 2+2", "Liên thông 2+2"],
-  bachelor_4yr: ["학사 4년", "Cử nhân 4 năm"],
+const DEPT_KIND_LABEL: Record<string, [string, string]> = {
+  language: ["어학당", "Khóa tiếng"],
+  regular: ["정규", "Chính quy"],
 };
 
 const NOTARIZATION_LABEL: Record<string, [string, string]> = {
@@ -96,27 +100,6 @@ const FORM_KEY_LABEL: Record<string, [string, string]> = {
   other: ["기타", "Khác"],
 };
 
-type Dept = {
-  faculty?: string | null;
-  name?: string;
-  track?: string | null;
-  years?: number | null;
-  capacity?: number | string | null;
-  korean_min_topik?: number | null;
-  tuition_per_semester_krw?: number | null;
-  notes?: string | null;
-};
-
-type RequiredDoc = {
-  key?: string;
-  name_ko?: string;
-  name_vi?: string | null;
-  required?: boolean;
-  notarization?: string;
-  language?: string;
-  notes?: string | null;
-};
-
 type Scholarship = {
   name?: string;
   applies_to?: string;
@@ -163,48 +146,39 @@ export default async function CenterAdmissionDetailPage({
     .eq("id", spec.university_id)
     .maybeSingle();
 
-  const departments = (Array.isArray(spec.departments) ? spec.departments : []) as Dept[];
-  const requiredDocs = (Array.isArray(spec.required_documents) ? spec.required_documents : []) as RequiredDoc[];
   const scholarships = (Array.isArray(spec.scholarships) ? spec.scholarships : []) as Scholarship[];
 
-  // 양식 파일 (B4-1) — 대학 전체 + 학과별 override
-  //   학과별이 있으면 그 학과 학생은 학과별 우선, 없으면 대학 전체.
-  const { data: formFiles } = await supabase
-    .from("study_admission_form_files")
-    .select("*")
-    .eq("university_id", spec.university_id)
-    .eq("is_current", true)
-    .order("department_name", { ascending: true, nullsFirst: true });
+  // 0067: 학과(어학당 먼저) + 학과별 발급서류·작성서류 양식, 학기별 일정
+  const [{ departments, byDept }, termsBySpec] = await Promise.all([
+    loadSpecDocuments(supabase, spec),
+    loadSpecTerms(supabase, [spec.id]),
+  ]);
+  const specTerms = termsBySpec.get(spec.id) ?? [];
 
-  // 학과별 그룹화: 같은 (department_name, key) 의 가장 최근 1건만
-  type FormFile = {
-    id: string;
-    department_name: string | null;
-    key: string;
-    name_ko: string;
-    file_url: string;
-    file_name: string;
-    size_bytes: number | null;
-  };
-  const universalForms: FormFile[] = [];
-  const deptOverrides = new Map<string, FormFile[]>(); // department_name → forms[]
-  for (const f of (formFiles ?? []) as FormFile[]) {
-    if (f.department_name === null) {
-      universalForms.push(f);
-    } else {
-      if (!deptOverrides.has(f.department_name)) {
-        deptOverrides.set(f.department_name, []);
-      }
-      deptOverrides.get(f.department_name)!.push(f);
-    }
-  }
-
-  const schedule = (spec.schedule ?? {}) as {
+  type ScheduleShape = {
     rounds?: Round[];
     semester_start?: string | null;
     semester_end?: string | null;
     submission_method?: string;
   };
+  // 학기별 일정. 학기 행이 없으면 요강 공통 schedule(옛 데이터) 하나로.
+  const termSchedules: Array<{ term: string; schedule: ScheduleShape; notes: string | null }> =
+    specTerms.length > 0
+      ? specTerms.map((t) => ({
+          term: t.term,
+          schedule: (t.schedule && typeof t.schedule === "object" ? t.schedule : {}) as ScheduleShape,
+          notes: t.notes,
+        }))
+      : [{ term: spec.term, schedule: (spec.schedule ?? {}) as ScheduleShape, notes: null }];
+  const termLabel = specTerms.length > 0 ? specTerms.map((t) => t.term).join(" · ") : spec.term;
+
+  const deptName = (d: SpecDepartmentRow) =>
+    locale === "ko" ? d.name_ko : d.name_vi || d.name_ko;
+  const docName = (doc: SpecIssuedDoc) =>
+    locale === "ko" ? doc.name_ko : doc.name_vi || doc.name_ko;
+  const docNotes = (doc: SpecIssuedDoc) =>
+    locale === "ko" ? doc.notes : doc.notes_vi ?? doc.notes;
+  const docCount = departments.reduce((n, d) => n + (byDept.get(d.id)?.issued.length ?? 0), 0);
 
   const tuition = (spec.tuition ?? {}) as {
     unit?: string;
@@ -311,8 +285,7 @@ export default async function CenterAdmissionDetailPage({
             <p className="mt-0.5 text-sm text-slate-600">{university.name_vi}</p>
           ) : null}
           <p className="mt-1 text-sm text-slate-500">
-            {spec.term} ·{" "}
-            {L(PROGRAM_TYPE_LABEL, spec.program_type, locale)}
+            {termLabel}
             {university?.region_ko ? ` · ${university.region_ko}` : ""}
           </p>
         </div>
@@ -321,7 +294,7 @@ export default async function CenterAdmissionDetailPage({
         </span>
       </div>
 
-      {/* Học khoa */}
+      {/* Học khoa — 어학당 먼저 */}
       <Card title={`${tr(locale, "학과", "Ngành học")} (${departments.length})`}>
         {departments.length === 0 ? (
           <p className="text-sm text-slate-500">{tr(locale, "데이터 없음", "Không có dữ liệu")}</p>
@@ -330,6 +303,7 @@ export default async function CenterAdmissionDetailPage({
             <table className="w-full text-sm">
               <thead className="bg-slate-50">
                 <tr className="text-left">
+                  <th className="px-3 py-2 font-medium">{tr(locale, "구분", "Loại")}</th>
                   <th className="px-3 py-2 font-medium">{tr(locale, "학부", "Khoa")}</th>
                   <th className="px-3 py-2 font-medium">{tr(locale, "학과", "Ngành")}</th>
                   <th className="px-3 py-2 font-medium">{tr(locale, "과정", "Hệ")}</th>
@@ -340,19 +314,24 @@ export default async function CenterAdmissionDetailPage({
                 </tr>
               </thead>
               <tbody>
-                {departments.map((d, i) => (
-                  <tr key={i} className="border-t border-slate-100">
-                    <td className="px-3 py-2 text-slate-600">{d.faculty ?? "—"}</td>
-                    <td className="px-3 py-2 font-medium">{d.name ?? "—"}</td>
-                    <td className="px-3 py-2 text-slate-600">{d.track ?? "—"}</td>
-                    <td className="px-3 py-2 text-center">{d.years ?? "—"}</td>
-                    <td className="px-3 py-2 text-center">{d.capacity ?? "—"}</td>
+                {departments.map((d) => (
+                  <tr key={d.id} className="border-t border-slate-100">
+                    <td className="px-3 py-2">
+                      <span className="rounded border border-slate-300 px-1.5 py-0.5 text-xs">
+                        {L(DEPT_KIND_LABEL, d.kind, locale)}
+                      </span>
+                    </td>
+                    <td className="px-3 py-2 text-slate-600">{d.info.faculty ?? "—"}</td>
+                    <td className="px-3 py-2 font-medium">{deptName(d)}</td>
+                    <td className="px-3 py-2 text-slate-600">{d.info.track ?? "—"}</td>
+                    <td className="px-3 py-2 text-center">{d.info.years ?? "—"}</td>
+                    <td className="px-3 py-2 text-center">{d.info.capacity ?? "—"}</td>
                     <td className="px-3 py-2 text-center">
-                      {d.korean_min_topik ? `${d.korean_min_topik}급` : "—"}
+                      {d.info.korean_min_topik ? `${d.info.korean_min_topik}급` : "—"}
                     </td>
                     <td className="px-3 py-2 text-right">
-                      {d.tuition_per_semester_krw
-                        ? `${d.tuition_per_semester_krw.toLocaleString("vi-VN")} KRW`
+                      {d.info.tuition_per_semester_krw
+                        ? `${d.info.tuition_per_semester_krw.toLocaleString("vi-VN")} KRW`
                         : "—"}
                     </td>
                   </tr>
@@ -363,52 +342,87 @@ export default async function CenterAdmissionDetailPage({
         )}
       </Card>
 
-      {/* Yêu cầu hồ sơ */}
-      <Card title={`${tr(locale, "제출 서류", "Hồ sơ cần nộp")} (${requiredDocs.length})`}>
-        {requiredDocs.length === 0 ? (
+      {/* Yêu cầu hồ sơ — 학과별 (발급서류 + 작성서류 양식) */}
+      <Card title={`${tr(locale, "제출 서류", "Hồ sơ cần nộp")} (${docCount})`}>
+        {departments.length === 0 ? (
           <p className="text-sm text-slate-500">{tr(locale, "데이터 없음", "Không có dữ liệu")}</p>
         ) : (
-          <ul className="space-y-2 text-sm">
-            {requiredDocs.map((doc, i) => (
-              <li
-                key={i}
-                className="rounded-md border border-slate-200 p-3"
-              >
-                <div className="flex items-start justify-between gap-2">
-                  <div className="flex-1">
-                    <div className="font-medium">
-                      {doc.name_vi || doc.name_ko || doc.key || "—"}
-                      {doc.name_vi && doc.name_ko ? (
-                        <span className="ml-2 text-xs text-slate-500">
-                          ({doc.name_ko})
-                        </span>
-                      ) : null}
+          <div className="space-y-5">
+            {departments.map((d) => {
+              const docs = byDept.get(d.id);
+              const issued = docs?.issued ?? [];
+              const forms = docs?.formFiles ?? [];
+              return (
+                <section key={d.id}>
+                  <h3 className="mb-2 flex flex-wrap items-center gap-2 text-sm font-medium text-slate-700">
+                    {deptName(d)}
+                    <span className="rounded border border-slate-300 px-1.5 py-0.5 text-xs font-normal">
+                      {L(DEPT_KIND_LABEL, d.kind, locale)}
+                    </span>
+                    <span className="text-xs font-normal text-slate-400">
+                      {tr(locale, "발급", "Xin cấp")} {issued.length} · {tr(locale, "양식", "Mẫu")} {forms.length}
+                    </span>
+                  </h3>
+                  {issued.length === 0 ? (
+                    <p className="text-xs text-slate-500">{tr(locale, "발급 서류 없음", "Không có giấy tờ cần xin cấp")}</p>
+                  ) : (
+                    <ul className="space-y-2 text-sm">
+                      {issued.map((doc) => (
+                        <li
+                          key={`${doc.std_key}:${doc.target_person ?? ""}`}
+                          className="rounded-md border border-slate-200 p-3"
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="flex-1">
+                              <div className="font-medium">
+                                {docName(doc)}
+                                {locale !== "ko" && doc.name_vi ? (
+                                  <span className="ml-2 text-xs text-slate-500">
+                                    ({doc.name_ko})
+                                  </span>
+                                ) : null}
+                              </div>
+                              {doc.notarization && doc.notarization !== "none" ? (
+                                <div className="mt-0.5 text-xs text-slate-600">
+                                  {tr(locale, "인증", "Xác thực")}:{" "}
+                                  {L(NOTARIZATION_LABEL, doc.notarization, locale)}
+                                </div>
+                              ) : null}
+                              {docNotes(doc) ? (
+                                <div className="mt-1 whitespace-pre-wrap text-xs text-slate-500">
+                                  {docNotes(doc)}
+                                </div>
+                              ) : null}
+                            </div>
+                            <span
+                              className={`shrink-0 rounded-full px-2 py-0.5 text-xs ${
+                                !doc.required
+                                  ? "border border-slate-300 text-slate-600"
+                                  : "bg-rose-100 text-rose-700"
+                              }`}
+                            >
+                              {!doc.required ? tr(locale, "선택", "Tùy chọn") : tr(locale, "필수", "Bắt buộc")}
+                            </span>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  {forms.length > 0 ? (
+                    <div className="mt-3">
+                      <div className="mb-1 text-xs font-medium text-slate-600">
+                        {tr(locale, "작성 서류 (학교 양식)", "Hồ sơ tự điền (mẫu trường)")}
+                      </div>
+                      <FormFilesList locale={locale} forms={forms} />
                     </div>
-                    {doc.notarization && doc.notarization !== "none" ? (
-                      <div className="mt-0.5 text-xs text-slate-600">
-                        {tr(locale, "인증", "Xác thực")}:{" "}
-                        {L(NOTARIZATION_LABEL, doc.notarization, locale)}
-                      </div>
-                    ) : null}
-                    {doc.notes ? (
-                      <div className="mt-1 whitespace-pre-wrap text-xs text-slate-500">
-                        {doc.notes}
-                      </div>
-                    ) : null}
-                  </div>
-                  <span
-                    className={`shrink-0 rounded-full px-2 py-0.5 text-xs ${
-                      doc.required === false
-                        ? "border border-slate-300 text-slate-600"
-                        : "bg-rose-100 text-rose-700"
-                    }`}
-                  >
-                    {doc.required === false ? tr(locale, "선택", "Tùy chọn") : tr(locale, "필수", "Bắt buộc")}
-                  </span>
-                </div>
-              </li>
-            ))}
-          </ul>
+                  ) : null}
+                </section>
+              );
+            })}
+            <p className="text-xs text-slate-500">
+              {tr(locale, "양식은 학교가 제공하는 것입니다. 작성해 다른 서류와 함께 제출합니다.", "Mẫu hồ sơ do trường cung cấp. Sinh viên điền và nộp cùng các giấy tờ khác.")}
+            </p>
+          </div>
         )}
       </Card>
 
@@ -573,54 +587,64 @@ export default async function CenterAdmissionDetailPage({
         </section>
       </Card>
 
-      {/* Lịch tuyển sinh */}
-      <Card title={tr(locale, "모집 일정", "Lịch tuyển sinh")}>
-        {schedule.rounds && schedule.rounds.length > 0 ? (
-          <div className="overflow-hidden rounded-md border border-slate-200">
-            <table className="w-full text-sm">
-              <thead className="bg-slate-50">
-                <tr className="text-left">
-                  <th className="px-3 py-2 font-medium">{tr(locale, "차수", "Đợt")}</th>
-                  <th className="px-3 py-2 font-medium">{tr(locale, "원서 접수", "Nhận hồ sơ")}</th>
-                  <th className="px-3 py-2 font-medium">{tr(locale, "면접", "Phỏng vấn")}</th>
-                  <th className="px-3 py-2 font-medium">{tr(locale, "합격 발표", "Kết quả")}</th>
-                  <th className="px-3 py-2 font-medium">{tr(locale, "등록금 납부", "Đóng học phí")}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {schedule.rounds.map((r, i) => (
-                  <tr key={i} className="border-t border-slate-100">
-                    <td className="px-3 py-2 font-medium">{r.name ?? "—"}</td>
-                    <td className="px-3 py-2 text-xs">
-                      {r.application_open ?? "—"} ~ {r.application_close ?? "—"}
-                    </td>
-                    <td className="px-3 py-2 text-xs">
-                      {r.interview
-                        ? r.interview
-                        : r.interview_period
-                          ? `${r.interview_period[0]} ~ ${r.interview_period[1]}`
-                          : "—"}
-                    </td>
-                    <td className="px-3 py-2 text-xs">
-                      {r.result_announcement ?? "—"}
-                    </td>
-                    <td className="px-3 py-2 text-xs">
-                      {r.payment_period
-                        ? `${r.payment_period[0]} ~ ${r.payment_period[1]}`
-                        : "—"}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <p className="text-sm text-slate-500">{tr(locale, "일정 없음", "Chưa có lịch")}</p>
-        )}
-        <div className="mt-3 grid grid-cols-1 gap-x-6 gap-y-1 text-sm md:grid-cols-3">
-          <Info label={tr(locale, "개강", "Khai giảng")} value={schedule.semester_start} />
-          <Info label={tr(locale, "종강", "Kết thúc")} value={schedule.semester_end} />
-          <Info label={tr(locale, "제출 방법", "Hình thức nộp")} value={schedule.submission_method} />
+      {/* Lịch tuyển sinh — 학기별 */}
+      <Card title={`${tr(locale, "모집 일정", "Lịch tuyển sinh")} (${termSchedules.length})`}>
+        <div className="space-y-4">
+          {termSchedules.map(({ term, schedule, notes }) => (
+            <section key={term}>
+              <h3 className="mb-2 text-sm font-medium text-slate-700">{term}</h3>
+              {schedule.rounds && schedule.rounds.length > 0 ? (
+                <div className="overflow-hidden rounded-md border border-slate-200">
+                  <table className="w-full text-sm">
+                    <thead className="bg-slate-50">
+                      <tr className="text-left">
+                        <th className="px-3 py-2 font-medium">{tr(locale, "차수", "Đợt")}</th>
+                        <th className="px-3 py-2 font-medium">{tr(locale, "원서 접수", "Nhận hồ sơ")}</th>
+                        <th className="px-3 py-2 font-medium">{tr(locale, "면접", "Phỏng vấn")}</th>
+                        <th className="px-3 py-2 font-medium">{tr(locale, "합격 발표", "Kết quả")}</th>
+                        <th className="px-3 py-2 font-medium">{tr(locale, "등록금 납부", "Đóng học phí")}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {schedule.rounds.map((r, i) => (
+                        <tr key={i} className="border-t border-slate-100">
+                          <td className="px-3 py-2 font-medium">{r.name ?? "—"}</td>
+                          <td className="px-3 py-2 text-xs">
+                            {r.application_open ?? "—"} ~ {r.application_close ?? "—"}
+                          </td>
+                          <td className="px-3 py-2 text-xs">
+                            {r.interview
+                              ? r.interview
+                              : r.interview_period
+                                ? `${r.interview_period[0]} ~ ${r.interview_period[1]}`
+                                : "—"}
+                          </td>
+                          <td className="px-3 py-2 text-xs">
+                            {r.result_announcement ?? "—"}
+                          </td>
+                          <td className="px-3 py-2 text-xs">
+                            {r.payment_period
+                              ? `${r.payment_period[0]} ~ ${r.payment_period[1]}`
+                              : "—"}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p className="text-sm text-slate-500">{tr(locale, "일정 없음", "Chưa có lịch")}</p>
+              )}
+              <div className="mt-3 grid grid-cols-1 gap-x-6 gap-y-1 text-sm md:grid-cols-3">
+                <Info label={tr(locale, "개강", "Khai giảng")} value={schedule.semester_start} />
+                <Info label={tr(locale, "종강", "Kết thúc")} value={schedule.semester_end} />
+                <Info label={tr(locale, "제출 방법", "Hình thức nộp")} value={schedule.submission_method} />
+              </div>
+              {notes ? (
+                <p className="mt-2 whitespace-pre-wrap text-xs text-slate-500">{notes}</p>
+              ) : null}
+            </section>
+          ))}
         </div>
       </Card>
 
@@ -707,38 +731,6 @@ export default async function CenterAdmissionDetailPage({
           </ul>
         )}
       </Card>
-
-      {/* Mẫu hồ sơ (양식 파일) */}
-      {universalForms.length > 0 || deptOverrides.size > 0 ? (
-        <Card title={tr(locale, "양식 다운로드", "Mẫu hồ sơ tải xuống")}>
-          {/* 학과별 override 가 있는 경우 우선 표시 */}
-          {deptOverrides.size > 0 ? (
-            <div className="space-y-3">
-              {Array.from(deptOverrides.entries()).map(([dept, forms]) => (
-                <div key={dept}>
-                  <div className="mb-1 text-xs font-medium text-slate-600">
-                    {dept} <span className="text-slate-400">{tr(locale, "(해당 학과 전용)", "(riêng cho ngành này)")}</span>
-                  </div>
-                  <FormFilesList locale={locale} forms={forms} />
-                </div>
-              ))}
-              {universalForms.length > 0 ? (
-                <div className="mt-3 border-t pt-3">
-                  <div className="mb-1 text-xs font-medium text-slate-600">
-                    {tr(locale, "전체 학과 공통", "Áp dụng chung toàn trường")}
-                  </div>
-                  <FormFilesList locale={locale} forms={universalForms} />
-                </div>
-              ) : null}
-            </div>
-          ) : (
-            <FormFilesList locale={locale} forms={universalForms} />
-          )}
-          <p className="mt-2 text-xs text-slate-500">
-            {tr(locale, "학교가 제공하는 양식입니다. 작성해 다른 서류와 함께 제출합니다.", "Mẫu hồ sơ do trường cung cấp. Sinh viên điền và nộp cùng các giấy tờ khác.")}
-          </p>
-        </Card>
-      ) : null}
 
       {/* Sau khi trúng tuyển */}
       {metadata.post_acceptance ? (

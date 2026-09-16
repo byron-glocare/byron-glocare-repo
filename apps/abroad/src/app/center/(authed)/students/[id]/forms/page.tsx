@@ -11,6 +11,10 @@ import { notFound } from "next/navigation";
 import { verifyCenterSession } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
 import { residenceFromStudentLocation } from "@/lib/admission/offering-languages";
+import {
+  formFileAppliesTo,
+  loadApplicationDepartments,
+} from "@/lib/admission/spec-documents";
 import { getLocale, tr, type Locale } from "@/lib/i18n";
 import type { AdmissionFormFileKey } from "@/types/study";
 
@@ -82,7 +86,7 @@ export default async function StudentFormsListPage({
   const { data: apps } = await supabase
     .from("study_applications")
     .select(
-      "id, admission_spec_id, target_department_label, selected_language"
+      "id, admission_spec_id, target_department_id, target_department_label, selected_language"
     )
     .eq("student_id", id);
 
@@ -124,12 +128,16 @@ export default async function StudentFormsListPage({
 
   if ((apps ?? []).length > 0) {
     const specIds = (apps ?? []).map((a) => a.admission_spec_id);
-    const { data: specs } = await supabase
-      .from("study_admission_specs")
-      .select(
-        "id, university_id, is_online_submission, online_guide_url, online_form_url"
-      )
-      .in("id", specIds);
+    const [{ data: specs }, { deptByApp }] = await Promise.all([
+      supabase
+        .from("study_admission_specs")
+        .select(
+          "id, university_id, is_online_submission, online_guide_url, online_form_url"
+        )
+        .in("id", specIds),
+      // 0067: 지원 → 요강 학과 (양식은 spec_department_id 로 고른다)
+      loadApplicationDepartments(supabase, apps ?? []),
+    ]);
 
     const specToUni = new Map(
       (specs ?? []).map((s) => [s.id, s.university_id])
@@ -158,7 +166,7 @@ export default async function StudentFormsListPage({
           supabase
             .from("study_admission_form_files")
             .select(
-              "id, university_id, department_name, name_ko, key, required_data_type_keys, essay_questions"
+              "id, university_id, spec_department_id, department_name, name_ko, key, required_data_type_keys, essay_questions"
             )
             .in("university_id", universityIds)
             .eq("is_current", true),
@@ -263,14 +271,13 @@ export default async function StudentFormsListPage({
       for (const app of apps ?? []) {
         const uniId = specToUni.get(app.admission_spec_id);
         if (uniId == null || onlineUni.has(uniId)) continue;
-        const applicable = (formRows ?? []).filter((f) => {
-          if (f.university_id !== uniId) return false;
-          if (f.department_name === null) return true;
-          return (
-            app.target_department_label &&
-            f.department_name === app.target_department_label
-          );
-        });
+        const applicable = (formRows ?? []).filter((f) =>
+          formFileAppliesTo(f, {
+            dept: deptByApp.get(app.id),
+            universityId: uniId,
+            departmentLabel: app.target_department_label,
+          })
+        );
         for (const f of applicable) {
           const existing = collected.get(f.id);
           const lbl = app.target_department_label ?? allLabel;

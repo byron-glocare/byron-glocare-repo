@@ -10,18 +10,22 @@ import {
   type CreateApplicationState,
 } from "./actions";
 
+/** 모집요강 직접 선택용 — 요강(대학) + 학과(어학당 포함) + 학기 */
 export type SpecOption = {
   id: string;
   universityNameKo: string | null;
   /** 화면 표시용 — 베트남어 화면이면 name_vi(없으면 한국어) */
   universityName: string | null;
-  term: string;
   admissionCategory: string | null;
-  programType: string;
+  terms: string[];
   departments: Array<{
+    departmentId: number;
+    /** 저장값(target_department_label) — 한국어 학과명, 번역 금지 */
+    nameKo: string;
+    /** 화면 표시용 학과명 */
     name: string;
-    faculty?: string | null;
-    track?: string | null;
+    kind: "language" | "regular";
+    availableLanguages: string[];
   }>;
 };
 
@@ -33,7 +37,7 @@ export type OfferingOption = {
   /** 화면 표시용 — 베트남어 화면이면 name_vi(없으면 한국어) */
   universityName: string | null;
   departmentId: number;
-  /** 저장값(target_department_label) — 양식 매칭이 한국어로 비교하므로 번역 금지 */
+  /** 저장값(target_department_label) — 옛 코드가 한국어로 비교하므로 번역 금지 */
   departmentNameKo: string;
   /** 화면 표시용 학과명 */
   departmentName: string;
@@ -41,21 +45,6 @@ export type OfferingOption = {
   intakeQuota: number | null;
   availableLanguages: string[];
 };
-
-function programTypeLabel(locale: Locale, programType: string): string {
-  switch (programType) {
-    case "language_program":
-      return tr(locale, "어학연수 (D-4)", "Khóa tiếng (D-4)");
-    case "associate_2yr":
-      return tr(locale, "전문학사 2년", "Cao đẳng 2 năm");
-    case "bachelor_3yr_extension":
-      return tr(locale, "학사 편입 2+2", "Liên thông 2+2");
-    case "bachelor_4yr":
-      return tr(locale, "학사 4년", "Cử nhân 4 năm");
-    default:
-      return programType;
-  }
-}
 
 function languageLabel(locale: Locale, lang: string): string {
   switch (lang) {
@@ -70,6 +59,11 @@ function languageLabel(locale: Locale, lang: string): string {
   }
 }
 
+function kindLabel(locale: Locale, kind: "language" | "regular"): string {
+  return kind === "language"
+    ? tr(locale, "어학당", "Khóa tiếng")
+    : tr(locale, "정규", "Chính quy");
+}
 
 const inputClass =
   "rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200";
@@ -77,15 +71,6 @@ const labelClass = "flex flex-col gap-1.5";
 const labelTextClass = "text-sm font-medium text-slate-700";
 const requiredMarkClass = "ml-0.5 text-red-500";
 const errorTextClass = "text-xs text-red-600";
-const helpTextClass = "text-xs text-slate-500";
-
-function departmentLabel(d: SpecOption["departments"][number]): string {
-  if (!d) return "";
-  const parts: string[] = [];
-  if (d.faculty) parts.push(d.faculty);
-  parts.push(d.name);
-  return d.track ? `${parts.join(" · ")} (${d.track})` : parts.join(" · ");
-}
 
 export function NewApplicationForm({
   locale,
@@ -127,18 +112,30 @@ export function NewApplicationForm({
     );
   };
 
-  // --- spec 모드 상태 ---
+  // --- spec 모드 상태 (요강 → 학과 → 학기) ---
   const [specId, setSpecId] = useState<string>("");
   const selectedSpec = useMemo(
     () => specs.find((s) => s.id === specId),
     [specId, specs]
   );
-  const [deptLabel, setDeptLabel] = useState<string>("");
+  const [specDeptId, setSpecDeptId] = useState<string>("");
+  const [specTerm, setSpecTerm] = useState<string>("");
+  const [specLanguage, setSpecLanguage] = useState<string>("");
+  const selectedSpecDept = useMemo(
+    () => selectedSpec?.departments.find((d) => String(d.departmentId) === specDeptId),
+    [selectedSpec, specDeptId]
+  );
+  const pickSpecDept = (spec: SpecOption | undefined, deptId: string) => {
+    setSpecDeptId(deptId);
+    const d = spec?.departments.find((x) => String(x.departmentId) === deptId);
+    setSpecLanguage(d && d.availableLanguages.length === 1 ? d.availableLanguages[0] : "");
+  };
   const onSpecChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const id = e.target.value;
     setSpecId(id);
     const spec = specs.find((s) => s.id === id);
-    setDeptLabel(spec && spec.departments.length > 0 ? departmentLabel(spec.departments[0]) : "");
+    pickSpecDept(spec, spec && spec.departments.length === 1 ? String(spec.departments[0].departmentId) : "");
+    setSpecTerm(spec && spec.terms.length === 1 ? spec.terms[0] : "");
   };
 
   const fieldError = (name: string) => state?.fieldErrors?.[name]?.[0];
@@ -147,17 +144,23 @@ export function NewApplicationForm({
   const submitSpecId =
     mode === "offering" ? selectedOffering?.sourceSpecId ?? "" : specId;
   const submitDeptLabel =
-    mode === "offering" ? selectedOffering?.departmentNameKo ?? "" : deptLabel;
+    mode === "offering"
+      ? selectedOffering?.departmentNameKo ?? ""
+      : selectedSpecDept?.nameKo ?? "";
   const submitDeptId =
-    mode === "offering" && selectedOffering
-      ? String(selectedOffering.departmentId)
-      : "";
+    mode === "offering"
+      ? selectedOffering
+        ? String(selectedOffering.departmentId)
+        : ""
+      : specDeptId;
+  const submitTerm = mode === "offering" ? selectedOffering?.term ?? "" : specTerm;
   const submitOfferingId = mode === "offering" ? offeringId : "";
+  const submitLanguage = mode === "offering" ? selectedLanguage : specLanguage;
 
   const canSubmit =
     mode === "offering"
       ? !!offeringId && !!selectedLanguage
-      : !!specId && !!deptLabel;
+      : !!specId && !!specDeptId && !!specTerm && !!specLanguage;
 
   // 모집 중인 학과가 없음 — 승인된 모집요강이 있어도 여기서 멈춘다.
   // 모집요강 전체를 지원 가능 목록처럼 흘려보내지 않기 위해서다.
@@ -201,6 +204,41 @@ export function NewApplicationForm({
     );
   }
 
+  const languageField = (
+    languages: string[],
+    value: string,
+    onChange: (v: string) => void
+  ) => (
+    <label className={labelClass}>
+      <span className={labelTextClass}>
+        {tr(locale, "어학 능력", "Năng lực ngoại ngữ")}
+        <span className={requiredMarkClass}>*</span>
+      </span>
+      {languages.length > 1 ? (
+        <select
+          required
+          className={inputClass}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+        >
+          <option value="">{tr(locale, "— 선택 —", "— Chọn —")}</option>
+          {languages.map((l) => (
+            <option key={l} value={l}>
+              {languageLabel(locale, l)}
+            </option>
+          ))}
+        </select>
+      ) : (
+        <input
+          type="text"
+          className={inputClass + " bg-slate-50"}
+          value={value ? languageLabel(locale, value) : ""}
+          readOnly
+        />
+      )}
+    </label>
+  );
+
   return (
     <form action={action} className="flex flex-col gap-5">
       <input type="hidden" name="admission_spec_id" value={submitSpecId} />
@@ -211,11 +249,8 @@ export function NewApplicationForm({
         name="target_department_label"
         value={submitDeptLabel}
       />
-      <input
-        type="hidden"
-        name="selected_language"
-        value={mode === "offering" ? selectedLanguage : ""}
-      />
+      <input type="hidden" name="term" value={submitTerm} />
+      <input type="hidden" name="selected_language" value={submitLanguage} />
 
       {mode === "offering" ? (
         <>
@@ -262,38 +297,9 @@ export function NewApplicationForm({
           ) : null}
         </label>
 
-        {selectedOffering ? (
-          <label className={labelClass}>
-            <span className={labelTextClass}>
-              {tr(locale, "어학 능력", "Năng lực ngoại ngữ")}
-              <span className={requiredMarkClass}>*</span>
-            </span>
-            {selectedOffering.availableLanguages.length > 1 ? (
-              <select
-                required
-                className={inputClass}
-                value={selectedLanguage}
-                onChange={(e) => setSelectedLanguage(e.target.value)}
-              >
-                <option value="">{tr(locale, "— 선택 —", "— Chọn —")}</option>
-                {selectedOffering.availableLanguages.map((l) => (
-                  <option key={l} value={l}>
-                    {languageLabel(locale, l)}
-                  </option>
-                ))}
-              </select>
-            ) : (
-              <input
-                type="text"
-                className={inputClass + " bg-slate-50"}
-                value={
-                  selectedLanguage ? languageLabel(locale, selectedLanguage) : ""
-                }
-                readOnly
-              />
-            )}
-          </label>
-        ) : null}
+        {selectedOffering
+          ? languageField(selectedOffering.availableLanguages, selectedLanguage, setSelectedLanguage)
+          : null}
 
         </>
       ) : (
@@ -310,11 +316,12 @@ export function NewApplicationForm({
               onChange={onSpecChange}
             >
               <option value="">
-                {tr(locale, "— 대학 · 과정 선택 —", "— Chọn trường · chương trình —")}
+                {tr(locale, "— 대학 선택 —", "— Chọn trường —")}
               </option>
               {specs.map((s) => (
                 <option key={s.id} value={s.id}>
-                  {s.universityName ?? s.universityNameKo ?? "?"} · {programTypeLabel(locale, s.programType)} · {s.term}
+                  {s.universityName ?? s.universityNameKo ?? "?"}
+                  {s.admissionCategory ? ` · ${s.admissionCategory}` : ""}
                 </option>
               ))}
             </select>
@@ -346,28 +353,29 @@ export function NewApplicationForm({
                 {tr(locale, "학과 · 전공", "Ngành · chuyên ngành")}
                 <span className={requiredMarkClass}>*</span>
               </span>
-              {selectedSpec.departments.length > 1 ? (
+              {selectedSpec.departments.length === 0 ? (
+                <span className="text-xs text-slate-500">
+                  {tr(locale, "이 모집요강에 등록된 학과가 없습니다.", "Hồ sơ này chưa có ngành nào.")}
+                </span>
+              ) : selectedSpec.departments.length > 1 ? (
                 <select
                   required
                   className={inputClass}
-                  value={deptLabel}
-                  onChange={(e) => setDeptLabel(e.target.value)}
+                  value={specDeptId}
+                  onChange={(e) => pickSpecDept(selectedSpec, e.target.value)}
                 >
                   <option value="">{tr(locale, "— 학과 선택 —", "— Chọn ngành —")}</option>
-                  {selectedSpec.departments.map((d) => {
-                    const label = departmentLabel(d);
-                    return (
-                      <option key={label} value={label}>
-                        {label}
-                      </option>
-                    );
-                  })}
+                  {selectedSpec.departments.map((d) => (
+                    <option key={d.departmentId} value={String(d.departmentId)}>
+                      {d.name} ({kindLabel(locale, d.kind)})
+                    </option>
+                  ))}
                 </select>
               ) : (
                 <input
                   type="text"
                   className={inputClass + " bg-slate-50"}
-                  value={deptLabel}
+                  value={selectedSpecDept ? `${selectedSpecDept.name} (${kindLabel(locale, selectedSpecDept.kind)})` : ""}
                   readOnly
                 />
               )}
@@ -378,6 +386,48 @@ export function NewApplicationForm({
               ) : null}
             </label>
           ) : null}
+
+          {selectedSpec ? (
+            <label className={labelClass}>
+              <span className={labelTextClass}>
+                {tr(locale, "학기", "Học kỳ")}
+                <span className={requiredMarkClass}>*</span>
+              </span>
+              {selectedSpec.terms.length === 0 ? (
+                <span className="text-xs text-slate-500">
+                  {tr(locale, "이 모집요강에 등록된 학기가 없습니다.", "Hồ sơ này chưa có học kỳ nào.")}
+                </span>
+              ) : selectedSpec.terms.length > 1 ? (
+                <select
+                  required
+                  className={inputClass}
+                  value={specTerm}
+                  onChange={(e) => setSpecTerm(e.target.value)}
+                >
+                  <option value="">{tr(locale, "— 학기 선택 —", "— Chọn học kỳ —")}</option>
+                  {selectedSpec.terms.map((t) => (
+                    <option key={t} value={t}>
+                      {t}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  type="text"
+                  className={inputClass + " bg-slate-50"}
+                  value={specTerm}
+                  readOnly
+                />
+              )}
+              {fieldError("term") ? (
+                <span className={errorTextClass}>{fieldError("term")}</span>
+              ) : null}
+            </label>
+          ) : null}
+
+          {selectedSpecDept
+            ? languageField(selectedSpecDept.availableLanguages, specLanguage, setSpecLanguage)
+            : null}
         </>
       )}
 

@@ -25,19 +25,32 @@ const KEY_LABELS: Record<string, string> = {
   other: "기타",
 };
 
+const KIND_LABEL: Record<"language" | "regular", string> = { language: "어학당", regular: "일반학과" };
+
 type Uni = { id: number; name_ko: string };
-type Dept = { id: number; university_id: number; name_ko: string; active: boolean };
+export type SpecDeptOption = {
+  id: string;
+  university_id: number;
+  name_ko: string;
+  kind: "language" | "regular";
+  is_active: boolean;
+  sort_order: number;
+};
 
 export function NewFormDoc({
   universities,
-  departments,
+  specDepartments,
   preUniversityId,
+  preSpecDepartmentId = "",
   preKey = "",
   preName = "",
 }: {
   universities: Uni[];
-  departments: Dept[];
+  /** 요강 학과 (어학당 먼저) — 양식은 여기에 속한다 */
+  specDepartments: SpecDeptOption[];
   preUniversityId: string;
+  /** 모집요강 편집에서 넘어온 요강 학과 */
+  preSpecDepartmentId?: string;
   /** 모집요강에서 넘어온 서류 종류 — 이 값이 곧 양식과 서류의 연결 고리다. */
   preKey?: string;
   preName?: string;
@@ -48,22 +61,23 @@ export function NewFormDoc({
     undefined
   );
 
-  const [uniId, setUniId] = useState(preUniversityId);
+  // 요강 학과만 넘어왔으면 그 대학으로
+  const preDept = specDepartments.find((d) => d.id === preSpecDepartmentId);
+  const [uniId, setUniId] = useState(preUniversityId || (preDept ? String(preDept.university_id) : ""));
   // 기본값을 두지 않는다. 예전엔 '입학 지원서'가 미리 선택돼 있어서, 자기소개서
   // 양식을 올려도 입학 지원서로 저장되고(→ 해당 서류는 계속 미등록) 기존 입학
   // 지원서 양식까지 구버전으로 밀려났다.
   const [key, setKey] = useState(
     preKey && preKey in KEY_LABELS ? preKey : preKey ? "other" : ""
   );
-  const [deptName, setDeptName] = useState(""); // "" = 모든 학과
+  const [specDeptId, setSpecDeptId] = useState(preDept ? preDept.id : "");
   const [nameKo, setNameKo] = useState(preName);
   const fileRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
   const submitted = useRef(false);
 
-  const deptOptions = departments.filter(
-    (d) => String(d.university_id) === uniId
-  );
+  const deptOptions = specDepartments.filter((d) => String(d.university_id) === uniId);
+  const hasSpec = deptOptions.length > 0;
 
   useEffect(() => {
     if (!submitted.current) return;
@@ -71,7 +85,9 @@ export function NewFormDoc({
       toast.error("업로드 실패", { description: state.error });
       submitted.current = false;
     } else if (state?.fieldErrors) {
-      toast.error("입력을 확인하세요");
+      toast.error("입력을 확인하세요", {
+        description: Object.values(state.fieldErrors).join(" / "),
+      });
       submitted.current = false;
     } else if (state) {
       // 성공 (error/fieldErrors 없음)
@@ -80,13 +96,15 @@ export function NewFormDoc({
           ? `업로드 완료 — AI가 ${state.analyzedKeys}개 항목 정리`
           : "업로드 완료"
       );
+      if (state.warning) toast.warning(state.warning);
       // 진입한 대학 상세로 복귀(대학에서 들어온 경우), 아니면 입학서류 목록
       router.push(uniId ? `/universities/${uniId}` : "/admissions?tab=forms");
     }
-  }, [state, router]);
+  }, [state, router, uniId]);
 
   async function submit() {
     if (!uniId) return toast.error("대학을 선택하세요");
+    if (hasSpec && !specDeptId) return toast.error("요강 학과를 선택하세요");
     if (!key) return toast.error("양식 종류를 선택하세요");
     if (!file) return toast.error("파일을 선택하세요");
 
@@ -103,7 +121,8 @@ export function NewFormDoc({
     fd.set("university_id", uniId);
     fd.set("key", key);
     fd.set("name_ko", nameKo.trim() || file.name.replace(/\.[^.]+$/, ""));
-    fd.set("department_name", deptName);
+    fd.set("spec_department_id", specDeptId);
+    fd.set("department_name", "");
     fd.set("file_base64", base64);
     fd.set("file_name", file.name);
     fd.set("file_size", String(file.size));
@@ -122,7 +141,7 @@ export function NewFormDoc({
             value={uniId}
             onChange={(e) => {
               setUniId(e.target.value);
-              setDeptName("");
+              setSpecDeptId("");
             }}
             className="h-9 rounded-md border border-input bg-background px-3 text-sm"
           >
@@ -136,6 +155,29 @@ export function NewFormDoc({
         </label>
 
         <label className="flex flex-col gap-1.5">
+          <span className="text-xs font-medium">요강 학과 *</span>
+          <select
+            value={specDeptId}
+            onChange={(e) => setSpecDeptId(e.target.value)}
+            disabled={!uniId || !hasSpec}
+            className="h-9 rounded-md border border-input bg-background px-3 text-sm disabled:opacity-50"
+          >
+            <option value="">{!uniId ? "먼저 대학을 선택하세요" : hasSpec ? "— 선택 —" : "요강 학과 없음"}</option>
+            {deptOptions.map((d) => (
+              <option key={d.id} value={d.id}>
+                [{KIND_LABEL[d.kind]}] {d.name_ko}
+                {!d.is_active ? " (비활성)" : ""}
+              </option>
+            ))}
+          </select>
+          <span className="text-[11px] text-muted-foreground">
+            {uniId && !hasSpec
+              ? "이 대학은 모집요강(학과)이 없어 학과 없이 올라갑니다. 기존 양식은 내리지 않습니다."
+              : "같은 학과·같은 종류의 기존 양식만 이전 버전으로 내려갑니다."}
+          </span>
+        </label>
+
+        <label className="flex flex-col gap-1.5">
           <span className="text-xs font-medium">양식 종류 *</span>
           <select
             value={key}
@@ -146,24 +188,6 @@ export function NewFormDoc({
             {Object.entries(KEY_LABELS).map(([v, label]) => (
               <option key={v} value={v}>
                 {label}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label className="flex flex-col gap-1.5">
-          <span className="text-xs font-medium">적용 범위</span>
-          <select
-            value={deptName}
-            onChange={(e) => setDeptName(e.target.value)}
-            disabled={!uniId}
-            className="h-9 rounded-md border border-input bg-background px-3 text-sm disabled:opacity-50"
-          >
-            <option value="">모든 학과</option>
-            {deptOptions.map((d) => (
-              <option key={d.id} value={d.name_ko}>
-                {d.name_ko}
-                {!d.active ? " (숨김)" : ""}
               </option>
             ))}
           </select>

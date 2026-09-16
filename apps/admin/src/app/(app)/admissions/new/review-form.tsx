@@ -1,7 +1,7 @@
 "use client";
 
-import { useActionState, useMemo, useRef, useState } from "react";
-import { AlertTriangle, Check, Loader2 } from "lucide-react";
+import { useActionState, useMemo, useState } from "react";
+import { Check, Loader2 } from "lucide-react";
 
 import { approveSpecAction, type ApproveSpecState } from "./approve-action";
 import { Card } from "@/components/ui/card";
@@ -90,10 +90,6 @@ export function ReviewForm({
     approveSpecAction,
     undefined
   );
-
-  // 갱신(덮어쓰기) 확정 플래그 — ref 로 동기 처리(제출 타이밍 안전)
-  const formRef = useRef<HTMLFormElement>(null);
-  const confirmReplaceRef = useRef(false);
 
   // university name → id 자동 매핑
   const defaultUniversityId = useMemo(() => {
@@ -187,9 +183,7 @@ export function ReviewForm({
       </header>
 
       <form
-        ref={formRef}
         action={(fd: FormData) => {
-          fd.set("confirm_replace", confirmReplaceRef.current ? "true" : "");
           fd.set("is_online_submission", isOnline ? "on" : "");
           fd.set("online_form_url", isOnline ? onlineFormUrl : "");
           if (isOnline && guide) {
@@ -441,61 +435,8 @@ export function ReviewForm({
           </div>
         ) : null}
 
-        {/* 중복 승인본 — 갱신(덮어쓰기) 확인 */}
-        {state?.duplicate ? (
-          <div className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm">
-            <div className="flex items-start gap-2">
-              <AlertTriangle className="mt-0.5 size-5 shrink-0 text-amber-500" />
-              <div className="flex-1">
-                <p className="font-medium text-amber-900">
-                  이미 같은 대학 · {state.duplicate.term} ·{" "}
-                  {state.duplicate.programLabel} 승인본이{" "}
-                  {state.duplicate.count}건 있습니다.
-                </p>
-                <p className="mt-0.5 text-xs text-amber-800">
-                  갱신하면 <strong>기존 승인본은 보관(archived) 처리</strong>되고
-                  이 내용이 새 승인본이 됩니다. 잘못된 내용으로 덮어쓰지 않도록
-                  한 번 더 확인하세요. (같은 학기라도 <strong>다른 과정</strong>
-                  요강 — 예: 어학연수 ↔ 학위과정 — 은 그대로 유지됩니다.)
-                </p>
-                <div className="mt-2 flex items-center gap-2">
-                  <Button
-                    type="button"
-                    size="sm"
-                    disabled={pending}
-                    onClick={() => {
-                      confirmReplaceRef.current = true;
-                      formRef.current?.requestSubmit();
-                    }}
-                  >
-                    {pending ? (
-                      <Loader2 className="size-4 animate-spin" />
-                    ) : (
-                      <Check className="size-4" />
-                    )}
-                    갱신 승인 (기존 보관)
-                  </Button>
-                  <a
-                    href="/admissions"
-                    className={buttonVariants({ variant: "outline", size: "sm" })}
-                  >
-                    취소 (기존 유지)
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        ) : null}
-
         <div className="flex items-center gap-2 border-t border-border pt-4">
-          <Button
-            type="submit"
-            disabled={pending}
-            onClick={() => {
-              // 일반 제출은 항상 먼저 묻도록 확정 플래그 초기화
-              confirmReplaceRef.current = false;
-            }}
-          >
+          <Button type="submit" disabled={pending}>
             {pending ? (
               <>
                 <Loader2 className="size-4 animate-spin" />

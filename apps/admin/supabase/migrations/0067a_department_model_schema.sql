@@ -66,6 +66,12 @@ alter table public.study_admission_form_files
   add column if not exists spec_department_id uuid references public.study_spec_departments(id) on delete set null;
 create index if not exists study_admission_form_files_spec_dept_idx
   on public.study_admission_form_files(spec_department_id, is_current);
+-- 옛 현행 유일 인덱스 (대학, department_name, 종류) 는 학과별 복사본과 충돌한다 → 학과 기준으로 교체.
+--   (에디터에서 수동으로 만든 인덱스라 마이그레이션 파일에는 없다. 0066 실패의 원인이기도 하다.)
+drop index if exists public.uniq_study_form_files_current;
+create unique index if not exists uniq_study_form_files_current_dept
+  on public.study_admission_form_files(university_id, key, spec_department_id)
+  where is_current and spec_department_id is not null;
 
 -- 5. 지원서에 학기
 alter table public.study_applications

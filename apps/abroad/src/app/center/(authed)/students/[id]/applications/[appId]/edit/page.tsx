@@ -1,6 +1,6 @@
 /**
  * /center/students/[id]/applications/[appId]/edit
- *   지원 의향 편집 (target_department_label / next_action / next_deadline).
+ *   지원 의향 편집 (모집(대학·학과·학기) 변경 / target_department_label / next_action / next_deadline).
  *   status 변경은 학생 상세의 inline dropdown 으로 별도 처리.
  */
 
@@ -11,7 +11,7 @@ import { verifyCenterSession } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
 import { getLocale, tr } from "@/lib/i18n";
 
-import { EditApplicationForm } from "./edit-application-form";
+import { EditApplicationForm, type EditOfferingOption } from "./edit-application-form";
 
 export default async function EditApplicationPage({
   params,
@@ -24,7 +24,7 @@ export default async function EditApplicationPage({
   const supabase = await createCenterClient();
 
   // 학생 + 지원 동시 조회 (RLS 가 본인 org 만 허용)
-  const [studentRes, appRes] = await Promise.all([
+  const [studentRes, appRes, offeringRes] = await Promise.all([
     supabase
       .from("study_managed_students")
       .select("id, name")
@@ -33,10 +33,17 @@ export default async function EditApplicationPage({
     supabase
       .from("study_applications")
       .select(
-        "id, target_department_label, next_action, next_deadline, student_id"
+        "id, admission_spec_id, offering_id, target_department_id, term, target_department_label, next_action, next_deadline, student_id"
       )
       .eq("id", appId)
       .maybeSingle(),
+    // 모집 중(published) offering — 지원을 다른 대학·학과·학기로 옮길 때
+    supabase
+      .from("study_offerings")
+      .select("id, university_id, department_id, term, source_spec_id")
+      .eq("status", "published")
+      .not("source_spec_id", "is", null)
+      .order("term", { ascending: false }),
   ]);
 
   const student = studentRes.data;
@@ -45,6 +52,28 @@ export default async function EditApplicationPage({
   if (!student || !application || application.student_id !== id) {
     notFound();
   }
+
+  const offerings = offeringRes.data ?? [];
+  const uniIds = Array.from(new Set(offerings.map((o) => o.university_id)));
+  const deptIds = Array.from(new Set(offerings.map((o) => o.department_id)));
+  const [{ data: unis }, { data: depts }] = await Promise.all([
+    uniIds.length > 0
+      ? supabase.from("universities").select("id, name_ko, name_vi").in("id", uniIds)
+      : Promise.resolve({ data: [] as Array<{ id: number; name_ko: string; name_vi: string | null }> }),
+    deptIds.length > 0
+      ? supabase.from("departments").select("id, name_ko, name_vi").in("id", deptIds)
+      : Promise.resolve({ data: [] as Array<{ id: number; name_ko: string; name_vi: string | null }> }),
+  ]);
+  const uniName = new Map(
+    (unis ?? []).map((u) => [u.id, locale === "vi" ? u.name_vi || u.name_ko : u.name_ko])
+  );
+  const deptName = new Map(
+    (depts ?? []).map((d) => [d.id, locale === "vi" ? d.name_vi || d.name_ko : d.name_ko])
+  );
+  const offeringOptions: EditOfferingOption[] = offerings.map((o) => ({
+    id: o.id,
+    label: `${uniName.get(o.university_id) ?? "?"} · ${deptName.get(o.department_id) ?? `#${o.department_id}`} · ${o.term}`,
+  }));
 
   return (
     <div className="max-w-2xl">
@@ -67,6 +96,7 @@ export default async function EditApplicationPage({
         <EditApplicationForm
           locale={locale}
           application={application}
+          offerings={offeringOptions}
           studentId={id}
         />
       </div>

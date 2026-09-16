@@ -1,7 +1,9 @@
 /**
- * /admissions/[id] — 모집요강 상세 (글로케어 어드민).
- *   7 영역 본격 표시 (identity / departments / required_documents / eligibility / schedule / tuition / scholarships / metadata).
- *   편집은 후속 라운드 (/edit).
+ * /admissions/specs/[id] — 모집요강 상세 (대학당 1개 · 학과별 서류 · 학기별 일정, 0067).
+ *   머리: 대학 · 전형 이름 · 상태 · 학기 목록
+ *   학과: 어학당 먼저. 학과마다 정보 · 학비·장학금 · 작성서류 양식 · 발급서류 항목 · (있으면) 학과별 자격
+ *   학기: 학기마다 일정 + 모집하는 학과(모집 행 상태)
+ *   요강 공통 자격 · 기타(선발·연락처·정부지정 등)
  */
 
 import Link from "next/link";
@@ -13,40 +15,26 @@ import { PageHeader } from "@/components/page-header";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
-import {
-  classifyRequiredDocs,
-  isFormDoc,
-  type RequiredDoc as ClassifyDoc,
-} from "@/lib/admission/classify-documents";
+import { classifyRequiredDocs, isFormDoc, type RequiredDoc as ClassifyDoc } from "@/lib/admission/classify-documents";
 import { loadFormDocKeys } from "@/lib/admission/form-doc-keys";
+import { expandItem, loadDocCatalog, TARGET_LABEL_KO, type DocCatalog, type SpecDocItemRow } from "@/lib/admission/spec-doc-items";
 import {
-  expandItem,
-  loadDocCatalog,
-  loadSpecDocItemRows,
-  TARGET_LABEL_KO,
-} from "@/lib/admission/spec-doc-items";
-import {
-  formatAgeRequirement,
-  type AgeRequirementLike,
-} from "@/lib/admission/age-requirement";
+  KIND_LABEL,
+  loadDocItemRowsByDepartment,
+  loadFormFilesByDepartment,
+  loadSpecDepartments,
+  loadSpecTerms,
+  type SpecDepartment,
+  type SpecFormFile,
+} from "@/lib/admission/spec-departments";
+import { formatAgeRequirement, type AgeRequirementLike } from "@/lib/admission/age-requirement";
 import { DeleteSpecButton } from "./delete-spec-button";
-import { CloneSpecButton } from "./clone-spec-button";
+import { AddTermButton } from "./add-term-button";
 
 export const dynamic = "force-dynamic";
 
-const PROGRAM_TYPE_LABEL: Record<string, string> = {
-  language_program: "어학연수 (D-4)",
-  associate_2yr: "전문학사 2년",
-  bachelor_3yr_extension: "전공심화 (2+2)",
-  bachelor_4yr: "학사 4년",
-};
-
-const STATUS_LABEL: Record<string, string> = {
-  draft: "초안",
-  reviewing: "검수 중",
-  approved: "승인",
-  archived: "보관",
-};
+const STATUS_LABEL: Record<string, string> = { draft: "초안", reviewing: "검수 중", approved: "승인", archived: "보관" };
+const OFFERING_STATUS_LABEL: Record<string, string> = { draft: "초안", published: "노출 중", closed: "마감", archived: "보관" };
 
 const NOTARIZATION_LABEL: Record<string, string> = {
   none: "없음",
@@ -65,12 +53,7 @@ const EDUCATION_LABEL: Record<string, string> = {
   master: "석사",
 };
 
-const HOLDER_LABEL: Record<string, string> = {
-  self: "본인",
-  parent: "부모",
-  guardian: "보호자",
-  financial_sponsor: "재정보증인",
-};
+const HOLDER_LABEL: Record<string, string> = { self: "본인", parent: "부모", guardian: "보호자", financial_sponsor: "재정보증인" };
 
 const ALT_PATH_LABEL: Record<string, string> = {
   sejong_institute: "세종학당",
@@ -90,16 +73,6 @@ const BENEFIT_LABEL: Record<string, string> = {
   other: "기타",
 };
 
-type Dept = {
-  faculty?: string | null;
-  name?: string;
-  track?: string | null;
-  years?: number | null;
-  capacity?: number | string | null;
-  korean_min_topik?: number | null;
-  tuition_per_semester_krw?: number | null;
-};
-
 type Scholarship = {
   name?: string;
   applies_to?: string;
@@ -115,232 +88,116 @@ type Round = {
   application_open?: string | null;
   application_close?: string | null;
   document_submission_close?: string | null;
+  interview?: string | null;
   interview_period?: [string, string];
   result_announcement?: string | null;
   payment_period?: [string, string];
 };
 
-export default async function AdmissionDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+type ScheduleShape = { rounds?: Round[]; semester_start?: string | null; semester_end?: string | null; orientation?: string | null; submission_method?: string };
+
+type Tuition = {
+  unit?: string;
+  currency?: string;
+  application_fee?: number | null;
+  tuition_per_semester?: number | null;
+  tuition_per_year?: number | null;
+  tuition_by_faculty?: Record<string, number>;
+  disclosure_state?: string;
+};
+
+type EligibilityShape = {
+  applicant_categories?: string[];
+  age_requirement?: AgeRequirementLike | null;
+  education_required?: string;
+  education_paths?: string[];
+  education_exclusions?: string[];
+  gpa_min?: number | null;
+  gpa_scale?: string | null;
+  korean_proficiency?: {
+    topik_min_default?: number | null;
+    alternative_paths?: Array<{ type?: string; level?: string; description?: string; notes?: string | null }>;
+    post_admission_requirement?: string | null;
+  };
+  english_proficiency?: { applies_to_departments?: string[]; minimums?: Record<string, number | string>; notes?: string };
+  financial_minimum?: { amount?: number | null; currency?: string; holder_relations?: string[]; freshness_days?: number | null; notes?: string | null } | null;
+  exclusions?: string[];
+  notes_ko?: string;
+};
+
+type MetadataShape = {
+  selection_process?: { method?: string; interview_required?: boolean; interview_content?: string[]; evaluation_criteria?: string };
+  post_acceptance?: { visa_type?: string; post_graduation_visa?: string; insurance_requirement?: string; warnings?: string[]; process_steps?: string[] };
+  contacts?: {
+    phone?: string;
+    phone_vietnamese?: string;
+    phone_korean?: string;
+    fax?: string;
+    email?: string | null;
+    email_secondary?: string;
+    address_ko?: string;
+    address_en?: string;
+    website?: string;
+    online_apply_url?: string;
+    department_name?: string;
+    submission_hours?: string;
+  };
+  government_designations?: Array<{ agency?: string; designation_name?: string; effective_from?: string; benefits?: string[]; notes?: string }>;
+  language_program?: { hours_per_semester?: number; hours_per_week?: number; weeks_per_semester?: number; weekly_schedule?: string; visa_type?: string; visa_extension?: string };
+  country_specific_notes_vi?: string;
+};
+
+export default async function AdmissionDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const supabase = await createClient();
-  const [formDocKeys, docItemRows, docCatalog] = await Promise.all([
-    loadFormDocKeys(supabase),
-    loadSpecDocItemRows(supabase, id),
-    loadDocCatalog(supabase),
-  ]);
-  const docItemByKey = new Map(docCatalog.items.map((i) => [i.key, i]));
 
-  const { data: spec, error } = await supabase
-    .from("study_admission_specs")
-    .select("*")
-    .eq("id", id)
-    .maybeSingle();
-
+  const { data: spec, error } = await supabase.from("study_admission_specs").select("*").eq("id", id).maybeSingle();
   if (error || !spec) notFound();
 
-  const { data: university } = await supabase
-    .from("universities")
-    .select("id, name_ko, name_vi, region_ko")
-    .eq("id", spec.university_id)
-    .maybeSingle();
+  const [{ data: university }, formDocKeys, docCatalog, departments, terms, rowsByDept, filesByDept, { data: offeringRows }] = await Promise.all([
+    supabase.from("universities").select("id, name_ko, name_vi, region_ko").eq("id", spec.university_id).maybeSingle(),
+    loadFormDocKeys(supabase),
+    loadDocCatalog(supabase),
+    loadSpecDepartments(supabase, id),
+    loadSpecTerms(supabase, id),
+    loadDocItemRowsByDepartment(supabase, id),
+    loadFormFilesByDepartment(supabase, spec.university_id),
+    supabase.from("study_offerings").select("id, department_id, term, status, intake_quota").eq("university_id", spec.university_id),
+  ]);
+  const offerings = offeringRows ?? [];
+  const deptNameById = new Map(departments.map((d) => [d.department_id, d]));
 
-  // 이 대학의 현행 작성서류 양식 파일 (직접작성 서류 업로드 여부·편집 링크용)
-  const { data: formFiles } = await supabase
-    .from("study_admission_form_files")
-    .select("id, key, name_ko, file_name, file_url, department_name, applies_to_terms, applies_to_department_ids")
-    .eq("university_id", spec.university_id)
-    .eq("is_current", true);
-  const normFormName = (s: string) =>
-    s
-      .trim()
-      .replace(/^\s*\d+[.)]\s*/, "")
-      .replace(/\s+/g, "")
-      .toLowerCase();
-
-  type FormFile = NonNullable<typeof formFiles>[number];
-  const byKey = new Map<string, FormFile[]>();
-  // 이 요강의 학기에 적용되는 양식만 — 적용 학기가 비어 있으면 전체 학기.
-  //   (군장대처럼 어학연수·일반학과 양식이 한 대학에 같이 있을 때 남의 양식을 집지 않게)
-  const specDeptNames = new Set(
-    (Array.isArray(spec.departments) ? (spec.departments as { name?: string }[]) : [])
-      .map((d) => (d.name ?? "").trim())
-      .filter(Boolean)
-  );
-  const termOk = (f: FormFile) => {
-    const terms = (f.applies_to_terms ?? []) as string[];
-    return terms.length === 0 || terms.includes(spec.term);
-  };
-  for (const f of (formFiles ?? []).filter(termOk)) {
-    const list = byKey.get(f.key) ?? [];
-    list.push(f);
-    byKey.set(f.key, list);
-  }
-  /** 서류명이 같은가 — 앞 번호·공백을 털고 한쪽이 다른 쪽을 품어도 같은 걸로 본다. */
-  const nameMatches = (f: FormFile, docName: string) => {
-    const a = normFormName(f.name_ko);
-    const b = normFormName(docName);
-    if (!a || !b) return false;
-    return a === b || (b.length >= 4 && (a.includes(b) || b.includes(a)));
-  };
-
-  const formFileFor = (d: { key: string; name_ko: string }) => {
-    const sameKey = byKey.get(d.key) ?? [];
-    if (sameKey.length === 1) return sameKey[0];
-    if (sameKey.length > 1) {
-      // 같은 종류가 여럿이면(학과별 양식 등) 이름 → 대학 전체 순으로 고른다.
-      return (
-        sameKey.find((f) => nameMatches(f, d.name_ko)) ??
-        sameKey.find((f) => !!f.department_name && specDeptNames.has(f.department_name)) ??
-        sameKey.find((f) => f.department_name === null) ??
-        sameKey[0]
-      );
-    }
-    // 종류가 안 맞아도 이름이 같으면 같은 서류로 본다 — 과거에 잘못 분류돼
-    // 올라간 파일이 영영 '미등록'으로 남지 않도록 하는 구제 경로.
-    return (formFiles ?? []).find((f) => nameMatches(f, d.name_ko));
-  };
-
-  // 발급서류의 정본은 요강↔항목 행. 옛 JSONB 의 발급 줄은 아직 표준에 안 붙은 것만 따로 보여준다.
-  const unlinkedIssued = (Array.isArray(spec.required_documents) ? (spec.required_documents as ClassifyDoc[]) : []).filter((d) => {
+  // 옛 JSONB — 작성서류 줄(양식 등록 여부 표시)과 표준에 안 붙은 발급서류 줄
+  const legacyDocs = (Array.isArray(spec.required_documents) ? spec.required_documents : []) as ClassifyDoc[];
+  const { forms: formDocs } = classifyRequiredDocs(legacyDocs, formDocKeys);
+  const unlinkedIssued = legacyDocs.filter((d) => {
     const std = String(d.std_key ?? "").trim();
     return !isFormDoc(d, formDocKeys) && (std === "" || std === "__none__");
   });
-  // 제출서류 = required_documents → 직접작성/발급 분류
-  const { forms: formDocs } = classifyRequiredDocs(
-    (Array.isArray(spec.required_documents)
-      ? spec.required_documents
-      : []) as ClassifyDoc[],
-      formDocKeys
-  );
+  const allCurrentFileKeys = new Set(Array.from(filesByDept.values()).flat().map((f) => f.key));
 
-  const departments = (Array.isArray(spec.departments) ? spec.departments : []) as Dept[];
-  const eligibility = (spec.eligibility ?? {}) as {
-    applicant_categories?: string[];
-    age_requirement?: AgeRequirementLike | null;
-    education_required?: string;
-    education_paths?: string[];
-    education_exclusions?: string[];
-    gpa_min?: number | null;
-    gpa_scale?: string | null;
-    korean_proficiency?: {
-      topik_min_default?: number | null;
-      alternative_paths?: Array<{
-        type?: string;
-        level?: string;
-        description?: string;
-        notes?: string | null;
-      }>;
-      post_admission_requirement?: string | null;
-    };
-    english_proficiency?: {
-      applies_to_departments?: string[];
-      minimums?: Record<string, number | string>;
-      notes?: string;
-    };
-    financial_minimum?: {
-      amount?: number | null;
-      currency?: string;
-      holder_relations?: string[];
-      freshness_days?: number | null;
-      notes?: string | null;
-    } | null;
-    exclusions?: string[];
-    notes_ko?: string;
-  };
-  const schedule = (spec.schedule ?? {}) as { rounds?: Round[]; semester_start?: string | null };
-  const tuition = (spec.tuition ?? {}) as {
-    unit?: string;
-    currency?: string;
-    application_fee?: number | null;
-    tuition_per_semester?: number | null;
-    tuition_by_faculty?: Record<string, number>;
-  };
-  const scholarships = (Array.isArray(spec.scholarships) ? spec.scholarships : []) as Scholarship[];
-  const metadata = (spec.metadata ?? {}) as {
-    selection_process?: {
-      method?: string;
-      interview_required?: boolean;
-      interview_content?: string[];
-      evaluation_criteria?: string;
-    };
-    post_acceptance?: {
-      visa_type?: string;
-      post_graduation_visa?: string;
-      insurance_requirement?: string;
-      warnings?: string[];
-      process_steps?: string[];
-    };
-    forms?: {
-      application_form?: boolean;
-      self_intro?: boolean;
-      study_plan?: boolean;
-      financial_pledge?: boolean;
-      privacy_consent?: boolean;
-      academic_record_release?: boolean;
-      notes?: string;
-    };
-    contacts?: {
-      phone?: string;
-      phone_vietnamese?: string;
-      phone_korean?: string;
-      fax?: string;
-      email?: string | null;
-      email_secondary?: string;
-      address_ko?: string;
-      address_en?: string;
-      website?: string;
-      online_apply_url?: string;
-      department_name?: string;
-      submission_hours?: string;
-    };
-    government_designations?: Array<{
-      agency?: string;
-      designation_name?: string;
-      effective_from?: string;
-      benefits?: string[];
-      notes?: string;
-    }>;
-    language_program?: {
-      hours_per_semester?: number;
-      hours_per_week?: number;
-      weeks_per_semester?: number;
-      weekly_schedule?: string;
-      visa_type?: string;
-      visa_extension?: string;
-    };
-    country_specific_notes_vi?: string;
-  };
+  const eligibility = (spec.eligibility ?? {}) as EligibilityShape;
+  const metadata = (spec.metadata ?? {}) as MetadataShape;
+  const docItemCount = Array.from(rowsByDept.values()).reduce((n, r) => n + r.length, 0);
 
   return (
     <>
       <PageHeader
         title={university?.name_ko ?? "?"}
-        description={`${spec.term} · ${PROGRAM_TYPE_LABEL[spec.program_type] ?? spec.program_type}`}
+        description={[spec.admission_category, terms.length ? `학기 ${terms.map((t) => t.term).join(" · ")}` : "학기 없음", `학과 ${departments.length}`].filter(Boolean).join(" · ")}
         breadcrumbs={[
           { label: "입학서류", href: "/admissions" },
-          {
-            label: university?.name_ko ?? "상세",
-            href: `/admissions/${spec.university_id}`,
-          },
+          { label: university?.name_ko ?? "상세", href: `/admissions/${spec.university_id}` },
           { label: "모집요강" },
         ]}
         actions={
           <div className="flex items-center gap-2">
-            <Badge variant={spec.status === "approved" ? "default" : "secondary"}>
-              {STATUS_LABEL[spec.status] ?? spec.status}
-            </Badge>
-            <Link
-              href={`/admissions/specs/${id}/edit`}
-              className={buttonVariants({ variant: "outline", size: "sm" })}
-            >
+            <Badge variant={spec.status === "approved" ? "default" : "secondary"}>{STATUS_LABEL[spec.status] ?? spec.status}</Badge>
+            <Link href={`/admissions/specs/${id}/edit`} className={buttonVariants({ variant: "outline", size: "sm" })}>
               <Pencil className="size-4" />
               편집
             </Link>
-            <CloneSpecButton specId={id} currentTerm={spec.term} />
+            <AddTermButton specId={id} terms={terms.map((t) => ({ id: t.id, term: t.term }))} />
             <DeleteSpecButton specId={id} universityId={spec.university_id} />
           </div>
         }
@@ -354,814 +211,636 @@ export default async function AdmissionDetailPage({
             <Info label="대학교" value={university?.name_ko} />
             <Info label="베트남어" value={university?.name_vi} />
             <Info label="지역" value={university?.region_ko} />
-            <Info label="학기" value={spec.term} />
-            <Info label="과정" value={PROGRAM_TYPE_LABEL[spec.program_type] ?? spec.program_type} />
-            <Info label="전형(내부)" value={spec.admission_category} />
-            <Info label="학과 수" value={String(departments.length)} />
-            <Info
-              label="갱신"
-              value={new Date(spec.updated_at).toLocaleString("ko-KR")}
-            />
-            {spec.approved_at ? (
-              <Info
-                label="승인"
-                value={new Date(spec.approved_at).toLocaleString("ko-KR")}
-              />
+            <Info label="전형 이름" value={spec.admission_category} />
+            <Info label="학기" value={terms.length ? terms.map((t) => t.term).join(" · ") : null} />
+            <Info label="학과" value={`${departments.length} (어학당 ${departments.filter((d) => d.kind === "language").length} · 일반학과 ${departments.filter((d) => d.kind === "regular").length})`} />
+            <Info label="발급서류 항목" value={String(docItemCount)} />
+            <Info label="갱신" value={new Date(spec.updated_at).toLocaleString("ko-KR")} />
+            {spec.approved_at ? <Info label="승인" value={new Date(spec.approved_at).toLocaleString("ko-KR")} /> : null}
+            {spec.is_online_submission ? (
+              <Info label="온라인 접수" value={spec.online_form_url ?? "온라인 접수 (주소 없음)"} full />
             ) : null}
           </dl>
         </Card>
 
         {/* 학과 */}
-        <Card className="p-6">
-          <h2 className="mb-3 text-base font-semibold">학과 ({departments.length})</h2>
+        <section className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h2 className="text-base font-semibold">학과 ({departments.length})</h2>
+            <Link href={`/admissions/specs/${id}/edit?tab=departments`} className="text-xs text-primary underline">
+              학과 편집
+            </Link>
+          </div>
           {departments.length === 0 ? (
-            <p className="text-sm text-muted-foreground">없음</p>
+            <Card className="p-6 text-sm text-muted-foreground">요강 학과가 없습니다.</Card>
           ) : (
-            <div className="overflow-hidden rounded-md border">
-              <table className="w-full text-sm">
-                <thead className="bg-muted/50">
-                  <tr className="text-left">
-                    <th className="px-3 py-2 font-medium">학부</th>
-                    <th className="px-3 py-2 font-medium">학과</th>
-                    <th className="px-3 py-2 font-medium">트랙</th>
-                    <th className="w-16 px-3 py-2 text-center font-medium">년수</th>
-                    <th className="w-20 px-3 py-2 text-center font-medium">정원</th>
-                    <th className="w-20 px-3 py-2 text-center font-medium">TOPIK</th>
-                    <th className="w-32 px-3 py-2 text-right font-medium">등록금(학기)</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {departments.map((d, i) => (
-                    <tr key={i} className="border-t">
-                      <td className="px-3 py-2 text-muted-foreground">{d.faculty ?? "—"}</td>
-                      <td className="px-3 py-2 font-medium">{d.name ?? "—"}</td>
-                      <td className="px-3 py-2 text-muted-foreground">{d.track ?? "—"}</td>
-                      <td className="px-3 py-2 text-center">{d.years ?? "—"}</td>
-                      <td className="px-3 py-2 text-center">{d.capacity ?? "—"}</td>
-                      <td className="px-3 py-2 text-center">
-                        {d.korean_min_topik ? (
-                          <Badge variant="outline">{d.korean_min_topik}급</Badge>
-                        ) : (
-                          "—"
-                        )}
-                      </td>
-                      <td className="px-3 py-2 text-right">
-                        {d.tuition_per_semester_krw
-                          ? `${d.tuition_per_semester_krw.toLocaleString()}원`
-                          : "—"}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            departments.map((d) => (
+              <DepartmentCard
+                key={d.id}
+                sd={d}
+                rows={rowsByDept.get(d.id) ?? []}
+                files={filesByDept.get(d.id) ?? []}
+                catalog={docCatalog}
+                universityId={spec.university_id}
+                offeringTerms={offerings.filter((o) => o.department_id === d.department_id).map((o) => o.term).sort((a, b) => b.localeCompare(a))}
+              />
+            ))
           )}
+        </section>
+
+        {/* 옛 서류 줄 — 작성서류 · 미연결 */}
+        {formDocs.length > 0 || unlinkedIssued.length > 0 ? (
+          <Card className="p-6 space-y-4">
+            <h2 className="text-base font-semibold">요강 원문 서류 줄 (작성서류 · 미연결)</h2>
+            {formDocs.length > 0 ? (
+              <section>
+                <h3 className="mb-2 text-sm font-semibold">작성서류 (학교 양식) — {formDocs.length}</h3>
+                <ul className="space-y-1 text-sm">
+                  {formDocs.map((doc, i) => (
+                    <li key={`form-${i}`} className="flex flex-wrap items-center gap-2 rounded-md border px-3 py-2">
+                      <FileText className="size-3.5 shrink-0 text-muted-foreground" />
+                      <span className="font-medium">{doc.name_ko}</span>
+                      {doc.required === false ? <Badge variant="outline" className="text-[10px]">선택</Badge> : <Badge variant="secondary" className="text-[10px]">필수</Badge>}
+                      {allCurrentFileKeys.has(doc.key) ? (
+                        <Badge className="border-success/20 bg-success/10 text-success">등록됨</Badge>
+                      ) : (
+                        <Badge variant="outline" className="text-amber-600">미등록</Badge>
+                      )}
+                      {doc.notes ? <span className="w-full whitespace-pre-wrap text-xs text-muted-foreground">{doc.notes}</span> : null}
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-2 text-xs text-muted-foreground">양식은 학과 카드의 작성서류 양식에서 학과별로 올립니다.</p>
+              </section>
+            ) : null}
+            {unlinkedIssued.length > 0 ? (
+              <section>
+                <div className="mb-2 flex items-center gap-2">
+                  <h3 className="text-sm font-semibold">표준에 연결되지 않은 서류</h3>
+                  <Badge variant="outline" className="text-[10px] text-amber-600">{unlinkedIssued.length}</Badge>
+                  <Link href="/admissions?tab=docs" className="text-xs text-primary underline">
+                    제출서류 탭에서 연결
+                  </Link>
+                </div>
+                <ul className="space-y-1 text-sm">
+                  {unlinkedIssued.map((doc, i) => (
+                    <li key={`unlinked-${i}`} className="rounded-md border border-dashed px-3 py-2">
+                      {doc.name_ko}
+                      {doc.notes ? <span className="ml-2 text-xs text-muted-foreground">{doc.notes}</span> : null}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ) : null}
+          </Card>
+        ) : null}
+
+        {/* 학기 */}
+        <section className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h2 className="text-base font-semibold">학기 ({terms.length})</h2>
+            <Link href={`/admissions/specs/${id}/edit?tab=terms`} className="text-xs text-primary underline">
+              학기 편집
+            </Link>
+          </div>
+          {terms.length === 0 ? (
+            <Card className="p-6 text-sm text-muted-foreground">학기가 없습니다. 위의 학기 추가로 만드세요.</Card>
+          ) : (
+            terms.map((t) => {
+              const offs = offerings.filter((o) => o.term === t.term);
+              return (
+                <Card key={t.id} className="p-6 space-y-3">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h3 className="text-base font-semibold">{t.term}</h3>
+                    <Badge variant="secondary">{offs.length} 학과 모집</Badge>
+                    {t.notes ? <span className="text-xs text-muted-foreground">{t.notes}</span> : null}
+                  </div>
+                  <ScheduleTable schedule={(t.schedule ?? {}) as ScheduleShape} />
+                  <div>
+                    <div className="mb-1 text-xs uppercase tracking-wide text-muted-foreground">모집하는 학과</div>
+                    {offs.length === 0 ? (
+                      <p className="text-sm text-muted-foreground">없음</p>
+                    ) : (
+                      <ul className="flex flex-wrap gap-2 text-sm">
+                        {offs.map((o) => {
+                          const d = deptNameById.get(o.department_id);
+                          return (
+                            <li key={o.id} className="flex items-center gap-1.5 rounded-md border px-2 py-1">
+                              <span>{d?.name_ko ?? `학과 #${o.department_id}`}</span>
+                              <Badge variant={o.status === "published" ? "default" : "outline"} className="text-[10px]">{OFFERING_STATUS_LABEL[o.status] ?? o.status}</Badge>
+                              {o.intake_quota != null ? <span className="text-xs text-muted-foreground">{o.intake_quota}명</span> : null}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
+                  </div>
+                </Card>
+              );
+            })
+          )}
+        </section>
+
+        {/* 요강 공통 자격 */}
+        <Card className="p-6 space-y-4">
+          <h2 className="text-base font-semibold">지원 자격 (요강 공통)</h2>
+          <EligibilityBlock eligibility={eligibility} />
         </Card>
 
-        {/* 제출 서류 — 직접작성(학교 양식) / 발급 서류 분류 + 양식 업로드 여부 */}
-        <Card className="p-6 space-y-5">
-          <h2 className="text-base font-semibold">
-            제출 서류 ({formDocs.length + docItemRows.length + unlinkedIssued.length})
-          </h2>
+        <MetadataCards metadata={metadata} />
+      </div>
+    </>
+  );
+}
 
-          {/* 1) 직접작성 서류 — 입학서류 양식 매핑·업로드 여부·편집 링크 */}
-          <section>
-            <div className="mb-2 flex items-center gap-2">
-              <h3 className="text-sm font-semibold">직접작성 서류 (학교 양식)</h3>
-              <Badge variant="secondary" className="text-[10px]">
-                {formDocs.length}
-              </Badge>
-            </div>
-            {formDocs.length === 0 ? (
-              <p className="text-xs text-muted-foreground">
-                직접작성 양식이 없습니다.
-              </p>
-            ) : (
-              <ul className="space-y-2 text-sm">
-                {formDocs.map((doc, i) => {
-                  const file = formFileFor(doc);
-                  return (
-                    <li
-                      key={`form-${i}`}
-                      className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-md border p-3"
-                    >
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2 font-medium">
-                          <FileText className="size-3.5 shrink-0 text-muted-foreground" />
-                          {doc.name_ko}
-                          {doc.required === false ? (
-                            <Badge variant="outline" className="text-[10px]">
-                              선택
-                            </Badge>
-                          ) : (
-                            <Badge variant="secondary" className="text-[10px]">
-                              필수
-                            </Badge>
-                          )}
-                        </div>
-                        {doc.notes ? (
-                          <div className="mt-1 whitespace-pre-wrap text-xs text-muted-foreground">
-                            {doc.notes}
-                          </div>
-                        ) : null}
-                      </div>
-                      {file ? (
-                        <Badge className="border-success/20 bg-success/10 text-success">
-                          등록됨
-                        </Badge>
-                      ) : (
-                        <Badge variant="outline" className="text-amber-600">
-                          미등록
-                        </Badge>
-                      )}
-                      <Link
-                        href={
-                          file
-                            ? `/admissions/forms/${file.id}`
-                            : // 어느 서류의 양식인지 넘겨준다. 안 넘기면 업로드 화면이
-                              // 양식종류를 '입학 지원서'로 기본 선택해 버려서, 올린 파일이
-                              // 이 서류와 연결되지 않고(=계속 미등록) 엉뚱한 양식을
-                              // 밀어내기까지 한다.
-                              `/admissions/forms/new?university_id=${spec.university_id}` +
-                              `&key=${encodeURIComponent(doc.key)}` +
-                              `&name_ko=${encodeURIComponent(doc.name_ko)}`
-                        }
-                        className={buttonVariants({ variant: "outline", size: "sm" })}
-                      >
-                        {file ? (
-                          <>
-                            <Pencil className="size-3.5" />
-                            편집
-                          </>
-                        ) : (
-                          <>
-                            <Upload className="size-3.5" />
-                            양식 업로드
-                          </>
-                        )}
-                      </Link>
-                      {file ? (
-                        <a
-                          href={file.file_url}
-                          target="_blank"
-                          rel="noreferrer"
-                          download
-                          className={buttonVariants({ variant: "ghost", size: "sm" })}
-                          title={file.file_name}
-                        >
-                          <Download className="size-3.5" />
-                        </a>
-                      ) : null}
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-          </section>
+// ── 학과 카드 ─────────────────────────────────────────────────────────
 
-          {/* 2) 발급 서류 — 요강이 고른 항목(정본). 서류·조건은 표준을 따르고 따로 설정한 것만 다르다. */}
-          <section>
-            <div className="mb-2 flex items-center gap-2">
-              <h3 className="text-sm font-semibold">발급 서류 (항목)</h3>
-              <Badge variant="secondary" className="text-[10px]">
-                {docItemRows.length}
-              </Badge>
-            </div>
-            {docItemRows.length === 0 ? (
-              <p className="text-xs text-muted-foreground">고른 항목이 없습니다. 편집에서 항목을 추가하세요.</p>
-            ) : (
-              <ul className="space-y-2 text-sm">
-                {docItemRows.map((r) => {
-                  const item = docItemByKey.get(r.item_key);
-                  const slots = item ? expandItem(item, docCatalog) : [];
-                  const ov = r.overrides?.standards ?? {};
-                  const guide = r.guide_override_ko?.trim() || item?.guide_ko?.trim() || null;
-                  return (
-                    <li key={r.item_key} className="rounded-md border p-3">
-                      <div className="flex flex-wrap items-center gap-2 font-medium">
-                        {item?.name_ko ?? r.item_key}
-                        {r.required === false ? (
-                          <Badge variant="outline" className="text-[10px]">선택</Badge>
-                        ) : (
-                          <Badge variant="secondary" className="text-[10px]">필수</Badge>
-                        )}
-                        {r.guide_override_ko || Object.keys(ov).length > 0 ? (
-                          <Badge variant="outline" className="text-[10px] text-primary">따로 설정</Badge>
-                        ) : null}
-                        {!item ? <Badge variant="outline" className="text-[10px] text-destructive">없는 항목</Badge> : null}
-                      </div>
-                      {slots.length > 0 ? (
-                        <ul className="mt-1 space-y-0.5 text-xs text-muted-foreground">
-                          {slots.map((sl, i) => {
-                            const o = ov[sl.standard.key] ?? {};
-                            const nota = o.notarization ?? sl.standard.notarization;
-                            const validity = o.validity_days ?? sl.standard.validity_days;
-                            const within = o.issued_within_days ?? sl.standard.issued_within_days;
-                            const original = o.original_required ?? sl.standard.original_required;
-                            const conds = [
-                              nota && nota !== "none" ? `인증: ${NOTARIZATION_LABEL[nota] ?? nota}` : null,
-                              validity != null ? `유효기간 ${validity}일` : null,
-                              within != null ? `발급 후 ${within}일 이내` : null,
-                              original === true ? "원본" : null,
-                            ].filter(Boolean);
-                            return (
-                              <li key={i}>
-                                {sl.standard.name_ko}
-                                {sl.target ? ` - ${TARGET_LABEL_KO[sl.target] ?? sl.target}` : ""}
-                                {sl.alternatives.length ? ` (또는 ${sl.alternatives.map((a) => a.name_ko).join(", ")})` : ""}
-                                {!sl.required ? " · 선택" : ""}
-                                {conds.length ? ` · ${conds.join(" · ")}` : ""}
-                              </li>
-                            );
-                          })}
-                        </ul>
-                      ) : null}
-                      {guide ? (
-                        <div className="mt-1 whitespace-pre-wrap text-xs text-muted-foreground">{guide}</div>
-                      ) : null}
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-          </section>
+function DepartmentCard({
+  sd,
+  rows,
+  files,
+  catalog,
+  universityId,
+  offeringTerms,
+}: {
+  sd: SpecDepartment;
+  rows: SpecDocItemRow[];
+  files: SpecFormFile[];
+  catalog: DocCatalog;
+  universityId: number;
+  offeringTerms: string[];
+}) {
+  const itemByKey = new Map(catalog.items.map((i) => [i.key, i]));
+  const tuition = sd.tuition as Tuition;
+  const scholarships = sd.scholarships as Scholarship[];
+  const uploadHref = `/admissions/forms/new?university_id=${universityId}&spec_department_id=${encodeURIComponent(sd.id)}`;
+  return (
+    <Card className={`p-6 space-y-4 ${sd.is_active ? "" : "opacity-75"}`}>
+      <div className="flex flex-wrap items-center gap-2">
+        <h3 className="text-base font-semibold">{sd.name_ko}</h3>
+        <Badge variant={sd.kind === "language" ? "default" : "secondary"}>{KIND_LABEL[sd.kind]}</Badge>
+        {!sd.is_active ? <Badge variant="outline" className="text-muted-foreground">비활성</Badge> : null}
+        {!sd.department_active ? <Badge variant="outline" className="text-amber-600">마스터 비노출</Badge> : null}
+        {offeringTerms.length ? <span className="text-xs text-muted-foreground">모집: {offeringTerms.join(" · ")}</span> : null}
+      </div>
 
-          {/* 3) 표준에 연결되지 않은 발급 서류 — 연결 UI 에서 붙이면 위 항목으로 올라간다 */}
-          {unlinkedIssued.length > 0 ? (
-            <section>
-              <div className="mb-2 flex items-center gap-2">
-                <h3 className="text-sm font-semibold">표준에 연결되지 않은 서류</h3>
-                <Badge variant="outline" className="text-[10px] text-amber-600">
-                  {unlinkedIssued.length}
-                </Badge>
-                <Link href="/admissions?tab=docs" className="text-xs text-primary underline">
-                  제출서류 탭에서 연결
-                </Link>
-              </div>
-              <ul className="space-y-1 text-sm">
-                {unlinkedIssued.map((doc, i) => (
-                  <li key={`unlinked-${i}`} className="rounded-md border border-dashed px-3 py-2">
-                    {doc.name_ko}
-                    {doc.notes ? <span className="ml-2 text-xs text-muted-foreground">{doc.notes}</span> : null}
+      <dl className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm md:grid-cols-4">
+        <Info label="학부" value={sd.info.faculty ?? null} />
+        <Info label="트랙" value={sd.info.track ?? null} />
+        <Info label="년수" value={sd.info.years != null ? String(sd.info.years) : null} />
+        <Info label="정원" value={sd.info.capacity != null ? String(sd.info.capacity) : null} />
+        <Info label="TOPIK 최소" value={sd.info.korean_min_topik ? `${sd.info.korean_min_topik}급` : null} />
+        <Info label="학비" value={tuitionSummary(tuition)} />
+        <Info label="장학금" value={scholarships.length ? `${scholarships.length}건 — ${scholarships.map((s) => s.name).filter(Boolean).slice(0, 3).join(", ")}${scholarships.length > 3 ? " 외" : ""}` : null} />
+        <Info label="자격" value={sd.eligibility ? "학과별" : "요강 공통"} />
+        {sd.info.notes ? <Info label="메모" value={sd.info.notes} full /> : null}
+      </dl>
+
+      {/* 작성서류 양식 */}
+      <section>
+        <div className="mb-2 flex items-center gap-2">
+          <h4 className="text-sm font-semibold">작성서류 양식</h4>
+          <Badge variant="secondary" className="text-[10px]">{files.length}</Badge>
+          <Link href={uploadHref} className={buttonVariants({ variant: "outline", size: "sm" })}>
+            <Upload className="size-3.5" />
+            양식 업로드
+          </Link>
+        </div>
+        {files.length === 0 ? (
+          <p className="text-xs text-muted-foreground">이 학과의 양식이 없습니다.</p>
+        ) : (
+          <ul className="space-y-1 text-sm">
+            {files.map((f) => (
+              <li key={f.id} className="flex flex-wrap items-center gap-2 rounded-md border px-3 py-2">
+                <FileText className="size-3.5 shrink-0 text-muted-foreground" />
+                <span className="font-medium">{f.name_ko}</span>
+                <span className="text-xs text-muted-foreground">{f.key}</span>
+                {f.is_essay ? <Badge variant="outline" className="text-[10px]">서술형</Badge> : null}
+                <Badge className="border-success/20 bg-success/10 text-success">등록됨</Badge>
+                <span className="ml-auto flex items-center gap-1">
+                  <Link href={`/admissions/forms/${f.id}`} className={buttonVariants({ variant: "outline", size: "sm" })}>
+                    <Pencil className="size-3.5" />
+                    편집
+                  </Link>
+                  <a href={f.file_url} target="_blank" rel="noreferrer" download className={buttonVariants({ variant: "ghost", size: "sm" })} title={f.file_name}>
+                    <Download className="size-3.5" />
+                  </a>
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      {/* 발급서류 항목 */}
+      <section>
+        <div className="mb-2 flex items-center gap-2">
+          <h4 className="text-sm font-semibold">발급 서류 (항목)</h4>
+          <Badge variant="secondary" className="text-[10px]">{rows.length}</Badge>
+        </div>
+        {rows.length === 0 ? (
+          <p className="text-xs text-muted-foreground">고른 항목이 없습니다. 편집에서 항목을 추가하세요.</p>
+        ) : (
+          <ul className="space-y-2 text-sm">
+            {rows.map((r) => {
+              const item = itemByKey.get(r.item_key);
+              const slots = item ? expandItem(item, catalog) : [];
+              const ov = r.overrides?.standards ?? {};
+              const guide = r.guide_override_ko?.trim() || item?.guide_ko?.trim() || null;
+              return (
+                <li key={r.item_key} className="rounded-md border p-3">
+                  <div className="flex flex-wrap items-center gap-2 font-medium">
+                    {item?.name_ko ?? r.item_key}
+                    {r.required === false ? <Badge variant="outline" className="text-[10px]">선택</Badge> : <Badge variant="secondary" className="text-[10px]">필수</Badge>}
+                    {r.guide_override_ko || Object.keys(ov).length > 0 ? <Badge variant="outline" className="text-[10px] text-primary">따로 설정</Badge> : null}
+                    {!item ? <Badge variant="outline" className="text-[10px] text-destructive">없는 항목</Badge> : null}
+                  </div>
+                  {slots.length > 0 ? (
+                    <ul className="mt-1 space-y-0.5 text-xs text-muted-foreground">
+                      {slots.map((sl, i) => {
+                        const o = ov[sl.standard.key] ?? {};
+                        const nota = o.notarization ?? sl.standard.notarization;
+                        const validity = o.validity_days ?? sl.standard.validity_days;
+                        const within = o.issued_within_days ?? sl.standard.issued_within_days;
+                        const original = o.original_required ?? sl.standard.original_required;
+                        const conds = [
+                          nota && nota !== "none" ? `인증: ${NOTARIZATION_LABEL[nota] ?? nota}` : null,
+                          validity != null ? `유효기간 ${validity}일` : null,
+                          within != null ? `발급 후 ${within}일 이내` : null,
+                          original === true ? "원본" : null,
+                        ].filter(Boolean);
+                        return (
+                          <li key={i}>
+                            {sl.standard.name_ko}
+                            {sl.target ? ` - ${TARGET_LABEL_KO[sl.target] ?? sl.target}` : ""}
+                            {sl.alternatives.length ? ` (또는 ${sl.alternatives.map((a) => a.name_ko).join(", ")})` : ""}
+                            {!sl.required ? " · 선택" : ""}
+                            {conds.length ? ` · ${conds.join(" · ")}` : ""}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  ) : null}
+                  {guide ? <div className="mt-1 whitespace-pre-wrap text-xs text-muted-foreground">{guide}</div> : null}
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </section>
+
+      {/* 학비 · 장학금 상세 */}
+      {tuition.tuition_by_faculty && Object.keys(tuition.tuition_by_faculty).length > 0 ? (
+        <section>
+          <h4 className="mb-2 text-sm font-semibold">학비 (계열별)</h4>
+          <div className="overflow-hidden rounded-md border">
+            <table className="w-full text-sm">
+              <thead className="bg-muted/50">
+                <tr className="text-left">
+                  <th className="px-3 py-2 font-medium">계열</th>
+                  <th className="px-3 py-2 text-right font-medium">학기당 ({tuition.currency ?? "KRW"})</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.entries(tuition.tuition_by_faculty).map(([k, v]) => (
+                  <tr key={k} className="border-t">
+                    <td className="px-3 py-2">{k}</td>
+                    <td className="px-3 py-2 text-right">{v.toLocaleString()}원</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      ) : null}
+      {scholarships.length > 0 ? (
+        <section>
+          <h4 className="mb-2 text-sm font-semibold">장학금 ({scholarships.length})</h4>
+          <ul className="space-y-2 text-sm">
+            {scholarships.map((s, i) => (
+              <li key={i} className="rounded-md border p-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex-1">
+                    <div className="font-medium">
+                      {s.name ?? "—"}
+                      <Badge variant="outline" className="ml-2 text-xs">
+                        {s.applies_to === "freshman" ? "신입생" : s.applies_to === "enrolled" ? "재학생" : "공통"}
+                      </Badge>
+                    </div>
+                    <div className="mt-0.5 text-xs text-muted-foreground">{s.condition ?? "—"}</div>
+                  </div>
+                  <div className="text-right text-sm font-medium">{typeof s.benefit_value === "number" ? `${s.benefit_value.toLocaleString()}원` : s.benefit_value ?? "—"}</div>
+                </div>
+                {s.tiered_by_topik ? (
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {Object.entries(s.tiered_by_topik).map(([k, v]) => (
+                      <Badge key={k} variant="secondary" className="text-xs">
+                        TOPIK {k}급: {typeof v === "number" ? `${v.toLocaleString()}원` : v}
+                      </Badge>
+                    ))}
+                  </div>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {/* 학과별 자격 */}
+      {sd.eligibility ? (
+        <section className="rounded-md border p-3">
+          <h4 className="mb-2 text-sm font-semibold">학과별 지원 자격</h4>
+          <EligibilityBlock eligibility={sd.eligibility as EligibilityShape} />
+        </section>
+      ) : null}
+    </Card>
+  );
+}
+
+function tuitionSummary(t: Tuition): string | null {
+  if (t.disclosure_state === "pending_until_acceptance" || t.unit === "pending") return "미정 (합격 후 안내)";
+  if (t.tuition_per_semester) return `학기당 ${t.tuition_per_semester.toLocaleString()}원`;
+  if (t.tuition_per_year) return `연 ${t.tuition_per_year.toLocaleString()}원`;
+  if (t.tuition_by_faculty && Object.keys(t.tuition_by_faculty).length > 0) return `계열별 ${Object.keys(t.tuition_by_faculty).length}건`;
+  return null;
+}
+
+// ── 일정 ──────────────────────────────────────────────────────────────
+
+function ScheduleTable({ schedule }: { schedule: ScheduleShape }) {
+  return (
+    <div>
+      {schedule.rounds && schedule.rounds.length > 0 ? (
+        <div className="overflow-hidden rounded-md border">
+          <table className="w-full text-sm">
+            <thead className="bg-muted/50">
+              <tr className="text-left">
+                <th className="px-3 py-2 font-medium">차수</th>
+                <th className="px-3 py-2 font-medium">접수</th>
+                <th className="px-3 py-2 font-medium">서류마감</th>
+                <th className="px-3 py-2 font-medium">면접</th>
+                <th className="px-3 py-2 font-medium">발표</th>
+                <th className="px-3 py-2 font-medium">등록</th>
+              </tr>
+            </thead>
+            <tbody>
+              {schedule.rounds.map((r, i) => (
+                <tr key={i} className="border-t">
+                  <td className="px-3 py-2 font-medium">{r.name ?? "—"}</td>
+                  <td className="px-3 py-2 text-xs">
+                    {r.application_open ?? "—"} ~ {r.application_close ?? "—"}
+                  </td>
+                  <td className="px-3 py-2 text-xs">{r.document_submission_close ?? "—"}</td>
+                  <td className="px-3 py-2 text-xs">{r.interview_period ? `${r.interview_period[0]} ~ ${r.interview_period[1]}` : r.interview ?? "—"}</td>
+                  <td className="px-3 py-2 text-xs">{r.result_announcement ?? "—"}</td>
+                  <td className="px-3 py-2 text-xs">{r.payment_period ? `${r.payment_period[0]} ~ ${r.payment_period[1]}` : "—"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <p className="text-sm text-muted-foreground">일정 없음</p>
+      )}
+      <div className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-sm">
+        {schedule.semester_start ? (
+          <span>
+            <span className="text-muted-foreground">개강: </span>
+            <span className="font-medium">{schedule.semester_start}</span>
+          </span>
+        ) : null}
+        {schedule.orientation ? (
+          <span>
+            <span className="text-muted-foreground">오리엔테이션: </span>
+            <span className="font-medium">{schedule.orientation}</span>
+          </span>
+        ) : null}
+        {schedule.submission_method ? (
+          <span>
+            <span className="text-muted-foreground">제출 방식: </span>
+            <span className="font-medium">{schedule.submission_method}</span>
+          </span>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
+// ── 자격 ──────────────────────────────────────────────────────────────
+
+function EligibilityBlock({ eligibility }: { eligibility: EligibilityShape }) {
+  return (
+    <div className="space-y-4">
+      <section>
+        <h3 className="mb-2 text-sm font-medium text-muted-foreground">학력</h3>
+        <dl className="grid grid-cols-1 gap-x-6 gap-y-2 text-sm md:grid-cols-2">
+          <Info label="요구 학력" value={eligibility.education_required ? EDUCATION_LABEL[eligibility.education_required] ?? eligibility.education_required : null} />
+          <Info label="GPA 최소" value={eligibility.gpa_min != null ? `${eligibility.gpa_min}${eligibility.gpa_scale ? ` / ${eligibility.gpa_scale}` : ""}` : null} />
+          <Info label="나이" value={formatAgeRequirement(eligibility.age_requirement)} />
+          {eligibility.age_requirement?.notes ? <Info label="나이 메모" value={eligibility.age_requirement.notes} /> : null}
+          {eligibility.applicant_categories && eligibility.applicant_categories.length > 0 ? <Info label="지원 카테고리" value={eligibility.applicant_categories.join(", ")} full /> : null}
+          {eligibility.education_paths && eligibility.education_paths.length > 0 ? <Info label="허용 경로" value={eligibility.education_paths.join(", ")} full /> : null}
+          {eligibility.education_exclusions && eligibility.education_exclusions.length > 0 ? <Info label="제외 학력" value={eligibility.education_exclusions.join(", ")} full /> : null}
+        </dl>
+      </section>
+
+      {eligibility.korean_proficiency ? (
+        <section>
+          <h3 className="mb-2 text-sm font-medium text-muted-foreground">한국어 능력</h3>
+          <dl className="grid grid-cols-1 gap-x-6 gap-y-2 text-sm md:grid-cols-2">
+            <Info label="기본 TOPIK" value={eligibility.korean_proficiency.topik_min_default != null ? `${eligibility.korean_proficiency.topik_min_default}급 이상` : null} />
+            <Info label="입학 후 요건" value={eligibility.korean_proficiency.post_admission_requirement ?? null} />
+          </dl>
+          {eligibility.korean_proficiency.alternative_paths && eligibility.korean_proficiency.alternative_paths.length > 0 ? (
+            <div className="mt-2">
+              <div className="text-xs uppercase tracking-wide text-muted-foreground">TOPIK 대체 경로</div>
+              <ul className="mt-1 space-y-1 text-sm">
+                {eligibility.korean_proficiency.alternative_paths.map((p, i) => (
+                  <li key={i} className="flex items-start gap-2">
+                    <Badge variant="outline" className="shrink-0">{p.type ? ALT_PATH_LABEL[p.type] ?? p.type : "—"}</Badge>
+                    <span className="text-muted-foreground">
+                      {p.level ? `${p.level} ` : ""}
+                      {p.description ?? ""}
+                      {p.notes ? ` (${p.notes})` : ""}
+                    </span>
                   </li>
                 ))}
               </ul>
-            </section>
-          ) : null}
-        </Card>
-
-        {/* 자격 */}
-        <Card className="p-6 space-y-4">
-          <h2 className="text-base font-semibold">지원 자격</h2>
-
-          {/* 학력 */}
-          <section>
-            <h3 className="mb-2 text-sm font-medium text-muted-foreground">학력</h3>
-            <dl className="grid grid-cols-1 gap-x-6 gap-y-2 text-sm md:grid-cols-2">
-              <Info
-                label="요구 학력"
-                value={
-                  eligibility.education_required
-                    ? EDUCATION_LABEL[eligibility.education_required] ??
-                      eligibility.education_required
-                    : null
-                }
-              />
-              <Info
-                label="GPA 최소"
-                value={
-                  eligibility.gpa_min != null
-                    ? `${eligibility.gpa_min}${eligibility.gpa_scale ? ` / ${eligibility.gpa_scale}` : ""}`
-                    : null
-                }
-              />
-              <Info
-                label="나이"
-                value={formatAgeRequirement(eligibility.age_requirement)}
-              />
-              {eligibility.age_requirement?.notes ? (
-                <Info
-                  label="나이 메모"
-                  value={eligibility.age_requirement.notes}
-                />
-              ) : null}
-              {eligibility.applicant_categories &&
-              eligibility.applicant_categories.length > 0 ? (
-                <Info
-                  label="지원 카테고리"
-                  value={eligibility.applicant_categories.join(", ")}
-                  full
-                />
-              ) : null}
-              {eligibility.education_paths &&
-              eligibility.education_paths.length > 0 ? (
-                <Info
-                  label="허용 경로"
-                  value={eligibility.education_paths.join(", ")}
-                  full
-                />
-              ) : null}
-              {eligibility.education_exclusions &&
-              eligibility.education_exclusions.length > 0 ? (
-                <Info
-                  label="제외 학력"
-                  value={eligibility.education_exclusions.join(", ")}
-                  full
-                />
-              ) : null}
-            </dl>
-          </section>
-
-          {/* 한국어 */}
-          {eligibility.korean_proficiency ? (
-            <section>
-              <h3 className="mb-2 text-sm font-medium text-muted-foreground">
-                한국어 능력
-              </h3>
-              <dl className="grid grid-cols-1 gap-x-6 gap-y-2 text-sm md:grid-cols-2">
-                <Info
-                  label="기본 TOPIK"
-                  value={
-                    eligibility.korean_proficiency.topik_min_default != null
-                      ? `${eligibility.korean_proficiency.topik_min_default}급 이상`
-                      : null
-                  }
-                />
-                <Info
-                  label="입학 후 요건"
-                  value={
-                    eligibility.korean_proficiency.post_admission_requirement ?? null
-                  }
-                />
-              </dl>
-              {eligibility.korean_proficiency.alternative_paths &&
-              eligibility.korean_proficiency.alternative_paths.length > 0 ? (
-                <div className="mt-2">
-                  <div className="text-xs uppercase tracking-wide text-muted-foreground">
-                    TOPIK 대체 경로
-                  </div>
-                  <ul className="mt-1 space-y-1 text-sm">
-                    {eligibility.korean_proficiency.alternative_paths.map((p, i) => (
-                      <li key={i} className="flex items-start gap-2">
-                        <Badge variant="outline" className="shrink-0">
-                          {p.type ? ALT_PATH_LABEL[p.type] ?? p.type : "—"}
-                        </Badge>
-                        <span className="text-muted-foreground">
-                          {p.level ? `${p.level} ` : ""}
-                          {p.description ?? ""}
-                          {p.notes ? ` (${p.notes})` : ""}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ) : null}
-            </section>
-          ) : null}
-
-          {/* 영어 */}
-          {eligibility.english_proficiency &&
-          (eligibility.english_proficiency.minimums ||
-            eligibility.english_proficiency.applies_to_departments) ? (
-            <section>
-              <h3 className="mb-2 text-sm font-medium text-muted-foreground">
-                영어 능력
-              </h3>
-              {eligibility.english_proficiency.applies_to_departments &&
-              eligibility.english_proficiency.applies_to_departments.length > 0 ? (
-                <div className="text-sm">
-                  <span className="text-muted-foreground">대상: </span>
-                  {eligibility.english_proficiency.applies_to_departments.join(", ")}
-                </div>
-              ) : null}
-              {eligibility.english_proficiency.minimums ? (
-                <div className="mt-2 flex flex-wrap gap-1.5">
-                  {Object.entries(eligibility.english_proficiency.minimums).map(
-                    ([k, v]) => (
-                      <Badge key={k} variant="outline">
-                        {k}: {String(v)}
-                      </Badge>
-                    )
-                  )}
-                </div>
-              ) : null}
-              {eligibility.english_proficiency.notes ? (
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {eligibility.english_proficiency.notes}
-                </p>
-              ) : null}
-            </section>
-          ) : null}
-
-          {/* 재정 */}
-          {eligibility.financial_minimum ? (
-            <section>
-              <h3 className="mb-2 text-sm font-medium text-muted-foreground">재정</h3>
-              <dl className="grid grid-cols-1 gap-x-6 gap-y-2 text-sm md:grid-cols-2">
-                <Info
-                  label="최소 금액"
-                  value={
-                    eligibility.financial_minimum.amount != null
-                      ? `${eligibility.financial_minimum.amount.toLocaleString()} ${eligibility.financial_minimum.currency ?? "KRW"}`
-                      : null
-                  }
-                />
-                <Info
-                  label="유효 기간"
-                  value={
-                    eligibility.financial_minimum.freshness_days != null
-                      ? `${eligibility.financial_minimum.freshness_days}일`
-                      : null
-                  }
-                />
-                {eligibility.financial_minimum.holder_relations &&
-                eligibility.financial_minimum.holder_relations.length > 0 ? (
-                  <Info
-                    label="예금주"
-                    value={eligibility.financial_minimum.holder_relations
-                      .map((h) => HOLDER_LABEL[h] ?? h)
-                      .join(", ")}
-                    full
-                  />
-                ) : null}
-                {eligibility.financial_minimum.notes ? (
-                  <Info
-                    label="재정 메모"
-                    value={eligibility.financial_minimum.notes}
-                    full
-                  />
-                ) : null}
-              </dl>
-            </section>
-          ) : null}
-
-          {/* 제외사항·메모 */}
-          {(eligibility.exclusions && eligibility.exclusions.length > 0) ||
-          eligibility.notes_ko ? (
-            <section>
-              {eligibility.exclusions && eligibility.exclusions.length > 0 ? (
-                <div className="rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm">
-                  <div className="font-medium text-destructive">자격 제외사항</div>
-                  <ul className="mt-1 list-disc pl-5 text-xs">
-                    {eligibility.exclusions.map((e, i) => (
-                      <li key={i}>{e}</li>
-                    ))}
-                  </ul>
-                </div>
-              ) : null}
-              {eligibility.notes_ko ? (
-                <p className="mt-2 text-xs text-muted-foreground whitespace-pre-wrap">
-                  {eligibility.notes_ko}
-                </p>
-              ) : null}
-            </section>
-          ) : null}
-        </Card>
-
-        {/* 일정 */}
-        <Card className="p-6">
-          <h2 className="mb-3 text-base font-semibold">모집 일정</h2>
-          {schedule.rounds && schedule.rounds.length > 0 ? (
-            <div className="overflow-hidden rounded-md border">
-              <table className="w-full text-sm">
-                <thead className="bg-muted/50">
-                  <tr className="text-left">
-                    <th className="px-3 py-2 font-medium">차수</th>
-                    <th className="px-3 py-2 font-medium">접수</th>
-                    <th className="px-3 py-2 font-medium">서류마감</th>
-                    <th className="px-3 py-2 font-medium">면접</th>
-                    <th className="px-3 py-2 font-medium">발표</th>
-                    <th className="px-3 py-2 font-medium">등록</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {schedule.rounds.map((r, i) => (
-                    <tr key={i} className="border-t">
-                      <td className="px-3 py-2 font-medium">{r.name ?? "—"}</td>
-                      <td className="px-3 py-2 text-xs">
-                        {r.application_open ?? "—"} ~ {r.application_close ?? "—"}
-                      </td>
-                      <td className="px-3 py-2 text-xs">{r.document_submission_close ?? "—"}</td>
-                      <td className="px-3 py-2 text-xs">
-                        {r.interview_period
-                          ? `${r.interview_period[0]} ~ ${r.interview_period[1]}`
-                          : "—"}
-                      </td>
-                      <td className="px-3 py-2 text-xs">{r.result_announcement ?? "—"}</td>
-                      <td className="px-3 py-2 text-xs">
-                        {r.payment_period
-                          ? `${r.payment_period[0]} ~ ${r.payment_period[1]}`
-                          : "—"}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
             </div>
-          ) : (
-            <p className="text-sm text-muted-foreground">없음</p>
-          )}
-          {schedule.semester_start ? (
-            <p className="mt-3 text-sm">
-              <span className="text-muted-foreground">개강: </span>
-              <span className="font-medium">{schedule.semester_start}</span>
-            </p>
+          ) : null}
+        </section>
+      ) : null}
+
+      {eligibility.english_proficiency && (eligibility.english_proficiency.minimums || eligibility.english_proficiency.applies_to_departments) ? (
+        <section>
+          <h3 className="mb-2 text-sm font-medium text-muted-foreground">영어 능력</h3>
+          {eligibility.english_proficiency.applies_to_departments && eligibility.english_proficiency.applies_to_departments.length > 0 ? (
+            <div className="text-sm">
+              <span className="text-muted-foreground">대상: </span>
+              {eligibility.english_proficiency.applies_to_departments.join(", ")}
+            </div>
+          ) : null}
+          {eligibility.english_proficiency.minimums ? (
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {Object.entries(eligibility.english_proficiency.minimums).map(([k, v]) => (
+                <Badge key={k} variant="outline">
+                  {k}: {String(v)}
+                </Badge>
+              ))}
+            </div>
+          ) : null}
+          {eligibility.english_proficiency.notes ? <p className="mt-1 text-xs text-muted-foreground">{eligibility.english_proficiency.notes}</p> : null}
+        </section>
+      ) : null}
+
+      {eligibility.financial_minimum ? (
+        <section>
+          <h3 className="mb-2 text-sm font-medium text-muted-foreground">재정</h3>
+          <dl className="grid grid-cols-1 gap-x-6 gap-y-2 text-sm md:grid-cols-2">
+            <Info label="최소 금액" value={eligibility.financial_minimum.amount != null ? `${eligibility.financial_minimum.amount.toLocaleString()} ${eligibility.financial_minimum.currency ?? "KRW"}` : null} />
+            <Info label="유효 기간" value={eligibility.financial_minimum.freshness_days != null ? `${eligibility.financial_minimum.freshness_days}일` : null} />
+            {eligibility.financial_minimum.holder_relations && eligibility.financial_minimum.holder_relations.length > 0 ? (
+              <Info label="예금주" value={eligibility.financial_minimum.holder_relations.map((h) => HOLDER_LABEL[h] ?? h).join(", ")} full />
+            ) : null}
+            {eligibility.financial_minimum.notes ? <Info label="재정 메모" value={eligibility.financial_minimum.notes} full /> : null}
+          </dl>
+        </section>
+      ) : null}
+
+      {(eligibility.exclusions && eligibility.exclusions.length > 0) || eligibility.notes_ko ? (
+        <section>
+          {eligibility.exclusions && eligibility.exclusions.length > 0 ? (
+            <div className="rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm">
+              <div className="font-medium text-destructive">자격 제외사항</div>
+              <ul className="mt-1 list-disc pl-5 text-xs">
+                {eligibility.exclusions.map((e, i) => (
+                  <li key={i}>{e}</li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
+          {eligibility.notes_ko ? <p className="mt-2 whitespace-pre-wrap text-xs text-muted-foreground">{eligibility.notes_ko}</p> : null}
+        </section>
+      ) : null}
+    </div>
+  );
+}
+
+// ── 기타(metadata) ────────────────────────────────────────────────────
+
+function MetadataCards({ metadata }: { metadata: MetadataShape }) {
+  const hasValues = (o: object | undefined) => !!o && Object.values(o).some((v) => v !== undefined && v !== null && v !== "");
+  return (
+    <>
+      {hasValues(metadata.selection_process) ? (
+        <Card className="p-6">
+          <h2 className="mb-3 text-base font-semibold">선발 절차</h2>
+          <dl className="grid grid-cols-1 gap-x-6 gap-y-2 text-sm md:grid-cols-2">
+            <Info label="선발 방법" value={metadata.selection_process!.method} />
+            <Info label="면접" value={metadata.selection_process!.interview_required ? "필수" : "없음"} />
+            {metadata.selection_process!.interview_content && metadata.selection_process!.interview_content.length > 0 ? (
+              <Info label="면접 내용" value={metadata.selection_process!.interview_content.join(", ")} full />
+            ) : null}
+            <Info label="평가 기준" value={metadata.selection_process!.evaluation_criteria} full />
+          </dl>
+        </Card>
+      ) : null}
+
+      {metadata.post_acceptance ? (
+        <Card className="p-6">
+          <h2 className="mb-3 text-base font-semibold">합격 후 (비자·절차)</h2>
+          <dl className="grid grid-cols-1 gap-x-6 gap-y-2 text-sm md:grid-cols-2">
+            <Info label="입학 비자" value={metadata.post_acceptance.visa_type} />
+            <Info label="졸업 후 비자" value={metadata.post_acceptance.post_graduation_visa} />
+            <Info label="보험 요건" value={metadata.post_acceptance.insurance_requirement} full />
+          </dl>
+          {metadata.post_acceptance.warnings && metadata.post_acceptance.warnings.length > 0 ? (
+            <div className="mt-3 rounded-md border border-amber-500/30 bg-amber-500/5 p-3 text-sm">
+              <div className="font-medium text-amber-700 dark:text-amber-400">주의사항</div>
+              <ul className="mt-1 list-disc pl-5 text-xs">
+                {metadata.post_acceptance.warnings.map((w, i) => (
+                  <li key={i}>{w}</li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
+          {metadata.post_acceptance.process_steps && metadata.post_acceptance.process_steps.length > 0 ? (
+            <div className="mt-3">
+              <div className="text-xs uppercase tracking-wide text-muted-foreground">절차</div>
+              <ol className="mt-1 list-decimal pl-5 text-sm">
+                {metadata.post_acceptance.process_steps.map((s, i) => (
+                  <li key={i}>{s}</li>
+                ))}
+              </ol>
+            </div>
           ) : null}
         </Card>
+      ) : null}
 
-        {/* 등록금 */}
+      {hasValues(metadata.contacts) ? (
         <Card className="p-6">
-          <h2 className="mb-3 text-base font-semibold">등록금</h2>
-          {tuition.tuition_by_faculty && Object.keys(tuition.tuition_by_faculty).length > 0 ? (
-            <div className="overflow-hidden rounded-md border">
-              <table className="w-full text-sm">
-                <thead className="bg-muted/50">
-                  <tr className="text-left">
-                    <th className="px-3 py-2 font-medium">계열</th>
-                    <th className="px-3 py-2 text-right font-medium">학기당 ({tuition.currency ?? "KRW"})</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {Object.entries(tuition.tuition_by_faculty).map(([k, v]) => (
-                    <tr key={k} className="border-t">
-                      <td className="px-3 py-2">{k}</td>
-                      <td className="px-3 py-2 text-right">{v.toLocaleString()}원</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : tuition.tuition_per_semester ? (
-            <p className="text-sm">
-              학기당 {tuition.tuition_per_semester.toLocaleString()}원
-            </p>
-          ) : (
-            <p className="text-sm text-muted-foreground">미정 (합격 후 안내)</p>
-          )}
+          <h2 className="mb-3 text-base font-semibold">연락처</h2>
+          <dl className="grid grid-cols-1 gap-x-6 gap-y-2 text-sm md:grid-cols-2">
+            <Info label="담당 부서" value={metadata.contacts!.department_name} />
+            <Info label="전화" value={metadata.contacts!.phone} />
+            <Info label="베트남어 응대" value={metadata.contacts!.phone_vietnamese} />
+            <Info label="한국어 응대" value={metadata.contacts!.phone_korean} />
+            <Info label="이메일" value={metadata.contacts!.email ?? null} />
+            <Info label="보조 이메일" value={metadata.contacts!.email_secondary} />
+            <Info label="팩스" value={metadata.contacts!.fax} />
+            <Info label="접수 시간" value={metadata.contacts!.submission_hours} />
+            <Info label="웹사이트" value={metadata.contacts!.website} full />
+            <Info label="온라인 지원 URL" value={metadata.contacts!.online_apply_url} full />
+            <Info label="주소 (한국어)" value={metadata.contacts!.address_ko} full />
+            <Info label="주소 (영어)" value={metadata.contacts!.address_en} full />
+          </dl>
         </Card>
+      ) : null}
 
-        {/* 장학금 */}
+      {metadata.government_designations && metadata.government_designations.length > 0 ? (
         <Card className="p-6">
-          <h2 className="mb-3 text-base font-semibold">장학금 ({scholarships.length})</h2>
-          {scholarships.length === 0 ? (
-            <p className="text-sm text-muted-foreground">없음</p>
-          ) : (
-            <ul className="space-y-2 text-sm">
-              {scholarships.map((s, i) => (
-                <li key={i} className="rounded-md border p-3">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex-1">
-                      <div className="font-medium">
-                        {s.name ?? "—"}
-                        <Badge variant="outline" className="ml-2 text-xs">
-                          {s.applies_to === "freshman" ? "신입생" : s.applies_to === "enrolled" ? "재학생" : "공통"}
-                        </Badge>
-                      </div>
-                      <div className="mt-0.5 text-xs text-muted-foreground">{s.condition ?? "—"}</div>
-                    </div>
-                    <div className="text-right text-sm font-medium">
-                      {typeof s.benefit_value === "number"
-                        ? `${s.benefit_value.toLocaleString()}원`
-                        : s.benefit_value ?? "—"}
-                    </div>
+          <h2 className="mb-3 text-base font-semibold">정부 지정</h2>
+          <ul className="space-y-2 text-sm">
+            {metadata.government_designations.map((g, i) => (
+              <li key={i} className="rounded-md border border-success/30 bg-success/5 p-3">
+                <div className="font-medium">
+                  {g.designation_name ?? "—"}
+                  {g.effective_from ? <span className="ml-2 text-xs text-muted-foreground">(시행: {g.effective_from})</span> : null}
+                </div>
+                {g.benefits && g.benefits.length > 0 ? (
+                  <div className="mt-2 flex flex-wrap gap-1">
+                    {g.benefits.map((b, j) => (
+                      <Badge key={j} variant="outline" className="text-xs">{BENEFIT_LABEL[b] ?? b}</Badge>
+                    ))}
                   </div>
-                  {s.tiered_by_topik ? (
-                    <div className="mt-2 flex flex-wrap gap-1.5">
-                      {Object.entries(s.tiered_by_topik).map(([k, v]) => (
-                        <Badge key={k} variant="secondary" className="text-xs">
-                          TOPIK {k}급: {typeof v === "number" ? `${v.toLocaleString()}원` : v}
-                        </Badge>
-                      ))}
-                    </div>
-                  ) : null}
-                </li>
-              ))}
-            </ul>
-          )}
+                ) : null}
+                {g.notes ? <p className="mt-1 text-xs text-muted-foreground">{g.notes}</p> : null}
+              </li>
+            ))}
+          </ul>
         </Card>
+      ) : null}
 
-        {/* 선발 절차 */}
-        {metadata.selection_process &&
-        Object.values(metadata.selection_process).some(
-          (v) => v !== undefined && v !== null && v !== ""
-        ) ? (
-          <Card className="p-6">
-            <h2 className="mb-3 text-base font-semibold">선발 절차</h2>
-            <dl className="grid grid-cols-1 gap-x-6 gap-y-2 text-sm md:grid-cols-2">
-              <Info label="선발 방법" value={metadata.selection_process.method} />
-              <Info
-                label="면접"
-                value={
-                  metadata.selection_process.interview_required ? "필수" : "없음"
-                }
-              />
-              {metadata.selection_process.interview_content &&
-              metadata.selection_process.interview_content.length > 0 ? (
-                <Info
-                  label="면접 내용"
-                  value={metadata.selection_process.interview_content.join(", ")}
-                  full
-                />
-              ) : null}
-              <Info
-                label="평가 기준"
-                value={metadata.selection_process.evaluation_criteria}
-                full
-              />
-            </dl>
-          </Card>
-        ) : null}
+      {hasValues(metadata.language_program) ? (
+        <Card className="p-6">
+          <h2 className="mb-3 text-base font-semibold">어학연수 프로그램</h2>
+          <dl className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm md:grid-cols-4">
+            <Info label="학기당 시간" value={metadata.language_program!.hours_per_semester != null ? `${metadata.language_program!.hours_per_semester}시간` : null} />
+            <Info label="주당 시간" value={metadata.language_program!.hours_per_week != null ? `${metadata.language_program!.hours_per_week}시간` : null} />
+            <Info label="학기 주수" value={metadata.language_program!.weeks_per_semester != null ? `${metadata.language_program!.weeks_per_semester}주` : null} />
+            <Info label="시간표" value={metadata.language_program!.weekly_schedule} />
+            <Info label="비자" value={metadata.language_program!.visa_type} />
+            <Info label="연장 비자" value={metadata.language_program!.visa_extension} />
+          </dl>
+        </Card>
+      ) : null}
 
-        {/* 합격 후 (비자·절차) */}
-        {metadata.post_acceptance ? (
-          <Card className="p-6">
-            <h2 className="mb-3 text-base font-semibold">합격 후 (비자·절차)</h2>
-            <dl className="grid grid-cols-1 gap-x-6 gap-y-2 text-sm md:grid-cols-2">
-              <Info label="입학 비자" value={metadata.post_acceptance.visa_type} />
-              <Info
-                label="졸업 후 비자"
-                value={metadata.post_acceptance.post_graduation_visa}
-              />
-              <Info
-                label="보험 요건"
-                value={metadata.post_acceptance.insurance_requirement}
-                full
-              />
-            </dl>
-            {metadata.post_acceptance.warnings &&
-            metadata.post_acceptance.warnings.length > 0 ? (
-              <div className="mt-3 rounded-md border border-amber-500/30 bg-amber-500/5 p-3 text-sm">
-                <div className="font-medium text-amber-700 dark:text-amber-400">
-                  주의사항
-                </div>
-                <ul className="mt-1 list-disc pl-5 text-xs">
-                  {metadata.post_acceptance.warnings.map((w, i) => (
-                    <li key={i}>{w}</li>
-                  ))}
-                </ul>
-              </div>
-            ) : null}
-            {metadata.post_acceptance.process_steps &&
-            metadata.post_acceptance.process_steps.length > 0 ? (
-              <div className="mt-3">
-                <div className="text-xs uppercase tracking-wide text-muted-foreground">
-                  절차
-                </div>
-                <ol className="mt-1 list-decimal pl-5 text-sm">
-                  {metadata.post_acceptance.process_steps.map((s, i) => (
-                    <li key={i}>{s}</li>
-                  ))}
-                </ol>
-              </div>
-            ) : null}
-          </Card>
-        ) : null}
-
-        {/* 연락처 */}
-        {metadata.contacts &&
-        Object.values(metadata.contacts).some(
-          (v) => v !== undefined && v !== null && v !== ""
-        ) ? (
-          <Card className="p-6">
-            <h2 className="mb-3 text-base font-semibold">연락처</h2>
-            <dl className="grid grid-cols-1 gap-x-6 gap-y-2 text-sm md:grid-cols-2">
-              <Info
-                label="담당 부서"
-                value={metadata.contacts.department_name}
-              />
-              <Info label="전화" value={metadata.contacts.phone} />
-              <Info
-                label="베트남어 응대"
-                value={metadata.contacts.phone_vietnamese}
-              />
-              <Info
-                label="한국어 응대"
-                value={metadata.contacts.phone_korean}
-              />
-              <Info label="이메일" value={metadata.contacts.email ?? null} />
-              <Info
-                label="보조 이메일"
-                value={metadata.contacts.email_secondary}
-              />
-              <Info label="팩스" value={metadata.contacts.fax} />
-              <Info
-                label="접수 시간"
-                value={metadata.contacts.submission_hours}
-              />
-              <Info label="웹사이트" value={metadata.contacts.website} full />
-              <Info
-                label="온라인 지원 URL"
-                value={metadata.contacts.online_apply_url}
-                full
-              />
-              <Info
-                label="주소 (한국어)"
-                value={metadata.contacts.address_ko}
-                full
-              />
-              <Info
-                label="주소 (영어)"
-                value={metadata.contacts.address_en}
-                full
-              />
-            </dl>
-          </Card>
-        ) : null}
-
-        {/* 정부 지정 */}
-        {metadata.government_designations &&
-        metadata.government_designations.length > 0 ? (
-          <Card className="p-6">
-            <h2 className="mb-3 text-base font-semibold">정부 지정</h2>
-            <ul className="space-y-2 text-sm">
-              {metadata.government_designations.map((g, i) => (
-                <li
-                  key={i}
-                  className="rounded-md border border-success/30 bg-success/5 p-3"
-                >
-                  <div className="font-medium">
-                    {g.designation_name ?? "—"}
-                    {g.effective_from ? (
-                      <span className="ml-2 text-xs text-muted-foreground">
-                        (시행: {g.effective_from})
-                      </span>
-                    ) : null}
-                  </div>
-                  {g.benefits && g.benefits.length > 0 ? (
-                    <div className="mt-2 flex flex-wrap gap-1">
-                      {g.benefits.map((b, j) => (
-                        <Badge key={j} variant="outline" className="text-xs">
-                          {BENEFIT_LABEL[b] ?? b}
-                        </Badge>
-                      ))}
-                    </div>
-                  ) : null}
-                  {g.notes ? (
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      {g.notes}
-                    </p>
-                  ) : null}
-                </li>
-              ))}
-            </ul>
-          </Card>
-        ) : null}
-
-        {/* 어학연수 프로그램 */}
-        {metadata.language_program &&
-        Object.values(metadata.language_program).some(
-          (v) => v !== undefined && v !== null && v !== ""
-        ) ? (
-          <Card className="p-6">
-            <h2 className="mb-3 text-base font-semibold">어학연수 프로그램</h2>
-            <dl className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm md:grid-cols-4">
-              <Info
-                label="학기당 시간"
-                value={
-                  metadata.language_program.hours_per_semester != null
-                    ? `${metadata.language_program.hours_per_semester}시간`
-                    : null
-                }
-              />
-              <Info
-                label="주당 시간"
-                value={
-                  metadata.language_program.hours_per_week != null
-                    ? `${metadata.language_program.hours_per_week}시간`
-                    : null
-                }
-              />
-              <Info
-                label="학기 주수"
-                value={
-                  metadata.language_program.weeks_per_semester != null
-                    ? `${metadata.language_program.weeks_per_semester}주`
-                    : null
-                }
-              />
-              <Info
-                label="시간표"
-                value={metadata.language_program.weekly_schedule}
-              />
-              <Info label="비자" value={metadata.language_program.visa_type} />
-              <Info
-                label="연장 비자"
-                value={metadata.language_program.visa_extension}
-              />
-            </dl>
-          </Card>
-        ) : null}
-
-        {/* 베트남 특화 메모 */}
-        {metadata.country_specific_notes_vi ? (
-          <Card className="p-6">
-            <h2 className="mb-3 text-base font-semibold">베트남 특화 안내</h2>
-            <p className="whitespace-pre-wrap text-sm">
-              {metadata.country_specific_notes_vi}
-            </p>
-          </Card>
-        ) : null}
-      </div>
+      {metadata.country_specific_notes_vi ? (
+        <Card className="p-6">
+          <h2 className="mb-3 text-base font-semibold">베트남 특화 안내</h2>
+          <p className="whitespace-pre-wrap text-sm">{metadata.country_specific_notes_vi}</p>
+        </Card>
+      ) : null}
     </>
   );
 }
@@ -1174,4 +853,3 @@ function Info({ label, value, full }: { label: string; value?: string | null; fu
     </div>
   );
 }
-

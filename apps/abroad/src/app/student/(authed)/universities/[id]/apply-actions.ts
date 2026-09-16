@@ -20,6 +20,8 @@ const applySchema = z.object({
     z.coerce.number().int().positive().optional()
   ),
   target_department_label: z.string().trim().min(1).max(200),
+  // 0067: 지원 학기 (offering.term / 요강 학기)
+  term: emptyToUndef(z.string().trim().max(40).optional()),
   selected_language: emptyToUndef(
     z.enum(["korean", "english", "other"]).optional()
   ),
@@ -52,6 +54,11 @@ export async function createSelfApplicationAction(
     .eq("student_id", session.student.id);
   if (data.offering_id) {
     dupQuery = dupQuery.eq("offering_id", data.offering_id);
+  } else if (data.target_department_id != null && data.term) {
+    dupQuery = dupQuery
+      .eq("admission_spec_id", data.admission_spec_id)
+      .eq("target_department_id", data.target_department_id)
+      .eq("term", data.term);
   } else {
     dupQuery = dupQuery
       .eq("admission_spec_id", data.admission_spec_id)
@@ -69,6 +76,7 @@ export async function createSelfApplicationAction(
     selected_language: data.selected_language ?? null,
     target_department_id: data.target_department_id ?? null,
     target_department_label: data.target_department_label,
+    term: data.term ?? null,
     status: "preparing",
   });
 

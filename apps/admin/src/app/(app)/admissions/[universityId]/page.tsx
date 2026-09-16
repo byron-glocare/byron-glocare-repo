@@ -27,6 +27,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { FormFilesManager } from "@/app/(app)/universities/[id]/forms/forms-manager";
+import { loadSpecTerms } from "@/lib/admission/spec-departments";
 
 export const dynamic = "force-dynamic";
 
@@ -127,6 +128,7 @@ export default async function UniversityAdmissionPage({
         "id, term, admission_category, program_type, status, departments, required_documents, approved_at, updated_at"
       )
       .eq("university_id", uid)
+      .neq("status", "archived")
       .order("updated_at", { ascending: false }),
     supabase
       .from("departments")
@@ -157,6 +159,12 @@ export default async function UniversityAdmissionPage({
   ]);
 
   const specs = specRows ?? [];
+  // 대학당 요강 1개 · 학기는 study_spec_terms (0067)
+  const termsBySpec = new Map<string, string[]>();
+  for (const s of specs) {
+    const ts = await loadSpecTerms(supabase, s.id);
+    termsBySpec.set(s.id, ts.length ? ts.map((t) => t.term) : [s.term]);
+  }
   const depts = (deptRows ?? []).map((d) => ({ id: d.id, name_ko: d.name_ko }));
 
   type FormFileRow = {
@@ -255,8 +263,8 @@ export default async function UniversityAdmissionPage({
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-40">과정</TableHead>
-                    <TableHead className="w-28">학기</TableHead>
+                    <TableHead className="w-40">전형</TableHead>
+                    <TableHead className="w-40">학기</TableHead>
                     <TableHead>학과</TableHead>
                     <TableHead className="w-24 text-center">상태</TableHead>
                     <TableHead className="w-28">갱신</TableHead>
@@ -276,13 +284,14 @@ export default async function UniversityAdmissionPage({
                       <TableRow key={s.id}>
                         <TableCell className="text-sm">
                           <Link href={href} className="block hover:text-primary">
-                            {PROGRAM_TYPE_LABEL[s.program_type] ??
+                            {s.admission_category ??
+                              PROGRAM_TYPE_LABEL[s.program_type] ??
                               s.program_type}
                           </Link>
                         </TableCell>
                         <TableCell className="text-sm">
                           <Link href={href} className="block">
-                            {s.term}
+                            {(termsBySpec.get(s.id) ?? [s.term]).join(" · ")}
                           </Link>
                         </TableCell>
                         <TableCell className="text-sm">
@@ -328,7 +337,7 @@ export default async function UniversityAdmissionPage({
               <h2 className="text-sm font-semibold text-foreground">필수 서류</h2>
               {repSpec ? (
                 <span className="text-xs text-muted-foreground">
-                  ({repSpec.term} · {STATUS_LABEL[repSpec.status] ?? repSpec.status}{" "}
+                  ({(termsBySpec.get(repSpec.id) ?? [repSpec.term]).join(" · ")} · {STATUS_LABEL[repSpec.status] ?? repSpec.status}{" "}
                   모집요강 기준)
                 </span>
               ) : null}

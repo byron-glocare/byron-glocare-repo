@@ -10,6 +10,12 @@ import { verifyStudentSession } from "@/lib/student/dal";
 import { createClient } from "@/lib/supabase/server";
 import { getLocale, tr } from "@/lib/i18n";
 import { deriveOfferingLanguages } from "@/lib/admission/offering-languages";
+import {
+  departmentEligibility,
+  loadSpecDepartments,
+  loadSpecTerms,
+  programTypeOfDepartment,
+} from "@/lib/admission/spec-documents";
 
 import { OfferingList, type OfferingItem } from "./offering-list";
 import { AppliedToast } from "./applied-toast";
@@ -62,22 +68,34 @@ export default async function StudentUniversityDetailPage({
         .order("term", { ascending: false }),
       supabase
         .from("study_admission_specs")
-        .select("id, term, admission_category, program_type, eligibility, departments")
+        .select("id, term, admission_category, eligibility")
         .eq("university_id", uniId)
         .eq("status", "approved"),
       supabase
         .from("study_applications")
-        .select("offering_id, admission_spec_id, target_department_label")
+        .select("offering_id, admission_spec_id, target_department_id, term, target_department_label")
         .eq("student_id", session.student.id),
     ]);
 
   const specById = new Map((specs ?? []).map((s) => [s.id, s]));
+  // 0067: 학과·학기는 요강의 학과(study_spec_departments)·학기(study_spec_terms)에서
+  const specIds = (specs ?? []).map((s) => s.id);
+  const [deptsBySpec, termsBySpec] = await Promise.all([
+    loadSpecDepartments(supabase, specIds),
+    loadSpecTerms(supabase, specIds),
+  ]);
+  const specDeptOf = (specId: string | null | undefined, departmentId: number) =>
+    specId ? (deptsBySpec.get(specId) ?? []).find((d) => d.department_id === departmentId) ?? null : null;
+
   const appliedOfferingIds = new Set(
     (myApps ?? []).map((a) => a.offering_id).filter(Boolean)
   );
-  // 자유 지원(spec 직접) 중복 판별용 — (모집요강 + 학과라벨)
+  // 자유 지원(spec 직접) 중복 판별용 — (모집요강 + 학과 + 학기). 옛 지원은 학과라벨로.
   const appliedSpecDept = new Set(
-    (myApps ?? []).map((a) => `${a.admission_spec_id}::${a.target_department_label ?? ""}`)
+    (myApps ?? []).flatMap((a) => [
+      `${a.admission_spec_id}::${a.target_department_label ?? ""}`,
+      `${a.admission_spec_id}::${a.target_department_id ?? ""}::${a.term ?? ""}`,
+    ])
   );
 
   // 협약 = 모집(offerings)에 등록된 대학. 지원 가능 = published + 모집요강 연결.
@@ -101,8 +119,9 @@ export default async function StudentUniversityDetailPage({
 
     items = offerings.map((o) => {
       const spec = o.source_spec_id ? specById.get(o.source_spec_id) : null;
+      const specDept = specDeptOf(o.source_spec_id, o.department_id);
       const dept = deptMap.get(o.department_id);
-      const deptNameKo = dept?.name_ko ?? `학과 #${o.department_id}`;
+      const deptNameKo = dept?.name_ko ?? specDept?.name_ko ?? `학과 #${o.department_id}`;
       const deptName =
         (locale === "vi" ? dept?.name_vi ?? dept?.name_ko : dept?.name_ko) ??
         deptNameKo;
@@ -114,34 +133,37 @@ export default async function StudentUniversityDetailPage({
         departmentName: deptName,
         departmentLabelKo: deptNameKo,
         term: o.term,
-        programType: spec?.program_type ?? null,
-        languages: deriveOfferingLanguages(spec?.eligibility ?? null, deptNameKo),
+        programType: programTypeOfDepartment(specDept),
+        // 언어는 학과 자격요건(있으면) → 요강 공통 순
+        languages: deriveOfferingLanguages(departmentEligibility(specDept, spec), deptNameKo),
         alreadyApplied: appliedOfferingIds.has(o.id),
       };
     });
   } else {
-    // 자유 지원: 승인된 모집요강(spec)의 학과를 직접 골라 지원 (offering 없음)
+    // 자유 지원: 승인된 모집요강(spec)의 학과 × 학기를 직접 골라 지원 (offering 없음)
     items = (specs ?? []).flatMap((s) => {
-      const depts = Array.isArray(s.departments)
-        ? (s.departments as Array<{ name?: string }>)
-        : [];
-      return depts
-        .filter((d) => d && typeof d.name === "string" && d.name.trim())
-        .map((d) => {
-          const label = (d.name as string).trim();
+      const depts = deptsBySpec.get(s.id) ?? [];
+      const terms = (termsBySpec.get(s.id) ?? []).map((t) => t.term);
+      const termList = terms.length > 0 ? terms : [s.term];
+      return depts.flatMap((d) =>
+        termList.map((term) => {
+          const label = d.name_ko;
           return {
-            id: `${s.id}::${label}`,
+            id: `${s.id}::${d.department_id}::${term}`,
             offeringId: null,
             sourceSpecId: s.id,
-            departmentId: null,
-            departmentName: label,
+            departmentId: d.department_id,
+            departmentName: locale === "vi" ? d.name_vi || d.name_ko : d.name_ko,
             departmentLabelKo: label,
-            term: s.term,
-            programType: s.program_type ?? null,
-            languages: deriveOfferingLanguages(s.eligibility ?? null, label),
-            alreadyApplied: appliedSpecDept.has(`${s.id}::${label}`),
+            term,
+            programType: programTypeOfDepartment(d),
+            languages: deriveOfferingLanguages(departmentEligibility(d, s), label),
+            alreadyApplied:
+              appliedSpecDept.has(`${s.id}::${d.department_id}::${term}`) ||
+              appliedSpecDept.has(`${s.id}::${label}`),
           } satisfies OfferingItem;
-        });
+        })
+      );
     });
   }
 

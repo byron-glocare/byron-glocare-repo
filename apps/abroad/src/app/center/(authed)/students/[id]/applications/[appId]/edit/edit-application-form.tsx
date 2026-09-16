@@ -19,18 +19,24 @@ const helpTextClass = "text-xs text-slate-500";
 
 export type EditableApplication = {
   id: string;
+  offering_id: string | null;
+  term?: string | null;
   target_department_label: string | null;
   next_action: string | null;
   next_deadline: string | null;
 };
 
+export type EditOfferingOption = { id: string; label: string };
+
 export function EditApplicationForm({
   locale,
   application,
+  offerings,
   studentId,
 }: {
   locale: Locale;
   application: EditableApplication;
+  offerings: EditOfferingOption[];
   studentId: string;
 }) {
   const bound = updateApplicationAction.bind(
@@ -44,9 +50,43 @@ export function EditApplicationForm({
   >(bound, undefined);
 
   const fieldError = (n: string) => state?.fieldErrors?.[n]?.[0];
+  const current = [application.target_department_label, application.term].filter(Boolean).join(" · ");
 
   return (
     <form action={action} className="flex flex-col gap-5">
+      {/* 0067: 모집(대학 · 학과 · 학기) 변경 — 고르면 모집요강·학과·학기·학과명이 함께 바뀐다 */}
+      <label className={labelClass}>
+        <span className={labelTextClass}>
+          {tr(locale, "모집 (대학 · 학과 · 학기)", "Đợt tuyển (trường · ngành · học kỳ)")}
+        </span>
+        <select
+          name="offering_id"
+          defaultValue={application.offering_id ?? ""}
+          className={inputClass}
+        >
+          <option value="">
+            {tr(locale, "변경 안 함", "Giữ nguyên")}
+            {current ? ` (${current})` : ""}
+          </option>
+          {offerings.map((o) => (
+            <option key={o.id} value={o.id}>
+              {o.label}
+            </option>
+          ))}
+        </select>
+        {fieldError("offering_id") ? (
+          <span className={errorTextClass}>{fieldError("offering_id")}</span>
+        ) : (
+          <span className={helpTextClass}>
+            {tr(
+              locale,
+              "모집 중인 학과 목록입니다. 바꾸면 서류 목록도 새 학과 기준으로 바뀝니다.",
+              "Danh sách ngành đang tuyển. Đổi ngành thì danh sách hồ sơ cũng đổi theo."
+            )}
+          </span>
+        )}
+      </label>
+
       <label className={labelClass}>
         <span className={labelTextClass}>
           {tr(locale, "지원 학과", "Ngành học")} <span className="text-red-500">*</span>
@@ -67,8 +107,8 @@ export function EditApplicationForm({
           <span className={helpTextClass}>
             {tr(
               locale,
-              '학과명을 자유롭게 수정할 수 있습니다 (예: "요양"에서 "바이오제약"으로 변경)',
-              'Tự do chỉnh sửa tên ngành (ví dụ: chuyển từ "Yêu dưỡng" sang "Bio dược")'
+              '학과명을 자유롭게 수정할 수 있습니다 (예: "요양"에서 "바이오제약"으로 변경). 위에서 모집을 바꾸면 그 학과명으로 덮어씁니다.',
+              'Tự do chỉnh sửa tên ngành (ví dụ: chuyển từ "Yêu dưỡng" sang "Bio dược"). Nếu đổi đợt tuyển ở trên, tên ngành sẽ được thay theo.'
             )}
           </span>
         )}

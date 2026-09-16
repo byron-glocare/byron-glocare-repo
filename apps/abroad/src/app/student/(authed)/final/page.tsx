@@ -8,11 +8,14 @@ import Link from "next/link";
 
 import { verifyStudentSession } from "@/lib/student/dal";
 import { createClient } from "@/lib/supabase/server";
-import {
-  classifyRequiredDocs,
-  type RequiredDoc,
-} from "@/lib/admission/classify-documents";
+import { classifyRequiredDocs } from "@/lib/admission/classify-documents";
 import { loadFormDocKeys } from "@/lib/admission/form-doc-keys";
+import {
+  FORM_FILE_COLUMNS,
+  formFileAppliesTo,
+  loadApplicationDocuments,
+  type SpecFormFile,
+} from "@/lib/admission/spec-documents";
 import { getLocale, tr } from "@/lib/i18n";
 import { downloadUrl } from "@/lib/storage-download";
 
@@ -30,57 +33,36 @@ export default async function StudentFinalPage() {
   const session = await verifyStudentSession();
   const locale = await getLocale();
   const supabase = await createClient();
-  const formDocKeys = await loadFormDocKeys(supabase);
   const studentId = session.student.id;
 
   const { data: apps } = await supabase
     .from("study_applications")
-    .select("id, admission_spec_id, target_department_label")
+    .select("id, admission_spec_id, target_department_id, term, target_department_label")
     .eq("student_id", studentId);
   const applications = apps ?? [];
-  const specIds = Array.from(
-    new Set(applications.map((a) => a.admission_spec_id))
-  );
 
-  const { data: specs } =
-    specIds.length > 0
-      ? await supabase
-          .from("study_admission_specs")
-          .select("id, university_id, term, required_documents")
-          .in("id", specIds)
-      : { data: [] as Array<{ id: string; university_id: number; term: string; required_documents: unknown }> };
-  const specMap = new Map((specs ?? []).map((s) => [s.id, s]));
+  // 0067: 작성서류 양식은 지원의 요강 학과(spec_department_id)에서. 학과 없는 옛 지원만 이름 매칭 폴백.
+  const { specs: specMap, deptByApp, byApp } = await loadApplicationDocuments(supabase, applications);
+  const needsLegacy = applications.some((a) => !byApp.get(a.id));
+  const formDocKeys = needsLegacy ? await loadFormDocKeys(supabase) : new Set<string>();
 
-  const uniIds = Array.from(new Set((specs ?? []).map((s) => s.university_id)));
-  const [{ data: unis }, { data: forms }] = await Promise.all([
+  const uniIds = Array.from(new Set(Array.from(specMap.values()).map((s) => s.university_id)));
+  const [{ data: unis }, { data: legacyForms }] = await Promise.all([
     uniIds.length > 0
       ? supabase
           .from("universities")
           .select("id, name_ko, name_vi")
           .in("id", uniIds)
       : Promise.resolve({ data: [] as Array<{ id: number; name_ko: string; name_vi: string | null }> }),
-    uniIds.length > 0
+    needsLegacy && uniIds.length > 0
       ? supabase
           .from("study_admission_form_files")
-          .select(
-            "id, university_id, department_name, name_ko, key, field_overlays, mime_type, file_name, file_url"
-          )
+          .select(FORM_FILE_COLUMNS)
           .in("university_id", uniIds)
           .eq("is_current", true)
-      : Promise.resolve({
-          data: [] as Array<{
-            id: string;
-            university_id: number;
-            department_name: string | null;
-            name_ko: string;
-            key: string;
-            field_overlays: unknown;
-            mime_type: string | null;
-            file_name: string;
-            file_url: string;
-          }>,
-        }),
+      : Promise.resolve({ data: [] as unknown[] }),
   ]);
+  const legacyFormFiles = (legacyForms ?? []) as unknown as SpecFormFile[];
   const uniMap = new Map((unis ?? []).map((u) => [u.id, u]));
   const uniName = (uid: number) => {
     const u = uniMap.get(uid);
@@ -90,24 +72,30 @@ export default async function StudentFinalPage() {
   const groups = applications.map((a) => {
     const spec = specMap.get(a.admission_spec_id);
     const uni = spec?.university_id ?? null;
+    const docs = byApp.get(a.id) ?? null;
 
-    const uniForms = (forms ?? []).filter(
-      (f) =>
-        f.university_id === uni &&
-        (f.department_name == null ||
-          f.department_name === a.target_department_label)
-    );
-    const byKey = new Map(uniForms.map((f) => [f.key, f] as const));
-    const byName = new Map(
-      uniForms.map((f) => [normFormName(f.name_ko), f] as const)
-    );
-    const { forms: docForms } = classifyRequiredDocs(
-      (spec?.required_documents as RequiredDoc[]) ?? [],
-      formDocKeys
-    );
-    const writeRows = docForms.map((doc) => {
-      const file =
-        byKey.get(doc.key) ?? byName.get(normFormName(doc.name_ko)) ?? null;
+    let pairs: Array<{ doc: { key: string; name_ko: string }; file: SpecFormFile | null }>;
+    if (docs) {
+      pairs = docs.formFiles.map((file) => ({ doc: { key: file.key, name_ko: file.name_ko }, file }));
+    } else {
+      const uniForms = legacyFormFiles.filter((f) =>
+        formFileAppliesTo(f, {
+          dept: deptByApp.get(a.id),
+          universityId: uni,
+          departmentLabel: a.target_department_label,
+        })
+      );
+      const byKey = new Map(uniForms.map((f) => [f.key, f] as const));
+      const byName = new Map(
+        uniForms.map((f) => [normFormName(f.name_ko), f] as const)
+      );
+      const { forms: docForms } = classifyRequiredDocs(spec?.required_documents ?? [], formDocKeys);
+      pairs = docForms.map((doc) => ({
+        doc,
+        file: byKey.get(doc.key) ?? byName.get(normFormName(doc.name_ko)) ?? null,
+      }));
+    }
+    const writeRows = pairs.map(({ doc, file }) => {
       const overlayCount = Array.isArray(file?.field_overlays)
         ? (file!.field_overlays as unknown[]).length
         : 0;
@@ -131,7 +119,7 @@ export default async function StudentFinalPage() {
           : null;
       return { doc, file, canFill, engine, fillUrl };
     });
-    return { app: a, spec, writeRows };
+    return { app: a, spec, term: a.term ?? spec?.term ?? "", writeRows };
   });
 
   return (
@@ -172,7 +160,7 @@ export default async function StudentFinalPage() {
           )}
         </div>
       ) : (
-        groups.map(({ app, spec, writeRows }) => (
+        groups.map(({ app, spec, term, writeRows }) => (
           <section
             key={app.id}
             className="gc-card"
@@ -184,7 +172,7 @@ export default async function StudentFinalPage() {
                   ? ` · ${app.target_department_label}`
                   : ""}
               </h2>
-              <p className="text-xs text-ink-light">{spec?.term ?? ""}</p>
+              <p className="text-xs text-ink-light">{term}</p>
             </div>
 
             {writeRows.length === 0 ? (

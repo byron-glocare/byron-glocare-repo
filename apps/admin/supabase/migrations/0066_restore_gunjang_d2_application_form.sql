@@ -7,27 +7,21 @@
 --   이 null 이라 같은 묶음으로 취급됐기 때문이다. 파일과 슬롯 배치(67칸)는 그대로 남아 있다.
 --
 -- 하는 일 (군장대 university_id=8):
---   1) 일반학과 입학지원서(ebe5a156, 2026-08-12 업로드, 슬롯 67칸) 를 다시 현행으로.
---      적용 학기 2027-Spring, 적용 학과 글로벌케어과(57)·조선전공(58).
---   2) 오늘 올린 어학연수 양식 4개(입학원서·개인정보동의서·자기소개서·수학계획서)를
+--   1) 오늘 올린 어학연수 양식 4개(입학원서·개인정보동의서·자기소개서·수학계획서)를
 --      department_name='한국어학연수'(departments.id=64), 적용 학기 2026-Winter 로 분리.
---      → 버전 묶음이 달라져 서로 밀어내지 않는다. 어학연수 입학원서는 이름도 요강의
---        서류명("입학신청서")에 맞춘다 — 옛 일반학과 이름을 그대로 물려받고 있었다.
+--      어학연수 입학원서는 이름도 요강의 서류명("입학신청서")에 맞춘다.
+--   2) 일반학과 입학지원서(ebe5a156, 2026-08-12 업로드, 슬롯 67칸) 를 다시 현행으로.
+--      적용 학기 2027-Spring, 적용 학과 글로벌케어과(57)·조선전공(58).
 --
--- 안전: 지정한 행 8개만 갱신. 파일·슬롯·서술형 설정은 건드리지 않는다. 여러 번 돌려도 같다.
+-- 순서가 중요하다: 현행 양식에는 유일 인덱스 uniq_study_form_files_current
+--   (university_id, coalesce(department_name,''), key) 가 있어서, 어학연수 입학원서의
+--   department_name 을 먼저 바꿔 놓지 않으면 2) 에서 "duplicate key" 로 실패한다.
+--   (첫 시도가 그렇게 실패했다 — 2026-09-16.)
+--
+-- 안전: 지정한 행만 갱신. 파일·슬롯·서술형 설정은 건드리지 않는다. 여러 번 돌려도 같다.
 -- =============================================================================
 
--- 1. 일반학과 입학지원서 복구
-update public.study_admission_form_files
-   set is_current = true,
-       superseded_by = null,
-       applies_to_terms = '{2027-Spring}',
-       applies_to_department_ids = '{57,58}',
-       updated_at = timezone('utc', now())
- where id = 'ebe5a156-ab04-4314-b288-cdff19ba4621'
-   and university_id = 8;
-
--- 2. 어학연수 양식 분리 (현행 4개 + 오늘 올렸다가 밀린 옛 버전 3개도 같은 묶음으로)
+-- 1. 어학연수 양식 분리 (현행 4개 + 오늘 올렸다가 밀린 옛 버전 4개도 같은 묶음으로)
 update public.study_admission_form_files
    set department_name = '한국어학연수',
        applies_to_terms = '{2026-Winter}',
@@ -51,7 +45,17 @@ update public.study_admission_form_files
  where id in ('474f211e-0992-4670-ae2d-de40137cbe58', '3e2de009-5db1-4494-a505-72315e5735b6')
    and university_id = 8;
 
--- 확인 — 군장대 현행 양식: application_form 2건(일반 null / 어학연수), 나머지 어학연수 3건
+-- 2. 일반학과 입학지원서 복구 (이제 같은 묶음에 현행이 없으므로 올릴 수 있다)
+update public.study_admission_form_files
+   set is_current = true,
+       superseded_by = null,
+       applies_to_terms = '{2027-Spring}',
+       applies_to_department_ids = '{57,58}',
+       updated_at = timezone('utc', now())
+ where id = 'ebe5a156-ab04-4314-b288-cdff19ba4621'
+   and university_id = 8;
+
+-- 확인 — 군장대 현행 양식 5줄: application_form 2건(일반 null / 한국어학연수), 어학연수 3건
 select id, key, name_ko, department_name, applies_to_terms, applies_to_department_ids, is_current,
        (slot_mapping is not null) as has_slots
   from public.study_admission_form_files

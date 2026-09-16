@@ -2,7 +2,10 @@
  * 서류 등록(발급서류) 그룹 로딩·정리 — 유학센터/셀프 학생 공용.
  *   지원별로 필요한 발급서류를 모으고, 복수 대학 공용 서류 dedup·과거 업로드 해소·
  *   다른 지원 파일 가져오기 후보까지 계산해 "그리기만 하면 되는" 형태로 반환한다.
- *   (기존 /center/.../documents 페이지 로직을 그대로 이동. 동작 불변.)
+ *
+ *   0067: 서류는 지원의 요강 학과(study_spec_departments)에서 읽는다(lib/admission/spec-documents).
+ *   학과를 못 찾는 옛 지원만 요강 JSONB(required_documents) + 학과명 양식 매칭으로 폴백.
+ *   업로드 키(shareKey/legacyKey)는 표준·인증·대상자·이름이 같으므로 그대로 맞는다.
  */
 
 import "server-only";
@@ -15,9 +18,12 @@ import {
   docUploadKey,
   docShareKey,
   type ClassifiedDoc,
-  type RequiredDoc,
 } from "@/lib/admission/classify-documents";
 import { loadFormDocKeys } from "@/lib/admission/form-doc-keys";
+import {
+  formFileAppliesTo,
+  loadApplicationDocuments,
+} from "@/lib/admission/spec-documents";
 import type { Database } from "@/types/database";
 
 type Client = SupabaseClient<Database>;
@@ -58,29 +64,14 @@ export async function loadDocumentGroups(
 ): Promise<{ groups: DocGroup[]; hasAnyApp: boolean }> {
   const { data: apps } = await supabase
     .from("study_applications")
-    .select("id, admission_spec_id, target_department_label, created_at")
+    .select("id, admission_spec_id, target_department_id, term, target_department_label, created_at")
     .eq("student_id", studentId)
     .order("created_at", { ascending: true });
   const applications = apps ?? [];
-  const specIds = Array.from(
-    new Set(applications.map((a) => a.admission_spec_id).filter(Boolean))
-  );
 
-  const [{ data: specs }, { data: files }, { data: dataTypes }] =
+  const [{ specs, deptByApp, byApp }, { data: files }, { data: dataTypes }] =
     await Promise.all([
-      specIds.length > 0
-        ? supabase
-            .from("study_admission_specs")
-            .select("id, university_id, term, required_documents")
-            .in("id", specIds)
-        : Promise.resolve({
-            data: [] as Array<{
-              id: string;
-              university_id: number;
-              term: string;
-              required_documents: unknown;
-            }>,
-          }),
+      loadApplicationDocuments(supabase, applications),
       supabase
         .from("study_student_submission_files")
         .select("doc_key, file_name, file_path")
@@ -90,10 +81,22 @@ export async function loadDocumentGroups(
         .select("key, label_ko, label_vi, input_type")
         .eq("is_active", true),
     ]);
-  const specMap = new Map((specs ?? []).map((s) => [s.id, s]));
-  const uniIds = Array.from(new Set((specs ?? []).map((s) => s.university_id)));
+  const uniIds = Array.from(new Set(Array.from(specs.values()).map((s) => s.university_id)));
 
-  const [{ data: unis }, { data: forms }] = await Promise.all([
+  // 학과를 못 찾은 옛 지원이 있으면 예전 규칙(대학 전체 양식 + 학과명 매칭)용 양식을 읽는다
+  const needsLegacy = applications.some((a) => !deptByApp.get(a.id));
+  const legacyUniIds = needsLegacy
+    ? Array.from(
+        new Set(
+          applications
+            .filter((a) => !deptByApp.get(a.id))
+            .map((a) => specs.get(a.admission_spec_id)?.university_id)
+            .filter((u): u is number => u != null)
+        )
+      )
+    : [];
+
+  const [{ data: unis }, { data: legacyForms }, formDocKeys] = await Promise.all([
     uniIds.length > 0
       ? supabase
           .from("universities")
@@ -102,25 +105,26 @@ export async function loadDocumentGroups(
       : Promise.resolve({
           data: [] as Array<{ id: number; name_ko: string; name_vi: string | null }>,
         }),
-    uniIds.length > 0
+    legacyUniIds.length > 0
       ? supabase
           .from("study_admission_form_files")
           .select(
-            "university_id, department_name, applies_to_terms, required_data_type_keys"
+            "university_id, spec_department_id, department_name, applies_to_terms, required_data_type_keys"
           )
-          .in("university_id", uniIds)
+          .in("university_id", legacyUniIds)
           .eq("is_current", true)
       : Promise.resolve({
           data: [] as Array<{
             university_id: number;
+            spec_department_id: string | null;
             department_name: string | null;
             applies_to_terms: string[] | null;
             required_data_type_keys: string[] | null;
           }>,
         }),
+    needsLegacy ? loadFormDocKeys(supabase) : Promise.resolve(new Set<string>()),
   ]);
   const uniMap = new Map((unis ?? []).map((u) => [u.id, u]));
-  const formDocKeys = await loadFormDocKeys(supabase);
   const uniName = (uid: number) => {
     const u = uniMap.get(uid);
     return (locale === "ko" ? u?.name_ko : u?.name_vi) ?? u?.name_ko ?? `#${uid}`;
@@ -148,22 +152,67 @@ export async function loadDocumentGroups(
   };
 
   const rawGroups = applications.map((app) => {
-    const spec = specMap.get(app.admission_spec_id);
+    const spec = specs.get(app.admission_spec_id);
+    const dept = deptByApp.get(app.id) ?? null;
+    const docs = byApp.get(app.id) ?? null;
+    const deptLabel =
+      app.target_department_label ??
+      (dept ? (locale === "ko" ? dept.name_ko : dept.name_vi || dept.name_ko) : null);
     const label = spec
-      ? `${uniName(spec.university_id)}${
-          app.target_department_label ? ` · ${app.target_department_label}` : ""
-        }`
-      : app.target_department_label ?? "—";
+      ? `${uniName(spec.university_id)}${deptLabel ? ` · ${deptLabel}` : ""}`
+      : deptLabel ?? "—";
 
-    const { forms: formDocs, issued: specIssued } = classifyRequiredDocs(
-      (spec?.required_documents as RequiredDoc[]) ?? [],
-      formDocKeys
-    );
+    // 서류 목록: 학과가 풀리면 학과 서류, 아니면 옛 JSONB
+    let formDocs: ClassifiedDoc[];
+    let specIssued: ClassifiedDoc[];
+    let requiredDataKeys: string[];
+    if (docs) {
+      formDocs = docs.forms.map((f) => ({
+        key: f.key,
+        name_ko: f.name_ko,
+        name_vi: f.name_vi,
+        notes: f.notes,
+        notarization: f.notarization,
+        required: f.required,
+        kind: "form",
+        std_key: f.std_key,
+        target_person: f.target_person,
+      }));
+      specIssued = docs.issued.map((d) => ({
+        key: d.key,
+        name_ko: d.name_ko,
+        name_vi: d.name_vi,
+        notes: locale === "vi" ? d.notes_vi ?? d.notes : d.notes,
+        notarization: d.notarization,
+        required: d.required,
+        kind: "issued",
+        std_key: d.std_key,
+        target_person: d.target_person,
+      }));
+      requiredDataKeys = docs.formFiles.flatMap((f) => f.required_data_type_keys ?? []);
+    } else {
+      const classified = classifyRequiredDocs(spec?.required_documents ?? [], formDocKeys);
+      formDocs = classified.forms;
+      specIssued = classified.issued;
+      requiredDataKeys = spec
+        ? (legacyForms ?? [])
+            .filter((f) =>
+              formFileAppliesTo(f, {
+                dept: null,
+                universityId: spec.university_id,
+                departmentLabel: app.target_department_label,
+                term: app.term ?? spec.term,
+              })
+            )
+            .flatMap((f) => f.required_data_type_keys ?? [])
+        : [];
+    }
 
     const items = new Map<string, IssuedItem>();
     const dedupKeyOf = (d: ClassifiedDoc) =>
       d.std_key ? `s:${d.std_key}:${d.target_person ?? ""}` : `l:${docUploadKey(d)}`;
     for (const d of specIssued) {
+      if (items.has(dedupKeyOf(d))) continue;
       items.set(dedupKeyOf(d), {
         shareKey: docShareKey(d),
         legacyKey: docUploadKey(d),
@@ -177,44 +226,30 @@ export async function loadDocumentGroups(
       });
     }
 
-    if (spec) {
-      const applicableForms = (forms ?? []).filter((f) => {
-        if (f.university_id !== spec.university_id) return false;
-        const deptOk =
-          f.department_name === null ||
-          (!!app.target_department_label &&
-            f.department_name === app.target_department_label);
-        const terms = (f.applies_to_terms ?? []) as string[];
-        const termOk = terms.length === 0 || terms.includes(spec.term);
-        return deptOk && termOk;
+    // 적용 양식이 요구하는 파일형 표준데이터(양식에 박히는 사진·서명 제외)도 발급서류 칸으로
+    for (const key of new Set(requiredDataKeys)) {
+      const dt = dataTypeMap.get(key);
+      if (!dt || dt.input_type !== "file" || isFormImageDataType(dt)) continue;
+      const dedupKey = `s:${key}:`;
+      if (items.has(dedupKey)) continue;
+      items.set(dedupKey, {
+        shareKey: `std::${key}::none`,
+        legacyKey: null,
+        std_key: key,
+        target_person: null,
+        name_ko: dt.label_ko,
+        name_vi: dt.label_vi || null,
+        notes: null,
+        notarization: null,
+        required: true,
       });
-      const fileKeys = new Set<string>();
-      for (const f of applicableForms)
-        for (const k of f.required_data_type_keys ?? []) fileKeys.add(k);
-      for (const key of fileKeys) {
-        const dt = dataTypeMap.get(key);
-        if (!dt || dt.input_type !== "file" || isFormImageDataType(dt)) continue;
-        const dedupKey = `s:${key}:`;
-        if (items.has(dedupKey)) continue;
-        items.set(dedupKey, {
-          shareKey: `std::${key}::none`,
-          legacyKey: null,
-          std_key: key,
-          target_person: null,
-          name_ko: dt.label_ko,
-          name_vi: dt.label_vi || null,
-          notes: null,
-          notarization: null,
-          required: true,
-        });
-      }
     }
 
     return {
       app,
       spec,
       label,
-      term: spec?.term ?? "",
+      term: app.term ?? spec?.term ?? "",
       issued: Array.from(items.values()),
       formDocs,
     };

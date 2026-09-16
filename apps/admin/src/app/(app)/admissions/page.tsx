@@ -66,6 +66,7 @@ export default async function AdmissionsPage({
     supabase
       .from("study_admission_specs")
       .select("id, university_id, term, source_file_url, created_at, status")
+      .neq("status", "archived")
       .order("created_at", { ascending: false }),
   ]);
 

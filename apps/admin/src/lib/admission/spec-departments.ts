@@ -259,7 +259,7 @@ export async function copyDepartmentSetup(
   if (w.tuition || w.scholarships || w.eligibility) {
     const { data: src } = await supabase.from("study_spec_departments").select("tuition, scholarships, eligibility").eq("id", from.id).maybeSingle();
     if (src) {
-      const patch: Record<string, unknown> = {};
+      const patch: Database["public"]["Tables"]["study_spec_departments"]["Update"] = {};
       if (w.tuition) patch.tuition = src.tuition ?? {};
       if (w.scholarships) patch.scholarships = src.scholarships ?? [];
       if (w.eligibility) patch.eligibility = src.eligibility ?? null;

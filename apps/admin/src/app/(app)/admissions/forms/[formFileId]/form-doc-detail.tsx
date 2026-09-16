@@ -22,22 +22,7 @@ import {
   type UploadFormFileState,
 } from "@/app/(app)/universities/[id]/forms/actions";
 
-// 적용학기 후보: 2026~2030 × 4분기 (어학당 4학기 / 일반 봄·가을)
-const QUARTERS: Array<{ q: string; ko: string }> = [
-  { q: "Spring", ko: "봄" },
-  { q: "Summer", ko: "여름" },
-  { q: "Fall", ko: "가을" },
-  { q: "Winter", ko: "겨울" },
-];
-const TERM_OPTIONS: Array<{ value: string; label: string }> = (() => {
-  const out: Array<{ value: string; label: string }> = [];
-  for (let y = 2026; y <= 2030; y++) {
-    for (const { q, ko } of QUARTERS) {
-      out.push({ value: `${y}-${q}`, label: `${y} ${ko}` });
-    }
-  }
-  return out;
-})();
+const KIND_LABEL: Record<"language" | "regular", string> = { language: "어학당", regular: "일반학과" };
 
 type FormDoc = {
   id: string;
@@ -47,23 +32,32 @@ type FormDoc = {
   name_ko: string;
   file_url: string;
   file_name: string;
+  /** 옛 표시용 컬럼 */
   department_name: string | null;
+  /** 양식이 속한 요강 학과 (0067). null = 옛 행 — 여기서 지정해 고친다. */
+  spec_department_id: string | null;
+  is_current: boolean;
   notes: string | null;
   uploaded_at: string;
   required_data_type_keys: string[];
-  applies_to_terms: string[];
-  applies_to_department_ids: number[];
 };
 
-type Dept = { id: number; name_ko: string; active: boolean };
+export type SpecDeptChoice = {
+  id: string;
+  name_ko: string;
+  kind: "language" | "regular";
+  is_active: boolean;
+  sort_order: number;
+};
 
 export function FormDocDetail({
   form,
-  departments,
+  specDepartments,
   docNameOptions,
 }: {
   form: FormDoc;
-  departments: Dept[];
+  /** 대학 요강의 학과 (어학당 먼저) */
+  specDepartments: SpecDeptChoice[];
   docNameOptions: string[];
 }) {
   const router = useRouter();
@@ -84,9 +78,9 @@ export function FormDocDetail({
 
   const [nameKo, setNameKo] = useState(form.name_ko);
   const [notes, setNotes] = useState(form.notes ?? "");
-  const [allDepts, setAllDepts] = useState(form.applies_to_department_ids.length === 0);
-  const [deptIds, setDeptIds] = useState<number[]>(form.applies_to_department_ids);
-  const [terms, setTerms] = useState<string[]>(form.applies_to_terms);
+  const [specDeptId, setSpecDeptId] = useState(form.spec_department_id ?? "");
+
+  const currentDept = specDepartments.find((d) => d.id === form.spec_department_id) ?? null;
 
   useEffect(() => {
     if (state?.success) {
@@ -104,10 +98,13 @@ export function FormDocDetail({
       toast.error("파일 교체 실패", { description: upState.error });
       upSubmitted.current = false;
     } else if (upState?.fieldErrors) {
-      toast.error("파일 교체 실패");
+      toast.error("파일 교체 실패", {
+        description: Object.values(upState.fieldErrors).join(" / "),
+      });
       upSubmitted.current = false;
     } else if (upState) {
       toast.success("파일을 교체했습니다.");
+      if (upState.warning) toast.warning(upState.warning);
       router.push(`/universities/${form.university_id}`);
     }
   }, [upState, router, form.university_id]);
@@ -124,7 +121,9 @@ export function FormDocDetail({
     const base64 = comma >= 0 ? dataUrl.slice(comma + 1) : dataUrl;
     const fd = new FormData();
     fd.set("university_id", String(form.university_id));
-    fd.set("key", form.key); // 같은 종류·범위로 새 버전 생성(기존 supersede)
+    fd.set("key", form.key); // 같은 종류·학과로 새 버전 생성(기존 supersede)
+    // 교체되는 행의 요강 학과를 물려받는다 — 같은 (대학, 종류, 학과)의 현행만 내려간다.
+    fd.set("spec_department_id", form.spec_department_id ?? "");
     fd.set("department_name", form.department_name ?? "");
     fd.set("name_ko", nameKo.trim() || form.name_ko);
     fd.set("file_base64", base64);
@@ -138,9 +137,6 @@ export function FormDocDetail({
     startTransition(() => upAction(fd));
   }
 
-  const toggle = <T,>(arr: T[], v: T): T[] =>
-    arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v];
-
   return (
     <form
       action={(fd) => {
@@ -148,18 +144,31 @@ export function FormDocDetail({
         fd.set("university_id", String(form.university_id));
         fd.set("name_ko", nameKo);
         fd.set("notes", notes);
-        fd.set("applies_to_terms", JSON.stringify(terms));
-        fd.set(
-          "applies_to_department_ids",
-          JSON.stringify(allDepts ? [] : deptIds)
-        );
+        if (specDeptId !== (form.spec_department_id ?? "")) {
+          fd.set("spec_department_id", specDeptId);
+        }
         action(fd);
       }}
       className="space-y-6"
     >
       {/* 기본 정보 */}
       <Card className="p-6 space-y-4">
-        <h2 className="text-base font-semibold">기본 정보</h2>
+        <div className="flex flex-wrap items-center gap-2">
+          <h2 className="text-base font-semibold">기본 정보</h2>
+          {currentDept ? (
+            <>
+              <Badge variant="outline">{KIND_LABEL[currentDept.kind]}</Badge>
+              <span className="text-sm">{currentDept.name_ko}</span>
+            </>
+          ) : (
+            <Badge variant="outline" className="border-amber-300 text-amber-700">
+              요강 학과 미지정
+            </Badge>
+          )}
+          {!form.is_current ? (
+            <Badge variant="secondary">이전 버전</Badge>
+          ) : null}
+        </div>
 
         <div className="grid gap-4 md:grid-cols-2">
           <label className="flex flex-col gap-1.5">
@@ -191,76 +200,28 @@ export function FormDocDetail({
           </label>
         </div>
 
-        {/* 적용학과 */}
-        <div className="flex flex-col gap-1.5">
-          <span className="text-xs font-medium">적용 학과</span>
-          <label className="flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              checked={allDepts}
-              onChange={(e) => setAllDepts(e.target.checked)}
-              className="size-4"
-            />
-            모든 학과
-          </label>
-          {!allDepts ? (
-            <div className="flex flex-wrap gap-1.5">
-              {departments.length === 0 ? (
-                <span className="text-xs text-muted-foreground">
-                  등록된 학과가 없습니다.
-                </span>
-              ) : (
-                departments.map((d) => {
-                  const on = deptIds.includes(d.id);
-                  return (
-                    <button
-                      type="button"
-                      key={d.id}
-                      onClick={() => setDeptIds((cur) => toggle(cur, d.id))}
-                      className={`rounded-md border px-2 py-1 text-xs ${
-                        on
-                          ? "border-primary bg-primary/10 text-primary"
-                          : "border-input hover:bg-muted"
-                      }`}
-                    >
-                      {d.name_ko}
-                      {!d.active ? " (숨김)" : ""}
-                    </button>
-                  );
-                })
-              )}
-            </div>
-          ) : null}
-        </div>
-
-        {/* 적용학기 */}
-        <div className="flex flex-col gap-1.5">
-          <span className="text-xs font-medium">
-            적용 학기{" "}
-            <span className="font-normal text-muted-foreground">
-              (선택 없음 = 전체 학기 · 어학당 4학기/일반 봄·가을)
-            </span>
+        {/* 요강 학과 */}
+        <label className="flex flex-col gap-1.5">
+          <span className="text-xs font-medium">요강 학과</span>
+          <select
+            value={specDeptId}
+            onChange={(e) => setSpecDeptId(e.target.value)}
+            disabled={specDepartments.length === 0}
+            className="h-9 max-w-md rounded-md border border-input bg-background px-3 text-sm disabled:opacity-50"
+          >
+            <option value="">{specDepartments.length === 0 ? "요강 학과 없음 (모집요강 먼저)" : "— 미지정 —"}</option>
+            {specDepartments.map((d) => (
+              <option key={d.id} value={d.id}>
+                [{KIND_LABEL[d.kind]}] {d.name_ko}
+                {!d.is_active ? " (비활성)" : ""}
+              </option>
+            ))}
+          </select>
+          <span className="text-[11px] text-muted-foreground">
+            양식은 요강 학과별로 관리됩니다. 어학당 양식과 일반학과 양식은 서로 밀어내지 않습니다.
+            {form.department_name ? ` (옛 적용범위: ${form.department_name})` : ""}
           </span>
-          <div className="flex flex-wrap gap-1.5">
-            {TERM_OPTIONS.map((t) => {
-              const on = terms.includes(t.value);
-              return (
-                <button
-                  type="button"
-                  key={t.value}
-                  onClick={() => setTerms((cur) => toggle(cur, t.value))}
-                  className={`rounded-md border px-2 py-1 text-xs ${
-                    on
-                      ? "border-primary bg-primary/10 text-primary"
-                      : "border-input hover:bg-muted"
-                  }`}
-                >
-                  {t.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
+        </label>
 
         <div className="grid gap-4 md:grid-cols-2">
           <div className="flex flex-col gap-1.5">
@@ -301,6 +262,12 @@ export function FormDocDetail({
           ) : (
             <div className="space-y-2 rounded-md border border-input p-3">
               <p className="text-sm font-medium">새 파일로 변경하시겠습니까?</p>
+              {!form.spec_department_id ? (
+                <p className="text-xs text-amber-700">
+                  요강 학과가 지정되지 않은 양식입니다. 교체하면 기존 양식은 그대로 두고 새 양식이 추가됩니다 —
+                  먼저 위에서 요강 학과를 지정·저장하는 것을 권합니다.
+                </p>
+              ) : null}
               <input
                 ref={replaceRef}
                 type="file"
@@ -341,7 +308,7 @@ export function FormDocDetail({
                 </Button>
               </div>
               <p className="text-[11px] text-muted-foreground">
-                '함께 교체'는 새 파일로 AI가 필요 표준데이터를 다시 정리합니다(30~60초).
+                &lsquo;함께 교체&rsquo;는 새 파일로 AI가 필요 표준데이터를 다시 정리합니다(30~60초).
               </p>
             </div>
           )}

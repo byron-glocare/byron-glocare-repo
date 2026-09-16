@@ -9,11 +9,9 @@ import Link from "next/link";
 import { verifyStudentSession } from "@/lib/student/dal";
 import { createClient } from "@/lib/supabase/server";
 import { getLocale, tr } from "@/lib/i18n";
-import {
-  classifyRequiredDocs,
-  type RequiredDoc,
-} from "@/lib/admission/classify-documents";
+import { classifyRequiredDocs } from "@/lib/admission/classify-documents";
 import { loadFormDocKeys } from "@/lib/admission/form-doc-keys";
+import { loadApplicationDocuments } from "@/lib/admission/spec-documents";
 import {
   issuanceStatusLabel,
   issuanceStatusTone,
@@ -26,7 +24,6 @@ export default async function StudentIssuancePage() {
   const session = await verifyStudentSession();
   const locale = await getLocale();
   const supabase = await createClient();
-  const formDocKeys = await loadFormDocKeys(supabase);
   const studentId = session.student.id;
 
   const [{ data: pricing }, { data: orders }, { data: apps }] =
@@ -45,32 +42,29 @@ export default async function StudentIssuancePage() {
         .order("created_at", { ascending: false }),
       supabase
         .from("study_applications")
-        .select("admission_spec_id")
+        .select("id, admission_spec_id, target_department_id")
         .eq("student_id", studentId),
     ]);
 
   // 필요 서류 힌트 + 지원 대학(주문 컨텍스트)
-  const specIds = Array.from(
-    new Set((apps ?? []).map((a) => a.admission_spec_id).filter(Boolean))
-  );
-  const { data: specs } =
-    specIds.length > 0
-      ? await supabase
-          .from("study_admission_specs")
-          .select("id, university_id, required_documents")
-          .in("id", specIds)
-      : { data: [] as Array<{ id: string; university_id: number; required_documents: unknown }> };
+  //   0067: 지원의 요강 학과 서류에서. 학과 없는 옛 지원만 요강 JSONB 폴백.
+  const applications = (apps ?? []).filter((a) => a.admission_spec_id);
+  const { specs, byApp } = await loadApplicationDocuments(supabase, applications);
+  const needsLegacy = applications.some((a) => !byApp.get(a.id));
+  const formDocKeys = needsLegacy ? await loadFormDocKeys(supabase) : new Set<string>();
 
   const neededNames = new Set<string>();
-  for (const s of specs ?? []) {
-    const { issued } = classifyRequiredDocs(
-      (s.required_documents as RequiredDoc[]) ?? [],
-      formDocKeys
-    );
+  for (const a of applications) {
+    const docs = byApp.get(a.id);
+    if (docs) {
+      for (const d of docs.issued) neededNames.add(d.name_ko);
+      continue;
+    }
+    const { issued } = classifyRequiredDocs(specs.get(a.admission_spec_id)?.required_documents ?? [], formDocKeys);
     for (const d of issued) neededNames.add(d.name_ko);
   }
 
-  const uniIds = Array.from(new Set((specs ?? []).map((s) => s.university_id)));
+  const uniIds = Array.from(new Set(Array.from(specs.values()).map((s) => s.university_id)));
   const { data: unis } =
     uniIds.length > 0
       ? await supabase
