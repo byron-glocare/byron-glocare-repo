@@ -1,6 +1,6 @@
 /**
  * /admissions — 입학서류 메뉴 (재편).
- *   3분할 탭: [작성 서류 양식] / [발급 서류] / [모집요강 서류]
+ *   3분할 탭: [작성서류] / [제출서류] / [모집요강]
  *   각 탭: 검색 + 대학 필터. 행 클릭 → 개별 서류 상세.
  *   (구 대학별 요약 표·전체 모아보기·공용 제출서류 섹션 제거 — 개별 상세로 통합.)
  */
@@ -105,6 +105,39 @@ export default async function AdmissionsPage({
 
   const uniName = new Map((universities ?? []).map((u) => [u.id, u.name_ko]));
 
+  // 모집요강 탭 — 학과(일반) 이름, 어학당 운영 여부(O/X), 학기 목록
+  //   어학당 O = 어학당 학과가 활성이고 서류 항목이나 모집 행이 하나라도 있을 때. 기본으로 생긴 빈 어학당은 X.
+  const specIds = (specs ?? []).map((s) => s.id);
+  const [{ data: sdRows }, { data: sdItemRows }, { data: offRows }, { data: termRows }] = specIds.length
+    ? await Promise.all([
+        supabase.from("study_spec_departments").select("id, spec_id, kind, is_active, department_id, departments(name_ko)").in("spec_id", specIds),
+        supabase.from("study_spec_doc_items").select("spec_department_id").in("spec_id", specIds),
+        supabase.from("study_offerings").select("university_id, department_id"),
+        supabase.from("study_spec_terms").select("spec_id, term").in("spec_id", specIds).order("term", { ascending: false }),
+      ])
+    : [{ data: [] }, { data: [] }, { data: [] }, { data: [] }];
+  const itemsBySd = new Set((sdItemRows ?? []).map((r) => r.spec_department_id).filter(Boolean));
+  const offByDept = new Set((offRows ?? []).map((o) => `${o.university_id}:${o.department_id}`));
+  const deptNamesBySpec = new Map<string, string[]>();
+  const languageBySpec = new Map<string, boolean>();
+  for (const r of (sdRows ?? []) as unknown as Array<{ id: string; spec_id: string; kind: string; is_active: boolean; department_id: number; departments: { name_ko: string } | null }>) {
+    const spec = (specs ?? []).find((x) => x.id === r.spec_id);
+    if (r.kind === "language") {
+      const runs = r.is_active && (itemsBySd.has(r.id) || (!!spec && offByDept.has(`${spec.university_id}:${r.department_id}`)));
+      languageBySpec.set(r.spec_id, runs);
+    } else if (r.is_active) {
+      const list = deptNamesBySpec.get(r.spec_id) ?? [];
+      list.push(r.departments?.name_ko ?? `학과 #${r.department_id}`);
+      deptNamesBySpec.set(r.spec_id, list);
+    }
+  }
+  const termsBySpec = new Map<string, string[]>();
+  for (const t of termRows ?? []) {
+    const list = termsBySpec.get(t.spec_id) ?? [];
+    list.push(t.term);
+    termsBySpec.set(t.spec_id, list);
+  }
+
   // 제출서류 탭 — 표준에 연결되지 않은 요강 서류 (0060 이 못 옮긴 것). 운영자가 붙인다.
   const { data: specDocRows } =
     tab === "docs"
@@ -145,7 +178,10 @@ export default async function AdmissionsPage({
       (!q || `${f.name_ko} ${f.file_name}`.toLowerCase().includes(q))
   );
   const specRows = (specs ?? []).filter(
-    (s) => uniMatch(s.university_id) && (!q || s.term.toLowerCase().includes(q))
+    (s) =>
+      uniMatch(s.university_id) &&
+      (!q ||
+        `${(termsBySpec.get(s.id) ?? [s.term]).join(" ")} ${(deptNamesBySpec.get(s.id) ?? []).join(" ")}`.toLowerCase().includes(q))
   );
 
   const counts = {
@@ -157,7 +193,7 @@ export default async function AdmissionsPage({
   const tabs: Array<{ key: Tab; label: string; count: number }> = [
     { key: "forms", label: "작성서류", count: counts.forms },
     { key: "docs", label: "제출서류", count: counts.docs },
-    { key: "guidelines", label: "모집요강 서류", count: counts.guidelines },
+    { key: "guidelines", label: "모집요강", count: counts.guidelines },
   ];
 
   const deptScope = (
@@ -173,7 +209,7 @@ export default async function AdmissionsPage({
     <>
       <PageHeader
         title="입학서류"
-        description="작성서류 · 제출서류 · 모집요강 서류"
+        description="작성서류 · 제출서류 · 모집요강"
         breadcrumbs={[{ label: "입학서류" }]}
         actions={
           tab === "docs" ? null : tab === "forms" ? (
@@ -220,7 +256,7 @@ export default async function AdmissionsPage({
           <input type="hidden" name="tab" value={tab} />
           <div className="min-w-60 flex-1">
             <label className="mb-1 block text-xs text-muted-foreground">
-              검색 ({tab === "guidelines" ? "학기" : "서류명"})
+              검색 ({tab === "guidelines" ? "학과·학기" : "서류명"})
             </label>
             <div className="relative">
               <Search className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -337,8 +373,10 @@ export default async function AdmissionsPage({
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>대학교</TableHead>
-                    <TableHead className="w-32">학기</TableHead>
+                    <TableHead className="w-44">대학교</TableHead>
+                    <TableHead>학과</TableHead>
+                    <TableHead className="w-20 text-center">어학당</TableHead>
+                    <TableHead className="w-40">학기</TableHead>
                     <TableHead className="w-28">업로드일</TableHead>
                     <TableHead className="w-24 text-center">다운로드</TableHead>
                   </TableRow>
@@ -355,7 +393,19 @@ export default async function AdmissionsPage({
                         </TableCell>
                         <TableCell className="text-sm">
                           <Link href={href} className="block">
-                            {s.term}
+                            {(deptNamesBySpec.get(s.id) ?? []).length > 0
+                              ? (deptNamesBySpec.get(s.id) ?? []).join(", ")
+                              : <span className="text-muted-foreground">—</span>}
+                          </Link>
+                        </TableCell>
+                        <TableCell className="text-center text-sm">
+                          <Link href={href} className="block" title={languageBySpec.get(s.id) ? "어학당 운영" : "어학당 서류·모집 없음"}>
+                            {languageBySpec.get(s.id) ? "O" : <span className="text-muted-foreground">X</span>}
+                          </Link>
+                        </TableCell>
+                        <TableCell className="text-sm">
+                          <Link href={href} className="block">
+                            {(termsBySpec.get(s.id) ?? [s.term]).join(", ")}
                           </Link>
                         </TableCell>
                         <TableCell className="text-xs text-muted-foreground">
