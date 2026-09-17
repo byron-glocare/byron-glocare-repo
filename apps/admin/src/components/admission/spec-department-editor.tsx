@@ -33,6 +33,7 @@ import {
   type CopyWhat,
   type DeptActionState,
 } from "@/app/(app)/admissions/specs/[id]/edit/department-actions";
+import { DeleteFormFileButton } from "@/components/admission/delete-form-file-button";
 
 const KIND_LABEL: Record<SpecDepartmentKind, string> = { language: "어학당", regular: "일반학과" };
 const LANGUAGE_RE = /(어학|한국어|연수)/;
@@ -296,6 +297,7 @@ function FormFilesList({ files, universityId, sdId }: { files: SpecFormFile[]; u
                 <a href={f.file_url} target="_blank" rel="noreferrer" className="text-xs text-muted-foreground underline" title={f.file_name}>
                   파일
                 </a>
+                <DeleteFormFileButton formFileId={f.id} universityId={universityId} name={f.name_ko} />
               </span>
             </li>
           ))}

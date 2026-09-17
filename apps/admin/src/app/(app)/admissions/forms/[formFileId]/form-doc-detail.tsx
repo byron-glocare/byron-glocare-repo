@@ -21,6 +21,7 @@ import {
   type UpdateFormDetailState,
   type UploadFormFileState,
 } from "@/app/(app)/universities/[id]/forms/actions";
+import { DeleteFormFileButton } from "@/components/admission/delete-form-file-button";
 
 const KIND_LABEL: Record<"language" | "regular", string> = { language: "어학당", regular: "일반학과" };
 
@@ -250,6 +251,7 @@ export function FormDocDetail({
         {/* 파일 교체 */}
         <div className="border-t pt-4">
           {!replaceOpen ? (
+            <div className="flex flex-wrap items-center gap-2">
             <Button
               type="button"
               variant="outline"
@@ -259,6 +261,8 @@ export function FormDocDetail({
               <RefreshCw className="size-4" />
               파일 교체
             </Button>
+            <DeleteFormFileButton formFileId={form.id} universityId={form.university_id} name={form.name_ko} afterHref="/admissions?tab=forms" label="이 양식 삭제" />
+            </div>
           ) : (
             <div className="space-y-2 rounded-md border border-input p-3">
               <p className="text-sm font-medium">새 파일로 변경하시겠습니까?</p>

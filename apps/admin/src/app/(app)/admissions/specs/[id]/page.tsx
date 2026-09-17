@@ -31,6 +31,7 @@ import {
 import { formatAgeRequirement, type AgeRequirementLike } from "@/lib/admission/age-requirement";
 import { DeleteSpecButton } from "./delete-spec-button";
 import { AddTermButton } from "./add-term-button";
+import { DeleteFormFileButton } from "@/components/admission/delete-form-file-button";
 
 export const dynamic = "force-dynamic";
 
@@ -468,6 +469,7 @@ function DepartmentCard({
                   <a href={f.file_url} target="_blank" rel="noreferrer" download className={buttonVariants({ variant: "ghost", size: "sm" })} title={f.file_name}>
                     <Download className="size-3.5" />
                   </a>
+                  <DeleteFormFileButton formFileId={f.id} universityId={universityId} name={f.name_ko} />
                 </span>
               </li>
             ))}
