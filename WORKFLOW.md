@@ -128,7 +128,7 @@ git push origin main
 - 파일이 다수면 `apps/admin/src/X` → `src/X` 처럼 prefix 만 다르므로 path 변환 주의
 
 ### cutover 완료 후
-이 흐름 폐기 — `D:devglocare` 에서 직접 `git push origin main` 으로 prod.
+이 흐름 폐기 — `D:\dev\glocare` 에서 직접 `git push origin main` 으로 prod.
 
 ---
 
