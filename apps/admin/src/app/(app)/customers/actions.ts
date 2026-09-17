@@ -12,14 +12,12 @@ import type { ConsultationAnalysis } from "@/lib/consultation-tags";
 import {
   customerSchema,
   consultationSchema,
-  statusFlagsSchema,
   progressStateSchema,
   consultationWriteSchema,
   consultationUpdateSchema,
   customerReminderSchema,
   type CustomerInput,
   type ConsultationInput,
-  type StatusFlagsInput,
   type ProgressStateInput,
   type ConsultationWriteInput,
   type ConsultationUpdateInput,
@@ -260,37 +258,6 @@ export async function deleteCustomer(id: string): Promise<ActionResult> {
 
   revalidatePath("/customers");
   redirect("/customers");
-}
-
-// =============================================================================
-// 진행 단계 플래그 업데이트
-// =============================================================================
-
-export async function updateStatusFlags(
-  customerId: string,
-  input: StatusFlagsInput
-): Promise<ActionResult> {
-  let supabase;
-  try {
-    ({ supabase } = await requireAuth());
-  } catch {
-    return { ok: false, error: "Unauthorized" };
-  }
-
-  const parsed = statusFlagsSchema.safeParse(input);
-  if (!parsed.success) {
-    return { ok: false, error: parsed.error.issues[0].message };
-  }
-
-  const { error } = await supabase
-    .from("customer_statuses")
-    .update(parsed.data)
-    .eq("customer_id", customerId);
-
-  if (error) return { ok: false, error: error.message };
-
-  revalidatePath(`/customers/${customerId}`);
-  return { ok: true, data: null };
 }
 
 /**

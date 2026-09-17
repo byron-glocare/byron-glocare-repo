@@ -8,8 +8,8 @@
 
 | 조건 | cwd |
 |---|---|
-| 기본 (거의 모든 작업) | `C:\dev\glocare` |
-| 한 앱 전용 작업이라도 | `C:\dev\glocare` 권장 (모든 앱 동시 수정 가능) |
+| 기본 (거의 모든 작업) | `D:devglocare` |
+| 한 앱 전용 작업이라도 | `D:devglocare` 권장 (모든 앱 동시 수정 가능) |
 
 ```powershell
 cd C:\dev\glocare
@@ -28,11 +28,10 @@ claude remote-control --name "Glocare"
 
 | 작업 종류 | 읽기 권장 |
 |---|---|
-| admin (요양보호사/유학생 CRM, 대시보드, settlements 등) | [`apps/admin/HANDOFF.md`](./apps/admin/HANDOFF.md) |
+| admin (요양보호사/유학생 CRM, 대시보드, settlements 등) | [`apps/admin/README.md`](./apps/admin/README.md) + [`apps/admin/WORKING_WITH_CLAUDE.md`](./apps/admin/WORKING_WITH_CLAUDE.md) |
 | abroad (유학 공개 홈페이지) | [`apps/abroad/HANDOFF.md`](./apps/abroad/HANDOFF.md) + [`apps/abroad/PLAN_B.md`](./apps/abroad/PLAN_B.md) |
 | caregiver | (HANDOFF 작성 예정) |
 | 모노레포 자체 / 공유 코드 / 배포 | 이 문서 + [`README.md`](./README.md) |
-| prod cutover 결단 시 | [`DEPLOYMENT_CUTOVER.md`](./DEPLOYMENT_CUTOVER.md) |
 
 ---
 
@@ -86,7 +85,7 @@ npx vitest run          # tests
 
 ### cutover 후 (사용자가 결단할 때)
 - **monorepo `main` 브랜치로 push 시 → Vercel 자동 prod 배포 (3개 앱 모두)**
-- 자세한 cutover 절차: [`DEPLOYMENT_CUTOVER.md`](./DEPLOYMENT_CUTOVER.md)
+- (cutover 절차 문서는 완료 후 삭제 — 필요 시 git 이력의 DEPLOYMENT_CUTOVER.md 참고)
 
 ## 4-A. cutover 전 임시 prod 배포 흐름 (admin 전용)
 
@@ -129,7 +128,7 @@ git push origin main
 - 파일이 다수면 `apps/admin/src/X` → `src/X` 처럼 prefix 만 다르므로 path 변환 주의
 
 ### cutover 완료 후
-이 흐름 폐기 — `C:\dev\glocare` 에서 직접 `git push origin main` 으로 prod. [`DEPLOYMENT_CUTOVER.md`](./DEPLOYMENT_CUTOVER.md) 참고.
+이 흐름 폐기 — `D:devglocare` 에서 직접 `git push origin main` 으로 prod.
 
 ---
 

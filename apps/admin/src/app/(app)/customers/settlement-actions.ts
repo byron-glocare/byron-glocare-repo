@@ -350,22 +350,3 @@ export async function upsertWelcomePackPayment(
   revalidatePath(`/customers/${customerId}`);
   return { ok: true, data: null };
 }
-
-export async function deleteWelcomePackPayment(
-  customerId: string
-): Promise<ActionResult> {
-  let supabase;
-  try {
-    ({ supabase } = await requireAuth());
-  } catch {
-    return { ok: false, error: "Unauthorized" };
-  }
-  const { error } = await supabase
-    .from("welcome_pack_payments")
-    .delete()
-    .eq("customer_id", customerId);
-  if (error) return { ok: false, error: error.message };
-
-  revalidatePath(`/customers/${customerId}`);
-  return { ok: true, data: null };
-}

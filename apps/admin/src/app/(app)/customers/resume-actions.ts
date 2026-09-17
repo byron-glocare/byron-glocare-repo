@@ -188,26 +188,3 @@ export async function regenerateResumePolish(
   revalidatePath(`/customers/${customerId}`);
   return { ok: true, data: { polished: r.polished } };
 }
-
-/** 이력서 draft 폐기 — 다시 생성 가능 */
-export async function deleteResumeDraft(
-  customerId: string,
-  draftId: string
-): Promise<ResumeActionResult> {
-  let supabase;
-  try {
-    ({ supabase } = await requireAuth());
-  } catch {
-    return { ok: false, error: "Unauthorized" };
-  }
-
-  const { error } = await supabase
-    .from("resume_drafts")
-    .delete()
-    .eq("id", draftId)
-    .eq("customer_id", customerId);
-  if (error) return { ok: false, error: error.message };
-
-  revalidatePath(`/customers/${customerId}`);
-  return { ok: true, data: null };
-}

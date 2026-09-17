@@ -6,7 +6,7 @@
 - **GitHub** (예정 통합): `byron-glocare/byron-glocare-repo` 1곳으로 통합 (옛 abroad/caregiver 레포는 archive 예정)
 - **배포**: 앱별 Vercel 프로젝트, Root Directory = `apps/<앱>`
 
-> ⚠️ 2026-06-15 현재 — 모노레포 통합은 **로컬 코드 + 백업 브랜치(`legacy/standalone-admin`) 까지만 완료**. GitHub main / Vercel 의 Root Directory 전환은 운영자가 "이제 prod 가자" 결단할 때 일괄 실행. 자세한 절차는 [`DEPLOYMENT_CUTOVER.md`](./DEPLOYMENT_CUTOVER.md) 참고.
+> 모노레포 cutover 완료 — `main` push = Vercel 자동 prod 배포. cutover 절차 문서는 역할을 다해 삭제함(git 이력 `DEPLOYMENT_CUTOVER.md` 참고).
 
 ## 구조
 

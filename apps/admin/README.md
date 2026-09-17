@@ -115,7 +115,7 @@ Tailwind 클래스: `bg-primary`, `text-primary`, `bg-brand`, `hover:bg-brand-ho
 - **자동 검증**: TypeScript strict clean · `next build` 성공 · Vitest 93개 전부 통과
 - **DB 교차검증 스크립트**: 51/51 pass (`scripts/qa-verify.ts`)
 - **발견·수정 버그 총 20개**: 정산 로직·대시보드 버킷 필터링·timezone·보안(auth/open-redirect)·SMS 길이·UI(Select UUID 노출·Dropdown 크래시) 등
-- **체크리스트 문서**: [docs/qa-checklist.md](./docs/qa-checklist.md), [docs/qa-checklist-v2.md](./docs/qa-checklist-v2.md)
+- **체크리스트 문서**: [docs/qa-checklist-v2.md](./docs/qa-checklist-v2.md)
 
 ## 보안 원칙
 

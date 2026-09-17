@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { createClient } from "@/lib/supabase/server";
@@ -214,43 +213,4 @@ export async function uploadResumePhoto(
     .createSignedUrl(path, 60 * 60 * 24 * 30);
 
   return { ok: true, url: signed?.signedUrl ?? path };
-}
-
-/**
- * 다시 PDF download URL 발급 (signed URL 만료된 경우).
- */
-export async function refreshResumePdfUrl(
-  resumeId: number
-): Promise<{ ok: true; url: string } | { ok: false; error: string }> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return { ok: false, error: "로그인이 필요합니다." };
-
-  const path = `${user.id}/${resumeId}.pdf`;
-  const { data: signed, error } = await supabase.storage
-    .from("resume-pdfs")
-    .createSignedUrl(path, 60 * 60 * 24);
-
-  if (error || !signed) {
-    return { ok: false, error: error?.message ?? "URL 발급 실패" };
-  }
-  return { ok: true, url: signed.signedUrl };
-}
-
-export async function deleteResume(resumeId: number) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return;
-
-  await supabase.from("resumes").delete().eq("id", resumeId).eq("user_id", user.id);
-  await supabase.storage
-    .from("resume-pdfs")
-    .remove([`${user.id}/${resumeId}.pdf`])
-    .catch(() => {});
-  revalidatePath("/resume");
-  redirect("/resume");
 }
