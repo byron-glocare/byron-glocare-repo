@@ -2325,8 +2325,10 @@ export type Database = {
           id: string;
           spec_id: string;
           term: string;
-          /** JSONB — Schedule */
+          /** JSONB — Schedule (일반학과) */
           schedule: unknown;
+          /** JSONB — Schedule (어학당). 0068 */
+          schedule_language: unknown;
           notes: string | null;
           sort_order: number;
           created_at: string;
@@ -2337,6 +2339,7 @@ export type Database = {
           spec_id: string;
           term: string;
           schedule?: unknown;
+          schedule_language?: unknown;
           notes?: string | null;
           sort_order?: number;
           created_at?: string;

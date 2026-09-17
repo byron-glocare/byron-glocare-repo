@@ -4,9 +4,10 @@
  * AI 추출 모집요강 승인 — 대학당 요강 1개 모델(0067).
  *
  *   대학에 활성(보관 아님) 요강이 있으면 새로 만들지 않고 그 요강에 **합친다**:
- *     (a) 추출 학기 → study_spec_terms (있으면 건너뜀, 일정은 추출값)
+ *     (a) 추출 학기 → study_spec_terms (있으면 건너뜀, 일정은 추출값 — 어학연수 요강이면 schedule_language, 아니면 schedule)
  *     (b) 추출 학과 → 학과 마스터를 이름으로 찾거나(0067b 규칙) 만들고, 요강 학과가 없으면 만든다
- *         (어학연수 요강이면 어학당). 있는 요강 학과의 정보는 덮어쓰지 않는다.
+ *         (어학연수 요강이면 어학당, 어학연수 프로그램 정보는 어학당 info.language_program 에).
+ *         새로 만드는 요강 학과에만 추출 자격을 넣고, 있는 요강 학과의 정보·자격은 덮어쓰지 않는다.
  *     (c) 표준에 연결된 발급서류 줄 → 이번에 만든/맞춘 요강 학과 중 항목 행이 없는 학과에만 항목 행
  *     (d) 작성서류·미연결 줄은 옛 JSONB 에 덧붙인다(이름 중복 제거)
  *     (e) (학기, 학과) 모집 행이 없으면 draft 로
@@ -221,23 +222,32 @@ export async function approveSpecAction(_prev: ApproveSpecState, formData: FormD
     if (updErr) return { error: `요강 갱신 실패: ${updErr.message}` };
   }
 
-  // (a) 학기
+  // (a) 학기 — 어학연수 요강이면 추출 일정을 어학당 일정(schedule_language)에, 아니면 일반학과 일정(schedule)에
   const { data: termRow } = await admin.from("study_spec_terms").select("id").eq("spec_id", specId).eq("term", meta.term).maybeSingle();
   if (!termRow) {
-    const { error } = await admin.from("study_spec_terms").insert({ spec_id: specId, term: meta.term, schedule: jsonAreas.schedule ?? {}, sort_order: 0 });
+    const extractedSchedule = jsonAreas.schedule ?? {};
+    const { error } = await admin.from("study_spec_terms").insert({
+      spec_id: specId,
+      term: meta.term,
+      schedule: isLanguage ? {} : extractedSchedule,
+      schedule_language: isLanguage ? extractedSchedule : {},
+      sort_order: 0,
+    });
     if (error) return { error: `학기 생성 실패: ${error.message}` };
   }
 
-  // (b) 학과 — 이번 승인에서 만든/맞춘 요강 학과
+  // (b) 학과 — 이번 승인에서 만든/맞춘 요강 학과. 자격은 학과별(0068) — 이번에 만드는 학과에만 추출 자격을 넣고 기존 학과는 건드리지 않는다.
   const touched: Array<{ sdId: string; departmentId: number; created: boolean }> = [];
   const specDepts = await loadSpecDepartments(admin, specId);
   const createdDeptNames: string[] = [];
   if (isLanguage) {
+    const extractedMeta = isNonEmptyObject(jsonAreas.metadata) ? jsonAreas.metadata : {};
+    const languageProgram = isNonEmptyObject(extractedMeta.language_program) ? (extractedMeta.language_program as DepartmentInfo["language_program"]) : undefined;
     const lang = await ensureLanguageSpecDepartment(admin, specId, universityId, {
-      info: extractedDepts[0] ?? undefined,
+      info: { ...(extractedDepts[0] ?? {}), ...(languageProgram ? { language_program: languageProgram } : {}) },
       tuition: jsonAreas.tuition,
       scholarships: jsonAreas.scholarships,
-      eligibility: existing ? eligibility : null,
+      eligibility,
     });
     if (!lang.ok) return { error: lang.error };
     touched.push({ sdId: lang.id, departmentId: lang.department_id, created: lang.created });
@@ -267,7 +277,7 @@ export async function approveSpecAction(_prev: ApproveSpecState, formData: FormD
           info: { ...d, program_kind: "degree" },
           tuition: jsonAreas.tuition ?? {},
           scholarships: jsonAreas.scholarships ?? [],
-          eligibility: existing ? eligibility : null,
+          eligibility,
           sort_order: sortOrder,
         })
         .select("id")
@@ -275,8 +285,8 @@ export async function approveSpecAction(_prev: ApproveSpecState, formData: FormD
       if (error || !created) return { error: `요강 학과 생성 실패: ${error?.message ?? "unknown"}` };
       touched.push({ sdId: created.id, departmentId: master.id, created: true });
     }
-    // 어학당은 항상 하나
-    const lang = await ensureLanguageSpecDepartment(admin, specId, universityId);
+    // 어학당은 항상 하나 (새로 만들 때만 추출 자격을 넣는다)
+    const lang = await ensureLanguageSpecDepartment(admin, specId, universityId, { eligibility });
     if (!lang.ok) return { error: lang.error };
   }
 

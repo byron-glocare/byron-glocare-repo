@@ -2,7 +2,8 @@
 
 /**
  * 모집요강 편집 — 탭 껍데기 + 기본 탭 폼.
- *   기본: 전형 이름·상태·원본 파일·온라인 접수·공통 자격·기타·작성서류/미연결 옛 줄 (통째 저장 = updateSpecAction)
+ *   기본: 전형 이름·상태·원본 파일·온라인 접수·기타·작성서류/미연결 옛 줄 (통째 저장 = updateSpecAction)
+ *   지원 자격은 학과별(학과 탭). 옛 요강 공통 자격(spec.eligibility)은 학과 자격이 비었을 때 초기값으로만 쓴다.
  *   학과 / 학기: 서버 컴포넌트가 만들어 넘긴 패널 (각자 개별 저장)
  *   탭 패널은 keepMounted — 탭을 오가도 입력이 사라지지 않게.
  */
@@ -15,7 +16,6 @@ import { Card } from "@/components/ui/card";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RequiredDocumentsField, type RequiredDocument } from "@/components/admission/required-documents-field";
-import { EligibilityField, type Eligibility } from "@/components/admission/eligibility-field";
 import { MetadataField, type Metadata } from "@/components/admission/metadata-field";
 
 const STATUS_OPTIONS = [
@@ -85,10 +85,6 @@ export function EditSpecForm({
     }
   }
 
-  const initialEligibility = useMemo(
-    () => (spec.eligibility && typeof spec.eligibility === "object" && Object.keys(spec.eligibility as object).length ? (spec.eligibility as Eligibility) : null),
-    [spec.eligibility]
-  );
   const initialMetadata = useMemo(() => (spec.metadata && typeof spec.metadata === "object" ? (spec.metadata as Metadata) : null), [spec.metadata]);
 
   const fieldErr = (k: string) => state?.fieldErrors?.[k];
@@ -192,11 +188,6 @@ export function EditSpecForm({
                 </div>
               ) : null}
             </div>
-
-            <Section title="지원 자격 (요강 공통)" open error={fieldErr("spec_eligibility")}>
-              <p className="mb-2 text-xs text-muted-foreground">학과별로 다른 자격은 학과 탭에서 따로 둘 수 있습니다. 여기는 요강 공통입니다.</p>
-              <EligibilityField name="spec_eligibility" initial={initialEligibility} />
-            </Section>
 
             <Section title={`작성서류·미연결 (옛 서류 줄 ${legacyDocs.length})`} error={fieldErr("spec_required_documents")}>
               <p className="mb-2 text-xs text-muted-foreground">

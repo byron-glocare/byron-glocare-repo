@@ -1,6 +1,7 @@
 /**
  * /center/admissions/[id] — 모집요강 상세 (유학센터 read-only, 한/베 전환).
  *   approved 상태만 조회 가능 (RLS).
+ *   0068: 학기마다 일정 둘(일반학과/어학당), 자격요건·어학연수 프로그램은 학과별.
  */
 
 import Link from "next/link";
@@ -15,8 +16,12 @@ import {
   type AgeRequirementLike,
 } from "@/lib/admission/age-requirement";
 import {
+  departmentEligibility,
+  hasScheduleContent,
   loadSpecDocuments,
   loadSpecTerms,
+  scheduleForKind,
+  type LanguageProgramInfo,
   type SpecDepartmentRow,
   type SpecIssuedDoc,
 } from "@/lib/admission/spec-documents";
@@ -121,6 +126,51 @@ type Round = {
   payment_period?: [string, string];
 };
 
+type ScheduleShape = {
+  rounds?: Round[];
+  semester_start?: string | null;
+  semester_end?: string | null;
+  submission_method?: string;
+};
+
+type EligibilityShape = {
+  applicant_categories?: string[];
+  age_requirement?: AgeRequirementLike | null;
+  education_required?: string;
+  education_paths?: string[];
+  education_exclusions?: string[];
+  gpa_min?: number | null;
+  gpa_scale?: string | null;
+  korean_proficiency?: {
+    topik_min_default?: number | null;
+    alternative_paths?: Array<{
+      type?: string;
+      level?: string;
+      description?: string;
+    }>;
+    post_admission_requirement?: string | null;
+  };
+  english_proficiency?: {
+    applies_to_departments?: string[];
+    minimums?: Record<string, number | string>;
+    notes?: string;
+  };
+  financial_minimum?: {
+    amount?: number | null;
+    currency?: string;
+    holder_relations?: string[];
+    freshness_days?: number | null;
+    notes?: string | null;
+  } | null;
+  exclusions?: string[];
+  notes_ko?: string;
+};
+
+const asSchedule = (v: unknown): ScheduleShape =>
+  (v && typeof v === "object" ? v : {}) as ScheduleShape;
+const asEligibility = (v: unknown): EligibilityShape =>
+  (v && typeof v === "object" ? v : {}) as EligibilityShape;
+
 export default async function CenterAdmissionDetailPage({
   params,
 }: {
@@ -155,21 +205,24 @@ export default async function CenterAdmissionDetailPage({
   ]);
   const specTerms = termsBySpec.get(spec.id) ?? [];
 
-  type ScheduleShape = {
-    rounds?: Round[];
-    semester_start?: string | null;
-    semester_end?: string | null;
-    submission_method?: string;
-  };
-  // 학기별 일정. 학기 행이 없으면 요강 공통 schedule(옛 데이터) 하나로.
-  const termSchedules: Array<{ term: string; schedule: ScheduleShape; notes: string | null }> =
+  // 학기별 일정 (0068: 일반학과/어학당 둘). 학기 행이 없으면 요강 공통 schedule(옛 데이터) 하나로.
+  const termSchedules: Array<{
+    term: string;
+    regular: ScheduleShape;
+    language: ScheduleShape;
+    notes: string | null;
+    /** 옛 데이터 — 요강 공통 일정 하나뿐 */
+    legacy: boolean;
+  }> =
     specTerms.length > 0
       ? specTerms.map((t) => ({
           term: t.term,
-          schedule: (t.schedule && typeof t.schedule === "object" ? t.schedule : {}) as ScheduleShape,
+          regular: asSchedule(scheduleForKind(t, "regular")),
+          language: asSchedule(scheduleForKind(t, "language")),
           notes: t.notes,
+          legacy: false,
         }))
-      : [{ term: spec.term, schedule: (spec.schedule ?? {}) as ScheduleShape, notes: null }];
+      : [{ term: spec.term, regular: asSchedule(spec.schedule), language: {}, notes: null, legacy: true }];
   const termLabel = specTerms.length > 0 ? specTerms.map((t) => t.term).join(" · ") : spec.term;
 
   const deptName = (d: SpecDepartmentRow) =>
@@ -193,52 +246,12 @@ export default async function CenterAdmissionDetailPage({
     payment_method?: string;
   };
 
-  const eligibility = (spec.eligibility ?? {}) as {
-    applicant_categories?: string[];
-    age_requirement?: AgeRequirementLike | null;
-    education_required?: string;
-    education_paths?: string[];
-    education_exclusions?: string[];
-    gpa_min?: number | null;
-    gpa_scale?: string | null;
-    korean_proficiency?: {
-      topik_min_default?: number | null;
-      alternative_paths?: Array<{
-        type?: string;
-        level?: string;
-        description?: string;
-      }>;
-      post_admission_requirement?: string | null;
-    };
-    english_proficiency?: {
-      applies_to_departments?: string[];
-      minimums?: Record<string, number | string>;
-      notes?: string;
-    };
-    financial_minimum?: {
-      amount?: number | null;
-      currency?: string;
-      holder_relations?: string[];
-      freshness_days?: number | null;
-      notes?: string | null;
-    } | null;
-    exclusions?: string[];
-    notes_ko?: string;
-  };
-
   const metadata = (spec.metadata ?? {}) as {
     selection_process?: {
       method?: string;
       interview_required?: boolean;
       interview_content?: string[];
       evaluation_criteria?: string;
-    };
-    post_acceptance?: {
-      visa_type?: string;
-      post_graduation_visa?: string;
-      insurance_requirement?: string;
-      warnings?: string[];
-      process_steps?: string[];
     };
     contacts?: {
       phone?: string;
@@ -254,12 +267,16 @@ export default async function CenterAdmissionDetailPage({
       benefits?: string[];
     }>;
     country_specific_notes_vi?: string;
-    language_program?: {
-      hours_per_semester?: number;
-      hours_per_week?: number;
-      weeks_per_semester?: number;
-      visa_type?: string;
-    };
+    /** 옛 데이터 폴백 — 지금은 어학당 학과 info.language_program */
+    language_program?: LanguageProgramInfo | null;
+  };
+
+  // 어학연수 프로그램 — 어학당 학과 info 에서, 없으면 옛 metadata
+  const languageProgramOf = (d: SpecDepartmentRow): LanguageProgramInfo | null => {
+    if (d.kind !== "language") return null;
+    const own = d.info.language_program;
+    if (own && typeof own === "object" && Object.keys(own).length > 0) return own;
+    return metadata.language_program ?? null;
   };
 
   const fmtCur = (n: number | null | undefined, currency?: string) => {
@@ -426,220 +443,68 @@ export default async function CenterAdmissionDetailPage({
         )}
       </Card>
 
-      {/* Điều kiện đăng ký */}
-      <Card title={tr(locale, "지원 자격", "Điều kiện đăng ký")}>
-        <section className="space-y-3">
-          <Subsection title={tr(locale, "학력", "Học vấn")}>
-            <Dl>
-              <Info
-                label={tr(locale, "최소 요건", "Yêu cầu tối thiểu")}
-                value={
-                  eligibility.education_required
-                    ? L(EDUCATION_LABEL, eligibility.education_required, locale)
-                    : null
-                }
-              />
-              <Info
-                label={tr(locale, "최소 GPA", "GPA tối thiểu")}
-                value={
-                  eligibility.gpa_min != null
-                    ? `${eligibility.gpa_min}${eligibility.gpa_scale ? ` / ${eligibility.gpa_scale}` : ""}`
-                    : null
-                }
-              />
-              <Info
-                label={tr(locale, "나이", "Độ tuổi")}
-                value={formatAgeRequirement(eligibility.age_requirement, locale)}
-              />
-              {eligibility.age_requirement?.notes ? (
-                <Info
-                  label={tr(locale, "나이 단서", "Ghi chú độ tuổi")}
-                  value={eligibility.age_requirement.notes}
-                />
-              ) : null}
-              {eligibility.education_exclusions &&
-              eligibility.education_exclusions.length > 0 ? (
-                <Info
-                  label={tr(locale, "제외 대상", "Loại trừ")}
-                  value={eligibility.education_exclusions.join(", ")}
-                  full
-                />
-              ) : null}
-            </Dl>
-          </Subsection>
-
-          {eligibility.korean_proficiency ? (
-            <Subsection title={tr(locale, "한국어", "Tiếng Hàn")}>
-              <Dl>
-                <Info
-                  label={tr(locale, "최소 TOPIK", "TOPIK tối thiểu")}
-                  value={
-                    eligibility.korean_proficiency.topik_min_default != null
-                      ? tr(locale, `${eligibility.korean_proficiency.topik_min_default}급 이상`, `Cấp ${eligibility.korean_proficiency.topik_min_default} trở lên`)
-                      : null
-                  }
-                />
-                <Info
-                  label={tr(locale, "입학 후", "Sau khi nhập học")}
-                  value={
-                    eligibility.korean_proficiency.post_admission_requirement ?? null
-                  }
-                />
-              </Dl>
-              {eligibility.korean_proficiency.alternative_paths &&
-              eligibility.korean_proficiency.alternative_paths.length > 0 ? (
-                <div className="mt-2">
-                  <div className="text-xs font-medium uppercase tracking-wide text-slate-500">
-                    {tr(locale, "TOPIK 대체 경로", "Đường thay thế TOPIK")}
+      {/* Điều kiện đăng ký — 학과별 (어학당은 어학연수 프로그램 정보 포함) */}
+      <Card title={tr(locale, "학과별 지원 자격", "Điều kiện đăng ký theo ngành")}>
+        {departments.length === 0 ? (
+          // 옛 요강(학과 행 없음) — 요강 공통 자격요건 하나로
+          <EligibilityView locale={locale} eligibility={asEligibility(spec.eligibility)} fmtCur={fmtCur} />
+        ) : (
+          <div className="space-y-6">
+            {departments.map((d) => {
+              const lp = languageProgramOf(d);
+              return (
+                <section key={d.id} className="rounded-md border border-slate-200 p-4">
+                  <h3 className="mb-3 flex flex-wrap items-center gap-2 text-sm font-medium text-slate-800">
+                    {deptName(d)}
+                    <span className="rounded border border-slate-300 px-1.5 py-0.5 text-xs font-normal">
+                      {L(DEPT_KIND_LABEL, d.kind, locale)}
+                    </span>
+                  </h3>
+                  <div className="space-y-4">
+                    {d.kind === "language" ? (
+                      <Subsection title={tr(locale, "어학연수 프로그램", "Chương trình tiếng Hàn")}>
+                        {lp ? (
+                          <LanguageProgramView locale={locale} program={lp} />
+                        ) : (
+                          <p className="text-sm text-slate-500">{tr(locale, "미입력", "Chưa nhập")}</p>
+                        )}
+                      </Subsection>
+                    ) : null}
+                    <EligibilityView
+                      locale={locale}
+                      eligibility={asEligibility(departmentEligibility(d, spec))}
+                      fmtCur={fmtCur}
+                    />
                   </div>
-                  <ul className="mt-1 space-y-1 text-sm">
-                    {eligibility.korean_proficiency.alternative_paths.map(
-                      (p, i) => (
-                        <li key={i} className="flex items-start gap-2">
-                          <span className="shrink-0 rounded border border-slate-300 px-1.5 py-0.5 text-xs">
-                            {p.type ? L(ALT_PATH_LABEL, p.type, locale) : "—"}
-                          </span>
-                          <span className="text-slate-600">
-                            {p.level ? `${p.level} ` : ""}
-                            {p.description ?? ""}
-                          </span>
-                        </li>
-                      )
-                    )}
-                  </ul>
-                </div>
-              ) : null}
-            </Subsection>
-          ) : null}
-
-          {eligibility.english_proficiency &&
-          (eligibility.english_proficiency.minimums ||
-            eligibility.english_proficiency.applies_to_departments) ? (
-            <Subsection title={tr(locale, "영어", "Tiếng Anh")}>
-              {eligibility.english_proficiency.applies_to_departments &&
-              eligibility.english_proficiency.applies_to_departments.length > 0 ? (
-                <div className="text-sm">
-                  <span className="text-slate-500">{tr(locale, "적용 대상", "Áp dụng cho")}: </span>
-                  {eligibility.english_proficiency.applies_to_departments.join(
-                    ", "
-                  )}
-                </div>
-              ) : null}
-              {eligibility.english_proficiency.minimums ? (
-                <div className="mt-1 flex flex-wrap gap-1.5">
-                  {Object.entries(eligibility.english_proficiency.minimums).map(
-                    ([k, v]) => (
-                      <span
-                        key={k}
-                        className="rounded border border-slate-300 px-2 py-0.5 text-xs"
-                      >
-                        {k}: {String(v)}
-                      </span>
-                    )
-                  )}
-                </div>
-              ) : null}
-            </Subsection>
-          ) : null}
-
-          {eligibility.financial_minimum ? (
-            <Subsection title={tr(locale, "재정", "Tài chính")}>
-              <Dl>
-                <Info
-                  label={tr(locale, "최소 잔고", "Số dư tối thiểu")}
-                  value={fmtCur(
-                    eligibility.financial_minimum.amount,
-                    eligibility.financial_minimum.currency
-                  )}
-                />
-                <Info
-                  label={tr(locale, "유효 기간", "Thời hạn")}
-                  value={
-                    eligibility.financial_minimum.freshness_days != null
-                      ? tr(locale, `${eligibility.financial_minimum.freshness_days}일`, `${eligibility.financial_minimum.freshness_days} ngày`)
-                      : null
-                  }
-                />
-                {eligibility.financial_minimum.holder_relations &&
-                eligibility.financial_minimum.holder_relations.length > 0 ? (
-                  <Info
-                    label={tr(locale, "예금주", "Chủ tài khoản")}
-                    value={eligibility.financial_minimum.holder_relations
-                      .map((h) => L(HOLDER_LABEL, h, locale))
-                      .join(", ")}
-                    full
-                  />
-                ) : null}
-              </Dl>
-            </Subsection>
-          ) : null}
-
-          {eligibility.exclusions && eligibility.exclusions.length > 0 ? (
-            <div className="rounded-md border border-rose-200 bg-rose-50 p-3 text-sm">
-              <div className="font-medium text-rose-700">{tr(locale, "지원 불가", "Không đủ điều kiện")}</div>
-              <ul className="mt-1 list-disc pl-5 text-xs text-rose-800">
-                {eligibility.exclusions.map((e, i) => (
-                  <li key={i}>{e}</li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
-        </section>
+                </section>
+              );
+            })}
+          </div>
+        )}
       </Card>
 
-      {/* Lịch tuyển sinh — 학기별 */}
+      {/* Lịch tuyển sinh — 학기별 × (일반학과 / 어학당) */}
       <Card title={`${tr(locale, "모집 일정", "Lịch tuyển sinh")} (${termSchedules.length})`}>
-        <div className="space-y-4">
-          {termSchedules.map(({ term, schedule, notes }) => (
+        <div className="space-y-5">
+          {termSchedules.map(({ term, regular, language, notes, legacy }) => (
             <section key={term}>
               <h3 className="mb-2 text-sm font-medium text-slate-700">{term}</h3>
-              {schedule.rounds && schedule.rounds.length > 0 ? (
-                <div className="overflow-hidden rounded-md border border-slate-200">
-                  <table className="w-full text-sm">
-                    <thead className="bg-slate-50">
-                      <tr className="text-left">
-                        <th className="px-3 py-2 font-medium">{tr(locale, "차수", "Đợt")}</th>
-                        <th className="px-3 py-2 font-medium">{tr(locale, "원서 접수", "Nhận hồ sơ")}</th>
-                        <th className="px-3 py-2 font-medium">{tr(locale, "면접", "Phỏng vấn")}</th>
-                        <th className="px-3 py-2 font-medium">{tr(locale, "합격 발표", "Kết quả")}</th>
-                        <th className="px-3 py-2 font-medium">{tr(locale, "등록금 납부", "Đóng học phí")}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {schedule.rounds.map((r, i) => (
-                        <tr key={i} className="border-t border-slate-100">
-                          <td className="px-3 py-2 font-medium">{r.name ?? "—"}</td>
-                          <td className="px-3 py-2 text-xs">
-                            {r.application_open ?? "—"} ~ {r.application_close ?? "—"}
-                          </td>
-                          <td className="px-3 py-2 text-xs">
-                            {r.interview
-                              ? r.interview
-                              : r.interview_period
-                                ? `${r.interview_period[0]} ~ ${r.interview_period[1]}`
-                                : "—"}
-                          </td>
-                          <td className="px-3 py-2 text-xs">
-                            {r.result_announcement ?? "—"}
-                          </td>
-                          <td className="px-3 py-2 text-xs">
-                            {r.payment_period
-                              ? `${r.payment_period[0]} ~ ${r.payment_period[1]}`
-                              : "—"}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+              {legacy ? (
+                <ScheduleBlock locale={locale} schedule={regular} />
               ) : (
-                <p className="text-sm text-slate-500">{tr(locale, "일정 없음", "Chưa có lịch")}</p>
+                <div className="space-y-3">
+                  <ScheduleBlock
+                    locale={locale}
+                    title={tr(locale, "일반학과 일정", "Lịch ngành")}
+                    schedule={regular}
+                  />
+                  <ScheduleBlock
+                    locale={locale}
+                    title={tr(locale, "어학당 일정", "Lịch khóa tiếng Hàn")}
+                    schedule={language}
+                  />
+                </div>
               )}
-              <div className="mt-3 grid grid-cols-1 gap-x-6 gap-y-1 text-sm md:grid-cols-3">
-                <Info label={tr(locale, "개강", "Khai giảng")} value={schedule.semester_start} />
-                <Info label={tr(locale, "종강", "Kết thúc")} value={schedule.semester_end} />
-                <Info label={tr(locale, "제출 방법", "Hình thức nộp")} value={schedule.submission_method} />
-              </div>
               {notes ? (
                 <p className="mt-2 whitespace-pre-wrap text-xs text-slate-500">{notes}</p>
               ) : null}
@@ -732,48 +597,6 @@ export default async function CenterAdmissionDetailPage({
         )}
       </Card>
 
-      {/* Sau khi trúng tuyển */}
-      {metadata.post_acceptance ? (
-        <Card title={tr(locale, "합격 이후 (비자·절차)", "Sau khi trúng tuyển (Visa·Thủ tục)")}>
-          <Dl>
-            <Info label={tr(locale, "입학 비자", "Visa nhập học")} value={metadata.post_acceptance.visa_type} />
-            <Info
-              label={tr(locale, "졸업 후 비자", "Visa sau tốt nghiệp")}
-              value={metadata.post_acceptance.post_graduation_visa}
-            />
-            <Info
-              label={tr(locale, "보험 요건", "Yêu cầu bảo hiểm")}
-              value={metadata.post_acceptance.insurance_requirement}
-              full
-            />
-          </Dl>
-          {metadata.post_acceptance.warnings &&
-          metadata.post_acceptance.warnings.length > 0 ? (
-            <div className="mt-3 rounded-md border border-amber-200 bg-amber-50 p-3 text-sm">
-              <div className="font-medium text-amber-800">{tr(locale, "유의사항", "Lưu ý")}</div>
-              <ul className="mt-1 list-disc pl-5 text-xs text-amber-900">
-                {metadata.post_acceptance.warnings.map((w, i) => (
-                  <li key={i}>{w}</li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
-          {metadata.post_acceptance.process_steps &&
-          metadata.post_acceptance.process_steps.length > 0 ? (
-            <div className="mt-3">
-              <div className="text-xs font-medium uppercase tracking-wide text-slate-500">
-                {tr(locale, "절차", "Quy trình")}
-              </div>
-              <ol className="mt-1 list-decimal pl-5 text-sm">
-                {metadata.post_acceptance.process_steps.map((s, i) => (
-                  <li key={i}>{s}</li>
-                ))}
-              </ol>
-            </div>
-          ) : null}
-        </Card>
-      ) : null}
-
       {/* Chỉ định chính phủ */}
       {metadata.government_designations &&
       metadata.government_designations.length > 0 ? (
@@ -834,6 +657,280 @@ export default async function CenterAdmissionDetailPage({
             {metadata.country_specific_notes_vi}
           </p>
         </Card>
+      ) : null}
+    </div>
+  );
+}
+
+/** 학기 일정 한 블록 (일반학과 또는 어학당). 내용이 없으면 "미입력". */
+function ScheduleBlock({
+  locale,
+  title,
+  schedule,
+}: {
+  locale: Locale;
+  title?: string;
+  schedule: ScheduleShape;
+}) {
+  const filled = hasScheduleContent(schedule);
+  return (
+    <div className={title ? "rounded-md border border-slate-200 p-3" : ""}>
+      {title ? (
+        <div className="mb-2 flex items-center gap-2 text-xs font-medium text-slate-600">
+          {title}
+          {!filled ? (
+            <span className="rounded border border-slate-300 px-1.5 py-0.5 font-normal text-slate-500">
+              {tr(locale, "미입력", "Chưa nhập")}
+            </span>
+          ) : null}
+        </div>
+      ) : null}
+      {!filled ? (
+        !title ? (
+          <p className="text-sm text-slate-500">{tr(locale, "미입력", "Chưa nhập")}</p>
+        ) : null
+      ) : (
+        <>
+          {schedule.rounds && schedule.rounds.length > 0 ? (
+            <div className="overflow-hidden rounded-md border border-slate-200">
+              <table className="w-full text-sm">
+                <thead className="bg-slate-50">
+                  <tr className="text-left">
+                    <th className="px-3 py-2 font-medium">{tr(locale, "차수", "Đợt")}</th>
+                    <th className="px-3 py-2 font-medium">{tr(locale, "원서 접수", "Nhận hồ sơ")}</th>
+                    <th className="px-3 py-2 font-medium">{tr(locale, "면접", "Phỏng vấn")}</th>
+                    <th className="px-3 py-2 font-medium">{tr(locale, "합격 발표", "Kết quả")}</th>
+                    <th className="px-3 py-2 font-medium">{tr(locale, "등록금 납부", "Đóng học phí")}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {schedule.rounds.map((r, i) => (
+                    <tr key={i} className="border-t border-slate-100">
+                      <td className="px-3 py-2 font-medium">{r.name ?? "—"}</td>
+                      <td className="px-3 py-2 text-xs">
+                        {r.application_open ?? "—"} ~ {r.application_close ?? "—"}
+                      </td>
+                      <td className="px-3 py-2 text-xs">
+                        {r.interview
+                          ? r.interview
+                          : r.interview_period
+                            ? `${r.interview_period[0]} ~ ${r.interview_period[1]}`
+                            : "—"}
+                      </td>
+                      <td className="px-3 py-2 text-xs">
+                        {r.result_announcement ?? "—"}
+                      </td>
+                      <td className="px-3 py-2 text-xs">
+                        {r.payment_period
+                          ? `${r.payment_period[0]} ~ ${r.payment_period[1]}`
+                          : "—"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p className="text-sm text-slate-500">{tr(locale, "차수 일정 없음", "Chưa có lịch theo đợt")}</p>
+          )}
+          <div className="mt-3 grid grid-cols-1 gap-x-6 gap-y-1 text-sm md:grid-cols-3">
+            <Info label={tr(locale, "개강", "Khai giảng")} value={schedule.semester_start} />
+            <Info label={tr(locale, "종강", "Kết thúc")} value={schedule.semester_end} />
+            <Info label={tr(locale, "제출 방법", "Hình thức nộp")} value={schedule.submission_method} />
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+/** 어학연수 프로그램 정보 (어학당 학과 블록 안) */
+function LanguageProgramView({
+  locale,
+  program,
+}: {
+  locale: Locale;
+  program: LanguageProgramInfo;
+}) {
+  const num = (n: number | null | undefined) => (n != null ? String(n) : null);
+  return (
+    <Dl>
+      <Info label={tr(locale, "학기당 시간", "Số giờ mỗi kỳ")} value={num(program.hours_per_semester)} />
+      <Info label={tr(locale, "주당 시간", "Số giờ mỗi tuần")} value={num(program.hours_per_week)} />
+      <Info label={tr(locale, "학기당 주수", "Số tuần mỗi kỳ")} value={num(program.weeks_per_semester)} />
+      <Info label={tr(locale, "주간 시간표", "Thời khóa biểu tuần")} value={program.weekly_schedule} />
+      <Info label={tr(locale, "비자", "Visa")} value={program.visa_type} />
+      <Info label={tr(locale, "비자 연장", "Gia hạn visa")} value={program.visa_extension} full />
+    </Dl>
+  );
+}
+
+/** 자격요건 (학과별 — 학과에 따로 있으면 그것, 없으면 요강 공통) */
+function EligibilityView({
+  locale,
+  eligibility,
+  fmtCur,
+}: {
+  locale: Locale;
+  eligibility: EligibilityShape;
+  fmtCur: (n: number | null | undefined, currency?: string) => string;
+}) {
+  return (
+    <div className="space-y-3">
+      <Subsection title={tr(locale, "학력", "Học vấn")}>
+        <Dl>
+          <Info
+            label={tr(locale, "최소 요건", "Yêu cầu tối thiểu")}
+            value={
+              eligibility.education_required
+                ? L(EDUCATION_LABEL, eligibility.education_required, locale)
+                : null
+            }
+          />
+          <Info
+            label={tr(locale, "최소 GPA", "GPA tối thiểu")}
+            value={
+              eligibility.gpa_min != null
+                ? `${eligibility.gpa_min}${eligibility.gpa_scale ? ` / ${eligibility.gpa_scale}` : ""}`
+                : null
+            }
+          />
+          <Info
+            label={tr(locale, "나이", "Độ tuổi")}
+            value={formatAgeRequirement(eligibility.age_requirement, locale)}
+          />
+          {eligibility.age_requirement?.notes ? (
+            <Info
+              label={tr(locale, "나이 단서", "Ghi chú độ tuổi")}
+              value={eligibility.age_requirement.notes}
+            />
+          ) : null}
+          {eligibility.education_exclusions &&
+          eligibility.education_exclusions.length > 0 ? (
+            <Info
+              label={tr(locale, "제외 대상", "Loại trừ")}
+              value={eligibility.education_exclusions.join(", ")}
+              full
+            />
+          ) : null}
+        </Dl>
+      </Subsection>
+
+      {eligibility.korean_proficiency ? (
+        <Subsection title={tr(locale, "한국어", "Tiếng Hàn")}>
+          <Dl>
+            <Info
+              label={tr(locale, "최소 TOPIK", "TOPIK tối thiểu")}
+              value={
+                eligibility.korean_proficiency.topik_min_default != null
+                  ? tr(locale, `${eligibility.korean_proficiency.topik_min_default}급 이상`, `Cấp ${eligibility.korean_proficiency.topik_min_default} trở lên`)
+                  : null
+              }
+            />
+            <Info
+              label={tr(locale, "입학 후", "Sau khi nhập học")}
+              value={
+                eligibility.korean_proficiency.post_admission_requirement ?? null
+              }
+            />
+          </Dl>
+          {eligibility.korean_proficiency.alternative_paths &&
+          eligibility.korean_proficiency.alternative_paths.length > 0 ? (
+            <div className="mt-2">
+              <div className="text-xs font-medium uppercase tracking-wide text-slate-500">
+                {tr(locale, "TOPIK 대체 경로", "Đường thay thế TOPIK")}
+              </div>
+              <ul className="mt-1 space-y-1 text-sm">
+                {eligibility.korean_proficiency.alternative_paths.map(
+                  (p, i) => (
+                    <li key={i} className="flex items-start gap-2">
+                      <span className="shrink-0 rounded border border-slate-300 px-1.5 py-0.5 text-xs">
+                        {p.type ? L(ALT_PATH_LABEL, p.type, locale) : "—"}
+                      </span>
+                      <span className="text-slate-600">
+                        {p.level ? `${p.level} ` : ""}
+                        {p.description ?? ""}
+                      </span>
+                    </li>
+                  )
+                )}
+              </ul>
+            </div>
+          ) : null}
+        </Subsection>
+      ) : null}
+
+      {eligibility.english_proficiency &&
+      (eligibility.english_proficiency.minimums ||
+        eligibility.english_proficiency.applies_to_departments) ? (
+        <Subsection title={tr(locale, "영어", "Tiếng Anh")}>
+          {eligibility.english_proficiency.applies_to_departments &&
+          eligibility.english_proficiency.applies_to_departments.length > 0 ? (
+            <div className="text-sm">
+              <span className="text-slate-500">{tr(locale, "적용 대상", "Áp dụng cho")}: </span>
+              {eligibility.english_proficiency.applies_to_departments.join(
+                ", "
+              )}
+            </div>
+          ) : null}
+          {eligibility.english_proficiency.minimums ? (
+            <div className="mt-1 flex flex-wrap gap-1.5">
+              {Object.entries(eligibility.english_proficiency.minimums).map(
+                ([k, v]) => (
+                  <span
+                    key={k}
+                    className="rounded border border-slate-300 px-2 py-0.5 text-xs"
+                  >
+                    {k}: {String(v)}
+                  </span>
+                )
+              )}
+            </div>
+          ) : null}
+        </Subsection>
+      ) : null}
+
+      {eligibility.financial_minimum ? (
+        <Subsection title={tr(locale, "재정", "Tài chính")}>
+          <Dl>
+            <Info
+              label={tr(locale, "최소 잔고", "Số dư tối thiểu")}
+              value={fmtCur(
+                eligibility.financial_minimum.amount,
+                eligibility.financial_minimum.currency
+              )}
+            />
+            <Info
+              label={tr(locale, "유효 기간", "Thời hạn")}
+              value={
+                eligibility.financial_minimum.freshness_days != null
+                  ? tr(locale, `${eligibility.financial_minimum.freshness_days}일`, `${eligibility.financial_minimum.freshness_days} ngày`)
+                  : null
+              }
+            />
+            {eligibility.financial_minimum.holder_relations &&
+            eligibility.financial_minimum.holder_relations.length > 0 ? (
+              <Info
+                label={tr(locale, "예금주", "Chủ tài khoản")}
+                value={eligibility.financial_minimum.holder_relations
+                  .map((h) => L(HOLDER_LABEL, h, locale))
+                  .join(", ")}
+                full
+              />
+            ) : null}
+          </Dl>
+        </Subsection>
+      ) : null}
+
+      {eligibility.exclusions && eligibility.exclusions.length > 0 ? (
+        <div className="rounded-md border border-rose-200 bg-rose-50 p-3 text-sm">
+          <div className="font-medium text-rose-700">{tr(locale, "지원 불가", "Không đủ điều kiện")}</div>
+          <ul className="mt-1 list-disc pl-5 text-xs text-rose-800">
+            {eligibility.exclusions.map((e, i) => (
+              <li key={i}>{e}</li>
+            ))}
+          </ul>
+        </div>
       ) : null}
     </div>
   );

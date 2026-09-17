@@ -3,7 +3,7 @@
 /**
  * 모집요강 편집 — 학과 탭.
  *   어학당(항상 맨 앞, 삭제 불가) + 일반학과. 학과마다 카드 하나 = 폼 하나 = 저장 버튼 하나.
- *   학과가 가진 것: 마스터·정보, 학비, 장학금, (선택) 자격, 발급서류 항목, 작성서류 양식(읽기).
+ *   학과가 가진 것: 마스터·정보, 학비, 장학금, 자격(학과별), 발급서류 항목, 작성서류 양식(읽기), 어학당은 어학연수 프로그램.
  *   가져오기(복사)·학과 추가는 다이얼로그 → 서버 액션 → router.refresh().
  *   카드 key 에 revision 을 넣어 서버 데이터가 바뀌면 필드 초기값이 다시 잡히게 한다.
  */
@@ -55,6 +55,7 @@ export function SpecDepartmentEditor({
   catalog,
   copySources,
   revisions,
+  specEligibility = null,
 }: {
   specId: string;
   universityId: number;
@@ -66,6 +67,8 @@ export function SpecDepartmentEditor({
   copySources: CopySourceUniversity[];
   /** 학과별 서버 데이터 버전 — 바뀌면 카드를 다시 마운트한다 */
   revisions: Record<string, string>;
+  /** 옛 요강 공통 자격 — 학과 자격이 비어 있을 때 편집기 초기값으로만 쓴다(저장하면 학과 것이 된다) */
+  specEligibility?: Eligibility | null;
 }) {
   return (
     <div className="space-y-4">
@@ -87,6 +90,7 @@ export function SpecDepartmentEditor({
           formFiles={formFilesByDept[sd.id] ?? []}
           catalog={catalog}
           copySources={copySources}
+          specEligibility={specEligibility}
         />
       ))}
       {departments.length === 0 ? (
@@ -108,6 +112,7 @@ function DepartmentCard({
   formFiles,
   catalog,
   copySources,
+  specEligibility,
 }: {
   specId: string;
   universityId: number;
@@ -118,12 +123,15 @@ function DepartmentCard({
   formFiles: SpecFormFile[];
   catalog: DocCatalog;
   copySources: CopySourceUniversity[];
+  specEligibility: Eligibility | null;
 }) {
   const router = useRouter();
   const bound = saveSpecDepartmentAction.bind(null, specId, sd.id);
   const [state, action, pending] = useActionState<DeptActionState, FormData>(bound, undefined);
   const [busy, startTransition] = useTransition();
-  const [useCommon, setUseCommon] = useState(sd.eligibility == null);
+  // 자격은 학과별. 학과 자격이 비어 있으면 옛 요강 공통 자격으로 시작한다(저장하면 이 학과 것이 된다).
+  const initialEligibility = (sd.eligibility && Object.keys(sd.eligibility).length ? (sd.eligibility as Eligibility) : specEligibility) ?? null;
+  const lp = sd.info.language_program ?? {};
 
   useEffect(() => {
     if (!state) return;
@@ -234,14 +242,25 @@ function DepartmentCard({
           <ScholarshipsField name="dept_scholarships" initial={sd.scholarships as Scholarship[]} />
         </Section>
 
-        <Section title={useCommon ? "자격 — 요강 공통" : "자격 — 학과별"}>
-          <label className="mb-3 flex items-center gap-2 text-sm">
-            <input type="checkbox" checked={useCommon} onChange={(e) => setUseCommon(e.target.checked)} />
-            요강 공통 자격을 씀 (기본 탭의 자격)
-          </label>
-          <input type="hidden" name="eligibility_mode" value={useCommon ? "common" : "own"} />
-          {!useCommon ? <EligibilityField name="dept_eligibility" initial={(sd.eligibility ?? null) as Eligibility | null} /> : null}
+        <Section title="지원 자격">
+          {!sd.eligibility && specEligibility ? (
+            <p className="mb-2 text-xs text-muted-foreground">이 학과의 자격이 아직 없어 옛 요강 공통 자격을 보여줍니다. 저장하면 이 학과의 자격이 됩니다.</p>
+          ) : null}
+          <EligibilityField name="dept_eligibility" initial={initialEligibility} />
         </Section>
+
+        {sd.kind === "language" ? (
+          <Section title="어학연수 프로그램" open>
+            <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
+              <Num label="학기당 시간" name="lp_hours_per_semester" defaultValue={lp.hours_per_semester ?? null} min={0} />
+              <Num label="주당 시간" name="lp_hours_per_week" defaultValue={lp.hours_per_week ?? null} min={0} />
+              <Num label="학기 주수" name="lp_weeks_per_semester" defaultValue={lp.weeks_per_semester ?? null} min={0} />
+              <Text label="주간 시간표" name="lp_weekly_schedule" defaultValue={lp.weekly_schedule ?? ""} placeholder="예: 월-금 09:00-13:00" />
+              <Text label="비자" name="lp_visa_type" defaultValue={lp.visa_type ?? ""} placeholder="D-4" />
+              <Text label="연장 비자" name="lp_visa_extension" defaultValue={lp.visa_extension ?? ""} placeholder="예: 학기마다 연장" />
+            </div>
+          </Section>
+        ) : null}
 
         {state && !state.ok ? <div className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">{state.error}</div> : null}
 

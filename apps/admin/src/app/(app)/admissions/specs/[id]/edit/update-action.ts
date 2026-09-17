@@ -2,8 +2,8 @@
 
 /**
  * 모집요강 편집 — 기본 탭(요강 공통) 저장.
- *   전형 이름·상태·원본 파일·온라인 접수·공통 자격·기타(metadata)·작성서류/미연결 옛 줄.
- *   학과(학비·장학금·발급서류·양식)와 학기(일정·모집 학과)는 학과/학기 탭의 개별 액션이 저장한다.
+ *   전형 이름·상태·원본 파일·온라인 접수·기타(metadata)·작성서류/미연결 옛 줄.
+ *   학과(학비·장학금·자격·발급서류·양식)와 학기(일정·모집 학과)는 학과/학기 탭의 개별 액션이 저장한다.
  *   term 컬럼은 학기 중 가장 늦은 것으로 맞춘다(옛 읽기 코드용). program_type 은 손대지 않는다.
  */
 
@@ -71,8 +71,6 @@ export async function updateSpecAction(specId: string, _prev: UpdateSpecState, f
       return { ok: false, error: `JSON parse 실패: ${e instanceof Error ? e.message : String(e)}` };
     }
   };
-  const eligibility = parseArea("spec_eligibility", {});
-  if (!eligibility.ok) return { fieldErrors: { spec_eligibility: eligibility.error } };
   const metadata = parseArea("spec_metadata", {});
   if (!metadata.ok) return { fieldErrors: { spec_metadata: metadata.error } };
   const legacyIn = parseArea("spec_required_documents", null);
@@ -129,7 +127,7 @@ export async function updateSpecAction(specId: string, _prev: UpdateSpecState, f
   const patch: StudyAdmissionSpecUpdate = {
     admission_category: meta.admission_category,
     status: meta.status,
-    eligibility: eligibility.value,
+    // eligibility 는 학과별(0068) — 요강 공통 자격은 더 이상 여기서 저장하지 않는다(옛 값은 학과 자격 초기값용으로만 남긴다)
     metadata: metadata.value,
     source_file_url: meta.source_file_url,
     is_online_submission: isOnline,

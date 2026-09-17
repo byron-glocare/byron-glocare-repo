@@ -125,22 +125,10 @@ export function MetadataField({
     initial?.selection_process?.evaluation_criteria ?? ""
   );
 
-  // post_acceptance
-  const [visaType, setVisaType] = useState<string>(
-    initial?.post_acceptance?.visa_type ?? "D-2"
-  );
-  const [postGradVisa, setPostGradVisa] = useState<string>(
-    initial?.post_acceptance?.post_graduation_visa ?? ""
-  );
-  const [insReq, setInsReq] = useState<string>(
-    initial?.post_acceptance?.insurance_requirement ?? ""
-  );
-  const [warnings, setWarnings] = useState<string>(
-    (initial?.post_acceptance?.warnings ?? []).join("\n")
-  );
-  const [processSteps, setProcessSteps] = useState<string>(
-    (initial?.post_acceptance?.process_steps ?? []).join("\n")
-  );
+  // post_acceptance · language_program — UI 에서 뺐다(합격 후 섹션 폐기, 어학연수 프로그램은 어학당 학과로 이동, 0068).
+  // 옛 데이터를 잃지 않도록 초기값을 그대로 통과시킨다.
+  const passThroughPostAcceptance = initial?.post_acceptance;
+  const passThroughLanguageProgram = initial?.language_program;
 
   // forms
   const [forms, setForms] = useState<NonNullable<Metadata["forms"]>>({
@@ -163,11 +151,6 @@ export function MetadataField({
     initial?.government_designations ?? []
   );
 
-  // language_program
-  const [langProg, setLangProg] = useState<
-    NonNullable<Metadata["language_program"]>
-  >(initial?.language_program ?? {});
-
   // country notes vi
   const [countryNotes, setCountryNotes] = useState<string>(
     initial?.country_specific_notes_vi ?? ""
@@ -176,12 +159,6 @@ export function MetadataField({
   const splitCsv = (s: string): string[] =>
     s
       .split(",")
-      .map((x) => x.trim())
-      .filter((x) => x !== "");
-
-  const splitLines = (s: string): string[] =>
-    s
-      .split("\n")
       .map((x) => x.trim())
       .filter((x) => x !== "");
 
@@ -207,14 +184,7 @@ export function MetadataField({
           : undefined,
       evaluation_criteria: evalCriteria || undefined,
     }),
-    post_acceptance: cleanObj({
-      visa_type: visaType || undefined,
-      post_graduation_visa: postGradVisa || undefined,
-      insurance_requirement: insReq || undefined,
-      warnings: warnings.trim() !== "" ? splitLines(warnings) : undefined,
-      process_steps:
-        processSteps.trim() !== "" ? splitLines(processSteps) : undefined,
-    }),
+    post_acceptance: passThroughPostAcceptance,
     forms: cleanObj({
       application_form: forms.application_form,
       self_intro: forms.self_intro,
@@ -236,7 +206,7 @@ export function MetadataField({
           }))
         : undefined,
     country_specific_notes_vi: countryNotes || undefined,
-    language_program: cleanObj({ ...langProg }),
+    language_program: passThroughLanguageProgram,
   });
 
   return (
@@ -272,43 +242,6 @@ export function MetadataField({
             placeholder="예: 서류 60% + 면접 40%"
           />
         </div>
-      </div>
-
-      {/* 합격 후 (비자) */}
-      <div className="space-y-2 rounded-md border bg-muted/20 p-3">
-        <div className="text-sm font-medium">합격 후 (비자·절차)</div>
-        <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-          <FieldText
-            label="입학 비자"
-            value={visaType}
-            onChange={setVisaType}
-            placeholder="D-2"
-          />
-          <FieldText
-            label="졸업 후 비자"
-            value={postGradVisa}
-            onChange={setPostGradVisa}
-            placeholder="예: E-7"
-          />
-          <FieldText
-            label="보험 요건"
-            value={insReq}
-            onChange={setInsReq}
-            placeholder="예: 의료보험 의무"
-          />
-        </div>
-        <FieldTextarea
-          label="주의사항 (줄바꿈 구분)"
-          value={warnings}
-          onChange={setWarnings}
-          rows={3}
-        />
-        <FieldTextarea
-          label="절차 (줄바꿈 구분)"
-          value={processSteps}
-          onChange={setProcessSteps}
-          rows={3}
-        />
       </div>
 
       {/* 학교 양식 */}
@@ -553,76 +486,6 @@ export function MetadataField({
         )}
       </div>
 
-      {/* 어학연수 프로그램 */}
-      <div className="space-y-2 rounded-md border bg-muted/20 p-3">
-        <div className="text-sm font-medium">어학연수 프로그램 (해당 시)</div>
-        <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
-          <FieldNumber
-            label="학기당 시간"
-            value={
-              langProg.hours_per_semester == null
-                ? ""
-                : String(langProg.hours_per_semester)
-            }
-            onChange={(v) =>
-              setLangProg({
-                ...langProg,
-                hours_per_semester: v === "" ? undefined : Number(v),
-              })
-            }
-          />
-          <FieldNumber
-            label="주당 시간"
-            value={
-              langProg.hours_per_week == null
-                ? ""
-                : String(langProg.hours_per_week)
-            }
-            onChange={(v) =>
-              setLangProg({
-                ...langProg,
-                hours_per_week: v === "" ? undefined : Number(v),
-              })
-            }
-          />
-          <FieldNumber
-            label="학기 주수"
-            value={
-              langProg.weeks_per_semester == null
-                ? ""
-                : String(langProg.weeks_per_semester)
-            }
-            onChange={(v) =>
-              setLangProg({
-                ...langProg,
-                weeks_per_semester: v === "" ? undefined : Number(v),
-              })
-            }
-          />
-          <FieldText
-            label="주간 시간표"
-            value={langProg.weekly_schedule ?? ""}
-            onChange={(v) =>
-              setLangProg({ ...langProg, weekly_schedule: v })
-            }
-            placeholder="예: 월-금"
-          />
-          <FieldText
-            label="비자"
-            value={langProg.visa_type ?? ""}
-            onChange={(v) => setLangProg({ ...langProg, visa_type: v })}
-            placeholder="D-4"
-          />
-          <FieldText
-            label="연장 비자"
-            value={langProg.visa_extension ?? ""}
-            onChange={(v) =>
-              setLangProg({ ...langProg, visa_extension: v })
-            }
-          />
-        </div>
-      </div>
-
       {/* 베트남 특화 메모 */}
       <FieldTextarea
         label="베트남 특화 안내 (베트남어)"
@@ -652,31 +515,6 @@ function FieldText({
       <span className="text-xs text-muted-foreground">{label}</span>
       <input
         type="text"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        className="rounded-md border border-input bg-background px-2 py-1.5 text-sm"
-      />
-    </label>
-  );
-}
-
-function FieldNumber({
-  label,
-  value,
-  onChange,
-  placeholder,
-}: {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-  placeholder?: string;
-}) {
-  return (
-    <label className="flex flex-col gap-1">
-      <span className="text-xs text-muted-foreground">{label}</span>
-      <input
-        type="number"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}

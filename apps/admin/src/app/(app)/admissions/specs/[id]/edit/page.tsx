@@ -1,8 +1,8 @@
 /**
  * /admissions/specs/[id]/edit — 모집요강 편집 (대학당 1개 · 학과별 서류 · 학기별 일정).
  *   기본 탭: 요강 공통 (통째 저장)
- *   학과 탭: 어학당 + 일반학과, 학과마다 따로 저장
- *   학기 탭: 학기마다 일정 + 모집 학과
+ *   학과 탭: 어학당 + 일반학과, 학과마다 따로 저장 (자격은 학과별, 어학당은 어학연수 프로그램 포함)
+ *   학기 탭: 학기마다 일정(일반학과·어학당 따로) + 모집 학과
  *   ?tab=departments|terms 로 시작 탭 지정.
  */
 
@@ -122,7 +122,7 @@ export default async function EditAdmissionPage({
     deptRevisions[d.id] = rev([d.department_id, d.info, d.tuition, d.scholarships, d.eligibility, d.is_active, docRowsByDept[d.id] ?? [], (formFilesByDept[d.id] ?? []).map((f) => f.id)]);
   }
   const termRevisions: Record<string, string> = {};
-  for (const t of terms) termRevisions[t.id] = rev([t.term, t.schedule, t.notes]);
+  for (const t of terms) termRevisions[t.id] = rev([t.term, t.schedule, t.schedule_language, t.notes]);
 
   const offerings: TermOffering[] = (offeringRows ?? []).map((o) => ({ id: o.id, department_id: o.department_id, term: o.term, status: o.status, intake_quota: o.intake_quota }));
   const termDepts: TermDept[] = departments.map((d) => ({ id: d.id, department_id: d.department_id, name_ko: d.name_ko, kind: d.kind, is_active: d.is_active }));
@@ -158,6 +158,7 @@ export default async function EditAdmissionPage({
               catalog={docCatalog}
               copySources={copySources}
               revisions={deptRevisions}
+              specEligibility={spec.eligibility && typeof spec.eligibility === "object" && Object.keys(spec.eligibility as object).length ? (spec.eligibility as never) : null}
             />
           }
           termsPanel={<SpecTermEditor specId={id} terms={terms} departments={termDepts} offerings={offerings} revisions={termRevisions} />}

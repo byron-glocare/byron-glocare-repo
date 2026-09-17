@@ -1,9 +1,10 @@
 /**
  * /admissions/specs/[id] — 모집요강 상세 (대학당 1개 · 학과별 서류 · 학기별 일정, 0067).
  *   머리: 대학 · 전형 이름 · 상태 · 학기 목록
- *   학과: 어학당 먼저. 학과마다 정보 · 학비·장학금 · 작성서류 양식 · 발급서류 항목 · (있으면) 학과별 자격
- *   학기: 학기마다 일정 + 모집하는 학과(모집 행 상태)
- *   요강 공통 자격 · 기타(선발·연락처·정부지정 등)
+ *   학과: 어학당 먼저. 학과마다 정보 · 학비·장학금 · 작성서류 양식 · 발급서류 항목 · 지원 자격(학과별; 비면 옛 요강 공통 폴백)
+ *         어학당은 어학연수 프로그램(info.language_program; 옛 metadata.language_program 폴백)
+ *   학기: 학기마다 일정(일반학과 · 어학당 따로) + 모집하는 학과(모집 행 상태)
+ *   기타(선발·연락처·정부지정 등) — 합격 후·어학연수 프로그램 카드는 폐기(0068)
  */
 
 import Link from "next/link";
@@ -143,8 +144,17 @@ type MetadataShape = {
     submission_hours?: string;
   };
   government_designations?: Array<{ agency?: string; designation_name?: string; effective_from?: string; benefits?: string[]; notes?: string }>;
-  language_program?: { hours_per_semester?: number; hours_per_week?: number; weeks_per_semester?: number; weekly_schedule?: string; visa_type?: string; visa_extension?: string };
+  language_program?: LanguageProgramShape;
   country_specific_notes_vi?: string;
+};
+
+type LanguageProgramShape = {
+  hours_per_semester?: number | null;
+  hours_per_week?: number | null;
+  weeks_per_semester?: number | null;
+  weekly_schedule?: string | null;
+  visa_type?: string | null;
+  visa_extension?: string | null;
 };
 
 export default async function AdmissionDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -176,7 +186,8 @@ export default async function AdmissionDetailPage({ params }: { params: Promise<
   });
   const allCurrentFileKeys = new Set(Array.from(filesByDept.values()).flat().map((f) => f.key));
 
-  const eligibility = (spec.eligibility ?? {}) as EligibilityShape;
+  // 옛 요강 공통 자격 — 학과 자격이 비어 있을 때만 폴백으로 보여준다(0068: 자격은 학과별)
+  const specEligibility = (spec.eligibility && typeof spec.eligibility === "object" && Object.keys(spec.eligibility as object).length ? spec.eligibility : null) as EligibilityShape | null;
   const metadata = (spec.metadata ?? {}) as MetadataShape;
   const docItemCount = Array.from(rowsByDept.values()).reduce((n, r) => n + r.length, 0);
 
@@ -243,6 +254,8 @@ export default async function AdmissionDetailPage({ params }: { params: Promise<
                 catalog={docCatalog}
                 universityId={spec.university_id}
                 offeringTerms={offerings.filter((o) => o.department_id === d.department_id).map((o) => o.term).sort((a, b) => b.localeCompare(a))}
+                specEligibility={specEligibility}
+                legacyLanguageProgram={metadata.language_program ?? null}
               />
             ))
           )}
@@ -315,7 +328,14 @@ export default async function AdmissionDetailPage({ params }: { params: Promise<
                     <Badge variant="secondary">{offs.length} 학과 모집</Badge>
                     {t.notes ? <span className="text-xs text-muted-foreground">{t.notes}</span> : null}
                   </div>
-                  <ScheduleTable schedule={(t.schedule ?? {}) as ScheduleShape} />
+                  <div>
+                    <div className="mb-1 text-xs uppercase tracking-wide text-muted-foreground">일반학과 모집 일정</div>
+                    <ScheduleTable schedule={(t.schedule ?? {}) as ScheduleShape} />
+                  </div>
+                  <div>
+                    <div className="mb-1 text-xs uppercase tracking-wide text-muted-foreground">어학당 모집 일정</div>
+                    <ScheduleTable schedule={(t.schedule_language ?? {}) as ScheduleShape} />
+                  </div>
                   <div>
                     <div className="mb-1 text-xs uppercase tracking-wide text-muted-foreground">모집하는 학과</div>
                     {offs.length === 0 ? (
@@ -341,12 +361,6 @@ export default async function AdmissionDetailPage({ params }: { params: Promise<
           )}
         </section>
 
-        {/* 요강 공통 자격 */}
-        <Card className="p-6 space-y-4">
-          <h2 className="text-base font-semibold">지원 자격 (요강 공통)</h2>
-          <EligibilityBlock eligibility={eligibility} />
-        </Card>
-
         <MetadataCards metadata={metadata} />
       </div>
     </>
@@ -362,6 +376,8 @@ function DepartmentCard({
   catalog,
   universityId,
   offeringTerms,
+  specEligibility,
+  legacyLanguageProgram,
 }: {
   sd: SpecDepartment;
   rows: SpecDocItemRow[];
@@ -369,10 +385,19 @@ function DepartmentCard({
   catalog: DocCatalog;
   universityId: number;
   offeringTerms: string[];
+  /** 옛 요강 공통 자격 — 학과 자격이 비었을 때 폴백 */
+  specEligibility: EligibilityShape | null;
+  /** 옛 metadata.language_program — 어학당 info.language_program 이 비었을 때 폴백 */
+  legacyLanguageProgram: LanguageProgramShape | null;
 }) {
   const itemByKey = new Map(catalog.items.map((i) => [i.key, i]));
   const tuition = sd.tuition as Tuition;
   const scholarships = sd.scholarships as Scholarship[];
+  const ownEligibility = sd.eligibility && Object.keys(sd.eligibility).length ? (sd.eligibility as EligibilityShape) : null;
+  const eligibility = ownEligibility ?? specEligibility;
+  const hasValues = (o: object | null | undefined) => !!o && Object.values(o).some((v) => v !== undefined && v !== null && v !== "");
+  const languageProgram: LanguageProgramShape | null =
+    sd.kind === "language" ? ((hasValues(sd.info.language_program) ? sd.info.language_program : null) ?? (hasValues(legacyLanguageProgram) ? legacyLanguageProgram : null)) : null;
   const uploadHref = `/admissions/forms/new?university_id=${universityId}&spec_department_id=${encodeURIComponent(sd.id)}`;
   return (
     <Card className={`p-6 space-y-4 ${sd.is_active ? "" : "opacity-75"}`}>
@@ -392,9 +417,27 @@ function DepartmentCard({
         <Info label="TOPIK 최소" value={sd.info.korean_min_topik ? `${sd.info.korean_min_topik}급` : null} />
         <Info label="학비" value={tuitionSummary(tuition)} />
         <Info label="장학금" value={scholarships.length ? `${scholarships.length}건 — ${scholarships.map((s) => s.name).filter(Boolean).slice(0, 3).join(", ")}${scholarships.length > 3 ? " 외" : ""}` : null} />
-        <Info label="자격" value={sd.eligibility ? "학과별" : "요강 공통"} />
         {sd.info.notes ? <Info label="메모" value={sd.info.notes} full /> : null}
       </dl>
+
+      {/* 어학연수 프로그램 — 어학당만 */}
+      {sd.kind === "language" ? (
+        <section className="rounded-md border p-3">
+          <h4 className="mb-2 text-sm font-semibold">어학연수 프로그램</h4>
+          {languageProgram ? (
+            <dl className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm md:grid-cols-3">
+              <Info label="학기당 시간" value={languageProgram.hours_per_semester != null ? `${languageProgram.hours_per_semester}시간` : null} />
+              <Info label="주당 시간" value={languageProgram.hours_per_week != null ? `${languageProgram.hours_per_week}시간` : null} />
+              <Info label="학기 주수" value={languageProgram.weeks_per_semester != null ? `${languageProgram.weeks_per_semester}주` : null} />
+              <Info label="주간 시간표" value={languageProgram.weekly_schedule} />
+              <Info label="비자" value={languageProgram.visa_type} />
+              <Info label="연장 비자" value={languageProgram.visa_extension} />
+            </dl>
+          ) : (
+            <p className="text-xs text-muted-foreground">미입력</p>
+          )}
+        </section>
+      ) : null}
 
       {/* 작성서류 양식 */}
       <section>
@@ -546,13 +589,14 @@ function DepartmentCard({
         </section>
       ) : null}
 
-      {/* 학과별 자격 */}
-      {sd.eligibility ? (
-        <section className="rounded-md border p-3">
-          <h4 className="mb-2 text-sm font-semibold">학과별 지원 자격</h4>
-          <EligibilityBlock eligibility={sd.eligibility as EligibilityShape} />
-        </section>
-      ) : null}
+      {/* 지원 자격 — 학과별 (비면 옛 요강 공통 폴백) */}
+      <section className="rounded-md border p-3">
+        <div className="mb-2 flex items-center gap-2">
+          <h4 className="text-sm font-semibold">지원 자격</h4>
+          {!ownEligibility && eligibility ? <Badge variant="outline" className="text-[10px] text-amber-600">옛 요강 공통 값</Badge> : null}
+        </div>
+        {eligibility ? <EligibilityBlock eligibility={eligibility} /> : <p className="text-xs text-muted-foreground">미입력</p>}
+      </section>
     </Card>
   );
 }
@@ -568,6 +612,8 @@ function tuitionSummary(t: Tuition): string | null {
 // ── 일정 ──────────────────────────────────────────────────────────────
 
 function ScheduleTable({ schedule }: { schedule: ScheduleShape }) {
+  const empty = !(schedule.rounds && schedule.rounds.length > 0) && !schedule.semester_start && !schedule.orientation && !schedule.submission_method;
+  if (empty) return <p className="text-sm text-muted-foreground">미입력</p>;
   return (
     <div>
       {schedule.rounds && schedule.rounds.length > 0 ? (
@@ -746,37 +792,6 @@ function MetadataCards({ metadata }: { metadata: MetadataShape }) {
         </Card>
       ) : null}
 
-      {metadata.post_acceptance ? (
-        <Card className="p-6">
-          <h2 className="mb-3 text-base font-semibold">합격 후 (비자·절차)</h2>
-          <dl className="grid grid-cols-1 gap-x-6 gap-y-2 text-sm md:grid-cols-2">
-            <Info label="입학 비자" value={metadata.post_acceptance.visa_type} />
-            <Info label="졸업 후 비자" value={metadata.post_acceptance.post_graduation_visa} />
-            <Info label="보험 요건" value={metadata.post_acceptance.insurance_requirement} full />
-          </dl>
-          {metadata.post_acceptance.warnings && metadata.post_acceptance.warnings.length > 0 ? (
-            <div className="mt-3 rounded-md border border-amber-500/30 bg-amber-500/5 p-3 text-sm">
-              <div className="font-medium text-amber-700 dark:text-amber-400">주의사항</div>
-              <ul className="mt-1 list-disc pl-5 text-xs">
-                {metadata.post_acceptance.warnings.map((w, i) => (
-                  <li key={i}>{w}</li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
-          {metadata.post_acceptance.process_steps && metadata.post_acceptance.process_steps.length > 0 ? (
-            <div className="mt-3">
-              <div className="text-xs uppercase tracking-wide text-muted-foreground">절차</div>
-              <ol className="mt-1 list-decimal pl-5 text-sm">
-                {metadata.post_acceptance.process_steps.map((s, i) => (
-                  <li key={i}>{s}</li>
-                ))}
-              </ol>
-            </div>
-          ) : null}
-        </Card>
-      ) : null}
-
       {hasValues(metadata.contacts) ? (
         <Card className="p-6">
           <h2 className="mb-3 text-base font-semibold">연락처</h2>
@@ -818,20 +833,6 @@ function MetadataCards({ metadata }: { metadata: MetadataShape }) {
               </li>
             ))}
           </ul>
-        </Card>
-      ) : null}
-
-      {hasValues(metadata.language_program) ? (
-        <Card className="p-6">
-          <h2 className="mb-3 text-base font-semibold">어학연수 프로그램</h2>
-          <dl className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm md:grid-cols-4">
-            <Info label="학기당 시간" value={metadata.language_program!.hours_per_semester != null ? `${metadata.language_program!.hours_per_semester}시간` : null} />
-            <Info label="주당 시간" value={metadata.language_program!.hours_per_week != null ? `${metadata.language_program!.hours_per_week}시간` : null} />
-            <Info label="학기 주수" value={metadata.language_program!.weeks_per_semester != null ? `${metadata.language_program!.weeks_per_semester}주` : null} />
-            <Info label="시간표" value={metadata.language_program!.weekly_schedule} />
-            <Info label="비자" value={metadata.language_program!.visa_type} />
-            <Info label="연장 비자" value={metadata.language_program!.visa_extension} />
-          </dl>
         </Card>
       ) : null}
 

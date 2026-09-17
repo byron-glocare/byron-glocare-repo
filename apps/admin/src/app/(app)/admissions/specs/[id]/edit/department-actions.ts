@@ -57,7 +57,7 @@ const numOrNull = (v: FormDataEntryValue | null): number | null => {
   return Number.isFinite(n) ? n : null;
 };
 
-/** 학과 카드 저장 — 마스터·정보·학비·장학금·자격·발급서류 항목·활성 */
+/** 학과 카드 저장 — 마스터·정보·학비·장학금·자격(학과별)·발급서류 항목·활성·(어학당) 어학연수 프로그램 */
 export async function saveSpecDepartmentAction(
   specId: string,
   sdId: string,
@@ -89,13 +89,11 @@ export async function saveSpecDepartmentAction(
     if (isErr(tuition)) return { ok: false, error: `학비 JSON 오류: ${tuition.__error}` };
     const scholarships = parseJson<unknown[]>(formData.get("dept_scholarships"), []);
     if (isErr(scholarships)) return { ok: false, error: `장학금 JSON 오류: ${scholarships.__error}` };
-    const useCommon = formData.get("eligibility_mode") !== "own";
-    let eligibility: Record<string, unknown> | null = null;
-    if (!useCommon) {
-      const e = parseJson<Record<string, unknown>>(formData.get("dept_eligibility"), {});
-      if (isErr(e)) return { ok: false, error: `자격 JSON 오류: ${e.__error}` };
-      eligibility = e;
-    }
+    // 자격은 학과별(0068) — 비어 있어도 {} 로 저장한다(null 은 "옛 요강 공통을 씀"이었으나 폐기)
+    const eligibilityParsed = parseJson<Record<string, unknown>>(formData.get("dept_eligibility"), {});
+    if (isErr(eligibilityParsed)) return { ok: false, error: `자격 JSON 오류: ${eligibilityParsed.__error}` };
+    const eligibility: Record<string, unknown> =
+      eligibilityParsed && typeof eligibilityParsed === "object" && !Array.isArray(eligibilityParsed) ? eligibilityParsed : {};
     const rows = parseJson<SpecDocItemRow[]>(formData.get("dept_doc_items"), []);
     if (isErr(rows)) return { ok: false, error: `발급서류 항목 JSON 오류: ${rows.__error}` };
     if (!Array.isArray(rows)) return { ok: false, error: "발급서류 항목이 배열이 아닙니다." };
@@ -118,6 +116,33 @@ export async function saveSpecDepartmentAction(
     };
     // 이름은 학과 마스터를 따른다 (옛 JSONB 캐시는 departmentsJsonFrom 이 마스터 이름을 넣는다)
     delete info.name;
+    // 어학연수 프로그램 — 어학당만. 빈 값은 빼고, 전부 비면 키 자체를 뺀다.
+    if (sd.kind === "language") {
+      const strOrNull = (k: string): string | null => String(formData.get(k) ?? "").trim() || null;
+      const lp: NonNullable<DepartmentInfo["language_program"]> = {};
+      const nums = [
+        ["hours_per_semester", "lp_hours_per_semester"],
+        ["hours_per_week", "lp_hours_per_week"],
+        ["weeks_per_semester", "lp_weeks_per_semester"],
+      ] as const;
+      for (const [key, field] of nums) {
+        const n = numOrNull(formData.get(field));
+        if (n != null) lp[key] = n;
+      }
+      const strs = [
+        ["weekly_schedule", "lp_weekly_schedule"],
+        ["visa_type", "lp_visa_type"],
+        ["visa_extension", "lp_visa_extension"],
+      ] as const;
+      for (const [key, field] of strs) {
+        const s = strOrNull(field);
+        if (s) lp[key] = s;
+      }
+      if (Object.keys(lp).length > 0) info.language_program = lp;
+      else delete info.language_program;
+    } else {
+      delete info.language_program;
+    }
 
     const { error } = await admin
       .from("study_spec_departments")

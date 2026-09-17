@@ -42,6 +42,20 @@ export type SpecDepartmentInfo = {
   tuition_per_semester_krw?: number | null;
   notes?: string | null;
   program_kind?: string | null;
+  /** 어학당 학과에만 — 어학연수 프로그램 정보 (0068: metadata.language_program 에서 이사) */
+  language_program?: LanguageProgramInfo | null;
+};
+
+/** 어학연수 프로그램 정보 (어학당 학과 info.language_program / 옛 spec.metadata.language_program) */
+export type LanguageProgramInfo = {
+  hours_per_semester?: number | null;
+  hours_per_week?: number | null;
+  weeks_per_semester?: number | null;
+  weekly_schedule?: string | null;
+  subjects?: string[] | null;
+  completion_criteria?: { average_score_min?: number | null; attendance_min_pct?: number | null } | null;
+  visa_type?: string | null;
+  visa_extension?: string | null;
 };
 
 export type SpecDepartmentRow = {
@@ -479,22 +493,58 @@ export async function loadSpecDocuments(
   return { departments, byDept };
 }
 
-/** 요강의 학기(일정) */
-export type SpecTermRow = { id: string; term: string; schedule: unknown; notes: string | null; sort_order: number };
+/**
+ * 요강의 학기(일정). 0068: 학기마다 일정이 둘 —
+ *   schedule = 일반학과 모집 일정, schedule_language = 어학당 모집 일정.
+ */
+export type SpecTermRow = {
+  id: string;
+  term: string;
+  /** 일반학과 모집 일정 */
+  schedule: unknown;
+  /** 어학당 모집 일정 (0068) */
+  schedule_language: unknown;
+  notes: string | null;
+  sort_order: number;
+};
 export async function loadSpecTerms(supabase: Client, specIds: string[]): Promise<Map<string, SpecTermRow[]>> {
   const out = new Map<string, SpecTermRow[]>();
   if (specIds.length === 0) return out;
   const { data } = await supabase
     .from("study_spec_terms")
-    .select("id, spec_id, term, schedule, notes, sort_order")
+    .select("id, spec_id, term, schedule, schedule_language, notes, sort_order")
     .in("spec_id", specIds)
     .order("sort_order")
     .order("term", { ascending: false });
   for (const t of data ?? []) {
     if (!out.has(t.spec_id)) out.set(t.spec_id, []);
-    out.get(t.spec_id)!.push({ id: t.id, term: t.term, schedule: t.schedule, notes: t.notes, sort_order: t.sort_order });
+    out.get(t.spec_id)!.push({
+      id: t.id,
+      term: t.term,
+      schedule: t.schedule,
+      schedule_language: t.schedule_language ?? null,
+      notes: t.notes,
+      sort_order: t.sort_order,
+    });
   }
   return out;
+}
+
+/** 학과 종류에 맞는 학기 일정 — 어학당이면 schedule_language, 아니면 schedule. */
+export function scheduleForKind(
+  term: Pick<SpecTermRow, "schedule" | "schedule_language"> | null | undefined,
+  kind: SpecDepartmentKind | null | undefined
+): unknown {
+  if (!term) return null;
+  return kind === "language" ? term.schedule_language ?? null : term.schedule ?? null;
+}
+
+/** 일정 JSONB 에 내용이 있는가 (rounds·개강·종강·제출방법 중 하나라도) */
+export function hasScheduleContent(schedule: unknown): boolean {
+  if (!schedule || typeof schedule !== "object") return false;
+  const s = schedule as { rounds?: unknown; semester_start?: unknown; semester_end?: unknown; submission_method?: unknown };
+  if (Array.isArray(s.rounds) && s.rounds.length > 0) return true;
+  return [s.semester_start, s.semester_end, s.submission_method].some((v) => typeof v === "string" && v.trim() !== "");
 }
 
 /** 학과 종류 → 옛 program_type 라벨 키 (배지용 best-effort) */

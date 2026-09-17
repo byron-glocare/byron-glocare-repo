@@ -2,7 +2,7 @@
 
 /**
  * 모집요강 편집 — 학기 탭.
- *   학기마다 카드 하나 = 일정(ScheduleField)·메모 폼 + 그 학기에 모집하는 학과 체크리스트(study_offerings).
+ *   학기마다 카드 하나 = 일정(일반학과·어학당 각각 ScheduleField)·메모 폼 + 그 학기에 모집하는 학과 체크리스트(study_offerings).
  *   체크 = draft 모집 행 추가, 해제 = draft 일 때만 삭제(published/closed 는 모집 메뉴 몫).
  */
 
@@ -138,9 +138,15 @@ function TermCard({ specId, term, departments, offerings }: { specId: string; te
           </label>
         </div>
         <details open className="rounded-md border border-input bg-muted/30">
-          <summary className="cursor-pointer px-4 py-2 text-sm font-medium hover:bg-muted/50">모집 일정</summary>
+          <summary className="cursor-pointer px-4 py-2 text-sm font-medium hover:bg-muted/50">일반학과 모집 일정</summary>
           <div className="border-t border-input p-3">
             <ScheduleField name="term_schedule" initial={(Object.keys(term.schedule).length ? term.schedule : null) as Schedule | null} />
+          </div>
+        </details>
+        <details open className="rounded-md border border-input bg-muted/30">
+          <summary className="cursor-pointer px-4 py-2 text-sm font-medium hover:bg-muted/50">어학당 모집 일정</summary>
+          <div className="border-t border-input p-3">
+            <ScheduleField name="term_schedule_language" initial={(Object.keys(term.schedule_language).length ? term.schedule_language : null) as Schedule | null} />
           </div>
         </details>
         {state && !state.ok ? <div className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">{state.error}</div> : null}

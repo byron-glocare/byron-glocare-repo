@@ -13,6 +13,8 @@ import { residenceFromStudentLocation } from "@/lib/admission/offering-languages
 import {
   formFileAppliesTo,
   loadApplicationDepartments,
+  loadSpecTerms,
+  scheduleForKind,
 } from "@/lib/admission/spec-documents";
 import { getLocale, tr, type Locale } from "@/lib/i18n";
 
@@ -101,7 +103,7 @@ export default async function StudentOverviewPage({
   const { data: apps } = await supabase
     .from("study_applications")
     .select(
-      "id, status, next_deadline, target_department_label, target_department_id, admission_spec_id, offering_id, selected_language, created_at"
+      "id, status, next_deadline, target_department_label, target_department_id, admission_spec_id, offering_id, selected_language, term, created_at"
     )
     .eq("student_id", id)
     .order("created_at", { ascending: false });
@@ -109,7 +111,7 @@ export default async function StudentOverviewPage({
 
   // 부속 데이터 (지원 있을 때만)
   const specIds = Array.from(new Set(applications.map((a) => a.admission_spec_id)));
-  const [{ data: specs }, { data: vals }, { deptByApp }] = await Promise.all([
+  const [{ data: specs }, { data: vals }, { deptByApp }, termsBySpec] = await Promise.all([
     specIds.length > 0
       ? supabase
           .from("study_admission_specs")
@@ -122,8 +124,17 @@ export default async function StudentOverviewPage({
       .eq("student_id", id),
     // 0067: 지원 → 요강 학과 (양식은 spec_department_id 로 고른다)
     loadApplicationDepartments(supabase, applications),
+    // 0068: 학기별 일정 (일반학과/어학당) — 지원 학과 종류에 맞는 쪽을 쓴다
+    loadSpecTerms(supabase, specIds),
   ]);
   const specMap = new Map((specs ?? []).map((s) => [s.id, s]));
+  /** 지원의 일정 — 학기 행(지원 학기 → 없으면 첫 학기)에서 학과 종류별 일정, 없으면 옛 요강 공통 schedule */
+  const scheduleOfApp = (a: { admission_spec_id: string; term?: string | null; id: string }): unknown => {
+    const terms = termsBySpec.get(a.admission_spec_id) ?? [];
+    const termRow = (a.term ? terms.find((t) => t.term === a.term) : undefined) ?? terms[0] ?? null;
+    const kind = deptByApp.get(a.id)?.kind ?? "regular";
+    return scheduleForKind(termRow, kind) ?? specMap.get(a.admission_spec_id)?.schedule ?? null;
+  };
   const filledKeys = new Set((vals ?? []).map((v) => v.data_type_key));
 
   const uniIds = Array.from(
@@ -327,7 +338,7 @@ export default async function StudentOverviewPage({
             {applications.map((a) => {
               const spec = specMap.get(a.admission_spec_id);
               const upcoming = upcomingSchedule(
-                spec?.schedule,
+                scheduleOfApp(a),
                 locale,
                 dateLocale
               );

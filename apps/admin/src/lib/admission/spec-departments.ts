@@ -39,6 +39,17 @@ export type DepartmentInfo = {
   tuition_per_semester_krw?: number | null;
   notes?: string | null;
   is_glocare_target?: boolean;
+  /** 어학연수 프로그램 — 어학당(kind=language)에만. 옛 metadata.language_program 을 여기로 옮겼다(0068) */
+  language_program?: LanguageProgramInfo | null;
+};
+
+export type LanguageProgramInfo = {
+  hours_per_semester?: number | null;
+  hours_per_week?: number | null;
+  weeks_per_semester?: number | null;
+  weekly_schedule?: string | null;
+  visa_type?: string | null;
+  visa_extension?: string | null;
 };
 
 export type SpecDepartment = {
@@ -62,7 +73,10 @@ export type SpecTerm = {
   id: string;
   spec_id: string;
   term: string;
+  /** 일반학과 모집 일정 */
   schedule: Record<string, unknown>;
+  /** 어학당 모집 일정 — 같은 학기라도 따로 (0068) */
+  schedule_language: Record<string, unknown>;
   notes: string | null;
   sort_order: number;
 };
@@ -116,12 +130,14 @@ export async function loadSpecDepartments(supabase: Client, specId: string): Pro
 export async function loadSpecTerms(supabase: Client, specId: string): Promise<SpecTerm[]> {
   const { data } = await supabase
     .from("study_spec_terms")
-    .select("id, spec_id, term, schedule, notes, sort_order")
+    .select("id, spec_id, term, schedule, schedule_language, notes, sort_order")
     .eq("spec_id", specId)
     .order("term", { ascending: false });
   return (data ?? []).map((r) => ({
     id: r.id, spec_id: r.spec_id, term: r.term,
-    schedule: ((r.schedule ?? {}) as Record<string, unknown>) ?? {}, notes: r.notes, sort_order: r.sort_order,
+    schedule: ((r.schedule ?? {}) as Record<string, unknown>) ?? {},
+    schedule_language: ((r.schedule_language ?? {}) as Record<string, unknown>) ?? {},
+    notes: r.notes, sort_order: r.sort_order,
   }));
 }
 

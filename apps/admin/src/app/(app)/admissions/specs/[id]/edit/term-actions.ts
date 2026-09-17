@@ -39,7 +39,7 @@ async function loadSpec(specId: string) {
   return { admin, spec };
 }
 
-/** 학기 카드 저장 — 학기 문자열·일정·메모 */
+/** 학기 카드 저장 — 학기 문자열·일정(일반학과 schedule · 어학당 schedule_language)·메모 */
 export async function saveSpecTermAction(specId: string, termId: string, _prev: TermActionState, formData: FormData): Promise<TermActionState> {
   const g = await guard();
   if (!g.ok) return g;
@@ -52,15 +52,21 @@ export async function saveSpecTermAction(specId: string, termId: string, _prev: 
     const term = String(formData.get("term") ?? "").trim();
     if (!TERM_RE.test(term)) return { ok: false, error: "학기 형식이 올바르지 않습니다 (예: 2027-Spring)", fieldErrors: { term: "예: 2027-Spring" } };
 
-    let schedule: unknown = {};
-    const raw = formData.get("term_schedule");
-    if (typeof raw === "string" && raw.trim()) {
+    const parseSchedule = (key: string, label: string): { ok: true; value: unknown } | { ok: false; error: string } => {
+      const raw = formData.get(key);
+      if (typeof raw !== "string" || !raw.trim()) return { ok: true, value: {} };
       try {
-        schedule = JSON.parse(raw);
+        return { ok: true, value: JSON.parse(raw) };
       } catch (e) {
-        return { ok: false, error: `일정 JSON 오류: ${e instanceof Error ? e.message : String(e)}` };
+        return { ok: false, error: `${label} 일정 JSON 오류: ${e instanceof Error ? e.message : String(e)}` };
       }
-    }
+    };
+    const parsedSchedule = parseSchedule("term_schedule", "일반학과");
+    if (!parsedSchedule.ok) return { ok: false, error: parsedSchedule.error };
+    const parsedScheduleLanguage = parseSchedule("term_schedule_language", "어학당");
+    if (!parsedScheduleLanguage.ok) return { ok: false, error: parsedScheduleLanguage.error };
+    const schedule = parsedSchedule.value;
+    const schedule_language = parsedScheduleLanguage.value;
     const notes = String(formData.get("term_notes") ?? "").trim() || null;
 
     if (term !== row.term) {
@@ -79,7 +85,7 @@ export async function saveSpecTermAction(specId: string, termId: string, _prev: 
       await admin.from("study_offerings").update({ term }).eq("university_id", spec.university_id).eq("term", row.term).eq("status", "draft");
     }
 
-    const { error } = await admin.from("study_spec_terms").update({ term, schedule, notes }).eq("id", termId);
+    const { error } = await admin.from("study_spec_terms").update({ term, schedule, schedule_language, notes }).eq("id", termId);
     if (error) return { ok: false, error: `학기 저장 실패: ${error.message}` };
     await syncSpecLegacyTerm(admin, specId);
     revalidate(specId, spec.university_id);
@@ -90,7 +96,7 @@ export async function saveSpecTermAction(specId: string, termId: string, _prev: 
 }
 
 /**
- * 학기 추가 — 일정은 비워 두거나, 다른 학기 일정에서 차수 이름만 가져온다(날짜는 비움).
+ * 학기 추가 — 일정(일반학과·어학당 둘 다)은 비워 두거나, 다른 학기 일정에서 차수 이름만 가져온다(날짜는 비움).
  *   copy_departments 면 원본 학기에 모집 행이 있는 학과를 새 학기에도 draft 로 넣는다.
  */
 export async function addSpecTermAction(
@@ -108,17 +114,24 @@ export async function addSpecTermAction(
     if (dup) return { ok: false, error: `${term} 학기가 이미 있습니다.` };
 
     let schedule: Record<string, unknown> = { rounds: [] };
+    let schedule_language: Record<string, unknown> = { rounds: [] };
     let srcTerm: string | null = null;
     if (input.copy_from_term_id) {
-      const { data: src } = await admin.from("study_spec_terms").select("term, schedule").eq("id", input.copy_from_term_id).eq("spec_id", specId).maybeSingle();
+      const { data: src } = await admin
+        .from("study_spec_terms")
+        .select("term, schedule, schedule_language")
+        .eq("id", input.copy_from_term_id)
+        .eq("spec_id", specId)
+        .maybeSingle();
       if (src) {
         schedule = blankSchedule(src.schedule);
+        schedule_language = blankSchedule(src.schedule_language);
         srcTerm = src.term;
       }
     }
     const { data: created, error } = await admin
       .from("study_spec_terms")
-      .insert({ spec_id: specId, term, schedule, sort_order: 0 })
+      .insert({ spec_id: specId, term, schedule, schedule_language, sort_order: 0 })
       .select("id")
       .single();
     if (error || !created) return { ok: false, error: `학기 추가 실패: ${error?.message ?? "unknown"}` };

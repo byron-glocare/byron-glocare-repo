@@ -5,7 +5,7 @@
  *   학과는 study_spec_departments, 학기 일정은 study_spec_terms 에 있다.
  *
  *   - blocking(게이트): 요강이 없거나, 학과가 요강에 없거나, 요강 학과가 비활성이면 오픈 불가.
- *   - warnings(경고): 학기 일정 없음 / 발급서류 항목 없음 / 현행 작성서류 양식 없음 / 학비 미입력 /
+ *   - warnings(경고): 학기 일정 없음(어학당은 schedule_language, 일반학과는 schedule) / 발급서류 항목 없음 / 현행 작성서류 양식 없음 / 학비 미입력 /
  *     요강 미승인. 오픈은 허용하되 운영자에게 미완료 항목을 알린다.
  *
  *   요강 연결(source_spec_id)은 대학의 유일한 요강이므로 여기서 찾아 돌려준다 — 호출부가 자동으로 건다.
@@ -123,7 +123,7 @@ export async function assessOfferingReadiness(
 
   // 3) 경고 항목 — 학기 일정 / 발급서류 항목 / 현행 양식 / 학비
   const [{ data: termRow }, { count: docItemCount }, { count: formCount }] = await Promise.all([
-    supabase.from("study_spec_terms").select("schedule").eq("spec_id", spec.id).eq("term", term).maybeSingle(),
+    supabase.from("study_spec_terms").select("schedule, schedule_language").eq("spec_id", spec.id).eq("term", term).maybeSingle(),
     supabase
       .from("study_spec_doc_items")
       .select("id", { count: "exact", head: true })
@@ -135,6 +135,9 @@ export async function assessOfferingReadiness(
       .eq("is_current", true),
   ]);
 
+  // 학기 일정은 학과 종류에 맞는 것을 본다 — 어학당은 schedule_language, 일반학과는 schedule (0068)
+  const termSchedule = termRow ? (sd.kind === "language" ? termRow.schedule_language : termRow.schedule) : null;
+  const scheduleOk = !!termRow && hasSchedule(termSchedule);
   const checks: ReadinessCheck[] = [
     { key: "spec", label: "모집요강", ok: true },
     { key: "spec_department", label: "요강 학과", ok: true },
@@ -146,9 +149,9 @@ export async function assessOfferingReadiness(
     },
     {
       key: "schedule",
-      label: `${term} 학기 일정`,
-      ok: !!termRow && hasSchedule(termRow.schedule),
-      detail: !termRow ? "요강에 학기 없음" : hasSchedule(termRow.schedule) ? undefined : "일정 미입력",
+      label: `${term} 학기 ${KIND_LABEL[sd.kind]} 일정`,
+      ok: scheduleOk,
+      detail: !termRow ? "요강에 학기 없음" : scheduleOk ? undefined : "일정 미입력",
     },
     {
       key: "doc_items",
