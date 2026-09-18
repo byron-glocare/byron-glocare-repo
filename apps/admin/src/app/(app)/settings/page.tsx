@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/page-header";
 import { SystemSettingsManager } from "@/components/settings/system-settings-manager";
+import { ClassInquiryMessagesEditor } from "@/components/settings/class-inquiry-messages-editor";
 import type { Json } from "@/types/database";
 
 export const dynamic = "force-dynamic";
@@ -26,6 +27,7 @@ export default async function SettingsPage() {
       />
       <div className="p-6 space-y-6">
         <SystemSettingsManager settings={settings} />
+        <ClassInquiryMessagesEditor value={settings.class_inquiry_messages} />
       </div>
     </>
   );

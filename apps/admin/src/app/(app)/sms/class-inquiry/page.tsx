@@ -1,11 +1,15 @@
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/page-header";
 import { SmsClassInquiryView } from "@/components/sms/sms-class-inquiry-view";
+import { loadClassInquiryMessages } from "@/lib/class-inquiry-messages";
 
 export const dynamic = "force-dynamic";
 
 export default async function SmsClassInquiryPage() {
   const supabase = await createClient();
+
+  // 랜덤 발송에 쓰이는 문구(운영자가 설정에서 편집 가능, 미설정 시 기본 5종)
+  const messages = await loadClassInquiryMessages(supabase);
 
   const [{ data: centers }, { data: inquiries }, { data: classes }] =
     await Promise.all([
@@ -82,7 +86,7 @@ export default async function SmsClassInquiryPage() {
         ]}
       />
       <div className="p-6">
-        <SmsClassInquiryView centers={rows} />
+        <SmsClassInquiryView centers={rows} messages={messages} />
       </div>
     </>
   );

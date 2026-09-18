@@ -50,11 +50,14 @@ function formatPhoneInput(raw: string): string {
  */
 export function ClassInquiryDialog({
   center,
+  messages,
   open,
   onOpenChange,
   onSent,
 }: {
   center: InquiryCenter;
+  /** 랜덤 문구 풀 (설정에서 편집, 미설정 시 기본 5종) */
+  messages: string[];
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSent?: () => void;
@@ -81,7 +84,7 @@ export function ClassInquiryDialog({
   // 열릴 때마다 랜덤 문구 + 기본 선택(대표번호 → 있는 번호 → 직접 입력)로 리셋
   useEffect(() => {
     if (open) {
-      setBody(pickClassInquiryMessage());
+      setBody(pickClassInquiryMessage(messages));
       setCustomPhone("");
       setChoice(numberOptions[0]?.key ?? "custom");
     }
@@ -194,7 +197,7 @@ export function ClassInquiryDialog({
               <button
                 type="button"
                 className="text-[11px] text-muted-foreground underline hover:text-foreground"
-                onClick={() => setBody(pickClassInquiryMessage())}
+                onClick={() => setBody(pickClassInquiryMessage(messages))}
                 disabled={pending}
               >
                 다른 문구로 바꾸기

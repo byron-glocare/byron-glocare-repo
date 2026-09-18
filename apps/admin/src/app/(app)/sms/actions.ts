@@ -7,6 +7,7 @@ import {
   pickClassInquiryMessage,
 } from "@/lib/sms-templates";
 import { pickCenterSmsPhone } from "@/lib/sms-recipient";
+import { loadClassInquiryMessages } from "@/lib/class-inquiry-messages";
 
 export type SmsActionResult =
   | { ok: true; warning?: string }
@@ -381,7 +382,9 @@ export async function sendClassInquirySms(input: {
     };
   }
 
-  const body = input.bodyOverride?.trim() || pickClassInquiryMessage();
+  const body =
+    input.bodyOverride?.trim() ||
+    pickClassInquiryMessage(await loadClassInquiryMessages(supabase));
 
   const send = await sendNhnLms({
     phone: recipientPhone,

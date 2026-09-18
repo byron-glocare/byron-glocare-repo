@@ -367,8 +367,15 @@ export const CLASS_INQUIRY_MESSAGES: string[] = [
   "안녕하세요 원장님 :) 글로케어에서 강의 일정 문의드립니다. 이번 달과 다음 달 개강 예정을 주/야간 구분과 함께 알려주실 수 있을까요? 정확한 날짜가 아직이라면 대략적인 날짜 옆에 (미정)이라고 적어주시면 큰 도움이 됩니다. 좋은 하루 되세요!",
 ];
 
-export function pickClassInquiryMessage(): string {
-  return CLASS_INQUIRY_MESSAGES[
-    Math.floor(Math.random() * CLASS_INQUIRY_MESSAGES.length)
-  ];
+/**
+ * 문구 풀에서 하나를 랜덤으로 고른다.
+ * pool 미지정·빈 배열이면 기본 5종(CLASS_INQUIRY_MESSAGES) 사용.
+ * 운영자가 설정에서 편집한 문구는 system_settings 에 저장되며
+ * loadClassInquiryMessages() 로 읽어 이 함수에 넘긴다.
+ */
+export function pickClassInquiryMessage(
+  pool: string[] = CLASS_INQUIRY_MESSAGES
+): string {
+  const list = pool.length > 0 ? pool : CLASS_INQUIRY_MESSAGES;
+  return list[Math.floor(Math.random() * list.length)];
 }

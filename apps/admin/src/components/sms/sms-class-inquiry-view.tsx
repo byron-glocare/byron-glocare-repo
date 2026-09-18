@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { ExternalLink, Loader2, Search, Send } from "lucide-react";
+import { ExternalLink, Loader2, Pencil, Search, Send } from "lucide-react";
 
 import {
   sendClassInquirySms,
@@ -16,7 +16,7 @@ import {
 import { pickCenterSmsPhone } from "@/lib/sms-recipient";
 import { formatDateTime } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -37,7 +37,14 @@ type CenterRow = InquiryCenter & {
   lastClassLabel: string | null;
 };
 
-export function SmsClassInquiryView({ centers }: { centers: CenterRow[] }) {
+export function SmsClassInquiryView({
+  centers,
+  messages,
+}: {
+  centers: CenterRow[];
+  /** 랜덤 발송 문구 풀 (설정에서 편집, 미설정 시 기본 5종) */
+  messages: string[];
+}) {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [target, setTarget] = useState<CenterRow | null>(null);
@@ -151,6 +158,13 @@ export function SmsClassInquiryView({ centers }: { centers: CenterRow[] }) {
                 </span>
               )
             )}
+            <a
+              href="/settings#class-inquiry-messages"
+              className={buttonVariants({ variant: "outline", size: "sm" })}
+            >
+              <Pencil className="size-3" />
+              문구 편집
+            </a>
             <Button
               type="button"
               size="sm"
@@ -297,6 +311,7 @@ export function SmsClassInquiryView({ centers }: { centers: CenterRow[] }) {
         {target && (
           <ClassInquiryDialog
             center={target}
+            messages={messages}
             open={!!target}
             onOpenChange={(open) => {
               if (!open) setTarget(null);
