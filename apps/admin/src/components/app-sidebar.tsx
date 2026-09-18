@@ -5,6 +5,10 @@
  *   그룹은 접었다 펼 수 있고, 그룹 머리를 잡아 끌어 순서를 바꿀 수 있다.
  *   접힘·순서는 이 브라우저에만 저장된다(localStorage). 기본 순서는 nav.ts.
  *   현재 페이지가 든 그룹은 접혀 있어도 펼쳐 보인다 — 지금 어디 있는지는 늘 보여야 한다.
+ *
+ *   창 폭 768px(md) 미만에서는 고정 사이드바를 숨기고, 헤더의 메뉴 버튼이 같은 사이드바를
+ *   왼쪽 서랍(drawer)으로 연다. 예전엔 좁은 화면용 메뉴가 없어서 창을 줄이거나 화면 배율이
+ *   큰 PC 에서는 메뉴가 통째로 사라졌다(2026-09-18 운영자 제보).
  */
 
 import { useEffect, useState } from "react";
@@ -59,7 +63,15 @@ function applyOrder(groups: NavGroup[], order: string[]): NavGroup[] {
   return [...top, ...ordered];
 }
 
-export function AppSidebar() {
+export function AppSidebar({
+  drawer = false,
+  onNavigate,
+}: {
+  /** true = 좁은 화면 서랍 안에서 쓴다(늘 보임). false = 넓은 화면 고정 사이드바. */
+  drawer?: boolean;
+  /** 서랍에서 메뉴를 누르면 닫기 */
+  onNavigate?: () => void;
+} = {}) {
   const pathname = usePathname();
   const [order, setOrder] = useState<string[]>([]);
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
@@ -105,9 +117,15 @@ export function AppSidebar() {
   }
 
   return (
-    <aside className="hidden md:flex md:w-60 shrink-0 flex-col border-r border-border bg-sidebar">
+    <aside
+      className={cn(
+        "shrink-0 flex-col border-r border-border bg-sidebar",
+        drawer ? "flex h-full w-64" : "hidden md:flex md:w-60"
+      )}
+    >
       <Link
         href="/"
+        onClick={onNavigate}
         className="flex h-20 items-center gap-2 px-5 border-b border-border"
       >
         <Image
@@ -219,6 +237,7 @@ export function AppSidebar() {
                     <Link
                       key={item.href}
                       href={item.href}
+                      onClick={onNavigate}
                       className={cn(
                         "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
                         active
