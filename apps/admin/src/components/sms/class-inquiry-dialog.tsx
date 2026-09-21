@@ -56,8 +56,11 @@ export function ClassInquiryDialog({
   onSent,
 }: {
   center: InquiryCenter;
-  /** 랜덤 문구 풀 (설정에서 편집, 미설정 시 기본 5종) */
-  messages: string[];
+  /**
+   * 랜덤 문구 풀 (설정에서 편집). 생략하면 pickClassInquiryMessage 가
+   * 기본 5종(CLASS_INQUIRY_MESSAGES)으로 폴백한다.
+   */
+  messages?: string[];
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSent?: () => void;

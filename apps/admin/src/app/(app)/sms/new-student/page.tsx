@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/page-header";
 import { SmsNewStudentView } from "@/components/sms-new-student-view";
 import { computeCustomerStatus } from "@/lib/customer-status";
+import { loadClassInquiryMessages } from "@/lib/class-inquiry-messages";
 
 export const dynamic = "force-dynamic";
 
@@ -40,6 +41,9 @@ export default async function SmsNewStudentPage() {
       .from("sms_messages")
       .select("target_customer_id, message_type"),
   ]);
+
+  // 강의 정보 문의 다이얼로그의 랜덤 문구(설정에서 편집, 미설정 시 기본 5종)
+  const classInquiryMessages = await loadClassInquiryMessages(supabase);
 
   // "이미 보냄" 판정 — 진행 단계의 '강의 접수 메시지 발송' 플래그
   // (customer_statuses.class_intake_sms_sent) 단일 소스로 통일.
@@ -120,6 +124,7 @@ export default async function SmsNewStudentPage() {
           reservationAmountByCustomer={Object.fromEntries(
             reservationAmountByCustomer
           )}
+          classInquiryMessages={classInquiryMessages}
         />
       </div>
     </>

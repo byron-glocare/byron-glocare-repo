@@ -93,6 +93,8 @@ type Props = {
   readyToSendIds: string[];
   /** 학생별 예약금 합계 (reservation_payments.amount 합) — 메시지의 "예약금(시험비)" 항목용 */
   reservationAmountByCustomer: Record<string, number>;
+  /** 강의 정보 문의 다이얼로그의 랜덤 문구 풀 (설정에서 편집) */
+  classInquiryMessages: string[];
 };
 
 export function SmsNewStudentView({
@@ -102,6 +104,7 @@ export function SmsNewStudentView({
   sentCustomerIds,
   readyToSendIds,
   reservationAmountByCustomer,
+  classInquiryMessages,
 }: Props) {
   const router = useRouter();
   const sentSet = useMemo(() => new Set(sentCustomerIds), [sentCustomerIds]);
@@ -184,6 +187,7 @@ export function SmsNewStudentView({
             sentSet={sentSet}
             readySet={readySet}
             reservationAmountByCustomer={reservationAmountByCustomer}
+            classInquiryMessages={classInquiryMessages}
             onSent={() => router.refresh()}
           />
         ))
@@ -200,6 +204,7 @@ function CenterGroupCard({
   sentSet,
   readySet,
   reservationAmountByCustomer,
+  classInquiryMessages,
   onSent,
 }: {
   center: Center;
@@ -209,6 +214,7 @@ function CenterGroupCard({
   sentSet: Set<string>;
   readySet: Set<string>;
   reservationAmountByCustomer: Record<string, number>;
+  classInquiryMessages: string[];
   onSent: () => void;
 }) {
   // default collapsed — 정산 예정 카드와 동일한 UX
@@ -542,6 +548,7 @@ function CenterGroupCard({
       {/* 강의 정보 문의 다이얼로그 (공용) */}
       <ClassInquiryDialog
         center={center}
+        messages={classInquiryMessages}
         open={inquiryOpen}
         onOpenChange={setInquiryOpen}
       />
