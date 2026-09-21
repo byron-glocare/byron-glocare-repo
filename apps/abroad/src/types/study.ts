@@ -488,7 +488,9 @@ export type StudyOffering = {
   university_id: number; // universities.id = bigint → number
   department_id: number; // departments.id = bigint → number
   term: string;
-  intake_quota: number | null; // 학기별 모집수. published 시 필수
+  intake_quota: number | null; // 글로케어 모집 인원. published 시 필수
+  /** 학교 전체 모집 인원 (0069) */
+  total_quota?: number | null;
   available_languages: OfferingLanguage[]; // 글로케어가 제공하는 언어 옵션 (≥1)
   location_options: OfferingLocation[]; // 거주지 분기 옵션 (빈 배열 = 분기 없음)
   status: OfferingStatus;
@@ -504,6 +506,8 @@ export type StudyOffering = {
 // 6. study_applications
 // =============================================================================
 export type StudyApplication = {
+  /** 같은 학기 안의 지망 순위 1~3 (0069). 관리자 참고용 */
+  priority?: number | null;
   /** 0067: 지원 학기 */
   term?: string | null;
   id: string;

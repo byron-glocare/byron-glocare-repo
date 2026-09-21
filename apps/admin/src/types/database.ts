@@ -1304,6 +1304,7 @@ export type Database = {
           target_department_id: number | null;
           target_department_label: string | null;
           term: string | null;
+          priority: number | null;
           status: string;
           created_at: string;
           updated_at: string;
@@ -1317,6 +1318,7 @@ export type Database = {
           target_department_id?: number | null;
           target_department_label?: string | null;
           term?: string | null;
+          priority?: number | null;
           status?: string;
           created_at?: string;
           updated_at?: string;
@@ -1950,7 +1952,8 @@ export type Database = {
           university_id: number;
           department_id: number;
           term: string;
-          intake_quota: number | null; // published 시 필수
+          intake_quota: number | null; // 글로케어 인원 — published 시 필수
+          total_quota: number | null; // 학교 전체 정원 (0069)
           available_languages: ("korean" | "english" | "other")[];
           location_options: ("domestic" | "overseas")[];
           status: "draft" | "published" | "closed" | "archived";
@@ -1967,6 +1970,7 @@ export type Database = {
           department_id: number;
           term: string;
           intake_quota?: number | null;
+          total_quota?: number | null;
           available_languages?: ("korean" | "english" | "other")[];
           location_options?: ("domestic" | "overseas")[];
           status?: "draft" | "published" | "closed" | "archived";
