@@ -133,6 +133,7 @@ function DepartmentCard({
   // 자격은 학과별. 학과 자격이 비어 있으면 옛 요강 공통 자격으로 시작한다(저장하면 이 학과 것이 된다).
   const initialEligibility = (sd.eligibility && Object.keys(sd.eligibility).length ? (sd.eligibility as Eligibility) : specEligibility) ?? null;
   const lp = sd.info.language_program ?? {};
+  const bv = sd.info.brochure_vi ?? {};
 
   useEffect(() => {
     if (!state) return;
@@ -180,6 +181,14 @@ function DepartmentCard({
           {!sd.is_active ? <Badge variant="outline" className="text-muted-foreground">비활성</Badge> : null}
           {!sd.department_active ? <Badge variant="outline" className="text-amber-600">마스터 비노출</Badge> : null}
           <div className="ml-auto flex flex-wrap items-center gap-1.5">
+            <Link
+              href={`/admissions/specs/${specId}/brochure?dept=${encodeURIComponent(sd.id)}`}
+              className={buttonVariants({ variant: "ghost", size: "sm" })}
+              title="이 학과의 베트남어 모집요강 PDF"
+            >
+              <FileText className="size-3.5" />
+              이 학과 PDF
+            </Link>
             <CopySetupDialog specId={specId} target={sd} siblings={siblings} copySources={copySources} />
             <Button type="button" variant="outline" size="sm" disabled={busy} onClick={toggleActive}>
               {sd.is_active ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}
@@ -263,7 +272,21 @@ function DepartmentCard({
           </Section>
         ) : null}
 
-        {state && !state.ok ? <div className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">{state.error}</div> : null}
+        <Section title="모집요강 PDF 문구 (베트남어)">
+          <p className="mb-2 text-xs text-muted-foreground">
+            베트남어로 입력합니다. 비워 둔 항목은 PDF에서 빠집니다. 줄바꿈은 그대로 표시됩니다.
+          </p>
+          <div className="grid gap-3 md:grid-cols-2">
+            <Area label="프로그램 소개" hint="제목 아래 짧은 소개 (2~4문장)" name="brochure_program_intro" defaultValue={bv.program_intro ?? ""} />
+            <Area label="우대 사항" hint="지원 자격 아래 '우대' 로 표시" name="brochure_preferences" defaultValue={bv.preferences ?? ""} />
+            <Area label="졸업 후 진로" hint="취업 분야·비자 전환 등" name="brochure_career_outlook" defaultValue={bv.career_outlook ?? ""} />
+            <Area label="학교 강점" hint="학교·학과의 장점 (한 줄에 하나)" name="brochure_school_strengths" defaultValue={bv.school_strengths ?? ""} />
+            <Area label="기숙사" hint="기숙사비·형태 등 — 비우면 대학 기본 기숙사 설명 사용" name="brochure_dormitory" defaultValue={bv.dormitory ?? ""} />
+            <Area label="일정 참고" hint="모집 일정 아래 덧붙일 안내" name="brochure_schedule_note" defaultValue={bv.schedule_note ?? ""} />
+          </div>
+        </Section>
+
+        {state && !state.ok ?<div className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">{state.error}</div> : null}
 
         <div className="flex items-center gap-2 border-t pt-3">
           <Button type="submit" size="sm" disabled={pending || busy}>
@@ -561,6 +584,17 @@ function Text({ label, name, defaultValue, placeholder }: { label: string; name:
     <label className="flex flex-col gap-1">
       <span className="text-xs text-muted-foreground">{label}</span>
       <input type="text" name={name} defaultValue={defaultValue} placeholder={placeholder} className={inputClass} />
+    </label>
+  );
+}
+
+function Area({ label, hint, name, defaultValue }: { label: string; hint: string; name: string; defaultValue: string }) {
+  return (
+    <label className="flex flex-col gap-1">
+      <span className="text-xs text-muted-foreground">
+        {label} <span className="text-[11px] opacity-80">— {hint}</span>
+      </span>
+      <textarea name={name} defaultValue={defaultValue} rows={4} lang="vi" className={`${inputClass} min-h-20 resize-y`} />
     </label>
   );
 }

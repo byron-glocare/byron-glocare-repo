@@ -30,7 +30,26 @@ const SEASONS = ["Spring", "Summer", "Fall", "Winter", "Year"] as const;
 const OFFERING_STATUS_LABEL: Record<string, string> = { draft: "초안", published: "노출 중", closed: "마감", archived: "보관" };
 
 export type TermDept = { id: string; department_id: number; name_ko: string; kind: SpecDepartmentKind; is_active: boolean };
-export type TermOffering = { id: string; department_id: number; term: string; status: string; intake_quota: number | null };
+export type TermOffering = {
+  id: string;
+  department_id: number;
+  term: string;
+  status: string;
+  /** 글로케어 모집 인원 */
+  intake_quota: number | null;
+  /** 학교 전체 정원 (0069) — 호출부가 아직 안 넘기면 undefined */
+  total_quota?: number | null;
+  /** 지원자 수 (취소 제외) — 선택 */
+  applicant_count?: number;
+};
+
+/** "글로케어 N / 전체 M" — 값이 없는 쪽은 생략 */
+export function quotaText(o: { intake_quota: number | null; total_quota?: number | null }): string | null {
+  const parts: string[] = [];
+  if (o.intake_quota != null) parts.push(`글로케어 ${o.intake_quota}`);
+  if (o.total_quota != null) parts.push(`전체 ${o.total_quota}`);
+  return parts.length ? parts.join(" / ") : null;
+}
 
 /** 올해-1 ~ 올해+2 의 학기 목록 */
 export function termOptions(): string[] {
@@ -179,7 +198,8 @@ function TermCard({ specId, term, departments, offerings }: { specId: string; te
                   {o ? (
                     <>
                       <Badge variant={o.status === "published" ? "default" : "secondary"} className="text-[10px]">{OFFERING_STATUS_LABEL[o.status] ?? o.status}</Badge>
-                      {o.intake_quota != null ? <span className="text-xs text-muted-foreground">모집 {o.intake_quota}명</span> : null}
+                      {o.applicant_count != null ? <span className="text-xs text-muted-foreground">지원 {o.applicant_count}</span> : null}
+                      {quotaText(o) ? <span className="text-xs text-muted-foreground">{quotaText(o)}</span> : null}
                     </>
                   ) : null}
                   {locked ? <span className="text-xs text-muted-foreground">모집 메뉴에서 관리</span> : null}

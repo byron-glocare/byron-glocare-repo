@@ -173,9 +173,23 @@ export default async function AdmissionDetailPage({ params }: { params: Promise<
     loadSpecTerms(supabase, id),
     loadDocItemRowsByDepartment(supabase, id),
     loadFormFilesByDepartment(supabase, spec.university_id),
-    supabase.from("study_offerings").select("id, department_id, term, status, intake_quota").eq("university_id", spec.university_id),
+    supabase.from("study_offerings").select("id, department_id, term, status, intake_quota, total_quota").eq("university_id", spec.university_id),
   ]);
   const offerings = offeringRows ?? [];
+
+  // 모집 칸별 지원자 수 (취소 제외) — offering_id 로, 없으면 (학과, 학기) 로 맞춘다. 이 대학 요강에 걸린 지원서만.
+  const { data: uniSpecs } = await supabase.from("study_admission_specs").select("id").eq("university_id", spec.university_id);
+  const { data: uniApps } = await supabase
+    .from("study_applications")
+    .select("offering_id, target_department_id, term")
+    .in("admission_spec_id", (uniSpecs ?? []).map((s) => s.id).concat(id))
+    .neq("status", "cancelled");
+  const offeringIdByCell = new Map(offerings.map((o) => [`${o.department_id}|${o.term}`, o.id]));
+  const applicantCount = new Map<string, number>();
+  for (const a of uniApps ?? []) {
+    const oid = a.offering_id ?? (a.target_department_id != null && a.term ? offeringIdByCell.get(`${a.target_department_id}|${a.term}`) : undefined);
+    if (oid) applicantCount.set(oid, (applicantCount.get(oid) ?? 0) + 1);
+  }
   const deptNameById = new Map(departments.map((d) => [d.department_id, d]));
 
   // 옛 JSONB — 작성서류 줄(양식 등록 여부 표시)과 표준에 안 붙은 발급서류 줄
@@ -349,7 +363,15 @@ export default async function AdmissionDetailPage({ params }: { params: Promise<
                             <li key={o.id} className="flex items-center gap-1.5 rounded-md border px-2 py-1">
                               <span>{d?.name_ko ?? `학과 #${o.department_id}`}</span>
                               <Badge variant={o.status === "published" ? "default" : "outline"} className="text-[10px]">{OFFERING_STATUS_LABEL[o.status] ?? o.status}</Badge>
-                              {o.intake_quota != null ? <span className="text-xs text-muted-foreground">{o.intake_quota}명</span> : null}
+                              <span className="text-xs text-muted-foreground">
+                                {[
+                                  `지원 ${applicantCount.get(o.id) ?? 0}`,
+                                  o.intake_quota != null ? `글로케어 ${o.intake_quota}` : null,
+                                  o.total_quota != null ? `전체 ${o.total_quota}` : null,
+                                ]
+                                  .filter(Boolean)
+                                  .join(" / ")}
+                              </span>
                             </li>
                           );
                         })}

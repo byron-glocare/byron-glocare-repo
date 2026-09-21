@@ -7,6 +7,7 @@ import { verifyCenterSession } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
 
 import { APP_STATUS_VALUES } from "./status";
+import { renumberTermPriorities } from "./priority-actions";
 
 const updateStatusSchema = z.object({
   status: z.enum(APP_STATUS_VALUES),
@@ -59,6 +60,14 @@ export async function updateApplicationStatusAction(
     .update(patch as never)
     .eq("id", applicationId);
 
+  // 0069: 취소/복구로 학기 안 지망 순위가 비거나 겹치지 않게 다시 매긴다
+  const { data: app } = await supabase
+    .from("study_applications")
+    .select("term")
+    .eq("id", applicationId)
+    .maybeSingle();
+  if (app) await renumberTermPriorities(studentId, app.term ?? null);
+
   revalidatePath(`/center/students/${studentId}`);
   revalidatePath(`/center/students/${studentId}/select`);
 }
@@ -75,10 +84,19 @@ export async function deleteApplicationAction(
   await verifyCenterSession();
   const supabase = await createCenterClient();
 
-  await supabase
+  const { data: app } = await supabase
+    .from("study_applications")
+    .select("term")
+    .eq("id", applicationId)
+    .maybeSingle();
+
+  const { error } = await supabase
     .from("study_applications")
     .delete()
     .eq("id", applicationId);
+
+  // 0069: 지운 자리의 지망 순위를 메운다
+  if (app && !error) await renumberTermPriorities(studentId, app.term ?? null);
 
   revalidatePath(`/center/students/${studentId}`);
   revalidatePath(`/center/students/${studentId}/select`);

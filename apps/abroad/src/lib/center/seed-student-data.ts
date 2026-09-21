@@ -2,7 +2,8 @@
  * 이미 받은 값을 정보입력에 자동으로 넘겨준다.
  *
  * 두 갈래:
- *   1) 학생 등록 시 받은 값 — 이름·전화·이메일·생년월일·TOPIK
+ *   1) 학생 등록 시 받은 값 — 이름·전화·이메일·생년월일·TOPIK·여권번호
+ *      (지금 등록 화면·엑셀은 받은 값을 데이터 항목에 바로 저장한다. 여기선 빈 칸만 보충.)
  *   2) 지원 대학을 고르는 것으로 이미 정해진 값 — 지원 학과·년도·학기·월
  *
  * 원칙: **빈 항목만 채운다.** 이미 값이 있으면 절대 덮어쓰지 않으므로
@@ -58,7 +59,7 @@ export async function seedStudentDataFromRecords(
     await Promise.all([
       supabase
         .from("study_managed_students")
-        .select("id, name, phone, email, dob, topik_level")
+        .select("id, name, phone, email, dob, topik_level, passport_no_encrypted")
         .eq("id", studentId)
         .maybeSingle(),
       supabase
@@ -90,6 +91,8 @@ export async function seedStudentDataFromRecords(
     ["student_email", student.email],
     ["birth_date", student.dob],
     ["topik_level", student.topik_level],
+    // 여권번호 — 등록 시 study_managed_students 에만 있던 옛 학생도 채운다 (지금 등록은 데이터 항목에도 바로 저장)
+    ["passport_no", student.passport_no_encrypted],
   ];
 
   // 2) 지원 정보 — 가장 먼저 등록한 지원 기준(복수 지원이면 정보입력에서 수정).

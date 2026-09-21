@@ -34,7 +34,12 @@ export type OfferingRow = {
   university_id: number;
   department_id: number;
   term: string;
+  /** 글로케어 모집 인원 — 오픈 필수 */
   intake_quota: number | null;
+  /** 학교 전체 정원 (선택, 0069) */
+  total_quota: number | null;
+  /** 지원자 수 (취소 제외) */
+  applicant_count: number;
   status: "draft" | "published" | "closed" | "archived";
   source_spec_id: string | null;
   available_languages: string[];
@@ -301,7 +306,7 @@ function UniversityGrid({ block }: { block: UniversityBlock }) {
               <tr className="border-b bg-muted/10 text-xs text-muted-foreground">
                 <th className="sticky left-0 z-10 bg-background px-4 py-2 text-left font-medium">학과</th>
                 {terms.map((t) => (
-                  <th key={t} className="min-w-44 px-3 py-2 text-left font-medium">
+                  <th key={t} className="min-w-56 px-3 py-2 text-left font-medium">
                     {t}
                     {!block.terms.includes(t) ? (
                       <span className="ml-1 text-[10px] font-normal text-amber-700">(새 학기)</span>
@@ -481,12 +486,22 @@ function OfferingCell({
     <div className="space-y-1">
       <div className="flex items-center gap-1.5">
         <StatusBadge status={o.status} />
-        <QuotaInput offering={o} />
+        <span
+          className={`text-xs ${o.applicant_count > 0 ? "font-medium" : "text-muted-foreground"}`}
+          title="지원자 수 (취소 제외)"
+        >
+          지원 {o.applicant_count}
+        </span>
         {o.status !== "published" && !o.source_spec_id && block.spec ? (
           <span className="text-[10px] text-muted-foreground" title="오픈 시 대학 요강으로 자동 연결됩니다">
             ·
           </span>
         ) : null}
+      </div>
+      <div className="flex items-center gap-1.5">
+        <QuotaInput offering={o} field="intake_quota" />
+        <span className="text-xs text-muted-foreground">/</span>
+        <QuotaInput offering={o} field="total_quota" />
       </div>
       <div className="flex flex-wrap items-center gap-1">
         {o.status !== "published" ? (
@@ -532,34 +547,41 @@ function OfferingCell({
   );
 }
 
-function QuotaInput({ offering }: { offering: OfferingRow }) {
+const QUOTA_FIELD_META: Record<"intake_quota" | "total_quota", { label: string; title: string }> = {
+  intake_quota: { label: "글로케어", title: "글로케어 모집 인원 — 오픈에 필수" },
+  total_quota: { label: "전체", title: "학교 전체 정원 (선택)" },
+};
+
+function QuotaInput({ offering, field }: { offering: OfferingRow; field: "intake_quota" | "total_quota" }) {
   const router = useRouter();
-  const [value, setValue] = useState(offering.intake_quota != null ? String(offering.intake_quota) : "");
+  const current = offering[field];
+  const [value, setValue] = useState(current != null ? String(current) : "");
   const [saving, startSave] = useTransition();
+  const meta = QUOTA_FIELD_META[field];
 
   const commit = () => {
     const trimmed = value.trim();
     const next = trimmed === "" ? null : Number(trimmed);
-    if (next === (offering.intake_quota ?? null)) return;
+    if (next === (current ?? null)) return;
     if (next != null && !Number.isInteger(next)) {
-      toast.error("정원은 정수로 입력하세요");
+      toast.error("인원은 정수로 입력하세요");
       return;
     }
     startSave(async () => {
-      const res = await updateOfferingQuotaAction(offering.id, next);
+      const res = await updateOfferingQuotaAction(offering.id, next, field);
       if (!res.ok) {
-        toast.error("정원 저장 실패", { description: res.error });
-        setValue(offering.intake_quota != null ? String(offering.intake_quota) : "");
+        toast.error(`${meta.label} 인원 저장 실패`, { description: res.error });
+        setValue(current != null ? String(current) : "");
         return;
       }
       router.refresh();
     });
   };
 
-  const missing = offering.intake_quota == null;
+  const missing = field === "intake_quota" && current == null;
   return (
-    <label className="flex items-center gap-1 text-xs" title="정원 (글로케어 운영 모집 인원). 오픈에 필수.">
-      <span className="text-muted-foreground">정원</span>
+    <label className="flex items-center gap-1 text-xs" title={meta.title}>
+      <span className="text-muted-foreground">{meta.label}</span>
       <input
         type="number"
         min={0}
@@ -643,7 +665,10 @@ function OfferingDetailDialog({
           <DialogTitle>{label}</DialogTitle>
           <DialogDescription>
             <StatusBadge status={offering.status} />
-            <span className="ml-2">정원 {offering.intake_quota ?? "미정"}</span>
+            <span className="ml-2">
+              지원 {offering.applicant_count} / 글로케어 {offering.intake_quota ?? "미정"} / 전체{" "}
+              {offering.total_quota ?? "미정"}
+            </span>
           </DialogDescription>
         </DialogHeader>
 

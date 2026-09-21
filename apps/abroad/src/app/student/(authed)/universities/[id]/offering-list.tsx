@@ -20,6 +20,8 @@ export type OfferingItem = {
   programType: string | null;
   languages: string[];
   alreadyApplied: boolean;
+  /** 0069: "글로케어 N명 / 전체 M명" — 없으면 null */
+  quotaLabel: string | null;
 };
 
 function programTypeLabel(locale: Locale, t: string | null): string | null {
@@ -99,6 +101,7 @@ function OfferingRow({
           <div className="mt-1 flex flex-wrap gap-1.5">
             <Badge>{item.term}</Badge>
             {pt && <Badge>{pt}</Badge>}
+            {item.quotaLabel && <Badge>{item.quotaLabel}</Badge>}
             {item.languages.map((l) => (
               <Badge key={l}>
                 {languageLabel(locale, l)}

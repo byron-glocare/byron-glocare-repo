@@ -1,7 +1,8 @@
 /**
  * /offerings — 모집 (0067 학과 모델).
  *   대학마다 격자: 행 = 요강 학과(어학당 먼저, 일반학과), 열 = 학기.
- *   칸 = 그 학과가 그 학기에 모집하는지(study_offerings 행) + 상태(초안/오픈/마감) + 정원.
+ *   칸 = 그 학과가 그 학기에 모집하는지(study_offerings 행) + 상태(초안/오픈/마감)
+ *        + 지원자 수 · 글로케어 모집 인원(intake_quota, 오픈 필수) · 학교 전체 정원(total_quota, 0069).
  *   요강 연결은 대학의 요강(보관 아님 1개)으로 자동 — 운영자가 고르지 않는다.
  */
 
@@ -28,6 +29,8 @@ export default async function OfferingsPage({
     { data: specDepts },
     { data: specTerms },
     { data: offerings, error },
+    { data: allSpecs },
+    { data: applications },
   ] = await Promise.all([
     supabase.from("universities").select("id, name_ko, active").order("name_ko", { ascending: true }),
     supabase.from("departments").select("id, university_id, name_ko, active").order("sort_order", { ascending: true }),
@@ -44,10 +47,35 @@ export default async function OfferingsPage({
     supabase
       .from("study_offerings")
       .select(
-        "id, university_id, department_id, term, intake_quota, status, source_spec_id, available_languages, location_options, sort_order, notes"
+        "id, university_id, department_id, term, intake_quota, total_quota, status, source_spec_id, available_languages, location_options, sort_order, notes"
       )
       .order("created_at", { ascending: false }),
+    // 지원자 수 집계용 — 보관 요강에 걸린 옛 지원서도 대학을 알아야 하므로 전체 요강
+    supabase.from("study_admission_specs").select("id, university_id"),
+    supabase
+      .from("study_applications")
+      .select("offering_id, admission_spec_id, target_department_id, term")
+      .neq("status", "cancelled"),
   ]);
+
+  // 모집 칸별 지원자 수 — offering_id 가 있으면 그것, 없으면 (요강의 대학, 지망 학과, 학기) 로 맞춘다
+  const uniBySpec = new Map((allSpecs ?? []).map((s) => [s.id, s.university_id]));
+  const offeringIdByCell = new Map<string, string>();
+  const offeringIds = new Set<string>();
+  for (const o of offerings ?? []) {
+    offeringIdByCell.set(`${o.university_id}|${o.department_id}|${o.term}`, o.id);
+    offeringIds.add(o.id);
+  }
+  const applicantCount = new Map<string, number>();
+  for (const a of applications ?? []) {
+    let oid: string | undefined;
+    if (a.offering_id && offeringIds.has(a.offering_id)) oid = a.offering_id;
+    else if (!a.offering_id && a.target_department_id != null && a.term) {
+      const uni = uniBySpec.get(a.admission_spec_id);
+      if (uni != null) oid = offeringIdByCell.get(`${uni}|${a.target_department_id}|${a.term}`);
+    }
+    if (oid) applicantCount.set(oid, (applicantCount.get(oid) ?? 0) + 1);
+  }
 
   // 대학 → 요강 (대학당 1개. 혹시 여럿이면 최신 것)
   const specByUni = new Map<number, { id: string; status: string }>();
@@ -70,7 +98,7 @@ export default async function OfferingsPage({
   const offeringsByUni = new Map<number, OfferingRow[]>();
   for (const o of offerings ?? []) {
     const list = offeringsByUni.get(o.university_id) ?? [];
-    list.push(o as OfferingRow);
+    list.push({ ...(o as Omit<OfferingRow, "applicant_count">), applicant_count: applicantCount.get(o.id) ?? 0 });
     offeringsByUni.set(o.university_id, list);
   }
 

@@ -17,6 +17,8 @@ import {
   programTypeOfDepartment,
 } from "@/lib/admission/spec-documents";
 
+import { formatOfferingQuota } from "@/app/center/(authed)/admissions/quota-label";
+
 import { OfferingList, type OfferingItem } from "./offering-list";
 import { AppliedToast } from "./applied-toast";
 
@@ -61,7 +63,7 @@ export default async function StudentUniversityDetailPage({
       supabase
         .from("study_offerings")
         .select(
-          "id, department_id, term, intake_quota, source_spec_id, sort_order, status"
+          "id, department_id, term, intake_quota, total_quota, source_spec_id, sort_order, status"
         )
         .eq("university_id", uniId)
         .order("sort_order")
@@ -137,6 +139,8 @@ export default async function StudentUniversityDetailPage({
         // 언어는 학과 자격요건(있으면) → 요강 공통 순
         languages: deriveOfferingLanguages(departmentEligibility(specDept, spec), deptNameKo),
         alreadyApplied: appliedOfferingIds.has(o.id),
+        // 0069: 글로케어 N명 / 전체 M명 (지원자 수는 노출하지 않는다)
+        quotaLabel: formatOfferingQuota(locale, o.intake_quota, o.total_quota),
       };
     });
   } else {
@@ -161,6 +165,7 @@ export default async function StudentUniversityDetailPage({
             alreadyApplied:
               appliedSpecDept.has(`${s.id}::${d.department_id}::${term}`) ||
               appliedSpecDept.has(`${s.id}::${label}`),
+            quotaLabel: null,
           } satisfies OfferingItem;
         })
       );

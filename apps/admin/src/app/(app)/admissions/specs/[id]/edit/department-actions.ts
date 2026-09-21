@@ -143,6 +143,24 @@ export async function saveSpecDepartmentAction(
     } else {
       delete info.language_program;
     }
+    // 모집요강 PDF 문구(베트남어) — 빈 값은 빼고, 전부 비면 키 자체를 뺀다.
+    {
+      const bv: NonNullable<DepartmentInfo["brochure_vi"]> = {};
+      const fields = [
+        ["program_intro", "brochure_program_intro"],
+        ["preferences", "brochure_preferences"],
+        ["career_outlook", "brochure_career_outlook"],
+        ["school_strengths", "brochure_school_strengths"],
+        ["dormitory", "brochure_dormitory"],
+        ["schedule_note", "brochure_schedule_note"],
+      ] as const;
+      for (const [key, field] of fields) {
+        const s = String(formData.get(field) ?? "").replace(/\r\n/g, "\n").trim();
+        if (s) bv[key] = s;
+      }
+      if (Object.keys(bv).length > 0) info.brochure_vi = bv;
+      else delete info.brochure_vi;
+    }
 
     const { error } = await admin
       .from("study_spec_departments")

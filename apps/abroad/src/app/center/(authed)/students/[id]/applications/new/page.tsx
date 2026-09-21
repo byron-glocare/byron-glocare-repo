@@ -47,7 +47,7 @@ export default async function NewApplicationPage({
   }
 
   // 2. approved 모집요강 list + 모집 중 offering (지원 가능 = 모집요강 연결된 것)
-  const [{ data: specs }, { data: offerings }] = await Promise.all([
+  const [{ data: specs }, { data: offerings }, { data: myApps }] = await Promise.all([
     supabase
       .from("study_admission_specs")
       .select("id, university_id, term, admission_category, eligibility")
@@ -56,12 +56,25 @@ export default async function NewApplicationPage({
     supabase
       .from("study_offerings")
       .select(
-        "id, university_id, department_id, term, intake_quota, source_spec_id, sort_order"
+        "id, university_id, department_id, term, intake_quota, total_quota, source_spec_id, sort_order"
       )
       .eq("status", "published")
       .not("source_spec_id", "is", null)
       .order("term", { ascending: false }),
+    // 0069: 이 학생의 기존 지원 — 학기별 남은 지망 수·이미 지원한 모집 표시
+    supabase
+      .from("study_applications")
+      .select("id, offering_id, term, status")
+      .eq("student_id", id),
   ]);
+
+  const existingByTerm: Record<string, { count: number; offeringIds: string[] }> = {};
+  for (const a of myApps ?? []) {
+    if (a.status === "cancelled" || !a.term) continue;
+    const e = (existingByTerm[a.term] ??= { count: 0, offeringIds: [] });
+    e.count += 1;
+    if (a.offering_id) e.offeringIds.push(a.offering_id);
+  }
 
   const specById = new Map((specs ?? []).map((s) => [s.id, s]));
   const specIds = (specs ?? []).map((s) => s.id);
@@ -138,6 +151,8 @@ export default async function NewApplicationPage({
         departmentName: deptDisplayMap.get(o.department_id) ?? deptName,
         term: o.term,
         intakeQuota: o.intake_quota,
+        totalQuota: o.total_quota ?? null,
+        sortOrder: o.sort_order,
         // 언어는 자격요건에서 도출 — 학과에 따로 있으면 그것, 없으면 요강 공통
         availableLanguages: deriveOfferingLanguages(
           departmentEligibility(specDept, spec ?? null),
@@ -188,6 +203,7 @@ export default async function NewApplicationPage({
           studentId={id}
           specs={specOptions}
           offerings={offeringOptions}
+          existingByTerm={existingByTerm}
         />
       </div>
     </div>

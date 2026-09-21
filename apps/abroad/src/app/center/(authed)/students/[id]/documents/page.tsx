@@ -166,6 +166,7 @@ export default async function DocumentsPage({
                             studentId={id}
                             docKey={it.usedKey}
                             existing={it.file}
+                            autoExtract
                           />
                           {it.importCandidate ? (
                             <ImportFileButton

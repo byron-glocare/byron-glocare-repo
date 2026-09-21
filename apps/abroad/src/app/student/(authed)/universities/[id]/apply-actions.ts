@@ -69,6 +69,28 @@ export async function createSelfApplicationAction(
     redirect(`/student/universities/${data.university_id}?applied=1`);
   }
 
+  // 0069: 지망 순위 — 같은 학기 안에서 다음 빈 번호(1~3). 이미 3개면 null(관리자 참고용이라 막지 않는다).
+  let priority: number | null = null;
+  if (data.term) {
+    const { data: sameTerm } = await supabase
+      .from("study_applications")
+      .select("priority, status")
+      .eq("student_id", session.student.id)
+      .eq("term", data.term);
+    const active = (sameTerm ?? []).filter((a) => a.status !== "cancelled");
+    const used = new Set(
+      active
+        .map((a) => a.priority)
+        .filter((p): p is number => typeof p === "number")
+    );
+    for (let p = 1; p <= 3 && active.length < 3; p++) {
+      if (!used.has(p)) {
+        priority = p;
+        break;
+      }
+    }
+  }
+
   const { error } = await supabase.from("study_applications").insert({
     student_id: session.student.id,
     admission_spec_id: data.admission_spec_id,
@@ -78,6 +100,7 @@ export async function createSelfApplicationAction(
     target_department_label: data.target_department_label,
     term: data.term ?? null,
     status: "preparing",
+    priority,
   });
 
   if (error) {

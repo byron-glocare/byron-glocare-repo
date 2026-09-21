@@ -102,7 +102,7 @@ export async function checkOfferingReadinessAction(id: string): Promise<Readines
     .maybeSingle();
   if (!row) return { ok: false, blocked: true, reason: "모집을 찾을 수 없습니다" };
   if (row.intake_quota == null) {
-    return { ok: false, blocked: true, reason: "오픈하려면 정원을 먼저 입력하세요." };
+    return { ok: false, blocked: true, reason: "오픈하려면 글로케어 모집 인원을 먼저 입력하세요." };
   }
   const r = await assessOfferingReadiness(row.university_id, row.department_id, row.term);
   if (r.blocked) return { ok: false, blocked: true, reason: r.reason };
@@ -131,7 +131,7 @@ export async function updateOfferingStatusAction(
   let warnings: string[] = [];
   const patch: OfferingUpdate = { status };
   if (status === "published") {
-    if (row.intake_quota == null) return { ok: false, error: "오픈하려면 정원을 먼저 입력하세요." };
+    if (row.intake_quota == null) return { ok: false, error: "오픈하려면 글로케어 모집 인원을 먼저 입력하세요." };
     const readiness = await assessOfferingReadiness(row.university_id, row.department_id, row.term);
     if (readiness.blocked) return { ok: false, error: readiness.reason };
     warnings = readiness.warnings;
@@ -148,23 +148,28 @@ export async function updateOfferingStatusAction(
 }
 
 /**
- * 정원(intake_quota) 인라인 수정. 오픈 중인 모집은 비울 수 없다 (DB CHECK 와 동일).
+ * 인원 인라인 수정.
+ *   field = "intake_quota" (글로케어 모집 인원, 기본) — 오픈 중인 모집은 비울 수 없다 (DB CHECK 와 동일).
+ *   field = "total_quota"  (학교 전체 정원, 0069) — 선택 값, 언제든 비울 수 있다.
  */
 export async function updateOfferingQuotaAction(
   id: string,
-  quota: number | null
+  quota: number | null,
+  field: "intake_quota" | "total_quota" = "intake_quota"
 ): Promise<ActionResult> {
   const user = await requireUser();
   if (!user) return { ok: false, error: "로그인이 필요합니다" };
+  if (field !== "intake_quota" && field !== "total_quota") return { ok: false, error: "잘못된 항목" };
   if (quota != null && (!Number.isInteger(quota) || quota < 0 || quota > 100000)) {
-    return { ok: false, error: "정원은 0~100000 사이 정수" };
+    return { ok: false, error: "인원은 0~100000 사이 정수" };
   }
   const supabase = createAdminClient();
-  if (quota == null) {
+  if (quota == null && field === "intake_quota") {
     const { data: row } = await supabase.from("study_offerings").select("status").eq("id", id).maybeSingle();
-    if (row?.status === "published") return { ok: false, error: "오픈 중인 모집은 정원을 비울 수 없습니다." };
+    if (row?.status === "published") return { ok: false, error: "오픈 중인 모집은 글로케어 인원을 비울 수 없습니다." };
   }
-  const { error } = await supabase.from("study_offerings").update({ intake_quota: quota }).eq("id", id);
+  const patch: OfferingUpdate = field === "total_quota" ? { total_quota: quota } : { intake_quota: quota };
+  const { error } = await supabase.from("study_offerings").update(patch).eq("id", id);
   if (error) return { ok: false, error: `저장 실패: ${error.message}` };
   revalidatePath("/offerings");
   return { ok: true };

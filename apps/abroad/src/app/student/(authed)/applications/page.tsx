@@ -12,6 +12,11 @@ import {
   appStatusLabel,
   appStatusTone,
 } from "@/app/center/(authed)/students/[id]/applications/status";
+import {
+  compareByTermPriority,
+  priorityLabel,
+  priorityTone,
+} from "@/app/center/(authed)/students/[id]/applications/priority";
 
 export const dynamic = "force-dynamic";
 
@@ -23,7 +28,7 @@ export default async function StudentApplicationsPage() {
   const { data: apps } = await supabase
     .from("study_applications")
     .select(
-      "id, admission_spec_id, offering_id, term, target_department_label, selected_language, status, created_at"
+      "id, admission_spec_id, offering_id, term, priority, target_department_label, selected_language, status, created_at"
     )
     .eq("student_id", session.student.id)
     .order("created_at", { ascending: false });
@@ -53,7 +58,8 @@ export default async function StudentApplicationsPage() {
       : { data: [] as Array<{ id: number; name_ko: string; name_vi: string | null }> };
   const uniById = new Map((unis ?? []).map((u) => [u.id, u]));
 
-  const rows = (apps ?? []).map((a) => {
+  // 0069: 학기 → 지망 순위 순으로 보여준다 (순위는 읽기 전용 — 센터/관리자가 정한다)
+  const rows = (apps ?? []).slice().sort(compareByTermPriority).map((a) => {
     const spec = specById.get(a.admission_spec_id);
     const uni = spec ? uniById.get(spec.university_id) : null;
     const uniName =
@@ -65,6 +71,7 @@ export default async function StudentApplicationsPage() {
       dept: a.target_department_label ?? "",
       term: a.term ?? spec?.term ?? "",
       status: a.status,
+      priority: a.status !== "cancelled" ? a.priority ?? null : null,
     };
   });
 
@@ -108,7 +115,14 @@ export default async function StudentApplicationsPage() {
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <div className="text-sm font-semibold text-ink">
+                  <div className="flex flex-wrap items-center gap-1.5 text-sm font-semibold text-ink">
+                    {r.priority != null ? (
+                      <span
+                        className={`shrink-0 rounded px-1.5 py-0.5 text-[11px] font-semibold ${priorityTone(r.priority)}`}
+                      >
+                        {priorityLabel(locale, r.priority)}
+                      </span>
+                    ) : null}
                     {r.uniName}
                   </div>
                   <div className="mt-0.5 text-xs text-ink-light">

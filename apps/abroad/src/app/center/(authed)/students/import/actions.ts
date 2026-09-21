@@ -1,18 +1,35 @@
 "use server";
 
-import { trAsync } from "@/lib/i18n";
+import { getLocale, trAsync } from "@/lib/i18n";
 
 import { revalidatePath } from "next/cache";
 import * as XLSX from "xlsx";
 
 import { verifyCenterSession } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
+import { createServiceClient } from "@/lib/supabase/service";
 import { createStudentSchema } from "@/lib/center/students/schema";
+import {
+  ROSTER_COLUMNS,
+  ROSTER_INPUT_COLUMNS,
+  type RosterColumn,
+} from "@/lib/center/student-roster-columns";
+import {
+  REG_FIELDS,
+  normalizeRegistration,
+  rosterRowToRaw,
+} from "@/lib/center/students/registration";
+import {
+  loadKnownDataKeys,
+  writeRegistrationValues,
+} from "@/lib/center/students/save-registration";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const MAX_ROWS = 500;
 const SHEET_NAME = "Sinh viên";
 const EXAMPLE_RE = /^\s*\[VÍ DỤ\]/i;
+/** 머리글 글자로 찾은 칸이 이보다 적으면 양식이 다른 파일로 본다 */
+const MIN_TEXT_MATCHES = 5;
 
 export type ImportRowResult = {
   rowNumber: number;
@@ -32,16 +49,44 @@ export type ImportState =
     }
   | undefined;
 
-/** Excel cell value → string (Date · number 안전 변환) */
-function cellToStr(v: unknown): string {
+// ──────────────────────────────────────────────────────────────
+// 머리글(2줄) 해석
+// ──────────────────────────────────────────────────────────────
+
+function norm(s: string): string {
+  return s
+    .normalize("NFC")
+    .toLowerCase()
+    .replace(/[\s·.,\-_()*:'"’]+/g, "");
+}
+
+/** 머리글 글자와 정의 라벨이 같은 칸인가 — "한국어 / Tiếng Việt" 중 한쪽만 맞아도 인정 */
+function labelMatches(header: string, label: string): boolean {
+  const h = header.trim();
+  if (!h) return false;
+  if (norm(h) === norm(label)) return true;
+  const hParts = h.split("/").map(norm).filter(Boolean);
+  const lParts = label.split("/").map(norm).filter(Boolean);
+  return hParts.some((p) => lParts.includes(p));
+}
+
+type HeaderCell = { group: string; sub: string };
+
+function headerMatches(h: HeaderCell | undefined, c: RosterColumn): boolean {
+  if (!h) return false;
+  if (!labelMatches(h.group, c.group)) return false;
+  if (c.sub) return labelMatches(h.sub, c.sub);
+  return !h.sub || norm(h.sub) === norm(h.group);
+}
+
+function cellText(v: unknown): string {
   if (v === null || v === undefined) return "";
-  if (v instanceof Date) {
-    const y = v.getFullYear();
-    const m = String(v.getMonth() + 1).padStart(2, "0");
-    const d = String(v.getDate()).padStart(2, "0");
-    return `${y}-${m}-${d}`;
-  }
+  if (v instanceof Date) return v.toISOString();
   return String(v).trim();
+}
+
+function isBlank(v: unknown): boolean {
+  return cellText(v) === "";
 }
 
 export async function uploadStudentsAction(
@@ -49,6 +94,7 @@ export async function uploadStudentsAction(
   formData: FormData
 ): Promise<ImportState> {
   const session = await verifyCenterSession();
+  const locale = await getLocale();
 
   const file = formData.get("file");
   if (!file || !(file instanceof File) || file.size === 0) {
@@ -68,134 +114,194 @@ export async function uploadStudentsAction(
     wb = XLSX.read(ab, { type: "array", cellDates: true });
   } catch (e) {
     return {
-      error: `Không đọc được file (${e instanceof Error ? e.message : "lỗi không xác định"}). Vui lòng dùng mẫu chính thức.`,
+      error: `${await trAsync("파일을 읽지 못했습니다", "Không đọc được file")} (${e instanceof Error ? e.message : "?"}).`,
     };
   }
 
-  const ws = wb.Sheets[SHEET_NAME];
-  if (!ws) {
+  // 시트: "Sinh viên" 우선, 없으면 첫 시트 (운영자 원본 파일 이름이 다를 수 있음)
+  const ws = wb.Sheets[SHEET_NAME] ?? wb.Sheets[wb.SheetNames[0]];
+  if (!ws || !ws["!ref"]) {
     return {
-      error: `Không tìm thấy sheet "${SHEET_NAME}". Vui lòng dùng mẫu chính thức.`,
+      error: await trAsync(
+        `"${SHEET_NAME}" 시트를 찾을 수 없습니다. 공식 양식을 사용하세요.`,
+        `Không tìm thấy sheet "${SHEET_NAME}". Vui lòng dùng mẫu chính thức.`
+      ),
     };
   }
 
-  // 2. 행 수집 — header: [A,B,C,...] 위치 기반 매핑, 1행(헤더) skip
-  type RawRow = {
-    rowNumber: number;
-    name: string;
-    dob: string;
-    passport_no: string;
-    phone: string;
-    email: string;
-    topik_level: string;
-    current_visa: string;
-    location: string;
-    notes: string;
-  };
-
-  const HEADER_KEYS = [
-    "name",
-    "dob",
-    "passport_no",
-    "phone",
-    "email",
-    "topik_level",
-    "current_visa",
-    "location",
-    "notes",
-  ] as const;
-
-  const records = XLSX.utils.sheet_to_json<Record<string, unknown>>(ws, {
-    header: HEADER_KEYS as unknown as string[],
-    range: 1, // 헤더 row(0) skip → 데이터는 row 1 부터, Excel 표시 행번호 = index+2
+  // 시트 좌표 그대로 (A1 부터) 읽기 → 배열 index = 엑셀 행-1 / 열-1
+  const ref = XLSX.utils.decode_range(ws["!ref"]);
+  const grid = XLSX.utils.sheet_to_json<unknown[]>(ws, {
+    header: 1,
+    range: { s: { r: 0, c: 0 }, e: ref.e },
     defval: "",
-    raw: false, // 숫자 등 모두 문자열로 (TOPIK '3' 같은 숫자 텍스트 보존)
+    blankrows: true,
+    raw: true,
   });
 
-  const rawRows: RawRow[] = records.map((rec, idx) => ({
-    rowNumber: idx + 2, // 사람이 보는 Excel 행번호 (헤더가 1, 데이터 첫 행이 2)
-    name: cellToStr(rec.name),
-    dob: cellToStr(rec.dob),
-    passport_no: cellToStr(rec.passport_no),
-    phone: cellToStr(rec.phone),
-    email: cellToStr(rec.email),
-    topik_level: cellToStr(rec.topik_level),
-    current_visa: cellToStr(rec.current_visa),
-    location: cellToStr(rec.location),
-    notes: cellToStr(rec.notes),
-  }));
+  // 2. 머리글 2줄 — 병합 셀은 왼쪽 위 셀에만 값이 있으므로 병합 범위로 채운다
+  const width = Math.max(ref.e.c + 1, 0);
+  const top: string[] = [];
+  const sub: string[] = [];
+  for (let c = 0; c < width; c++) {
+    top[c] = cellText(grid[0]?.[c]);
+    sub[c] = cellText(grid[1]?.[c]);
+  }
+  for (const m of ws["!merges"] ?? []) {
+    if (m.s.r > 1) continue;
+    const v = cellText(grid[m.s.r]?.[m.s.c]);
+    for (let r = m.s.r; r <= Math.min(m.e.r, 1); r++) {
+      for (let c = m.s.c; c <= m.e.c; c++) {
+        if (r === 0 && !top[c]) top[c] = v;
+        if (r === 1 && !sub[c]) sub[c] = v;
+      }
+    }
+  }
+  const headers: HeaderCell[] = top.map((g, c) => ({ group: g, sub: sub[c] }));
 
-  if (rawRows.length === 0) {
+  // 3. 칸 찾기 — ① 그룹+하위 글자 ② 못 찾으면 위치(운영자 원본 = 전체 칸 / 우리 양식 = 입력 칸)
+  const claimed = new Set<number>();
+  const colIndex = new Map<RosterColumn, number>();
+  for (const col of ROSTER_INPUT_COLUMNS) {
+    const idx = headers.findIndex((h, i) => !claimed.has(i) && headerMatches(h, col));
+    if (idx >= 0) {
+      colIndex.set(col, idx);
+      claimed.add(idx);
+    }
+  }
+  const textMatches = colIndex.size;
+  if (textMatches < MIN_TEXT_MATCHES) {
+    return {
+      error: await trAsync(
+        "머리글이 양식과 맞지 않습니다. '양식 다운로드'로 받은 새 양식(머리글 2줄)을 사용하세요.",
+        "Tiêu đề không khớp với mẫu. Vui lòng tải mẫu mới (tiêu đề 2 dòng) và nhập lại."
+      ),
+    };
+  }
+  const layoutScore = (layout: RosterColumn[]) =>
+    layout.reduce((n, col, i) => n + (headerMatches(headers[i], col) ? 1 : 0), 0);
+  const layout =
+    layoutScore(ROSTER_COLUMNS) >= layoutScore(ROSTER_INPUT_COLUMNS)
+      ? ROSTER_COLUMNS
+      : ROSTER_INPUT_COLUMNS;
+  for (const col of ROSTER_INPUT_COLUMNS) {
+    if (colIndex.has(col)) continue;
+    const pos = layout.indexOf(col);
+    if (pos >= 0 && pos < width && !claimed.has(pos)) {
+      colIndex.set(col, pos);
+      claimed.add(pos);
+    }
+  }
+
+  // 4. 데이터 행 (3행부터). 뒤쪽 빈 행은 잘라낸다.
+  const valueCols = ROSTER_INPUT_COLUMNS.filter(
+    (c) => c.special !== "seq" && c.special !== "absence_total" && c.special !== "income_total"
+  );
+  type RawRow = { rowNumber: number; cells: Array<{ column: RosterColumn; value: unknown }> };
+  const dataRows: RawRow[] = [];
+  for (let r = 2; r < grid.length; r++) {
+    const row = grid[r] ?? [];
+    const cells = valueCols
+      .filter((c) => colIndex.has(c))
+      .map((c) => ({ column: c, value: row[colIndex.get(c)!] }));
+    dataRows.push({ rowNumber: r + 1, cells });
+  }
+  while (dataRows.length > 0 && dataRows[dataRows.length - 1].cells.every((c) => isBlank(c.value))) {
+    dataRows.pop();
+  }
+
+  if (dataRows.length === 0) {
     return { error: await trAsync("데이터가 없습니다 (머리글만 있습니다).", "File không có dữ liệu (chỉ có dòng tiêu đề).") };
   }
-  if (rawRows.length > MAX_ROWS) {
+  const nonEmpty = dataRows.filter((r) => r.cells.some((c) => !isBlank(c.value))).length;
+  if (nonEmpty > MAX_ROWS) {
     return {
-      error: `File có ${rawRows.length} dòng — vượt giới hạn ${MAX_ROWS}. Vui lòng chia nhỏ.`,
+      error: await trAsync(
+        `${nonEmpty}행 — 한 번에 ${MAX_ROWS}행까지입니다. 나눠서 올려 주세요.`,
+        `File có ${nonEmpty} dòng — vượt giới hạn ${MAX_ROWS}. Vui lòng chia nhỏ.`
+      ),
     };
   }
 
-  // 3. 행별 처리
+  // 5. 행별 처리
   const supabase = await createCenterClient();
+  const svc = createServiceClient();
+  const knownKeys = await loadKnownDataKeys(svc, [
+    ...Object.keys(REG_FIELDS).filter((k) => k !== "name"),
+    "home_country_address",
+    "full_name_vi",
+  ]);
+
   const results: ImportRowResult[] = [];
   let okCount = 0;
   let skippedCount = 0;
   let errorCount = 0;
 
-  for (const r of rawRows) {
-    // 3-1. [VÍ DỤ] skip
-    if (EXAMPLE_RE.test(r.name)) {
+  for (const r of dataRows) {
+    const raw = rosterRowToRaw(r.cells);
+    const nameText = cellText(raw.name);
+
+    // 5-1. 완전히 빈 행 skip
+    if (r.cells.every((c) => isBlank(c.value))) {
+      results.push({ rowNumber: r.rowNumber, status: "skipped", message: await trAsync("빈 행", "Dòng trống") });
+      skippedCount++;
+      continue;
+    }
+
+    // 5-2. [VÍ DỤ] 예시 행 skip
+    if (EXAMPLE_RE.test(nameText)) {
       results.push({
         rowNumber: r.rowNumber,
         status: "skipped",
         message: await trAsync("예시 행 (자동으로 건너뜀)", "Dòng ví dụ (đã bỏ qua tự động)"),
-        name: r.name,
+        name: nameText,
       });
       skippedCount++;
       continue;
     }
 
-    // 3-2. 완전히 빈 행 skip
-    const hasAny =
-      r.name ||
-      r.dob ||
-      r.passport_no ||
-      r.phone ||
-      r.email ||
-      r.topik_level ||
-      r.current_visa ||
-      r.location ||
-      r.notes;
-    if (!hasAny) {
-      results.push({
-        rowNumber: r.rowNumber,
-        status: "skipped",
-        message: await trAsync("빈 행", "Dòng trống"),
-      });
-      skippedCount++;
-      continue;
-    }
-
-    // 3-3. zod 검증
-    const parsed = createStudentSchema.safeParse(r);
+    // 5-3. 정규화 + 필수 검사 + 학생 기본 칸 형식 검사
+    const reg = normalizeRegistration(raw, locale);
+    const msgs = Object.values(reg.errors);
+    const parsed = createStudentSchema.safeParse({
+      name: reg.student.name,
+      dob: reg.student.dob ?? "",
+      passport_no: reg.student.passport_no ?? "",
+      phone: reg.student.phone ?? "",
+      email: reg.student.email ?? "",
+      topik_level: reg.student.topik_level ?? "",
+    });
     if (!parsed.success) {
-      const fe = parsed.error.flatten().fieldErrors;
-      const msgs = Object.entries(fe)
-        .map(([k, v]) => (v && v[0] ? `${k}: ${v[0]}` : null))
-        .filter(Boolean)
-        .join("; ");
+      const label: Record<string, string> = {
+        name: REG_FIELDS.name.id,
+        dob: "birth_date",
+        passport_no: "passport_no",
+        phone: "student_phone",
+        email: "student_email",
+      };
+      for (const [k, v] of Object.entries(parsed.error.flatten().fieldErrors)) {
+        const m = (v as string[] | undefined)?.[0];
+        const fid = label[k] ?? k;
+        if (m && !reg.errors[fid]) {
+          const f = REG_FIELDS[fid];
+          msgs.push(`${f ? (locale === "ko" ? f.ko : f.vi) : k}: ${m}`);
+        }
+      }
+    }
+    if (msgs.length > 0 || !parsed.success) {
       results.push({
         rowNumber: r.rowNumber,
         status: "error",
-        message: msgs || (await trAsync("올바르지 않은 데이터", "Dữ liệu không hợp lệ")),
-        name: r.name || undefined,
+        message: msgs.join("; ") || (await trAsync("올바르지 않은 데이터", "Dữ liệu không hợp lệ")),
+        name: nameText || undefined,
       });
       errorCount++;
       continue;
     }
 
-    // 3-4. INSERT (org_id 서버 강제)
+    // 5-4. INSERT (org_id 서버 강제)
     const d = parsed.data;
-    const { error: insertErr } = await supabase
+    const { data: inserted, error: insertErr } = await supabase
       .from("study_managed_students")
       .insert({
         org_id: session.org.id,
@@ -205,36 +311,51 @@ export async function uploadStudentsAction(
         phone: d.phone ?? null,
         email: d.email ?? null,
         topik_level: d.topik_level ?? null,
-        current_visa: d.current_visa ?? null,
-        location: d.location ?? null,
-        notes: d.notes ?? null,
-      });
+      })
+      .select("id")
+      .single();
 
-    if (insertErr) {
+    if (insertErr || !inserted) {
       results.push({
         rowNumber: r.rowNumber,
         status: "error",
-        message: `DB: ${insertErr.message}`,
+        message: `DB: ${insertErr?.message ?? "no id"}`,
         name: d.name,
       });
       errorCount++;
-    } else {
+      continue;
+    }
+
+    // 5-5. 데이터 항목 저장 (작성서류용). 실패하면 학생 행 되돌림.
+    const saved = await writeRegistrationValues(svc, {
+      studentId: inserted.id,
+      values: reg.values,
+      filledBy: session.authUserId,
+      knownKeys,
+    });
+    if (!saved.ok) {
+      await svc.from("study_managed_students").delete().eq("id", inserted.id);
       results.push({
         rowNumber: r.rowNumber,
-        status: "ok",
+        status: "error",
+        message: `DB: ${saved.error}`,
         name: d.name,
       });
-      okCount++;
+      errorCount++;
+      continue;
     }
+
+    results.push({ rowNumber: r.rowNumber, status: "ok", name: d.name });
+    okCount++;
   }
 
-  // 4. 목록 캐시 갱신 (성공 row 있을 때만)
+  // 6. 목록 캐시 갱신 (성공 row 있을 때만)
   if (okCount > 0) {
     revalidatePath("/center/students");
   }
 
   return {
-    totalRows: rawRows.length,
+    totalRows: dataRows.length,
     okCount,
     skippedCount,
     errorCount,

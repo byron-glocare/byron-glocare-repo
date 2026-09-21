@@ -41,6 +41,17 @@ export type DepartmentInfo = {
   is_glocare_target?: boolean;
   /** 어학연수 프로그램 — 어학당(kind=language)에만. 옛 metadata.language_program 을 여기로 옮겼다(0068) */
   language_program?: LanguageProgramInfo | null;
+  /** 모집요강 PDF(베트남어 전용) 문구 — 학과별. 빈 항목은 저장하지 않는다 */
+  brochure_vi?: BrochureTextVi | null;
+};
+
+export type BrochureTextVi = {
+  program_intro?: string;
+  preferences?: string;
+  career_outlook?: string;
+  school_strengths?: string;
+  dormitory?: string;
+  schedule_note?: string;
 };
 
 export type LanguageProgramInfo = {

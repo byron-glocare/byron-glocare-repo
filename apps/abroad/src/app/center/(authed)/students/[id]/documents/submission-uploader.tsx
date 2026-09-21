@@ -2,6 +2,7 @@
 
 import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { Loader2, Upload, Eye, Trash2, RefreshCw } from "lucide-react";
 
 import { tr, type Locale } from "@/lib/i18n";
@@ -13,23 +14,79 @@ import {
   getSubmissionFileSignedUrlAction,
   removeSubmissionFileAction,
 } from "./actions";
+import {
+  autoExtractUploadedFileAction,
+  type ExtractProposal,
+} from "../data/extract-actions";
+import { ExtractConflictDialog } from "./extract-conflict-dialog";
 
 export function SubmissionUploader({
   locale,
   studentId,
   docKey,
   existing,
+  autoExtract = false,
 }: {
   locale: Locale;
   studentId: string;
   docKey: string;
   existing: { file_name: string; file_path: string } | null;
+  /**
+   * 업로드 직후 그 파일을 AI 로 읽어 '정보 입력'을 채울지 (유학센터 화면만 true).
+   *   빈 항목은 바로 저장, 현재 값과 다른 항목은 확인 창. 학생 포털은 기본값 false.
+   */
+  autoExtract?: boolean;
 }) {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const [pending, startTransition] = useTransition();
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const [extracting, setExtracting] = useState(false);
+  const [conflicts, setConflicts] = useState<{ fileName: string; items: ExtractProposal[] } | null>(null);
+
+  /** 업로드 완료 후 자동 추출 — 실패해도 업로드는 이미 끝났으므로 경고만 */
+  async function runAutoExtract(fileName: string) {
+    setExtracting(true);
+    const warn = (detail?: string) =>
+      toast.warning(
+        tr(
+          locale,
+          "업로드는 완료됐지만 서류 자동 읽기에 실패했습니다. '정보 입력'에서 직접 입력하거나 'AI로 채우기'를 다시 눌러 주세요.",
+          "Đã tải lên, nhưng không tự đọc được giấy tờ. Hãy nhập tay ở 'Nhập thông tin' hoặc bấm lại 'Điền bằng AI'."
+        ),
+        detail ? { description: detail } : undefined
+      );
+    try {
+      const res = await autoExtractUploadedFileAction({ studentId, docKey });
+      if (!res.ok) {
+        warn(res.error === "NO_FILES" || res.error === "FILES_TOO_LARGE" ? undefined : res.error);
+        return;
+      }
+      if (res.applied.length > 0) {
+        toast.success(
+          tr(
+            locale,
+            `서류에서 ${res.applied.length}개 항목을 읽어 '정보 입력'에 채웠습니다.`,
+            `Đã đọc ${res.applied.length} mục từ giấy tờ và điền vào 'Nhập thông tin'.`
+          ),
+          {
+            description: res.applied
+              .slice(0, 6)
+              .map((a) => (locale === "ko" ? a.label_ko : a.label_vi))
+              .join(", "),
+          }
+        );
+      }
+      if (res.conflicts.length > 0) {
+        setConflicts({ fileName, items: res.conflicts });
+      }
+    } catch (e) {
+      warn(e instanceof Error ? e.message : undefined);
+    } finally {
+      setExtracting(false);
+    }
+  }
 
   async function onPick(file: File) {
     setErr(null);
@@ -71,6 +128,8 @@ export function SubmissionUploader({
         return;
       }
       startTransition(() => router.refresh());
+      // 업로드 끝 → (센터만) 그 파일 자동 읽기. 기다리지 않는다 — 업로드 UI 는 바로 풀린다.
+      if (autoExtract) void runAutoExtract(file.name);
     } catch (e) {
       setErr(
         e instanceof Error
@@ -174,6 +233,21 @@ export function SubmissionUploader({
         </button>
       )}
       {err ? <span className="text-[11px] text-red-600">{err}</span> : null}
+      {extracting ? (
+        <span className="inline-flex items-center gap-1 text-[11px] text-violet-700">
+          <Loader2 className="size-3 animate-spin" />
+          {tr(locale, "AI가 서류를 읽는 중…", "AI đang đọc giấy tờ…")}
+        </span>
+      ) : null}
+      {conflicts ? (
+        <ExtractConflictDialog
+          locale={locale}
+          studentId={studentId}
+          fileName={conflicts.fileName}
+          conflicts={conflicts.items}
+          onClose={() => setConflicts(null)}
+        />
+      ) : null}
     </div>
   );
 }

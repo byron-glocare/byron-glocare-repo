@@ -22,6 +22,12 @@ import { updateApplicationStatusAction } from "./applications/actions";
 import { StatusSelect } from "./applications/status-select";
 import { DeleteApplicationButton } from "./applications/delete-application-button";
 import { DocsCompletePopup } from "./docs-complete-popup";
+import {
+  compareByTermPriority,
+  priorityLabel,
+  priorityTone,
+} from "./applications/priority";
+import { moveApplicationPriorityAction } from "./applications/priority-actions";
 
 /** 모집요강 schedule 에서 다가오는(오늘 이후) 일정 항목 추출 */
 function upcomingSchedule(
@@ -103,11 +109,26 @@ export default async function StudentOverviewPage({
   const { data: apps } = await supabase
     .from("study_applications")
     .select(
-      "id, status, next_deadline, target_department_label, target_department_id, admission_spec_id, offering_id, selected_language, term, created_at"
+      "id, status, next_deadline, target_department_label, target_department_id, admission_spec_id, offering_id, selected_language, term, priority, created_at"
     )
     .eq("student_id", id)
     .order("created_at", { ascending: false });
-  const applications = apps ?? [];
+  // 0069: 학기 → 지망 순위 순
+  const applications = (apps ?? []).slice().sort(compareByTermPriority);
+
+  // 학기별 묶음 + 학기 안 취소되지 않은 지원의 순서(↑/↓ 가능 여부)
+  const termGroups: Array<{ term: string | null; apps: typeof applications }> = [];
+  for (const a of applications) {
+    const term = a.term ?? null;
+    const last = termGroups[termGroups.length - 1];
+    if (last && last.term === term) last.apps.push(a);
+    else termGroups.push({ term, apps: [a] });
+  }
+  const activeOrder = new Map<string, { index: number; count: number }>();
+  for (const g of termGroups) {
+    const active = g.apps.filter((a) => a.status !== "cancelled");
+    active.forEach((a, index) => activeOrder.set(a.id, { index, count: active.length }));
+  }
 
   // 부속 데이터 (지원 있을 때만)
   const specIds = Array.from(new Set(applications.map((a) => a.admission_spec_id)));
@@ -334,19 +355,68 @@ export default async function StudentOverviewPage({
             )}
           />
         ) : (
+          <div className="space-y-4">
+            <p className="text-xs text-slate-500">
+              {tr(
+                locale,
+                "학기별 지망 순위(1~3지망) 순서입니다. ↑/↓ 로 순위를 바꿀 수 있습니다 (관리자 참고용).",
+                "Sắp xếp theo thứ tự nguyện vọng (1~3) trong từng học kỳ. Dùng ↑/↓ để đổi thứ tự (để quản trị viên tham khảo)."
+              )}
+            </p>
+            {termGroups.map((g) => (
+          <div key={g.term ?? "__none__"}>
+          <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">
+            {g.term ?? tr(locale, "학기 미정", "Chưa rõ học kỳ")}
+          </div>
           <ul className="divide-y divide-slate-100">
-            {applications.map((a) => {
+            {g.apps.map((a) => {
               const spec = specMap.get(a.admission_spec_id);
               const upcoming = upcomingSchedule(
                 scheduleOfApp(a),
                 locale,
                 dateLocale
               );
+              const order = activeOrder.get(a.id);
+              const priority = a.status !== "cancelled" ? a.priority ?? null : null;
               return (
-                <li key={a.id} className="py-3 first:pt-0">
+                <li key={a.id} className="py-3">
                   <div className="flex flex-wrap items-start justify-between gap-2">
+                    <div className="flex min-w-0 items-start gap-2">
+                      {order && order.count > 1 ? (
+                        <div className="flex shrink-0 flex-col gap-0.5">
+                          <form action={moveApplicationPriorityAction.bind(null, a.id, id, "up")}>
+                            <button
+                              type="submit"
+                              disabled={order.index === 0}
+                              title={tr(locale, "순위 올리기", "Lên thứ tự")}
+                              aria-label={tr(locale, "순위 올리기", "Lên thứ tự")}
+                              className="rounded border border-slate-300 px-1.5 text-xs leading-5 text-slate-600 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-30"
+                            >
+                              ↑
+                            </button>
+                          </form>
+                          <form action={moveApplicationPriorityAction.bind(null, a.id, id, "down")}>
+                            <button
+                              type="submit"
+                              disabled={order.index === order.count - 1}
+                              title={tr(locale, "순위 내리기", "Xuống thứ tự")}
+                              aria-label={tr(locale, "순위 내리기", "Xuống thứ tự")}
+                              className="rounded border border-slate-300 px-1.5 text-xs leading-5 text-slate-600 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-30"
+                            >
+                              ↓
+                            </button>
+                          </form>
+                        </div>
+                      ) : null}
                     <div className="min-w-0">
-                      <div className="font-medium text-slate-900">
+                      <div className="flex flex-wrap items-center gap-1.5 font-medium text-slate-900">
+                        {priority != null ? (
+                          <span
+                            className={`shrink-0 rounded px-1.5 py-0.5 text-[11px] font-semibold ${priorityTone(priority)}`}
+                          >
+                            {priorityLabel(locale, priority)}
+                          </span>
+                        ) : null}
                         {a.target_department_label ?? "—"}
                       </div>
                       <div className="mt-0.5 text-xs text-slate-500">
@@ -374,6 +444,7 @@ export default async function StudentOverviewPage({
                         ) : null}
                       </div>
                     </div>
+                    </div>
                     <div className="flex shrink-0 flex-wrap items-center gap-1.5">
                       <StatusSelect
                         locale={locale}
@@ -400,6 +471,9 @@ export default async function StudentOverviewPage({
               );
             })}
           </ul>
+          </div>
+            ))}
+          </div>
         )}
       </section>
 

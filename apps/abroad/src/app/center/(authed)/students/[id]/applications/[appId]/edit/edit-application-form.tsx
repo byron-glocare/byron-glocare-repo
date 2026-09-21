@@ -9,6 +9,7 @@ import {
   updateApplicationAction,
   type UpdateApplicationState,
 } from "./actions";
+import { priorityLabel, priorityTone } from "../../priority";
 
 const inputClass =
   "rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200";
@@ -21,6 +22,9 @@ export type EditableApplication = {
   id: string;
   offering_id: string | null;
   term?: string | null;
+  /** 0069: 같은 학기 안 지망 순위 — 여기선 읽기 전용(순서 변경은 학생 상세 목록에서) */
+  priority?: number | null;
+  status?: string | null;
   target_department_label: string | null;
   next_action: string | null;
   next_deadline: string | null;
@@ -54,6 +58,34 @@ export function EditApplicationForm({
 
   return (
     <form action={action} className="flex flex-col gap-5">
+      {/* 0069: 지망 순위 (읽기 전용) */}
+      <div className={labelClass}>
+        <span className={labelTextClass}>{tr(locale, "지망 순위", "Thứ tự nguyện vọng")}</span>
+        <div className="flex flex-wrap items-center gap-2">
+          {application.priority != null && application.status !== "cancelled" ? (
+            <span
+              className={`rounded px-2 py-0.5 text-xs font-semibold ${priorityTone(application.priority)}`}
+            >
+              {priorityLabel(locale, application.priority)}
+            </span>
+          ) : (
+            <span className="text-sm text-slate-400">{tr(locale, "순위 없음", "Chưa xếp thứ tự")}</span>
+          )}
+          {application.term ? (
+            <span className="text-xs text-slate-500">
+              {tr(locale, "학기", "Học kỳ")} {application.term}
+            </span>
+          ) : null}
+        </div>
+        <span className={helpTextClass}>
+          {tr(
+            locale,
+            "순위 변경은 학생 상세의 대학 정보 목록에서 ↑/↓ 버튼으로 합니다.",
+            "Đổi thứ tự bằng nút ↑/↓ ở danh sách trường trong trang chi tiết sinh viên."
+          )}
+        </span>
+      </div>
+
       {/* 0067: 모집(대학 · 학과 · 학기) 변경 — 고르면 모집요강·학과·학기·학과명이 함께 바뀐다 */}
       <label className={labelClass}>
         <span className={labelTextClass}>

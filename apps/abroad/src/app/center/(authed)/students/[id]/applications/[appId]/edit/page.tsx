@@ -33,7 +33,7 @@ export default async function EditApplicationPage({
     supabase
       .from("study_applications")
       .select(
-        "id, admission_spec_id, offering_id, target_department_id, term, target_department_label, next_action, next_deadline, student_id"
+        "id, admission_spec_id, offering_id, target_department_id, term, priority, status, target_department_label, next_action, next_deadline, student_id"
       )
       .eq("id", appId)
       .maybeSingle(),

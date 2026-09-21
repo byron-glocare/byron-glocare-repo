@@ -6,7 +6,9 @@
  *   ?tab=departments|terms 로 시작 탭 지정.
  */
 
+import Link from "next/link";
 import { notFound } from "next/navigation";
+import { FileText } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { loadFormDocKeys } from "@/lib/admission/form-doc-keys";
@@ -20,6 +22,7 @@ import {
   type SpecFormFile,
 } from "@/lib/admission/spec-departments";
 import { PageHeader } from "@/components/page-header";
+import { buttonVariants } from "@/components/ui/button";
 import { SpecDepartmentEditor, type CopySourceUniversity } from "@/components/admission/spec-department-editor";
 import { SpecTermEditor, type TermDept, type TermOffering } from "@/components/admission/spec-term-editor";
 
@@ -77,7 +80,7 @@ export default async function EditAdmissionPage({
     loadSpecTerms(supabase, id),
     loadDocItemRowsByDepartment(supabase, id),
     loadFormFilesByDepartment(supabase, spec.university_id),
-    supabase.from("study_offerings").select("id, department_id, term, status, intake_quota").eq("university_id", spec.university_id),
+    supabase.from("study_offerings").select("id, department_id, term, status, intake_quota, total_quota").eq("university_id", spec.university_id),
     supabase
       .from("study_admission_specs")
       .select("id, university_id, universities(name_ko)")
@@ -124,7 +127,7 @@ export default async function EditAdmissionPage({
   const termRevisions: Record<string, string> = {};
   for (const t of terms) termRevisions[t.id] = rev([t.term, t.schedule, t.schedule_language, t.notes]);
 
-  const offerings: TermOffering[] = (offeringRows ?? []).map((o) => ({ id: o.id, department_id: o.department_id, term: o.term, status: o.status, intake_quota: o.intake_quota }));
+  const offerings: TermOffering[] = (offeringRows ?? []).map((o) => ({ id: o.id, department_id: o.department_id, term: o.term, status: o.status, intake_quota: o.intake_quota, total_quota: o.total_quota }));
   const termDepts: TermDept[] = departments.map((d) => ({ id: d.id, department_id: d.department_id, name_ko: d.name_ko, kind: d.kind, is_active: d.is_active }));
 
   return (
@@ -137,6 +140,12 @@ export default async function EditAdmissionPage({
           { label: university?.name_ko ?? "상세", href: `/admissions/specs/${id}` },
           { label: "편집" },
         ]}
+        actions={
+          <Link href={`/admissions/specs/${id}/brochure`} className={buttonVariants({ variant: "outline", size: "sm" })}>
+            <FileText className="size-4" />
+            모집요강 PDF (베트남어)
+          </Link>
+        }
       />
       <div className="p-6">
         <EditSpecForm

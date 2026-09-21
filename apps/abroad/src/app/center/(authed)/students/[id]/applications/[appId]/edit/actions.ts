@@ -9,6 +9,8 @@ import { z } from "zod";
 import { verifyCenterSession } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
 
+import { renumberTermPriorities } from "../../priority-actions";
+
 const emptyToUndef = <T extends z.ZodTypeAny>(s: T) =>
   z.preprocess((v) => (v === "" || v === null ? undefined : v), s);
 
@@ -62,16 +64,20 @@ export async function updateApplicationAction(
     offering_id?: string;
     target_department_id?: number;
     term?: string;
+    priority?: number | null;
   } = {
     target_department_label: d.target_department_label,
     next_action: d.next_action ?? null,
     next_deadline: d.next_deadline ?? null,
   };
 
+  // 0069: 학기가 바뀌면 지망 순위를 옛 학기·새 학기 양쪽에서 다시 매긴다
+  let termChangedFrom: { old: string | null; next: string } | null = null;
+
   if (d.offering_id) {
     const { data: current } = await supabase
       .from("study_applications")
-      .select("offering_id")
+      .select("offering_id, term")
       .eq("id", applicationId)
       .maybeSingle();
     if (current && current.offering_id !== d.offering_id) {
@@ -93,6 +99,11 @@ export async function updateApplicationAction(
       patch.offering_id = offering.id;
       patch.target_department_id = offering.department_id;
       patch.term = offering.term;
+      if ((current.term ?? null) !== offering.term) {
+        // 새 학기에서는 맨 뒤 순위로 (renumber 가 빈 번호를 채운다)
+        patch.priority = null;
+        termChangedFrom = { old: current.term ?? null, next: offering.term };
+      }
       // 학과명(한국어)은 옛 코드의 양식 매칭 기준 — 모집을 바꾸면 그 학과명으로 덮어쓴다
       if (dept?.name_ko) patch.target_department_label = dept.name_ko;
     }
@@ -105,6 +116,11 @@ export async function updateApplicationAction(
 
   if (error) {
     return { error: `${t("수정 실패", "Lỗi cập nhật")}: ${error.message}` };
+  }
+
+  if (termChangedFrom) {
+    await renumberTermPriorities(studentId, termChangedFrom.old);
+    await renumberTermPriorities(studentId, termChangedFrom.next);
   }
 
   revalidatePath(`/center/students/${studentId}`);

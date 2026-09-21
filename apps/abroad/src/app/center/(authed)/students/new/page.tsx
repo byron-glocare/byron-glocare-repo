@@ -9,6 +9,8 @@ import { verifyCenterSession } from "@/lib/center/dal";
 import { createServiceClient } from "@/lib/supabase/service";
 import { getLocale, tr } from "@/lib/i18n";
 
+import { termOptions } from "@/lib/center/students/registration";
+
 import { NewStudentForm } from "./new-student-form";
 
 export default async function NewStudentPage() {
@@ -54,7 +56,7 @@ export default async function NewStudentPage() {
   }
 
   return (
-    <div className="max-w-3xl">
+    <div className="max-w-4xl">
       <header className="mb-6">
         <Link
           href="/center/students"
@@ -75,7 +77,7 @@ export default async function NewStudentPage() {
       </header>
 
       <div className="rounded-lg border border-slate-200 bg-white p-6">
-        <NewStudentForm locale={locale} centers={centers} />
+        <NewStudentForm locale={locale} centers={centers} terms={termOptions()} />
       </div>
     </div>
   );

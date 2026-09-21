@@ -2,6 +2,8 @@
 
 import { trAsync } from "@/lib/i18n";
 
+import { revalidatePath } from "next/cache";
+
 import { verifyCenterSession } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
 import {
@@ -53,9 +55,11 @@ export type ExtractDataResult =
  *   **제안 목록**으로 반환한다 (저장은 안 함 — 운영자가 확인 후 적용).
  */
 export async function extractStudentDataAction(
-  studentId: string
+  studentId: string,
+  /** filePath 를 주면 그 파일 하나만 읽는다 (업로드 직후 자동 추출용) */
+  options?: { filePath?: string }
 ): Promise<ExtractDataResult> {
-  const session = await verifyCenterSession();
+  await verifyCenterSession();
   const supabase = await createCenterClient();
 
   // 권한: 이 학생이 내 org 인지 (RLS)
@@ -177,12 +181,18 @@ export async function extractStudentDataAction(
     }
   }
 
-  if (fileRefs.length === 0) {
+  // 한 파일만 (업로드 직후 자동 추출)
+  const onlyPath = options?.filePath;
+  const pickedRefs = onlyPath
+    ? fileRefs.filter((r) => r.path === onlyPath).slice(0, 1)
+    : fileRefs;
+
+  if (pickedRefs.length === 0) {
     return { ok: false, error: "NO_FILES" };
   }
 
   // org 경로 검증 + 캡
-  const safeRefs = fileRefs
+  const safeRefs = pickedRefs
     .filter((r) => r.path.split("/")[1] === studentId)
     .slice(0, MAX_DOCS);
 
@@ -300,6 +310,104 @@ export async function extractStudentDataAction(
     skippedDocs,
     raw: rawAll,
   };
+}
+
+/** 업로드 직후 자동 추출 결과 */
+export type AutoExtractResult =
+  | {
+      ok: true;
+      /** 비어 있어서 자동 저장한 항목 */
+      applied: Array<{ key: string; label_ko: string; label_vi: string; display: string }>;
+      /** 현재 값과 달라서 사용자 확인이 필요한 항목 */
+      conflicts: ExtractProposal[];
+    }
+  | { ok: false; error: string };
+
+/**
+ * 제출서류 업로드 직후 (유학센터 전용) — **그 파일 하나만** 읽어서
+ *   · 비어 있는 항목 → 바로 저장
+ *   · 현재 값과 다른 항목 → conflicts 로 돌려줌 (화면에서 "교체 / 그대로 두기" 확인)
+ *   · 같은 항목 → 아무것도 안 함
+ */
+export async function autoExtractUploadedFileAction(input: {
+  studentId: string;
+  docKey: string;
+}): Promise<AutoExtractResult> {
+  const session = await verifyCenterSession();
+  const supabase = await createCenterClient();
+
+  // 권한 + 방금 올린 파일 (RLS — 내 org 학생만 보인다)
+  const { data: file } = await supabase
+    .from("study_student_submission_files")
+    .select("file_path")
+    .eq("student_id", input.studentId)
+    .eq("doc_key", input.docKey)
+    .maybeSingle();
+  if (!file?.file_path) {
+    return { ok: false, error: await trAsync("업로드한 파일을 찾지 못했습니다.", "Không tìm thấy tệp vừa tải.") };
+  }
+
+  const res = await extractStudentDataAction(input.studentId, { filePath: file.file_path });
+  if (!res.ok) return res;
+
+  // 비교용 현재값 (제안의 currentDisplay 는 표시용 라벨이라 원값으로 다시 비교)
+  const { data: values } = await supabase
+    .from("study_student_data_values")
+    .select("data_type_key, value")
+    .eq("student_id", input.studentId);
+  const currentByKey = new Map<string, Json>(
+    (values ?? []).map((v) => [v.data_type_key, v.value as Json])
+  );
+
+  const applied: Array<{ key: string; label_ko: string; label_vi: string; display: string }> = [];
+  const conflicts: ExtractProposal[] = [];
+  const rows: Array<{ student_id: string; data_type_key: string; value: Json; filled_by: string }> = [];
+
+  for (const p of res.proposals) {
+    if (p.proposedValue === null || p.proposedValue === undefined || p.proposedValue === "") continue;
+    // 빈 칸은 자동 저장하되, AI 신뢰도 "낮음"은 확인 창으로 돌린다(현재 값 "—" 로 보임).
+    if (p.isCurrentEmpty && p.confidence === "low") {
+      conflicts.push(p);
+    } else if (p.isCurrentEmpty) {
+      rows.push({
+        student_id: input.studentId,
+        data_type_key: p.key,
+        value: p.proposedValue,
+        filled_by: session.authUserId,
+      });
+      applied.push({ key: p.key, label_ko: p.label_ko, label_vi: p.label_vi, display: p.proposedDisplay });
+    } else if (!sameValue(currentByKey.get(p.key) ?? null, p.proposedValue)) {
+      conflicts.push(p);
+    }
+  }
+
+  if (rows.length > 0) {
+    const { error } = await supabase
+      .from("study_student_data_values")
+      .upsert(rows, { onConflict: "student_id,data_type_key" });
+    if (error) return { ok: false, error: error.message };
+    revalidatePath(`/center/students/${input.studentId}/data`);
+  }
+
+  return { ok: true, applied, conflicts };
+}
+
+/** 두 값이 사실상 같은가 — 공백·대소문자·천 단위 쉼표·날짜 0 채움 차이는 무시 */
+function sameValue(a: Json, b: Json): boolean {
+  const canon = (v: Json): string => {
+    if (v === null || v === undefined) return "";
+    if (Array.isArray(v)) return v.map((x) => canon(x as Json)).sort().join("|");
+    if (typeof v === "number") return String(v);
+    const s = String(v).trim().toLowerCase().replace(/\s+/g, " ");
+    const d = /^(\d{4})[-./](\d{1,2})[-./](\d{1,2})$/.exec(s);
+    if (d) return `${d[1]}-${d[2].padStart(2, "0")}-${d[3].padStart(2, "0")}`;
+    if (/^-?[\d,]+(\.\d+)?$/.test(s)) {
+      const n = Number(s.replace(/,/g, ""));
+      if (Number.isFinite(n)) return String(n);
+    }
+    return s;
+  };
+  return canon(a) === canon(b);
 }
 
 function displayValue(

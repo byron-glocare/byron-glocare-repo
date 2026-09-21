@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Search } from "lucide-react";
+import { Download, Search } from "lucide-react";
 
 import { createAdminClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/page-header";
@@ -46,7 +46,7 @@ export default async function ManagedStudentsPage({
   // service-role 로 모든 org 학생 조회 (admin = glocare_admin, 읽기 전용)
   const admin = createAdminClient();
 
-  const [{ data: students }, { data: orgs }, { data: files }] =
+  const [{ data: students }, { data: orgs }, { data: files }, { data: appTerms }, { data: universities }] =
     await Promise.all([
       admin
         .from("study_managed_students")
@@ -56,7 +56,14 @@ export default async function ManagedStudentsPage({
         .order("created_at", { ascending: false }),
       admin.from("study_center_orgs").select("id, name_ko, name_vi"),
       admin.from("study_student_submission_files").select("student_id"),
+      // 지원자 명단 엑셀 필터용 — 지원서에 쓰인 학기 · 대학
+      admin.from("study_applications").select("term").neq("status", "cancelled").not("term", "is", null),
+      admin.from("universities").select("id, name_ko").order("name_ko", { ascending: true }),
     ]);
+
+  const termOptions = Array.from(
+    new Set((appTerms ?? []).map((a) => a.term).filter((t): t is string => !!t))
+  ).sort((a, b) => b.localeCompare(a));
 
   const orgMap = new Map(
     (orgs ?? []).map((o) => [o.id, o.name_ko || o.name_vi])
@@ -159,6 +166,55 @@ export default async function ManagedStudentsPage({
               초기화
             </Link>
           ) : null}
+        </form>
+
+        {/* 지원자 명단 엑셀 — 학기·대학 필터 (지원서 기준, 학생 1명 = 1행) */}
+        <form
+          method="get"
+          action="/managed-students/export"
+          className="flex flex-wrap items-end gap-2 rounded-md border border-dashed px-3 py-2"
+        >
+          <div>
+            <label className="mb-1 block text-xs text-muted-foreground">
+              학기
+            </label>
+            <select
+              name="term"
+              defaultValue=""
+              className="h-8 min-w-36 rounded-md border border-input bg-background px-2 text-sm"
+            >
+              <option value="">전체</option>
+              {termOptions.map((t) => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="mb-1 block text-xs text-muted-foreground">
+              대학
+            </label>
+            <select
+              name="u"
+              defaultValue=""
+              className="h-8 min-w-44 rounded-md border border-input bg-background px-2 text-sm"
+            >
+              <option value="">전체</option>
+              {(universities ?? []).map((u) => (
+                <option key={u.id} value={String(u.id)}>
+                  {u.name_ko}
+                </option>
+              ))}
+            </select>
+          </div>
+          <button type="submit" className={buttonVariants({ variant: "outline" })}>
+            <Download className="size-4" />
+            지원자 명단 엑셀
+          </button>
+          <span className="text-xs text-muted-foreground">
+            지원서(취소 제외)가 있는 학생만 · 1~3지망 포함
+          </span>
         </form>
 
         <p className="text-sm text-muted-foreground">

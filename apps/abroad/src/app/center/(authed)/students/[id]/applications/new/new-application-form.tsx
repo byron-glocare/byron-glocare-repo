@@ -5,6 +5,9 @@ import { useActionState, useMemo, useState } from "react";
 
 import { tr, type Locale } from "@/lib/i18n";
 
+import { formatOfferingQuota } from "@/app/center/(authed)/admissions/quota-label";
+
+import { MAX_PRIORITY, priorityLabel, priorityTone } from "../priority";
 import {
   createApplicationAction,
   type CreateApplicationState,
@@ -42,9 +45,18 @@ export type OfferingOption = {
   /** 화면 표시용 학과명 */
   departmentName: string;
   term: string;
+  /** 글로케어 모집 인원 */
   intakeQuota: number | null;
+  /** 학교 전체 정원 (0069) */
+  totalQuota: number | null;
+  sortOrder: number;
   availableLanguages: string[];
 };
+
+/** 학기별 이 학생의 (취소 안 된) 기존 지원 — 남은 지망 수·이미 지원한 모집 */
+export type ExistingByTerm = Record<string, { count: number; offeringIds: string[] }>;
+
+type Choice = { offeringId: string; language: string };
 
 function languageLabel(locale: Locale, lang: string): string {
   switch (lang) {
@@ -67,6 +79,8 @@ function kindLabel(locale: Locale, kind: "language" | "regular"): string {
 
 const inputClass =
   "rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200";
+const smallBtnClass =
+  "rounded border border-slate-300 px-2 py-0.5 text-xs text-slate-600 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-30";
 const labelClass = "flex flex-col gap-1.5";
 const labelTextClass = "text-sm font-medium text-slate-700";
 const requiredMarkClass = "ml-0.5 text-red-500";
@@ -77,11 +91,13 @@ export function NewApplicationForm({
   studentId,
   specs,
   offerings,
+  existingByTerm,
 }: {
   locale: Locale;
   studentId: string;
   specs: SpecOption[];
   offerings: OfferingOption[];
+  existingByTerm: ExistingByTerm;
 }) {
   const boundAction = createApplicationAction.bind(null, studentId);
   const [state, action, pending] = useActionState<
@@ -95,22 +111,78 @@ export function NewApplicationForm({
   // 지원 가능 목록처럼 보였다. 직접 선택은 아래 버튼으로 명시적으로 들어간다.
   const [mode, setMode] = useState<"offering" | "spec">("offering");
 
-  // --- offering 모드 상태 ---
-  const [offeringId, setOfferingId] = useState<string>("");
-  const selectedOffering = useMemo(
-    () => offerings.find((o) => o.id === offeringId),
-    [offeringId, offerings]
+  // --- offering 모드 상태: 학기 → 지망(최대 3, 순서 = 지망 순위) ---
+  const terms = useMemo(
+    () =>
+      Array.from(new Set(offerings.map((o) => o.term))).sort((a, b) =>
+        b.localeCompare(a)
+      ),
+    [offerings]
   );
-  const [selectedLanguage, setSelectedLanguage] = useState<string>("");
-  const onOfferingChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const id = e.target.value;
-    setOfferingId(id);
-    const o = offerings.find((x) => x.id === id);
-    // 언어 1개면 자동 선택, 여러 개면 미선택
-    setSelectedLanguage(
-      o && o.availableLanguages.length === 1 ? o.availableLanguages[0] : ""
+  const [term, setTerm] = useState<string>(terms.length === 1 ? terms[0] : "");
+  const [choices, setChoices] = useState<Choice[]>([]);
+  const offeringById = useMemo(
+    () => new Map(offerings.map((o) => [o.id, o])),
+    [offerings]
+  );
+  const termOfferings = useMemo(
+    () =>
+      offerings
+        .filter((o) => o.term === term)
+        .slice()
+        .sort(
+          (a, b) =>
+            (a.universityName ?? a.universityNameKo ?? "").localeCompare(
+              b.universityName ?? b.universityNameKo ?? "",
+              locale
+            ) ||
+            a.sortOrder - b.sortOrder ||
+            a.departmentName.localeCompare(b.departmentName, locale)
+        ),
+    [offerings, term, locale]
+  );
+  const existing = existingByTerm[term] ?? { count: 0, offeringIds: [] };
+  const appliedSet = new Set(existing.offeringIds);
+  const remaining = Math.max(0, MAX_PRIORITY - existing.count);
+
+  const onTermChange = (v: string) => {
+    setTerm(v);
+    setChoices([]);
+  };
+  const addChoice = (o: OfferingOption) => {
+    setChoices((prev) =>
+      prev.length >= remaining || prev.some((c) => c.offeringId === o.id)
+        ? prev
+        : [
+            ...prev,
+            {
+              offeringId: o.id,
+              // 언어 1개면 자동 선택, 여러 개면 미선택
+              language: o.availableLanguages.length === 1 ? o.availableLanguages[0] : "",
+            },
+          ]
     );
   };
+  const removeChoice = (i: number) =>
+    setChoices((prev) => prev.filter((_, j) => j !== i));
+  const moveChoice = (i: number, delta: -1 | 1) =>
+    setChoices((prev) => {
+      const j = i + delta;
+      if (j < 0 || j >= prev.length) return prev;
+      const next = prev.slice();
+      [next[i], next[j]] = [next[j], next[i]];
+      return next;
+    });
+  const setChoiceLanguage = (i: number, language: string) =>
+    setChoices((prev) => prev.map((c, j) => (j === i ? { ...c, language } : c)));
+
+  const choicesJson = JSON.stringify(
+    choices.map((c) => ({
+      offering_id: c.offeringId,
+      selected_language: c.language,
+      target_department_label: offeringById.get(c.offeringId)?.departmentNameKo ?? "",
+    }))
+  );
 
   // --- spec 모드 상태 (요강 → 학과 → 학기) ---
   const [specId, setSpecId] = useState<string>("");
@@ -140,26 +212,9 @@ export function NewApplicationForm({
 
   const fieldError = (name: string) => state?.fieldErrors?.[name]?.[0];
 
-  // 선택 결과 → insert 에 들어갈 값
-  const submitSpecId =
-    mode === "offering" ? selectedOffering?.sourceSpecId ?? "" : specId;
-  const submitDeptLabel =
-    mode === "offering"
-      ? selectedOffering?.departmentNameKo ?? ""
-      : selectedSpecDept?.nameKo ?? "";
-  const submitDeptId =
-    mode === "offering"
-      ? selectedOffering
-        ? String(selectedOffering.departmentId)
-        : ""
-      : specDeptId;
-  const submitTerm = mode === "offering" ? selectedOffering?.term ?? "" : specTerm;
-  const submitOfferingId = mode === "offering" ? offeringId : "";
-  const submitLanguage = mode === "offering" ? selectedLanguage : specLanguage;
-
   const canSubmit =
     mode === "offering"
-      ? !!offeringId && !!selectedLanguage
+      ? choices.length > 0 && choices.every((c) => !!c.language)
       : !!specId && !!specDeptId && !!specTerm && !!specLanguage;
 
   // 모집 중인 학과가 없음 — 승인된 모집요강이 있어도 여기서 멈춘다.
@@ -239,68 +294,237 @@ export function NewApplicationForm({
     </label>
   );
 
+  const offeringTitle = (o: OfferingOption) =>
+    `${o.universityName ?? o.universityNameKo ?? "?"} · ${o.departmentName}`;
+
   return (
     <form action={action} className="flex flex-col gap-5">
-      <input type="hidden" name="admission_spec_id" value={submitSpecId} />
-      <input type="hidden" name="offering_id" value={submitOfferingId} />
-      <input type="hidden" name="target_department_id" value={submitDeptId} />
-      <input
-        type="hidden"
-        name="target_department_label"
-        value={submitDeptLabel}
-      />
-      <input type="hidden" name="term" value={submitTerm} />
-      <input type="hidden" name="selected_language" value={submitLanguage} />
+      {mode === "offering" ? (
+        <input type="hidden" name="choices" value={choicesJson} />
+      ) : (
+        <>
+          <input type="hidden" name="admission_spec_id" value={specId} />
+          <input type="hidden" name="offering_id" value="" />
+          <input type="hidden" name="target_department_id" value={specDeptId} />
+          <input
+            type="hidden"
+            name="target_department_label"
+            value={selectedSpecDept?.nameKo ?? ""}
+          />
+          <input type="hidden" name="term" value={specTerm} />
+          <input type="hidden" name="selected_language" value={specLanguage} />
+        </>
+      )}
 
       {mode === "offering" ? (
         <>
-        <label className={labelClass}>
-          <span className={labelTextClass}>
-            {tr(locale, "희망 학과 (모집 중)", "Ngành nguyện vọng (đang tuyển)")}
-            <span className={requiredMarkClass}>*</span>
-          </span>
-          <select
-            required
-            className={inputClass}
-            value={offeringId}
-            onChange={onOfferingChange}
-          >
-            <option value="">
-              {tr(locale, "— 대학 · 학과 · 학기 선택 —", "— Chọn trường · ngành · học kỳ —")}
-            </option>
-            {offerings.map((o) => (
-              <option key={o.id} value={o.id}>
-                {o.universityName ?? o.universityNameKo ?? "?"} · {o.departmentName} · {o.term}
-                {o.intakeQuota != null
-                  ? ` · ${tr(locale, "모집", "tuyển")} ${o.intakeQuota}${tr(locale, "명", " SV")}`
-                  : ""}
-              </option>
-            ))}
-          </select>
-          {specs.length > 0 ? (
-            <button
-              type="button"
-              onClick={() => setMode("spec")}
-              className="self-start text-xs text-slate-500 underline hover:text-slate-700"
-            >
-              {tr(
-                locale,
-                "원하는 학과가 없나요? 모집요강에서 직접 선택",
-                "Không thấy ngành mong muốn? Chọn trực tiếp từ hồ sơ tuyển sinh"
-              )}
-            </button>
-          ) : null}
-          {fieldError("admission_spec_id") ? (
-            <span className={errorTextClass}>
-              {fieldError("admission_spec_id")}
+          {/* 1. 학기 */}
+          <label className={labelClass}>
+            <span className={labelTextClass}>
+              {tr(locale, "지원 학기", "Học kỳ đăng ký")}
+              <span className={requiredMarkClass}>*</span>
             </span>
+            <select
+              required
+              className={inputClass}
+              value={term}
+              onChange={(e) => onTermChange(e.target.value)}
+            >
+              <option value="">{tr(locale, "— 학기 선택 —", "— Chọn học kỳ —")}</option>
+              {terms.map((t) => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
+              ))}
+            </select>
+            {specs.length > 0 ? (
+              <button
+                type="button"
+                onClick={() => setMode("spec")}
+                className="self-start text-xs text-slate-500 underline hover:text-slate-700"
+              >
+                {tr(
+                  locale,
+                  "원하는 학과가 없나요? 모집요강에서 직접 선택",
+                  "Không thấy ngành mong muốn? Chọn trực tiếp từ hồ sơ tuyển sinh"
+                )}
+              </button>
+            ) : null}
+          </label>
+
+          {term ? (
+            <>
+              {/* 2. 고른 지망 (순서 = 지망 순위) */}
+              <div className={labelClass}>
+                <span className={labelTextClass}>
+                  {tr(locale, "지망 순위", "Thứ tự nguyện vọng")}
+                  <span className={requiredMarkClass}>*</span>
+                </span>
+                <p className="text-xs text-slate-500">
+                  {tr(
+                    locale,
+                    `아래 목록에서 고른 순서가 1지망 · 2지망 · 3지망이 됩니다 (학기당 최대 ${MAX_PRIORITY}개, 같은 대학의 다른 학과도 각각 1개로 셉니다). ↑/↓ 로 순서를 바꿀 수 있습니다. 결제는 지망마다 따로 진행됩니다.`,
+                    `Thứ tự chọn bên dưới sẽ là Nguyện vọng 1 · 2 · 3 (tối đa ${MAX_PRIORITY} mỗi học kỳ; các ngành khác nhau của cùng một trường tính riêng). Dùng ↑/↓ để đổi thứ tự. Mỗi nguyện vọng được thanh toán riêng.`
+                  )}
+                </p>
+                {existing.count > 0 ? (
+                  <p className="text-xs text-amber-700">
+                    {tr(
+                      locale,
+                      `이 학생은 ${term} 학기에 이미 ${existing.count}개 지원했습니다. 새 지망은 ${existing.count + 1}지망부터 매겨집니다.`,
+                      `Sinh viên đã có ${existing.count} nguyện vọng ở học kỳ ${term}. Nguyện vọng mới bắt đầu từ Nguyện vọng ${existing.count + 1}.`
+                    )}
+                  </p>
+                ) : null}
+
+                {remaining === 0 ? (
+                  <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+                    {tr(
+                      locale,
+                      `이 학기에는 이미 지망 ${MAX_PRIORITY}개가 모두 찼습니다. 기존 지원을 취소하거나 다른 학기를 고르세요.`,
+                      `Học kỳ này đã đủ ${MAX_PRIORITY} nguyện vọng. Hãy hủy nguyện vọng cũ hoặc chọn học kỳ khác.`
+                    )}
+                  </div>
+                ) : choices.length === 0 ? (
+                  <div className="rounded-md border border-dashed border-slate-300 px-3 py-4 text-center text-xs text-slate-500">
+                    {tr(
+                      locale,
+                      "아직 고른 지망이 없습니다. 아래 모집 목록에서 '추가'를 누르세요.",
+                      "Chưa chọn nguyện vọng nào. Nhấn 'Thêm' ở danh sách bên dưới."
+                    )}
+                  </div>
+                ) : (
+                  <ol className="flex flex-col gap-2">
+                    {choices.map((c, i) => {
+                      const o = offeringById.get(c.offeringId);
+                      if (!o) return null;
+                      const rank = existing.count + i + 1;
+                      return (
+                        <li
+                          key={c.offeringId}
+                          className="flex flex-wrap items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-3 py-2"
+                        >
+                          <span
+                            className={`shrink-0 rounded px-2 py-0.5 text-xs font-semibold ${priorityTone(rank)}`}
+                          >
+                            {priorityLabel(locale, rank)}
+                          </span>
+                          <span className="min-w-0 flex-1 text-sm text-slate-800">
+                            {offeringTitle(o)}
+                          </span>
+                          {o.availableLanguages.length > 1 ? (
+                            <select
+                              aria-label={tr(locale, "어학 능력", "Năng lực ngoại ngữ")}
+                              className="rounded-md border border-slate-300 px-2 py-1 text-xs"
+                              value={c.language}
+                              onChange={(e) => setChoiceLanguage(i, e.target.value)}
+                            >
+                              <option value="">
+                                {tr(locale, "— 어학 능력 —", "— Ngoại ngữ —")}
+                              </option>
+                              {o.availableLanguages.map((l) => (
+                                <option key={l} value={l}>
+                                  {languageLabel(locale, l)}
+                                </option>
+                              ))}
+                            </select>
+                          ) : (
+                            <span className="text-xs text-slate-500">
+                              {c.language ? languageLabel(locale, c.language) : "—"}
+                            </span>
+                          )}
+                          <div className="flex shrink-0 items-center gap-1">
+                            <button
+                              type="button"
+                              className={smallBtnClass}
+                              disabled={i === 0}
+                              onClick={() => moveChoice(i, -1)}
+                              aria-label={tr(locale, "순위 올리기", "Lên thứ tự")}
+                              title={tr(locale, "순위 올리기", "Lên thứ tự")}
+                            >
+                              ↑
+                            </button>
+                            <button
+                              type="button"
+                              className={smallBtnClass}
+                              disabled={i === choices.length - 1}
+                              onClick={() => moveChoice(i, 1)}
+                              aria-label={tr(locale, "순위 내리기", "Xuống thứ tự")}
+                              title={tr(locale, "순위 내리기", "Xuống thứ tự")}
+                            >
+                              ↓
+                            </button>
+                            <button
+                              type="button"
+                              className={smallBtnClass}
+                              onClick={() => removeChoice(i)}
+                            >
+                              {tr(locale, "빼기", "Bỏ")}
+                            </button>
+                          </div>
+                        </li>
+                      );
+                    })}
+                  </ol>
+                )}
+              </div>
+
+              {/* 3. 이 학기의 모집 목록 */}
+              {remaining > 0 ? (
+                <div className={labelClass}>
+                  <span className={labelTextClass}>
+                    {tr(locale, "모집 중인 대학 · 학과", "Trường · ngành đang tuyển")}
+                    <span className="ml-2 text-xs font-normal text-slate-500">
+                      {tr(
+                        locale,
+                        `${choices.length} / ${remaining}개 선택`,
+                        `Đã chọn ${choices.length} / ${remaining}`
+                      )}
+                    </span>
+                  </span>
+                  <ul className="divide-y divide-slate-100 rounded-md border border-slate-200">
+                    {termOfferings.map((o) => {
+                      const picked = choices.some((c) => c.offeringId === o.id);
+                      const applied = appliedSet.has(o.id);
+                      const full = choices.length >= remaining;
+                      const quota = formatOfferingQuota(locale, o.intakeQuota, o.totalQuota);
+                      return (
+                        <li
+                          key={o.id}
+                          className="flex items-center justify-between gap-2 px-3 py-2"
+                        >
+                          <div className="min-w-0">
+                            <div className="text-sm text-slate-800">{offeringTitle(o)}</div>
+                            {quota ? (
+                              <div className="text-xs text-slate-500">{quota}</div>
+                            ) : null}
+                          </div>
+                          {applied ? (
+                            <span className="shrink-0 text-xs text-slate-400">
+                              {tr(locale, "이미 지원함", "Đã đăng ký")}
+                            </span>
+                          ) : picked ? (
+                            <span className="shrink-0 text-xs font-medium text-emerald-700">
+                              {tr(locale, "선택됨", "Đã chọn")}
+                            </span>
+                          ) : (
+                            <button
+                              type="button"
+                              className="shrink-0 rounded-md border border-slate-300 px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
+                              disabled={full}
+                              onClick={() => addChoice(o)}
+                            >
+                              {tr(locale, "추가", "Thêm")}
+                            </button>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              ) : null}
+            </>
           ) : null}
-        </label>
-
-        {selectedOffering
-          ? languageField(selectedOffering.availableLanguages, selectedLanguage, setSelectedLanguage)
-          : null}
-
         </>
       ) : (
         <>
@@ -428,12 +652,32 @@ export function NewApplicationForm({
           {selectedSpecDept
             ? languageField(selectedSpecDept.availableLanguages, specLanguage, setSpecLanguage)
             : null}
+
+          <p className="text-xs text-slate-500">
+            {tr(
+              locale,
+              `지망 순위는 이 학기의 다음 순위로 자동으로 매겨집니다 (학기당 최대 ${MAX_PRIORITY}지망).`,
+              `Thứ tự nguyện vọng được tự động gán tiếp theo trong học kỳ (tối đa ${MAX_PRIORITY} mỗi học kỳ).`
+            )}
+          </p>
         </>
       )}
 
       {state?.error ? (
         <div className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
           {state.error}
+        </div>
+      ) : null}
+
+      {state?.notice ? (
+        <div className="flex flex-wrap items-center justify-between gap-2 rounded-md bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
+          <span>{state.notice}</span>
+          <Link
+            href={`/center/students/${studentId}`}
+            className="shrink-0 rounded-md bg-emerald-700 px-3 py-1 text-xs font-semibold text-white hover:bg-emerald-800"
+          >
+            {tr(locale, "학생 상세로", "Về chi tiết sinh viên")}
+          </Link>
         </div>
       ) : null}
 
@@ -445,11 +689,9 @@ export function NewApplicationForm({
         >
           {pending
             ? tr(locale, "저장 중...", "Đang lưu...")
-            : tr(
-                locale,
-                "지원 등록",
-                "Đăng ký nguyện vọng"
-              )}
+            : mode === "offering" && choices.length > 1
+              ? tr(locale, `지망 ${choices.length}개 등록`, `Đăng ký ${choices.length} nguyện vọng`)
+              : tr(locale, "지원 등록", "Đăng ký nguyện vọng")}
         </button>
         <Link
           href={`/center/students/${studentId}`}

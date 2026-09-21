@@ -10,12 +10,16 @@ import Link from "next/link";
 
 import { verifyCenterSession } from "@/lib/center/dal";
 import { getLocale, tr } from "@/lib/i18n";
+import { REG_FIELDS, REQUIRED_FIELD_IDS } from "@/lib/center/students/registration";
 
 import { ImportForm } from "./import-form";
 
 export default async function StudentImportPage() {
   await verifyCenterSession();
   const locale = await getLocale();
+  const requiredLabels = REQUIRED_FIELD_IDS.map((id) =>
+    tr(locale, REG_FIELDS[id].ko, REG_FIELDS[id].vi)
+  ).join(", ");
 
   return (
     <div className="max-w-3xl">
@@ -49,19 +53,9 @@ export default async function StudentImportPage() {
         <p className="mb-4 text-sm text-slate-600">
           {tr(
             locale,
-            "엑셀 양식에는 TOPIK · Visa · 위치 드롭다운이 포함되어 있습니다.",
-            "Mẫu Excel có sẵn dropdown cho TOPIK · Visa · Vị trí."
+            "운영 엑셀(지원자 명단)과 같은 양식입니다 — 머리글 2줄, 3행부터 입력. 비자·성별·최종학력·TOPIK·지원 학기 등은 드롭다운이 있습니다. 빨간 머리글이 필수 칸입니다.",
+            "Cùng mẫu với danh sách ứng viên — tiêu đề 2 dòng, nhập từ dòng 3. Visa, giới tính, học lực, TOPIK, kỳ đăng ký có dropdown. Cột tiêu đề màu đỏ là bắt buộc."
           )}
-          <br />
-          <span className="text-slate-500">
-            {tr(locale, "행", "Dòng")}{" "}
-            <code className="rounded bg-slate-100 px-1 text-xs">[VÍ DỤ]</code>{" "}
-            {tr(
-              locale,
-              "은 시스템이 자동으로 건너뜁니다 — 삭제하지 않아도 됩니다.",
-              "sẽ được hệ thống tự động bỏ qua — không cần xóa."
-            )}
-          </span>
         </p>
         <a
           href="/api/center/students/template"
@@ -96,39 +90,35 @@ export default async function StudentImportPage() {
         </h2>
         <ul className="ml-5 list-disc space-y-1.5">
           <li>
-            {tr(locale, "다음으로 시작하는 행 ", "Dòng bắt đầu bằng ")}
-            <code className="rounded bg-slate-100 px-1 text-xs">[VÍ DỤ]</code>{" "}
+            <strong>{tr(locale, "필수 칸", "Cột bắt buộc")}</strong>: {requiredLabels}.{" "}
             {tr(
               locale,
-              "은 자동으로 건너뜁니다. 삭제하거나 그대로 두어도 됩니다.",
-              "sẽ tự động bị bỏ qua. Có thể xóa hoặc giữ nguyên."
+              "하나라도 비면 그 행은 등록되지 않고 오류로 표시됩니다.",
+              "Thiếu một mục thì dòng đó không được đăng ký và báo lỗi."
             )}
           </li>
           <li>
-            <strong>{tr(locale, "이름", "Họ và tên")}</strong>{" "}
+            <strong>{tr(locale, "날짜", "Ngày")}</strong>:{" "}
+            <code>YYYY-MM-DD</code> {tr(locale, "또는", "hoặc")} <code>DD/MM/YYYY</code>
+          </li>
+          <li>
+            <strong>{tr(locale, "최종 졸업학교 · 입학일자 · 졸업일자", "Trường tốt nghiệp · Ngày nhập học · Ngày tốt nghiệp")}</strong>:{" "}
             {tr(
               locale,
-              "열은 필수이며, 나머지 열은 비워둘 수 있습니다.",
-              "cột bắt buộc, các cột khác có thể để trống."
+              "최종학력이 고졸이면 고등학교, 전문대·대학 졸업이면 대학 정보로 저장됩니다.",
+              "THPT → lưu là thông tin cấp 3; CĐ/ĐH → lưu là thông tin trường CĐ/ĐH."
             )}
           </li>
           <li>
-            <strong>{tr(locale, "생년월일", "Ngày sinh")}</strong>{" "}
-            {tr(locale, "형식 ", "dạng ")}
-            <code>YYYY-MM-DD</code>{" "}
-            {tr(locale, "(예: 2005-03-15)", "(ví dụ: 2005-03-15)")}
+            {tr(
+              locale,
+              "결석 합계·월수입 합계 칸은 자동 계산이라 입력하지 않아도 됩니다.",
+              "Cột tổng số buổi nghỉ và tổng thu nhập được tự động tính, không cần nhập."
+            )}
           </li>
           <li>
             <strong>{tr(locale, "여권번호", "Số hộ chiếu")}</strong>:{" "}
             {tr(locale, "4–20자, 영문·숫자만.", "4–20 ký tự, chỉ chữ và số.")}
-          </li>
-          <li>
-            <strong>{tr(locale, "TOPIK · Visa · 위치", "TOPIK · Visa · Vị trí")}</strong>{" "}
-            {tr(
-              locale,
-              "는 양식의 드롭다운에서 선택하세요.",
-              "chọn từ dropdown trong mẫu."
-            )}
           </li>
           <li>
             {tr(locale, "한 번에 약 ", "Tối đa khoảng ")}
@@ -142,8 +132,8 @@ export default async function StudentImportPage() {
           <li>
             {tr(
               locale,
-              "학생에게 이메일을 보내지 않습니다 — 정보 저장용입니다.",
-              "Hệ thống không gửi email cho sinh viên — chỉ lưu thông tin."
+              "입력한 값은 '정보 입력'과 작성서류에 그대로 쓰입니다. 학생에게 이메일을 보내지 않습니다.",
+              "Giá trị nhập được dùng luôn cho 'Nhập thông tin' và hồ sơ. Hệ thống không gửi email cho sinh viên."
             )}
           </li>
         </ul>
