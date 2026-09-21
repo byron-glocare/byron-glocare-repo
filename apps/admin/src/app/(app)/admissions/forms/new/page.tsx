@@ -1,7 +1,8 @@
 /**
  * /admissions/forms/new — 작성서류(양식파일) 신규 업로드.
- *   대학·요강 학과·양식종류 선택 후 파일 업로드 → AI 분석(uploadFormFileAction) → 목록으로.
- *   양식은 요강 학과(study_spec_departments)에 속한다 — 버전 묶음 = (대학, 종류, 요강 학과).
+ *   대학·요강 학과·서류명 입력 후 파일 업로드 → AI 분석(uploadFormFileAction) → 목록으로.
+ *   양식은 요강 학과(study_spec_departments)에 속하는 독립 문서(서류명으로 구분, 0070).
+ *   새 업로드는 기존 양식을 내리지 않는다 — 버전은 상세의 "파일 교체"로만 생긴다.
  */
 
 import { redirect } from "next/navigation";
@@ -26,7 +27,6 @@ export default async function NewFormDocPage({
   const preUni = sp.university_id ?? "";
   // 모집요강 편집의 [양식 업로드] 에서 넘어오면 어느 학과·서류의 양식인지 함께 온다.
   const preSpecDept = sp.spec_department_id ?? "";
-  const preKey = sp.key ?? "";
   const preName = sp.name_ko ?? "";
 
   const supabaseUser = await createClient();
@@ -76,7 +76,6 @@ export default async function NewFormDocPage({
           specDepartments={specDeptOptions}
           preUniversityId={preUni}
           preSpecDepartmentId={preSpecDept}
-          preKey={preKey}
           preName={preName}
         />
       </div>

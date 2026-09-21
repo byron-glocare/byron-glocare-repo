@@ -33,10 +33,13 @@ const uploadSchema = z.object({
   university_id: z.coerce.number().int().positive(),
   /** 옛 컬럼 — 표시용으로만 남긴다. 버전 묶음에는 쓰지 않는다. */
   department_name: z.string().max(200).nullable(),
-  /** 요강 학과(0067). 버전 묶음 = (대학, 종류, 요강 학과). */
+  /** 요강 학과(0067). 양식은 이 학과에 속하는 독립 문서(서류명으로 구분). */
   spec_department_id: z.string().uuid().nullable(),
-  key: z.enum(FORM_KEYS),
-  name_ko: z.string().min(1).max(500),
+  /** 옛 양식 종류 — 0070 부터 분류에 쓰지 않는다. 새 행은 other. 옛 값도 받는다. */
+  key: z.enum(FORM_KEYS).default("other"),
+  name_ko: z.string().trim().min(1, "서류명을 입력하세요").max(500),
+  /** 파일 교체 — 이 행을 이전 버전으로 내리고(superseded_by=새 행) 설정을 물려받는다. */
+  replaces_form_file_id: z.string().uuid().nullable(),
   notes: z.string().max(1000).nullable(),
   file_base64: z.string().min(1),
   file_name: z.string().min(1).max(300),
@@ -58,8 +61,10 @@ export type UploadFormFileState =
       analyzedQuestions?: number;
       /** AI 가 제안한 신규 카탈로그 항목 — 운영자가 1클릭 추가 가능 */
       missingDataTypes?: SuggestedMissingDataType[];
-      /** 요강 학과 없이 올라와 기존 양식을 내리지 않았을 때 등 — 성공했지만 알릴 것 */
+      /** 요강 학과 없이 올라왔을 때 등 — 성공했지만 알릴 것 */
       warning?: string;
+      /** 새로 만든 양식 행 id (파일 교체 후 새 버전 상세로 이동할 때) */
+      formFileId?: string;
     }
   | undefined;
 
@@ -114,8 +119,9 @@ export async function uploadFormFileAction(
     university_id: formData.get("university_id"),
     department_name: emptyToNull(formData.get("department_name")),
     spec_department_id: emptyToNull(formData.get("spec_department_id")),
-    key: formData.get("key"),
+    key: emptyToNull(formData.get("key")) ?? undefined,
     name_ko: formData.get("name_ko"),
+    replaces_form_file_id: emptyToNull(formData.get("replaces_form_file_id")),
     notes: emptyToNull(formData.get("notes")),
     file_base64: formData.get("file_base64"),
     file_name: formData.get("file_name"),
@@ -142,10 +148,45 @@ export async function uploadFormFileAction(
     };
   }
 
-  // 3. Storage 업로드
+  // 2-1. 파일 교체면 교체 대상 행을 먼저 확인 — 현행 행만 교체할 수 있다.
+  let replaced: {
+    id: string;
+    university_id: number;
+    key: StudyAdmissionFormFileInsert["key"];
+    name_ko: string;
+    department_name: string | null;
+    spec_department_id: string | null;
+    is_current: boolean;
+    superseded_by: string | null;
+    notes: string | null;
+    required_data_type_keys: string[] | null;
+    applies_to_terms: string[] | null;
+    applies_to_department_ids: number[] | null;
+    is_essay: boolean | null;
+    essay_sections: StudyAdmissionFormFileInsert["essay_sections"] | null;
+  } | null = null;
+  if (data.replaces_form_file_id) {
+    const { data: old } = await supabase
+      .from("study_admission_form_files")
+      .select(
+        "id, university_id, key, name_ko, department_name, spec_department_id, is_current, superseded_by, notes, required_data_type_keys, applies_to_terms, applies_to_department_ids, is_essay, essay_sections"
+      )
+      .eq("id", data.replaces_form_file_id)
+      .maybeSingle();
+    if (!old) return { error: "교체할 양식을 찾을 수 없습니다." };
+    if (old.university_id !== data.university_id) {
+      return { error: "대학교 정보가 일치하지 않습니다." };
+    }
+    if (!old.is_current) {
+      return { error: "이전 버전입니다. 현행 양식에서 파일을 교체하세요(또는 먼저 복원)." };
+    }
+    replaced = old;
+  }
+
+  // 3. Storage 업로드 — 새 업로드는 종류 대신 'form' 경로 (옛 경로는 그대로 둔다)
   const buffer = Buffer.from(data.file_base64, "base64");
   const safeName = sanitizeFileName(data.file_name);
-  const path = `${data.university_id}/${data.key}/${Date.now()}_${safeName}`;
+  const path = `${data.university_id}/form/${Date.now()}_${safeName}`;
 
   const { error: upErr } = await supabase.storage
     .from(BUCKET)
@@ -168,7 +209,11 @@ export async function uploadFormFileAction(
   let analyzedKeys = 0;
   let analyzedQuestions = 0;
   let missingDataTypes: SuggestedMissingDataType[] = [];
-  let mergedRequiredKeys = data.required_data_type_keys;
+  // 교체면 교체되는 행의 필요 표준데이터를 이어받는다(AI 결과는 여기에 합집합).
+  const baseRequiredKeys = replaced
+    ? replaced.required_data_type_keys ?? []
+    : data.required_data_type_keys;
+  let mergedRequiredKeys = baseRequiredKeys;
   let essayQuestions: Array<{
     question_ko: string;
     question_vi?: string;
@@ -199,7 +244,7 @@ export async function uploadFormFileAction(
     });
 
     if (result.ok) {
-      const merged = new Set(data.required_data_type_keys);
+      const merged = new Set(baseRequiredKeys);
       for (const k of result.suggested_required_data_keys) merged.add(k);
       mergedRequiredKeys = Array.from(merged);
       essayQuestions = result.essay_questions.map((q) => ({
@@ -223,61 +268,93 @@ export async function uploadFormFileAction(
     }
   }
 
-  // 5. 기존 현행 양식 archive (분석 완료 후 — insert 직전에 실행해 공백 최소화)
-  //    버전 묶음 = (대학, 종류, 요강 학과). 옛 department_name 으로 묶지 않는다 —
-  //    어학당 입학원서를 올리면서 일반학과 입학원서를 내려버린 사고의 원인이었다.
-  //    요강 학과가 없으면(옛 호출) 아무것도 내리지 않고 새 현행 행으로만 넣는다.
-  let archivedIds: string[] = [];
+  // 5. 새 row INSERT (AI 결과 포함)
+  //    0070: 양식은 종류로 묶지 않는다 — 새 업로드는 아무것도 내리지 않는다.
+  //    파일 교체일 때만 교체 대상 행 하나를 이전 버전으로 내리고(아래 6) 설정을 물려받는다.
   let warning: string | undefined;
-  if (data.spec_department_id) {
-    const { data: archivedRows, error: archErr } = await supabase
-      .from("study_admission_form_files")
-      .update({ is_current: false })
-      .eq("university_id", data.university_id)
-      .eq("key", data.key)
-      .eq("spec_department_id", data.spec_department_id)
-      .eq("is_current", true)
-      .select("id");
-    if (archErr) {
-      await supabase.storage.from(BUCKET).remove([path]);
-      return { error: `기존 양식 archive 실패: ${archErr.message}` };
-    }
-    archivedIds = (archivedRows ?? []).map((r) => r.id);
-  } else {
-    warning =
-      "요강 학과 없이 올라갔습니다. 기존 양식은 그대로 두고 새 양식을 추가했습니다 — 양식 상세에서 학과를 지정하세요.";
+  const ins: StudyAdmissionFormFileInsert = replaced
+    ? {
+        university_id: replaced.university_id,
+        department_name: replaced.department_name,
+        spec_department_id: replaced.spec_department_id,
+        key: replaced.key,
+        name_ko: replaced.name_ko,
+        file_url: publicUrl,
+        file_name: data.file_name,
+        size_bytes: data.file_size,
+        mime_type: data.mime_type ?? null,
+        is_current: true,
+        uploaded_by: user.id,
+        notes: replaced.notes,
+        required_data_type_keys: mergedRequiredKeys,
+        applies_to_terms: replaced.applies_to_terms ?? [],
+        applies_to_department_ids: replaced.applies_to_department_ids ?? [],
+        is_essay: replaced.is_essay ?? false,
+        essay_sections: replaced.essay_sections ?? [],
+        essay_questions: essayQuestions,
+      }
+    : {
+        university_id: data.university_id,
+        department_name: data.department_name,
+        spec_department_id: data.spec_department_id,
+        key: data.key,
+        name_ko: data.name_ko,
+        file_url: publicUrl,
+        file_name: data.file_name,
+        size_bytes: data.file_size,
+        mime_type: data.mime_type ?? null,
+        is_current: true,
+        uploaded_by: user.id,
+        notes: data.notes,
+        required_data_type_keys: mergedRequiredKeys,
+        essay_questions: essayQuestions,
+      };
+  if (!replaced && !data.spec_department_id) {
+    warning = "요강 학과 없이 올라갔습니다 — 양식 상세에서 학과를 지정하세요.";
+  }
+  const { data: inserted, error: insErr } = await supabase
+    .from("study_admission_form_files")
+    .insert(ins)
+    .select("id")
+    .single();
+  if (insErr || !inserted) {
+    await supabase.storage.from(BUCKET).remove([path]);
+    return { error: `DB 저장 실패: ${insErr?.message ?? "알 수 없는 오류"}` };
   }
 
-  // 6. 새 row INSERT (AI 결과 포함)
-  const ins: StudyAdmissionFormFileInsert = {
-    university_id: data.university_id,
-    department_name: data.department_name,
-    spec_department_id: data.spec_department_id,
-    key: data.key,
-    name_ko: data.name_ko,
-    file_url: publicUrl,
-    file_name: data.file_name,
-    size_bytes: data.file_size,
-    mime_type: data.mime_type ?? null,
-    is_current: true,
-    uploaded_by: user.id,
-    notes: data.notes,
-    required_data_type_keys: mergedRequiredKeys,
-    essay_questions: essayQuestions,
-  };
-  const { error: insErr } = await supabase
-    .from("study_admission_form_files")
-    .insert(ins);
-  if (insErr) {
-    // 롤백: 방금 archive 한 기존 현행본을 되돌려 "현행 0개" 상태를 막는다.
-    if (archivedIds.length > 0) {
-      await supabase
-        .from("study_admission_form_files")
-        .update({ is_current: true })
-        .in("id", archivedIds);
+  // 6. 파일 교체 — 교체된 그 행만 이전 버전으로 (계보 = superseded_by)
+  //    보통은 교체된 행이 계보 끝(head)이라 그 행의 superseded_by = 새 행.
+  //    복원했던 행(이미 superseded_by 가 있음)을 교체하면 계보 끝에 새 행을 잇는다 —
+  //    그래야 중간 버전들이 계보에서 떨어져 나가지 않는다.
+  if (replaced) {
+    let linkId = replaced.id;
+    if (replaced.superseded_by) {
+      const rows = await loadLineageRows(supabase, replaced.university_id);
+      linkId = lineageHead(rows, replaced.id)?.id ?? replaced.id;
     }
-    await supabase.storage.from(BUCKET).remove([path]);
-    return { error: `DB 저장 실패: ${insErr.message}` };
+    const { error: archErr } = await supabase
+      .from("study_admission_form_files")
+      .update({ is_current: false })
+      .eq("id", replaced.id);
+    const { error: linkErr } = archErr
+      ? { error: null }
+      : await supabase
+          .from("study_admission_form_files")
+          .update({ superseded_by: inserted.id })
+          .eq("id", linkId);
+    if (archErr || linkErr) {
+      if (!archErr) {
+        await supabase
+          .from("study_admission_form_files")
+          .update({ is_current: true })
+          .eq("id", replaced.id);
+      }
+      // 롤백: 새 행을 지워 같은 서류가 둘로 보이지 않게 한다.
+      await supabase.from("study_admission_form_files").delete().eq("id", inserted.id);
+      await supabase.storage.from(BUCKET).remove([path]);
+      return { error: `기존 양식 교체 실패: ${(archErr ?? linkErr)?.message ?? ""}` };
+    }
+    revalidatePath(`/admissions/forms/${replaced.id}`);
   }
 
   revalidatePath(`/universities/${data.university_id}/forms`);
@@ -285,6 +362,7 @@ export async function uploadFormFileAction(
   revalidatePath(`/admissions/${data.university_id}`);
   revalidatePath("/admissions/specs", "layout");
   return {
+    formFileId: inserted.id,
     analyzeNotes,
     analyzedKeys,
     analyzedQuestions,
@@ -294,8 +372,69 @@ export async function uploadFormFileAction(
 }
 
 /**
+ * 계보(superseded_by 체인) 헬퍼 — 같은 대학의 행을 한 번에 읽어 메모리에서 따라간다.
+ *   predecessors(id) = superseded_by 체인이 id 로 이어지는 모든 이전 버전.
+ *   head(id)         = id 에서 superseded_by 를 끝까지 따라간 최신 행.
+ */
+type LineageRow = { id: string; superseded_by: string | null; file_url: string; is_current: boolean };
+
+async function loadLineageRows(
+  supabase: ReturnType<typeof createAdminClient>,
+  universityId: number
+): Promise<LineageRow[]> {
+  const { data } = await supabase
+    .from("study_admission_form_files")
+    .select("id, superseded_by, file_url, is_current")
+    .eq("university_id", universityId);
+  return data ?? [];
+}
+
+function lineagePredecessors(rows: LineageRow[], id: string): LineageRow[] {
+  const byNext = new Map<string, LineageRow[]>();
+  for (const r of rows) {
+    if (!r.superseded_by) continue;
+    const arr = byNext.get(r.superseded_by) ?? [];
+    arr.push(r);
+    byNext.set(r.superseded_by, arr);
+  }
+  const out: LineageRow[] = [];
+  const seen = new Set<string>([id]);
+  const queue = [id];
+  while (queue.length > 0) {
+    const cur = queue.shift()!;
+    for (const p of byNext.get(cur) ?? []) {
+      if (seen.has(p.id)) continue;
+      seen.add(p.id);
+      out.push(p);
+      queue.push(p.id);
+    }
+  }
+  return out;
+}
+
+function lineageHead(rows: LineageRow[], id: string): LineageRow | null {
+  const byId = new Map(rows.map((r) => [r.id, r]));
+  let cur = byId.get(id) ?? null;
+  const seen = new Set<string>();
+  while (cur && cur.superseded_by && !seen.has(cur.id)) {
+    seen.add(cur.id);
+    const next = byId.get(cur.superseded_by);
+    if (!next) break;
+    cur = next;
+  }
+  return cur;
+}
+
+/** 이 행이 속한 계보 전체 = head + head 의 모든 이전 버전. */
+function lineageAll(rows: LineageRow[], id: string): LineageRow[] {
+  const head = lineageHead(rows, id);
+  if (!head) return [];
+  return [head, ...lineagePredecessors(rows, head.id)];
+}
+
+/**
  * 양식이 속한 요강 학과 변경 — 옛 행(spec_department_id null)을 고치는 경로이기도 하다.
- *   새 학과에 같은 종류의 현행 양식이 이미 있으면 거부한다 (조용히 내리지 않는다).
+ *   이 행 하나만 옮긴다. 다른 양식을 내리거나 막지 않는다(0070).
  */
 export async function setFormFileDepartmentAction(
   formFileId: string,
@@ -310,7 +449,7 @@ export async function setFormFileDepartmentAction(
 
   const { data: form } = await supabase
     .from("study_admission_form_files")
-    .select("id, university_id, key, is_current, spec_department_id")
+    .select("id, university_id, spec_department_id")
     .eq("id", formFileId)
     .maybeSingle();
   if (!form) return { ok: false, error: "양식을 찾을 수 없습니다." };
@@ -326,24 +465,7 @@ export async function setFormFileDepartmentAction(
       ? await supabase.from("study_admission_specs").select("university_id").eq("id", sd.spec_id).maybeSingle()
       : { data: null };
     if (!sd || spec?.university_id !== form.university_id) return { ok: false, error: "이 대학의 요강 학과가 아닙니다." };
-
-    if (form.is_current) {
-      const { data: clash } = await supabase
-        .from("study_admission_form_files")
-        .select("id, name_ko")
-        .eq("university_id", form.university_id)
-        .eq("key", form.key)
-        .eq("spec_department_id", specDepartmentId)
-        .eq("is_current", true)
-        .neq("id", form.id)
-        .limit(1);
-      if (clash && clash.length > 0) {
-        return {
-          ok: false,
-          error: `그 학과에 같은 종류의 현행 양식("${clash[0].name_ko}")이 이미 있습니다. 그 양식을 삭제하거나 다른 학과를 고르세요.`,
-        };
-      }
-    }
+    // 0070: 같은 학과에 현행 양식이 여러 개여도 된다(서류명으로 구분) — 충돌 검사 없음.
   }
 
   const { error } = await supabase
@@ -567,17 +689,15 @@ export async function replaceRequiredKeysAction(
  * 양식 메타데이터 수정 (업로드 이후 표시명·종류·적용범위·메모·필요데이터 편집).
  *   파일 자체는 재업로드로 교체 (버전 관리). 여기서는 메타만 수정.
  *
- *   양식종류(key) 변경:
- *     - 같은 (대학, 새 key, 요강 학과) 에 이미 다른 current 양식이 있으면 충돌 → 거부.
- *     - 버전 그룹핑이 (university_id, key, spec_department_id) 기준이므로
- *       이전 버전(archive)까지 같은 그룹 전체에 cascade.
+ *   양식종류(key): 0070 부터 분류에 쓰지 않는다. 폼에 들어 있으면 이 행 하나에만 저장한다
+ *   (다른 버전·다른 양식으로 cascade 하지 않고 충돌 검사도 없다).
  *   department_name 은 옛 표시용 컬럼 — 그대로 저장만 하고 묶음에는 쓰지 않는다.
  *   요강 학과 변경은 setFormFileDepartmentAction.
  */
 const updateMetaSchema = z.object({
   form_file_id: z.string().uuid(),
   university_id: z.coerce.number().int().positive(),
-  key: z.enum(FORM_KEYS),
+  key: z.enum(FORM_KEYS).optional(),
   department_name: z.string().max(200).nullable(),
   name_ko: z.string().min(1).max(500),
   notes: z.string().max(1000).nullable(),
@@ -620,7 +740,7 @@ export async function updateFormFileMetaAction(
   const parsed = updateMetaSchema.safeParse({
     form_file_id: formData.get("form_file_id"),
     university_id: formData.get("university_id"),
-    key: formData.get("key"),
+    key: emptyToNull(formData.get("key")) ?? undefined,
     department_name: emptyToNull(formData.get("department_name")),
     name_ko: formData.get("name_ko"),
     notes: emptyToNull(formData.get("notes")),
@@ -647,56 +767,18 @@ export async function updateFormFileMetaAction(
     return { error: "대학교 정보가 일치하지 않습니다" };
   }
 
-  // 버전 묶음은 (대학, 종류, 요강 학과). department_name 은 표시용 옛 컬럼 — 묶음에 쓰지 않는다.
-  if (orig.key !== data.key) {
-    // 1) 기존 버전 체인 id 수집 (요강 학과가 없으면 이 행 하나)
-    const chainIds = new Set<string>([orig.id]);
-    if (orig.spec_department_id) {
-      const { data: chainRows } = await supabase
-        .from("study_admission_form_files")
-        .select("id")
-        .eq("university_id", orig.university_id)
-        .eq("key", orig.key)
-        .eq("spec_department_id", orig.spec_department_id);
-      for (const r of chainRows ?? []) chainIds.add(r.id);
-    }
-
-    // 2) 같은 학과에 새 종류의 current 양식이 있는지 충돌 검사
-    if (orig.spec_department_id) {
-      const { data: collideRows } = await supabase
-        .from("study_admission_form_files")
-        .select("id")
-        .eq("university_id", data.university_id)
-        .eq("key", data.key)
-        .eq("spec_department_id", orig.spec_department_id)
-        .eq("is_current", true);
-      const conflict = (collideRows ?? []).some((r) => !chainIds.has(r.id));
-      if (conflict) {
-        return {
-          error: "이 학과에 같은 종류의 양식이 이미 있습니다. 먼저 기존 양식을 삭제하거나 다른 종류를 선택하세요.",
-        };
-      }
-    }
-
-    // 3) 그룹 전체 cascade (이전 버전까지 key 동기화)
-    const { error: cascadeErr } = await supabase
-      .from("study_admission_form_files")
-      .update({ key: data.key })
-      .in("id", Array.from(chainIds));
-    if (cascadeErr) {
-      return { error: `양식 종류 변경 실패: ${cascadeErr.message}` };
-    }
-  }
-
-  // 4) 현재 row 메타 수정 (department_name 은 표시용 그대로 저장)
+  // 현재 row 메타 수정 (department_name 은 표시용 그대로 저장).
+  //   key 는 (옛 호출이 보냈을 때만) 이 행 하나에만 — 묶음·cascade 없음(0070).
+  const patch: Database["public"]["Tables"]["study_admission_form_files"]["Update"] = {
+    name_ko: data.name_ko,
+    notes: data.notes,
+    department_name: data.department_name,
+    required_data_type_keys: data.required_data_type_keys,
+  };
+  if (data.key && data.key !== orig.key) patch.key = data.key;
   const { error: updErr } = await supabase
     .from("study_admission_form_files")
-    .update({
-      name_ko: data.name_ko,
-      notes: data.notes,
-      department_name: data.department_name,
-      required_data_type_keys: data.required_data_type_keys,
-    })
+    .update(patch)
     .eq("id", data.form_file_id);
   if (updErr) {
     return { error: `수정 실패: ${updErr.message}` };
@@ -709,7 +791,8 @@ export async function updateFormFileMetaAction(
 }
 
 /**
- * 양식 삭제 (현재 + 모든 이전 버전 + Storage 파일).
+ * 양식 삭제 — 이 행 + 계보상 이전 버전(superseded_by 체인이 이 행으로 이어지는 행) + Storage 파일.
+ *   같은 종류·같은 학과의 다른 양식은 건드리지 않는다(0070).
  */
 export async function deleteFormFileAction(
   formFileId: string,
@@ -724,28 +807,22 @@ export async function deleteFormFileAction(
 
   const { data: row } = await supabase
     .from("study_admission_form_files")
-    .select("id, university_id, key, spec_department_id")
+    .select("id, university_id, file_url, is_current")
     .eq("id", formFileId)
     .maybeSingle();
   if (!row) return;
 
-  // 버전 묶음 = (대학, 종류, 요강 학과). 요강 학과가 없으면 이 행 하나만.
-  let allVersions: Array<{ id: string; file_url: string }> = [];
-  if (row.spec_department_id) {
-    const { data } = await supabase
-      .from("study_admission_form_files")
-      .select("id, file_url")
-      .eq("university_id", row.university_id)
-      .eq("key", row.key)
-      .eq("spec_department_id", row.spec_department_id);
-    allVersions = data ?? [];
-  } else {
-    const { data } = await supabase
-      .from("study_admission_form_files")
-      .select("id, file_url")
-      .eq("id", row.id);
-    allVersions = data ?? [];
-  }
+  // 이 행 + 계보상 이전 버전 전부.
+  //   현행 행을 지우면 = 그 서류를 지우는 것 → 계보 전체(복원으로 현행이 된 행이면 뒤 버전까지).
+  const lineageRows = await loadLineageRows(supabase, row.university_id);
+  const targets = row.is_current
+    ? lineageAll(lineageRows, row.id)
+    : [row, ...lineagePredecessors(lineageRows, row.id)];
+  const allVersions: Array<{ id: string; file_url: string }> = targets.map((r) => ({
+    id: r.id,
+    file_url: r.file_url,
+  }));
+  if (!allVersions.some((v) => v.id === row.id)) allVersions.push({ id: row.id, file_url: row.file_url });
   const deleteIds = allVersions.map((v) => v.id);
   const urls = Array.from(new Set(allVersions.map((v) => v.file_url)));
 
@@ -972,20 +1049,26 @@ export async function restoreFormFileAction(
 
   const { data: target } = await supabase
     .from("study_admission_form_files")
-    .select("university_id, key, is_current, spec_department_id")
+    .select("id, university_id, is_current")
     .eq("id", formFileId)
     .maybeSingle();
   if (!target || target.is_current) return;
 
-  // 같은 묶음(대학, 종류, 요강 학과)의 현행만 내린다. 요강 학과가 없으면 아무것도 내리지 않는다.
-  if (target.spec_department_id) {
-    await supabase
+  // 이 버전이 속한 계보의 현행(보통 head)만 내린다 — 다른 양식은 건드리지 않는다(0070).
+  //   계보: target → superseded_by → … → head. 옛 행(계보 없음)이면 내릴 것 없음.
+  //   superseded_by 는 그대로 둔다 — 복원해도 계보(버전 목록)는 유지되고,
+  //   복원본을 다시 교체하면 새 버전이 계보 끝(head)에 이어진다.
+  const lineageRows = await loadLineageRows(supabase, target.university_id);
+  const toArchive = lineageAll(lineageRows, target.id)
+    .filter((r) => r.is_current && r.id !== target.id)
+    .map((r) => r.id);
+  if (toArchive.length > 0) {
+    const { error: archErr } = await supabase
       .from("study_admission_form_files")
       .update({ is_current: false })
-      .eq("university_id", target.university_id)
-      .eq("key", target.key)
-      .eq("spec_department_id", target.spec_department_id)
-      .eq("is_current", true);
+      .in("id", toArchive);
+    if (archErr) return;
+    for (const id of toArchive) revalidatePath(`/admissions/forms/${id}`);
   }
 
   await supabase
@@ -993,6 +1076,7 @@ export async function restoreFormFileAction(
     .update({ is_current: true })
     .eq("id", formFileId);
 
+  revalidatePath(`/admissions/forms/${formFileId}`);
   revalidatePath(`/universities/${universityId}/forms`);
   revalidatePath("/admissions");
   revalidatePath(`/admissions/${universityId}`);

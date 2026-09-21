@@ -279,7 +279,12 @@ export default async function AdmissionDetailPage({ params }: { params: Promise<
         {/* 옛 서류 줄 — 작성서류 · 미연결 */}
         {formDocs.length > 0 || unlinkedIssued.length > 0 ? (
           <Card className="p-6 space-y-4">
-            <h2 className="text-base font-semibold">요강 원문 서류 줄 (작성서류 · 미연결)</h2>
+            <div className="flex items-center justify-between gap-2">
+              <h2 className="text-base font-semibold">요강 원문 서류 줄 (작성서류 · 미연결)</h2>
+              <Link href={`/admissions/specs/${id}/edit`} className="text-xs text-primary underline">
+                편집 기본 탭에서 정리
+              </Link>
+            </div>
             {formDocs.length > 0 ? (
               <section>
                 <h3 className="mb-2 text-sm font-semibold">작성서류 (학교 양식) — {formDocs.length}</h3>

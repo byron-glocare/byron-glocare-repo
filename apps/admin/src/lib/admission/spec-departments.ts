@@ -229,18 +229,69 @@ export async function writeDepartmentDocItems(
   return null;
 }
 
+type FormFileRow = Database["public"]["Tables"]["study_admission_form_files"]["Row"];
+
 /**
- * 학과 설정 복사 — from 학과의 발급서류 항목·작성서류 양식·학비·장학금·자격을 to 학과로.
- *   양식은 같은 파일을 가리키는 새 행(슬롯 배치·서술형 설정 포함). to 학과의 기존 양식은 현행에서 내린다.
+ * 양식 행 복사 — 같은 파일(file_url)을 가리키는 새 행을 to 학과에 현행으로 만든다.
+ *   행별 설정(필요 데이터·서술형·오버레이·라벨/슬롯 배치·메모·이름·종류)을 모두 옮긴다.
+ *   복사본은 독립 문서다(0070: 종류별 묶음 없음). 대상 학과의 기존 양식은 건드리지 않는다.
+ *   스토리지 파일은 여러 행이 공유하므로 양식 삭제 액션이 파일을 지키게 되어 있다.
+ */
+export async function insertFormFileCopy(
+  supabase: Client,
+  f: FormFileRow,
+  to: { id: string; university_id: number }
+): Promise<string | null> {
+  const { error } = await supabase.from("study_admission_form_files").insert({
+    university_id: to.university_id,
+    spec_department_id: to.id,
+    department_name: null,
+    key: f.key,
+    name_ko: f.name_ko,
+    file_url: f.file_url,
+    file_name: f.file_name,
+    size_bytes: f.size_bytes,
+    mime_type: f.mime_type,
+    is_current: true,
+    superseded_by: null,
+    uploaded_by: f.uploaded_by,
+    notes: f.notes,
+    required_data_type_keys: f.required_data_type_keys ?? [],
+    applies_to_terms: [],
+    applies_to_department_ids: [],
+    essay_questions: f.essay_questions ?? [],
+    field_overlays: f.field_overlays ?? [],
+    label_mapping: f.label_mapping ?? {},
+    slot_mapping: f.slot_mapping ?? {},
+    is_essay: f.is_essay ?? false,
+    essay_sections: f.essay_sections ?? [],
+  });
+  return error ? `양식 복사 실패(${f.name_ko}): ${error.message}` : null;
+}
+
+export type CopyDepartmentWhat = {
+  docs?: boolean;
+  forms?: boolean;
+  tuition?: boolean;
+  scholarships?: boolean;
+  eligibility?: boolean;
+  /** 모집요강 PDF 문구(info.brochure_vi) + (어학당끼리) 어학연수 프로그램(info.language_program) */
+  brochure?: boolean;
+};
+
+/**
+ * 학과 설정 복사("다른 학과와 똑같이 맞추기") — from 학과의 발급서류 항목·작성서류 양식·학비·장학금·자격·PDF 문구를 to 학과로.
+ *   양식: to 학과의 현행 양식을 전부 이전 버전(is_current=false)으로 내리고(지우지 않음),
+ *         from 학과의 현행 양식을 전부 새 행으로 복사한다(종류 매칭 없음).
  *   what 으로 일부만 복사할 수 있다. 기본은 전부.
  */
 export async function copyDepartmentSetup(
   supabase: Client,
   from: { id: string; spec_id: string },
   to: { id: string; spec_id: string; university_id: number },
-  what: { docs?: boolean; forms?: boolean; tuition?: boolean; scholarships?: boolean; eligibility?: boolean } = {}
+  what: CopyDepartmentWhat = {}
 ): Promise<string | null> {
-  const w = { docs: true, forms: true, tuition: true, scholarships: true, eligibility: true, ...what };
+  const w = { docs: true, forms: true, tuition: true, scholarships: true, eligibility: true, brochure: true, ...what };
 
   if (w.docs) {
     const { data: rows } = await supabase
@@ -256,40 +307,48 @@ export async function copyDepartmentSetup(
   }
 
   if (w.forms) {
-    const { data: files } = await supabase.from("study_admission_form_files").select("*").eq("spec_department_id", from.id).eq("is_current", true);
-    // to 학과의 기존 현행 양식은 내린다 (같은 종류만)
-    const keys = (files ?? []).map((f) => f.key);
-    if (keys.length) {
-      const { error } = await supabase
-        .from("study_admission_form_files")
-        .update({ is_current: false })
-        .eq("spec_department_id", to.id)
-        .eq("is_current", true)
-        .in("key", keys);
-      if (error) return `양식 정리 실패: ${error.message}`;
-    }
-    for (const f of files ?? []) {
-      const { id: _id, created_at: _c, updated_at: _u, superseded_by: _s, ...rest } = f;
-      void _id; void _c; void _u; void _s;
-      const { error } = await supabase.from("study_admission_form_files").insert({
-        ...rest,
-        university_id: to.university_id,
-        spec_department_id: to.id,
-        is_current: true,
-        applies_to_department_ids: [],
-        department_name: null,
-      });
-      if (error) return `양식 복사 실패: ${error.message}`;
+    const { data: files, error: readErr } = await supabase
+      .from("study_admission_form_files")
+      .select("*")
+      .eq("spec_department_id", from.id)
+      .eq("is_current", true)
+      .order("uploaded_at");
+    if (readErr) return `원본 양식 읽기 실패: ${readErr.message}`;
+    // to 학과의 현행 양식은 전부 이전 버전으로 (지우지 않는다)
+    const { error: offErr } = await supabase
+      .from("study_admission_form_files")
+      .update({ is_current: false })
+      .eq("spec_department_id", to.id)
+      .eq("is_current", true);
+    if (offErr) return `양식 정리 실패: ${offErr.message}`;
+    for (const f of (files ?? []) as FormFileRow[]) {
+      const err = await insertFormFileCopy(supabase, f, { id: to.id, university_id: to.university_id });
+      if (err) return err;
     }
   }
 
-  if (w.tuition || w.scholarships || w.eligibility) {
-    const { data: src } = await supabase.from("study_spec_departments").select("tuition, scholarships, eligibility").eq("id", from.id).maybeSingle();
-    if (src) {
+  if (w.tuition || w.scholarships || w.eligibility || w.brochure) {
+    const [{ data: src }, { data: dst }] = await Promise.all([
+      supabase.from("study_spec_departments").select("kind, info, tuition, scholarships, eligibility").eq("id", from.id).maybeSingle(),
+      supabase.from("study_spec_departments").select("kind, info").eq("id", to.id).maybeSingle(),
+    ]);
+    if (src && dst) {
       const patch: Database["public"]["Tables"]["study_spec_departments"]["Update"] = {};
       if (w.tuition) patch.tuition = src.tuition ?? {};
       if (w.scholarships) patch.scholarships = src.scholarships ?? [];
       if (w.eligibility) patch.eligibility = src.eligibility ?? null;
+      if (w.brochure) {
+        const srcInfo = ((src.info ?? {}) as DepartmentInfo) ?? {};
+        const info: DepartmentInfo = { ...(((dst.info ?? {}) as DepartmentInfo) ?? {}) };
+        if (srcInfo.brochure_vi && Object.keys(srcInfo.brochure_vi).length) info.brochure_vi = { ...srcInfo.brochure_vi };
+        else delete info.brochure_vi;
+        // 어학연수 프로그램은 어학당 → 어학당일 때만
+        if (dst.kind === "language" && src.kind === "language") {
+          if (srcInfo.language_program && Object.keys(srcInfo.language_program).length) info.language_program = { ...srcInfo.language_program };
+          else delete info.language_program;
+        }
+        patch.info = info as Database["public"]["Tables"]["study_spec_departments"]["Update"]["info"];
+      }
       const { error } = await supabase.from("study_spec_departments").update(patch).eq("id", to.id);
       if (error) return `학비·장학금 복사 실패: ${error.message}`;
     }

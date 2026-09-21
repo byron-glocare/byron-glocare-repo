@@ -2,7 +2,7 @@
 
 /**
  * 모집요강 편집 — 기본 탭(요강 공통) 저장.
- *   전형 이름·상태·원본 파일·온라인 접수·기타(metadata)·작성서류/미연결 옛 줄.
+ *   전형 이름·상태·원본 파일·온라인 접수·기타(metadata). 옛 required_documents JSONB 는 건드리지 않는다.
  *   학과(학비·장학금·자격·발급서류·양식)와 학기(일정·모집 학과)는 학과/학기 탭의 개별 액션이 저장한다.
  *   term 컬럼은 학기 중 가장 늦은 것으로 맞춘다(옛 읽기 코드용). program_type 은 손대지 않는다.
  */
@@ -14,14 +14,7 @@ import { z } from "zod";
 import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { isGlocareAdmin } from "@/lib/admin-guard";
 import type { StudyAdmissionSpecUpdate } from "@/types/database";
-import { loadDocCatalog, rowsFromLegacy, splitLegacyDocs, type LegacyDoc } from "@/lib/admission/spec-doc-items";
-import { loadFormDocKeys } from "@/lib/admission/form-doc-keys";
-import {
-  loadDocItemRowsByDepartment,
-  loadSpecDepartments,
-  refreshSpecLegacyCaches,
-  writeDepartmentDocItems,
-} from "@/lib/admission/spec-departments";
+import { refreshSpecLegacyCaches } from "@/lib/admission/spec-departments";
 import { syncSpecLegacyTerm } from "@/lib/admission/spec-merge";
 
 const STATUSES = ["draft", "reviewing", "approved", "archived"] as const;
@@ -73,38 +66,13 @@ export async function updateSpecAction(specId: string, _prev: UpdateSpecState, f
   };
   const metadata = parseArea("spec_metadata", {});
   if (!metadata.ok) return { fieldErrors: { spec_metadata: metadata.error } };
-  const legacyIn = parseArea("spec_required_documents", null);
-  if (!legacyIn.ok) return { fieldErrors: { spec_required_documents: legacyIn.error } };
 
   const admin = createAdminClient();
-  const { data: spec } = await admin.from("study_admission_specs").select("id, university_id, required_documents").eq("id", specId).maybeSingle();
+  const { data: spec } = await admin.from("study_admission_specs").select("id, university_id").eq("id", specId).maybeSingle();
   if (!spec) return { error: "모집요강을 찾을 수 없습니다." };
 
-  // 옛 JSONB — 작성서류·미연결 줄만 제출된 것으로 바꾸고, 항목에서 그린 발급서류 줄은 그대로 둔다
-  let requiredDocuments: unknown = undefined;
-  if (Array.isArray(legacyIn.value)) {
-    const formDocKeys = await loadFormDocKeys(admin);
-    const prev = (Array.isArray(spec.required_documents) ? spec.required_documents : []) as LegacyDoc[];
-    const { linked: rendered } = splitLegacyDocs(prev, formDocKeys);
-    const { keep, linked: newlyLinked } = splitLegacyDocs(legacyIn.value as LegacyDoc[], formDocKeys);
-    requiredDocuments = [...keep, ...rendered];
-    // 미연결 줄에 서류 종류를 새로 골랐으면 → 항목 행으로 (모든 학과에, 이미 있는 학과는 건너뜀)
-    if (newlyLinked.length > 0) {
-      const catalog = await loadDocCatalog(admin);
-      const newRows = rowsFromLegacy(newlyLinked, new Set(catalog.items.map((i) => i.key)));
-      if (newRows.length > 0) {
-        const [depts, rowsByDept] = await Promise.all([loadSpecDepartments(admin, specId), loadDocItemRowsByDepartment(admin, specId)]);
-        for (const d of depts) {
-          const existing = rowsByDept.get(d.id) ?? [];
-          const have = new Set(existing.map((r) => r.item_key));
-          const add = newRows.filter((r) => !have.has(r.item_key));
-          if (add.length === 0) continue;
-          const err = await writeDepartmentDocItems(admin, specId, d.id, [...existing, ...add]);
-          if (err) return { error: err };
-        }
-      }
-    }
-  }
+  // 옛 JSONB(required_documents)는 여기서 건드리지 않는다 — 작성서류·미연결 옛 줄은
+  // 기본 탭의 옛 줄 목록(legacy-doc-actions)이 줄마다 학과로 옮기거나 지운다.
 
   // 온라인 접수 + 가이드(새 파일 업로드 시에만 교체)
   const isOnline = formData.get("is_online_submission") === "on";
@@ -133,7 +101,6 @@ export async function updateSpecAction(specId: string, _prev: UpdateSpecState, f
     is_online_submission: isOnline,
     online_form_url: onlineFormUrl,
   };
-  if (requiredDocuments !== undefined) patch.required_documents = requiredDocuments;
   if (newGuideUrl) patch.online_guide_url = newGuideUrl;
   if (meta.status === "approved") {
     patch.approved_by = user.id;

@@ -8,7 +8,7 @@
 
 import { useActionState, useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Check, Loader2, Plus, Trash2 } from "lucide-react";
+import { Check, Download, Loader2, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
@@ -20,6 +20,7 @@ import type { SpecDepartmentKind, SpecTerm } from "@/lib/admission/spec-departme
 import {
   addSpecTermAction,
   deleteSpecTermAction,
+  importTermScheduleAction,
   saveSpecTermAction,
   setTermDepartmentAction,
   type TermActionState,
@@ -59,24 +60,74 @@ export function termOptions(): string[] {
   return out;
 }
 
+/** 일정 복사 원본 후보 — 다른 대학 활성 요강의 학기 (edit/page.tsx 가 넘긴다) */
+export type SourceTerm = { id: string; term: string; spec_id: string; university_name: string };
+
+type SourceGroup = { label: string; items: Array<{ id: string; term: string }>; thisSpec: boolean };
+
+/** "이 요강" 먼저, 그다음 "다른 대학 · <대학명>" (대학명 순) */
+function buildSourceGroups(specId: string, terms: SpecTerm[], sourceTerms: SourceTerm[] | undefined, excludeId?: string): SourceGroup[] {
+  const own = terms.filter((t) => t.id !== excludeId).map((t) => ({ id: t.id, term: t.term }));
+  const groups: SourceGroup[] = own.length ? [{ label: "이 요강", items: own, thisSpec: true }] : [];
+  const byUni = new Map<string, Array<{ id: string; term: string }>>();
+  for (const s of sourceTerms ?? []) {
+    if (s.spec_id === specId || s.id === excludeId) continue;
+    const arr = byUni.get(s.university_name) ?? [];
+    arr.push({ id: s.id, term: s.term });
+    byUni.set(s.university_name, arr);
+  }
+  for (const [name, items] of Array.from(byUni.entries()).sort((a, b) => a[0].localeCompare(b[0], "ko"))) {
+    groups.push({ label: `다른 대학 · ${name}`, items: items.sort((a, b) => b.term.localeCompare(a.term)), thisSpec: false });
+  }
+  return groups;
+}
+
+function SourceTermSelect({
+  groups,
+  value,
+  onChange,
+  emptyLabel,
+}: {
+  groups: SourceGroup[];
+  value: string;
+  onChange: (v: string) => void;
+  emptyLabel: string;
+}) {
+  return (
+    <select className={inputClass} value={value} onChange={(e) => onChange(e.target.value)}>
+      <option value="">{emptyLabel}</option>
+      {groups.map((g) => (
+        <optgroup key={g.label} label={g.label}>
+          {g.items.map((t) => (
+            <option key={t.id} value={t.id}>{t.term}</option>
+          ))}
+        </optgroup>
+      ))}
+    </select>
+  );
+}
+
 export function SpecTermEditor({
   specId,
   terms,
   departments,
   offerings,
   revisions,
+  sourceTerms,
 }: {
   specId: string;
   terms: SpecTerm[];
   departments: TermDept[];
   offerings: TermOffering[];
   revisions: Record<string, string>;
+  /** 다른 대학 활성 요강의 학기 — 없으면 이 요강의 학기만 원본으로 쓴다 */
+  sourceTerms?: SourceTerm[];
 }) {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-xs text-muted-foreground">학기마다 일정이 다릅니다. 그 학기에 모집하는 학과를 체크하면 모집(초안) 행이 만들어집니다.</p>
-        <AddTermDialog specId={specId} terms={terms} />
+        <AddTermDialog specId={specId} terms={terms} sourceTerms={sourceTerms} />
       </div>
       {terms.length === 0 ? (
         <div className="rounded-md border border-dashed p-6 text-center text-sm text-muted-foreground">학기가 없습니다. 학기를 추가하세요.</div>
@@ -88,13 +139,26 @@ export function SpecTermEditor({
           term={t}
           departments={departments}
           offerings={offerings.filter((o) => o.term === t.term)}
+          sourceGroups={buildSourceGroups(specId, terms, sourceTerms, t.id)}
         />
       ))}
     </div>
   );
 }
 
-function TermCard({ specId, term, departments, offerings }: { specId: string; term: SpecTerm; departments: TermDept[]; offerings: TermOffering[] }) {
+function TermCard({
+  specId,
+  term,
+  departments,
+  offerings,
+  sourceGroups,
+}: {
+  specId: string;
+  term: SpecTerm;
+  departments: TermDept[];
+  offerings: TermOffering[];
+  sourceGroups: SourceGroup[];
+}) {
   const router = useRouter();
   const bound = saveSpecTermAction.bind(null, specId, term.id);
   const [state, action, pending] = useActionState<TermActionState, FormData>(bound, undefined);
@@ -136,7 +200,8 @@ function TermCard({ specId, term, departments, offerings }: { specId: string; te
       <div className="mb-3 flex flex-wrap items-center gap-2">
         <h3 className="text-base font-semibold">{term.term}</h3>
         <Badge variant="secondary">{offerings.length} 학과 모집</Badge>
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center gap-1">
+          <ImportScheduleDialog specId={specId} term={term} sourceGroups={sourceGroups} disabled={busy || pending} />
           <Button type="button" variant="ghost" size="sm" className="text-destructive hover:text-destructive" disabled={busy} onClick={remove}>
             <Trash2 className="size-3.5" />
             학기 삭제
@@ -213,7 +278,95 @@ function TermCard({ specId, term, departments, offerings }: { specId: string; te
   );
 }
 
-function AddTermDialog({ specId, terms }: { specId: string; terms: SpecTerm[] }) {
+function ImportScheduleDialog({
+  specId,
+  term,
+  sourceGroups,
+  disabled,
+}: {
+  specId: string;
+  term: SpecTerm;
+  sourceGroups: SourceGroup[];
+  disabled?: boolean;
+}) {
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const [source, setSource] = useState("");
+  const [keepDates, setKeepDates] = useState(false);
+  const [regular, setRegular] = useState(true);
+  const [language, setLanguage] = useState(true);
+  const [pending, startTransition] = useTransition();
+
+  const sourceLabel = (() => {
+    for (const g of sourceGroups) {
+      const hit = g.items.find((t) => t.id === source);
+      if (hit) return `${g.label} ${hit.term}`;
+    }
+    return "";
+  })();
+
+  const run = () => {
+    if (!source) return toast.error("원본 학기를 고르세요");
+    if (!regular && !language) return toast.error("가져올 일정을 하나 이상 고르세요");
+    const what = [regular ? "일반학과" : null, language ? "어학당" : null].filter(Boolean).join("·");
+    if (!confirm(`${term.term}의 ${what} 일정을 ${sourceLabel}의 일정으로 덮어씁니다.${keepDates ? "" : " (날짜는 비웁니다)"} 저장하지 않은 입력은 사라집니다. 계속할까요?`)) return;
+    startTransition(async () => {
+      const res = await importTermScheduleAction(specId, term.id, { source_term_id: source, keep_dates: keepDates, regular, language });
+      if (res.ok) {
+        toast.success(`${term.term} 일정을 가져왔습니다.`);
+        setOpen(false);
+        router.refresh();
+      } else toast.error("가져오기 실패", { description: res.error });
+    });
+  };
+
+  return (
+    <>
+      <Button type="button" variant="ghost" size="sm" disabled={disabled} onClick={() => setOpen(true)}>
+        <Download className="size-3.5" />
+        다른 학기에서 가져오기
+      </Button>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{term.term} — 다른 학기에서 일정 가져오기</DialogTitle>
+            <DialogDescription>고른 일정이 이 학기 일정을 덮어씁니다. 학기 이름·메모·모집 학과는 그대로입니다.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3">
+            <label className="flex flex-col gap-1 text-sm">
+              <span className="text-xs text-muted-foreground">원본 학기</span>
+              <SourceTermSelect groups={sourceGroups} value={source} onChange={setSource} emptyLabel="— 선택 —" />
+            </label>
+            <label className="flex items-center gap-2 text-sm">
+              <input type="checkbox" checked={regular} onChange={(e) => setRegular(e.target.checked)} />
+              일반학과 일정
+            </label>
+            <label className="flex items-center gap-2 text-sm">
+              <input type="checkbox" checked={language} onChange={(e) => setLanguage(e.target.checked)} />
+              어학당 일정
+            </label>
+            <label className="flex items-center gap-2 text-sm">
+              <input type="checkbox" checked={keepDates} onChange={(e) => setKeepDates(e.target.checked)} />
+              날짜까지 그대로 복사
+            </label>
+            <p className="text-[11px] text-muted-foreground">
+              {keepDates ? "차수와 날짜를 모두 그대로 가져옵니다." : "차수 이름만 가져오고 날짜는 비웁니다."}
+            </p>
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={pending}>취소</Button>
+            <Button type="button" onClick={run} disabled={pending || !source || (!regular && !language)}>
+              {pending ? <Loader2 className="size-4 animate-spin" /> : <Download className="size-4" />}
+              가져오기
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}
+
+function AddTermDialog({ specId, terms, sourceTerms }: { specId: string; terms: SpecTerm[]; sourceTerms?: SourceTerm[] }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const have = new Set(terms.map((t) => t.term));
@@ -222,12 +375,22 @@ function AddTermDialog({ specId, terms }: { specId: string; terms: SpecTerm[] })
   const [custom, setCustom] = useState("");
   const [copyFrom, setCopyFrom] = useState(terms[0]?.id ?? "");
   const [copyDepts, setCopyDepts] = useState(true);
+  const [keepDates, setKeepDates] = useState(false);
   const [pending, startTransition] = useTransition();
+
+  const groups = buildSourceGroups(specId, terms, sourceTerms);
+  // 모집 학과 복사는 원본이 이 요강의 학기일 때만 (다른 대학 학과는 이 요강의 학과가 아니다)
+  const copyFromThisSpec = !!copyFrom && terms.some((t) => t.id === copyFrom);
 
   const chosen = custom.trim() || term;
   const run = () =>
     startTransition(async () => {
-      const res = await addSpecTermAction(specId, { term: chosen, copy_from_term_id: copyFrom || null, copy_departments: copyDepts && !!copyFrom });
+      const res = await addSpecTermAction(specId, {
+        term: chosen,
+        copy_from_term_id: copyFrom || null,
+        copy_departments: copyDepts && copyFromThisSpec,
+        keep_dates: keepDates && !!copyFrom,
+      });
       if (res.ok) {
         toast.success(`${chosen} 학기를 추가했습니다. 일정을 입력하세요.`);
         setOpen(false);
@@ -246,7 +409,7 @@ function AddTermDialog({ specId, terms }: { specId: string; terms: SpecTerm[] })
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>학기 추가</DialogTitle>
-            <DialogDescription>일정은 다른 학기에서 차수 이름만 가져오고 날짜는 비웁니다.</DialogDescription>
+            <DialogDescription>일정은 이 요강이나 다른 대학의 학기에서 가져올 수 있습니다. 기본은 차수 이름만 가져오고 날짜는 비웁니다.</DialogDescription>
           </DialogHeader>
           <div className="space-y-3">
             <label className="flex flex-col gap-1 text-sm">
@@ -263,16 +426,16 @@ function AddTermDialog({ specId, terms }: { specId: string; terms: SpecTerm[] })
             </label>
             <label className="flex flex-col gap-1 text-sm">
               <span className="text-xs text-muted-foreground">일정을 다음 학기에서 복사</span>
-              <select className={inputClass} value={copyFrom} onChange={(e) => setCopyFrom(e.target.value)}>
-                <option value="">복사 안 함</option>
-                {terms.map((t) => (
-                  <option key={t.id} value={t.id}>{t.term}</option>
-                ))}
-              </select>
+              <SourceTermSelect groups={groups} value={copyFrom} onChange={setCopyFrom} emptyLabel="복사 안 함" />
             </label>
             <label className="flex items-center gap-2 text-sm">
-              <input type="checkbox" checked={copyDepts} onChange={(e) => setCopyDepts(e.target.checked)} disabled={!copyFrom} />
+              <input type="checkbox" checked={keepDates} onChange={(e) => setKeepDates(e.target.checked)} disabled={!copyFrom} />
+              날짜까지 그대로 복사
+            </label>
+            <label className={`flex items-center gap-2 text-sm ${copyFrom && !copyFromThisSpec ? "opacity-50" : ""}`}>
+              <input type="checkbox" checked={copyDepts && copyFromThisSpec} onChange={(e) => setCopyDepts(e.target.checked)} disabled={!copyFromThisSpec} />
               그 학기의 모집 학과도 초안으로 넣기
+              {copyFrom && !copyFromThisSpec ? <span className="text-xs text-muted-foreground">(이 요강의 학기일 때만)</span> : null}
             </label>
           </div>
           <DialogFooter>

@@ -1,18 +1,22 @@
 /**
  * /admissions/forms/[formFileId] — [작성서류] 상세.
  *   제목=서류명, 부제목=대학교명.
- *   기본정보(서류명·대학·적용학과·적용학기·업로드일·다운로드) + 상세정보(양식종류·필요데이터)
- *   + 미리보기 + 다운로드(원본 / AI 빈양식).
+ *   기본정보(서류명·대학·요강 학과·업로드일·다운로드) + 버전 기록(superseded_by 계보)
+ *   + 채움 설정. 양식 종류(key)는 0070 부터 분류에 쓰지 않는다 — 서류명으로 구분.
  *
  *   위치는 입학서류 메뉴지만 대학교 상세에서도 링크로 접근.
  *   (빈상태 업로드·파일교체 3버튼·AI 원본모사 빈양식은 후속 증분.)
  */
 
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/page-header";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { restoreFormFileAction } from "@/app/(app)/universities/[id]/forms/actions";
 import { FormDocDetail } from "./form-doc-detail";
 import {
   OverlayPicker,
@@ -154,6 +158,46 @@ export default async function FormDocDetailPage({
     ? (form.field_overlays as RawOverlay[])
     : [];
 
+  // 버전 기록 = 이 행의 계보(superseded_by 체인). head(최신) + head 의 모든 이전 버전.
+  //   0070 부터 양식은 종류로 묶지 않으므로, 버전은 "파일 교체"로 생긴 체인뿐이다.
+  const { data: uniRows } = await supabase
+    .from("study_admission_form_files")
+    .select("id, superseded_by, file_name, file_url, uploaded_at, is_current")
+    .eq("university_id", form.university_id);
+  const lineage = (() => {
+    const rows = uniRows ?? [];
+    const byId = new Map(rows.map((r) => [r.id, r]));
+    let head = byId.get(form.id) ?? null;
+    const seen = new Set<string>();
+    while (head && head.superseded_by && !seen.has(head.id)) {
+      seen.add(head.id);
+      const next = byId.get(head.superseded_by);
+      if (!next) break;
+      head = next;
+    }
+    if (!head) return [];
+    const byNext = new Map<string, typeof rows>();
+    for (const r of rows) {
+      if (!r.superseded_by) continue;
+      const arr = byNext.get(r.superseded_by) ?? [];
+      arr.push(r);
+      byNext.set(r.superseded_by, arr);
+    }
+    const out = [head];
+    const visited = new Set<string>([head.id]);
+    const queue = [head.id];
+    while (queue.length > 0) {
+      const cur = queue.shift()!;
+      for (const p of byNext.get(cur) ?? []) {
+        if (visited.has(p.id)) continue;
+        visited.add(p.id);
+        out.push(p);
+        queue.push(p.id);
+      }
+    }
+    return out.sort((a, b) => b.uploaded_at.localeCompare(a.uploaded_at));
+  })();
+
   return (
     <>
       <PageHeader
@@ -184,6 +228,58 @@ export default async function FormDocDetailPage({
           specDepartments={specDepartments}
           docNameOptions={docNameOptions}
         />
+
+        <Card className="mt-6 p-6">
+          <h2 className="text-base font-semibold">버전 기록</h2>
+          <p className="mt-1 text-xs text-muted-foreground">
+            이 양식에서 &ldquo;파일 교체&rdquo;로 이어진 버전입니다. 복원하면 이 계보의 현행만 이전 버전으로 내려갑니다.
+          </p>
+          {lineage.length <= 1 ? (
+            <p className="mt-3 text-sm text-muted-foreground">이전 버전이 없습니다.</p>
+          ) : (
+            <ul className="mt-3 divide-y rounded-md border">
+              {lineage.map((v) => (
+                <li key={v.id} className="flex flex-wrap items-center gap-2 px-3 py-2 text-sm">
+                  {v.is_current ? (
+                    <Badge>현행</Badge>
+                  ) : (
+                    <Badge variant="secondary">이전</Badge>
+                  )}
+                  {v.id === form.id ? (
+                    <span className="font-medium">{v.file_name}</span>
+                  ) : (
+                    <Link href={`/admissions/forms/${v.id}`} className="underline-offset-2 hover:underline">
+                      {v.file_name}
+                    </Link>
+                  )}
+                  <span className="text-xs text-muted-foreground">
+                    {new Date(v.uploaded_at).toLocaleString("ko-KR")}
+                  </span>
+                  {v.id === form.id ? (
+                    <span className="text-xs text-muted-foreground">(지금 보는 버전)</span>
+                  ) : null}
+                  <span className="ml-auto flex items-center gap-2">
+                    <a
+                      href={v.file_url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className={buttonVariants({ variant: "ghost", size: "sm" })}
+                    >
+                      다운로드
+                    </a>
+                    {!v.is_current ? (
+                      <form action={restoreFormFileAction.bind(null, v.id, form.university_id)}>
+                        <Button type="submit" variant="outline" size="sm">
+                          복원
+                        </Button>
+                      </form>
+                    ) : null}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Card>
 
         <Card className="mt-6 p-6">
           <ReanalyzeData formFileId={form.id} />

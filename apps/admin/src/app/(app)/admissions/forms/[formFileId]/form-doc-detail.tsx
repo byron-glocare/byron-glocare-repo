@@ -104,9 +104,14 @@ export function FormDocDetail({
       });
       upSubmitted.current = false;
     } else if (upState) {
-      toast.success("파일을 교체했습니다.");
+      toast.success("파일을 교체했습니다. 이전 파일은 버전 기록에 남습니다.");
       if (upState.warning) toast.warning(upState.warning);
-      router.push(`/universities/${form.university_id}`);
+      upSubmitted.current = false;
+      router.push(
+        upState.formFileId
+          ? `/admissions/forms/${upState.formFileId}`
+          : `/universities/${form.university_id}`
+      );
     }
   }, [upState, router, form.university_id]);
 
@@ -122,11 +127,12 @@ export function FormDocDetail({
     const base64 = comma >= 0 ? dataUrl.slice(comma + 1) : dataUrl;
     const fd = new FormData();
     fd.set("university_id", String(form.university_id));
-    fd.set("key", form.key); // 같은 종류·학과로 새 버전 생성(기존 supersede)
-    // 교체되는 행의 요강 학과를 물려받는다 — 같은 (대학, 종류, 학과)의 현행만 내려간다.
+    // 이 행을 교체 — 이 행만 이전 버전이 되고(superseded_by=새 행), 새 행이
+    // 학과·서류명·종류·필요데이터·서술형 설정을 서버에서 물려받는다.
+    fd.set("replaces_form_file_id", form.id);
     fd.set("spec_department_id", form.spec_department_id ?? "");
     fd.set("department_name", form.department_name ?? "");
-    fd.set("name_ko", nameKo.trim() || form.name_ko);
+    fd.set("name_ko", form.name_ko);
     fd.set("file_base64", base64);
     fd.set("file_name", replaceFile.name);
     fd.set("file_size", String(replaceFile.size));
@@ -168,6 +174,11 @@ export function FormDocDetail({
           )}
           {!form.is_current ? (
             <Badge variant="secondary">이전 버전</Badge>
+          ) : null}
+          {form.key && form.key !== "other" ? (
+            <span className="text-[11px] text-muted-foreground" title="0070 이전에 쓰던 양식 종류 — 지금은 분류에 쓰지 않습니다">
+              옛 종류: {form.key}
+            </span>
           ) : null}
         </div>
 
@@ -219,7 +230,7 @@ export function FormDocDetail({
             ))}
           </select>
           <span className="text-[11px] text-muted-foreground">
-            양식은 요강 학과별로 관리됩니다. 어학당 양식과 일반학과 양식은 서로 밀어내지 않습니다.
+            양식은 요강 학과에 속하는 독립 문서입니다. 같은 학과에 여러 양식을 둘 수 있고, 서류명으로 구분합니다.
             {form.department_name ? ` (옛 적용범위: ${form.department_name})` : ""}
           </span>
         </label>
@@ -252,26 +263,30 @@ export function FormDocDetail({
         <div className="border-t pt-4">
           {!replaceOpen ? (
             <div className="flex flex-wrap items-center gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => setReplaceOpen(true)}
-            >
-              <RefreshCw className="size-4" />
-              파일 교체
-            </Button>
+            {form.is_current ? (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setReplaceOpen(true)}
+              >
+                <RefreshCw className="size-4" />
+                파일 교체
+              </Button>
+            ) : (
+              <span className="text-xs text-muted-foreground">
+                이전 버전입니다 — 아래 버전 기록에서 복원한 뒤 교체할 수 있습니다.
+              </span>
+            )}
             <DeleteFormFileButton formFileId={form.id} universityId={form.university_id} name={form.name_ko} afterHref="/admissions?tab=forms" label="이 양식 삭제" />
             </div>
           ) : (
             <div className="space-y-2 rounded-md border border-input p-3">
               <p className="text-sm font-medium">새 파일로 변경하시겠습니까?</p>
-              {!form.spec_department_id ? (
-                <p className="text-xs text-amber-700">
-                  요강 학과가 지정되지 않은 양식입니다. 교체하면 기존 양식은 그대로 두고 새 양식이 추가됩니다 —
-                  먼저 위에서 요강 학과를 지정·저장하는 것을 권합니다.
-                </p>
-              ) : null}
+              <p className="text-xs text-muted-foreground">
+                이 양식만 이전 버전으로 내려가고, 새 파일이 같은 학과·서류명·서술형 설정을 이어받습니다.
+                같은 학과의 다른 양식은 그대로입니다.
+              </p>
               <input
                 ref={replaceRef}
                 type="file"
@@ -323,7 +338,7 @@ export function FormDocDetail({
       <Card className="p-6 space-y-4">
         <h2 className="text-base font-semibold">메모</h2>
         <p className="-mt-2 text-xs text-muted-foreground">
-          양식 종류·필요 표준데이터는 아래 “문서 자동화 설정”에서 박스를 배치·연결하면
+          필요 표준데이터는 아래 “문서 자동화 설정”에서 박스를 배치·연결하면
           자동으로 정해집니다.
         </p>
 

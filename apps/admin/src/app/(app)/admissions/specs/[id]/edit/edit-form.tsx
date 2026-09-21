@@ -2,7 +2,8 @@
 
 /**
  * 모집요강 편집 — 탭 껍데기 + 기본 탭 폼.
- *   기본: 전형 이름·상태·원본 파일·온라인 접수·기타·작성서류/미연결 옛 줄 (통째 저장 = updateSpecAction)
+ *   기본: 전형 이름·상태·원본 파일·온라인 접수·기타 (통째 저장 = updateSpecAction)
+ *         + 옛 "작성서류·미연결" 서류 줄 정리 목록(줄마다 개별 액션, 폼 밖). 줄이 없으면 섹션 자체가 없다.
  *   지원 자격은 학과별(학과 탭). 옛 요강 공통 자격(spec.eligibility)은 학과 자격이 비었을 때 초기값으로만 쓴다.
  *   학과 / 학기: 서버 컴포넌트가 만들어 넘긴 패널 (각자 개별 저장)
  *   탭 패널은 keepMounted — 탭을 오가도 입력이 사라지지 않게.
@@ -15,7 +16,6 @@ import { updateSpecAction, type UpdateSpecState } from "./update-action";
 import { Card } from "@/components/ui/card";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { RequiredDocumentsField, type RequiredDocument } from "@/components/admission/required-documents-field";
 import { MetadataField, type Metadata } from "@/components/admission/metadata-field";
 
 const STATUS_OPTIONS = [
@@ -44,8 +44,8 @@ export function EditSpecForm({
   spec,
   universityName,
   terms,
-  docTypes = [],
-  legacyDocs,
+  legacyPanel = null,
+  legacyCount = 0,
   initialTab = "basic",
   departmentsPanel,
   termsPanel,
@@ -54,9 +54,9 @@ export function EditSpecForm({
   spec: EditableSpec;
   universityName: string;
   terms: string[];
-  docTypes?: Array<{ key: string; label_ko: string; label_vi?: string | null; aliases?: string[] | null; is_form_doc?: boolean | null }>;
-  /** 옛 JSONB 중 작성서류·미연결 줄만 */
-  legacyDocs: RequiredDocument[];
+  /** 옛 JSONB 작성서류·미연결 줄 정리 목록 — 줄이 없으면 null */
+  legacyPanel?: React.ReactNode;
+  legacyCount?: number;
   initialTab?: EditTab;
   departmentsPanel: React.ReactNode;
   termsPanel: React.ReactNode;
@@ -189,14 +189,6 @@ export function EditSpecForm({
               ) : null}
             </div>
 
-            <Section title={`작성서류·미연결 (옛 서류 줄 ${legacyDocs.length})`} error={fieldErr("spec_required_documents")}>
-              <p className="mb-2 text-xs text-muted-foreground">
-                작성서류(학교 양식)와 아직 표준에 연결되지 않은 서류입니다. 발급서류 항목은 학과 탭에서 학과마다 고릅니다. 미연결 서류에 서류 종류를 고르면
-                저장할 때 모든 학과의 발급서류 항목에 추가됩니다.
-              </p>
-              <RequiredDocumentsField name="spec_required_documents" initial={legacyDocs} docTypes={docTypes} />
-            </Section>
-
             <Section title="기타 정보 (선발·연락처·정부지정 등)" error={fieldErr("spec_metadata")}>
               <MetadataField name="spec_metadata" initial={initialMetadata} />
             </Section>
@@ -223,6 +215,13 @@ export function EditSpecForm({
             </div>
           </form>
         </Card>
+        {legacyPanel && legacyCount > 0 ? (
+          <Card className="mt-3 p-6">
+            <Section title={`작성서류·미연결 (옛 서류 줄 ${legacyCount})`} open>
+              {legacyPanel}
+            </Section>
+          </Card>
+        ) : null}
       </TabsContent>
 
       <TabsContent value="departments" keepMounted className="mt-3">

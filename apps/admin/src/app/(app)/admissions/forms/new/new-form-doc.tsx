@@ -13,18 +13,6 @@ import {
   type UploadFormFileState,
 } from "@/app/(app)/universities/[id]/forms/actions";
 
-const KEY_LABELS: Record<string, string> = {
-  application_form: "입학 지원서",
-  self_intro: "자기소개서",
-  study_plan: "학업계획서",
-  financial_pledge_form: "재정보증서",
-  privacy_consent: "개인정보 동의서",
-  academic_record_release: "성적 제공 동의서",
-  recommendation_letter: "추천서",
-  health_certificate: "건강진단서(양식)",
-  other: "기타",
-};
-
 const KIND_LABEL: Record<"language" | "regular", string> = { language: "어학당", regular: "일반학과" };
 
 type Uni = { id: number; name_ko: string };
@@ -42,7 +30,6 @@ export function NewFormDoc({
   specDepartments,
   preUniversityId,
   preSpecDepartmentId = "",
-  preKey = "",
   preName = "",
 }: {
   universities: Uni[];
@@ -51,8 +38,9 @@ export function NewFormDoc({
   preUniversityId: string;
   /** 모집요강 편집에서 넘어온 요강 학과 */
   preSpecDepartmentId?: string;
-  /** 모집요강에서 넘어온 서류 종류 — 이 값이 곧 양식과 서류의 연결 고리다. */
+  /** (옛) 양식 종류 — 0070 부터 쓰지 않는다. 호출부 호환용으로만 받는다. */
   preKey?: string;
+  /** 모집요강에서 넘어온 서류명 — 양식은 (요강 학과, 서류명)으로 구분된다. */
   preName?: string;
 }) {
   const router = useRouter();
@@ -64,12 +52,7 @@ export function NewFormDoc({
   // 요강 학과만 넘어왔으면 그 대학으로
   const preDept = specDepartments.find((d) => d.id === preSpecDepartmentId);
   const [uniId, setUniId] = useState(preUniversityId || (preDept ? String(preDept.university_id) : ""));
-  // 기본값을 두지 않는다. 예전엔 '입학 지원서'가 미리 선택돼 있어서, 자기소개서
-  // 양식을 올려도 입학 지원서로 저장되고(→ 해당 서류는 계속 미등록) 기존 입학
-  // 지원서 양식까지 구버전으로 밀려났다.
-  const [key, setKey] = useState(
-    preKey && preKey in KEY_LABELS ? preKey : preKey ? "other" : ""
-  );
+  // 양식 종류(key)는 0070 부터 쓰지 않는다 — 양식은 서류명으로 구분하는 독립 문서.
   const [specDeptId, setSpecDeptId] = useState(preDept ? preDept.id : "");
   const [nameKo, setNameKo] = useState(preName);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -105,7 +88,7 @@ export function NewFormDoc({
   async function submit() {
     if (!uniId) return toast.error("대학을 선택하세요");
     if (hasSpec && !specDeptId) return toast.error("요강 학과를 선택하세요");
-    if (!key) return toast.error("양식 종류를 선택하세요");
+    if (!nameKo.trim()) return toast.error("서류명을 입력하세요");
     if (!file) return toast.error("파일을 선택하세요");
 
     const dataUrl = await new Promise<string>((res, rej) => {
@@ -119,8 +102,7 @@ export function NewFormDoc({
 
     const fd = new FormData();
     fd.set("university_id", uniId);
-    fd.set("key", key);
-    fd.set("name_ko", nameKo.trim() || file.name.replace(/\.[^.]+$/, ""));
+    fd.set("name_ko", nameKo.trim());
     fd.set("spec_department_id", specDeptId);
     fd.set("department_name", "");
     fd.set("file_base64", base64);
@@ -173,33 +155,20 @@ export function NewFormDoc({
           <span className="text-[11px] text-muted-foreground">
             {uniId && !hasSpec
               ? "이 대학은 모집요강(학과)이 없어 학과 없이 올라갑니다. 기존 양식은 내리지 않습니다."
-              : "같은 학과·같은 종류의 기존 양식만 이전 버전으로 내려갑니다."}
+              : "새 양식으로 추가됩니다. 기존 양식은 그대로 둡니다(바꾸려면 양식 상세의 파일 교체)."}
           </span>
         </label>
 
-        <label className="flex flex-col gap-1.5">
-          <span className="text-xs font-medium">양식 종류 *</span>
-          <select
-            value={key}
-            onChange={(e) => setKey(e.target.value)}
-            className="h-9 rounded-md border border-input bg-background px-3 text-sm"
-          >
-            <option value="">선택하세요</option>
-            {Object.entries(KEY_LABELS).map(([v, label]) => (
-              <option key={v} value={v}>
-                {label}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label className="flex flex-col gap-1.5">
-          <span className="text-xs font-medium">서류명</span>
+        <label className="flex flex-col gap-1.5 sm:col-span-2">
+          <span className="text-xs font-medium">서류명 *</span>
           <Input
             value={nameKo}
             onChange={(e) => setNameKo(e.target.value)}
-            placeholder="비우면 파일명 사용"
+            placeholder="예: 입학지원서 (어학연수과정)"
           />
+          <span className="text-[11px] text-muted-foreground">
+            같은 학과에 여러 양식을 둘 수 있습니다 — 서류명으로 구분됩니다.
+          </span>
         </label>
       </div>
 

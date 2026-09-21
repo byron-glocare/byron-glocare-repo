@@ -33,6 +33,13 @@ function revalidate(specId: string, universityId?: number) {
   }
 }
 
+/** 다른 학기 일정 복사 — keepDates 면 그대로(깊은 복사), 아니면 차수 이름만(blankSchedule). */
+function copySchedule(src: unknown, keepDates: boolean): Record<string, unknown> {
+  if (!keepDates) return blankSchedule(src);
+  if (!src || typeof src !== "object") return { rounds: [] };
+  return JSON.parse(JSON.stringify(src)) as Record<string, unknown>;
+}
+
 async function loadSpec(specId: string) {
   const admin = createAdminClient();
   const { data: spec } = await admin.from("study_admission_specs").select("id, university_id").eq("id", specId).maybeSingle();
@@ -96,12 +103,15 @@ export async function saveSpecTermAction(specId: string, termId: string, _prev: 
 }
 
 /**
- * 학기 추가 — 일정(일반학과·어학당 둘 다)은 비워 두거나, 다른 학기 일정에서 차수 이름만 가져온다(날짜는 비움).
- *   copy_departments 면 원본 학기에 모집 행이 있는 학과를 새 학기에도 draft 로 넣는다.
+ * 학기 추가 — 일정(일반학과·어학당 둘 다)은 비워 두거나, 다른 학기 일정을 가져온다.
+ *   copy_from_term_id 는 이 요강뿐 아니라 다른 대학 요강의 학기여도 된다.
+ *   keep_dates=false(기본) → 차수 이름만 가져오고 날짜는 비움(blankSchedule) / true → 그대로 복사.
+ *   copy_departments 면 원본 학기에 모집 행이 있는 학과를 새 학기에도 draft 로 넣는다
+ *   — 원본이 이 요강의 학기일 때만(다른 대학 학과는 이 요강의 학과가 아니다).
  */
 export async function addSpecTermAction(
   specId: string,
-  input: { term: string; copy_from_term_id?: string | null; copy_departments?: boolean }
+  input: { term: string; copy_from_term_id?: string | null; copy_departments?: boolean; keep_dates?: boolean }
 ): Promise<TermResult> {
   const g = await guard();
   if (!g.ok) return g;
@@ -116,18 +126,18 @@ export async function addSpecTermAction(
     let schedule: Record<string, unknown> = { rounds: [] };
     let schedule_language: Record<string, unknown> = { rounds: [] };
     let srcTerm: string | null = null;
+    let srcIsThisSpec = false;
     if (input.copy_from_term_id) {
       const { data: src } = await admin
         .from("study_spec_terms")
-        .select("term, schedule, schedule_language")
+        .select("spec_id, term, schedule, schedule_language")
         .eq("id", input.copy_from_term_id)
-        .eq("spec_id", specId)
         .maybeSingle();
-      if (src) {
-        schedule = blankSchedule(src.schedule);
-        schedule_language = blankSchedule(src.schedule_language);
-        srcTerm = src.term;
-      }
+      if (!src) return { ok: false, error: "복사할 원본 학기를 찾을 수 없습니다." };
+      schedule = copySchedule(src.schedule, !!input.keep_dates);
+      schedule_language = copySchedule(src.schedule_language, !!input.keep_dates);
+      srcTerm = src.term;
+      srcIsThisSpec = src.spec_id === specId;
     }
     const { data: created, error } = await admin
       .from("study_spec_terms")
@@ -136,7 +146,7 @@ export async function addSpecTermAction(
       .single();
     if (error || !created) return { ok: false, error: `학기 추가 실패: ${error?.message ?? "unknown"}` };
 
-    if (input.copy_departments && srcTerm) {
+    if (input.copy_departments && srcTerm && srcIsThisSpec) {
       const { data: offs } = await admin.from("study_offerings").select("department_id, sort_order").eq("university_id", spec.university_id).eq("term", srcTerm);
       for (const o of offs ?? []) {
         const err = await ensureDraftOffering(admin, spec.university_id, o.department_id, term, specId, o.sort_order);
@@ -146,6 +156,47 @@ export async function addSpecTermAction(
     await syncSpecLegacyTerm(admin, specId);
     revalidate(specId, spec.university_id);
     return { ok: true, id: created.id };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : String(e) };
+  }
+}
+
+/**
+ * 기존 학기에 다른 학기 일정 가져오기 — 이 학기의 schedule(일반학과) / schedule_language(어학당)를 덮어쓴다.
+ *   원본은 이 요강 또는 다른 대학 요강의 학기. keep_dates=false 면 차수 이름만(날짜 비움).
+ *   학기 이름·메모·모집 학과는 건드리지 않는다.
+ */
+export async function importTermScheduleAction(
+  specId: string,
+  termId: string,
+  input: { source_term_id: string; keep_dates?: boolean; regular: boolean; language: boolean }
+): Promise<TermResult> {
+  const g = await guard();
+  if (!g.ok) return g;
+  try {
+    if (!input.regular && !input.language) return { ok: false, error: "가져올 일정(일반학과/어학당)을 하나 이상 고르세요." };
+    if (!input.source_term_id) return { ok: false, error: "원본 학기를 고르세요." };
+    if (input.source_term_id === termId) return { ok: false, error: "같은 학기에서는 가져올 수 없습니다." };
+    const { admin, spec } = await loadSpec(specId);
+    if (!spec) return { ok: false, error: "모집요강을 찾을 수 없습니다." };
+    const { data: row } = await admin.from("study_spec_terms").select("id, spec_id").eq("id", termId).maybeSingle();
+    if (!row || row.spec_id !== specId) return { ok: false, error: "학기를 찾을 수 없습니다." };
+    const { data: src } = await admin
+      .from("study_spec_terms")
+      .select("schedule, schedule_language")
+      .eq("id", input.source_term_id)
+      .maybeSingle();
+    if (!src) return { ok: false, error: "원본 학기를 찾을 수 없습니다." };
+
+    const keep = !!input.keep_dates;
+    const patch: { schedule?: Record<string, unknown>; schedule_language?: Record<string, unknown> } = {};
+    if (input.regular) patch.schedule = copySchedule(src.schedule, keep);
+    if (input.language) patch.schedule_language = copySchedule(src.schedule_language, keep);
+    const { error } = await admin.from("study_spec_terms").update(patch).eq("id", termId);
+    if (error) return { ok: false, error: `일정 가져오기 실패: ${error.message}` };
+    await syncSpecLegacyTerm(admin, specId);
+    revalidate(specId, spec.university_id);
+    return { ok: true, id: termId };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : String(e) };
   }

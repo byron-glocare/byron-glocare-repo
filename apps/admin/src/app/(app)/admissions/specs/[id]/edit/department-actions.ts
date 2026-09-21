@@ -11,6 +11,7 @@ import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { isGlocareAdmin } from "@/lib/admin-guard";
 import {
   copyDepartmentSetup,
+  insertFormFileCopy,
   refreshSpecLegacyCaches,
   writeDepartmentDocItems,
   type DepartmentInfo,
@@ -20,7 +21,7 @@ import { normDeptName } from "@/lib/admission/spec-merge";
 
 export type DeptActionState = { ok: true; savedAt: string } | { ok: false; error: string; fieldErrors?: Record<string, string> } | undefined;
 export type DeptResult = { ok: true; id?: string } | { ok: false; error: string };
-export type CopyWhat = { docs?: boolean; forms?: boolean; tuition?: boolean; scholarships?: boolean; eligibility?: boolean };
+export type CopyWhat = { docs?: boolean; forms?: boolean; tuition?: boolean; scholarships?: boolean; eligibility?: boolean; brochure?: boolean };
 
 async function guard(): Promise<{ ok: true } | { ok: false; error: string }> {
   const supabase = await createClient();
@@ -274,6 +275,100 @@ export async function copyDepartmentSetupAction(specId: string, toSdId: string, 
     if (cacheErr) return { ok: false, error: cacheErr };
     revalidate(specId, universityId);
     return { ok: true };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : String(e) };
+  }
+}
+
+/** 대상 학과(이 요강 소속) + 대학 id */
+async function loadTarget(
+  admin: ReturnType<typeof createAdminClient>,
+  specId: string,
+  sdId: string
+): Promise<{ ok: true; universityId: number } | { ok: false; error: string }> {
+  const { data: to } = await admin.from("study_spec_departments").select("id, spec_id, study_admission_specs(university_id)").eq("id", sdId).maybeSingle();
+  if (!to || to.spec_id !== specId) return { ok: false, error: "대상 학과를 찾을 수 없습니다." };
+  const universityId = (to.study_admission_specs as unknown as { university_id: number } | null)?.university_id;
+  if (!universityId) return { ok: false, error: "대학을 찾을 수 없습니다." };
+  return { ok: true, universityId };
+}
+
+/**
+ * 양식 가져오기 — 고른 현행 양식(같은 대학 다른 학과·다른 대학)을 이 학과에 새 행으로 복사.
+ *   각 복사본은 독립 문서다. 이 학과의 기존 양식은 건드리지 않는다.
+ */
+export async function copyFormFilesToDepartmentAction(specId: string, toSdId: string, formFileIds: string[]): Promise<DeptResult> {
+  const g = await guard();
+  if (!g.ok) return g;
+  try {
+    const ids = Array.from(new Set((formFileIds ?? []).filter((x) => typeof x === "string" && x)));
+    if (ids.length === 0) return { ok: false, error: "가져올 양식을 고르세요." };
+    const admin = createAdminClient();
+    const t = await loadTarget(admin, specId, toSdId);
+    if (!t.ok) return t;
+    const { data: files, error } = await admin.from("study_admission_form_files").select("*").in("id", ids).eq("is_current", true);
+    if (error) return { ok: false, error: `양식 읽기 실패: ${error.message}` };
+    if (!files?.length) return { ok: false, error: "가져올 양식을 찾을 수 없습니다(현행이 아닐 수 있습니다)." };
+    // 고른 순서대로
+    const order = new Map(ids.map((id, i) => [id, i]));
+    const sorted = [...files].sort((a, b) => (order.get(a.id) ?? 0) - (order.get(b.id) ?? 0));
+    for (const f of sorted) {
+      const err = await insertFormFileCopy(admin, f, { id: toSdId, university_id: t.universityId });
+      if (err) return { ok: false, error: err };
+    }
+    const cacheErr = await refreshSpecLegacyCaches(admin, specId);
+    if (cacheErr) return { ok: false, error: cacheErr };
+    revalidate(specId, t.universityId);
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : String(e) };
+  }
+}
+
+/**
+ * 발급서류 항목 가져오기 — 다른 학과의 항목 행(study_spec_doc_items.id)을 이 학과 끝에 복사.
+ *   필수·안내문·조건 덮어쓰기까지 그대로. 이 학과에 이미 있는 항목은 건너뛴다.
+ */
+export async function copyDocItemsToDepartmentAction(specId: string, toSdId: string, docItemRowIds: string[]): Promise<DeptResult & { added?: number; skipped?: number }> {
+  const g = await guard();
+  if (!g.ok) return g;
+  try {
+    const ids = Array.from(new Set((docItemRowIds ?? []).filter((x) => typeof x === "string" && x)));
+    if (ids.length === 0) return { ok: false, error: "가져올 항목을 고르세요." };
+    const admin = createAdminClient();
+    const t = await loadTarget(admin, specId, toSdId);
+    if (!t.ok) return t;
+    const [{ data: src, error }, { data: existing }] = await Promise.all([
+      admin.from("study_spec_doc_items").select("id, item_key, required, guide_override_ko, guide_override_vi, overrides").in("id", ids),
+      admin.from("study_spec_doc_items").select("item_key, sort_order").eq("spec_department_id", toSdId),
+    ]);
+    if (error) return { ok: false, error: `항목 읽기 실패: ${error.message}` };
+    const have = new Set((existing ?? []).map((r) => r.item_key));
+    let sort = (existing ?? []).reduce((m, r) => Math.max(m, r.sort_order ?? 0), 0);
+    const order = new Map(ids.map((id, i) => [id, i]));
+    const sorted = [...(src ?? [])].sort((a, b) => (order.get(a.id) ?? 0) - (order.get(b.id) ?? 0));
+    let added = 0;
+    let skipped = 0;
+    for (const r of sorted) {
+      if (have.has(r.item_key)) { skipped++; continue; }
+      have.add(r.item_key);
+      const { error: insErr } = await admin.from("study_spec_doc_items").insert({
+        spec_id: specId,
+        spec_department_id: toSdId,
+        item_key: r.item_key,
+        required: r.required !== false,
+        sort_order: ++sort,
+        guide_override_ko: r.guide_override_ko,
+        guide_override_vi: r.guide_override_vi,
+        overrides: r.overrides ?? {},
+      });
+      if (insErr) return { ok: false, error: `항목 복사 실패: ${insErr.message}` };
+      added++;
+    }
+    const cacheErr = await refreshSpecLegacyCaches(admin, specId);
+    if (cacheErr) return { ok: false, error: cacheErr };
+    revalidate(specId, t.universityId);
+    return { ok: true, added, skipped };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : String(e) };
   }
