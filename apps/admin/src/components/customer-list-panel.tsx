@@ -782,8 +782,7 @@ export async function CustomerListPanel({
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-32">베트남 이름</TableHead>
-                    <TableHead className="w-28">한국 이름</TableHead>
+                    <TableHead className="w-48">이름 (베트남어 | 한국어)</TableHead>
                     <TableHead className="w-40">현재 단계</TableHead>
                     {columnPreset === "default" && (
                       <>
@@ -795,6 +794,7 @@ export async function CustomerListPanel({
                     {columnPreset === "default" && (
                       <>
                         <TableHead className="w-24">지역</TableHead>
+                        <TableHead className="w-28">강의 개강일</TableHead>
                         <TableHead className="w-40">교육원</TableHead>
                       </>
                     )}
@@ -830,6 +830,10 @@ export async function CustomerListPanel({
                             className="hover:text-primary"
                           >
                             {dash(c.name_vi)}
+                            <span className="mx-1 text-muted-foreground">|</span>
+                            <span className="text-muted-foreground">
+                              {dash(c.name_kr)}
+                            </span>
                           </Link>
                           {selfSet.has(c.id) && (
                             <Badge
@@ -839,11 +843,6 @@ export async function CustomerListPanel({
                               자가가입
                             </Badge>
                           )}
-                        </TableCell>
-                        <TableCell>
-                          <Link href={`/customers/${c.id}`} className="block">
-                            {dash(c.name_kr)}
-                          </Link>
                         </TableCell>
                         <TableCell>
                           <Link href={`/customers/${c.id}`} className="block">
@@ -881,6 +880,14 @@ export async function CustomerListPanel({
                                 className="block"
                               >
                                 {dash(c.desired_region)}
+                              </Link>
+                            </TableCell>
+                            <TableCell className="text-sm">
+                              <Link
+                                href={`/customers/${c.id}`}
+                                className="block"
+                              >
+                                {formatDate(c.class_start_date)}
                               </Link>
                             </TableCell>
                             <TableCell className="text-sm">
