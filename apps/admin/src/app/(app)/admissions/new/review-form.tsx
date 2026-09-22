@@ -35,6 +35,8 @@ import {
   MetadataField,
   type Metadata,
 } from "@/components/admission/metadata-field";
+import { INLINE_UPLOAD_MAX_MB, fileTooLargeMessage } from "@/lib/upload-limits";
+import { toast } from "sonner";
 
 const PROGRAM_TYPE_OPTIONS = [
   { value: "language_program", label: "어학연수 (D-4)" },
@@ -158,6 +160,12 @@ export function ReviewForm({
   const [guideReading, setGuideReading] = useState(false);
 
   async function onPickGuide(file: File) {
+    // 가이드 파일은 아직 서버로 실어 보낸다 — Vercel 요청 본문 한도 때문에 3MB 까지.
+    const tooLarge = fileTooLargeMessage(file, INLINE_UPLOAD_MAX_MB);
+    if (tooLarge) {
+      toast.error("파일이 너무 큽니다", { description: tooLarge, duration: 10000 });
+      return;
+    }
     setGuideReading(true);
     try {
       const dataUrl = await fileToDataUrl(file);

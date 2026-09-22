@@ -120,7 +120,7 @@ export function FormDocDetail({
     if (!replaceFile) return toast.error("교체할 파일을 선택하세요");
     // 파일은 브라우저 → 저장소로 바로 (서버 요청 본문 한도 회피)
     const up = await uploadFormFileDirect(form.university_id, replaceFile);
-    if (!up.ok) return toast.error("파일 교체 실패", { description: up.error });
+    if (!up.ok) return toast.error("파일 교체 실패", { description: up.error, duration: 10000 });
     const fd = new FormData();
     fd.set("university_id", String(form.university_id));
     // 이 행을 교체 — 이 행만 이전 버전이 되고(superseded_by=새 행), 새 행이

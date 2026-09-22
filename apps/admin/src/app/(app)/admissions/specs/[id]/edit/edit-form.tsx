@@ -17,6 +17,8 @@ import { Card } from "@/components/ui/card";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MetadataField, type Metadata } from "@/components/admission/metadata-field";
+import { INLINE_UPLOAD_MAX_MB, fileTooLargeMessage } from "@/lib/upload-limits";
+import { toast } from "sonner";
 
 const STATUS_OPTIONS = [
   { value: "draft", label: "초안" },
@@ -70,6 +72,12 @@ export function EditSpecForm({
   const [guideReading, setGuideReading] = useState(false);
 
   async function onPickGuide(file: File) {
+    // 가이드 파일은 아직 서버로 실어 보낸다 — Vercel 요청 본문 한도 때문에 3MB 까지.
+    const tooLarge = fileTooLargeMessage(file, INLINE_UPLOAD_MAX_MB);
+    if (tooLarge) {
+      toast.error("파일이 너무 큽니다", { description: tooLarge, duration: 10000 });
+      return;
+    }
     setGuideReading(true);
     try {
       const dataUrl: string = await new Promise((res, rej) => {

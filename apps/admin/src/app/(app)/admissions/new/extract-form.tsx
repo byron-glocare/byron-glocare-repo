@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { ReviewForm } from "./review-form";
 import type { CallExtractResult } from "@/lib/admission/call-extract";
+import { INLINE_UPLOAD_MAX_MB, fileTooLargeMessage } from "@/lib/upload-limits";
 
 const TERM_OPTIONS = [
   "2026-Spring",
@@ -71,12 +72,11 @@ export function ExtractForm({
       return;
     }
 
-    const maxBytes = isPdf ? 40 * 1024 * 1024 : 30 * 1024 * 1024;
-    if (file.size > maxBytes) {
+    // 이 화면은 아직 파일을 서버로 실어 보낸다 — Vercel 요청 본문 한도(~4.5MB, base64 1.33배) 때문에 3MB 까지.
+    const tooLarge = fileTooLargeMessage(file, INLINE_UPLOAD_MAX_MB);
+    if (tooLarge) {
       setLoading(false);
-      setError(
-        `파일이 너무 큽니다 (${(file.size / 1024 / 1024).toFixed(1)}MB > ${maxBytes / 1024 / 1024}MB)`
-      );
+      setError(tooLarge);
       return;
     }
 

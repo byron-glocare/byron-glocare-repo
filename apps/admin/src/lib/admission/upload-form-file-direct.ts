@@ -12,6 +12,7 @@
 
 import { createClient } from "@/lib/supabase/client";
 import { createFormUploadUrlAction } from "@/app/(app)/universities/[id]/forms/actions";
+import { DIRECT_UPLOAD_MAX_MB, fileTooLargeMessage } from "@/lib/upload-limits";
 
 const BUCKET = "admission-form-files";
 
@@ -19,6 +20,8 @@ export async function uploadFormFileDirect(
   universityId: number,
   file: File
 ): Promise<{ ok: true; path: string } | { ok: false; error: string }> {
+  const tooLarge = fileTooLargeMessage(file, DIRECT_UPLOAD_MAX_MB);
+  if (tooLarge) return { ok: false, error: tooLarge };
   try {
     const signed = await createFormUploadUrlAction(universityId, file.name);
     if (!signed.ok) return signed;

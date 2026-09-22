@@ -13,6 +13,7 @@ import {
   type UploadFormFileState,
 } from "@/app/(app)/universities/[id]/forms/actions";
 import { uploadFormFileDirect } from "@/lib/admission/upload-form-file-direct";
+import { DIRECT_UPLOAD_MAX_MB, fileTooLargeMessage } from "@/lib/upload-limits";
 
 const KIND_LABEL: Record<"language" | "regular", string> = { language: "어학당", regular: "일반학과" };
 
@@ -97,7 +98,7 @@ export function NewFormDoc({
     setUploading(true);
     const up = await uploadFormFileDirect(Number(uniId), file);
     setUploading(false);
-    if (!up.ok) return toast.error("업로드 실패", { description: up.error });
+    if (!up.ok) return toast.error("업로드 실패", { description: up.error, duration: 10000 });
 
     const fd = new FormData();
     fd.set("university_id", uniId);
@@ -176,7 +177,17 @@ export function NewFormDoc({
         <input
           ref={fileRef}
           type="file"
-          onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+          onChange={(e) => {
+            const f = e.target.files?.[0] ?? null;
+            const tooLarge = f ? fileTooLargeMessage(f, DIRECT_UPLOAD_MAX_MB) : null;
+            if (tooLarge) {
+              toast.error("파일이 너무 큽니다", { description: tooLarge, duration: 10000 });
+              e.target.value = "";
+              setFile(null);
+              return;
+            }
+            setFile(f);
+          }}
           className="text-sm file:mr-3 file:rounded-md file:border file:border-input file:bg-secondary file:px-3 file:py-1.5 file:text-sm file:font-medium hover:file:bg-secondary/80"
         />
         {file ? (
