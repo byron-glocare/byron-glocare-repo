@@ -41,7 +41,10 @@ const uploadSchema = z.object({
   /** 파일 교체 — 이 행을 이전 버전으로 내리고(superseded_by=새 행) 설정을 물려받는다. */
   replaces_form_file_id: z.string().uuid().nullable(),
   notes: z.string().max(1000).nullable(),
-  file_base64: z.string().min(1),
+  // 파일 본문(옛 방식) 또는 브라우저가 이미 올린 저장소 경로 중 하나.
+  //   Vercel 은 서버로 보내는 요청 본문을 ~4.5MB 로 막는다 → 큰 파일은 base64 로 못 보낸다(2026-09-22 사고).
+  file_base64: z.string().optional(),
+  storage_path: z.string().max(500).optional(),
   file_name: z.string().min(1).max(300),
   file_size: z.coerce.number().int().positive(),
   mime_type: z.string().max(200).optional(),
@@ -123,7 +126,8 @@ export async function uploadFormFileAction(
     name_ko: formData.get("name_ko"),
     replaces_form_file_id: emptyToNull(formData.get("replaces_form_file_id")),
     notes: emptyToNull(formData.get("notes")),
-    file_base64: formData.get("file_base64"),
+    file_base64: emptyToNull(formData.get("file_base64")) ?? undefined,
+    storage_path: emptyToNull(formData.get("storage_path")) ?? undefined,
     file_name: formData.get("file_name"),
     file_size: formData.get("file_size"),
     mime_type: formData.get("mime_type") ?? undefined,
@@ -183,19 +187,29 @@ export async function uploadFormFileAction(
     replaced = old;
   }
 
-  // 3. Storage 업로드 — 새 업로드는 종류 대신 'form' 경로 (옛 경로는 그대로 둔다)
-  const buffer = Buffer.from(data.file_base64, "base64");
-  const safeName = sanitizeFileName(data.file_name);
-  const path = `${data.university_id}/form/${Date.now()}_${safeName}`;
-
-  const { error: upErr } = await supabase.storage
-    .from(BUCKET)
-    .upload(path, buffer, {
-      contentType: data.mime_type || "application/octet-stream",
-      upsert: false,
-    });
-  if (upErr) {
-    return { error: `Storage 업로드 실패: ${upErr.message}` };
+  // 3. Storage — 브라우저가 서명 주소로 이미 올렸으면(storage_path) 그 경로를 쓴다.
+  //    아니면(옛 호출부) base64 를 여기서 올린다. 새 업로드는 종류 대신 'form' 경로.
+  let path: string;
+  if (data.storage_path) {
+    if (!data.storage_path.startsWith(`${data.university_id}/form/`) || data.storage_path.includes("..")) {
+      return { error: "업로드 경로가 올바르지 않습니다. 다시 시도하세요." };
+    }
+    path = data.storage_path;
+  } else if (data.file_base64) {
+    const buffer = Buffer.from(data.file_base64, "base64");
+    const safeName = sanitizeFileName(data.file_name);
+    path = `${data.university_id}/form/${Date.now()}_${safeName}`;
+    const { error: upErr } = await supabase.storage
+      .from(BUCKET)
+      .upload(path, buffer, {
+        contentType: data.mime_type || "application/octet-stream",
+        upsert: false,
+      });
+    if (upErr) {
+      return { error: `Storage 업로드 실패: ${upErr.message}` };
+    }
+  } else {
+    return { error: "파일이 없습니다." };
   }
 
   const {
@@ -1080,4 +1094,26 @@ export async function restoreFormFileAction(
   revalidatePath(`/universities/${universityId}/forms`);
   revalidatePath("/admissions");
   revalidatePath(`/admissions/${universityId}`);
+}
+
+/**
+ * 양식 파일을 브라우저에서 저장소로 바로 올리기 위한 서명 업로드 주소.
+ *   Vercel 서버 함수는 요청 본문이 ~4.5MB 를 넘으면 받지도 못하고 끊는다 → 파일은 서버를 거치지 않는다.
+ *   돌려준 path 를 uploadFormFileAction 의 storage_path 로 넘긴다.
+ */
+export async function createFormUploadUrlAction(
+  universityId: number,
+  fileName: string
+): Promise<{ ok: true; path: string; token: string } | { ok: false; error: string }> {
+  const supabaseUser = await createClient();
+  const {
+    data: { user },
+  } = await supabaseUser.auth.getUser();
+  if (!user) return { ok: false, error: "로그인이 필요합니다" };
+  if (!Number.isInteger(universityId) || universityId <= 0) return { ok: false, error: "대학을 선택하세요" };
+  const supabase = createAdminClient();
+  const path = `${universityId}/form/${Date.now()}_${sanitizeFileName(fileName)}`;
+  const { data, error } = await supabase.storage.from(BUCKET).createSignedUploadUrl(path);
+  if (error || !data) return { ok: false, error: `업로드 주소 발급 실패: ${error?.message ?? "unknown"}` };
+  return { ok: true, path: data.path, token: data.token };
 }

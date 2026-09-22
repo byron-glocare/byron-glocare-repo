@@ -21,6 +21,7 @@ import {
   type UpdateFormDetailState,
   type UploadFormFileState,
 } from "@/app/(app)/universities/[id]/forms/actions";
+import { uploadFormFileDirect } from "@/lib/admission/upload-form-file-direct";
 import { DeleteFormFileButton } from "@/components/admission/delete-form-file-button";
 
 const KIND_LABEL: Record<"language" | "regular", string> = { language: "어학당", regular: "일반학과" };
@@ -117,14 +118,9 @@ export function FormDocDetail({
 
   async function doReplace(withAi: boolean) {
     if (!replaceFile) return toast.error("교체할 파일을 선택하세요");
-    const dataUrl = await new Promise<string>((res, rej) => {
-      const r = new FileReader();
-      r.onload = () => res(String(r.result));
-      r.onerror = () => rej(r.error);
-      r.readAsDataURL(replaceFile);
-    });
-    const comma = dataUrl.indexOf(",");
-    const base64 = comma >= 0 ? dataUrl.slice(comma + 1) : dataUrl;
+    // 파일은 브라우저 → 저장소로 바로 (서버 요청 본문 한도 회피)
+    const up = await uploadFormFileDirect(form.university_id, replaceFile);
+    if (!up.ok) return toast.error("파일 교체 실패", { description: up.error });
     const fd = new FormData();
     fd.set("university_id", String(form.university_id));
     // 이 행을 교체 — 이 행만 이전 버전이 되고(superseded_by=새 행), 새 행이
@@ -133,7 +129,7 @@ export function FormDocDetail({
     fd.set("spec_department_id", form.spec_department_id ?? "");
     fd.set("department_name", form.department_name ?? "");
     fd.set("name_ko", form.name_ko);
-    fd.set("file_base64", base64);
+    fd.set("storage_path", up.path);
     fd.set("file_name", replaceFile.name);
     fd.set("file_size", String(replaceFile.size));
     fd.set("mime_type", replaceFile.type || "application/octet-stream");

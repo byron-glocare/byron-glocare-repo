@@ -12,6 +12,7 @@ import {
   uploadFormFileAction,
   type UploadFormFileState,
 } from "@/app/(app)/universities/[id]/forms/actions";
+import { uploadFormFileDirect } from "@/lib/admission/upload-form-file-direct";
 
 const KIND_LABEL: Record<"language" | "regular", string> = { language: "어학당", regular: "일반학과" };
 
@@ -58,6 +59,7 @@ export function NewFormDoc({
   const fileRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
   const submitted = useRef(false);
+  const [uploading, setUploading] = useState(false);
 
   const deptOptions = specDepartments.filter((d) => String(d.university_id) === uniId);
   const hasSpec = deptOptions.length > 0;
@@ -91,21 +93,18 @@ export function NewFormDoc({
     if (!nameKo.trim()) return toast.error("서류명을 입력하세요");
     if (!file) return toast.error("파일을 선택하세요");
 
-    const dataUrl = await new Promise<string>((res, rej) => {
-      const r = new FileReader();
-      r.onload = () => res(String(r.result));
-      r.onerror = () => rej(r.error);
-      r.readAsDataURL(file);
-    });
-    const comma = dataUrl.indexOf(",");
-    const base64 = comma >= 0 ? dataUrl.slice(comma + 1) : dataUrl;
+    // 파일은 브라우저 → 저장소로 바로 (서버 요청 본문 한도 회피)
+    setUploading(true);
+    const up = await uploadFormFileDirect(Number(uniId), file);
+    setUploading(false);
+    if (!up.ok) return toast.error("업로드 실패", { description: up.error });
 
     const fd = new FormData();
     fd.set("university_id", uniId);
     fd.set("name_ko", nameKo.trim());
     fd.set("spec_department_id", specDeptId);
     fd.set("department_name", "");
-    fd.set("file_base64", base64);
+    fd.set("storage_path", up.path);
     fd.set("file_name", file.name);
     fd.set("file_size", String(file.size));
     fd.set("mime_type", file.type || "application/octet-stream");
@@ -186,9 +185,9 @@ export function NewFormDoc({
       </div>
 
       <div className="flex justify-end">
-        <Button type="button" onClick={submit} disabled={pending}>
-          {pending ? <Loader2 className="size-4 animate-spin" /> : <Upload className="size-4" />}
-          {pending ? "업로드·분석 중…" : "업로드"}
+        <Button type="button" onClick={submit} disabled={pending || uploading}>
+          {pending || uploading ? <Loader2 className="size-4 animate-spin" /> : <Upload className="size-4" />}
+          {uploading ? "파일 올리는 중…" : pending ? "분석 중…" : "업로드"}
         </Button>
       </div>
       <p className="text-[11px] text-muted-foreground">
