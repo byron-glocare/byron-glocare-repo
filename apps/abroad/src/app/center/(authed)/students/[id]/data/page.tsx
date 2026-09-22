@@ -18,7 +18,11 @@ import {
 import { seedStudentDataFromRecords } from "@/lib/center/seed-student-data";
 import { isFixedKey } from "@/lib/fixed-values";
 import { FixedValuesCard } from "@/components/fixed-values-card";
+import { createServiceClient } from "@/lib/supabase/service";
+import type { Json } from "@/types/database";
 import { StudentDataEditor } from "./student-data-editor";
+import { gatherStudentFileRefs, loadExtractContext } from "./doc-extract-core";
+import { computeDocSuggestions } from "./extract-compare";
 
 export default async function StudentDataPage({
   params,
@@ -60,6 +64,25 @@ export default async function StudentDataPage({
     .map((d) => (isFormImageDataType(d) ? { ...d, category: "other" } : d));
   const nonFileKeys = new Set(nonFile.map((d) => d.key));
 
+  // 업로드 서류 자동 읽기 — 이미 읽은 서류의 값 중 현재 값과 다른 것(항목별) + 아직 안 읽은 서류 수.
+  //   추출 기록 테이블은 RLS 정책이 없어 service-role 로 읽는다(위에서 학생 가시성 확인됨).
+  const extractCtx = await loadExtractContext(supabase, id);
+  const fileRefs = await gatherStudentFileRefs(supabase, id, extractCtx);
+  const refPaths = new Set(fileRefs.map((r) => r.path));
+  const { data: extractionRows } = await createServiceClient()
+    .from("study_student_doc_extractions")
+    .select("id, file_path, file_name, status, proposals, dismissed_keys, extracted_at")
+    .eq("student_id", id);
+  const readPaths = new Set((extractionRows ?? []).map((r) => r.file_path));
+  const unreadDocCount = fileRefs.filter((r) => !readPaths.has(r.path)).length;
+  const docSuggestions = computeDocSuggestions(
+    (extractionRows ?? []).filter(
+      (r) => r.status === "done" && refPaths.has(r.file_path)
+    ),
+    new Map<string, Json | null>(valueMap),
+    nonFileKeys
+  );
+
   return (
     <div className="space-y-4">
       <header>
@@ -84,6 +107,8 @@ export default async function StudentDataPage({
         existingValues={Object.fromEntries(valueMap)}
         existingInputs={Object.fromEntries(inputMap)}
         requiredBySource={pickRequired(requiredMap, nonFileKeys)}
+        docSuggestions={docSuggestions}
+        unreadDocCount={unreadDocCount}
       />
     </div>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { ChevronDown, ChevronRight, Wrench } from "lucide-react";
 import type { Json } from "@/types/database";
 import { tr, type Locale } from "@/lib/i18n";
@@ -18,6 +19,12 @@ import {
 } from "./actions";
 import { AiExtractPanel } from "./ai-extract-panel";
 import { FillLinkButton } from "./fill-link-button";
+import { DocSyncStatus, useDocSync } from "./doc-sync-status";
+import {
+  applyDocSuggestionAction,
+  dismissDocSuggestionAction,
+} from "./doc-extraction-actions";
+import type { DocSuggestion } from "./extract-compare";
 
 export type DataTypeMeta = {
   key: string;
@@ -105,6 +112,8 @@ export function StudentDataEditor({
   existingInputs = {},
   requiredBySource,
   showCenterTools = true,
+  docSuggestions,
+  unreadDocCount = 0,
 }: {
   locale: Locale;
   studentId: string;
@@ -115,6 +124,13 @@ export function StudentDataEditor({
   requiredBySource: Record<string, string[]>;
   /** 센터 전용 도구(외부 입력 링크·AI 자동채움) 노출. 셀프 학생은 false. */
   showCenterTools?: boolean;
+  /**
+   * (유학센터 화면만) 업로드 서류에서 읽은 값 중 현재 값과 다른 것 — 항목별.
+   *   넘기면 서류 자동 읽기(아직 안 읽은 서류)도 켜진다. 학생 포털은 넘기지 않는다.
+   */
+  docSuggestions?: Record<string, DocSuggestion[]>;
+  /** 아직 안 읽은 업로드 서류 수 (docSuggestions 와 함께) */
+  unreadDocCount?: number;
 }) {
   // 로컬 state — 즉시 UI 반영 + 서버 저장
   const [values, setValues] = useState<Record<string, Json | null>>(
@@ -124,6 +140,43 @@ export function StudentDataEditor({
   const [inputs, setInputs] = useState<Record<string, Json | null>>(
     existingInputs as Record<string, Json | null>
   );
+  // 서버에서 값이 바뀐 항목(자동 채움·서류 값으로 교체)의 입력칸을 다시 그리기 위한 버전
+  const [fieldVersions, setFieldVersions] = useState<Record<string, number>>({});
+
+  /** 서버가 바꾼 값을 로컬 state 에 반영 + 입력칸 재마운트 (원문은 비워짐) */
+  const applyServerValues = (
+    entries: Array<{ key: string; value: Json }>,
+    opts?: { keepInput?: boolean }
+  ) => {
+    if (entries.length === 0) return;
+    setValues((cur) => {
+      const next = { ...cur };
+      for (const e of entries) next[e.key] = e.value;
+      return next;
+    });
+    if (!opts?.keepInput) {
+      setInputs((cur) => {
+        const next = { ...cur };
+        for (const e of entries) next[e.key] = null;
+        return next;
+      });
+    }
+    setFieldVersions((cur) => {
+      const next = { ...cur };
+      for (const e of entries) next[e.key] = (next[e.key] ?? 0) + 1;
+      return next;
+    });
+  };
+
+  const docMode = showCenterTools && docSuggestions !== undefined;
+  const docSync = useDocSync({
+    locale,
+    studentId,
+    initialUnread: unreadDocCount,
+    enabled: docMode,
+    onFilled: (fields) =>
+      applyServerValues(fields.map((f) => ({ key: f.key, value: f.value }))),
+  });
 
   // 필요한 항목만 보기 (지원 대학 직접작성서류가 요구하는 키) ↔ 전체 보기
   const requiredKeySet = new Set(Object.keys(requiredBySource));
@@ -162,8 +215,67 @@ export function StudentDataEditor({
     return v === null || v === undefined || v === "";
   });
 
+  // 서류와 다른 항목 (화면에 있는 항목만)
+  const suggestionKeys = docMode
+    ? dataTypes
+        .filter((d) => (docSuggestions?.[d.key]?.length ?? 0) > 0)
+        .map((d) => d.key)
+    : [];
+
+  const jumpToField = (key: string) => {
+    const go = () => {
+      const el = document.getElementById(`field-${key}`);
+      if (!el) return false;
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+      history.replaceState(null, "", `#field-${key}`);
+      return true;
+    };
+    if (go()) return;
+    // "필요한 항목만" 범위 밖이면 전체 보기로 바꾼 뒤 이동
+    setShowAll(true);
+    setTimeout(go, 50);
+  };
+
   return (
     <div className="space-y-3">
+      {docMode ? (
+        <DocSyncStatus locale={locale} phase={docSync.phase} error={docSync.error} />
+      ) : null}
+
+      {suggestionKeys.length > 0 ? (
+        <section className="rounded-lg border border-amber-300 bg-amber-50 p-4">
+          <h2 className="text-sm font-semibold text-amber-900">
+            {tr(
+              locale,
+              `서류와 다른 항목 ${suggestionKeys.length}개`,
+              `${suggestionKeys.length} mục khác với giấy tờ`
+            )}
+          </h2>
+          <p className="mt-0.5 text-xs text-amber-800">
+            {tr(
+              locale,
+              "업로드한 서류에서 읽은 값이 현재 입력값과 다릅니다. 항목을 눌러 확인하세요.",
+              "Giá trị đọc từ giấy tờ khác với giá trị hiện tại. Bấm vào mục để kiểm tra."
+            )}
+          </p>
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {suggestionKeys.map((k) => {
+              const dt = byKey.get(k);
+              return (
+                <button
+                  key={k}
+                  type="button"
+                  onClick={() => jumpToField(k)}
+                  className="rounded-md border border-amber-300 bg-white px-2 py-1 text-xs font-medium text-amber-900 hover:bg-amber-100"
+                >
+                  {dt ? (locale === "ko" ? dt.label_ko : dt.label_vi) : k}
+                </button>
+              );
+            })}
+          </div>
+        </section>
+      ) : null}
+
       {/* 1) 필수 상태 — 가장 중요 (지원 양식이 요구하는 항목) */}
       {requiredKeys.length > 0 ? (
         <section
@@ -243,8 +355,10 @@ export function StudentDataEditor({
               locale={locale}
               studentId={studentId}
               onApplied={(key, value) =>
-                setValues((cur) => ({ ...cur, [key]: value }))
+                applyServerValues([{ key, value }], { keepInput: true })
               }
+              onRereadAll={docMode ? () => void docSync.rereadAll() : undefined}
+              rereading={docSync.busy}
             />
             <FillLinkButton locale={locale} studentId={studentId} />
           </div>
@@ -294,6 +408,9 @@ export function StudentDataEditor({
           studentId={studentId}
           requiredBySource={requiredBySource}
           byKey={byKey}
+          fieldVersions={fieldVersions}
+          docSuggestions={docMode ? docSuggestions : undefined}
+          onDocApplied={(key, value) => applyServerValues([{ key, value }])}
         />
       ))}
     </div>
@@ -311,6 +428,9 @@ function CategorySection({
   studentId,
   requiredBySource,
   byKey,
+  fieldVersions,
+  docSuggestions,
+  onDocApplied,
 }: {
   locale: Locale;
   category: string;
@@ -322,6 +442,9 @@ function CategorySection({
   studentId: string;
   requiredBySource: Record<string, string[]>;
   byKey: Map<string, DataTypeMeta>;
+  fieldVersions: Record<string, number>;
+  docSuggestions?: Record<string, DocSuggestion[]>;
+  onDocApplied: (key: string, value: Json) => void;
 }) {
   const valueOf = (key: string): Json | null => values[key] ?? null;
   const effectiveValue = (dt: DataTypeMeta): Json | null => {
@@ -357,7 +480,9 @@ function CategorySection({
             />
           ) : (
             <FieldRow
-              key={dt.key}
+              key={`${dt.key}:${fieldVersions[dt.key] ?? 0}`}
+              docSuggestions={docSuggestions?.[dt.key] ?? []}
+              onDocApplied={(v) => onDocApplied(dt.key, v)}
               locale={locale}
               dataType={dt}
               value={values[dt.key] ?? null}
@@ -385,6 +510,8 @@ function FieldRow({
   onChange,
   studentId,
   requiredSources,
+  docSuggestions = [],
+  onDocApplied,
 }: {
   locale: Locale;
   dataType: DataTypeMeta;
@@ -393,6 +520,8 @@ function FieldRow({
   onChange: (v: Json | null, valueInput?: Json | null) => void;
   studentId: string;
   requiredSources: string[];
+  docSuggestions?: DocSuggestion[];
+  onDocApplied?: (value: Json) => void;
 }) {
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -483,10 +612,99 @@ function FieldRow({
         />
       </div>
 
+      {docSuggestions.length > 0 ? (
+        <DocSuggestionNotes
+          locale={locale}
+          studentId={studentId}
+          dataTypeKey={dataType.key}
+          suggestions={docSuggestions}
+          onApplied={(v) => onDocApplied?.(v)}
+        />
+      ) : null}
+
       {error ? (
         <div className="mt-1 text-xs text-rose-700">
           {tr(locale, "오류", "Lỗi")}: {error}
         </div>
+      ) : null}
+    </div>
+  );
+}
+
+/**
+ * "서류와 다름" 표시 — 업로드 서류에서 읽은 값이 현재 값과 다를 때 (유학센터 화면만).
+ *   [이 값으로 바꾸기] 는 서버가 추출 기록에서 값을 다시 읽어 저장한다.
+ */
+function DocSuggestionNotes({
+  locale,
+  studentId,
+  dataTypeKey,
+  suggestions,
+  onApplied,
+}: {
+  locale: Locale;
+  studentId: string;
+  dataTypeKey: string;
+  suggestions: DocSuggestion[];
+  onApplied: (value: Json) => void;
+}) {
+  const router = useRouter();
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const run = async (s: DocSuggestion, mode: "apply" | "dismiss") => {
+    setBusyId(`${mode}:${s.extractionId}`);
+    setError(null);
+    const input = { studentId, key: dataTypeKey, extractionId: s.extractionId };
+    const res =
+      mode === "apply"
+        ? await applyDocSuggestionAction(input)
+        : await dismissDocSuggestionAction(input);
+    setBusyId(null);
+    if (!res.ok) {
+      setError(res.error);
+      return;
+    }
+    if (mode === "apply") onApplied(s.value);
+    router.refresh();
+  };
+
+  return (
+    <div className="mt-2 space-y-1">
+      {suggestions.map((s) => (
+        <div
+          key={s.extractionId}
+          className="flex flex-wrap items-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-2.5 py-1.5 text-xs text-amber-900"
+        >
+          <span className="min-w-0 flex-1">
+            {tr(locale, "서류와 다름", "Khác với giấy tờ")} ·{" "}
+            <span className="text-amber-700">{s.fileName}</span>:{" "}
+            <span className="font-semibold">{s.display}</span>
+          </span>
+          <button
+            type="button"
+            disabled={busyId !== null}
+            onClick={() => void run(s, "apply")}
+            className="shrink-0 rounded border border-amber-400 bg-white px-2 py-0.5 font-medium text-amber-900 hover:bg-amber-100 disabled:opacity-50"
+          >
+            {busyId === `apply:${s.extractionId}`
+              ? tr(locale, "바꾸는 중…", "Đang đổi…")
+              : tr(locale, "이 값으로 바꾸기", "Dùng giá trị này")}
+          </button>
+          <button
+            type="button"
+            disabled={busyId !== null}
+            onClick={() => void run(s, "dismiss")}
+            className="shrink-0 rounded border border-slate-300 bg-white px-2 py-0.5 text-slate-600 hover:bg-slate-50 disabled:opacity-50"
+          >
+            {busyId === `dismiss:${s.extractionId}` ? "…" : tr(locale, "무시", "Bỏ qua")}
+          </button>
+        </div>
+      ))}
+      {error ? (
+        <p className="text-xs text-rose-700">
+          {tr(locale, "오류", "Lỗi")}: {error}
+        </p>
       ) : null}
     </div>
   );

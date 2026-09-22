@@ -20,10 +20,18 @@ export function AiExtractPanel({
   locale,
   studentId,
   onApplied,
+  onRereadAll,
+  rereading = false,
 }: {
   locale: Locale;
   studentId: string;
   onApplied: (key: string, value: Json) => void;
+  /**
+   * (자동 읽기 켜진 화면만) 읽은 기록을 지우고 업로드 서류를 전부 다시 읽는다 —
+   *   빈 칸 자동 채움 + 다른 값은 항목별 표시.
+   */
+  onRereadAll?: () => void;
+  rereading?: boolean;
 }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -123,16 +131,39 @@ export function AiExtractPanel({
             )}
           </p>
         </div>
-        <button
-          type="button"
-          onClick={runExtract}
-          disabled={busy || applying}
-          className="shrink-0 rounded-md bg-violet-600 px-3 py-2 text-sm font-semibold text-white hover:bg-violet-700 disabled:opacity-50"
-        >
-          {busy
-            ? tr(locale, "서류 분석 중…", "Đang phân tích…")
-            : tr(locale, "AI로 채우기", "Điền bằng AI")}
-        </button>
+        <div className="flex shrink-0 flex-wrap items-center gap-2">
+          {onRereadAll ? (
+            <button
+              type="button"
+              onClick={onRereadAll}
+              disabled={rereading || busy || applying}
+              className="rounded-md bg-violet-600 px-3 py-2 text-sm font-semibold text-white hover:bg-violet-700 disabled:opacity-50"
+              title={tr(
+                locale,
+                "업로드한 서류를 모두 다시 읽어 빈 칸을 채우고, 다른 값은 항목마다 표시합니다.",
+                "Đọc lại toàn bộ giấy tờ đã tải, điền mục trống và đánh dấu giá trị khác."
+              )}
+            >
+              {rereading
+                ? tr(locale, "서류 읽는 중…", "Đang đọc…")
+                : tr(locale, "서류 전부 다시 읽기", "Đọc lại toàn bộ giấy tờ")}
+            </button>
+          ) : null}
+          <button
+            type="button"
+            onClick={runExtract}
+            disabled={busy || applying || rereading}
+            className={
+              onRereadAll
+                ? "rounded-md border border-violet-300 bg-white px-3 py-2 text-sm font-medium text-violet-700 hover:bg-violet-100 disabled:opacity-50"
+                : "rounded-md bg-violet-600 px-3 py-2 text-sm font-semibold text-white hover:bg-violet-700 disabled:opacity-50"
+            }
+          >
+            {busy
+              ? tr(locale, "서류 분석 중…", "Đang phân tích…")
+              : tr(locale, "AI로 채우기", "Điền bằng AI")}
+          </button>
+        </div>
       </div>
 
       {appliedCount !== null ? (

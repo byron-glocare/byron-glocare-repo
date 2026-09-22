@@ -1394,6 +1394,26 @@ export type Database = {
         Update: Partial<Database["public"]["Tables"]["study_spec_terms"]["Insert"]>;
         Relationships: [];
       };
+      study_student_doc_extractions: {
+        Row: {
+          id: string;
+          student_id: string;
+          file_path: string;
+          doc_key: string | null;
+          file_name: string | null;
+          status: "done" | "failed";
+          /** JSONB — Array<{ key, value, display, confidence, source }> */
+          proposals: unknown;
+          dismissed_keys: string[];
+          error: string | null;
+          extracted_at: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["study_student_doc_extractions"]["Row"]> & { student_id: string; file_path: string };
+        Update: Partial<Database["public"]["Tables"]["study_student_doc_extractions"]["Row"]>;
+        Relationships: [];
+      };
     };
     Views: { [_ in never]: never };
     Functions: { [_ in never]: never };
