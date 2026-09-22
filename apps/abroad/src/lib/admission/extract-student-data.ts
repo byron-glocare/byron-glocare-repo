@@ -85,6 +85,11 @@ const SYSTEM_PROMPT = `당신은 한국 대학에 지원하는 베트남 학생�
 7. **여권 번호·발급일·만료일**, **생년월일**, **성별**, **국적**은 여권에서 정확히.
 8. confidence: 또렷이 읽힘=high, 일부 흐림/추론=medium, 불확실=low. low 도 포함하되 표시.
 9. 베트남 학생 기준 — 한국식 이름이 없으면 비워두세요(만들지 말 것).
+10. **서류 주인을 구분하세요.** 각 서류 앞의 [서류: …] 라벨에 "학생 본인 아님"이 붙어 있으면 부모 등 다른 사람의 서류입니다.
+    그 서류의 이름·생년월일·신분증 번호·연락처를 학생 항목(full_name_*, birth_date, national_id_no, student_phone 등)에 **절대 넣지 마세요.**
+    아버지 서류면 father_* 항목(father_name, father_birth_date, father_national_id, father_contact 등)에,
+    어머니 서류면 mother_* 항목에만 넣으세요. 부모 서류에서 학생의 성별·여권 정보는 추출하지 마세요.
+11. source 에는 [서류: …] 라벨을 **그대로** 적으세요.
 
 # 출력 JSON 형식
 \`\`\`json

@@ -45,9 +45,35 @@ export type ExtractContext = {
   currentByKey: Map<string, Json>;
 };
 
+/** 서류 주인 — 부모 서류의 이름·생년월일을 학생 칸에 넣지 않으려고 (2026-09-22 사고: 엄마 신분증 → 학생 이름) */
+export type DocOwner = "self" | "father" | "mother" | "parents";
+
+const OWNER_LABEL: Record<DocOwner, string> = {
+  self: "학생 본인 서류",
+  father: "아버지의 서류 — 학생 본인 아님",
+  mother: "어머니의 서류 — 학생 본인 아님",
+  parents: "부모의 서류 — 학생 본인 아님",
+};
+
+/** 대상자 값·서류명·파일명으로 서류 주인 추정 */
+export function inferDocOwner(target: string | null, ...texts: Array<string | null | undefined>): DocOwner {
+  const t = (target ?? "").trim().toLowerCase();
+  if (t === "father") return "father";
+  if (t === "mother") return "mother";
+  const s = texts.filter(Boolean).join(" ").toLowerCase();
+  const father = /(아버지|부친|\(부\)|bố|father)/.test(s);
+  const mother = /(어머니|모친|\(모\)|mẹ|mother)/.test(s);
+  if (father && !mother) return "father";
+  if (mother && !father) return "mother";
+  if (father || mother || /(부모|parents|bố mẹ|phụ huynh)/.test(s)) return "parents";
+  return "self";
+}
+
 /** 업로드 서류 1개 */
 export type StudentFileRef = {
   label: string;
+  /** 누구의 서류인지 */
+  owner?: DocOwner;
   path: string;
   file_name: string;
   /** 제출서류 doc_key, 또는 첨부 file 항목의 데이터 키 */
@@ -129,19 +155,41 @@ export async function gatherStudentFileRefs(
       .in("id", subIds);
     for (const s of subs ?? []) subNameById.set(s.id, s.name_ko);
   }
-  // doc_key = "key::이름" → 라벨은 이름 부분
-  const labelFromDocKey = (dk: string | null): string | null => {
-    if (!dk) return null;
+  // doc_key 형식 두 가지:
+  //   새: "std::<서류키>::<인증>[::<대상자>]"  → 서류명은 서류 카탈로그에서, 대상자는 마지막 칸
+  //   옛: "<종류>::<이름>"                     → 이름 부분
+  const stdKeys = Array.from(
+    new Set(
+      (subFiles ?? [])
+        .map((f) => f.doc_key ?? "")
+        .filter((k) => k.startsWith("std::"))
+        .map((k) => k.split("::")[1])
+        .filter(Boolean)
+    )
+  );
+  const stdNameByKey = new Map<string, string>();
+  if (stdKeys.length > 0) {
+    const { data: stds } = await supabase.from("study_doc_standards").select("key, name_ko").in("key", stdKeys);
+    for (const s of stds ?? []) stdNameByKey.set(s.key, s.name_ko);
+  }
+  const parseDocKey = (dk: string | null): { name: string | null; target: string | null } => {
+    if (!dk) return { name: null, target: null };
+    if (dk.startsWith("std::")) {
+      const parts = dk.split("::");
+      return { name: stdNameByKey.get(parts[1]) ?? null, target: parts[3] ?? null };
+    }
     const idx = dk.indexOf("::");
-    return idx >= 0 ? dk.slice(idx + 2) : dk;
+    return { name: idx >= 0 ? dk.slice(idx + 2) : dk, target: null };
   };
   for (const f of subFiles ?? []) {
     if (!f.file_path) continue;
+    const parsed = parseDocKey(f.doc_key ?? null);
+    const name =
+      (f.submission_id ? subNameById.get(f.submission_id) : null) ?? parsed.name ?? "제출서류";
+    const owner = inferDocOwner(parsed.target, name, f.file_name);
     fileRefs.push({
-      label:
-        (f.submission_id ? subNameById.get(f.submission_id) : null) ??
-        labelFromDocKey(f.doc_key) ??
-        "제출서류",
+      label: `${name} (${OWNER_LABEL[owner]})`,
+      owner,
       path: f.file_path,
       file_name: f.file_name,
       doc_key: f.doc_key ?? null,
@@ -160,8 +208,11 @@ export async function gatherStudentFileRefs(
     if (val && typeof val === "object" && !Array.isArray(val)) {
       const o = val as { path?: string; file_name?: string };
       if (o.path) {
+        const name = fileLabelByKey.get(key) ?? "첨부서류";
+        const owner = inferDocOwner(null, name, o.file_name, key);
         fileRefs.push({
-          label: fileLabelByKey.get(key) ?? "첨부서류",
+          label: `${name} (${OWNER_LABEL[owner]})`,
+          owner,
           path: o.path,
           file_name: o.file_name ?? "file",
           doc_key: key,
@@ -259,7 +310,9 @@ export async function extractFromRefs(
     }
     anyOk = true;
     rawAll += (rawAll ? "\n" : "") + res.raw;
-    for (const f of res.fields) {
+    for (const raw of res.fields) {
+      const f = remapByOwner(raw, batch);
+      if (!f) continue;
       const prev = merged.get(f.key);
       // 같은 항목이 여러 배치에서 나오면 신뢰도 높은 값 우선
       if (!prev || CONF_RANK[f.confidence] < CONF_RANK[prev.confidence]) {
@@ -295,4 +348,43 @@ function guessMime(fileName: string): string {
     default:
       return "application/octet-stream";
   }
+}
+
+/**
+ * 부모 서류에서 읽은 값이 학생 칸으로 들어가지 않게 한다.
+ *   AI 가 알려준 출처(source = 서류 라벨)로 서류 주인을 찾고,
+ *   아버지/어머니 서류의 이름·생년월일·신분증번호·연락처는 father_* / mother_* 로 옮기고,
+ *   그 밖의 학생 본인 항목(여권·성별 등)은 버린다. 부모 둘 다인 서류는 학생 항목만 버린다.
+ */
+const SELF_ONLY_KEYS = new Set([
+  "full_name_en", "full_name_vi", "full_name_ko", "full_name_hanja", "first_name", "last_name",
+  "birth_date", "gender", "passport_no", "passport_issued", "passport_expiry", "national_id_no",
+  "student_phone", "student_email", "foreign_registration_no",
+]);
+const PARENT_REMAP: Record<string, "name" | "birth_date" | "national_id" | "contact"> = {
+  full_name_en: "name", full_name_vi: "name", full_name_ko: "name",
+  birth_date: "birth_date", national_id_no: "national_id", student_phone: "contact",
+};
+
+function ownerOfSource(source: string | null, batch: ExtractDocInput[]): DocOwner | null {
+  if (!source) return batch.length === 1 ? ownerFromLabel(batch[0].label) : null;
+  const hit = batch.find((d) => d.label === source) ?? batch.find((d) => source.includes(d.label) || d.label.includes(source));
+  return ownerFromLabel(hit?.label ?? source);
+}
+function ownerFromLabel(label: string): DocOwner | null {
+  for (const o of ["father", "mother", "parents", "self"] as DocOwner[]) if (label.includes(OWNER_LABEL[o])) return o;
+  return null;
+}
+
+function remapByOwner(f: ExtractedField, batch: ExtractDocInput[]): ExtractedField | null {
+  const owner = ownerOfSource(f.source, batch);
+  if (!owner || owner === "self") return f;
+  if (!SELF_ONLY_KEYS.has(f.key)) return f; // 이미 father_*/mother_* 이거나 공통 항목(주소 등)
+  if (owner === "parents") return null;
+  const kind = PARENT_REMAP[f.key];
+  if (!kind) return null;
+  const prefix = owner; // "father" | "mother"
+  const key = kind === "name" ? `${prefix}_name` : kind === "birth_date" ? `${prefix}_birth_date` : kind === "national_id" ? `${prefix}_national_id` : `${prefix}_contact`;
+  // 이름은 영문/베트남식 중 먼저 온 것 하나만 (같은 키로 겹치면 병합 단계가 신뢰도로 고른다)
+  return { ...f, key };
 }

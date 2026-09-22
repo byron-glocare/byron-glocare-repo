@@ -16,7 +16,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { createClient } from "@/lib/supabase/server";
 import { createCenterClient } from "@/lib/supabase/center";
-import { verifyCenterSession } from "@/lib/center/dal";
+import { getCenterSessionOrNull, verifyCenterSession } from "@/lib/center/dal";
 import type { Database } from "@/types/database";
 
 export type DataAccess = {
@@ -45,11 +45,17 @@ export type DataAccess = {
  * 접근 불가면 예외.
  */
 export async function resolveDataAccess(studentId?: string): Promise<DataAccess> {
+  //   학생 포털 로그인(createClient 쿠키)과 센터 로그인(createCenterClient 쿠키)은 별개다.
+  //   같은 브라우저에 둘 다 로그인돼 있으면(운영자가 학생 포털도 써 본 경우) 예전엔 무조건
+  //   학생으로 판단해, 센터 화면에서 다른 학생을 다루면 "권한 없음"이 났다(2026-09-22).
+  //   규칙: 다루는 학생이 본인 학생 기록이면 학생, 아니면 센터 로그인이 있으면 센터.
+  //         학생이 정해지지 않은 동작(파일 보기)은 두 로그인 중 어느 쪽으로든 볼 수 있으면 허용.
   const authed = await createClient();
   const {
     data: { user },
   } = await authed.auth.getUser();
 
+  let selfAccess: DataAccess | null = null;
   if (user) {
     // 셀프 학생? (본인 auth 에 연결된 managed_students 행)
     const { data: selfRow } = await authed
@@ -59,10 +65,7 @@ export async function resolveDataAccess(studentId?: string): Promise<DataAccess>
       .maybeSingle();
 
     if (selfRow) {
-      if (studentId && selfRow.id !== studentId) {
-        throw new Error("권한이 없습니다.");
-      }
-      return {
+      selfAccess = {
         kind: "self",
         supabase: authed,
         authUserId: user.id,
@@ -71,10 +74,28 @@ export async function resolveDataAccess(studentId?: string): Promise<DataAccess>
         revalidateData: () => revalidatePath("/student/data"),
         revalidateDocuments: () => revalidatePath("/student/documents"),
       };
+      if (studentId && selfRow.id === studentId) return selfAccess;
+      if (!studentId) {
+        const center = await getCenterSessionOrNull();
+        if (!center) return selfAccess;
+        const centerAccess = await buildCenterAccess();
+        const self = selfAccess;
+        return {
+          ...centerAccess,
+          ownsPath: async (p) => (await self.ownsPath(p)) || (await centerAccess.ownsPath(p)),
+        };
+      }
+      // 다른 학생 — 센터 로그인이 있어야 한다
+      const center = await getCenterSessionOrNull();
+      if (!center) throw new Error("권한이 없습니다.");
     }
   }
 
-  // 유학센터 담당자
+  return buildCenterAccess();
+}
+
+/** 유학센터 담당자 접근 (센터 세션 필수 — 없으면 센터 로그인으로 redirect) */
+async function buildCenterAccess(): Promise<DataAccess> {
   const session = await verifyCenterSession();
   const supabase = await createCenterClient();
   return {
