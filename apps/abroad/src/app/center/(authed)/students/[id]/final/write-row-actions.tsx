@@ -14,7 +14,6 @@ import {
 } from "lucide-react";
 
 import { tr, type Locale } from "@/lib/i18n";
-import { createClient } from "@/lib/supabase/client";
 import { downloadUrl } from "@/lib/storage-download";
 import {
   createFinalUploadAction,
@@ -23,6 +22,7 @@ import {
   unsubmitFinalDocAction,
   getFinalDocSignedUrlAction,
 } from "./finalize-actions";
+import { uploadWithSignedToken } from "@/lib/storage/resilient-upload";
 
 const BTN_BASE =
   "inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold transition-colors disabled:opacity-60";
@@ -78,14 +78,15 @@ export function WriteRowActions({
         setErr(created.error);
         return;
       }
-      const sb = createClient();
-      const { error: upErr } = await sb.storage
-        .from(created.bucket)
-        .uploadToSignedUrl(created.path, created.token, file, {
-          contentType: file.type || undefined,
-        });
-      if (upErr) {
-        setErr(`업로드 실패: ${upErr.message}`);
+      // 1MB 조각으로 나눠 보내고 끊기면 이어서 (베트남→한국 경로에서 큰 요청이 끊기던 문제)
+      const up = await uploadWithSignedToken({
+        bucket: created.bucket,
+        path: created.path,
+        token: created.token,
+        file,
+      });
+      if (!up.ok) {
+        setErr(`업로드 실패: ${up.error}`);
         return;
       }
       const fin = await recordFinalUploadAction({

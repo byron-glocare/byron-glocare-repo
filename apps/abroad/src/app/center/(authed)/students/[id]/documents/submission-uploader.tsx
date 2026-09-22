@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { Loader2, Upload, Eye, Trash2, RefreshCw } from "lucide-react";
 
 import { tr, type Locale } from "@/lib/i18n";
-import { createClient } from "@/lib/supabase/client";
+import { uploadWithSignedToken } from "@/lib/storage/resilient-upload";
 
 import {
   createSubmissionUploadAction,
@@ -41,6 +41,7 @@ export function SubmissionUploader({
   const inputRef = useRef<HTMLInputElement>(null);
   const [pending, startTransition] = useTransition();
   const [busy, setBusy] = useState(false);
+  const [progress, setProgress] = useState<number | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [extracting, setExtracting] = useState(false);
   const [conflicts, setConflicts] = useState<{ fileName: string; items: ExtractProposal[] } | null>(null);
@@ -104,14 +105,24 @@ export function SubmissionUploader({
         return;
       }
       // 2) 브라우저 → Supabase 직접 업로드 (Vercel 4.5MB 한계 우회)
-      const sb = createClient();
-      const { error: upErr } = await sb.storage
-        .from(created.bucket)
-        .uploadToSignedUrl(created.path, created.token, file, {
-          contentType: file.type || undefined,
-        });
-      if (upErr) {
-        setErr(`업로드 실패: ${upErr.message}`);
+      //    1MB 조각으로 나눠 보내고 끊기면 이어서 (베트남→한국 경로에서 큰 요청이 끊기던 문제, 2026-09-22)
+      setProgress(0);
+      const up = await uploadWithSignedToken({
+        bucket: created.bucket,
+        path: created.path,
+        token: created.token,
+        file,
+        onProgress: (sent, total) => setProgress(Math.round((sent / total) * 100)),
+      });
+      setProgress(null);
+      if (!up.ok) {
+        setErr(
+          tr(
+            locale,
+            `업로드 실패: ${up.error}. 잠시 후 다시 시도해 주세요.`,
+            `Tải lên thất bại: ${up.error}. Vui lòng thử lại sau.`
+          )
+        );
         return;
       }
       // 3) 완료 기록
@@ -232,6 +243,12 @@ export function SubmissionUploader({
           {tr(locale, "파일 올리기", "Tải lên")}
         </button>
       )}
+      {progress !== null ? (
+        <span className="inline-flex items-center gap-1 text-[11px] text-slate-600">
+          <Loader2 className="size-3 animate-spin" />
+          {tr(locale, `올리는 중 ${progress}%`, `Đang tải lên ${progress}%`)}
+        </span>
+      ) : null}
       {err ? <span className="text-[11px] text-red-600">{err}</span> : null}
       {extracting ? (
         <span className="inline-flex items-center gap-1 text-[11px] text-violet-700">
