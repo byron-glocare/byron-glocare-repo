@@ -12,8 +12,20 @@ import type { User } from "@supabase/supabase-js";
  * (역할은 Supabase Admin API / SQL 로만 설정 가능 — 사용자가 못 바꿈.)
  */
 export function isGlocareAdmin(user: User | null | undefined): boolean {
-  if (!user) return false;
-  const role = (user.app_metadata as { role?: unknown } | null | undefined)
-    ?.role;
-  return role === "glocare_admin";
+  return roleOf(user) === "glocare_admin";
+}
+
+/** 대표님 전용 모바일 페이지(/ceo) 접근 역할. */
+export function isGlocareCeo(user: User | null | undefined): boolean {
+  return roleOf(user) === "glocare_ceo";
+}
+
+/** 영업직원 전용 모바일 페이지(/sales) 접근 역할. */
+export function isGlocareSales(user: User | null | undefined): boolean {
+  return roleOf(user) === "glocare_sales";
+}
+
+function roleOf(user: User | null | undefined): unknown {
+  if (!user) return undefined;
+  return (user.app_metadata as { role?: unknown } | null | undefined)?.role;
 }

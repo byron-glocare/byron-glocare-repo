@@ -487,6 +487,7 @@ export default async function SettlementsPage({
           care_home_finding: false,
           resume_sent: false,
           interview_passed: false,
+          intake_persuading: false,
           updated_at: new Date().toISOString(),
         },
         reservationPayments: reservationsByCustomer.get(c.id) ?? [],

@@ -326,12 +326,14 @@ export type Database = {
           care_home_finding: boolean;
           resume_sent: boolean;
           interview_passed: boolean;
+          intake_persuading: boolean;
           updated_at: string;
         };
         Insert: {
           customer_id: string;
           intake_abandoned?: boolean;
           intake_confirmed?: boolean;
+          intake_persuading?: boolean;
           study_abroad_consultation?: boolean;
           training_center_finding?: boolean;
           class_schedule_confirmation_needed?: boolean;

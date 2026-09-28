@@ -161,6 +161,7 @@ function defaultStatus(customerId: string): CustomerStatus {
     care_home_finding: false,
     resume_sent: false,
     interview_passed: false,
+    intake_persuading: false,
     updated_at: new Date().toISOString(),
   };
 }
