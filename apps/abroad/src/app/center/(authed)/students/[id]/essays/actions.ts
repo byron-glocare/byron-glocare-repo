@@ -27,7 +27,7 @@ export async function generateEssayAction(input: {
   // 1. 학생 확인 (RLS)
   const { data: student } = await supabase
     .from("study_managed_students")
-    .select("id, name")
+    .select("id, name, dob, topik_level")
     .eq("id", input.studentId)
     .maybeSingle();
   if (!student) return { ok: false, error: "학생을 찾을 수 없습니다" };
@@ -77,11 +77,32 @@ export async function generateEssayAction(input: {
       .filter((f) => f.value.trim() !== "");
   }
 
+  // 3-1. 나이·한국어 실력 — 글 수준을 학생에게 맞추려고 넘긴다(대필로 보이지 않게).
+  //      학생 기본정보가 비어 있으면 정보 입력 값(birth_date, topik_level)에서 가져온다.
+  let dob: string | null = student.dob ?? null;
+  let topik: string | number | null = student.topik_level ?? null;
+  if (!dob || !topik) {
+    const { data: extra } = await supabase
+      .from("study_student_data_values")
+      .select("data_type_key, value")
+      .eq("student_id", input.studentId)
+      .in("data_type_key", ["birth_date", "topik_level"]);
+    for (const row of extra ?? []) {
+      const v = typeof row.value === "string" ? row.value : row.value == null ? "" : String(row.value);
+      if (!v.trim()) continue;
+      if (row.data_type_key === "birth_date" && !dob) dob = v;
+      if (row.data_type_key === "topik_level" && !topik) topik = v;
+    }
+  }
+  const age = ageFromDob(dob);
+
   // 4. Claude 호출 (작성지침을 질문으로 전달)
   const result = await generateEssayDraft({
     questionKo: sec.prompt?.trim() || sec.label || "서술형 답변",
     basisFacts,
     studentName: student.name,
+    studentAge: age,
+    topikLevel: topik,
   });
 
   if (!result.ok) return result;
@@ -134,4 +155,17 @@ export async function saveEssayEditAction(input: {
 
   revalidatePath(`/center/students/${input.studentId}/essays`);
   return { ok: true };
+}
+
+/** 생년월일(YYYY-MM-DD)에서 만 나이. 못 읽으면 undefined */
+function ageFromDob(dob: string | null): number | undefined {
+  const m = (dob ?? "").match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!m) return undefined;
+  const birth = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+  if (Number.isNaN(birth.getTime())) return undefined;
+  const now = new Date();
+  let age = now.getFullYear() - birth.getFullYear();
+  const before = now.getMonth() < birth.getMonth() || (now.getMonth() === birth.getMonth() && now.getDate() < birth.getDate());
+  if (before) age -= 1;
+  return age > 0 && age < 100 ? age : undefined;
 }
