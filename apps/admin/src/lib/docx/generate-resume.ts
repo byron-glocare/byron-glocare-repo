@@ -45,6 +45,29 @@ const EMPTY_PNG = Buffer.from(
   "base64"
 );
 
+/** docxtemplater 의 "Multi error" 에서 개별 오류 설명을 추출해 읽을 수 있게 만든다. */
+function formatDocxError(e: unknown): Error {
+  const err = e as {
+    message?: string;
+    properties?: {
+      errors?: Array<{
+        message?: string;
+        properties?: { explanation?: string; xtag?: string; context?: string };
+      }>;
+    };
+  };
+  const details = err?.properties?.errors
+    ?.map(
+      (x) =>
+        x?.properties?.explanation ??
+        `${x?.message ?? ""}${x?.properties?.xtag ? ` (tag: ${x.properties.xtag})` : ""}`
+    )
+    .join(" || ");
+  return new Error(
+    details ? `템플릿 오류: ${details}` : err?.message ?? "docx 처리 실패"
+  );
+}
+
 /**
  * 이력서 docx 생성 — template (placeholder) 에 학생 입력 + 사진 채워 Buffer 반환.
  */
@@ -80,12 +103,18 @@ export async function generateResumeDocx(
       name === "photo" && hasPhoto ? photoFitSize : [1, 1],
   });
 
-  const doc = new Docxtemplater(zip, {
-    paragraphLoop: true,
-    linebreaks: true,
-    nullGetter: () => "",
-    modules: [imageModule],
-  });
+  let doc: Docxtemplater;
+  try {
+    doc = new Docxtemplater(zip, {
+      paragraphLoop: true,
+      linebreaks: true,
+      nullGetter: () => "",
+      modules: [imageModule],
+    });
+  } catch (e) {
+    // 템플릿 파싱(루프/태그) 오류는 생성자에서 throw 된다.
+    throw formatDocxError(e);
+  }
 
   const narrative = data.narrative_polished?.trim() || data.narrative_raw || "";
 
@@ -131,26 +160,7 @@ export async function generateResumeDocx(
       photo: "photo",
     });
   } catch (e) {
-    // docxtemplater "Multi error" 는 개별 오류를 properties.errors 에 담는다.
-    const err = e as {
-      message?: string;
-      properties?: {
-        errors?: Array<{
-          message?: string;
-          properties?: { explanation?: string; xtag?: string; context?: string };
-        }>;
-      };
-    };
-    const details = err?.properties?.errors
-      ?.map(
-        (x) =>
-          x?.properties?.explanation ??
-          `${x?.message ?? ""}${x?.properties?.xtag ? ` (tag: ${x.properties.xtag})` : ""}`
-      )
-      .join(" || ");
-    throw new Error(
-      details ? `템플릿 오류: ${details}` : err?.message ?? "docx 렌더 실패"
-    );
+    throw formatDocxError(e);
   }
 
   const out = doc.getZip().generate({ type: "nodebuffer", compression: "DEFLATE" });
