@@ -118,15 +118,24 @@ export async function generateResumeDocx(
 
   const narrative = data.narrative_polished?.trim() || data.narrative_raw || "";
 
+  // 연도 4자리(20YY)를 2자리(YY)로 — 경력 기간 칸이 좁아 4자리면 줄바꿈되어 보기 싫음.
+  const abbrevYears = (s: string | null | undefined): string =>
+    (s ?? "").replace(/20(\d{2})/g, "$1");
+
   // 양식의 column 구조에 맞춰 schema 필드명 변환
   const educations = data.educations.map((e) => ({
     school: e.school,
     major: e.major,
-    period:
+    period: abbrevYears(
       e.start_year && e.end_year
         ? `${e.start_year} ~ ${e.end_year}`
-        : e.start_year || e.end_year,
+        : String(e.start_year || e.end_year || "")
+    ),
     status: e.status,
+  }));
+  const careers = data.careers.map((c) => ({
+    ...c,
+    period: abbrevYears(c.period),
   }));
   const certifications = data.certifications.map((c) => ({
     name: c.name,
@@ -135,9 +144,17 @@ export async function generateResumeDocx(
   }));
   const activities = data.activities.map((a) => ({
     name: a.name,
-    period: a.period,
+    period: abbrevYears(a.period),
     org: "", // 양식에 "기관" 컬럼이 있지만 새 schema 엔 없음 — 빈 칸
     detail: a.detail,
+  }));
+  // 기술·어학: 상세가 수준과 똑같으면(예: 모국어/모국어) 중복이라 상세를 비운다.
+  const skills = data.skills.map((s) => ({
+    ...s,
+    detail:
+      s.detail && s.level && s.detail.trim() === s.level.trim()
+        ? ""
+        : s.detail,
   }));
 
   try {
@@ -151,9 +168,9 @@ export async function generateResumeDocx(
       one_liner: data.one_liner,
       narrative,
       educations,
-      careers: data.careers,
+      careers,
       certifications,
-      skills: data.skills,
+      skills,
       activities,
       // 사진 토큰. 값은 image module 의 getImage 에서 무시되지만 모든 케이스에서
       // 같은 키 전달 → 항상 image module 가 `{%photo}` placeholder 처리.
