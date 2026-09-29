@@ -111,24 +111,47 @@ export async function generateResumeDocx(
     detail: a.detail,
   }));
 
-  doc.render({
-    name_vi: data.name_vi,
-    name_kr: data.name_kr,
-    birth_date: data.birth_date,
-    phone: data.phone,
-    email: data.email,
-    address: data.address,
-    one_liner: data.one_liner,
-    narrative,
-    educations,
-    careers: data.careers,
-    certifications,
-    skills: data.skills,
-    activities,
-    // 사진 토큰. 값은 image module 의 getImage 에서 무시되지만 모든 케이스에서
-    // 같은 키 전달 → 항상 image module 가 `{%photo}` placeholder 처리.
-    photo: "photo",
-  });
+  try {
+    doc.render({
+      name_vi: data.name_vi,
+      name_kr: data.name_kr,
+      birth_date: data.birth_date,
+      phone: data.phone,
+      email: data.email,
+      address: data.address,
+      one_liner: data.one_liner,
+      narrative,
+      educations,
+      careers: data.careers,
+      certifications,
+      skills: data.skills,
+      activities,
+      // 사진 토큰. 값은 image module 의 getImage 에서 무시되지만 모든 케이스에서
+      // 같은 키 전달 → 항상 image module 가 `{%photo}` placeholder 처리.
+      photo: "photo",
+    });
+  } catch (e) {
+    // docxtemplater "Multi error" 는 개별 오류를 properties.errors 에 담는다.
+    const err = e as {
+      message?: string;
+      properties?: {
+        errors?: Array<{
+          message?: string;
+          properties?: { explanation?: string; xtag?: string; context?: string };
+        }>;
+      };
+    };
+    const details = err?.properties?.errors
+      ?.map(
+        (x) =>
+          x?.properties?.explanation ??
+          `${x?.message ?? ""}${x?.properties?.xtag ? ` (tag: ${x.properties.xtag})` : ""}`
+      )
+      .join(" || ");
+    throw new Error(
+      details ? `템플릿 오류: ${details}` : err?.message ?? "docx 렌더 실패"
+    );
+  }
 
   const out = doc.getZip().generate({ type: "nodebuffer", compression: "DEFLATE" });
   return out as Buffer;
