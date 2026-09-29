@@ -3,17 +3,20 @@ import JSZip from "jszip";
 
 import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { isGlocareAdmin } from "@/lib/admin-guard";
+import {
+  extOf,
+  resolveDocKinds,
+  submissionFileName,
+} from "@/lib/admission/submission-file-naming";
 
 const STUDENT_FILES_BUCKET = "student-files";
 
-/** 경로/폴더 안전 문자열 */
-function safe(s: string): string {
-  return s.replace(/[^\w.\-가-힣]+/g, "_").slice(0, 80);
-}
-
 /**
  * GET /managed-students/[id]/download-all
- *   학생이 업로드한 모든 제출서류를 zip 으로 묶어 한 번에 다운로드.
+ *   학생이 업로드한 모든 제출서류 + 최종 제출된 작성서류를 zip 으로 한 번에 다운로드.
+ *
+ *   zip 안에 폴더를 만들지 않는다 — 대학에 보낼 때 폴더를 헤집는 게 불편하다는 요청(2026-09-29).
+ *   파일명은 업로드 원본이 아니라 규칙 이름(`서류명_이름_대학_학과_학기.확장자`)으로 바꿔 담는다.
  *   (route handler 는 (app) layout 게이트를 안 거치므로 여기서 직접 권한 확인)
  */
 export async function GET(
@@ -46,22 +49,41 @@ export async function GET(
       .order("created_at", { ascending: true }),
     admin
       .from("study_student_final_docs")
-      .select("file_path, file_name")
+      .select("doc_name, file_path, file_name")
       .eq("student_id", id)
-      .order("finalized_at", { ascending: true }),
+      .not("submitted_at", "is", null)
+      .order("submitted_at", { ascending: true }),
   ]);
 
-  // 업로드 제출서류 + 확정 작성서류를 폴더로 구분해 한 번에 묶음
-  const items: { folder: string; path: string; name: string }[] = [
+  const [kinds, target] = await Promise.all([
+    resolveDocKinds(admin, (files ?? []).map((f) => f.doc_key)),
+    loadPrimaryTarget(admin, id),
+  ]);
+
+  // 파일명은 학생·지원 대학 기준으로 붙인다. 서류는 지원 대학끼리 공유되므로
+  // 대표(1지망) 지원 1건을 기준으로 삼는다.
+  const items = [
     ...(files ?? []).map((f) => ({
-      folder: f.doc_key ? `제출서류/${safe(f.doc_key)}` : "제출서류",
       path: f.file_path,
-      name: f.file_name,
+      name: submissionFileName({
+        docLabel: f.doc_key ? kinds.get(f.doc_key)?.label ?? f.doc_key : "제출서류",
+        studentName: student.name,
+        universityNameKo: target.university,
+        departmentName: target.department,
+        term: target.term,
+        ext: extOf(f.file_name),
+      }),
     })),
     ...(finals ?? []).map((f) => ({
-      folder: "확정작성서류",
       path: f.file_path,
-      name: f.file_name,
+      name: submissionFileName({
+        docLabel: f.doc_name || "작성서류",
+        studentName: student.name,
+        universityNameKo: target.university,
+        departmentName: target.department,
+        term: target.term,
+        ext: extOf(f.file_name),
+      }),
     })),
   ];
 
@@ -80,8 +102,8 @@ export async function GET(
     if (error || !blob) continue;
     const buf = Buffer.from(await blob.arrayBuffer());
 
-    let entry = `${f.folder}/${f.name}`;
-    // 파일명 중복 방지
+    let entry = f.name;
+    // 파일명 중복 방지 (같은 서류를 여러 장 올린 경우)
     if (used.has(entry)) {
       const dot = entry.lastIndexOf(".");
       const base = dot > 0 ? entry.slice(0, dot) : entry;
@@ -110,4 +132,42 @@ export async function GET(
       "Cache-Control": "no-store",
     },
   });
+}
+
+/** 파일명에 쓸 대표 지원(1지망 우선) 의 대학·학과·학기 */
+async function loadPrimaryTarget(
+  admin: ReturnType<typeof createAdminClient>,
+  studentId: string
+): Promise<{ university: string | null; department: string | null; term: string | null }> {
+  const empty = { university: null, department: null, term: null };
+  const { data: apps } = await admin
+    .from("study_applications")
+    .select("admission_spec_id, target_department_label, priority, term, created_at")
+    .eq("student_id", studentId)
+    .order("priority", { ascending: true, nullsFirst: false })
+    .order("created_at", { ascending: true })
+    .limit(1);
+  const app = apps?.[0];
+  if (!app) return empty;
+
+  const { data: spec } = app.admission_spec_id
+    ? await admin
+        .from("study_admission_specs")
+        .select("university_id, term")
+        .eq("id", app.admission_spec_id)
+        .maybeSingle()
+    : { data: null };
+  const { data: uni } = spec
+    ? await admin
+        .from("universities")
+        .select("name_ko")
+        .eq("id", spec.university_id)
+        .maybeSingle()
+    : { data: null as { name_ko: string } | null };
+
+  return {
+    university: uni?.name_ko ?? null,
+    department: app.target_department_label ?? null,
+    term: app.term || spec?.term || null,
+  };
 }

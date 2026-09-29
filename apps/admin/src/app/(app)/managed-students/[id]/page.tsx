@@ -8,6 +8,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { dash, formatDate, formatDateTime } from "@/lib/format";
+import {
+  extOf,
+  resolveDocKinds,
+  submissionFileName,
+} from "@/lib/admission/submission-file-naming";
 import { ReassignCenter } from "./reassign-center";
 
 export const dynamic = "force-dynamic";
@@ -86,29 +91,11 @@ export default async function ManagedStudentDetailPage({
     name: `${c.name_ko || c.name_vi}${c.active ? "" : " (숨김)"}`,
   }));
 
-  // 업로드 서류 다운로드용 서명 URL (1시간)
-  const signed = await Promise.all(
-    (files ?? []).map(async (f) => {
-      const { data } = await admin.storage
-        .from(STUDENT_FILES_BUCKET)
-        .createSignedUrl(f.file_path, 60 * 60);
-      return { ...f, url: data?.signedUrl ?? null };
-    })
-  );
-  const signedFinals = await Promise.all(
-    (finals ?? []).map(async (f) => {
-      const { data } = await admin.storage
-        .from(STUDENT_FILES_BUCKET)
-        .createSignedUrl(f.file_path, 60 * 60);
-      return { ...f, url: data?.signedUrl ?? null };
-    })
-  );
-
   // 지원 내역 (B2C 셀프·센터 공통) — 대학/학과/학기/상태
   const { data: apps } = await admin
     .from("study_applications")
     .select(
-      "id, admission_spec_id, target_department_label, status, created_at"
+      "id, admission_spec_id, target_department_label, status, priority, term, created_at"
     )
     .eq("student_id", id)
     .order("created_at", { ascending: false });
@@ -138,12 +125,63 @@ export default async function ManagedStudentDetailPage({
     const sp = specById.get(a.admission_spec_id);
     return {
       id: a.id,
+      priority: a.priority ?? null,
       university: sp ? appUniName.get(sp.university_id) ?? "—" : "—",
       dept: a.target_department_label ?? "—",
-      term: sp?.term ?? "",
+      term: a.term || sp?.term || "",
       status: a.status,
     };
   });
+
+  // 다운로드 파일명에 쓰는 대표 지원 — 1지망 우선, 없으면 가장 먼저 만든 것.
+  // 제출서류는 지원 대학끼리 공유되므로 파일마다 대학을 나누지 않고 대표 1건을 쓴다.
+  const primaryApp = [...appRows].sort((a, b) => {
+    const pa = a.priority ?? 99;
+    const pb = b.priority ?? 99;
+    return pa - pb;
+  })[0];
+  const nameBase = {
+    studentName: student.name as string,
+    universityNameKo: primaryApp?.university === "—" ? null : primaryApp?.university ?? null,
+    departmentName: primaryApp?.dept === "—" ? null : primaryApp?.dept ?? null,
+    term: primaryApp?.term || null,
+  };
+
+  // 업로드 서류의 '서류 종류' — doc_key(std::…) 를 요강에 등록된 서류 이름으로 푼다
+  const docKinds = await resolveDocKinds(
+    admin,
+    (files ?? []).map((f) => f.doc_key)
+  );
+
+  // 다운로드용 서명 URL (1시간). download 옵션으로 규칙 파일명으로 내려가게 한다 —
+  // 업로드 원본 이름(`Lan - Hộ chiếu.pdf`)은 대학에 그대로 보낼 수 없다.
+  const signed = await Promise.all(
+    (files ?? []).map(async (f) => {
+      const kind = f.doc_key ? docKinds.get(f.doc_key) ?? null : null;
+      const downloadName = submissionFileName({
+        ...nameBase,
+        docLabel: kind?.label ?? f.doc_key ?? "제출서류",
+        ext: extOf(f.file_name),
+      });
+      const { data } = await admin.storage
+        .from(STUDENT_FILES_BUCKET)
+        .createSignedUrl(f.file_path, 60 * 60, { download: downloadName });
+      return { ...f, url: data?.signedUrl ?? null, kindLabel: kind?.label ?? null, downloadName };
+    })
+  );
+  const signedFinals = await Promise.all(
+    (finals ?? []).map(async (f) => {
+      const downloadName = submissionFileName({
+        ...nameBase,
+        docLabel: f.doc_name || "작성서류",
+        ext: extOf(f.file_name),
+      });
+      const { data } = await admin.storage
+        .from(STUDENT_FILES_BUCKET)
+        .createSignedUrl(f.file_path, 60 * 60, { download: downloadName });
+      return { ...f, url: data?.signedUrl ?? null, downloadName };
+    })
+  );
 
   const orgName =
     org?.name_ko ||
@@ -245,7 +283,7 @@ export default async function ManagedStudentDetailPage({
         <Card>
           <CardHeader className="flex-row items-center justify-between gap-3">
             <CardTitle className="text-base">업로드한 제출서류</CardTitle>
-            {signed.length > 0 ? (
+            {signed.length > 0 || signedFinals.length > 0 ? (
               <a
                 href={`/managed-students/${id}/download-all`}
                 className={buttonVariants({ variant: "default", size: "sm" })}
@@ -267,18 +305,27 @@ export default async function ManagedStudentDetailPage({
                     key={f.id}
                     className="flex items-center justify-between gap-3 p-3"
                   >
-                    <div className="flex min-w-0 items-center gap-2">
-                      <FileText className="size-4 shrink-0 text-muted-foreground" />
-                      <div className="min-w-0">
+                    <div className="flex min-w-0 items-start gap-2">
+                      <FileText className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+                      <div className="min-w-0 space-y-0.5">
+                        {/* 서류 종류 = 모집요강에 등록된 서류 이름 */}
                         <div className="truncate text-sm font-medium">
-                          {f.file_name}
+                          {f.kindLabel ?? (
+                            <span className="text-muted-foreground">
+                              종류 미지정{f.doc_key ? ` (${f.doc_key})` : ""}
+                            </span>
+                          )}
+                        </div>
+                        <div className="truncate text-xs text-muted-foreground">
+                          업로드 파일명: {f.file_name}
+                        </div>
+                        <div className="truncate text-xs text-muted-foreground">
+                          다운로드 파일명:{" "}
+                          <span className="font-medium text-foreground">
+                            {f.downloadName}
+                          </span>
                         </div>
                         <div className="text-xs text-muted-foreground">
-                          {f.doc_key ? (
-                            <Badge variant="outline" className="mr-1 text-[10px]">
-                              {f.doc_key}
-                            </Badge>
-                          ) : null}
                           {bytes(f.size_bytes)} · {formatDate(f.created_at)}
                         </div>
                       </div>
@@ -321,11 +368,20 @@ export default async function ManagedStudentDetailPage({
                     key={f.id}
                     className="flex items-center justify-between gap-3 p-3"
                   >
-                    <div className="flex min-w-0 items-center gap-2">
-                      <FileText className="size-4 shrink-0 text-emerald-600" />
-                      <div className="min-w-0">
+                    <div className="flex min-w-0 items-start gap-2">
+                      <FileText className="mt-0.5 size-4 shrink-0 text-emerald-600" />
+                      <div className="min-w-0 space-y-0.5">
                         <div className="truncate text-sm font-medium">
                           {f.doc_name}
+                        </div>
+                        <div className="truncate text-xs text-muted-foreground">
+                          업로드 파일명: {f.file_name}
+                        </div>
+                        <div className="truncate text-xs text-muted-foreground">
+                          다운로드 파일명:{" "}
+                          <span className="font-medium text-foreground">
+                            {f.downloadName}
+                          </span>
                         </div>
                         <div className="text-xs text-muted-foreground">
                           {bytes(f.size_bytes)} · 제출 {formatDate(f.submitted_at)}
