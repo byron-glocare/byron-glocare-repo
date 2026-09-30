@@ -10,6 +10,7 @@ import {
   ChevronRight,
   Copy,
   FileText,
+  Link2,
   Loader2,
   MessageCircle,
   Receipt,
@@ -36,6 +37,14 @@ import {
   settleSingleCustomer,
 } from "@/app/(app)/settlements/actions";
 import { sendCommissionSms } from "@/app/(app)/sms/actions";
+import {
+  createSettlementShareLink,
+  prepareSettlementPdfUpload,
+  revokeShareLink,
+} from "@/app/(app)/sms/share-link-actions";
+import { generateSettlementPdf } from "@/lib/settlement-pdf";
+import { createClient as createBrowserSupabase } from "@/lib/supabase/client";
+import { SHARE_FILES_BUCKET, SHARE_LINK_TTL_DAYS } from "@/lib/share-links";
 import { formatCurrency } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -130,10 +139,85 @@ function GroupRow({ group }: { group: Group }) {
     .join(",");
   const printHref = `/settlements/print?center=${group.centerId}&month=${ym}&items=${encodeURIComponent(printItems)}`;
 
+  // 정산서 PDF 다운로드 링크 (/d/<code>, 30일)
+  const [shareLink, setShareLink] = useState<{
+    code: string;
+    url: string;
+    expiresAt: string;
+  } | null>(null);
+  const [linkStep, setLinkStep] = useState<string | null>(null);
+
+  function withLink(body: string, url: string) {
+    return `${body.trimEnd()}\n\n▼ 정산서 PDF 내려받기 (${SHARE_LINK_TTL_DAYS}일간 유효)\n${url}`;
+  }
+
   function openSmsModal() {
     setSmsPhone(group.recipientPhone);
-    setSmsBody(group.message);
+    setSmsBody(
+      shareLink ? withLink(group.message, shareLink.url) : group.message
+    );
     setSmsModalOpen(true);
+  }
+
+  async function handleCreateLink() {
+    try {
+      setLinkStep("PDF 만드는 중…");
+      const pdf = await generateSettlementPdf(printHref);
+
+      setLinkStep("업로드 중…");
+      const prep = await prepareSettlementPdfUpload({
+        centerId: group.centerId,
+        month: ym,
+      });
+      if (!prep.ok) throw new Error(prep.error);
+      const { error: upErr } = await createBrowserSupabase()
+        .storage.from(SHARE_FILES_BUCKET)
+        .uploadToSignedUrl(prep.data.path, prep.data.token, pdf, {
+          contentType: "application/pdf",
+        });
+      if (upErr) throw new Error(`업로드 실패: ${upErr.message}`);
+
+      setLinkStep("링크 만드는 중…");
+      const made = await createSettlementShareLink({
+        centerId: group.centerId,
+        month: ym,
+        path: prep.data.path,
+      });
+      if (!made.ok) throw new Error(made.error);
+
+      const link = made.data;
+      setShareLink(link);
+      setSmsBody((b) => withLink(b, link.url));
+      toast.success("정산서 링크를 본문에 넣었습니다.", {
+        description: `PDF ${(pdf.size / 1024 / 1024).toFixed(1)}MB`,
+      });
+    } catch (e) {
+      toast.error("정산서 링크 생성 실패", {
+        description: e instanceof Error ? e.message : String(e),
+      });
+    } finally {
+      setLinkStep(null);
+    }
+  }
+
+  async function handleRevokeLink() {
+    if (!shareLink) return;
+    if (!confirm("이 링크를 즉시 사용 중지합니다. 이미 보낸 문자의 링크도 열리지 않게 됩니다.")) return;
+    const res = await revokeShareLink(shareLink.code);
+    if (!res.ok) {
+      toast.error("링크 취소 실패", { description: res.error });
+      return;
+    }
+    setSmsBody((b) =>
+      b
+        .replace(
+          `\n\n▼ 정산서 PDF 내려받기 (${SHARE_LINK_TTL_DAYS}일간 유효)\n${shareLink.url}`,
+          ""
+        )
+        .trimEnd()
+    );
+    setShareLink(null);
+    toast.success("링크를 사용 중지했습니다.");
   }
 
   async function handleSendSms() {
@@ -487,6 +571,63 @@ function GroupRow({ group }: { group: Group }) {
                 <p className="text-[11px] text-warning mt-1">
                   ⚠ 이 교육원에 대표자 / 대표 번호 모두 등록되지 않았습니다. 직접
                   입력하거나 교육원 정보를 먼저 수정해주세요.
+                </p>
+              )}
+            </div>
+            <div className="rounded-md border border-border p-3 space-y-2">
+              <div className="flex items-center justify-between gap-2">
+                <div className="min-w-0">
+                  <div className="text-xs font-medium">정산서 PDF 링크</div>
+                  <p className="text-[11px] text-muted-foreground">
+                    누르면 스마트폰에서 PDF가 바로 저장됩니다 · {SHARE_LINK_TTL_DAYS}일 후 자동 만료
+                  </p>
+                </div>
+                {shareLink ? (
+                  <div className="flex items-center gap-1 shrink-0">
+                    <a
+                      href={shareLink.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={cn(
+                        buttonVariants({ size: "sm", variant: "outline" }),
+                        "h-7 px-2 text-xs"
+                      )}
+                    >
+                      내려받아 확인
+                    </a>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="ghost"
+                      onClick={handleRevokeLink}
+                      disabled={smsSending}
+                      className="h-7 px-2 text-xs text-destructive"
+                    >
+                      링크 취소
+                    </Button>
+                  </div>
+                ) : (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={handleCreateLink}
+                    disabled={smsSending || !!linkStep}
+                    className="shrink-0"
+                  >
+                    {linkStep ? (
+                      <Loader2 className="size-4 animate-spin" />
+                    ) : (
+                      <Link2 className="size-4" />
+                    )}
+                    {linkStep ?? "링크 만들어 본문에 넣기"}
+                  </Button>
+                )}
+              </div>
+              {shareLink && (
+                <p className="text-[11px] font-mono text-muted-foreground break-all">
+                  {shareLink.url} · 만료{" "}
+                  {new Date(shareLink.expiresAt).toLocaleDateString("ko-KR")}
                 </p>
               )}
             </div>

@@ -124,8 +124,8 @@ export default async function SmsPage() {
                   <ArrowRight className="size-4 opacity-0 group-hover:opacity-100 transition-opacity" />
                 </h3>
                 <p className="text-sm text-muted-foreground mt-1">
-                  교육원별 정산 안내문 본문 미리보기 + 정산서 PDF (브라우저
-                  인쇄로 저장) — 카카오톡/이메일로 직접 전송
+                  교육원별 정산 안내문 문자 발송 + 정산서 PDF 다운로드 링크
+                  (30일 유효) 첨부
                 </p>
               </div>
             </div>

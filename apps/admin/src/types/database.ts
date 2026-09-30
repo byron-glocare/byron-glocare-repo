@@ -656,6 +656,44 @@ export type Database = {
       };
 
       // -----------------------------------------------------------------------
+      file_share_links: {
+        Row: {
+          id: string;
+          code: string;
+          kind: string;
+          storage_path: string;
+          file_name: string;
+          training_center_id: string | null;
+          settlement_month: string | null;
+          expires_at: string;
+          revoked_at: string | null;
+          download_count: number;
+          last_downloaded_at: string | null;
+          created_by: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          code: string;
+          kind?: string;
+          storage_path: string;
+          file_name: string;
+          training_center_id?: string | null;
+          settlement_month?: string | null;
+          expires_at: string;
+          revoked_at?: string | null;
+          download_count?: number;
+          last_downloaded_at?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["file_share_links"]["Insert"]
+        >;
+        Relationships: [];
+      };
+
+      // -----------------------------------------------------------------------
       auto_sms_rules: {
         Row: {
           id: string;

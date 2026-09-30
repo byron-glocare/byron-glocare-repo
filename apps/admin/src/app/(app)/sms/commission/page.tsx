@@ -187,7 +187,7 @@ export default async function SmsCommissionPage() {
     <>
       <PageHeader
         title="정산 내역 발송"
-        description="확정된 정산 내역 — 본문 복사 + 정산서 PDF 로 직접 전송하세요. 입금 받은 후 [완료 처리] 로 마무리."
+        description="확정된 정산 내역 — [문자 보내기] 에서 정산서 PDF 다운로드 링크(30일)를 본문에 넣어 보낼 수 있습니다. 입금 받은 후 [완료 처리] 로 마무리."
         breadcrumbs={[
           { href: "/sms", label: "알림발송" },
           { label: "정산 내역" },
