@@ -470,6 +470,31 @@ export const resumeDraftDataSchema = z.object({
 
 export type ResumeDraftData = z.output<typeof resumeDraftDataSchema>;
 export type ResumeDraftDataInput = z.input<typeof resumeDraftDataSchema>;
+
+// 이력서 HTML 편집기의 "완성 이력서" 구조 (AI 정리 + 관리자 편집 결과).
+// resume_drafts.resume_content 에 저장. HTML 필드 구조와 1:1.
+const resumeContentTimeline = z.object({
+  period: trimStr,
+  status: trimStr,
+  title: trimStr,
+  sub: trimStr,
+  duties: z.array(trimStr).default([]),
+});
+export const resumeContentSchema = z.object({
+  name_en: trimStr,
+  name_ko: trimStr,
+  headline: trimStr,
+  info: z.array(z.object({ k: trimStr, v: trimStr })).default([]),
+  skills: z.array(z.object({ name: trimStr, level: trimStr })).default([]),
+  educations: z.array(resumeContentTimeline).default([]),
+  careers: z.array(resumeContentTimeline).default([]),
+  certifications: z
+    .array(z.object({ title: trimStr, sub: trimStr, date: trimStr }))
+    .default([]),
+  activities: z.array(resumeContentTimeline).default([]),
+  intro: z.array(trimStr).default([]),
+});
+export type ResumeContent = z.output<typeof resumeContentSchema>;
 export type WelcomePackPaymentOutput = z.output<typeof welcomePackPaymentSchema>;
 
 // =============================================================================

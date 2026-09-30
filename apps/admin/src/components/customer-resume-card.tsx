@@ -100,11 +100,8 @@ export function CustomerResumeCard({ customerId, productType, draft }: Props) {
   }
 
   function handleDownload() {
-    // timestamp = 브라우저 캐시 버스터. 같은 URL 재요청 시 옛 docx 받지 않게.
-    window.open(
-      `/api/customers/${customerId}/resume?t=${Date.now()}`,
-      "_blank"
-    );
+    // 이력서 HTML 편집기(전체 화면) — AI 정리 + 편집 + PDF 인쇄.
+    window.open(`/resume/${customerId}`, "_blank");
   }
 
   function handleRepolish() {
@@ -241,7 +238,7 @@ export function CustomerResumeCard({ customerId, productType, draft }: Props) {
             <>
               <Button type="button" size="sm" onClick={handleDownload}>
                 <Download className="size-4" />
-                이력서 다운로드 (.docx)
+                이력서 생성 · 편집 · PDF
               </Button>
               <Button
                 type="button"

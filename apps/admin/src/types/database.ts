@@ -625,6 +625,7 @@ export type Database = {
           expires_at: string;
           submitted_at: string | null;
           data: Json;
+          resume_content: Json | null;
           photo_path: string | null;
           created_at: string;
           updated_at: string;
@@ -636,6 +637,7 @@ export type Database = {
           expires_at: string;
           submitted_at?: string | null;
           data?: Json;
+          resume_content?: Json | null;
           photo_path?: string | null;
           created_at?: string;
           updated_at?: string;

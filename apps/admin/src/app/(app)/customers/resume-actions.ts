@@ -5,7 +5,13 @@ import { randomUUID } from "node:crypto";
 
 import { requireAuth } from "@/lib/require-auth";
 import { polishResumeNarrative } from "@/lib/resume/polish";
-import { resumeDraftDataSchema } from "@/lib/validators";
+import { organizeResume } from "@/lib/resume/organize";
+import {
+  resumeDraftDataSchema,
+  resumeContentSchema,
+  type ResumeContent,
+} from "@/lib/validators";
+import type { Json } from "@/types/database";
 
 export type ResumeActionResult<T = unknown> =
   | { ok: true; data: T }
@@ -187,4 +193,73 @@ export async function regenerateResumePolish(
 
   revalidatePath(`/customers/${customerId}`);
   return { ok: true, data: { polished: r.polished } };
+}
+
+/**
+ * 이력서 생성/재생성 — 학생 제출 원본(data)을 AI로 정리해
+ * resume_content(구조화 JSON)에 저장. 편집 페이지가 이 값을 렌더한다.
+ */
+export async function generateResumeContent(
+  customerId: string,
+  draftId: string
+): Promise<ResumeActionResult<{ content: ResumeContent }>> {
+  let supabase;
+  try {
+    ({ supabase } = await requireAuth());
+  } catch {
+    return { ok: false, error: "Unauthorized" };
+  }
+
+  const { data: draft, error: fetchErr } = await supabase
+    .from("resume_drafts")
+    .select("id, data")
+    .eq("id", draftId)
+    .eq("customer_id", customerId)
+    .maybeSingle();
+  if (fetchErr) return { ok: false, error: fetchErr.message };
+  if (!draft) return { ok: false, error: "draft 를 찾을 수 없습니다." };
+
+  const parsed = resumeDraftDataSchema.safeParse(draft.data);
+  if (!parsed.success) return { ok: false, error: "이력서 데이터 파싱 실패" };
+
+  const r = await organizeResume(parsed.data);
+  if (!r.ok) return { ok: false, error: r.error };
+
+  const { error } = await supabase
+    .from("resume_drafts")
+    .update({ resume_content: r.content as unknown as Json })
+    .eq("id", draft.id);
+  if (error) return { ok: false, error: error.message };
+
+  revalidatePath(`/customers/${customerId}`);
+  return { ok: true, data: { content: r.content } };
+}
+
+/**
+ * 편집한 이력서 내용을 resume_content 에 저장.
+ */
+export async function saveResumeContent(
+  customerId: string,
+  draftId: string,
+  content: unknown
+): Promise<ResumeActionResult<null>> {
+  let supabase;
+  try {
+    ({ supabase } = await requireAuth());
+  } catch {
+    return { ok: false, error: "Unauthorized" };
+  }
+
+  const parsed = resumeContentSchema.safeParse(content);
+  if (!parsed.success) return { ok: false, error: "이력서 내용 형식 오류" };
+
+  const { error } = await supabase
+    .from("resume_drafts")
+    .update({ resume_content: parsed.data as unknown as Json })
+    .eq("id", draftId)
+    .eq("customer_id", customerId);
+  if (error) return { ok: false, error: error.message };
+
+  revalidatePath(`/customers/${customerId}`);
+  return { ok: true, data: null };
 }
