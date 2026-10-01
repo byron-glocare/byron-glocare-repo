@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/page-header";
 import { buildCommissionNotificationMessage } from "@/lib/sms-templates";
 import { pickCenterSmsPhone } from "@/lib/sms-recipient";
+import { shareLinkUrl } from "@/lib/share-links";
 import { SmsCommissionView } from "@/components/sms-commission-view";
 
 export const dynamic = "force-dynamic";
@@ -16,6 +17,7 @@ export default async function SmsCommissionPage() {
     { data: centers },
     { data: customers },
     { data: classes },
+    { data: shareLinks },
   ] = await Promise.all([
     supabase
       .from("commission_payments")
@@ -37,7 +39,30 @@ export default async function SmsCommissionPage() {
     supabase
       .from("training_classes")
       .select("id, class_type, start_date"),
+    // 활성 정산서 PDF 공유 링크 — 모달 재진입 시 복원용
+    supabase
+      .from("file_share_links")
+      .select("code, training_center_id, settlement_month, expires_at")
+      .eq("kind", "settlement")
+      .is("revoked_at", null)
+      .gt("expires_at", new Date().toISOString())
+      .order("expires_at", { ascending: false }),
   ]);
+
+  // center::month → 가장 최근 활성 링크
+  const shareLinkMap = new Map<
+    string,
+    { code: string; url: string; expiresAt: string }
+  >();
+  for (const l of shareLinks ?? []) {
+    const key = `${l.training_center_id}::${l.settlement_month}`;
+    if (shareLinkMap.has(key)) continue; // 최신(desc) 우선
+    shareLinkMap.set(key, {
+      code: l.code,
+      url: shareLinkUrl(l.code),
+      expiresAt: l.expires_at,
+    });
+  }
 
   const centerMap = new Map((centers ?? []).map((c) => [c.id, c]));
   const customerMap = new Map((customers ?? []).map((c) => [c.id, c]));
@@ -82,6 +107,8 @@ export default async function SmsCommissionPage() {
     rows: Row[];
     totals: { total: number; deduction: number; net: number };
     message: string;
+    /** 기존 활성 정산서 PDF 공유 링크 (모달 재진입 복원용) */
+    shareLink: { code: string; url: string; expiresAt: string } | null;
   };
 
   const groupsMap = new Map<string, Group>();
@@ -153,6 +180,10 @@ export default async function SmsCommissionPage() {
           net: row.net,
         },
         message: "",
+        shareLink:
+          shareLinkMap.get(
+            `${cp.training_center_id}::${cp.settlement_month}`
+          ) ?? null,
       });
     }
   }

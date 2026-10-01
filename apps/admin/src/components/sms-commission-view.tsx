@@ -78,6 +78,8 @@ type Group = {
   rows: Row[];
   totals: { total: number; deduction: number; net: number };
   message: string;
+  /** 기존 활성 정산서 PDF 공유 링크 (모달 재진입 복원용) */
+  shareLink: { code: string; url: string; expiresAt: string } | null;
 };
 
 type Props = {
@@ -178,7 +180,7 @@ function GroupRow({ group }: { group: Group }) {
     code: string;
     url: string;
     expiresAt: string;
-  } | null>(null);
+  } | null>(group.shareLink);
   const [linkStep, setLinkStep] = useState<string | null>(null);
 
   function withLink(body: string, url: string) {
