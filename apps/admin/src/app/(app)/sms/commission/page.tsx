@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/page-header";
 import { buildCommissionNotificationMessage } from "@/lib/sms-templates";
 import { pickCenterSmsPhone } from "@/lib/sms-recipient";
@@ -39,8 +39,9 @@ export default async function SmsCommissionPage() {
     supabase
       .from("training_classes")
       .select("id, class_type, start_date"),
-    // 활성 정산서 PDF 공유 링크 — 모달 재진입 시 복원용
-    supabase
+    // 활성 정산서 PDF 공유 링크 — 모달 재진입 시 복원용.
+    // file_share_links 는 RLS 로 service_role 전용 → admin 클라이언트로 조회.
+    createAdminClient()
       .from("file_share_links")
       .select("code, training_center_id, settlement_month, expires_at")
       .eq("kind", "settlement")
