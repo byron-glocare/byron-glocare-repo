@@ -67,6 +67,8 @@ type Group = {
   directorPhone: string;
   /** 대표 번호 — fallback 표시용 */
   mainPhone: string;
+  /** 담당자 연락처 */
+  contactPhone: string;
   /** 실제 발송에 사용되는 번호 (director_phone > phone fallback) */
   recipientPhone: string;
   phoneSource: "director" | "main" | "contact" | "none";
@@ -81,6 +83,22 @@ type Group = {
 type Props = {
   groups: Group[];
 };
+
+type PhoneChoice = "phone" | "director" | "contact" | "custom";
+
+/** "01012345678" → "010-1234-5678", "0212345678" → "02-1234-5678" */
+function formatPhoneInput(raw: string): string {
+  const d = raw.replace(/\D/g, "").slice(0, 11);
+  if (d.startsWith("02")) {
+    if (d.length <= 2) return d;
+    if (d.length <= 5) return `${d.slice(0, 2)}-${d.slice(2)}`;
+    if (d.length <= 9) return `${d.slice(0, 2)}-${d.slice(2, 5)}-${d.slice(5)}`;
+    return `${d.slice(0, 2)}-${d.slice(2, 6)}-${d.slice(6, 10)}`;
+  }
+  if (d.length <= 3) return d;
+  if (d.length <= 7) return `${d.slice(0, 3)}-${d.slice(3)}`;
+  return `${d.slice(0, 3)}-${d.slice(3, 7)}-${d.slice(7)}`;
+}
 
 export function SmsCommissionView({ groups }: Props) {
   if (groups.length === 0) {
@@ -129,9 +147,25 @@ function GroupRow({ group }: { group: Group }) {
 
   // 문자 발송 모달
   const [smsModalOpen, setSmsModalOpen] = useState(false);
-  const [smsPhone, setSmsPhone] = useState(group.recipientPhone);
   const [smsBody, setSmsBody] = useState(group.message);
   const [smsSending, setSmsSending] = useState(false);
+
+  // 수신 번호 — 교육원의 모든 번호를 라디오로, 기본값은 선택된 발송 번호
+  const numberOptions = [
+    { key: "phone" as const, label: "대표번호", value: group.mainPhone },
+    { key: "director" as const, label: "대표자 연락처", value: group.directorPhone },
+    { key: "contact" as const, label: "담당자 연락처", value: group.contactPhone },
+  ].filter((o) => o.value);
+  function defaultChoice(): PhoneChoice {
+    const match = numberOptions.find((o) => o.value === group.recipientPhone);
+    return match?.key ?? numberOptions[0]?.key ?? "custom";
+  }
+  const [phoneChoice, setPhoneChoice] = useState<PhoneChoice>(defaultChoice());
+  const [customPhone, setCustomPhone] = useState("");
+  const selectedPhone =
+    phoneChoice === "custom"
+      ? customPhone.trim()
+      : numberOptions.find((o) => o.key === phoneChoice)?.value ?? "";
 
   const ym = group.settlementMonth.slice(0, 7);
   const printItems = group.rows
@@ -152,7 +186,8 @@ function GroupRow({ group }: { group: Group }) {
   }
 
   function openSmsModal() {
-    setSmsPhone(group.recipientPhone);
+    setPhoneChoice(defaultChoice());
+    setCustomPhone("");
     setSmsBody(
       shareLink ? withLink(group.message, shareLink.url) : group.message
     );
@@ -221,14 +256,14 @@ function GroupRow({ group }: { group: Group }) {
   }
 
   async function handleSendSms() {
-    if (!smsPhone.trim()) {
-      toast.error("수신자 전화번호를 입력해주세요.");
+    if (!selectedPhone) {
+      toast.error("수신자 전화번호를 선택하거나 입력해주세요.");
       return;
     }
     setSmsSending(true);
     const result = await sendCommissionSms({
       centerId: group.centerId,
-      recipientPhone: smsPhone,
+      recipientPhone: selectedPhone,
       body: smsBody,
       customerIds: group.rows.map((r) => r.customerId),
     });
@@ -546,33 +581,56 @@ function GroupRow({ group }: { group: Group }) {
               <Label className="text-xs text-muted-foreground">
                 수신자 전화번호
               </Label>
-              <Input
-                value={smsPhone}
-                onChange={(e) => setSmsPhone(e.target.value)}
-                placeholder="010-0000-0000"
-                disabled={smsSending}
-              />
-              {group.phoneSource === "director" && (
-                <p className="text-[11px] text-muted-foreground mt-1">
-                  기본값: 교육원 <strong>대표자 번호</strong>
-                </p>
-              )}
-              {group.phoneSource === "main" && (
-                <p className="text-[11px] text-warning mt-1">
-                  기본값: 교육원 <strong>대표 번호</strong>
-                </p>
-              )}
-              {group.phoneSource === "contact" && (
-                <p className="text-[11px] text-muted-foreground mt-1">
-                  기본값: 교육원 <strong>담당자 번호</strong> (교육원 정보에서 선택됨)
-                </p>
-              )}
-              {group.phoneSource === "none" && (
-                <p className="text-[11px] text-warning mt-1">
-                  ⚠ 이 교육원에 대표자 / 대표 번호 모두 등록되지 않았습니다. 직접
-                  입력하거나 교육원 정보를 먼저 수정해주세요.
-                </p>
-              )}
+              <div className="mt-1 space-y-1.5 rounded-md border border-border p-3">
+                {numberOptions.length === 0 && (
+                  <p className="text-[11px] text-warning">
+                    이 교육원에 등록된 번호가 없습니다. 아래에 직접 입력하세요.
+                  </p>
+                )}
+                {numberOptions.map((o) => (
+                  <label
+                    key={o.key}
+                    className="flex items-center gap-2 text-sm cursor-pointer"
+                  >
+                    <input
+                      type="radio"
+                      name={`commission-phone-${group.centerId}-${group.settlementMonth}`}
+                      className="accent-primary"
+                      checked={phoneChoice === o.key}
+                      onChange={() => setPhoneChoice(o.key)}
+                      disabled={smsSending}
+                    />
+                    <span className="font-mono">{o.value}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {o.label}
+                      {o.value === group.recipientPhone ? " · 발송 번호" : ""}
+                    </span>
+                  </label>
+                ))}
+                <label className="flex items-center gap-2 text-sm cursor-pointer">
+                  <input
+                    type="radio"
+                    name={`commission-phone-${group.centerId}-${group.settlementMonth}`}
+                    className="accent-primary shrink-0"
+                    checked={phoneChoice === "custom"}
+                    onChange={() => setPhoneChoice("custom")}
+                    disabled={smsSending}
+                  />
+                  <span className="text-xs text-muted-foreground shrink-0">
+                    직접 입력
+                  </span>
+                  <Input
+                    value={customPhone}
+                    onChange={(e) =>
+                      setCustomPhone(formatPhoneInput(e.target.value))
+                    }
+                    onFocus={() => setPhoneChoice("custom")}
+                    placeholder="010-0000-0000"
+                    className="h-8 font-mono text-sm"
+                    disabled={smsSending}
+                  />
+                </label>
+              </div>
             </div>
             <div className="rounded-md border border-border p-3 space-y-2">
               <div className="flex items-center justify-between gap-2">
@@ -658,7 +716,7 @@ function GroupRow({ group }: { group: Group }) {
             <Button
               type="button"
               onClick={handleSendSms}
-              disabled={smsSending || !smsPhone.trim()}
+              disabled={smsSending || !selectedPhone}
             >
               {smsSending ? (
                 <Loader2 className="size-4 animate-spin" />

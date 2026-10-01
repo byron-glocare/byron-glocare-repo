@@ -63,6 +63,8 @@ export default async function SmsCommissionPage() {
     directorPhone: string;
     /** 대표 번호 (사업장) — fallback 표시용 */
     mainPhone: string;
+    /** 담당자 연락처 — 표시용 */
+    contactPhone: string;
     /**
      * 실제 발송에 사용되는 수신자 번호.
      *   - 0순위: 교육원에서 선택한 문자 발송 번호 (sms_recipient)
@@ -120,6 +122,7 @@ export default async function SmsCommissionPage() {
     } else {
       const director = center.director_phone?.trim() ?? "";
       const main = center.phone?.trim() ?? "";
+      const contact = center.contact_phone?.trim() ?? "";
       const selected = pickCenterSmsPhone(center);
       const recipientPhone = selected?.phone ?? (director || main || "");
       const phoneSource: "director" | "main" | "contact" | "none" = selected
@@ -137,6 +140,7 @@ export default async function SmsCommissionPage() {
         region: center.region,
         directorPhone: director,
         mainPhone: main,
+        contactPhone: contact,
         recipientPhone,
         phoneSource,
         directorName: center.director_name ?? "",
