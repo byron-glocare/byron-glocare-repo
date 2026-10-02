@@ -62,6 +62,7 @@ function makeStatus(
     intake_abandoned: false,
     // 0013: 기본 시나리오에서는 등록(=진행) 결정된 상태로 가정
     intake_confirmed: true,
+    intake_persuading: false,
     study_abroad_consultation: false,
     training_center_finding: false,
     class_schedule_confirmation_needed: false,
