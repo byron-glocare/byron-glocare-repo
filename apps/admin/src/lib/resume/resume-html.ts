@@ -123,13 +123,13 @@ export function buildResumeInnerHtml(
   return `<div class="sheet"><div class="inner">
   <h1 class="doc-title">이력서</h1>
   <div class="top">
-    <aside class="side">
+    <div class="side">
       <label class="photo" title="클릭해서 사진 바꾸기"><img id="resume-photo" src="${esc(photoDataUri)}" alt="증명사진"><input type="file" id="resume-photo-input" accept="image/*" hidden></label>
       <span class="name-en" ${CE} data-ph="영문 이름" data-single>${esc(c.name_en)}</span>
       <span class="name-ko" ${CE} data-ph="한글 이름" data-single>${esc(c.name_ko)}</span>
       <div class="side-block" data-list="info"><h3>기본 정보</h3><div class="list">${infoRows}</div><button class="add no-print" type="button" data-add="info">+ 추가</button>${TPL.info}</div>
       <div class="side-block" data-list="skills"><h3>기술 및 어학</h3><div class="list">${skillRows}</div><button class="add no-print" type="button" data-add="skills">+ 추가</button>${TPL.skills}</div>
-    </aside>
+    </div>
     <main>
       <p class="hl"><span class="q open">&ldquo;</span><span class="hl-text" ${CE} data-ph="한 줄 소개 (40자 이내)" data-single>${esc(c.headline)}</span><span class="q close">&rdquo;</span></p>
       <section class="sec" data-list="edu"><h2>학력</h2><div class="list">${eduRows}</div><button class="add no-print" type="button" data-add="edu">+ 추가</button>${TPL.edu}</section>
