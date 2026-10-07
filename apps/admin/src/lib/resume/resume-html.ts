@@ -70,11 +70,10 @@ export const RESUME_CSS = `
   .resume-root.view [contenteditable]:empty, .resume-root.view .item.empty, .resume-root.view .sec.empty, .resume-root.view .side-block.empty,
   .resume-root.view .hl.empty, .resume-root.view .intro-sec.empty, .resume-root.view .photo.noimg { display:none !important; }
   @media print {
-    body { background:#fff !important; }
-    body * { visibility:hidden; }
-    .resume-root, .resume-root * { visibility:visible; }
-    .resume-root { position:absolute; left:0; top:0; width:100%; background:#fff !important; padding:0 !important; }
-    .resume-root .sheet { margin:0; box-shadow:none; width:auto; border:1pt solid var(--frame); }
+    html, body { background:#fff !important; }
+    .no-print { display:none !important; }
+    .resume-root { background:#fff !important; padding:0 !important; }
+    .resume-root .sheet { margin:0 auto; box-shadow:none; }
     .resume-root .add, .resume-root .del { display:none !important; }
     .resume-root [contenteditable]:empty, .resume-root .item.empty, .resume-root .sec.empty, .resume-root .side-block.empty,
     .resume-root .hl.empty, .resume-root .intro-sec.empty, .resume-root .photo.noimg { display:none !important; }

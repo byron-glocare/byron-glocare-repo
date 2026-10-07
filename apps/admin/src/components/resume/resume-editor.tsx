@@ -277,7 +277,16 @@ export function ResumeEditor({
         <button
           type="button"
           onClick={() => {
-            if (rootRef.current) markEmpty(rootRef.current);
+            const root = rootRef.current;
+            if (root) {
+              markEmpty(root);
+              const nm =
+                txt(root.querySelector(".name-en")) ||
+                txt(root.querySelector(".name-ko")) ||
+                "이력서";
+              // 브라우저 인쇄(Save as PDF)의 기본 파일명 = document.title
+              document.title = `${nm}_글로케어 요양보호사 이력서`;
+            }
             window.print();
           }}
           className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-semibold text-primary-foreground"
