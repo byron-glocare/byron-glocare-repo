@@ -24,8 +24,9 @@ export const RESUME_CSS = `
   .resume-root .inner { position:relative; min-height:259mm; }
   .resume-root .doc-title { margin:-2mm 0 4mm; padding-bottom:2mm; text-align:center; font-size:20pt; font-weight:700; letter-spacing:.6em; text-indent:.6em; line-height:1.3; border-bottom:1pt solid var(--rule); position:relative; }
   .resume-root .doc-title::after { content:""; position:absolute; left:50%; bottom:-1.5pt; width:14mm; height:2pt; margin-left:-7mm; background:var(--brand); }
-  .resume-root .top { display:grid; grid-template-columns:56mm 1fr; column-gap:6mm; align-items:start; }
-  .resume-root .side { background:var(--side); padding:6mm 4.5mm 5mm; }
+  .resume-root .top { display:flex; gap:6mm; align-items:flex-start; }
+  .resume-root .side { background:var(--side); padding:6mm 4.5mm 5mm; flex:0 0 56mm; width:56mm; }
+  .resume-root .top > main { flex:1 1 0; min-width:0; }
   .resume-root .photo { display:block; width:36mm; margin:0 auto 4mm; padding:2mm; background:#fff; border:1pt solid var(--brand); cursor:pointer; }
   .resume-root .photo img { display:block; width:100%; aspect-ratio:3/4; object-fit:cover; background:#E8EEF0; }
   .resume-root .photo img[src=""] { visibility:hidden; }
@@ -42,7 +43,9 @@ export const RESUME_CSS = `
   .resume-root .q.open { margin-right:2mm; } .resume-root .q.close { margin-left:2mm; }
   .resume-root .sec h2 { margin:4mm 0 1mm; padding-bottom:1mm; font-size:14pt; color:var(--primary); border-bottom:1pt solid var(--rule); break-after:avoid; }
   .resume-root .item { position:relative; break-inside:avoid; }
-  .resume-root .tl { display:grid; grid-template-columns:34mm 1fr; column-gap:3mm; padding:2mm 0; border-bottom:.75pt solid var(--line); }
+  .resume-root .tl { display:flex; gap:3mm; padding:2mm 0; border-bottom:.75pt solid var(--line); }
+  .resume-root .tl-l { flex:0 0 34mm; width:34mm; }
+  .resume-root .tl-r { flex:1 1 0; min-width:0; }
   .resume-root .period { display:block; font-size:11pt; font-weight:700; }
   .resume-root .status, .resume-root .sub { display:block; color:var(--muted); }
   .resume-root .status { font-size:11pt; }
