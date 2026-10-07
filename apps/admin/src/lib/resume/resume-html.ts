@@ -16,7 +16,8 @@ export const RESUME_CSS = `
   .resume-root { --brand:#FF6464; --primary:#D94545; --text:#1A1A1A; --muted:#555050;
     --frame:#6E6865; --rule:#8F8986; --line:#BDB5B2; --side:#F5F3F2;
     --font:"Malgun Gothic","맑은 고딕","Apple SD Gothic Neo","Noto Sans KR",sans-serif;
-    color:var(--text); font-family:var(--font); font-size:12pt; line-height:1.5; word-break:keep-all; overflow-wrap:anywhere; }
+    color:var(--text); font-family:var(--font); font-size:12pt; line-height:1.5; word-break:keep-all; overflow-wrap:anywhere;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   .resume-root * { box-sizing:border-box; }
   @page { size:A4; margin:8mm 8mm 12mm; }
   .resume-root .sheet { position:relative; width:194mm; margin:8mm auto 24mm; background:#fff; border:1pt solid var(--frame); padding:9mm;
