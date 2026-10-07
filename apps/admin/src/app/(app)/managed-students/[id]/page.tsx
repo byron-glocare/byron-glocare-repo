@@ -14,6 +14,7 @@ import {
   submissionFileName,
 } from "@/lib/admission/submission-file-naming";
 import { ReassignCenter } from "./reassign-center";
+import { DocPreviewProvider, PreviewButton, type PreviewDoc } from "./doc-preview";
 
 export const dynamic = "force-dynamic";
 
@@ -183,6 +184,74 @@ export default async function ManagedStudentDetailPage({
     })
   );
 
+  // 정보 입력 화면의 파일 항목(사진·서명 등) — 제출서류 목록에는 없지만 학생이 올린 문서라 미리보기에 같이 넣는다.
+  const [{ data: fileTypes }, { data: dataValues }] = await Promise.all([
+    admin
+      .from("study_student_data_types")
+      .select("key, label_ko, input_type, sort_order")
+      .in("input_type", ["file", "signature"]),
+    admin
+      .from("study_student_data_values")
+      .select("data_type_key, value")
+      .eq("student_id", id),
+  ]);
+  const fileTypeByKey = new Map((fileTypes ?? []).map((t) => [t.key, t]));
+  const attachments = (dataValues ?? [])
+    .flatMap((v) => {
+      const t = fileTypeByKey.get(v.data_type_key);
+      const o = v.value as { path?: unknown; file_name?: unknown } | null;
+      if (!t || !o || typeof o !== "object" || typeof o.path !== "string") return [];
+      // 경로의 학생 구간이 이 학생인 것만 (org/학생/...)
+      if (o.path.split("/")[1] !== id) return [];
+      return [
+        {
+          key: t.key,
+          label: t.label_ko,
+          path: o.path,
+          fileName: typeof o.file_name === "string" ? o.file_name : o.path.split("/").pop() ?? "file",
+          sort: t.sort_order ?? 0,
+        },
+      ];
+    })
+    .sort((a, b) => a.sort - b.sort);
+
+  // 미리보기용 서명 URL — download 옵션 없이(브라우저 안에서 열리게), 한 번에 발급
+  const previewPaths = [
+    ...signed.map((f) => f.file_path),
+    ...signedFinals.map((f) => f.file_path),
+    ...attachments.map((a) => a.path),
+  ];
+  const { data: previewSigned } =
+    previewPaths.length > 0
+      ? await admin.storage.from(STUDENT_FILES_BUCKET).createSignedUrls(previewPaths, 60 * 60)
+      : { data: [] as { path: string | null; signedUrl: string }[] };
+  const previewUrlByPath = new Map(
+    (previewSigned ?? []).map((s) => [s.path ?? "", s.signedUrl || null])
+  );
+  const previewDocs: PreviewDoc[] = [
+    ...signed.map((f) => ({
+      key: `sub:${f.id}`,
+      group: "업로드한 제출서류",
+      label: f.kindLabel ?? "종류 미지정",
+      fileName: f.file_name,
+      url: previewUrlByPath.get(f.file_path) ?? null,
+    })),
+    ...signedFinals.map((f) => ({
+      key: `final:${f.id}`,
+      group: "최종 제출 서류",
+      label: f.doc_name,
+      fileName: f.file_name,
+      url: previewUrlByPath.get(f.file_path) ?? null,
+    })),
+    ...attachments.map((a) => ({
+      key: `data:${a.key}`,
+      group: "정보 입력 첨부",
+      label: a.label,
+      fileName: a.fileName,
+      url: previewUrlByPath.get(a.path) ?? null,
+    })),
+  ];
+
   const orgName =
     org?.name_ko ||
     org?.name_vi ||
@@ -221,6 +290,7 @@ export default async function ManagedStudentDetailPage({
           { label: student.name },
         ]}
       />
+      <DocPreviewProvider docs={previewDocs}>
       <div className="p-6 space-y-6">
         <Card>
           <CardHeader className="flex-row items-center justify-between gap-3">
@@ -283,15 +353,18 @@ export default async function ManagedStudentDetailPage({
         <Card>
           <CardHeader className="flex-row items-center justify-between gap-3">
             <CardTitle className="text-base">업로드한 제출서류</CardTitle>
-            {signed.length > 0 || signedFinals.length > 0 ? (
-              <a
-                href={`/managed-students/${id}/download-all`}
-                className={buttonVariants({ variant: "default", size: "sm" })}
-              >
-                <Download className="size-3.5" />
-                전체 다운로드 (zip)
-              </a>
-            ) : null}
+            <div className="flex items-center gap-2">
+              <PreviewButton label={`전체 미리보기 (${previewDocs.length})`} />
+              {signed.length > 0 || signedFinals.length > 0 ? (
+                <a
+                  href={`/managed-students/${id}/download-all`}
+                  className={buttonVariants({ variant: "default", size: "sm" })}
+                >
+                  <Download className="size-3.5" />
+                  전체 다운로드 (zip)
+                </a>
+              ) : null}
+            </div>
           </CardHeader>
           <CardContent>
             {signed.length === 0 ? (
@@ -300,7 +373,7 @@ export default async function ManagedStudentDetailPage({
               </p>
             ) : (
               <div className="divide-y divide-border rounded-md border border-border">
-                {signed.map((f) => (
+                {signed.map((f, i) => (
                   <div
                     key={f.id}
                     className="flex items-center justify-between gap-3 p-3"
@@ -330,6 +403,8 @@ export default async function ManagedStudentDetailPage({
                         </div>
                       </div>
                     </div>
+                    <div className="flex shrink-0 items-center gap-2">
+                    <PreviewButton index={i} />
                     {f.url ? (
                       <a
                         href={f.url}
@@ -344,6 +419,7 @@ export default async function ManagedStudentDetailPage({
                     ) : (
                       <span className="text-xs text-destructive">링크 오류</span>
                     )}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -363,7 +439,7 @@ export default async function ManagedStudentDetailPage({
               </p>
             ) : (
               <div className="divide-y divide-border rounded-md border border-border">
-                {signedFinals.map((f) => (
+                {signedFinals.map((f, i) => (
                   <div
                     key={f.id}
                     className="flex items-center justify-between gap-3 p-3"
@@ -388,6 +464,8 @@ export default async function ManagedStudentDetailPage({
                         </div>
                       </div>
                     </div>
+                    <div className="flex shrink-0 items-center gap-2">
+                    <PreviewButton index={signed.length + i} />
                     {f.url ? (
                       <a
                         href={f.url}
@@ -402,6 +480,7 @@ export default async function ManagedStudentDetailPage({
                     ) : (
                       <span className="text-xs text-destructive">링크 오류</span>
                     )}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -416,6 +495,7 @@ export default async function ManagedStudentDetailPage({
           ← 목록으로
         </Link>
       </div>
+      </DocPreviewProvider>
     </>
   );
 }
