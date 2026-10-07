@@ -87,11 +87,17 @@ export const RESUME_CSS = `
 function kvRow(k: string, v: string, strong = false): string {
   return `<div class="kv item"><span class="k${strong ? " strong" : ""}" ${CE} data-ph="항목" data-single>${esc(k)}</span><span class="v" ${CE} data-ph="내용" data-single>${esc(v)}</span><button class="del no-print" type="button" title="삭제">×</button></div>`;
 }
-function tlItem(it: { period: string; status: string; title: string; sub: string; duties: string[] }): string {
-  const duties = it.duties.length
+function tlItem(
+  it: { period: string; status: string; title: string; sub: string; duties: string[] },
+  withDuties: boolean
+): string {
+  const lis = it.duties.length
     ? it.duties.map((d) => `<li>${esc(d)}</li>`).join("")
     : "";
-  return `<div class="tl item"><div class="tl-l"><span class="period" ${CE} data-ph="YYYY.MM – YYYY.MM" data-single>${esc(it.period)}</span><span class="status" ${CE} data-ph="상태" data-single>${esc(it.status)}</span></div><div class="tl-r"><span class="title" ${CE} data-ph="기관명" data-single>${esc(it.title)}</span><span class="sub" ${CE} data-ph="세부 내용" data-single>${esc(it.sub)}</span><ul class="duties" ${CE} data-ph="주요 업무 (Enter로 줄 추가)">${duties}</ul></div><button class="del no-print" type="button" title="삭제">×</button></div>`;
+  const duties = withDuties
+    ? `<ul class="duties" ${CE} data-ph="주요 업무 (Enter로 줄 추가)">${lis}</ul>`
+    : "";
+  return `<div class="tl item"><div class="tl-l"><span class="period" ${CE} data-ph="YYYY.MM – YYYY.MM" data-single>${esc(it.period)}</span><span class="status" ${CE} data-ph="상태" data-single>${esc(it.status)}</span></div><div class="tl-r"><span class="title" ${CE} data-ph="기관명" data-single>${esc(it.title)}</span><span class="sub" ${CE} data-ph="세부 내용" data-single>${esc(it.sub)}</span>${duties}</div><button class="del no-print" type="button" title="삭제">×</button></div>`;
 }
 function certItem(it: { title: string; sub: string; date: string }): string {
   return `<div class="cert item"><div class="cert-l"><span class="title" ${CE} data-ph="자격증명" data-single>${esc(it.title)}</span><span class="sub" ${CE} data-ph="발급기관" data-single>${esc(it.sub)}</span></div><span class="date" ${CE} data-ph="YYYY.MM.DD" data-single>${esc(it.date)}</span><button class="del no-print" type="button" title="삭제">×</button></div>`;
@@ -100,10 +106,10 @@ function certItem(it: { title: string; sub: string; date: string }): string {
 const TPL = {
   info: `<template id="tpl-info">${kvRow("", "")}</template>`,
   skills: `<template id="tpl-skills">${kvRow("", "", true)}</template>`,
-  edu: `<template id="tpl-edu">${tlItem({ period: "", status: "", title: "", sub: "", duties: [] })}</template>`,
-  career: `<template id="tpl-career">${tlItem({ period: "", status: "", title: "", sub: "", duties: [] })}</template>`,
+  edu: `<template id="tpl-edu">${tlItem({ period: "", status: "", title: "", sub: "", duties: [] }, false)}</template>`,
+  career: `<template id="tpl-career">${tlItem({ period: "", status: "", title: "", sub: "", duties: [] }, true)}</template>`,
   certs: `<template id="tpl-certs">${certItem({ title: "", sub: "", date: "" })}</template>`,
-  acts: `<template id="tpl-acts">${tlItem({ period: "", status: "", title: "", sub: "", duties: [] })}</template>`,
+  acts: `<template id="tpl-acts">${tlItem({ period: "", status: "", title: "", sub: "", duties: [] }, true)}</template>`,
 };
 
 /** ResumeContent + 사진(dataURI) → 편집기 본문 HTML (.sheet 전체). */
@@ -113,10 +119,10 @@ export function buildResumeInnerHtml(
 ): string {
   const infoRows = c.info.map((r) => kvRow(r.k, r.v)).join("");
   const skillRows = c.skills.map((s) => kvRow(s.name, s.level, true)).join("");
-  const eduRows = c.educations.map(tlItem).join("");
-  const careerRows = c.careers.map(tlItem).join("");
+  const eduRows = c.educations.map((e) => tlItem(e, false)).join("");
+  const careerRows = c.careers.map((e) => tlItem(e, true)).join("");
   const certRows = c.certifications.map(certItem).join("");
-  const actRows = c.activities.map(tlItem).join("");
+  const actRows = c.activities.map((e) => tlItem(e, true)).join("");
   const introHtml = c.intro.length
     ? c.intro.map((p) => `<p>${esc(p)}</p>`).join("")
     : "";
