@@ -1194,7 +1194,34 @@ export type Database = {
         Relationships: [];
       };
     };
-    Views: { [_ in never]: never };
+    Views: {
+      /** 홈페이지 공개용. training_centers 중 계약 중인 곳의 공개 컬럼만 (0078) */
+      partner_training_centers: {
+        Row: {
+          id: string;
+          code: string;
+          name: string;
+          region: string | null;
+          tuition_fee_2026: number | null;
+          class_hours: string | null;
+          naeil_card_eligible: boolean;
+          website_url: string | null;
+          contract_active: boolean;
+        };
+        Relationships: [];
+      };
+      /** 홈페이지 공개용. care_homes 중 제휴 중인 곳의 공개 컬럼만 (0078) */
+      partner_care_homes: {
+        Row: {
+          id: string;
+          code: string;
+          name: string;
+          region: string | null;
+          bed_capacity: string | null;
+        };
+        Relationships: [];
+      };
+    };
     Functions: {
       create_self_customer: {
         Args: {

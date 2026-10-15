@@ -2,6 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import type { Database } from "@/types/database";
 import { SHARE_LINK_HOST } from "@/lib/share-links";
+import { isGlocareStaff } from "@/lib/admin-guard";
 
 /**
  * 매 요청마다 Supabase 세션을 갱신하고, 미인증 사용자를 /login 으로 보냅니다.
@@ -57,9 +58,17 @@ export async function updateSession(request: NextRequest) {
   // /r/[token] = 학생용 공개 이력서 작성 폼 (token 자체가 인증)
   const isPublicResumeRoute = pathname.startsWith("/r/");
 
-  // 미로그인 + API 라우트 → 401 JSON (리다이렉트 대신)
-  if (!user && isApiRoute) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  // /api/cron/* 는 세션 없이 호출된다(라우트 안에서 CRON_SECRET 검사).
+  if (pathname.startsWith("/api/cron/")) return response;
+
+  // API 라우트: 미로그인 → 401, 로그인했지만 직원이 아님(가입 고객·유학센터) → 403
+  if (isApiRoute) {
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (!isGlocareStaff(user)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
   }
 
   // 미로그인 + 보호 라우트 → /login

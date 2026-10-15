@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { createAdminClient, createClient } from "@/lib/supabase/server";
+import { isGlocareAdmin } from "@/lib/admin-guard";
 import { ResumeForm } from "./resume-form";
 import type { ResumeDraftDataInput } from "@/lib/validators";
 
@@ -27,7 +28,7 @@ export default async function PublicResumePage({
   const {
     data: { user: adminUser },
   } = await sessionClient.auth.getUser();
-  const isAdmin = !!adminUser;
+  const isAdmin = isGlocareAdmin(adminUser);
 
   const expired = new Date(draft.expires_at).getTime() < Date.now();
   const alreadySubmitted = !!draft.submitted_at;

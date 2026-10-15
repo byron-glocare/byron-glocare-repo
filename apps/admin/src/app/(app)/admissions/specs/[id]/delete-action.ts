@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
 import { createClient, createAdminClient } from "@/lib/supabase/server";
+import { isGlocareAdmin } from "@/lib/admin-guard";
 
 /**
  * 모집요강 삭제.
@@ -19,7 +20,7 @@ export async function deleteSpecAction(
   const {
     data: { user },
   } = await supabaseUser.auth.getUser();
-  if (!user) return;
+  if (!user || !isGlocareAdmin(user)) return;
 
   const admin = createAdminClient();
 

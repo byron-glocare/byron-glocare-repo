@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import { requireAuth } from "@/lib/require-auth";
 import { createClient, createAdminClient } from "@/lib/supabase/server";
+import { isGlocareAdmin } from "@/lib/admin-guard";
 import {
   universitySchema,
   departmentSchema,
@@ -226,7 +227,7 @@ export async function deleteUniversity(id: number): Promise<ActionResult> {
   const {
     data: { user },
   } = await supabaseUser.auth.getUser();
-  if (!user) return { ok: false, error: "Unauthorized" };
+  if (!user || !isGlocareAdmin(user)) return { ok: false, error: "Unauthorized" };
   const supabase = createAdminClient();
 
   // 의존 데이터 정리 후 대학 삭제 (개발: 테스트 대학 cascade)

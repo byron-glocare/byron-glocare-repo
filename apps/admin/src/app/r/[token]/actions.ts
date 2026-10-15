@@ -1,6 +1,7 @@
 "use server";
 
 import { createAdminClient, createClient } from "@/lib/supabase/server";
+import { isGlocareAdmin } from "@/lib/admin-guard";
 import {
   resumeDraftDataSchema,
   type ResumeDraftDataInput,
@@ -14,7 +15,7 @@ async function isAdminAuthenticated(): Promise<boolean> {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    return !!user;
+    return isGlocareAdmin(user);
   } catch {
     return false;
   }

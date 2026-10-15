@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { createClient, createAdminClient } from "@/lib/supabase/server";
+import { isGlocareAdmin } from "@/lib/admin-guard";
 import {
   callAnalyzeForm,
   type SuggestedMissingDataType,
@@ -43,7 +44,7 @@ export async function saveEssayQuestionsAction(
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { error: "로그인이 필요합니다" };
+  if (!user || !isGlocareAdmin(user)) return { error: "로그인이 필요합니다" };
 
   const raw = formData.get("questions");
   if (typeof raw !== "string") {
@@ -136,7 +137,7 @@ export async function analyzeFormAction(
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { ok: false, error: "로그인이 필요합니다" };
+  if (!user || !isGlocareAdmin(user)) return { ok: false, error: "로그인이 필요합니다" };
 
   // 양식 정보
   const { data: form } = await supabase
@@ -192,7 +193,7 @@ export async function addSuggestedDataTypeAction(
   const {
     data: { user },
   } = await supabaseUser.auth.getUser();
-  if (!user) return { ok: false, error: "로그인이 필요합니다" };
+  if (!user || !isGlocareAdmin(user)) return { ok: false, error: "로그인이 필요합니다" };
 
   const supabase = createAdminClient();
 

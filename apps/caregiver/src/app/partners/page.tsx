@@ -21,15 +21,15 @@ export default async function PartnersPage({
   const supabase = await createClient();
 
   const [centers, homes, unis] = await Promise.all([
+    // 공개 뷰(partner_*): 계약 중인 파트너의 공개 가능한 컬럼만. 원본 테이블은 직원 전용 RLS.
     supabase
-      .from("training_centers")
+      .from("partner_training_centers")
       .select(
         "id, name, region, tuition_fee_2026, class_hours, naeil_card_eligible"
       )
-      .eq("contract_active", true)
       .order("name"),
     supabase
-      .from("care_homes")
+      .from("partner_care_homes")
       .select("id, name, region, bed_capacity")
       .order("name"),
     supabase

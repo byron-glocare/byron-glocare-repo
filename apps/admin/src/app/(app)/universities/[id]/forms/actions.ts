@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { createClient, createAdminClient } from "@/lib/supabase/server";
+import { isGlocareAdmin } from "@/lib/admin-guard";
 import {
   callAnalyzeForm,
   type SuggestedMissingDataType,
@@ -94,7 +95,7 @@ export async function uploadFormFileAction(
   const {
     data: { user },
   } = await supabaseUser.auth.getUser();
-  if (!user) return { error: "로그인이 필요합니다" };
+  if (!user || !isGlocareAdmin(user)) return { error: "로그인이 필요합니다" };
 
   // 2. 이후 모든 작업은 service role (RLS 우회 — 어드민 전용 기능)
   const supabase = createAdminClient();
@@ -458,7 +459,7 @@ export async function setFormFileDepartmentAction(
   const {
     data: { user },
   } = await supabaseUser.auth.getUser();
-  if (!user) return { ok: false, error: "로그인이 필요합니다" };
+  if (!user || !isGlocareAdmin(user)) return { ok: false, error: "로그인이 필요합니다" };
   const supabase = createAdminClient();
 
   const { data: form } = await supabase
@@ -511,7 +512,7 @@ export async function addSuggestedDataTypeFromUploadAction(
   const {
     data: { user },
   } = await supabaseUser.auth.getUser();
-  if (!user) return { ok: false, error: "로그인이 필요합니다" };
+  if (!user || !isGlocareAdmin(user)) return { ok: false, error: "로그인이 필요합니다" };
 
   const supabase = createAdminClient();
 
@@ -575,7 +576,7 @@ export async function reanalyzeFormAction(
   const {
     data: { user },
   } = await supabaseUser.auth.getUser();
-  if (!user) return { ok: false, error: "로그인이 필요합니다" };
+  if (!user || !isGlocareAdmin(user)) return { ok: false, error: "로그인이 필요합니다" };
 
   const supabase = createAdminClient();
 
@@ -639,7 +640,7 @@ export async function mergeRequiredKeysAction(
   const {
     data: { user },
   } = await supabaseUser.auth.getUser();
-  if (!user) return { ok: false, error: "로그인이 필요합니다" };
+  if (!user || !isGlocareAdmin(user)) return { ok: false, error: "로그인이 필요합니다" };
 
   const supabase = createAdminClient();
 
@@ -676,7 +677,7 @@ export async function replaceRequiredKeysAction(
   const {
     data: { user },
   } = await supabaseUser.auth.getUser();
-  if (!user) return { ok: false, error: "로그인이 필요합니다" };
+  if (!user || !isGlocareAdmin(user)) return { ok: false, error: "로그인이 필요합니다" };
 
   const supabase = createAdminClient();
 
@@ -734,7 +735,7 @@ export async function updateFormFileMetaAction(
   const {
     data: { user },
   } = await supabaseUser.auth.getUser();
-  if (!user) return { error: "로그인이 필요합니다" };
+  if (!user || !isGlocareAdmin(user)) return { error: "로그인이 필요합니다" };
 
   const supabase = createAdminClient();
 
@@ -816,7 +817,7 @@ export async function deleteFormFileAction(
   const {
     data: { user },
   } = await supabaseUser.auth.getUser();
-  if (!user) return;
+  if (!user || !isGlocareAdmin(user)) return;
   const supabase = createAdminClient();
 
   const { data: row } = await supabase
@@ -886,7 +887,7 @@ export async function updateFormFileDetailAction(
   const {
     data: { user },
   } = await supabaseUser.auth.getUser();
-  if (!user) return { error: "로그인이 필요합니다" };
+  if (!user || !isGlocareAdmin(user)) return { error: "로그인이 필요합니다" };
   const supabase = createAdminClient();
 
   const id = String(formData.get("form_file_id") ?? "");
@@ -976,7 +977,7 @@ export async function saveFieldOverlaysAction(
   const {
     data: { user },
   } = await supabaseUser.auth.getUser();
-  if (!user) return { ok: false, error: "로그인이 필요합니다" };
+  if (!user || !isGlocareAdmin(user)) return { ok: false, error: "로그인이 필요합니다" };
   const supabase = createAdminClient();
 
   // 검증·정규화 (숫자만, 음수 좌표 방지)
@@ -1058,7 +1059,7 @@ export async function restoreFormFileAction(
   const {
     data: { user },
   } = await supabaseUser.auth.getUser();
-  if (!user) return;
+  if (!user || !isGlocareAdmin(user)) return;
   const supabase = createAdminClient();
 
   const { data: target } = await supabase
@@ -1109,7 +1110,7 @@ export async function createFormUploadUrlAction(
   const {
     data: { user },
   } = await supabaseUser.auth.getUser();
-  if (!user) return { ok: false, error: "로그인이 필요합니다" };
+  if (!user || !isGlocareAdmin(user)) return { ok: false, error: "로그인이 필요합니다" };
   if (!Number.isInteger(universityId) || universityId <= 0) return { ok: false, error: "대학을 선택하세요" };
   const supabase = createAdminClient();
   const path = `${universityId}/form/${Date.now()}_${sanitizeFileName(fileName)}`;

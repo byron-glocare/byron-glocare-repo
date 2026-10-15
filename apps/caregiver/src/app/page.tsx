@@ -33,11 +33,13 @@ export default async function HomePage() {
       .select("id", { count: "exact", head: true })
       .not("work_start_date", "is", null)
       .or(`work_end_date.is.null,work_end_date.gt.${today}`),
+    // 파트너 수는 공개 뷰로 (원본 테이블은 직원 전용 RLS)
     supabase
-      .from("training_centers")
-      .select("id", { count: "exact", head: true })
-      .eq("contract_active", true),
-    supabase.from("care_homes").select("id", { count: "exact", head: true }),
+      .from("partner_training_centers")
+      .select("id", { count: "exact", head: true }),
+    supabase
+      .from("partner_care_homes")
+      .select("id", { count: "exact", head: true }),
     supabase
       .from("universities")
       .select("id", { count: "exact", head: true })

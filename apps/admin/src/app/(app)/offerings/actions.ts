@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { createClient, createAdminClient } from "@/lib/supabase/server";
+import { isGlocareAdmin } from "@/lib/admin-guard";
 import type { Database } from "@/types/database";
 import { assessOfferingReadiness } from "@/lib/admission/assess-offering-readiness";
 
@@ -29,7 +30,8 @@ async function requireUser() {
   const {
     data: { user },
   } = await supabaseUser.auth.getUser();
-  return user;
+  // service_role 로 쓰는 액션이므로 로그인만이 아니라 어드민 역할까지 확인
+  return user && isGlocareAdmin(user) ? user : null;
 }
 
 /** 대학의 요강(보관 아님) id — 모집의 source_spec_id 는 항상 이것 */
@@ -63,7 +65,7 @@ export async function createOfferingAction(input: {
   term: string;
 }): Promise<ActionResult> {
   const user = await requireUser();
-  if (!user) return { ok: false, error: "로그인이 필요합니다" };
+  if (!user || !isGlocareAdmin(user)) return { ok: false, error: "로그인이 필요합니다" };
   const parsed = createSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "입력값을 확인하세요 (학기는 1~100자)" };
   const data = parsed.data;
@@ -93,7 +95,7 @@ export async function createOfferingAction(input: {
  */
 export async function checkOfferingReadinessAction(id: string): Promise<ReadinessResult> {
   const user = await requireUser();
-  if (!user) return { ok: false, blocked: true, reason: "로그인이 필요합니다" };
+  if (!user || !isGlocareAdmin(user)) return { ok: false, blocked: true, reason: "로그인이 필요합니다" };
   const supabase = createAdminClient();
   const { data: row } = await supabase
     .from("study_offerings")
@@ -118,7 +120,7 @@ export async function updateOfferingStatusAction(
   status: OfferingStatus
 ): Promise<ActionResult> {
   const user = await requireUser();
-  if (!user) return { ok: false, error: "로그인이 필요합니다" };
+  if (!user || !isGlocareAdmin(user)) return { ok: false, error: "로그인이 필요합니다" };
   const supabase = createAdminClient();
 
   const { data: row } = await supabase
@@ -158,7 +160,7 @@ export async function updateOfferingQuotaAction(
   field: "intake_quota" | "total_quota" = "intake_quota"
 ): Promise<ActionResult> {
   const user = await requireUser();
-  if (!user) return { ok: false, error: "로그인이 필요합니다" };
+  if (!user || !isGlocareAdmin(user)) return { ok: false, error: "로그인이 필요합니다" };
   if (field !== "intake_quota" && field !== "total_quota") return { ok: false, error: "잘못된 항목" };
   if (quota != null && (!Number.isInteger(quota) || quota < 0 || quota > 100000)) {
     return { ok: false, error: "인원은 0~100000 사이 정수" };
@@ -183,7 +185,7 @@ export async function updateOfferingOptionsAction(
   input: { available_languages: string[]; location_options: string[]; notes: string | null }
 ): Promise<ActionResult> {
   const user = await requireUser();
-  if (!user) return { ok: false, error: "로그인이 필요합니다" };
+  if (!user || !isGlocareAdmin(user)) return { ok: false, error: "로그인이 필요합니다" };
   const langs = input.available_languages.filter((l): l is Language => (LANGUAGES as readonly string[]).includes(l));
   const locs = input.location_options.filter((l): l is Location => (LOCATIONS as readonly string[]).includes(l));
   const notes = (input.notes ?? "").trim().slice(0, 2000) || null;
@@ -202,7 +204,7 @@ export async function updateOfferingOptionsAction(
  */
 export async function deleteOfferingAction(id: string): Promise<ActionResult> {
   const user = await requireUser();
-  if (!user) return { ok: false, error: "로그인이 필요합니다" };
+  if (!user || !isGlocareAdmin(user)) return { ok: false, error: "로그인이 필요합니다" };
   const supabase = createAdminClient();
   const { data: row } = await supabase.from("study_offerings").select("status").eq("id", id).maybeSingle();
   if (!row) return { ok: false, error: "모집을 찾을 수 없습니다" };

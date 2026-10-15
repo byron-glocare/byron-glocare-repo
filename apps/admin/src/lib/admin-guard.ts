@@ -38,3 +38,11 @@ function roleOf(user: User | null | undefined): unknown {
   if (!user) return undefined;
   return (user.app_metadata as { role?: unknown } | null | undefined)?.role;
 }
+
+/**
+ * 글로케어 내부 직원(어드민·대표·영업) 여부. API 라우트·requireAuth 의 공통 게이트.
+ * 홈페이지 가입 고객·유학센터 계정은 같은 auth.users 를 쓰지만 여기서 걸러진다.
+ */
+export function isGlocareStaff(user: User | null | undefined): boolean {
+  return isGlocareAdmin(user) || isGlocareCeo(user) || isGlocareSales(user);
+}

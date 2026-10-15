@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { createClient, createAdminClient } from "@/lib/supabase/server";
+import { isGlocareAdmin } from "@/lib/admin-guard";
 import type {
   StudyStudentDataTypeInsert,
   StudyStudentDataTypeUpdate,
@@ -109,7 +110,7 @@ export async function saveDataTypeAction(
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { error: "로그인이 필요합니다" };
+  if (!user || !isGlocareAdmin(user)) return { error: "로그인이 필요합니다" };
 
   const raw = {
 
@@ -291,7 +292,7 @@ export async function getDataTypeUsageAction(
   const {
     data: { user },
   } = await supabaseUser.auth.getUser();
-  if (!user) return { ...empty, error: "로그인이 필요합니다" };
+  if (!user || !isGlocareAdmin(user)) return { ...empty, error: "로그인이 필요합니다" };
 
   const admin = createAdminClient();
 
@@ -344,7 +345,7 @@ export async function reactivateDataTypeAction(id: string): Promise<void> {
   const {
     data: { user },
   } = await supabaseUser.auth.getUser();
-  if (!user) return;
+  if (!user || !isGlocareAdmin(user)) return;
 
   const admin = createAdminClient();
   await admin
@@ -363,7 +364,7 @@ export async function deactivateDataTypeAction(
   const {
     data: { user },
   } = await supabaseUser.auth.getUser();
-  if (!user) return { ok: false, error: "로그인이 필요합니다" };
+  if (!user || !isGlocareAdmin(user)) return { ok: false, error: "로그인이 필요합니다" };
 
   const admin = createAdminClient();
   const { error } = await admin
@@ -388,7 +389,7 @@ export async function deleteDataTypeAction(
   const {
     data: { user },
   } = await supabaseUser.auth.getUser();
-  if (!user) return { ok: false, error: "로그인이 필요합니다" };
+  if (!user || !isGlocareAdmin(user)) return { ok: false, error: "로그인이 필요합니다" };
 
   if (!force) {
     const usage = await getDataTypeUsageAction(id);
