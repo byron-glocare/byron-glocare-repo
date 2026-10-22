@@ -135,7 +135,9 @@ export default async function StudentDataTypesPage() {
             </p>
           </Card>
         ) : (
-          CATEGORY_ORDER.filter((c) => byCategory.has(c)).map((cat) => {
+          // '서류' 묶음은 표에서 숨긴다(2026-10-22 요청) — 서류의 정본은 입학서류 → 제출서류 탭.
+          //   데이터·연결(원서 사진 칸 등)은 그대로 두고 이 화면 표에서만 뺀다.
+          CATEGORY_ORDER.filter((c) => c !== "document" && byCategory.has(c)).map((cat) => {
             const items = byCategory.get(cat)!;
             return (
               <Card key={cat}>
