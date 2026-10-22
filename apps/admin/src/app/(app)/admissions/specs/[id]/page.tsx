@@ -224,6 +224,10 @@ export default async function AdmissionDetailPage({ params }: { params: Promise<
               편집
             </Link>
             <AddTermButton specId={id} terms={terms.map((t) => ({ id: t.id, term: t.term }))} />
+            <Link href={`/admissions/specs/${id}/brochure`} className={buttonVariants({ variant: "outline", size: "sm" })}>
+              <FileText className="size-4" />
+              모집요강 PDF
+            </Link>
             <DeleteSpecButton specId={id} universityId={spec.university_id} />
           </div>
         }

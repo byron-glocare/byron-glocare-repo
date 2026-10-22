@@ -198,14 +198,6 @@ function DepartmentCard({
           {!sd.is_active ? <Badge variant="outline" className="text-muted-foreground">비활성</Badge> : null}
           {!sd.department_active ? <Badge variant="outline" className="text-amber-600">마스터 비노출</Badge> : null}
           <div className="ml-auto flex flex-wrap items-center gap-1.5">
-            <Link
-              href={`/admissions/specs/${specId}/brochure?dept=${encodeURIComponent(sd.id)}`}
-              className={buttonVariants({ variant: "ghost", size: "sm" })}
-              title="이 학과의 베트남어 모집요강 PDF"
-            >
-              <FileText className="size-3.5" />
-              이 학과 PDF
-            </Link>
             <CopySetupDialog specId={specId} target={sd} siblings={siblings} copySources={copySources} />
             <Button type="button" variant="outline" size="sm" disabled={busy} onClick={toggleActive}>
               {sd.is_active ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}

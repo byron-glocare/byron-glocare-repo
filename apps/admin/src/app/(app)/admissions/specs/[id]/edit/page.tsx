@@ -6,9 +6,7 @@
  *   ?tab=departments|terms 로 시작 탭 지정.
  */
 
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { FileText } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { loadFormDocKeys } from "@/lib/admission/form-doc-keys";
@@ -22,7 +20,6 @@ import {
   type SpecFormFile,
 } from "@/lib/admission/spec-departments";
 import { PageHeader } from "@/components/page-header";
-import { buttonVariants } from "@/components/ui/button";
 import { SpecDepartmentEditor, type CopySourceUniversity, type ImportSources } from "@/components/admission/spec-department-editor";
 import { LegacyDocRows, type LegacyDocRow } from "@/components/admission/legacy-doc-rows";
 import { isFormDoc } from "@/lib/admission/classify-documents";
@@ -206,12 +203,6 @@ export default async function EditAdmissionPage({
           { label: university?.name_ko ?? "상세", href: `/admissions/specs/${id}` },
           { label: "편집" },
         ]}
-        actions={
-          <Link href={`/admissions/specs/${id}/brochure`} className={buttonVariants({ variant: "outline", size: "sm" })}>
-            <FileText className="size-4" />
-            모집요강 PDF (베트남어)
-          </Link>
-        }
       />
       <div className="p-6">
         <EditSpecForm

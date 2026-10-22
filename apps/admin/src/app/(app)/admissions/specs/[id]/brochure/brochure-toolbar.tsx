@@ -43,9 +43,9 @@ export function BrochureToolbar({
 
   return (
     <div className="flex flex-wrap items-end gap-3 border-b border-border bg-card px-6 py-4 print:hidden">
-      <Link href={`/admissions/specs/${specId}/edit?tab=departments`} className={buttonVariants({ variant: "ghost", size: "sm" })}>
+      <Link href={`/admissions/specs/${specId}`} className={buttonVariants({ variant: "ghost", size: "sm" })}>
         <ArrowLeft className="size-4" />
-        요강 편집
+        모집요강으로
       </Link>
       <label className="flex flex-col gap-1">
         <span className="text-xs text-muted-foreground">학과</span>
