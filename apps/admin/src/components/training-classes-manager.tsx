@@ -17,7 +17,7 @@ import {
   deleteTrainingClass,
   updateTrainingClass,
 } from "@/app/(app)/training-centers/actions";
-import type { TrainingClass } from "@/types/database";
+import { CLASS_TYPE_LABEL, type ClassType, type TrainingClass } from "@/types/database";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -154,7 +154,7 @@ export function TrainingClassesManager({ centerId, classes }: Props) {
     form.reset({
       year: cls.year,
       month: cls.month,
-      class_type: cls.class_type as "weekday" | "night",
+      class_type: cls.class_type as ClassType,
       start_date: cls.start_date,
       end_date: cls.end_date,
       notes: cls.notes,
@@ -229,7 +229,7 @@ export function TrainingClassesManager({ centerId, classes }: Props) {
                     <FormControl>
                       <SelectTrigger>
                         <SelectValueMap
-                          map={{ weekday: "주간", night: "야간" }}
+                          map={CLASS_TYPE_LABEL as Record<string, string>}
                           placeholder="선택"
                         />
                       </SelectTrigger>
@@ -237,6 +237,7 @@ export function TrainingClassesManager({ centerId, classes }: Props) {
                     <SelectContent>
                       <SelectItem value="weekday">주간</SelectItem>
                       <SelectItem value="night">야간</SelectItem>
+                      <SelectItem value="weekend">주말</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -379,10 +380,12 @@ export function TrainingClassesManager({ centerId, classes }: Props) {
                         className={
                           cls.class_type === "weekday"
                             ? "bg-info/10 text-info border-info/20"
-                            : "bg-warning/10 text-warning border-warning/20"
+                            : cls.class_type === "weekend"
+                              ? "bg-success/10 text-success border-success/20"
+                              : "bg-warning/10 text-warning border-warning/20"
                         }
                       >
-                        {cls.class_type === "weekday" ? "주간" : "야간"}
+                        {CLASS_TYPE_LABEL[cls.class_type] ?? cls.class_type}
                       </Badge>
                     </TableCell>
                     <TableCell>{formatDate(cls.start_date)}</TableCell>

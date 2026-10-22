@@ -17,6 +17,7 @@ import {
   updateCustomer,
   deleteCustomer,
 } from "@/app/(app)/customers/actions";
+import { CLASS_TYPE_LABEL } from "@/types/database";
 import type { TrainingCenter, TrainingClass, CareHome } from "@/types/database";
 
 import { Button } from "@/components/ui/button";
@@ -710,7 +711,7 @@ export function CustomerBasicForm({
                               ...Object.fromEntries(
                                 filteredClasses.map((cls) => [
                                   cls.id,
-                                  `${cls.year}년 ${cls.month}월 — ${cls.class_type === "weekday" ? "주간" : "야간"}${cls.start_date ? ` (${cls.start_date})` : ""}`,
+                                  `${cls.year}년 ${cls.month}월 — ${CLASS_TYPE_LABEL[cls.class_type] ?? cls.class_type}${cls.start_date ? ` (${cls.start_date})` : ""}`,
                                 ])
                               ),
                             }}
@@ -729,7 +730,7 @@ export function CustomerBasicForm({
                         {filteredClasses.map((cls) => (
                           <SelectItem key={cls.id} value={cls.id}>
                             {cls.year}년 {cls.month}월 —{" "}
-                            {cls.class_type === "weekday" ? "주간" : "야간"}
+                            {CLASS_TYPE_LABEL[cls.class_type] ?? cls.class_type}
                             {cls.start_date ? ` (${cls.start_date})` : ""}
                           </SelectItem>
                         ))}

@@ -6,6 +6,7 @@
  */
 
 import type {
+  ClassType,
   Customer,
   CustomerStatus,
   ReservationPayment,
@@ -136,6 +137,7 @@ export function computeSettlementSummary(inputs: {
   } else if (commissionPayments.length > 0) {
     commission = "완료";
   } else if (customer.class_start_date && trainingClass?.class_type) {
+    // 주간 2개월 / 야간·주말 3개월
     const months = trainingClass.class_type === "weekday" ? 2 : 3;
     const dueDate = addMonthsStr(customer.class_start_date, months);
     commission = today < dueDate ? "정산 전" : "정산 지연";
@@ -184,10 +186,11 @@ export function computeSettlementSummary(inputs: {
 
 export function commissionSettlementMonth(
   classStartDate: string | null,
-  classType: "weekday" | "night" | null
+  classType: ClassType | null
 ): { year: number; month: number } | null {
   if (!classStartDate || !classType) return null;
 
+  // 주간 50일 / 야간·주말 80일
   const offsetDays = classType === "weekday" ? 50 : 80;
   const d = new Date(classStartDate);
   d.setDate(d.getDate() + offsetDays);
@@ -200,7 +203,7 @@ export function commissionSettlementMonth(
 
 export function isCommissionSettlementTargetFor(
   classStartDate: string | null,
-  classType: "weekday" | "night" | null,
+  classType: ClassType | null,
   year: number,
   month: number
 ): boolean {

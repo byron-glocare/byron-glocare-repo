@@ -224,7 +224,7 @@ export async function sendNewStudentSms(input: {
     );
     const classMap = new Map<
       string,
-      { start_date: string | null; class_type: "weekday" | "night" }
+      { start_date: string | null; class_type: "weekday" | "night" | "weekend" }
     >();
     if (classIds.length > 0) {
       const { data: classes } = await supabase

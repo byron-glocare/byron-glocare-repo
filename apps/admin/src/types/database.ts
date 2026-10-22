@@ -26,7 +26,13 @@ export type Gender = "남" | "여";
 export type DesiredTime = "주간" | "야간";
 export type ProductType = "교육" | "웰컴팩" | "교육+웰컴팩";
 export type TerminationReason = "요양보호사 직종변경" | "귀국" | "연락두절";
-export type ClassType = "weekday" | "night";
+export type ClassType = "weekday" | "night" | "weekend";
+/** class_type → 한글 라벨. 표시용 단일 출처. */
+export const CLASS_TYPE_LABEL: Record<ClassType, string> = {
+  weekday: "주간",
+  night: "야간",
+  weekend: "주말",
+};
 export type ConsultationType = "training_center" | "care_home";
 export type CommissionStatus = "pending" | "notified" | "completed";
 export type ReservationRefundReason =

@@ -89,7 +89,7 @@ export type TrainingCenterOutput = z.output<typeof trainingCenterSchema>;
 export const trainingClassSchema = z.object({
   year: z.number().int().min(2020, "연도는 2020 이상").max(2100),
   month: z.number().int().min(1).max(12, "월은 1~12"),
-  class_type: z.enum(["weekday", "night"]),
+  class_type: z.enum(["weekday", "night", "weekend"]),
   start_date: optionalString,
   end_date: optionalString,
   notes: optionalString,

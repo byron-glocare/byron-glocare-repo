@@ -63,8 +63,9 @@ export function computeSettlementDueDate(
   classType: TrainingClass["class_type"] | null
 ): string | null {
   if (!classStartDate) return null;
+  // 주간 50일 / 야간·주말 80일
   const offset =
-    classType === "night" ? NIGHT_OFFSET_DAYS : WEEKDAY_OFFSET_DAYS;
+    classType === "weekday" ? WEEKDAY_OFFSET_DAYS : NIGHT_OFFSET_DAYS;
   return addDaysIso(classStartDate, offset);
 }
 

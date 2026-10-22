@@ -218,7 +218,9 @@ export default async function SettlementsPage({
       classTypeLabel: trainingClass
         ? trainingClass.class_type === "weekday"
           ? "주간"
-          : "야간"
+          : trainingClass.class_type === "weekend"
+            ? "주말"
+            : "야간"
         : null,
       tuitionFee: center.tuition_fee_2026 ?? 0,
       dueDate: elig.dueDate,

@@ -132,7 +132,9 @@ export default async function SmsCommissionPage() {
       classTypeLabel: trainingClass
         ? trainingClass.class_type === "weekday"
           ? "주간"
-          : "야간"
+          : trainingClass.class_type === "weekend"
+            ? "주말"
+            : "야간"
         : null,
       tuitionBase: cp.total_amount,
       deduction: cp.deduction_amount,

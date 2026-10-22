@@ -72,7 +72,7 @@ type TrainingClass = {
   training_center_id: string;
   year: number;
   month: number;
-  class_type: "weekday" | "night";
+  class_type: "weekday" | "night" | "weekend";
   start_date: string | null;
 };
 
@@ -274,7 +274,7 @@ function CenterGroupCard({
 
   function resolveClassForStudent(s: Customer): {
     classStartDate: string | null;
-    classType: "weekday" | "night" | null;
+    classType: "weekday" | "night" | "weekend" | null;
   } {
     const cls = s.training_class_id ? classMap.get(s.training_class_id) : null;
     if (cls) {

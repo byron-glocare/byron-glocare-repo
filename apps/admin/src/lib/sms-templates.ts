@@ -33,7 +33,7 @@ export type NewStudentTemplateStudent = {
   reservationAmount: number | null;
   /** 해당 학생이 등록된 강의 — 학생마다 다를 수 있음 (대표값을 fallback 으로 사용) */
   classStartDate: string | null;
-  classType: "weekday" | "night" | null;
+  classType: "weekday" | "night" | "weekend" | null;
   /** 특이사항 — 학생별 */
   extraNote?: string;
 };
@@ -136,15 +136,17 @@ function renderNewStudentBlock(
 /** "2026-04-17" + "weekday" → "26년 4월 17일 주간반" */
 function formatClassLabel(
   iso: string | null,
-  type: "weekday" | "night" | null
+  type: "weekday" | "night" | "weekend" | null
 ): string {
-  if (!iso) return type === "night" ? "야간반" : type === "weekday" ? "주간반" : "—";
+  const label =
+    type === "night" ? "야간반" : type === "weekend" ? "주말반" : type === "weekday" ? "주간반" : null;
+  if (!iso) return label ?? "—";
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
   if (!m) return iso;
   const yy = m[1].slice(2);
   const mo = Number(m[2]);
   const da = Number(m[3]);
-  const t = type === "night" ? "야간반" : "주간반";
+  const t = label ?? "주간반";
   return `${yy}년 ${mo}월 ${da}일 ${t}`;
 }
 
