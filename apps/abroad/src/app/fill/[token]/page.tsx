@@ -109,10 +109,11 @@ export default async function FillPage({
   }
 
   // 공개 입력 = 텍스트성 항목 + 서명(캔버스). 파일 업로드·파생 항목은 제외(센터 처리).
+  //   화면은 탭 두 개 — [지원 서류에 필요한 항목] (지원 대학 양식이 쓰는 키) / [전체 항목].
+  //   지원 양식이 아직 없으면 필요한 항목을 고를 수 없으니 전체 항목만 보여준다.
   const EXCLUDED = new Set(["file"]);
   const fields: PublicFieldMeta[] = (dataTypes ?? [])
     .filter((d) => !EXCLUDED.has(d.input_type) && !d.is_derived)
-    .filter((d) => requiredKeys.size === 0 || requiredKeys.has(d.key))
     .map((d) => ({
       key: d.key,
       label_ko: d.label_ko,
@@ -135,6 +136,7 @@ export default async function FillPage({
       studentName={student?.name ?? ""}
       expiresAt={link.expires_at}
       fields={fields}
+      requiredKeys={fields.filter((f) => requiredKeys.has(f.key)).map((f) => f.key)}
       existingValues={existing}
     />
   );

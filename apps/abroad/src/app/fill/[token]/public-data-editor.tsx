@@ -62,21 +62,33 @@ function categoryLabel(locale: Locale, c: string): string {
 
 type SaveState = "idle" | "saving" | "saved" | "error";
 
+function isEmptyValue(v: Json | null | undefined): boolean {
+  return v === null || v === undefined || v === "" || (Array.isArray(v) && v.length === 0);
+}
+
 export function PublicDataEditor({
   token,
   locale,
   studentName,
   expiresAt,
-  fields,
+  fields: allFields,
+  requiredKeys,
   existingValues,
 }: {
   token: string;
   locale: Locale;
   studentName: string;
   expiresAt: string;
+  /** 입력 가능한 전체 항목 */
   fields: PublicFieldMeta[];
+  /** 지원 대학 양식이 쓰는 항목 — 비어 있으면 탭 없이 전체만 */
+  requiredKeys: string[];
   existingValues: Record<string, Json>;
 }) {
+  const hasRequired = requiredKeys.length > 0;
+  const [tab, setTab] = useState<"required" | "all">(hasRequired ? "required" : "all");
+  const requiredSet = new Set(requiredKeys);
+  const fields = tab === "required" ? allFields.filter((f) => requiredSet.has(f.key)) : allFields;
   const [values, setValues] = useState<Record<string, Json | null>>(
     existingValues as Record<string, Json | null>
   );
@@ -168,6 +180,39 @@ export function PublicDataEditor({
           {expDate.toLocaleDateString(locale === "ko" ? "ko-KR" : "vi-VN")}
         </p>
       </header>
+
+      {/* 탭 — 필요한 항목만 / 전체 항목. 값은 두 탭이 같이 쓴다 */}
+      {hasRequired ? (
+        <div role="tablist" className="mb-4 grid grid-cols-2 gap-1 rounded-lg bg-slate-100 p-1">
+          {(
+            [
+              ["required", tr(locale, "지원 서류에 필요한 항목", "Mục cần cho hồ sơ"), allFields.filter((f) => requiredSet.has(f.key))],
+              ["all", tr(locale, "전체 항목", "Tất cả các mục"), allFields],
+            ] as const
+          ).map(([key, label, list]) => {
+            const filled = list.filter((f) => !isEmptyValue(values[f.key])).length;
+            const active = tab === key;
+            return (
+              <button
+                key={key}
+                type="button"
+                role="tab"
+                aria-selected={active}
+                onClick={() => setTab(key)}
+                className={
+                  "rounded-md px-3 py-2 text-sm transition-colors " +
+                  (active ? "bg-white font-semibold text-slate-900 shadow-sm" : "text-slate-600 hover:text-slate-900")
+                }
+              >
+                <span className="block">{label}</span>
+                <span className="block text-[11px] font-normal text-slate-500">
+                  {tr(locale, `${list.length}개 중 ${filled}개 입력`, `Đã nhập ${filled}/${list.length}`)}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
 
       {/* 오프라인/저장실패 경고 — 사용자 요청 문구 */}
       {showOffline ? (
