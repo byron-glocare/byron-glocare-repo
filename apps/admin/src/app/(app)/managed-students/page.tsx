@@ -31,6 +31,14 @@ const LOC_LABEL: Record<string, string> = {
   other: "기타",
 };
 
+const SEASON_KO: Record<string, string> = { Spring: "봄", Summer: "여름", Fall: "가을", Winter: "겨울", Year: "연중" };
+/** "2027-Spring" → "2027 봄" */
+function termKo(term: string | null | undefined): string {
+  if (!term) return "";
+  const [y, season] = term.split("-");
+  return season ? `${y} ${SEASON_KO[season] ?? season}` : term;
+}
+
 type SearchParams = Promise<{ q?: string; org?: string; loc?: string }>;
 
 export default async function ManagedStudentsPage({
@@ -46,7 +54,7 @@ export default async function ManagedStudentsPage({
   // service-role 로 모든 org 학생 조회 (admin = glocare_admin, 읽기 전용)
   const admin = createAdminClient();
 
-  const [{ data: students }, { data: orgs }, { data: files }, { data: appTerms }, { data: universities }] =
+  const [{ data: students }, { data: orgs }, { data: files }, { data: apps }, { data: universities }, { data: specs }] =
     await Promise.all([
       admin
         .from("study_managed_students")
@@ -56,18 +64,41 @@ export default async function ManagedStudentsPage({
         .order("created_at", { ascending: false }),
       admin.from("study_center_orgs").select("id, name_ko, name_vi"),
       admin.from("study_student_submission_files").select("student_id"),
-      // 지원자 명단 엑셀 필터용 — 지원서에 쓰인 학기 · 대학
-      admin.from("study_applications").select("term").neq("status", "cancelled").not("term", "is", null),
+      // 목록의 지원 대학·학과·학기 + 지원자 명단 엑셀 필터(학기)
+      admin
+        .from("study_applications")
+        .select("student_id, admission_spec_id, target_department_label, priority, term, created_at")
+        .neq("status", "cancelled"),
       admin.from("universities").select("id, name_ko").order("name_ko", { ascending: true }),
+      admin.from("study_admission_specs").select("id, university_id, term"),
     ]);
 
   const termOptions = Array.from(
-    new Set((appTerms ?? []).map((a) => a.term).filter((t): t is string => !!t))
+    new Set((apps ?? []).map((a) => a.term).filter((t): t is string => !!t))
   ).sort((a, b) => b.localeCompare(a));
 
   const orgMap = new Map(
     (orgs ?? []).map((o) => [o.id, o.name_ko || o.name_vi])
   );
+  // 학생별 지원 — 지망 순(없으면 먼저 만든 순). 학기는 지원서 값, 없으면 요강 값.
+  const uniName = new Map((universities ?? []).map((u) => [u.id, u.name_ko]));
+  const specById = new Map((specs ?? []).map((sp) => [sp.id, sp]));
+  const appsByStudent = new Map<string, { priority: number | null; university: string; dept: string; term: string; created: string }[]>();
+  for (const a of apps ?? []) {
+    const spec = a.admission_spec_id ? specById.get(a.admission_spec_id) : undefined;
+    const list = appsByStudent.get(a.student_id) ?? [];
+    list.push({
+      priority: a.priority ?? null,
+      university: (spec ? uniName.get(spec.university_id) : null) ?? "대학 미정",
+      dept: a.target_department_label ?? "",
+      term: termKo(a.term || spec?.term),
+      created: a.created_at,
+    });
+    appsByStudent.set(a.student_id, list);
+  }
+  for (const list of appsByStudent.values())
+    list.sort((x, y) => (x.priority ?? 99) - (y.priority ?? 99) || x.created.localeCompare(y.created));
+
   const fileCount = new Map<string, number>();
   for (const f of files ?? [])
     fileCount.set(f.student_id, (fileCount.get(f.student_id) ?? 0) + 1);
@@ -230,6 +261,7 @@ export default async function ManagedStudentsPage({
               <TableHeader>
                 <TableRow>
                   <TableHead>이름</TableHead>
+                  <TableHead className="min-w-64">지원 대학 · 학과 · 학기</TableHead>
                   <TableHead className="w-48">유학센터</TableHead>
                   <TableHead className="w-32">생년월일</TableHead>
                   <TableHead className="w-36">연락처</TableHead>
@@ -256,6 +288,28 @@ export default async function ManagedStudentsPage({
                               B2C
                             </Badge>
                           ) : null}
+                        </Link>
+                      </TableCell>
+                      <TableCell className="text-sm">
+                        <Link href={`/managed-students/${s.id}`} className="block space-y-0.5">
+                          {(appsByStudent.get(s.id) ?? []).length === 0 ? (
+                            <span className="text-muted-foreground">—</span>
+                          ) : (
+                            (appsByStudent.get(s.id) ?? []).map((a, i) => (
+                              <div key={i} className="flex items-baseline gap-1.5 leading-snug">
+                                {a.priority ? (
+                                  <span className="shrink-0 text-[11px] text-muted-foreground">{a.priority}지망</span>
+                                ) : null}
+                                <span>
+                                  {a.university}
+                                  <span className="text-muted-foreground">
+                                    {a.dept ? ` · ${a.dept}` : ""}
+                                    {a.term ? ` · ${a.term}` : ""}
+                                  </span>
+                                </span>
+                              </div>
+                            ))
+                          )}
                         </Link>
                       </TableCell>
                       <TableCell className="text-sm text-muted-foreground">
