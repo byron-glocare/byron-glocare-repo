@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { Download, Search } from "lucide-react";
 
 import { createAdminClient } from "@/lib/supabase/server";
@@ -16,6 +17,7 @@ import {
   parseListFilter,
 } from "@/lib/study/student-applications";
 import { termLabelKo } from "@/lib/study/term-label";
+import { docProgress, fetchStudentDocStatus, type StudentDocStatus } from "@/lib/admission/call-student-documents";
 
 export const dynamic = "force-dynamic";
 
@@ -81,6 +83,9 @@ export default async function ManagedStudentsPage({
   const orgOptions = [...orgMap.entries()].sort((a, b) => String(a[1]).localeCompare(String(b[1]), "ko"));
 
   const rows = filterStudents(students ?? [], filter, appsByStudent);
+  // 지망별 서류 진행(n/m) — abroad 내부 API(학생 20명에 ~3초). 기다리지 않고 표를 먼저 보내고
+  //   숫자는 도착하는 대로 채운다(Suspense). 실패하면 표시 안 함.
+  const docPromise = fetchStudentDocStatus(rows.filter((s) => appsByStudent.has(s.id)).map((s) => s.id));
   const hasFilter = Object.values(filter).some(Boolean);
   const total = (students ?? []).length;
   const qs = listFilterQuery(filter);
@@ -213,7 +218,7 @@ export default async function ManagedStudentsPage({
                     <TableHead className="min-w-80">지원 대학 · 학과 · 학기</TableHead>
                     <TableHead className="min-w-44">유학센터</TableHead>
                     <TableHead className="w-20">현재 비자</TableHead>
-                    <TableHead className="w-16 text-center">서류</TableHead>
+                    <TableHead className="w-16 text-center" title="올린 파일 수">업로드</TableHead>
                     <TableHead className="w-28">등록일</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -256,6 +261,9 @@ export default async function ManagedStudentsPage({
                                       {a.termLabel ? ` · ${a.termLabel}` : ""}
                                     </span>
                                   </span>
+                                  <Suspense fallback={null}>
+                                    <DocBadge promise={docPromise} appId={a.appId} />
+                                  </Suspense>
                                 </div>
                               ))
                             )}
@@ -296,5 +304,28 @@ function Field({ label, id, children }: { label: string; id: string; children: R
       </label>
       {children}
     </div>
+  );
+}
+
+/** 지망 하나의 서류 진행 — 필수 발급서류 업로드 + 작성서류 최종 제출. 다 되면 초록 */
+async function DocBadge({ promise, appId }: { promise: Promise<Map<string, StudentDocStatus> | null>; appId: string }) {
+  const map = await promise;
+  let p: { done: number; total: number } | undefined;
+  for (const st of map?.values() ?? []) {
+    const a = st.applications.find((x) => x.appId === appId);
+    if (a) p = docProgress(a);
+  }
+  if (!p || p.total === 0) return null;
+  const full = p.done === p.total;
+  return (
+    <span
+      title="서류 완료 / 필요 (발급서류 업로드 + 작성서류 최종 제출)"
+      className={
+        "ml-auto shrink-0 rounded px-1.5 text-[11px] tabular-nums " +
+        (full ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400" : "bg-muted text-muted-foreground")
+      }
+    >
+      서류 {p.done}/{p.total}
+    </span>
   );
 }

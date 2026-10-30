@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Download, FileText } from "lucide-react";
+import { Check, Circle, Download, FileText } from "lucide-react";
 
 import { createAdminClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/page-header";
@@ -14,6 +14,8 @@ import {
   submissionFileName,
 } from "@/lib/admission/submission-file-naming";
 import { ReassignCenter } from "./reassign-center";
+import { docProgress, fetchStudentDocStatus } from "@/lib/admission/call-student-documents";
+import { termLabelKo } from "@/lib/study/term-label";
 import { DocPreviewProvider, PreviewButton, type PreviewDoc } from "./doc-preview";
 
 export const dynamic = "force-dynamic";
@@ -53,6 +55,8 @@ export default async function ManagedStudentDetailPage({
     .eq("id", id)
     .maybeSingle();
   if (!student) notFound();
+  // 지원별 서류 현황 — abroad 내부 API(센터 화면과 같은 계산). 다른 조회와 동시에 돌린다. 실패하면 null.
+  const docStatusPromise = fetchStudentDocStatus([id]);
 
   const [{ data: org }, { data: files }, { data: finals }, { data: centers }] =
     await Promise.all([
@@ -280,6 +284,10 @@ export default async function ManagedStudentDetailPage({
     { label: "등록일", value: formatDateTime(student.created_at) },
   ];
 
+  const docMap = await docStatusPromise;
+  const docStatus = docMap ? docMap.get(id) ?? { studentId: id, applications: [] } : null;
+  const docApps = docStatus?.applications ?? [];
+
   return (
     <>
       <PageHeader
@@ -346,6 +354,64 @@ export default async function ManagedStudentDetailPage({
                   </li>
                 ))}
               </ul>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* 지원별 서류 현황 — 대학마다 필요한 서류와 완료/미완 (2026-10-30 학생관리업무 반영 4) */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">지원별 서류 현황</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {!docStatus ? (
+              <p className="text-sm text-muted-foreground">서류 현황을 불러오지 못했습니다. 잠시 후 새로고침해 주세요.</p>
+            ) : docApps.length === 0 ? (
+              <p className="text-sm text-muted-foreground">지원 내역이 없습니다.</p>
+            ) : (
+              <div className="space-y-4">
+                {docApps.map((a) => {
+                  const p = docProgress(a);
+                  const issuedReq = a.issued.filter((d) => d.required);
+                  const issuedDone = issuedReq.filter((d) => d.uploaded).length;
+                  const formsDone = a.forms.filter((f) => f.status === "submitted").length;
+                  return (
+                    <div key={a.appId} className="rounded-md border border-border">
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 border-b border-border bg-muted/30 px-3 py-2">
+                        <span className="text-sm font-medium">{a.label}</span>
+                        <span className="text-xs text-muted-foreground">{termLabelKo(a.term)}</span>
+                        <span className="ml-auto text-xs tabular-nums">
+                          <span className={p.done === p.total && p.total > 0 ? "font-semibold text-emerald-600" : "font-semibold"}>
+                            {p.done}/{p.total}
+                          </span>
+                          <span className="text-muted-foreground">
+                            {" "}
+                            완료 · 필수 발급서류 {issuedDone}/{issuedReq.length} · 작성서류 {formsDone}/{a.forms.length}
+                          </span>
+                        </span>
+                      </div>
+                      <div className="grid gap-x-6 gap-y-1 p-3 sm:grid-cols-2">
+                        <DocList
+                          title="발급서류 (업로드)"
+                          items={a.issued.map((d) => ({
+                            name: d.name + (d.required ? "" : " (선택)"),
+                            done: d.uploaded,
+                            note: d.uploaded ? null : "미업로드",
+                          }))}
+                        />
+                        <DocList
+                          title="작성서류 (최종 제출)"
+                          items={a.forms.map((f) => ({
+                            name: f.name,
+                            done: f.status === "submitted",
+                            note: f.status === "uploaded" ? "완성본 올림 · 미제출" : f.status === "none" ? "미작성" : null,
+                          }))}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             )}
           </CardContent>
         </Card>
@@ -497,5 +563,32 @@ export default async function ManagedStudentDetailPage({
       </div>
       </DocPreviewProvider>
     </>
+  );
+}
+
+function DocList({ title, items }: { title: string; items: { name: string; done: boolean; note: string | null }[] }) {
+  return (
+    <div>
+      <p className="mb-1 text-xs font-medium text-muted-foreground">{title}</p>
+      {items.length === 0 ? (
+        <p className="text-xs text-muted-foreground">없음</p>
+      ) : (
+        <ul className="space-y-0.5">
+          {items.map((it, i) => (
+            <li key={i} className="flex items-start gap-1.5 text-sm">
+              {it.done ? (
+                <Check className="mt-0.5 size-3.5 shrink-0 text-emerald-600" aria-label="완료" />
+              ) : (
+                <Circle className="mt-0.5 size-3.5 shrink-0 text-muted-foreground/60" aria-label="미완" />
+              )}
+              <span className={it.done ? "" : "text-muted-foreground"}>
+                {it.name}
+                {it.note ? <span className="ml-1 text-[11px] text-amber-600">{it.note}</span> : null}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }

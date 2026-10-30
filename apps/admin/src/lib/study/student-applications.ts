@@ -18,6 +18,7 @@ type Client = SupabaseClient<Database>;
 export type Course = "D-2" | "D-4";
 
 export type AppSummary = {
+  appId: string;
   studentId: string;
   priority: number | null;
   universityId: number | null;
@@ -46,7 +47,7 @@ export const APP_STATUS_KO: Record<string, string> = {
 export async function loadStudentApplications(supabase: Client): Promise<Map<string, AppSummary[]>> {
   const { data: apps } = await supabase
     .from("study_applications")
-    .select("student_id, admission_spec_id, target_department_id, target_department_label, priority, term, status, created_at")
+    .select("id, student_id, admission_spec_id, target_department_id, target_department_label, priority, term, status, created_at")
     .neq("status", "cancelled");
   const specIds = Array.from(new Set((apps ?? []).map((a) => a.admission_spec_id).filter((x): x is string => !!x)));
 
@@ -84,6 +85,7 @@ export async function loadStudentApplications(supabase: Client): Promise<Map<str
     const term = a.term || spec?.term || "";
     const list = out.get(a.student_id) ?? [];
     list.push({
+      appId: a.id,
       studentId: a.student_id,
       priority: a.priority ?? null,
       universityId: spec?.university_id ?? null,
