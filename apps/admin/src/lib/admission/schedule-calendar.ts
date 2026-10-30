@@ -13,6 +13,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import type { Database } from "@/types/database";
+import { termLabelKo } from "@/lib/study/term-label";
 
 type Client = SupabaseClient<Database>;
 
@@ -61,11 +62,6 @@ export type CalendarEvent = {
   itemIds: string[];
 };
 
-const SEASON_KO: Record<string, string> = { Spring: "봄", Summer: "여름", Fall: "가을", Winter: "겨울", Year: "연중" };
-export function termLabelKo(term: string): string {
-  const [y, season] = term.split("-");
-  return season ? `${y} ${SEASON_KO[season] ?? season}` : term;
-}
 
 const ISO = /^\d{4}-\d{2}-\d{2}$/;
 const isIso = (v: unknown): v is string => typeof v === "string" && ISO.test(v);

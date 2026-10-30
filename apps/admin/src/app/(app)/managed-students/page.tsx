@@ -7,15 +7,15 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { buttonVariants } from "@/components/ui/button";
+import { TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { formatDate } from "@/lib/format";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { dash, formatDate } from "@/lib/format";
+  filterStudents,
+  listFilterQuery,
+  loadStudentApplications,
+  parseListFilter,
+} from "@/lib/study/student-applications";
+import { termLabelKo } from "@/lib/study/term-label";
 
 export const dynamic = "force-dynamic";
 
@@ -31,102 +31,64 @@ const LOC_LABEL: Record<string, string> = {
   other: "기타",
 };
 
-const SEASON_KO: Record<string, string> = { Spring: "봄", Summer: "여름", Fall: "가을", Winter: "겨울", Year: "연중" };
-/** "2027-Spring" → "2027 봄" */
-function termKo(term: string | null | undefined): string {
-  if (!term) return "";
-  const [y, season] = term.split("-");
-  return season ? `${y} ${SEASON_KO[season] ?? season}` : term;
-}
+const selectClass = "h-8 rounded-md border border-input bg-background px-2 text-sm";
 
-type SearchParams = Promise<{ q?: string; org?: string; loc?: string }>;
-
+/**
+ * /managed-students — 유학생 목록.
+ *   검색 조건(2026-10-30 학생관리업무 반영): 이름·연락처·이메일, 유학센터, 위치,
+ *   과정(D-2 학과 / D-4 어학당), 학기, 대학, 학과. 학기·대학·학과·과정은 '같은 지원 하나'가 모두 맞아야 통과.
+ *   엑셀 두 가지: 목록 엑셀(지금 조건 그대로, 6칸) / 지원자 명단 엑셀(대학 제출용 43칸, 학기·대학만 반영).
+ *   표는 화면 높이 안에서 스크롤 — 가로 스크롤바가 늘 화면 아래에 보이고 머리줄은 고정.
+ */
 export default async function ManagedStudentsPage({
   searchParams,
 }: {
-  searchParams: SearchParams;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const sp = await searchParams;
-  const q = (sp.q ?? "").trim();
-  const orgFilter = (sp.org ?? "").trim();
-  const locFilter = (sp.loc ?? "").trim();
+  const filter = parseListFilter(await searchParams);
 
   // service-role 로 모든 org 학생 조회 (admin = glocare_admin, 읽기 전용)
   const admin = createAdminClient();
 
-  const [{ data: students }, { data: orgs }, { data: files }, { data: apps }, { data: universities }, { data: specs }] =
-    await Promise.all([
-      admin
-        .from("study_managed_students")
-        .select(
-          "id, org_id, source, name, dob, phone, email, topik_level, current_visa, location, created_at"
-        )
-        .order("created_at", { ascending: false }),
-      admin.from("study_center_orgs").select("id, name_ko, name_vi"),
-      admin.from("study_student_submission_files").select("student_id"),
-      // 목록의 지원 대학·학과·학기 + 지원자 명단 엑셀 필터(학기)
-      admin
-        .from("study_applications")
-        .select("student_id, admission_spec_id, target_department_label, priority, term, created_at")
-        .neq("status", "cancelled"),
-      admin.from("universities").select("id, name_ko").order("name_ko", { ascending: true }),
-      admin.from("study_admission_specs").select("id, university_id, term"),
-    ]);
+  const [{ data: students }, { data: orgs }, { data: files }, appsByStudent] = await Promise.all([
+    admin
+      .from("study_managed_students")
+      .select("id, org_id, source, name, phone, email, current_visa, location, created_at")
+      .order("created_at", { ascending: false }),
+    admin.from("study_center_orgs").select("id, name_ko, name_vi"),
+    admin.from("study_student_submission_files").select("student_id"),
+    loadStudentApplications(admin),
+  ]);
 
-  const termOptions = Array.from(
-    new Set((apps ?? []).map((a) => a.term).filter((t): t is string => !!t))
-  ).sort((a, b) => b.localeCompare(a));
-
-  const orgMap = new Map(
-    (orgs ?? []).map((o) => [o.id, o.name_ko || o.name_vi])
-  );
-  // 학생별 지원 — 지망 순(없으면 먼저 만든 순). 학기는 지원서 값, 없으면 요강 값.
-  const uniName = new Map((universities ?? []).map((u) => [u.id, u.name_ko]));
-  const specById = new Map((specs ?? []).map((sp) => [sp.id, sp]));
-  const appsByStudent = new Map<string, { priority: number | null; university: string; dept: string; term: string; created: string }[]>();
-  for (const a of apps ?? []) {
-    const spec = a.admission_spec_id ? specById.get(a.admission_spec_id) : undefined;
-    const list = appsByStudent.get(a.student_id) ?? [];
-    list.push({
-      priority: a.priority ?? null,
-      university: (spec ? uniName.get(spec.university_id) : null) ?? "대학 미정",
-      dept: a.target_department_label ?? "",
-      term: termKo(a.term || spec?.term),
-      created: a.created_at,
-    });
-    appsByStudent.set(a.student_id, list);
-  }
-  for (const list of appsByStudent.values())
-    list.sort((x, y) => (x.priority ?? 99) - (y.priority ?? 99) || x.created.localeCompare(y.created));
-
+  const orgMap = new Map((orgs ?? []).map((o) => [o.id, o.name_ko || o.name_vi]));
   const fileCount = new Map<string, number>();
-  for (const f of files ?? [])
-    fileCount.set(f.student_id, (fileCount.get(f.student_id) ?? 0) + 1);
+  for (const f of files ?? []) fileCount.set(f.student_id, (fileCount.get(f.student_id) ?? 0) + 1);
 
-  // 유학센터 필터는 "본사 직접(B2C)" 도 고를 수 있어야 해서 self 를 특수값으로 둔다.
-  const norm = (v: string) => v.toLowerCase();
-  const needle = norm(q);
-  const rows = (students ?? []).filter((s) => {
-    if (needle) {
-      const hay = norm(
-        [s.name, s.phone, s.email].filter(Boolean).join(" ")
-      );
-      if (!hay.includes(needle)) return false;
-    }
-    if (orgFilter) {
-      if (orgFilter === "self") {
-        if (s.source !== "self") return false;
-      } else if (String(s.org_id ?? "") !== orgFilter) return false;
-    }
-    if (locFilter && (s.location ?? "") !== locFilter) return false;
-    return true;
-  });
+  // 필터 선택지 — 실제 지원에 쓰인 값만
+  const allApps = Array.from(appsByStudent.values()).flat();
+  const termOptions = Array.from(new Set(allApps.map((a) => a.term).filter(Boolean))).sort((a, b) => b.localeCompare(a));
+  const uniOptions = Array.from(
+    new Map(allApps.filter((a) => a.universityId != null).map((a) => [a.universityId as number, a.university])).entries()
+  ).sort((a, b) => a[1].localeCompare(b[1], "ko"));
+  const deptOptions = Array.from(
+    new Set(
+      allApps
+        .filter((a) => !filter.university || String(a.universityId ?? "") === filter.university)
+        .map((a) => a.dept)
+        .filter(Boolean)
+    )
+  ).sort((a, b) => a.localeCompare(b, "ko"));
+  const orgOptions = [...orgMap.entries()].sort((a, b) => String(a[1]).localeCompare(String(b[1]), "ko"));
 
-  const orgOptions = [...orgMap.entries()].sort((a, b) =>
-    String(a[1]).localeCompare(String(b[1]), "ko")
-  );
-  const hasFilter = !!(q || orgFilter || locFilter);
+  const rows = filterStudents(students ?? [], filter, appsByStudent);
+  const hasFilter = Object.values(filter).some(Boolean);
   const total = (students ?? []).length;
+  const qs = listFilterQuery(filter);
+  // 지원자 명단 엑셀(43칸)은 학기·대학 조건만 받는다
+  const rosterQs = new URLSearchParams({
+    ...(filter.term ? { term: filter.term } : {}),
+    ...(filter.university ? { u: filter.university } : {}),
+  }).toString();
 
   return (
     <>
@@ -137,29 +99,54 @@ export default async function ManagedStudentsPage({
       />
       <div className="p-6 space-y-4">
         <form method="get" className="flex flex-wrap items-end gap-2">
-          <div className="min-w-60 flex-1">
-            <label className="mb-1 block text-xs text-muted-foreground">
+          <div className="min-w-56 flex-1">
+            <label htmlFor="ms-q" className="mb-1 block text-xs text-muted-foreground">
               검색 (이름 · 연락처 · 이메일)
             </label>
             <div className="relative">
               <Search className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                name="q"
-                defaultValue={q}
-                placeholder="이름 / 010... / 이메일"
-                className="pl-8"
-              />
+              <Input id="ms-q" name="q" defaultValue={filter.q ?? ""} placeholder="이름 / 010... / 이메일" className="pl-8" />
             </div>
           </div>
-          <div>
-            <label className="mb-1 block text-xs text-muted-foreground">
-              유학센터
-            </label>
-            <select
-              name="org"
-              defaultValue={orgFilter}
-              className="h-8 min-w-44 rounded-md border border-input bg-background px-2 text-sm"
-            >
+          <Field label="과정" id="ms-course">
+            <select id="ms-course" name="course" defaultValue={filter.course ?? ""} className={`${selectClass} min-w-28`}>
+              <option value="">전체</option>
+              <option value="D-2">D-2 (학과)</option>
+              <option value="D-4">D-4 (어학당)</option>
+            </select>
+          </Field>
+          <Field label="학기" id="ms-term">
+            <select id="ms-term" name="term" defaultValue={filter.term ?? ""} className={`${selectClass} min-w-28`}>
+              <option value="">전체</option>
+              {termOptions.map((t) => (
+                <option key={t} value={t}>
+                  {termLabelKo(t)}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <Field label="대학" id="ms-u">
+            <select id="ms-u" name="u" defaultValue={filter.university ?? ""} className={`${selectClass} min-w-40`}>
+              <option value="">전체</option>
+              {uniOptions.map(([id, name]) => (
+                <option key={id} value={String(id)}>
+                  {name}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <Field label="학과(전공)" id="ms-dept">
+            <select id="ms-dept" name="dept" defaultValue={filter.dept ?? ""} className={`${selectClass} min-w-40`}>
+              <option value="">전체</option>
+              {deptOptions.map((d) => (
+                <option key={d} value={d}>
+                  {d}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <Field label="유학센터" id="ms-org">
+            <select id="ms-org" name="org" defaultValue={filter.org ?? ""} className={`${selectClass} min-w-40`}>
               <option value="">전체</option>
               <option value="self">본사 직접 (B2C)</option>
               {orgOptions.map(([id, name]) => (
@@ -168,16 +155,9 @@ export default async function ManagedStudentsPage({
                 </option>
               ))}
             </select>
-          </div>
-          <div>
-            <label className="mb-1 block text-xs text-muted-foreground">
-              위치
-            </label>
-            <select
-              name="loc"
-              defaultValue={locFilter}
-              className="h-8 min-w-28 rounded-md border border-input bg-background px-2 text-sm"
-            >
+          </Field>
+          <Field label="위치" id="ms-loc">
+            <select id="ms-loc" name="loc" defaultValue={filter.loc ?? ""} className={`${selectClass} min-w-24`}>
               <option value="">전체</option>
               {Object.entries(LOC_LABEL).map(([v, label]) => (
                 <option key={v} value={v}>
@@ -185,182 +165,136 @@ export default async function ManagedStudentsPage({
                 </option>
               ))}
             </select>
-          </div>
+          </Field>
           <button type="submit" className={buttonVariants()}>
             적용
           </button>
           {hasFilter ? (
-            <Link
-              href="/managed-students"
-              className={buttonVariants({ variant: "ghost" })}
-            >
+            <Link href="/managed-students" className={buttonVariants({ variant: "ghost" })}>
               초기화
             </Link>
           ) : null}
         </form>
 
-        {/* 지원자 명단 엑셀 — 학기·대학 필터 (지원서 기준, 학생 1명 = 1행) */}
-        <form
-          method="get"
-          action="/managed-students/export"
-          className="flex flex-wrap items-end gap-2 rounded-md border border-dashed px-3 py-2"
-        >
-          <div>
-            <label className="mb-1 block text-xs text-muted-foreground">
-              학기
-            </label>
-            <select
-              name="term"
-              defaultValue=""
-              className="h-8 min-w-36 rounded-md border border-input bg-background px-2 text-sm"
-            >
-              <option value="">전체</option>
-              {termOptions.map((t) => (
-                <option key={t} value={t}>
-                  {t}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="mb-1 block text-xs text-muted-foreground">
-              대학
-            </label>
-            <select
-              name="u"
-              defaultValue=""
-              className="h-8 min-w-44 rounded-md border border-input bg-background px-2 text-sm"
-            >
-              <option value="">전체</option>
-              {(universities ?? []).map((u) => (
-                <option key={u.id} value={String(u.id)}>
-                  {u.name_ko}
-                </option>
-              ))}
-            </select>
-          </div>
-          <button type="submit" className={buttonVariants({ variant: "outline" })}>
-            <Download className="size-4" />
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="mr-auto text-sm text-muted-foreground">
+            {hasFilter ? `${rows.length}명 / 총 ${total}명` : `총 ${total}명`}
+          </p>
+          <a
+            href={`/managed-students/list-export${qs ? `?${qs}` : ""}`}
+            className={buttonVariants({ variant: "outline", size: "sm" })}
+            title="지금 조건의 목록 — 이름·주민번호·진행단계·유학센터·대학교·전공"
+          >
+            <Download className="size-3.5" />
+            목록 엑셀
+          </a>
+          <a
+            href={`/managed-students/export${rosterQs ? `?${rosterQs}` : ""}`}
+            className={buttonVariants({ variant: "outline", size: "sm" })}
+            title="대학 제출용 43칸 양식 — 학기·대학 조건만 반영, 지원서(취소 제외)가 있는 학생만"
+          >
+            <Download className="size-3.5" />
             지원자 명단 엑셀
-          </button>
-          <span className="text-xs text-muted-foreground">
-            지원서(취소 제외)가 있는 학생만 · 1~3지망 포함
-          </span>
-        </form>
+          </a>
+        </div>
 
-        <p className="text-sm text-muted-foreground">
-          {hasFilter ? `${rows.length}명 / 총 ${total}명` : `총 ${total}명`}
-        </p>
         {rows.length === 0 ? (
           <Card className="p-12 text-center text-sm text-muted-foreground">
             {hasFilter ? "조건에 맞는 유학생이 없습니다." : "등록된 유학생이 없습니다."}
           </Card>
         ) : (
-          <Card className="overflow-hidden p-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>이름</TableHead>
-                  <TableHead className="min-w-64">지원 대학 · 학과 · 학기</TableHead>
-                  <TableHead className="w-48">유학센터</TableHead>
-                  <TableHead className="w-32">생년월일</TableHead>
-                  <TableHead className="w-36">연락처</TableHead>
-                  <TableHead className="w-20">TOPIK</TableHead>
-                  <TableHead className="w-24">비자</TableHead>
-                  <TableHead className="w-20">위치</TableHead>
-                  <TableHead className="w-20 text-center">서류</TableHead>
-                  <TableHead className="w-28">등록일</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {rows.map((s) => {
-                  const n = fileCount.get(s.id) ?? 0;
-                  return (
-                    <TableRow key={s.id} className="cursor-pointer">
-                      <TableCell className="font-medium">
-                        <Link
-                          href={`/managed-students/${s.id}`}
-                          className="inline-flex items-center gap-2 hover:text-primary"
-                        >
-                          {s.name}
-                          {s.source === "self" ? (
-                            <Badge variant="outline" className="text-[10px]">
-                              B2C
-                            </Badge>
-                          ) : null}
-                        </Link>
-                      </TableCell>
-                      <TableCell className="text-sm">
-                        <Link href={`/managed-students/${s.id}`} className="block space-y-0.5">
-                          {(appsByStudent.get(s.id) ?? []).length === 0 ? (
-                            <span className="text-muted-foreground">—</span>
-                          ) : (
-                            (appsByStudent.get(s.id) ?? []).map((a, i) => (
-                              <div key={i} className="flex items-baseline gap-1.5 leading-snug">
-                                {a.priority ? (
-                                  <span className="shrink-0 text-[11px] text-muted-foreground">{a.priority}지망</span>
-                                ) : null}
-                                <span>
-                                  {a.university}
-                                  <span className="text-muted-foreground">
-                                    {a.dept ? ` · ${a.dept}` : ""}
-                                    {a.term ? ` · ${a.term}` : ""}
+          <Card className="p-0">
+            {/* 화면 높이 안에서 스크롤 → 가로 스크롤바가 늘 보이고 머리줄은 고정 */}
+            <div className="max-h-[calc(100svh-17rem)] min-h-64 overflow-auto rounded-xl">
+              <table className="w-full caption-bottom text-sm">
+                <TableHeader>
+                  <TableRow className="[&>th]:sticky [&>th]:top-0 [&>th]:z-10 [&>th]:bg-card">
+                    <TableHead className="min-w-40">이름</TableHead>
+                    <TableHead className="min-w-80">지원 대학 · 학과 · 학기</TableHead>
+                    <TableHead className="min-w-44">유학센터</TableHead>
+                    <TableHead className="w-20">현재 비자</TableHead>
+                    <TableHead className="w-16 text-center">서류</TableHead>
+                    <TableHead className="w-28">등록일</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {rows.map((s) => {
+                    const n = fileCount.get(s.id) ?? 0;
+                    const apps = appsByStudent.get(s.id) ?? [];
+                    const href = `/managed-students/${s.id}`;
+                    return (
+                      <TableRow key={s.id} className="cursor-pointer">
+                        <TableCell className="font-medium">
+                          <Link href={href} className="inline-flex items-center gap-2 hover:text-primary">
+                            {s.name}
+                            {s.source === "self" ? (
+                              <Badge variant="outline" className="text-[10px]">
+                                B2C
+                              </Badge>
+                            ) : null}
+                          </Link>
+                        </TableCell>
+                        <TableCell className="text-sm">
+                          <Link href={href} className="block space-y-0.5">
+                            {apps.length === 0 ? (
+                              <span className="text-muted-foreground">—</span>
+                            ) : (
+                              apps.map((a, i) => (
+                                <div key={i} className="flex items-baseline gap-1.5 leading-snug">
+                                  {a.priority ? (
+                                    <span className="shrink-0 text-[11px] text-muted-foreground">{a.priority}지망</span>
+                                  ) : null}
+                                  {a.course ? (
+                                    <span className="shrink-0 rounded border border-border px-1 text-[10px] text-muted-foreground">
+                                      {a.course}
+                                    </span>
+                                  ) : null}
+                                  <span>
+                                    {a.university}
+                                    <span className="text-muted-foreground">
+                                      {a.dept ? ` · ${a.dept}` : ""}
+                                      {a.termLabel ? ` · ${a.termLabel}` : ""}
+                                    </span>
                                   </span>
-                                </span>
-                              </div>
-                            ))
-                          )}
-                        </Link>
-                      </TableCell>
-                      <TableCell className="text-sm text-muted-foreground">
-                        <Link href={`/managed-students/${s.id}`} className="block">
-                          {(s.org_id ? orgMap.get(s.org_id) : null) ??
-                            (s.source === "self" ? "본사 직접 (B2C)" : "—")}
-                        </Link>
-                      </TableCell>
-                      <TableCell className="text-sm">
-                        <Link href={`/managed-students/${s.id}`} className="block">
-                          {dash(formatDate(s.dob))}
-                        </Link>
-                      </TableCell>
-                      <TableCell className="text-sm">
-                        <Link href={`/managed-students/${s.id}`} className="block">
-                          {dash(s.phone)}
-                        </Link>
-                      </TableCell>
-                      <TableCell className="text-sm">
-                        <Link href={`/managed-students/${s.id}`} className="block">
-                          {s.topik_level ? `${s.topik_level}급` : "—"}
-                        </Link>
-                      </TableCell>
-                      <TableCell className="text-sm">
-                        <Link href={`/managed-students/${s.id}`} className="block">
-                          {s.current_visa ? VISA_LABEL[s.current_visa] ?? s.current_visa : "—"}
-                        </Link>
-                      </TableCell>
-                      <TableCell className="text-sm">
-                        <Link href={`/managed-students/${s.id}`} className="block">
-                          {s.location ? LOC_LABEL[s.location] ?? s.location : "—"}
-                        </Link>
-                      </TableCell>
-                      <TableCell className="text-center">
-                        {n > 0 ? (
-                          <Badge variant="secondary">{n}</Badge>
-                        ) : (
-                          <span className="text-xs text-muted-foreground">0</span>
-                        )}
-                      </TableCell>
-                      <TableCell className="text-xs text-muted-foreground">
-                        {formatDate(s.created_at)}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
+                                </div>
+                              ))
+                            )}
+                          </Link>
+                        </TableCell>
+                        <TableCell className="text-sm text-muted-foreground">
+                          <Link href={href} className="block">
+                            {(s.org_id ? orgMap.get(s.org_id) : null) ?? (s.source === "self" ? "본사 직접 (B2C)" : "—")}
+                          </Link>
+                        </TableCell>
+                        <TableCell className="text-sm">
+                          <Link href={href} className="block">
+                            {s.current_visa ? VISA_LABEL[s.current_visa] ?? s.current_visa : "—"}
+                          </Link>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          {n > 0 ? <Badge variant="secondary">{n}</Badge> : <span className="text-xs text-muted-foreground">0</span>}
+                        </TableCell>
+                        <TableCell className="text-xs text-muted-foreground">{formatDate(s.created_at)}</TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </table>
+            </div>
           </Card>
         )}
       </div>
     </>
+  );
+}
+
+function Field({ label, id, children }: { label: string; id: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <label htmlFor={id} className="mb-1 block text-xs text-muted-foreground">
+        {label}
+      </label>
+      {children}
+    </div>
   );
 }
