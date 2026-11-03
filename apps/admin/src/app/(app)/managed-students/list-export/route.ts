@@ -30,7 +30,7 @@ export async function GET(req: Request) {
   const filter = parseListFilter(Object.fromEntries(url.searchParams.entries()));
 
   const admin = createAdminClient();
-  const [{ data: students }, { data: orgs }, appsByStudent] = await Promise.all([
+  const [{ data: students }, { data: orgs }, appIndex] = await Promise.all([
     admin
       .from("study_managed_students")
       .select("id, org_id, source, name, phone, email, location, created_at")
@@ -38,7 +38,7 @@ export async function GET(req: Request) {
     admin.from("study_center_orgs").select("id, name_ko, name_vi"),
     loadStudentApplications(admin),
   ]);
-  const rows = filterStudents(students ?? [], filter, appsByStudent);
+  const rows = filterStudents(students ?? [], filter, appIndex);
 
   // 주민번호 — 학생 정보 입력 값에서
   const ids = rows.map((s) => s.id);
@@ -65,7 +65,7 @@ export async function GET(req: Request) {
     const n = idNo.get(s.id);
     const idText = n?.frn ?? (n?.cccd ? `${n.cccd} (CCCD)` : "");
     const center = (s.org_id ? orgName.get(s.org_id) : null) ?? (s.source === "self" ? "본사 직접 (B2C)" : "");
-    const apps = appsByStudent.get(s.id) ?? [];
+    const apps = appIndex.byStudent.get(s.id) ?? [];
     if (apps.length === 0) {
       out.push([s.name, idText, "", center, "", ""]);
       continue;

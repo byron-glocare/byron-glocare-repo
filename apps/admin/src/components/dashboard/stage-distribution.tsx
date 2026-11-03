@@ -52,23 +52,72 @@ function hrefForEntry(key: string, stage: string): string {
 }
 
 export function StageDistributionChart({ distribution }: Props) {
+  return (
+    <DistributionChart
+      data={distribution.map((d) => ({
+        name: d.key,
+        value: d.count,
+        color: COLORS[d.key] ?? COLORS[d.stage] ?? "#9CA3AF",
+        href: hrefForEntry(d.key, d.stage),
+      }))}
+      emptyText="아직 등록된 고객이 없습니다."
+      countLabel="고객 수"
+      rowTitle="교육생 보기"
+    />
+  );
+}
+
+// 유학생 단계별 컬러 — 진행 순서대로 파랑 → 초록, 종료는 위와 같은 회색 계열
+const STUDY_COLORS: Record<string, string> = {
+  "지원 전": "#9CA3AF",
+  "결제 전": "#3B82F6",
+  "서류 작성 중": "#F59E0B",
+  "서류 작성 완료": "#FF6060",
+  "대학교 제출 완료": "#10B981",
+  입학: "#059669",
+  종료: "#EF4444",
+};
+
+export type StudyDistribution = { stage: string; count: number }[];
+
+/** 유학생 단계 분포 — 칸을 누르면 그 단계의 유학생 목록으로 */
+export function StudyDistributionChart({ distribution }: { distribution: StudyDistribution }) {
+  return (
+    <DistributionChart
+      data={distribution.map((d) => ({
+        name: d.stage,
+        value: d.count,
+        color: STUDY_COLORS[d.stage] ?? "#9CA3AF",
+        href: `/managed-students?stage=${encodeURIComponent(d.stage)}`,
+      }))}
+      emptyText="아직 등록된 유학생이 없습니다."
+      countLabel="학생 수"
+      rowTitle="유학생 보기"
+    />
+  );
+}
+
+function DistributionChart({
+  data,
+  emptyText,
+  countLabel,
+  rowTitle,
+}: {
+  data: { name: string; value: number; color: string; href: string }[];
+  emptyText: string;
+  countLabel: string;
+  rowTitle: string;
+}) {
   const router = useRouter();
-  const total = distribution.reduce((sum, d) => sum + d.count, 0);
+  const total = data.reduce((sum, d) => sum + d.value, 0);
 
   if (total === 0) {
     return (
       <div className="text-center py-12 text-sm text-muted-foreground">
-        아직 등록된 고객이 없습니다.
+        {emptyText}
       </div>
     );
   }
-
-  const data = distribution.map((d) => ({
-    name: d.key,
-    value: d.count,
-    color: COLORS[d.key] ?? COLORS[d.stage] ?? "#9CA3AF",
-    href: hrefForEntry(d.key, d.stage),
-  }));
 
   return (
     <div className="grid lg:grid-cols-2 gap-6 items-center">
@@ -115,7 +164,7 @@ export function StageDistributionChart({ distribution }: Props) {
           <TableHeader>
             <TableRow>
               <TableHead>단계</TableHead>
-              <TableHead className="text-right">고객 수</TableHead>
+              <TableHead className="text-right">{countLabel}</TableHead>
               <TableHead className="text-right w-16">비율</TableHead>
             </TableRow>
           </TableHeader>
@@ -125,7 +174,7 @@ export function StageDistributionChart({ distribution }: Props) {
                 key={d.name}
                 className="cursor-pointer hover:bg-accent/40"
                 onClick={() => router.push(d.href)}
-                title={`${d.name.replace("_", " ")} 교육생 보기`}
+                title={`${d.name.replace("_", " ")} ${rowTitle}`}
               >
                 <TableCell className="flex items-center gap-2">
                   <span

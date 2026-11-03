@@ -15,6 +15,7 @@ import {
   listFilterQuery,
   loadStudentApplications,
   parseListFilter,
+  STUDY_STAGE_ORDER,
 } from "@/lib/study/student-applications";
 import { termLabelKo } from "@/lib/study/term-label";
 import { docProgress, fetchStudentDocStatus, type StudentDocStatus } from "@/lib/admission/call-student-documents";
@@ -39,6 +40,7 @@ const selectClass = "h-8 rounded-md border border-input bg-background px-2 text-
  * /managed-students — 유학생 목록.
  *   검색 조건(2026-10-30 학생관리업무 반영): 이름·연락처·이메일, 유학센터, 위치,
  *   과정(D-2 학과 / D-4 어학당), 학기, 대학, 학과. 학기·대학·학과·과정은 '같은 지원 하나'가 모두 맞아야 통과.
+ *   기본은 진행 중인 학생만 — 지원이 모두 끝난(불합격·취소·학기 종료) 학생은 '보기'에서 전체/종료만을 골라야 나온다.
  *   엑셀 두 가지: 목록 엑셀(지금 조건 그대로, 6칸) / 지원자 명단 엑셀(대학 제출용 43칸, 학기·대학만 반영).
  *   표는 화면 높이 안에서 스크롤 — 가로 스크롤바가 늘 화면 아래에 보이고 머리줄은 고정.
  */
@@ -52,7 +54,7 @@ export default async function ManagedStudentsPage({
   // service-role 로 모든 org 학생 조회 (admin = glocare_admin, 읽기 전용)
   const admin = createAdminClient();
 
-  const [{ data: students }, { data: orgs }, { data: files }, appsByStudent] = await Promise.all([
+  const [{ data: students }, { data: orgs }, { data: files }, appIndex] = await Promise.all([
     admin
       .from("study_managed_students")
       .select("id, org_id, source, name, phone, email, current_visa, location, created_at")
@@ -62,6 +64,7 @@ export default async function ManagedStudentsPage({
     loadStudentApplications(admin),
   ]);
 
+  const appsByStudent = appIndex.byStudent;
   const orgMap = new Map((orgs ?? []).map((o) => [o.id, o.name_ko || o.name_vi]));
   const fileCount = new Map<string, number>();
   for (const f of files ?? []) fileCount.set(f.student_id, (fileCount.get(f.student_id) ?? 0) + 1);
@@ -82,7 +85,12 @@ export default async function ManagedStudentsPage({
   ).sort((a, b) => a.localeCompare(b, "ko"));
   const orgOptions = [...orgMap.entries()].sort((a, b) => String(a[1]).localeCompare(String(b[1]), "ko"));
 
-  const rows = filterStudents(students ?? [], filter, appsByStudent);
+  const rows = filterStudents(students ?? [], filter, appIndex);
+  // 기본 보기에서 가려진 종료 학생 수
+  const defaultView = !filter.view && !filter.stage;
+  const hiddenEnded = defaultView
+    ? filterStudents(students ?? [], { ...filter, view: "all" }, appIndex).length - rows.length
+    : 0;
   // 지망별 서류 진행(n/m) — abroad 내부 API(학생 20명에 ~3초). 기다리지 않고 표를 먼저 보내고
   //   숫자는 도착하는 대로 채운다(Suspense). 실패하면 표시 안 함.
   const docPromise = fetchStudentDocStatus(rows.filter((s) => appsByStudent.has(s.id)).map((s) => s.id));
@@ -150,6 +158,23 @@ export default async function ManagedStudentsPage({
               ))}
             </select>
           </Field>
+          <Field label="단계" id="ms-stage">
+            <select id="ms-stage" name="stage" defaultValue={filter.stage ?? ""} className={`${selectClass} min-w-32`}>
+              <option value="">전체</option>
+              {STUDY_STAGE_ORDER.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <Field label="보기" id="ms-view">
+            <select id="ms-view" name="view" defaultValue={filter.view ?? ""} className={`${selectClass} min-w-24`}>
+              <option value="">진행 중</option>
+              <option value="all">전체</option>
+              <option value="ended">종료만</option>
+            </select>
+          </Field>
           <Field label="유학센터" id="ms-org">
             <select id="ms-org" name="org" defaultValue={filter.org ?? ""} className={`${selectClass} min-w-40`}>
               <option value="">전체</option>
@@ -183,7 +208,15 @@ export default async function ManagedStudentsPage({
 
         <div className="flex flex-wrap items-center gap-2">
           <p className="mr-auto text-sm text-muted-foreground">
-            {hasFilter ? `${rows.length}명 / 총 ${total}명` : `총 ${total}명`}
+            {rows.length}명 / 총 {total}명
+            {hiddenEnded > 0 ? (
+              <>
+                {" · "}
+                <Link href={`/managed-students?${listFilterQuery({ ...filter, view: "all" })}`} className="underline underline-offset-2 hover:text-foreground">
+                  종료 {hiddenEnded}명 제외됨 (포함해서 보기)
+                </Link>
+              </>
+            ) : null}
           </p>
           <a
             href={`/managed-students/list-export${qs ? `?${qs}` : ""}`}
@@ -235,6 +268,11 @@ export default async function ManagedStudentsPage({
                             {s.source === "self" ? (
                               <Badge variant="outline" className="text-[10px]">
                                 B2C
+                              </Badge>
+                            ) : null}
+                            {appIndex.endedStudents.has(s.id) ? (
+                              <Badge variant="secondary" className="text-[10px]">
+                                종료
                               </Badge>
                             ) : null}
                           </Link>

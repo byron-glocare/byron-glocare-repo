@@ -10,10 +10,12 @@ import {
   UserPlus,
 } from "lucide-react";
 
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient, createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/page-header";
 import { TaskCards } from "@/components/dashboard/task-cards";
-import { StageDistributionChart } from "@/components/dashboard/stage-distribution";
+import { StageDistributionChart, StudyDistributionChart } from "@/components/dashboard/stage-distribution";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { loadStudentApplications, STUDY_STAGE_ORDER, studentStage } from "@/lib/study/student-applications";
 import { NewCustomersCard } from "@/components/dashboard/new-customers-card";
 import { CumulativeStatsCard } from "@/components/dashboard/cumulative-stats-card";
 import { PartnersStatsCard } from "@/components/dashboard/partners-stats-card";
@@ -244,6 +246,22 @@ export default async function DashboardPage() {
 
   const taskBuckets = computeTaskBuckets(inputs);
   const stageDistribution = computeStageDistribution(inputs);
+
+  // 유학생 단계 분포 — 유학 데이터는 목록과 같이 서버 권한으로 읽는다((app) 레이아웃이 어드민만 통과시킨다)
+  const studyAdmin = createAdminClient();
+  const [{ data: studyStudents }, studyIndex] = await Promise.all([
+    studyAdmin.from("study_managed_students").select("id"),
+    loadStudentApplications(studyAdmin),
+  ]);
+  const studyCounts = new Map<string, number>();
+  for (const s of studyStudents ?? []) {
+    const stage = studentStage(s.id, studyIndex);
+    studyCounts.set(stage, (studyCounts.get(stage) ?? 0) + 1);
+  }
+  const studyDistribution = STUDY_STAGE_ORDER.filter((s) => studyCounts.has(s)).map((stage) => ({
+    stage,
+    count: studyCounts.get(stage) ?? 0,
+  }));
   const newCustomerCounts = computeNewCustomerCounts(customers ?? []);
   const cumulativeCounts = computeCumulativeCounts(inputs);
 
@@ -325,15 +343,29 @@ export default async function DashboardPage() {
         {/* 하단 2열: 단계 분포 + 신규 고객 */}
         <div className="grid gap-6 lg:grid-cols-3">
           <Card className="lg:col-span-2">
-            <CardHeader>
-              <CardTitle className="text-base">단계별 고객 분포</CardTitle>
-              <CardDescription>
-                자동 판정된 현재 단계 기준. 접수포기·교육드랍·종료는 모두 "종료"로 집계.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <StageDistributionChart distribution={stageDistribution} />
-            </CardContent>
+            <Tabs defaultValue="care">
+              <CardHeader className="flex-row flex-wrap items-center justify-between gap-3">
+                <CardTitle className="text-base">단계별 고객 분포</CardTitle>
+                <TabsList>
+                  <TabsTrigger value="care">요양</TabsTrigger>
+                  <TabsTrigger value="study">유학</TabsTrigger>
+                </TabsList>
+              </CardHeader>
+              <CardContent className="pt-4">
+                <TabsContent value="care" className="space-y-3">
+                  <CardDescription>
+                    자동 판정된 현재 단계 기준. 접수포기·교육드랍·종료는 모두 &quot;종료&quot;로 집계.
+                  </CardDescription>
+                  <StageDistributionChart distribution={stageDistribution} />
+                </TabsContent>
+                <TabsContent value="study" className="space-y-3">
+                  <CardDescription>
+                    학생의 끝나지 않은 첫 지망 상태 기준. 불합격·취소·학기가 끝난 지원만 남은 학생은 &quot;종료&quot;로 집계.
+                  </CardDescription>
+                  <StudyDistributionChart distribution={studyDistribution} />
+                </TabsContent>
+              </CardContent>
+            </Tabs>
           </Card>
 
           <div className="space-y-3">

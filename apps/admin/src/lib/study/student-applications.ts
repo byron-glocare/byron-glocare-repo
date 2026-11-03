@@ -6,11 +6,17 @@
  *   학생이 학과에 지원하면 과정은 D-2 다(2026-10-30 결정).
  *   학과 판별은 abroad 의 pickDepartment 와 같다: target_department_id 가 요강 학과에 있으면 그것,
  *   없으면(옛 지원) 첫 정규 학과, 그것도 없으면 어학당.
+ *
+ *   종료 판정(따로 체크하는 칸이 없어 계산한다, 2026-11-03):
+ *     지원 하나가 끝남 = 불합격·취소이거나, 학기가 끝남(종강일이 지남).
+ *     종강일은 요강 일정에서 읽고, 비어 있으면(지원 대부분이 그렇다) 학기 이름으로 추정한다 — termEndDate.
+ *     학생이 종료 = 지원이 하나 이상 있고 그 지원이 모두 끝남. 지원이 없는 학생은 종료가 아니다.
  */
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import type { Database } from "@/types/database";
+import { todayKstStr } from "@/lib/training-class-schedule";
 import { termLabelKo } from "./term-label";
 
 type Client = SupabaseClient<Database>;
@@ -31,7 +37,30 @@ export type AppSummary = {
   course: Course | null;
   status: string;
   created: string;
+  /** 불합격이거나 학기가 끝난 지원 */
+  ended: boolean;
 };
+
+/** byStudent = 학생별 지원(취소 제외) · endedStudents = 지원이 모두 끝난 학생 */
+export type StudentAppIndex = {
+  byStudent: Map<string, AppSummary[]>;
+  endedStudents: Set<string>;
+};
+
+/**
+ * 학기가 끝나는 날. 요강의 종강일이 있으면 그 날, 없으면 다음 학기 전날로 추정:
+ *   봄·여름 → 그해 8/31, 가을·겨울 → 다음 해 2/28, 연중 → 그해 12/31. 형식을 모르면 null(끝나지 않은 것으로 본다).
+ */
+export function termEndDate(term: string, schedule: unknown): string | null {
+  const end = (schedule as { semester_end?: unknown } | null)?.semester_end;
+  if (typeof end === "string" && /^\d{4}-\d{2}-\d{2}$/.test(end)) return end;
+  const m = /^(\d{4})-(Spring|Summer|Fall|Winter|Year)$/.exec(term);
+  if (!m) return null;
+  const y = Number(m[1]);
+  if (m[2] === "Spring" || m[2] === "Summer") return `${y}-08-31`;
+  if (m[2] === "Year") return `${y}-12-31`;
+  return `${y + 1}-02-28`;
+}
 
 /** 지원 단계 한국어 라벨 — abroad 센터 화면(applications/status.ts)과 같은 말 */
 export const APP_STATUS_KO: Record<string, string> = {
@@ -44,20 +73,26 @@ export const APP_STATUS_KO: Record<string, string> = {
   cancelled: "중도 취소",
 };
 
-export async function loadStudentApplications(supabase: Client): Promise<Map<string, AppSummary[]>> {
+export async function loadStudentApplications(supabase: Client): Promise<StudentAppIndex> {
   const { data: apps } = await supabase
     .from("study_applications")
-    .select("id, student_id, admission_spec_id, target_department_id, target_department_label, priority, term, status, created_at")
-    .neq("status", "cancelled");
+    .select("id, student_id, admission_spec_id, target_department_id, target_department_label, priority, term, status, created_at");
   const specIds = Array.from(new Set((apps ?? []).map((a) => a.admission_spec_id).filter((x): x is string => !!x)));
 
-  const [{ data: specs }, { data: specDepts }] =
+  const [{ data: specs }, { data: specDepts }, { data: specTerms }] =
     specIds.length > 0
       ? await Promise.all([
           supabase.from("study_admission_specs").select("id, university_id, term").in("id", specIds),
           supabase.from("study_spec_departments").select("spec_id, department_id, kind, sort_order").in("spec_id", specIds),
+          supabase.from("study_spec_terms").select("spec_id, term, schedule, schedule_language").in("spec_id", specIds),
         ])
-      : [{ data: [] as { id: string; university_id: number; term: string }[] }, { data: [] as { spec_id: string; department_id: number | null; kind: string; sort_order: number | null }[] }];
+      : [
+          { data: [] as { id: string; university_id: number; term: string }[] },
+          { data: [] as { spec_id: string; department_id: number | null; kind: string; sort_order: number | null }[] },
+          { data: [] as { spec_id: string; term: string; schedule: unknown; schedule_language: unknown }[] },
+        ];
+  const today = todayKstStr();
+  const termRow = new Map((specTerms ?? []).map((t) => [`${t.spec_id}::${t.term}`, t]));
 
   const uniIds = Array.from(new Set((specs ?? []).map((s) => s.university_id)));
   const { data: unis } =
@@ -75,7 +110,10 @@ export async function loadStudentApplications(supabase: Client): Promise<Map<str
   }
 
   const out = new Map<string, AppSummary[]>();
+  const applied = new Set<string>();
   for (const a of apps ?? []) {
+    applied.add(a.student_id);
+    if (a.status === "cancelled") continue;
     const spec = a.admission_spec_id ? specById.get(a.admission_spec_id) : undefined;
     const rows = (a.admission_spec_id ? deptsBySpec.get(a.admission_spec_id) : undefined) ?? [];
     const dept =
@@ -83,6 +121,8 @@ export async function loadStudentApplications(supabase: Client): Promise<Map<str
       rows.find((d) => d.kind === "regular") ??
       rows.find((d) => d.kind === "language");
     const term = a.term || spec?.term || "";
+    const row = termRow.get(`${a.admission_spec_id}::${term}`);
+    const end = termEndDate(term, dept?.kind === "language" ? row?.schedule_language : row?.schedule);
     const list = out.get(a.student_id) ?? [];
     list.push({
       appId: a.id,
@@ -96,12 +136,33 @@ export async function loadStudentApplications(supabase: Client): Promise<Map<str
       course: dept ? (dept.kind === "language" ? "D-4" : "D-2") : null,
       status: a.status,
       created: a.created_at,
+      ended: a.status === "rejected" || (end != null && end < today),
     });
     out.set(a.student_id, list);
   }
   for (const list of out.values())
     list.sort((x, y) => (x.priority ?? 99) - (y.priority ?? 99) || x.created.localeCompare(y.created));
-  return out;
+  const endedStudents = new Set(
+    Array.from(applied).filter((id) => (out.get(id) ?? []).every((a) => a.ended))
+  );
+  return { byStudent: out, endedStudents };
+}
+
+/** 대시보드·목록의 학생 단계 — 끝나지 않은 첫 지망의 상태. 지원이 없으면 '지원 전', 모두 끝났으면 '종료' */
+export const STUDY_STAGE_ORDER = [
+  "지원 전",
+  APP_STATUS_KO.payment_pending,
+  APP_STATUS_KO.preparing,
+  APP_STATUS_KO.docs_complete,
+  APP_STATUS_KO.submitted,
+  APP_STATUS_KO.enrolled,
+  "종료",
+];
+
+export function studentStage(id: string, index: StudentAppIndex): string {
+  if (index.endedStudents.has(id)) return "종료";
+  const first = (index.byStudent.get(id) ?? []).find((a) => !a.ended);
+  return first ? APP_STATUS_KO[first.status] ?? first.status : "지원 전";
 }
 
 /** 목록 필터 — 지원 단위 조건(학기·대학·학과·과정)은 '같은 지원 하나'가 모두 맞아야 통과 */
@@ -119,14 +180,21 @@ export function matchesAppFilter(apps: AppSummary[], f: AppFilter): boolean {
 }
 
 /** 유학생 목록 검색 조건 (URL 쿼리) — 목록 화면과 목록 엑셀이 같은 규칙을 쓴다 */
-export type ListFilter = AppFilter & { q?: string; org?: string; loc?: string };
+export type ListFilter = AppFilter & {
+  q?: string;
+  org?: string;
+  loc?: string;
+  /** 비어 있으면 진행 중만 · all = 전체 · ended = 종료만 */
+  view?: string;
+  stage?: string;
+};
 
 export function parseListFilter(sp: Record<string, string | string[] | undefined>): ListFilter {
   const v = (k: string) => {
     const x = sp[k];
     return (Array.isArray(x) ? x[0] : x ?? "").trim() || undefined;
   };
-  return { q: v("q"), org: v("org"), loc: v("loc"), course: v("course"), term: v("term"), university: v("u"), dept: v("dept") };
+  return { q: v("q"), org: v("org"), loc: v("loc"), course: v("course"), term: v("term"), university: v("u"), dept: v("dept"), view: v("view"), stage: v("stage") };
 }
 
 /** 같은 조건을 다시 쿼리스트링으로 (엑셀 링크용) */
@@ -140,6 +208,8 @@ export function listFilterQuery(f: ListFilter): string {
   put("term", f.term);
   put("u", f.university);
   put("dept", f.dept);
+  put("view", f.view);
+  put("stage", f.stage);
   return qs.toString();
 }
 
@@ -157,7 +227,7 @@ type StudentLite = {
 export function filterStudents<T extends StudentLite>(
   students: T[],
   f: ListFilter,
-  appsByStudent: Map<string, AppSummary[]>
+  index: StudentAppIndex
 ): T[] {
   const needle = (f.q ?? "").toLowerCase();
   return students.filter((s) => {
@@ -168,6 +238,14 @@ export function filterStudents<T extends StudentLite>(
       } else if (String(s.org_id ?? "") !== f.org) return false;
     }
     if (f.loc && (s.location ?? "") !== f.loc) return false;
-    return matchesAppFilter(appsByStudent.get(s.id) ?? [], f);
+    // 단계를 고르면 그 단계가 곧 조건이다 — '종료' 단계를 골랐는데 보기 조건이 가리면 안 된다.
+    if (f.stage) {
+      if (studentStage(s.id, index) !== f.stage) return false;
+    } else if (f.view === "ended") {
+      if (!index.endedStudents.has(s.id)) return false;
+    } else if (f.view !== "all" && index.endedStudents.has(s.id)) {
+      return false;
+    }
+    return matchesAppFilter(index.byStudent.get(s.id) ?? [], f);
   });
 }
