@@ -360,7 +360,7 @@ export default async function DashboardPage() {
                 </TabsContent>
                 <TabsContent value="study" className="space-y-3">
                   <CardDescription>
-                    학생의 끝나지 않은 첫 지망 상태 기준. 불합격·취소·학기가 끝난 지원만 남은 학생은 &quot;종료&quot;로 집계.
+                    학생의 끝나지 않은 첫 지망 상태 기준. 불합격·취소·종료된 학기의 지원만 남은 학생은 &quot;종료&quot;로 집계.
                   </CardDescription>
                   <StudyDistributionChart distribution={studyDistribution} />
                 </TabsContent>

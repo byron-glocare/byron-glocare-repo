@@ -40,7 +40,8 @@ const selectClass = "h-8 rounded-md border border-input bg-background px-2 text-
  * /managed-students — 유학생 목록.
  *   검색 조건(2026-10-30 학생관리업무 반영): 이름·연락처·이메일, 유학센터, 위치,
  *   과정(D-2 학과 / D-4 어학당), 학기, 대학, 학과. 학기·대학·학과·과정은 '같은 지원 하나'가 모두 맞아야 통과.
- *   기본은 진행 중인 학생만 — 지원이 모두 끝난(불합격·취소·학기 종료) 학생은 '보기'에서 전체/종료만을 골라야 나온다.
+ *   기본은 진행 중인 학생만 — 지원한 학기가 모두 종료된 학생과 아무 데도 지원하지 않은 학생은
+ *   '보기'에서 전체/진행 중 아님을 고르거나 이름으로 검색해야 나온다. 학기 종료는 /managed-students/terms.
  *   엑셀 두 가지: 목록 엑셀(지금 조건 그대로, 6칸) / 지원자 명단 엑셀(대학 제출용 43칸, 학기·대학만 반영).
  *   표는 화면 높이 안에서 스크롤 — 가로 스크롤바가 늘 화면 아래에 보이고 머리줄은 고정.
  */
@@ -109,6 +110,11 @@ export default async function ManagedStudentsPage({
         title="유학생"
         description="유학센터에서 등록한 전체 유학생 — 조회 및 다운로드"
         breadcrumbs={[{ label: "유학생" }]}
+        actions={
+          <Link href="/managed-students/terms" className={buttonVariants({ variant: "outline", size: "sm" })}>
+            학기 종료 관리
+          </Link>
+        }
       />
       <div className="p-6 space-y-4">
         <form method="get" className="flex flex-wrap items-end gap-2">
@@ -172,7 +178,7 @@ export default async function ManagedStudentsPage({
             <select id="ms-view" name="view" defaultValue={filter.view ?? ""} className={`${selectClass} min-w-24`}>
               <option value="">진행 중</option>
               <option value="all">전체</option>
-              <option value="ended">종료만</option>
+              <option value="inactive">진행 중 아님</option>
             </select>
           </Field>
           <Field label="유학센터" id="ms-org">
@@ -213,7 +219,7 @@ export default async function ManagedStudentsPage({
               <>
                 {" · "}
                 <Link href={`/managed-students?${listFilterQuery({ ...filter, view: "all" })}`} className="underline underline-offset-2 hover:text-foreground">
-                  종료 {hiddenEnded}명 제외됨 (포함해서 보기)
+                  진행 중 아닌 {hiddenEnded}명 제외됨 (포함해서 보기)
                 </Link>
               </>
             ) : null}

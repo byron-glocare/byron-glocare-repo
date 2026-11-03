@@ -7,16 +7,16 @@
  *   학과 판별은 abroad 의 pickDepartment 와 같다: target_department_id 가 요강 학과에 있으면 그것,
  *   없으면(옛 지원) 첫 정규 학과, 그것도 없으면 어학당.
  *
- *   종료 판정(따로 체크하는 칸이 없어 계산한다, 2026-11-03):
- *     지원 하나가 끝남 = 불합격·취소이거나, 학기가 끝남(종강일이 지남).
- *     종강일은 요강 일정에서 읽고, 비어 있으면(지원 대부분이 그렇다) 학기 이름으로 추정한다 — termEndDate.
- *     학생이 종료 = 지원이 하나 이상 있고 그 지원이 모두 끝남. 지원이 없는 학생은 종료가 아니다.
+ *   진행 중 판정(2026-11-03):
+ *     지원 하나가 끝남 = 불합격·취소이거나, 어드민이 그 학기를 종료함(study_spec_terms.closed_at).
+ *     날짜로 자동 종료하지 않는다 — 끝났는지는 사람이 정한다(/managed-students/terms).
+ *     학생이 종료 = 지원이 있고 모두 끝남. 진행 중 = 끝나지 않은 지원이 하나라도 있음.
+ *     아무 데도 지원하지 않은 학생은 종료는 아니지만 진행 중도 아니다.
  */
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import type { Database } from "@/types/database";
-import { todayKstStr } from "@/lib/training-class-schedule";
 import { termLabelKo } from "./term-label";
 
 type Client = SupabaseClient<Database>;
@@ -37,7 +37,7 @@ export type AppSummary = {
   course: Course | null;
   status: string;
   created: string;
-  /** 불합격이거나 학기가 끝난 지원 */
+  /** 불합격이거나 학기가 종료된 지원 */
   ended: boolean;
 };
 
@@ -47,19 +47,9 @@ export type StudentAppIndex = {
   endedStudents: Set<string>;
 };
 
-/**
- * 학기가 끝나는 날. 요강의 종강일이 있으면 그 날, 없으면 다음 학기 전날로 추정:
- *   봄·여름 → 그해 8/31, 가을·겨울 → 다음 해 2/28, 연중 → 그해 12/31. 형식을 모르면 null(끝나지 않은 것으로 본다).
- */
-export function termEndDate(term: string, schedule: unknown): string | null {
-  const end = (schedule as { semester_end?: unknown } | null)?.semester_end;
-  if (typeof end === "string" && /^\d{4}-\d{2}-\d{2}$/.test(end)) return end;
-  const m = /^(\d{4})-(Spring|Summer|Fall|Winter|Year)$/.exec(term);
-  if (!m) return null;
-  const y = Number(m[1]);
-  if (m[2] === "Spring" || m[2] === "Summer") return `${y}-08-31`;
-  if (m[2] === "Year") return `${y}-12-31`;
-  return `${y + 1}-02-28`;
+/** 진행 중 = 끝나지 않은 지원이 하나라도 있음 (지원이 없으면 진행 중이 아니다) */
+export function isInProgress(id: string, index: StudentAppIndex): boolean {
+  return (index.byStudent.get(id) ?? []).some((a) => !a.ended);
 }
 
 /** 지원 단계 한국어 라벨 — abroad 센터 화면(applications/status.ts)과 같은 말 */
@@ -84,15 +74,16 @@ export async function loadStudentApplications(supabase: Client): Promise<Student
       ? await Promise.all([
           supabase.from("study_admission_specs").select("id, university_id, term").in("id", specIds),
           supabase.from("study_spec_departments").select("spec_id, department_id, kind, sort_order").in("spec_id", specIds),
-          supabase.from("study_spec_terms").select("spec_id, term, schedule, schedule_language").in("spec_id", specIds),
+          supabase.from("study_spec_terms").select("spec_id, term, closed_at").in("spec_id", specIds),
         ])
       : [
           { data: [] as { id: string; university_id: number; term: string }[] },
           { data: [] as { spec_id: string; department_id: number | null; kind: string; sort_order: number | null }[] },
-          { data: [] as { spec_id: string; term: string; schedule: unknown; schedule_language: unknown }[] },
+          { data: [] as { spec_id: string; term: string; closed_at: string | null }[] },
         ];
-  const today = todayKstStr();
-  const termRow = new Map((specTerms ?? []).map((t) => [`${t.spec_id}::${t.term}`, t]));
+  const closedTerms = new Set(
+    (specTerms ?? []).filter((t) => t.closed_at).map((t) => `${t.spec_id}::${t.term}`)
+  );
 
   const uniIds = Array.from(new Set((specs ?? []).map((s) => s.university_id)));
   const { data: unis } =
@@ -121,8 +112,6 @@ export async function loadStudentApplications(supabase: Client): Promise<Student
       rows.find((d) => d.kind === "regular") ??
       rows.find((d) => d.kind === "language");
     const term = a.term || spec?.term || "";
-    const row = termRow.get(`${a.admission_spec_id}::${term}`);
-    const end = termEndDate(term, dept?.kind === "language" ? row?.schedule_language : row?.schedule);
     const list = out.get(a.student_id) ?? [];
     list.push({
       appId: a.id,
@@ -136,7 +125,7 @@ export async function loadStudentApplications(supabase: Client): Promise<Student
       course: dept ? (dept.kind === "language" ? "D-4" : "D-2") : null,
       status: a.status,
       created: a.created_at,
-      ended: a.status === "rejected" || (end != null && end < today),
+      ended: a.status === "rejected" || closedTerms.has(`${a.admission_spec_id}::${term}`),
     });
     out.set(a.student_id, list);
   }
@@ -184,7 +173,7 @@ export type ListFilter = AppFilter & {
   q?: string;
   org?: string;
   loc?: string;
-  /** 비어 있으면 진행 중만 · all = 전체 · ended = 종료만 */
+  /** 비어 있으면 진행 중만 · all = 전체 · inactive = 진행 중 아님(종료·미지원) */
   view?: string;
   stage?: string;
 };
@@ -223,7 +212,10 @@ type StudentLite = {
   location: string | null;
 };
 
-/** 유학센터 조건 'self' = 본사 직접(B2C) */
+/**
+ * 유학센터 조건 'self' = 본사 직접(B2C).
+ * 검색어가 있으면 진행 여부로 가리지 않는다 — 특정 학생을 찾는데 종료·미지원이라 안 나오면 없는 학생으로 오해한다.
+ */
 export function filterStudents<T extends StudentLite>(
   students: T[],
   f: ListFilter,
@@ -241,9 +233,9 @@ export function filterStudents<T extends StudentLite>(
     // 단계를 고르면 그 단계가 곧 조건이다 — '종료' 단계를 골랐는데 보기 조건이 가리면 안 된다.
     if (f.stage) {
       if (studentStage(s.id, index) !== f.stage) return false;
-    } else if (f.view === "ended") {
-      if (!index.endedStudents.has(s.id)) return false;
-    } else if (f.view !== "all" && index.endedStudents.has(s.id)) {
+    } else if (f.view === "inactive") {
+      if (isInProgress(s.id, index)) return false;
+    } else if (f.view !== "all" && !needle && !isInProgress(s.id, index)) {
       return false;
     }
     return matchesAppFilter(index.byStudent.get(s.id) ?? [], f);

@@ -2383,6 +2383,8 @@ export type Database = {
           schedule_language: unknown;
           notes: string | null;
           sort_order: number;
+          /** 어드민이 학기를 종료한 시각. null = 진행 중. 0081 */
+          closed_at: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -2392,6 +2394,7 @@ export type Database = {
           term: string;
           schedule?: unknown;
           schedule_language?: unknown;
+          closed_at?: string | null;
           notes?: string | null;
           sort_order?: number;
           created_at?: string;
