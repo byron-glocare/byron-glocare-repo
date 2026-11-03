@@ -14,6 +14,7 @@ import {
   submissionFileName,
 } from "@/lib/admission/submission-file-naming";
 import { ReassignCenter } from "./reassign-center";
+import { StudentCloseButton } from "./student-close-button";
 import { docProgress, fetchStudentDocStatus } from "@/lib/admission/call-student-documents";
 import { termLabelKo } from "@/lib/study/term-label";
 import { DocPreviewProvider, PreviewButton, type PreviewDoc } from "./doc-preview";
@@ -297,6 +298,14 @@ export default async function ManagedStudentDetailPage({
           { href: "/managed-students", label: "유학생" },
           { label: student.name },
         ]}
+        actions={
+          <div className="flex items-center gap-2">
+            {student.closed_at ? (
+              <Badge variant="secondary">{formatDate(student.closed_at)} 종료</Badge>
+            ) : null}
+            <StudentCloseButton studentId={id} name={student.name} closed={!!student.closed_at} />
+          </div>
+        }
       />
       <DocPreviewProvider docs={previewDocs}>
       <div className="p-6 space-y-6">

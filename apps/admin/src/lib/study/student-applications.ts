@@ -10,7 +10,8 @@
  *   진행 중 판정(2026-11-03):
  *     지원 하나가 끝남 = 불합격·취소이거나, 어드민이 그 학기를 종료함(study_spec_terms.closed_at).
  *     날짜로 자동 종료하지 않는다 — 끝났는지는 사람이 정한다(/managed-students/terms).
- *     학생이 종료 = 지원이 있고 모두 끝남. 진행 중 = 끝나지 않은 지원이 하나라도 있음.
+ *     학생이 종료 = 어드민이 그 학생을 종료함(study_managed_students.closed_at), 또는 지원이 있고 모두 끝남.
+ *     진행 중 = 종료가 아니고 끝나지 않은 지원이 하나라도 있음.
  *     아무 데도 지원하지 않은 학생은 종료는 아니지만 진행 중도 아니다.
  */
 
@@ -41,15 +42,15 @@ export type AppSummary = {
   ended: boolean;
 };
 
-/** byStudent = 학생별 지원(취소 제외) · endedStudents = 지원이 모두 끝난 학생 */
+/** byStudent = 학생별 지원(취소 제외) · endedStudents = 직접 종료했거나 지원이 모두 끝난 학생 */
 export type StudentAppIndex = {
   byStudent: Map<string, AppSummary[]>;
   endedStudents: Set<string>;
 };
 
-/** 진행 중 = 끝나지 않은 지원이 하나라도 있음 (지원이 없으면 진행 중이 아니다) */
+/** 진행 중 = 종료가 아니고 끝나지 않은 지원이 하나라도 있음 (지원이 없으면 진행 중이 아니다) */
 export function isInProgress(id: string, index: StudentAppIndex): boolean {
-  return (index.byStudent.get(id) ?? []).some((a) => !a.ended);
+  return !index.endedStudents.has(id) && (index.byStudent.get(id) ?? []).some((a) => !a.ended);
 }
 
 /** 지원 단계 한국어 라벨 — abroad 센터 화면(applications/status.ts)과 같은 말 */
@@ -131,9 +132,14 @@ export async function loadStudentApplications(supabase: Client): Promise<Student
   }
   for (const list of out.values())
     list.sort((x, y) => (x.priority ?? 99) - (y.priority ?? 99) || x.created.localeCompare(y.created));
-  const endedStudents = new Set(
-    Array.from(applied).filter((id) => (out.get(id) ?? []).every((a) => a.ended))
-  );
+  const { data: closedStudents } = await supabase
+    .from("study_managed_students")
+    .select("id")
+    .not("closed_at", "is", null);
+  const endedStudents = new Set([
+    ...Array.from(applied).filter((id) => (out.get(id) ?? []).every((a) => a.ended)),
+    ...(closedStudents ?? []).map((s) => s.id),
+  ]);
   return { byStudent: out, endedStudents };
 }
 

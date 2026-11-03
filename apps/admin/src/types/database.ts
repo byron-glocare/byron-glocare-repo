@@ -1278,11 +1278,14 @@ export type Database = {
           current_visa: string | null;
           location: string | null;
           notes: string | null;
+          /** 어드민이 학생을 종료한 시각. null = 종료 아님. 0082 */
+          closed_at: string | null;
           created_at: string;
           updated_at: string;
         };
         Insert: {
           id?: string;
+          closed_at?: string | null;
           org_id?: string | null;
           auth_user_id?: string | null;
           source?: "center" | "self";

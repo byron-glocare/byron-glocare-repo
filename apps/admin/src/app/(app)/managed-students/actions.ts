@@ -86,3 +86,21 @@ export async function reassignStudentAction(
   revalidatePath("/managed-students");
   return { ok: true };
 }
+
+/** 학생 종료/되돌리기 — 목록 기본 화면(진행 중)에서 빠지거나 돌아온다. 지원·서류는 그대로. 글로케어 어드민 전용. */
+export async function setStudentClosedAction(studentId: string, closed: boolean): Promise<ReassignResult> {
+  const guard = await requireGlocareAdmin();
+  if (!guard.ok) return guard;
+
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("study_managed_students")
+    .update({ closed_at: closed ? new Date().toISOString() : null })
+    .eq("id", studentId);
+  if (error) return { ok: false, error: error.message };
+
+  revalidatePath(`/managed-students/${studentId}`);
+  revalidatePath("/managed-students");
+  revalidatePath("/");
+  return { ok: true };
+}
