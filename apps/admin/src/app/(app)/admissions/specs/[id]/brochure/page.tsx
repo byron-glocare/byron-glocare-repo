@@ -1,6 +1,6 @@
 /**
- * /admissions/specs/[id]/brochure — 모집요강 PDF (베트남어 전용).
- *   ?dept=<요강 학과 id>|all (기본 all = 활성 학과 전부) · ?term=YYYY-Season (기본 가장 늦은 학기)
+ * /admissions/specs/[id]/brochure — 모집요강 PDF (베트남어·한국어).
+ *   ?lang=ko (기본 베트남어) · ?dept=<요강 학과 id>|all (기본 all = 활성 학과 전부) · ?term=YYYY-Season (기본 가장 늦은 학기)
  *   인쇄용 A4 페이지. 브라우저 인쇄 → "PDF로 저장". 학과마다 새 페이지.
  *   어드민 레이아웃 안에서 그려지므로, 인쇄 때는 사이드바·헤더를 숨기고 스크롤 컨테이너를 푼다.
  */
@@ -10,20 +10,28 @@ import { notFound } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
 import { loadBrochure, type BrochureBlock, type BrochurePage } from "@/lib/admission/brochure-data";
-import { BROCHURE_FOOTER, GLOCARE_INTRO_VI, L } from "@/lib/admission/brochure-text";
+import { BROCHURE_FOOTER } from "@/lib/admission/brochure-text";
+import { brochureText, parseBrochureLang, type BrochureText } from "@/lib/admission/brochure-lang";
 
 import { BrochureToolbar } from "./brochure-toolbar";
 
 export const dynamic = "force-dynamic";
-/** 문서 제목 = "PDF로 저장" 기본 파일 이름 → 베트남어로 */
-export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+/** 문서 제목 = "PDF로 저장" 기본 파일 이름 → 고른 언어로 */
+export async function generateMetadata({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ lang?: string }>;
+}): Promise<Metadata> {
   const { id } = await params;
+  const lang = parseBrochureLang((await searchParams).lang);
   const supabase = await createClient();
   const { data: spec } = await supabase.from("study_admission_specs").select("university_id").eq("id", id).maybeSingle();
   if (!spec) return { title: "Glocare" };
   const { data: uni } = await supabase.from("universities").select("name_ko, name_vi").eq("id", spec.university_id).maybeSingle();
-  const name = uni?.name_vi?.trim() || uni?.name_ko || "";
-  return { title: `${name} — ${L.eyebrow} · Glocare` };
+  const name = (lang === "vi" ? uni?.name_vi?.trim() : null) || uni?.name_ko || "";
+  return { title: `${name} — ${brochureText(lang).L.eyebrow} · Glocare` };
 }
 
 export default async function BrochurePdfPage({
@@ -31,13 +39,15 @@ export default async function BrochurePdfPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ dept?: string; term?: string }>;
+  searchParams: Promise<{ dept?: string; term?: string; lang?: string }>;
 }) {
   const { id } = await params;
   const sp = await searchParams;
   const supabase = await createClient();
-  const model = await loadBrochure(supabase, id, { dept: sp.dept ?? null, term: sp.term ?? null });
+  const lang = parseBrochureLang(sp.lang);
+  const model = await loadBrochure(supabase, id, { dept: sp.dept ?? null, term: sp.term ?? null, lang });
   if (!model) notFound();
+  const text = brochureText(lang);
 
   return (
     <div className="bro-root">
@@ -45,13 +55,18 @@ export default async function BrochurePdfPage({
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
       <link
         rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap"
+        href={
+          lang === "ko"
+            ? "https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap"
+            : "https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap"
+        }
         precedence="default"
       />
       <style>{BROCHURE_CSS}</style>
 
       <BrochureToolbar
         specId={id}
+        lang={lang}
         dept={model.dept}
         term={model.term}
         deptOptions={model.deptOptions}
@@ -63,22 +78,23 @@ export default async function BrochurePdfPage({
         {model.pages.length === 0 ? (
           <div className="bro-empty print:hidden">표시할 학과가 없습니다. 요강 편집에서 학과를 활성으로 두거나 학과를 고르세요.</div>
         ) : (
-          model.pages.map((p) => <Sheet key={p.sdId} page={p} logoUrl={model.logoUrl} />)
+          model.pages.map((p) => <Sheet key={p.sdId} page={p} logoUrl={model.logoUrl} text={text} />)
         )}
       </div>
     </div>
   );
 }
 
-function Sheet({ page, logoUrl }: { page: BrochurePage; logoUrl: string | null }) {
+function Sheet({ page, logoUrl, text }: { page: BrochurePage; logoUrl: string | null; text: BrochureText }) {
+  const { L } = text;
   return (
-    <article className="bro-sheet" lang="vi">
+    <article className="bro-sheet" lang={text.lang}>
       <header className="bro-band">
         <div className="bro-brand">
           <span className="bro-wordmark">{L.brand}</span>
           <span className="bro-brand-sub">{L.brandSub}</span>
         </div>
-        <p className="bro-glocare">{GLOCARE_INTRO_VI}</p>
+        <p className="bro-glocare">{text.intro}</p>
       </header>
 
       <section className="bro-hero">
@@ -187,7 +203,7 @@ const BROCHURE_CSS = `
   margin: 14mm 14mm 16mm 14mm;
   @bottom-center {
     content: ${FOOTER_CSS_STRING};
-    font-family: "Be Vietnam Pro", system-ui, sans-serif;
+    font-family: "Be Vietnam Pro", "Noto Sans KR", system-ui, sans-serif;
     font-size: 7.5pt;
     color: #8a9099;
   }
@@ -219,6 +235,7 @@ const BROCHURE_CSS = `
   line-height: 1.55;
   position: relative;
 }
+.bro-sheet[lang="ko"] { font-family: "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif; word-break: keep-all; }
 .bro-band {
   display: flex;
   align-items: center;

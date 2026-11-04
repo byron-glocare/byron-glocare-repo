@@ -1,6 +1,6 @@
 "use client";
 
-/** 모집요강 PDF 도구줄 — 학과·학기 선택(URL 갱신) + 인쇄(PDF 저장). 인쇄 시 숨김. */
+/** 모집요강 PDF 도구줄 — 언어·학과·학기 선택(URL 갱신) + 인쇄(PDF 저장). 인쇄 시 숨김. */
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -8,13 +8,20 @@ import { useTransition } from "react";
 import { ArrowLeft, Loader2, Printer } from "lucide-react";
 
 import { Button, buttonVariants } from "@/components/ui/button";
+import type { BrochureLang } from "@/lib/admission/brochure-lang";
 
 type Option = { value: string; label: string };
+
+const LANG_OPTIONS: Array<{ value: BrochureLang; label: string }> = [
+  { value: "vi", label: "베트남어" },
+  { value: "ko", label: "한국어" },
+];
 
 const selectClass = "rounded-md border border-input bg-background px-2 py-1.5 text-sm";
 
 export function BrochureToolbar({
   specId,
+  lang,
   dept,
   term,
   deptOptions,
@@ -22,6 +29,7 @@ export function BrochureToolbar({
   pageCount,
 }: {
   specId: string;
+  lang: BrochureLang;
   dept: string;
   term: string | null;
   deptOptions: Option[];
@@ -31,8 +39,9 @@ export function BrochureToolbar({
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 
-  const go = (next: { dept?: string; term?: string }) => {
+  const go = (next: { lang?: BrochureLang; dept?: string; term?: string }) => {
     const qs = new URLSearchParams();
+    if ((next.lang ?? lang) === "ko") qs.set("lang", "ko");
     const d = next.dept ?? dept;
     const t = next.term ?? term ?? "";
     if (d && d !== "all") qs.set("dept", d);
@@ -47,6 +56,14 @@ export function BrochureToolbar({
         <ArrowLeft className="size-4" />
         모집요강으로
       </Link>
+      <label className="flex flex-col gap-1">
+        <span className="text-xs text-muted-foreground">언어</span>
+        <select className={selectClass} value={lang} onChange={(e) => go({ lang: e.target.value as BrochureLang })} disabled={pending}>
+          {LANG_OPTIONS.map((o) => (
+            <option key={o.value} value={o.value}>{o.label}</option>
+          ))}
+        </select>
+      </label>
       <label className="flex flex-col gap-1">
         <span className="text-xs text-muted-foreground">학과</span>
         <select className={selectClass} value={dept} onChange={(e) => go({ dept: e.target.value })} disabled={pending}>

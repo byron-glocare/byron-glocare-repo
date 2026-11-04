@@ -1,7 +1,7 @@
 /**
- * 모집요강 PDF(베트남어 전용) — 데이터 로더 + 화면 모델.
+ * 모집요강 PDF(베트남어·한국어) — 데이터 로더 + 화면 모델.
  *   요강 1개(대학) → 학과별 한 장. 학과 1개 또는 활성 학과 전부, 학기 1개.
- *   화면은 이 모델만 그린다(문구·포맷은 brochure-text.ts).
+ *   화면은 이 모델만 그린다(문구·포맷은 brochure-lang.ts).
  */
 
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -13,34 +13,13 @@ import {
   loadFormFilesByDepartment,
   loadSpecDepartments,
   loadSpecTerms,
+  type BrochureTextVi,
   type SpecDepartment,
   type SpecFormFile,
   type SpecTerm,
 } from "./spec-departments";
-import {
-  ALT_PATH_VI,
-  APPLIES_TO_VI,
-  DOC_COND_VI,
-  EDUCATION_VI,
-  FEE_VI,
-  L,
-  LP_VI,
-  SCHEDULE_VI,
-  TARGET_VI,
-  TUITION_UNIT_VI,
-  ageRequirementVi,
-  financialVi,
-  fmtDate,
-  fmtMoney,
-  fmtRange,
-  gpaVi,
-  hasHangul,
-  roundNameVi,
-  scholarshipBenefitVi,
-  termLabelVi,
-  termSortKey,
-  topikVi,
-} from "./brochure-text";
+import { hasHangul, termSortKey } from "./brochure-text";
+import { brochureText, type BrochureLang, type BrochureText } from "./brochure-lang";
 
 type Client = SupabaseClient<Database>;
 
@@ -70,6 +49,7 @@ export type BrochurePage = {
 export type BrochureOption = { value: string; label: string };
 export type BrochureModel = {
   specId: string;
+  lang: BrochureLang;
   universityNameKo: string;
   logoUrl: string | null;
   term: string | null;
@@ -82,7 +62,7 @@ export type BrochureModel = {
 // ── 입력 JSON 모양 (느슨하게) ─────────────────────────────────────────
 
 type Elig = {
-  age_requirement?: Parameters<typeof ageRequirementVi>[0];
+  age_requirement?: Parameters<BrochureText["age"]>[0];
   education_required?: string;
   gpa_min?: number | null;
   gpa_scale?: string | null;
@@ -92,7 +72,7 @@ type Elig = {
     post_admission_requirement?: string | null;
   };
   english_proficiency?: { minimums?: Record<string, number | string> } | null;
-  financial_minimum?: Parameters<typeof financialVi>[0];
+  financial_minimum?: Parameters<BrochureText["financial"]>[0];
 };
 type Tuition = {
   currency?: string;
@@ -148,25 +128,30 @@ const viOnly = (s: string | null | undefined): string | null => {
   const t = clean(s);
   return t && !hasHangul(t) ? t : null;
 };
+/** 그 언어판에 넣을 수 있는 자유 입력 — 입력값이 대부분 한국어라 한국어판은 그대로 */
+const local = (t: BrochureText, s: string | null | undefined): string | null => (t.lang === "ko" ? clean(s) : viOnly(s));
+/** 학과별 소개 문구는 베트남어로만 입력받는다 → 한국어판에는 넣지 않는다 */
+const copyOf = (sd: SpecDepartment, t: BrochureText): BrochureTextVi => (t.lang === "vi" ? sd.info.brochure_vi ?? {} : {});
 
 // ── 섹션 만들기 ───────────────────────────────────────────────────────
 
-function eligibilityBlocks(sd: SpecDepartment, specElig: Elig | null): BrochureBlock[] {
+function eligibilityBlocks(sd: SpecDepartment, specElig: Elig | null, t: BrochureText): BrochureBlock[] {
+  const { L } = t;
   const e: Elig = (nonEmpty(sd.eligibility) ? (sd.eligibility as Elig) : specElig) ?? {};
   const rows: BrochureRow[] = [];
-  const edu = e.education_required ? EDUCATION_VI[e.education_required] : null;
+  const edu = e.education_required ? t.education[e.education_required] : null;
   if (edu) rows.push({ label: L.education, value: edu });
-  const gpa = gpaVi(e.gpa_min, e.gpa_scale);
+  const gpa = t.gpa(e.gpa_min, e.gpa_scale);
   if (gpa) rows.push({ label: L.gpa, value: gpa });
-  const age = ageRequirementVi(e.age_requirement);
+  const age = t.age(e.age_requirement);
   if (age) rows.push({ label: L.age, value: age });
 
-  const topik = topikVi(e.korean_proficiency?.topik_min_default ?? sd.info.korean_min_topik ?? null);
+  const topik = t.topik(e.korean_proficiency?.topik_min_default ?? sd.info.korean_min_topik ?? null);
   const alts = (e.korean_proficiency?.alternative_paths ?? [])
     .map((a) => {
-      const base = (a.type && ALT_PATH_VI[a.type]) || viOnly(a.name) || null;
+      const base = (a.type && t.altPath[a.type]) || local(t, a.name) || null;
       if (!base) return null;
-      const lv = viOnly(a.level);
+      const lv = local(t, a.level);
       return lv ? `${base} (${lv})` : base;
     })
     .filter((x): x is string => !!x);
@@ -178,7 +163,7 @@ function eligibilityBlocks(sd: SpecDepartment, specElig: Elig | null): BrochureB
   if (eng && Object.keys(eng).length) {
     rows.push({ label: L.english, value: Object.entries(eng).map(([k, v]) => `${k.replace(/_/g, " ")} ${v}`).join(" · ") });
   }
-  const fin = financialVi(e.financial_minimum);
+  const fin = t.financial(e.financial_minimum);
   if (fin) rows.push({ label: L.financial, value: fin });
 
   const blocks: BrochureBlock[] = [];
@@ -188,49 +173,50 @@ function eligibilityBlocks(sd: SpecDepartment, specElig: Elig | null): BrochureB
     const lp = sd.info.language_program ?? {};
     const lpRows: BrochureRow[] = [];
     const load = [
-      lp.hours_per_week != null ? LP_VI.hoursPerWeek(lp.hours_per_week) : null,
-      lp.hours_per_semester != null ? LP_VI.hoursPerSemester(lp.hours_per_semester) : null,
-      lp.weeks_per_semester != null ? LP_VI.weeks(lp.weeks_per_semester) : null,
+      lp.hours_per_week != null ? t.lp.hoursPerWeek(lp.hours_per_week) : null,
+      lp.hours_per_semester != null ? t.lp.hoursPerSemester(lp.hours_per_semester) : null,
+      lp.weeks_per_semester != null ? t.lp.weeks(lp.weeks_per_semester) : null,
     ].filter(Boolean);
     if (load.length) lpRows.push({ label: L.program, value: load.join(" · ") });
-    const sched = viOnly(lp.weekly_schedule);
-    if (sched) lpRows.push({ label: LP_VI.schedule, value: sched });
-    const visa = viOnly(lp.visa_type);
-    if (visa) lpRows.push({ label: LP_VI.visa, value: visa });
-    const ext = viOnly(lp.visa_extension);
-    if (ext) lpRows.push({ label: LP_VI.visaExtension, value: ext });
+    const sched = local(t, lp.weekly_schedule);
+    if (sched) lpRows.push({ label: t.lp.schedule, value: sched });
+    const visa = local(t, lp.visa_type);
+    if (visa) lpRows.push({ label: t.lp.visa, value: visa });
+    const ext = local(t, lp.visa_extension);
+    if (ext) lpRows.push({ label: t.lp.visaExtension, value: ext });
     if (lpRows.length) blocks.push({ type: "rows", title: L.program, rows: lpRows });
   }
 
-  const pref = clean(sd.info.brochure_vi?.preferences);
+  const pref = clean(copyOf(sd, t).preferences);
   if (pref) blocks.push({ type: "text", title: L.preferences, text: pref });
   return blocks;
 }
 
-function tuitionBlocks(sd: SpecDepartment, dormDefault: string | null): BrochureBlock[] {
+function tuitionBlocks(sd: SpecDepartment, dormDefault: string | null, text: BrochureText): BrochureBlock[] {
+  const { L, fmtMoney } = text;
   const t = sd.tuition as Tuition;
   const cur = t.currency || "KRW";
   const rows: BrochureRow[] = [];
   const pending = t.unit === "pending" || t.disclosure_state === "pending_until_acceptance";
   const mainAmount =
     t.unit === "per_year" ? t.tuition_per_year : t.tuition_per_semester ?? sd.info.tuition_per_semester_krw ?? null;
-  const mainLabel = TUITION_UNIT_VI[t.unit ?? "per_semester"] ?? TUITION_UNIT_VI.per_semester;
+  const mainLabel = text.tuitionUnit[t.unit ?? "per_semester"] ?? text.tuitionUnit.per_semester;
   if (pending) rows.push({ label: L.tuitionTitle, value: L.tuitionPending });
   else if (mainAmount != null) rows.push({ label: mainLabel, value: fmtMoney(mainAmount, cur)! });
-  if (!pending && t.unit !== "per_year" && t.tuition_per_year != null) rows.push({ label: TUITION_UNIT_VI.per_year, value: fmtMoney(t.tuition_per_year, cur)! });
+  if (!pending && t.unit !== "per_year" && t.tuition_per_year != null) rows.push({ label: text.tuitionUnit.per_year, value: fmtMoney(t.tuition_per_year, cur)! });
   for (const [k, v] of Object.entries(t.tuition_by_faculty ?? {})) {
     if (typeof v === "number") rows.push({ label: k, value: fmtMoney(v, cur)! });
   }
-  if (t.application_fee != null) rows.push({ label: FEE_VI.application_fee, value: t.application_fee === 0 ? "Miễn phí" : fmtMoney(t.application_fee, cur)! });
-  if (t.admission_fee != null) rows.push({ label: FEE_VI.admission_fee, value: t.admission_fee === 0 ? "Miễn phí" : fmtMoney(t.admission_fee, cur)! });
-  if (t.insurance_per_year != null) rows.push({ label: FEE_VI.insurance_per_year, value: fmtMoney(t.insurance_per_year, cur)! });
-  if (t.dorm_fee != null) rows.push({ label: FEE_VI.dorm_fee, value: fmtMoney(t.dorm_fee, cur)! });
+  if (t.application_fee != null) rows.push({ label: text.fee.application_fee, value: t.application_fee === 0 ? L.free : fmtMoney(t.application_fee, cur)! });
+  if (t.admission_fee != null) rows.push({ label: text.fee.admission_fee, value: t.admission_fee === 0 ? L.free : fmtMoney(t.admission_fee, cur)! });
+  if (t.insurance_per_year != null) rows.push({ label: text.fee.insurance_per_year, value: fmtMoney(t.insurance_per_year, cur)! });
+  if (t.dorm_fee != null) rows.push({ label: text.fee.dorm_fee, value: fmtMoney(t.dorm_fee, cur)! });
   for (const f of t.other_fees ?? []) {
     const name = clean(f.name);
     if (name && f.amount != null) rows.push({ label: name, value: fmtMoney(f.amount, cur)! });
   }
-  const pay = viOnly(t.payment_method);
-  if (pay) rows.push({ label: FEE_VI.payment_method, value: pay });
+  const pay = local(text, t.payment_method);
+  if (pay) rows.push({ label: text.fee.payment_method, value: pay });
 
   const blocks: BrochureBlock[] = [];
   if (rows.length) blocks.push({ type: "rows", title: L.tuitionTitle, rows });
@@ -241,10 +227,10 @@ function tuitionBlocks(sd: SpecDepartment, dormDefault: string | null): Brochure
       type: "list",
       title: L.scholarshipTitle,
       items: sch.map((s) => {
-        const benefit = scholarshipBenefitVi(s);
+        const benefit = text.scholarshipBenefit(s);
         const sub = [
           clean(s.condition),
-          s.applies_to ? APPLIES_TO_VI[s.applies_to] : null,
+          s.applies_to ? text.appliesTo[s.applies_to] : null,
           clean(s.duration),
         ].filter((x): x is string => !!x);
         return { text: [clean(s.name), benefit].filter(Boolean).join(" — "), sub, note: clean(s.notes) ?? undefined };
@@ -252,41 +238,43 @@ function tuitionBlocks(sd: SpecDepartment, dormDefault: string | null): Brochure
     });
   }
 
-  const dorm = clean(sd.info.brochure_vi?.dormitory) ?? dormDefault;
+  const dorm = clean(copyOf(sd, text).dormitory) ?? dormDefault;
   if (dorm) blocks.push({ type: "text", title: L.dormitoryTitle, text: dorm });
   return blocks;
 }
 
-function scheduleBlocks(sd: SpecDepartment, term: SpecTerm | null): BrochureBlock[] {
+function scheduleBlocks(sd: SpecDepartment, term: SpecTerm | null, t: BrochureText): BrochureBlock[] {
+  const { L, fmtDate, fmtRange, schedule: SCHEDULE } = t;
   const blocks: BrochureBlock[] = [];
   const s = (term ? (sd.kind === "language" ? term.schedule_language : term.schedule) : {}) as Schedule;
   const rounds = (s.rounds ?? []).filter(Boolean);
   rounds.forEach((r, i) => {
     const rows: BrochureRow[] = [];
     const add = (label: string, v: string | null) => { if (v) rows.push({ label, value: v }); };
-    add(SCHEDULE_VI.application, fmtRange(r.application_open, r.application_close));
-    add(SCHEDULE_VI.documents, fmtDate(r.document_submission_close));
-    add(SCHEDULE_VI.interview, r.interview_period ? fmtRange(r.interview_period[0], r.interview_period[1]) : fmtDate(r.interview));
-    add(SCHEDULE_VI.result, fmtDate(r.result_announcement));
-    add(SCHEDULE_VI.payment, r.payment_period ? fmtRange(r.payment_period[0], r.payment_period[1]) : null);
-    add(SCHEDULE_VI.visa, r.visa_certificate_issuance ? fmtRange(r.visa_certificate_issuance[0], r.visa_certificate_issuance[1]) : null);
-    if (rows.length) blocks.push({ type: "rows", title: roundNameVi(r.name, i, rounds.length), rows });
+    add(SCHEDULE.application, fmtRange(r.application_open, r.application_close));
+    add(SCHEDULE.documents, fmtDate(r.document_submission_close));
+    add(SCHEDULE.interview, r.interview_period ? fmtRange(r.interview_period[0], r.interview_period[1]) : fmtDate(r.interview));
+    add(SCHEDULE.result, fmtDate(r.result_announcement));
+    add(SCHEDULE.payment, r.payment_period ? fmtRange(r.payment_period[0], r.payment_period[1]) : null);
+    add(SCHEDULE.visa, r.visa_certificate_issuance ? fmtRange(r.visa_certificate_issuance[0], r.visa_certificate_issuance[1]) : null);
+    if (rows.length) blocks.push({ type: "rows", title: t.roundName(r.name, i, rounds.length), rows });
   });
   const common: BrochureRow[] = [];
   const add = (label: string, v: string | null) => { if (v) common.push({ label, value: v }); };
-  add(SCHEDULE_VI.enrollment, s.main_enrollment_period ? fmtRange(s.main_enrollment_period[0], s.main_enrollment_period[1]) : null);
-  add(SCHEDULE_VI.enrollmentExtra, s.additional_enrollment_period ? fmtRange(s.additional_enrollment_period[0], s.additional_enrollment_period[1]) : null);
-  add(SCHEDULE_VI.orientation, fmtDate(s.orientation));
-  add(SCHEDULE_VI.semesterStart, fmtDate(s.semester_start));
-  add(SCHEDULE_VI.semesterEnd, fmtDate(s.semester_end));
+  add(SCHEDULE.enrollment, s.main_enrollment_period ? fmtRange(s.main_enrollment_period[0], s.main_enrollment_period[1]) : null);
+  add(SCHEDULE.enrollmentExtra, s.additional_enrollment_period ? fmtRange(s.additional_enrollment_period[0], s.additional_enrollment_period[1]) : null);
+  add(SCHEDULE.orientation, fmtDate(s.orientation));
+  add(SCHEDULE.semesterStart, fmtDate(s.semester_start));
+  add(SCHEDULE.semesterEnd, fmtDate(s.semester_end));
   if (common.length) blocks.push({ type: "rows", rows: common });
-  const note = clean(sd.info.brochure_vi?.schedule_note);
+  const note = clean(copyOf(sd, t).schedule_note);
   if (note) blocks.push({ type: "text", text: note });
   if (blocks.length) blocks.push({ type: "footnote", text: L.scheduleFootnote });
   return blocks;
 }
 
-function documentBlocks(rows: SpecDocItemRow[], catalog: DocCatalog, forms: SpecFormFile[]): BrochureBlock[] {
+function documentBlocks(rows: SpecDocItemRow[], catalog: DocCatalog, forms: SpecFormFile[], t: BrochureText): BrochureBlock[] {
+  const { L } = t;
   const itemByKey = new Map(catalog.items.map((i) => [i.key, i]));
   const items: BrochureListItem[] = [];
   const seen = new Set<string>();
@@ -298,8 +286,8 @@ function documentBlocks(rows: SpecDocItemRow[], catalog: DocCatalog, forms: Spec
       const sig = `${e.standard.key}|${e.target ?? ""}`;
       if (seen.has(sig)) continue;
       seen.add(sig);
-      const nameOf = (s: { name_vi: string | null; name_ko: string }) => clean(s.name_vi) ?? s.name_ko;
-      const target = e.target ? TARGET_VI[e.target] ?? null : null;
+      const nameOf = (s: { name_vi: string | null; name_ko: string }) => (t.lang === "vi" ? clean(s.name_vi) : null) ?? s.name_ko;
+      const target = e.target ? t.target[e.target] ?? null : null;
       let text = nameOf(e.standard);
       if (target) text += ` (${target})`;
       if (e.alternatives.length) text += ` ${L.or} ${e.alternatives.map(nameOf).join(` ${L.or} `)}`;
@@ -310,11 +298,11 @@ function documentBlocks(rows: SpecDocItemRow[], catalog: DocCatalog, forms: Spec
       const validity = o.validity_days ?? e.standard.validity_days;
       const original = o.original_required ?? e.standard.original_required;
       const conds = [
-        within != null ? DOC_COND_VI.issuedWithin(within) : null,
-        within == null && validity != null ? DOC_COND_VI.validity(validity) : null,
-        original === true ? DOC_COND_VI.original : null,
+        within != null ? t.docCond.issuedWithin(within) : null,
+        within == null && validity != null ? t.docCond.validity(validity) : null,
+        original === true ? t.docCond.original : null,
       ].filter((x): x is string => !!x);
-      const guide = viOnly(r.guide_override_vi);
+      const guide = t.lang === "ko" ? clean(r.guide_override_ko) : viOnly(r.guide_override_vi);
       items.push({ text, sub: conds.length ? [conds.join(" · ")] : undefined, note: guide ?? undefined });
     }
   }
@@ -331,13 +319,16 @@ function documentBlocks(rows: SpecDocItemRow[], catalog: DocCatalog, forms: Spec
 export async function loadBrochure(
   supabase: Client,
   specId: string,
-  opts: { dept?: string | null; term?: string | null }
+  opts: { dept?: string | null; term?: string | null; lang?: BrochureLang }
 ): Promise<BrochureModel | null> {
+  const lang = opts.lang ?? "vi";
+  const t = brochureText(lang);
+  const { L } = t;
   const { data: spec } = await supabase.from("study_admission_specs").select("id, university_id, eligibility").eq("id", specId).maybeSingle();
   if (!spec) return null;
 
   const [{ data: uni }, departments, terms, rowsByDept, filesByDept, catalog, { data: offerings }] = await Promise.all([
-    supabase.from("universities").select("id, name_ko, name_vi, region_vi, logo_url, dormitory_desc_vi").eq("id", spec.university_id).maybeSingle(),
+    supabase.from("universities").select("id, name_ko, name_vi, region_ko, region_vi, logo_url, dormitory_desc_ko, dormitory_desc_vi").eq("id", spec.university_id).maybeSingle(),
     loadSpecDepartments(supabase, specId),
     loadSpecTerms(supabase, specId),
     loadDocItemRowsByDepartment(supabase, specId),
@@ -352,9 +343,9 @@ export async function loadBrochure(
   const deptParam = opts.dept && departments.some((d) => d.id === opts.dept) ? opts.dept : "all";
   const chosen = deptParam === "all" ? departments.filter((d) => d.is_active) : departments.filter((d) => d.id === deptParam);
 
-  const universityName = clean(uni?.name_vi) ?? uni?.name_ko ?? "";
+  const universityName = (lang === "vi" ? clean(uni?.name_vi) : null) ?? uni?.name_ko ?? "";
   const specElig = nonEmpty(spec.eligibility) ? (spec.eligibility as Elig) : null;
-  const dormDefault = clean(uni?.dormitory_desc_vi);
+  const dormDefault = clean(lang === "ko" ? uni?.dormitory_desc_ko : uni?.dormitory_desc_vi);
 
   const quotaOf = (departmentId: number): number | null => {
     if (!term) return null;
@@ -364,29 +355,29 @@ export async function loadBrochure(
   };
 
   const pages: BrochurePage[] = chosen.map((sd) => {
-    const bv = sd.info.brochure_vi ?? {};
+    const bv = copyOf(sd, t);
     const facts: string[] = [];
-    const region = clean(uni?.region_vi);
+    const region = clean(lang === "ko" ? uni?.region_ko : uni?.region_vi);
     if (region) facts.push(`${L.region}: ${region}`);
     if (sd.kind === "regular" && sd.info.years) facts.push(L.years(sd.info.years));
-    const faculty = viOnly(sd.info.faculty);
+    const faculty = local(t, sd.info.faculty);
     if (faculty) facts.push(faculty);
-    const track = viOnly(sd.info.track);
+    const track = local(t, sd.info.track);
     if (track) facts.push(track);
 
     const raw: BrochureSection[] = [
-      { title: L.secEligibility, blocks: eligibilityBlocks(sd, specElig) },
-      { title: L.secTuition, blocks: tuitionBlocks(sd, dormDefault) },
-      { title: L.secSchedule, blocks: scheduleBlocks(sd, term) },
+      { title: L.secEligibility, blocks: eligibilityBlocks(sd, specElig, t) },
+      { title: L.secTuition, blocks: tuitionBlocks(sd, dormDefault, t) },
+      { title: L.secSchedule, blocks: scheduleBlocks(sd, term, t) },
       { title: L.secCareer, blocks: clean(bv.career_outlook) ? [{ type: "text", text: clean(bv.career_outlook)! }] : [] },
       { title: L.secStrengths, blocks: clean(bv.school_strengths) ? [{ type: "text", text: clean(bv.school_strengths)! }] : [] },
-      { title: L.secDocuments, blocks: documentBlocks(rowsByDept.get(sd.id) ?? [], catalog, filesByDept.get(sd.id) ?? []) },
+      { title: L.secDocuments, blocks: documentBlocks(rowsByDept.get(sd.id) ?? [], catalog, filesByDept.get(sd.id) ?? [], t) },
     ];
     return {
       sdId: sd.id,
       universityName,
-      departmentName: clean(sd.name_vi) ?? sd.name_ko,
-      termLabel: term ? termLabelVi(term.term) : "",
+      departmentName: (lang === "vi" ? clean(sd.name_vi) : null) ?? sd.name_ko,
+      termLabel: term ? t.termLabel(term.term) : "",
       courseLabel: sd.kind === "language" ? L.courseLanguage : L.courseRegular,
       quota: quotaOf(sd.department_id),
       facts,
@@ -397,10 +388,11 @@ export async function loadBrochure(
 
   return {
     specId,
+    lang,
     universityNameKo: uni?.name_ko ?? "",
     logoUrl: uni?.logo_url ?? null,
     term: term?.term ?? null,
-    termOptions: sortedTerms.map((t) => ({ value: t.term, label: `${t.term} · ${termLabelVi(t.term)}` })),
+    termOptions: sortedTerms.map((s) => ({ value: s.term, label: `${s.term} · ${t.termLabel(s.term)}` })),
     deptOptions: [
       { value: "all", label: "전체 학과 (활성)" },
       ...departments.map((d) => ({ value: d.id, label: `${d.name_ko}${d.kind === "language" ? " (어학당)" : ""}${d.is_active ? "" : " · 비활성"}` })),

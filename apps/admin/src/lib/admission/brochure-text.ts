@@ -1,6 +1,6 @@
 /**
- * 모집요강 PDF(베트남어 전용) — 고정 문구 + 표시용 포맷터.
- *   PDF 에는 한국어가 나오지 않게 한다(베트남어 이름이 없는 고유명사·원문 입력값은 예외).
+ * 모집요강 PDF 베트남어판 — 고정 문구 + 표시용 포맷터. 한국어판은 brochure-lang.ts.
+ *   베트남어판에는 한국어가 나오지 않게 한다(베트남어 이름이 없는 고유명사·원문 입력값은 예외).
  *   순수 함수만 — 서버·클라이언트 어디서나 쓴다.
  */
 
@@ -43,13 +43,14 @@ export const L = {
   scholarshipTitle: "Học bổng",
   dormitoryTitle: "Ký túc xá",
   tuitionPending: "Học phí sẽ được thông báo sau khi có kết quả trúng tuyển.",
+  free: "Miễn phí",
 
   scheduleFootnote: "※ Chỉ tiêu và lịch trình có thể thay đổi theo quyết định của trường.",
   schoolForms: "Mẫu đơn của trường",
   optional: "(không bắt buộc)",
   or: "hoặc",
   empty: "Chưa có thông tin.",
-} as const;
+};
 
 // ── 학기 ──────────────────────────────────────────────────────────────
 
@@ -187,7 +188,7 @@ export const FEE_VI = {
   dorm_fee: "Phí ký túc xá",
   insurance_per_year: "Bảo hiểm (mỗi năm)",
   payment_method: "Hình thức thanh toán",
-} as const;
+};
 
 export const APPLIES_TO_VI: Record<string, string> = {
   freshman: "Tân sinh viên",
@@ -249,7 +250,7 @@ export const SCHEDULE_VI = {
   submission: "Hình thức nộp hồ sơ",
   round: (n: string) => `Đợt ${n}`,
   singleRound: "Lịch tuyển sinh",
-} as const;
+};
 
 /** 회차 이름 — "1차" → "Đợt 1". 그 밖의 한국어 이름은 번호로 대신한다. */
 export function roundNameVi(name: string | null | undefined, index: number, total: number): string {
@@ -273,7 +274,7 @@ export const DOC_COND_VI = {
   issuedWithin: (n: number) => `cấp trong vòng ${n} ngày`,
   validity: (n: number) => `còn hiệu lực ${n} ngày`,
   original: "nộp bản gốc",
-} as const;
+};
 
 // ── 어학연수 프로그램 ─────────────────────────────────────────────────
 
@@ -284,4 +285,4 @@ export const LP_VI = {
   schedule: "Thời gian học",
   visa: "Loại visa",
   visaExtension: "Gia hạn visa",
-} as const;
+};
