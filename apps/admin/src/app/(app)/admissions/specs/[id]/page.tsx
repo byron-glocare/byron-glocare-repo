@@ -226,8 +226,19 @@ export default async function AdmissionDetailPage({ params }: { params: Promise<
             <AddTermButton specId={id} terms={terms.map((t) => ({ id: t.id, term: t.term }))} />
             <Link href={`/admissions/specs/${id}/brochure`} className={buttonVariants({ variant: "outline", size: "sm" })}>
               <FileText className="size-4" />
-              모집요강 PDF
+              자체 모집요강
             </Link>
+            {typeof spec.source_file_url === "string" && /^https?:\/\//.test(spec.source_file_url) ? (
+              <a
+                href={`${spec.source_file_url}?download`}
+                target="_blank"
+                rel="noreferrer"
+                className={buttonVariants({ variant: "outline", size: "sm" })}
+              >
+                <Download className="size-4" />
+                모집요강 원본
+              </a>
+            ) : null}
             <DeleteSpecButton specId={id} universityId={spec.university_id} />
           </div>
         }

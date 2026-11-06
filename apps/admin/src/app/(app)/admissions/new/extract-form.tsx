@@ -10,6 +10,8 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { ReviewForm } from "./review-form";
 import type { CallExtractResult } from "@/lib/admission/call-extract";
 import { INLINE_UPLOAD_MAX_MB, fileTooLargeMessage } from "@/lib/upload-limits";
+import { createClient } from "@/lib/supabase/client";
+import { createAdmissionSourceUploadUrl } from "./approve-action";
 
 const TERM_OPTIONS = [
   "2026-Spring",
@@ -40,6 +42,8 @@ export function ExtractForm({
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<CallExtractResult | null>(null);
   const [fileName, setFileName] = useState<string>("");
+  // 추출에 쓴 원본 파일을 저장소에 보관한 뒤의 공개 URL (상세의 "모집요강 원본" 다운로드용)
+  const [sourceFileUrl, setSourceFileUrl] = useState<string | null>(null);
   const [meta, setMeta] = useState<{
     universityNameKo: string;
     term: string;
@@ -53,6 +57,7 @@ export function ExtractForm({
     setLoading(true);
     setError(null);
     setResult(null);
+    setSourceFileUrl(null);
 
     const fd = new FormData(e.currentTarget);
     // file size 사전 체크 (UX)
@@ -105,6 +110,25 @@ export function ExtractForm({
       }
       if (json) {
         setResult(json);
+        // 추출 성공 시, 쓴 원본 파일을 저장소에 그대로 보관한다(베스트 에포트).
+        // 실패해도 추출/승인 흐름은 막지 않는다 — 원본 다운로드만 안 될 뿐.
+        if (json.ok) {
+          try {
+            const signed = await createAdmissionSourceUploadUrl(file.name);
+            if (signed.ok) {
+              const supa = createClient();
+              const { error: upErr } = await supa.storage
+                .from("admission-form-files")
+                .uploadToSignedUrl(signed.path, signed.token, file, {
+                  contentType: file.type || "application/octet-stream",
+                  upsert: false,
+                });
+              if (!upErr) setSourceFileUrl(signed.publicUrl);
+            }
+          } catch {
+            /* 원본 보관 실패는 무시 */
+          }
+        }
       } else {
         const timeout =
           res.status === 504 ||
@@ -291,6 +315,7 @@ export function ExtractForm({
               term: meta.term,
               admissionCategory: meta.admissionCategory || undefined,
               sourceFileName: fileName,
+              sourceFileUrl: sourceFileUrl ?? undefined,
             }}
             universities={universities}
             docTypes={docTypes}

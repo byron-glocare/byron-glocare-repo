@@ -326,3 +326,26 @@ export async function approveSpecAction(_prev: ApproveSpecState, formData: FormD
   }
   redirect(`/admissions/specs/${specId}`);
 }
+
+/**
+ * 모집요강 "원본 파일"을 브라우저에서 저장소로 바로 올리기 위한 서명 업로드 주소.
+ *   추출 단계에서 올린 원본(PDF/HWP)을 그대로 보관해, 상세의 "모집요강 원본" 버튼으로 다시 받게 한다.
+ *   파일은 서버를 거치지 않는다(Vercel 본문 ~4.5MB 한도 회피). 버킷은 공개(getPublicUrl) — 양식 파일과 동일.
+ *   돌려준 publicUrl 을 승인 폼의 source_file_url 로 넘기면 요강에 저장된다.
+ */
+export async function createAdmissionSourceUploadUrl(
+  fileName: string
+): Promise<{ ok: true; path: string; token: string; publicUrl: string } | { ok: false; error: string }> {
+  const supabaseUser = await createClient();
+  const {
+    data: { user },
+  } = await supabaseUser.auth.getUser();
+  if (!user || !isGlocareAdmin(user)) return { ok: false, error: "로그인이 필요합니다" };
+  const admin = createAdminClient();
+  const safe = String(fileName || "source").replace(/[^a-zA-Z0-9._-]+/g, "_").slice(-100);
+  const path = `admission-sources/${Date.now()}_${safe}`;
+  const { data, error } = await admin.storage.from("admission-form-files").createSignedUploadUrl(path);
+  if (error || !data) return { ok: false, error: `업로드 주소 발급 실패: ${error?.message ?? "unknown"}` };
+  const { data: pub } = admin.storage.from("admission-form-files").getPublicUrl(path);
+  return { ok: true, path: data.path, token: data.token, publicUrl: pub.publicUrl };
+}

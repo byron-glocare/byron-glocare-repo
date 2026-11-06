@@ -61,6 +61,8 @@ export type ExtractMetaPrefill = {
   term: string;
   admissionCategory?: string;
   sourceFileName?: string;
+  /** 추출에 쓴 원본 파일을 저장소에 보관한 공개 URL. 있으면 요강에 저장해 "모집요강 원본"으로 받게 한다. */
+  sourceFileUrl?: string;
 };
 export type AiLogPrefill = {
   raw: string;
@@ -290,17 +292,28 @@ export function ReviewForm({
           </Field>
 
           <Field
-            label="원본 파일 경로 (선택)"
+            label="원본 파일"
             name="source_file_url"
             error={fieldErr("source_file_url")}
           >
-            <input
-              type="text"
-              name="source_file_url"
-              maxLength={500}
-              defaultValue={meta.sourceFileName ?? ""}
-              className="rounded-md border border-input bg-background px-3 py-2 text-sm"
-            />
+            {meta.sourceFileUrl ? (
+              <>
+                <input type="hidden" name="source_file_url" value={meta.sourceFileUrl} />
+                <div className="rounded-md border border-success/30 bg-success/5 px-3 py-2 text-sm text-muted-foreground">
+                  원본 보관됨 — {meta.sourceFileName ?? "파일"}
+                  <span className="block text-xs">승인 후 상세의 &quot;모집요강 원본&quot;으로 다시 받을 수 있습니다.</span>
+                </div>
+              </>
+            ) : (
+              <input
+                type="text"
+                name="source_file_url"
+                maxLength={500}
+                defaultValue={meta.sourceFileName ?? ""}
+                placeholder="원본 파일 경로 (선택)"
+                className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+              />
+            )}
           </Field>
         </div>
 
