@@ -80,7 +80,7 @@ export default async function PricingPlansPage() {
           </Card>
         ) : (
           <Card>
-            <Table>
+            <Table className="[&_td]:py-3.5">
               <TableHeader>
                 <TableRow>
                   <TableHead>이름</TableHead>

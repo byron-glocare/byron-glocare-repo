@@ -100,7 +100,7 @@ export default async function StudentsPage({
               </Card>
             ) : (
               <Card className="overflow-hidden p-0">
-                <Table>
+                <Table className="[&_td]:py-3.5">
                   <TableHeader>
                     <TableRow>
                       <TableHead className="w-32">접수일</TableHead>
@@ -173,7 +173,7 @@ export default async function StudentsPage({
               </Card>
             ) : (
               <Card className="overflow-hidden p-0">
-                <Table>
+                <Table className="[&_td]:py-3.5">
                   <TableHeader>
                     <TableRow>
                       <TableHead className="w-32">접수일</TableHead>

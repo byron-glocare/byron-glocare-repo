@@ -59,7 +59,7 @@ export default async function StudyCasesPage() {
           </Card>
         ) : (
           <Card className="overflow-hidden p-0">
-            <Table>
+            <Table className="[&_td]:py-3.5">
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-20 text-center">노출</TableHead>

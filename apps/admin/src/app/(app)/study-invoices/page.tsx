@@ -101,7 +101,7 @@ export default async function StudyInvoicesPage() {
           </Card>
         ) : (
           <Card>
-            <Table>
+            <Table className="[&_td]:py-3.5">
               <TableHeader>
                 <TableRow>
                   <TableHead>회사</TableHead>

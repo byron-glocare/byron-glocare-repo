@@ -57,7 +57,7 @@ export default async function StudyChannelsPage() {
           </Card>
         ) : (
           <Card className="overflow-hidden p-0">
-            <Table>
+            <Table className="[&_td]:py-3.5">
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-12">아이콘</TableHead>

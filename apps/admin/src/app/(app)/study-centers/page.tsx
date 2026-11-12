@@ -56,7 +56,7 @@ export default async function StudyCentersPage() {
           </Card>
         ) : (
           <Card className="overflow-hidden p-0">
-            <Table>
+            <Table className="[&_td]:py-3.5">
               <TableHeader>
                 <TableRow>
                   <TableHead>센터명 (베)</TableHead>

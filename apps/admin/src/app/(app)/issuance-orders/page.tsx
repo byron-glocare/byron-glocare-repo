@@ -66,7 +66,7 @@ export default async function IssuanceOrdersPage() {
           </Card>
         ) : (
           <Card className="overflow-hidden p-0">
-            <Table>
+            <Table className="[&_td]:py-3.5">
               <TableHeader>
                 <TableRow>
                   <TableHead>학생</TableHead>

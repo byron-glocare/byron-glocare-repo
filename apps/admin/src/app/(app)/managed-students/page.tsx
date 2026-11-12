@@ -250,7 +250,7 @@ export default async function ManagedStudentsPage({
           <Card className="p-0">
             {/* 화면 높이 안에서 스크롤 → 가로 스크롤바가 늘 보이고 머리줄은 고정 */}
             <div className="max-h-[calc(100svh-17rem)] min-h-64 overflow-auto rounded-xl">
-              <table className="w-full caption-bottom text-sm">
+              <table className="w-full caption-bottom text-sm [&_td]:py-3.5">
                 <TableHeader>
                   <TableRow className="[&>th]:sticky [&>th]:top-0 [&>th]:z-10 [&>th]:bg-card">
                     <TableHead className="min-w-40">이름</TableHead>
