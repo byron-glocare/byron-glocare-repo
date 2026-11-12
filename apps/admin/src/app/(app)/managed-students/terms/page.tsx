@@ -120,7 +120,7 @@ export default async function TermsPage() {
                 </div>
                 <ul className="divide-y divide-border">
                   {rows.map((r) => (
-                    <li key={r.id} className="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-2.5">
+                    <li key={r.id} className="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-4">
                       <span className="text-sm font-medium">{r.university}</span>
                       <span className="text-xs text-muted-foreground">
                         학생 {r.students.size}명{r.start ? ` · 개강 ${r.start}` : ""}
