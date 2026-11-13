@@ -31,6 +31,7 @@ import {
 import { formatAgeRequirement, type AgeRequirementLike } from "@/lib/admission/age-requirement";
 import { DeleteSpecButton } from "./delete-spec-button";
 import { AddTermButton } from "./add-term-button";
+import { SourceFileButton } from "./source-file-button";
 import { DeleteFormFileButton } from "@/components/admission/delete-form-file-button";
 
 export const dynamic = "force-dynamic";
@@ -230,7 +231,7 @@ export default async function AdmissionDetailPage({ params }: { params: Promise<
             </Link>
             {typeof spec.source_file_url === "string" && /^https?:\/\//.test(spec.source_file_url) ? (
               <a
-                href={`${spec.source_file_url}?download`}
+                href={`${spec.source_file_url}?download=${encodeURIComponent(sourceDownloadName(university?.name_ko, spec.source_file_url))}`}
                 target="_blank"
                 rel="noreferrer"
                 className={buttonVariants({ variant: "outline", size: "sm" })}
@@ -239,6 +240,10 @@ export default async function AdmissionDetailPage({ params }: { params: Promise<
                 모집요강 원본
               </a>
             ) : null}
+            <SourceFileButton
+              specId={id}
+              hasFile={typeof spec.source_file_url === "string" && /^https?:\/\//.test(spec.source_file_url)}
+            />
             <DeleteSpecButton specId={id} universityId={spec.university_id} />
           </div>
         }
@@ -897,4 +902,10 @@ function Info({ label, value, full }: { label: string; value?: string | null; fu
       <dd className="mt-0.5 text-sm">{value ?? "—"}</dd>
     </div>
   );
+}
+
+/** 원본 내려받기 파일 이름 — 저장소 경로는 한글이 지워져 있어 "대학명_모집요강.확장자"로 붙인다 */
+function sourceDownloadName(university: string | null | undefined, url: string): string {
+  const ext = /\.([a-z0-9]{2,5})$/i.exec(url.split("?")[0])?.[1] ?? "pdf";
+  return `${university || "모집요강"}_모집요강.${ext.toLowerCase()}`;
 }
