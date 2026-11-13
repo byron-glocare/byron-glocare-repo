@@ -9,7 +9,7 @@
 
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Download, FileText, Pencil, Upload } from "lucide-react";
+import { Download, FileText, Pencil, RefreshCw, Upload } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/page-header";
@@ -244,6 +244,12 @@ export default async function AdmissionDetailPage({ params }: { params: Promise<
               specId={id}
               hasFile={typeof spec.source_file_url === "string" && /^https?:\/\//.test(spec.source_file_url)}
             />
+            {typeof spec.source_file_url === "string" && /^https?:\/\//.test(spec.source_file_url) ? (
+              <Link href={`/admissions/specs/${id}/refresh`} className={buttonVariants({ variant: "outline", size: "sm" })}>
+                <RefreshCw className="size-4" />
+                원본으로 갱신
+              </Link>
+            ) : null}
             <DeleteSpecButton specId={id} universityId={spec.university_id} />
           </div>
         }
