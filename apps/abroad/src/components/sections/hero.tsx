@@ -58,10 +58,6 @@ export function Hero({
               <div className="hero-stat-n">{stats.centers}</div>
               <div className="hero-stat-l">{t["hero.stat.centers"]}</div>
             </div>
-            <div>
-              <div className="hero-stat-n">100%</div>
-              <div className="hero-stat-l">{t["hero.stat.support"]}</div>
-            </div>
           </div>
         </div>
 

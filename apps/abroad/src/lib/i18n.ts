@@ -41,7 +41,6 @@ const koDict = {
     "hero.cta.about": "글로케어 소개",
     "hero.stat.universities": "제휴 대학",
     "hero.stat.centers": "베트남 협력 센터",
-    "hero.stat.support": "비자 · 취업 지원",
 
     "section.cases.eyebrow": "취업 사례",
     "section.cases.title.prefix": "실제 ",
@@ -144,7 +143,6 @@ const viDict: DictShape = {
     "hero.cta.about": "Giới thiệu GLOCARE",
     "hero.stat.universities": "Trường đại học liên kết",
     "hero.stat.centers": "Trung tâm tại Việt Nam",
-    "hero.stat.support": "Hỗ trợ visa & việc làm",
 
     "section.cases.eyebrow": "Câu chuyện thành công",
     "section.cases.title.prefix": "BẠN LÀM VIỆC - ",
