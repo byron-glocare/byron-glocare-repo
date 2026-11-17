@@ -183,7 +183,7 @@ export function StudyCaseForm({ mode, caseId, defaultValues }: Props) {
                       />
                     </FormControl>
                     <FormDescription>
-                      썸네일은 자동 추출되니 thumb 는 비워둬도 됨.
+                      TikTok 이 썸네일 자동 추출을 막아(2026-11) 아래 썸네일 URL 을 넣어야 홈페이지에 썸네일이 보입니다.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -200,7 +200,7 @@ export function StudyCaseForm({ mode, caseId, defaultValues }: Props) {
                       <Input
                         {...field}
                         value={field.value ?? ""}
-                        placeholder="자동 추출되므로 보통 비워둠"
+                        placeholder="이미지 주소 (비우면 회색 면으로 표시)"
                       />
                     </FormControl>
                     <FormMessage />
