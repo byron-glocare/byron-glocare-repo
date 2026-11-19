@@ -17,6 +17,7 @@ import {
   updateStudyCase,
   deleteStudyCase,
 } from "@/app/(app)/study-cases/actions";
+import { CaseThumbUpload } from "@/components/case-thumb-upload";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -183,7 +184,7 @@ export function StudyCaseForm({ mode, caseId, defaultValues }: Props) {
                       />
                     </FormControl>
                     <FormDescription>
-                      TikTok 이 썸네일 자동 추출을 막아(2026-11) 아래 썸네일 URL 을 넣어야 홈페이지에 썸네일이 보입니다.
+                      TikTok 이 썸네일 자동 추출을 막아(2026-11) 아래에 썸네일 이미지를 올려야 홈페이지에 썸네일이 보입니다.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -195,12 +196,13 @@ export function StudyCaseForm({ mode, caseId, defaultValues }: Props) {
                 name="tiktok_thumb"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>썸네일 URL (선택)</FormLabel>
+                    <FormLabel>썸네일 이미지</FormLabel>
+                    <CaseThumbUpload value={field.value ?? ""} onChange={field.onChange} />
                     <FormControl>
                       <Input
                         {...field}
                         value={field.value ?? ""}
-                        placeholder="이미지 주소 (비우면 회색 면으로 표시)"
+                        placeholder="또는 이미지 주소 직접 입력 (비우면 회색 면으로 표시)"
                       />
                     </FormControl>
                     <FormMessage />
