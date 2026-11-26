@@ -63,7 +63,7 @@ export const ROSTER_COLUMNS: RosterColumn[] = [
   { group: "비자 종류 / Loại visa muốn đăng ký", key: "desired_visa_type", required: true, input: "select", width: 12 },
   { group: "이름 / Họ tên", special: "name", required: true, input: "text", width: 20 },
   { group: "영문이름 / Tên tiếng Anh", key: "full_name_en", required: true, input: "text", width: 22 },
-  { group: "한국비자 신청 이력 / Đã xin hoặc trượt visa Hàn chưa", key: "korea_visa_history", input: "text", width: 18 },
+  { group: "한국비자 신청 이력 / Đã xin hoặc trượt visa Hàn chưa", key: "korea_visa_history", input: "yesno", width: 18 },
   { group: "성별 / Giới tính", key: "gender", required: true, input: "select", width: 8 },
   { group: "생년월일 / Ngày sinh", key: "birth_date", required: true, input: "date", width: 12 },
   { group: "여권번호 / Số hộ chiếu", key: "passport_no", input: "text", width: 14 },
@@ -122,8 +122,8 @@ export function finalEducationKeys(level: string | null | undefined): { school: 
 export function normalizeYesNo(v: unknown): "yes" | "no" | null {
   const s = String(v ?? "").trim().toLowerCase();
   if (!s) return null;
-  if (["yes", "y", "o", "có", "co", "true", "1", "예", "있음", "유"].includes(s)) return "yes";
-  if (["no", "n", "x", "không", "khong", "false", "0", "아니오", "없음", "무"].includes(s)) return "no";
+  if (["yes", "y", "o", "có", "co", "rồi", "roi", "đã", "true", "1", "예", "있음", "유"].includes(s)) return "yes";
+  if (["no", "n", "x", "không", "khong", "chưa", "chua", "false", "0", "아니오", "없음", "무"].includes(s)) return "no";
   return null;
 }
 

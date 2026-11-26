@@ -77,6 +77,8 @@ const CATEGORY_ORDER = [
   "other",
 ];
 
+const VISA_REFUSAL_KEYS = new Set(["korea_visa_refusal_reason", "korea_visa_refusal_doc"]);
+
 function categoryLabel(locale: Locale, category: string): string {
   switch (category) {
     case "identity":
@@ -200,9 +202,11 @@ export function StudentDataEditor({
     return r.state === "ok" ? r.value : null;
   };
 
-  // 카테고리별 그룹화 (범위 적용)
+  // 카테고리별 그룹화 (범위 적용). 비자 불허 사유·서류는 신청 이력이 "있음"일 때만 (KAN-38)
+  const visaRefused = valueOf("korea_visa_history") === "yes";
   const byCategory = new Map<string, DataTypeMeta[]>();
   for (const dt of visibleTypes) {
+    if (!visaRefused && VISA_REFUSAL_KEYS.has(dt.key)) continue;
     if (!byCategory.has(dt.category)) byCategory.set(dt.category, []);
     byCategory.get(dt.category)!.push(dt);
   }

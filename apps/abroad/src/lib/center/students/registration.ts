@@ -59,6 +59,13 @@ const EDUCATION_FIELDS: RegField[] = [
   { id: "bachelor_grad_date", ko: "대학 졸업일", vi: "Ngày tốt nghiệp CĐ / ĐH", input: "date", required: false },
 ];
 
+/** 한국 비자 신청 이력이 "있음"일 때만 받는 칸 (KAN-38). 불허 서류 사진은 파일이라 폼에서 따로 받는다 */
+export const VISA_REFUSAL_FIELD_ID = "korea_visa_refusal_reason";
+export const VISA_REFUSAL_DOC_KEY = "korea_visa_refusal_doc";
+const VISA_FIELDS: RegField[] = [
+  { id: VISA_REFUSAL_FIELD_ID, ko: "비자 불허 사유", vi: "Lý do bị từ chối visa", input: "text", required: false },
+];
+
 /** 대학·전문대 졸업자에게만 받는 칸 */
 export const BACHELOR_FIELD_IDS = [
   "bachelor_university",
@@ -79,6 +86,7 @@ export const REG_FIELDS: Record<string, RegField> = (() => {
     }
   }
   for (const f of EDUCATION_FIELDS) out[f.id] = f;
+  for (const f of VISA_FIELDS) out[f.id] = f;
   return out;
 })();
 
@@ -93,7 +101,7 @@ export const REG_SECTIONS: Array<{ id: string; ko: string; vi: string; fields: s
     id: "basic",
     ko: "기본 정보",
     vi: "Thông tin cơ bản",
-    fields: ["name", "full_name_en", "gender", "birth_date", "desired_visa_type", "desired_term", "korea_visa_history"],
+    fields: ["name", "full_name_en", "gender", "birth_date", "desired_visa_type", "desired_term", "korea_visa_history", VISA_REFUSAL_FIELD_ID],
   },
   {
     id: "passport",
@@ -472,6 +480,9 @@ export function normalizeRegistration(
     .filter(Boolean)
     .join(", ");
   if (addr) values.home_country_address = addr;
+
+  // 불허 사유는 신청 이력이 "있음"일 때만
+  if (values.korea_visa_history !== "yes") delete values[VISA_REFUSAL_FIELD_ID];
 
   // 이름(베트남어) 도 데이터 항목에 — 시드와 같은 키
   if (name) values.full_name_vi = name;

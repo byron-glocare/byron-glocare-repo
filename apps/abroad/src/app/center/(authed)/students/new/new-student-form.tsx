@@ -8,10 +8,13 @@ import {
   BACHELOR_FIELD_IDS,
   REG_FIELDS,
   REG_SECTIONS,
+  VISA_REFUSAL_DOC_KEY,
+  VISA_REFUSAL_FIELD_ID,
   optionsFor,
   type RegOption,
 } from "@/lib/center/students/registration";
 import { sumOrNull } from "@/lib/center/student-roster-columns";
+import { shrinkImage } from "@/lib/shrink-image";
 
 import { createStudentAction, type CreateStudentState } from "./actions";
 
@@ -41,6 +44,7 @@ const WATCHED = [
   "hs_absence_3",
   "father_monthly_income",
   "mother_monthly_income",
+  "korea_visa_history",
 ];
 
 export function NewStudentForm({
@@ -68,11 +72,18 @@ export function NewStudentForm({
   const usesBachelor = level === "college" || level === "university";
   const absenceTotal = sumOrNull([watched.hs_absence_1, watched.hs_absence_2, watched.hs_absence_3]);
   const incomeTotal = sumOrNull([watched.father_monthly_income, watched.mother_monthly_income]);
+  const visaRefused = watched.korea_visa_history === "yes";
 
   // form action 대신 onSubmit → 제출 후 입력값이 지워지지 않게 (React 19 form action 은 자동 reset)
-  function onSubmit(e: FormEvent<HTMLFormElement>) {
+  async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
+    // 불허 서류 사진 — 요청 본문 한도(4.5MB) 안으로 줄여 같이 보낸다. 이력이 없음이면 보내지 않는다.
+    const doc = fd.get(VISA_REFUSAL_DOC_KEY);
+    if (doc instanceof File) {
+      if (doc.size === 0 || !visaRefused) fd.delete(VISA_REFUSAL_DOC_KEY);
+      else fd.set(VISA_REFUSAL_DOC_KEY, await shrinkImage(doc));
+    }
     startTransition(() => dispatch(fd));
   }
 
@@ -90,6 +101,7 @@ export function NewStudentForm({
 
     const label = tr(locale, f.ko, f.vi);
     const err = fieldError(id);
+    if (id === VISA_REFUSAL_FIELD_ID) return renderVisaRefusal(label, err);
     const opts = id === "desired_term" ? terms : optionsFor(id);
 
     let control: ReactNode;
@@ -142,6 +154,42 @@ export function NewStudentForm({
           </span>
         ) : null}
       </label>
+    );
+  }
+
+  /** 비자 불허 사유(직접 입력) + 불허 서류 사진 — 신청 이력이 "있음"일 때만 켜진다 */
+  function renderVisaRefusal(label: string, err: string | undefined) {
+    const off = !visaRefused;
+    return (
+      <div key={VISA_REFUSAL_FIELD_ID} className={`grid grid-cols-1 gap-4 sm:col-span-2 sm:grid-cols-2 ${off ? "opacity-50" : ""}`}>
+        <label className={labelClass}>
+          <span className={labelTextClass}>{label}</span>
+          <textarea
+            name={VISA_REFUSAL_FIELD_ID}
+            disabled={off}
+            rows={3}
+            maxLength={1000}
+            placeholder={off ? tr(locale, "신청 이력이 있음일 때 입력", "Nhập khi đã từng xin visa") : tr(locale, "불허 통지서에 적힌 사유", "Lý do ghi trên giấy từ chối")}
+            className={inputClass}
+          />
+          {err ? <span className={errorTextClass}>{err}</span> : null}
+        </label>
+        <label className={labelClass}>
+          <span className={labelTextClass}>{tr(locale, "불허 서류 사진", "Ảnh giấy từ chối")}</span>
+          <input
+            type="file"
+            name={VISA_REFUSAL_DOC_KEY}
+            accept="image/*,application/pdf"
+            disabled={off}
+            className="w-full rounded-md border border-slate-300 px-3 py-1.5 text-sm file:mr-3 file:rounded file:border-0 file:bg-slate-100 file:px-3 file:py-1 file:text-sm"
+          />
+          {fieldError(VISA_REFUSAL_DOC_KEY) ? (
+            <span className={errorTextClass}>{fieldError(VISA_REFUSAL_DOC_KEY)}</span>
+          ) : (
+            <span className={helpTextClass}>{tr(locale, "불허 사유가 적힌 서류 사진 (선택)", "Ảnh giấy ghi lý do từ chối (không bắt buộc)")}</span>
+          )}
+        </label>
+      </div>
     );
   }
 

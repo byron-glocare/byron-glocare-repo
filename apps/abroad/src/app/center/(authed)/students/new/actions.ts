@@ -7,9 +7,9 @@ import { revalidatePath } from "next/cache";
 
 import { verifyCenterSession } from "@/lib/center/dal";
 import { createCenterClient } from "@/lib/supabase/center";
-import { createServiceClient } from "@/lib/supabase/service";
+import { createServiceClient, STUDENT_FILES_BUCKET } from "@/lib/supabase/service";
 import { createStudentSchema } from "@/lib/center/students/schema";
-import { normalizeRegistration } from "@/lib/center/students/registration";
+import { normalizeRegistration, VISA_REFUSAL_DOC_KEY } from "@/lib/center/students/registration";
 import { writeRegistrationValues } from "@/lib/center/students/save-registration";
 
 export type CreateStudentState =
@@ -93,6 +93,7 @@ export async function createStudentAction(
 
   let insertError: { message: string } | null = null;
   let newStudentId: string | null = null;
+  let orgId: string | null = null;
 
   if (session.isGlocare) {
     // 글로케어(본사) 계정: 학생을 선택한 유학센터로 배정.
@@ -120,6 +121,7 @@ export async function createStudentAction(
       .single();
     insertError = error;
     newStudentId = row?.id ?? null;
+    orgId = resolved.orgId;
   } else {
     // 일반 유학센터 계정: 자기 org 로 강제 (클라이언트 위변조 방지)
     const supabase = await createCenterClient();
@@ -130,6 +132,7 @@ export async function createStudentAction(
       .single();
     insertError = error;
     newStudentId = row?.id ?? null;
+    orgId = session.org.id;
   }
 
   if (insertError || !newStudentId) {
@@ -141,6 +144,25 @@ export async function createStudentAction(
   // 5. 등록 값 → 데이터 항목(작성서류가 쓰는 값). 방금 이 계정이 넣은 학생이므로 service client 사용.
   //    실패하면 학생 행을 되돌린다 (반쪽 등록 방지 — 다시 제출해도 중복이 생기지 않게).
   const svc = createServiceClient();
+
+  // 5-1. 비자 불허 서류 사진 (신청 이력 "있음"일 때만) — 정보 입력 화면의 파일 항목과 같은 보관 경로·값 모양
+  const refusalDoc = formData.get(VISA_REFUSAL_DOC_KEY);
+  if (reg.values.korea_visa_history === "yes" && refusalDoc instanceof File && refusalDoc.size > 0) {
+    const safeName = refusalDoc.name.replace(/[^\w.\-]+/g, "_").slice(-120);
+    const path = `${orgId}/${newStudentId}/${VISA_REFUSAL_DOC_KEY}/${Date.now()}-${safeName}`;
+    const { error: upErr } = await svc.storage
+      .from(STUDENT_FILES_BUCKET)
+      .upload(path, Buffer.from(await refusalDoc.arrayBuffer()), {
+        contentType: refusalDoc.type || "application/octet-stream",
+        upsert: false,
+      });
+    if (upErr) {
+      await svc.from("study_managed_students").delete().eq("id", newStudentId);
+      return { error: `${await trAsync("불허 서류 사진 저장 오류", "Lỗi lưu ảnh giấy từ chối")}: ${upErr.message}` };
+    }
+    reg.values[VISA_REFUSAL_DOC_KEY] = { path, file_name: refusalDoc.name };
+  }
+
   const saved = await writeRegistrationValues(svc, {
     studentId: newStudentId,
     values: reg.values,

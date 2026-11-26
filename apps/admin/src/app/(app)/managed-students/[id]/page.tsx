@@ -201,6 +201,11 @@ export default async function ManagedStudentDetailPage({
       .eq("student_id", id),
   ]);
   const fileTypeByKey = new Map((fileTypes ?? []).map((t) => [t.key, t]));
+  // 한국 비자 불허 이력 (KAN-38) — 지원 가능 여부를 가르는 정보라 기본 정보에 눈에 띄게
+  const dataValueOf = (key: string) => (dataValues ?? []).find((v) => v.data_type_key === key)?.value;
+  const visaRefused = dataValueOf("korea_visa_history") === "yes";
+  const visaRefusalReason = typeof dataValueOf("korea_visa_refusal_reason") === "string" ? (dataValueOf("korea_visa_refusal_reason") as string) : null;
+  const hasVisaRefusalDoc = !!dataValueOf("korea_visa_refusal_doc");
   const attachments = (dataValues ?? [])
     .flatMap((v) => {
       const t = fileTypeByKey.get(v.data_type_key);
@@ -327,6 +332,17 @@ export default async function ManagedStudentDetailPage({
                 </div>
               ))}
             </dl>
+            {visaRefused ? (
+              <div className="mt-4 rounded-md border border-destructive/40 bg-destructive/5 p-3">
+                <div className="text-sm font-medium text-destructive">한국 비자 신청 이력 있음</div>
+                <p className="mt-1 whitespace-pre-wrap text-sm">
+                  {visaRefusalReason ? `불허 사유: ${visaRefusalReason}` : "불허 사유가 입력되지 않았습니다."}
+                </p>
+                {hasVisaRefusalDoc ? (
+                  <p className="mt-1 text-xs text-muted-foreground">불허 서류 사진은 아래 「업로드한 제출서류」의 미리보기에서 볼 수 있습니다.</p>
+                ) : null}
+              </div>
+            ) : null}
             {student.notes ? (
               <div className="mt-4">
                 <dt className="text-xs text-muted-foreground">메모</dt>
