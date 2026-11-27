@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { Plus, Trash2 } from "lucide-react";
+import { useState, useTransition } from "react";
+import { Languages, Loader2, Plus, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { translateScholarshipsAction } from "@/app/(app)/admissions/scholarship-actions";
 
 export type Scholarship = {
   name: string;
@@ -23,6 +25,29 @@ export type Scholarship = {
   duration?: string | null;
   exclusivity_with?: string[] | null;
   notes?: string | null;
+  // 베트남어 (모집요강 PDF 베트남어판). 비어 있으면 PDF 에 그 글을 넣지 않는다 (KAN-39)
+  name_vi?: string | null;
+  condition_vi?: string | null;
+  /** 혜택 설명 — 혜택값이 글(예: "성적에 따른 차등 지급")일 때의 베트남어 */
+  benefit_vi?: string | null;
+  duration_vi?: string | null;
+  notes_vi?: string | null;
+};
+
+const VI_FIELDS = [
+  { key: "name_vi", label: "장학금명", src: (s: Scholarship) => s.name },
+  { key: "condition_vi", label: "조건", src: (s: Scholarship) => s.condition },
+  { key: "benefit_vi", label: "혜택 설명", src: (s: Scholarship) => (typeof s.benefit_value === "string" ? s.benefit_value : "") },
+  { key: "duration_vi", label: "기간", src: (s: Scholarship) => s.duration ?? "" },
+  { key: "notes_vi", label: "메모", src: (s: Scholarship) => s.notes ?? "" },
+] as const;
+type ViKey = (typeof VI_FIELDS)[number]["key"];
+const AI_KEY: Record<ViKey, "name" | "condition" | "benefit" | "duration" | "notes"> = {
+  name_vi: "name",
+  condition_vi: "condition",
+  benefit_vi: "benefit",
+  duration_vi: "duration",
+  notes_vi: "notes",
 };
 
 const APPLIES_TO_OPTIONS = [
@@ -63,6 +88,42 @@ export function ScholarshipsField({
   initial: Scholarship[];
 }) {
   const [items, setItems] = useState<Scholarship[]>(initial);
+  const [translating, startTranslate] = useTransition();
+
+  /** 한국어가 있는데 베트남어가 빈 칸만 AI 로 채운다. 이미 적은 베트남어는 건드리지 않는다. */
+  const translateEmpty = () =>
+    startTranslate(async () => {
+      const res = await translateScholarshipsAction(
+        items.map((s) => ({
+          name: s.name ?? "",
+          condition: s.condition ?? "",
+          benefit: typeof s.benefit_value === "string" ? s.benefit_value : "",
+          duration: s.duration ?? "",
+          notes: s.notes ?? "",
+        }))
+      );
+      if (!res.ok) {
+        toast.error("번역하지 못했습니다", { description: res.error });
+        return;
+      }
+      let filled = 0;
+      setItems((cur) =>
+        cur.map((s, i) => {
+          const t = res.items[i];
+          if (!t) return s;
+          const next = { ...s };
+          for (const f of VI_FIELDS) {
+            const v = t[AI_KEY[f.key]]?.trim();
+            if (v && !String(s[f.key] ?? "").trim() && f.src(s).trim()) {
+              next[f.key] = v;
+              filled++;
+            }
+          }
+          return next;
+        })
+      );
+      toast.success(filled > 0 ? `베트남어 ${filled}칸을 채웠습니다. 확인 후 저장하세요.` : "채울 빈 칸이 없습니다.");
+    });
 
   const add = () => setItems([...items, emptyScholarship()]);
   const remove = (idx: number) =>
@@ -87,11 +148,27 @@ export function ScholarshipsField({
       duration: s.duration || null,
       exclusivity_with: s.exclusivity_with ?? null,
       notes: s.notes || null,
+      name_vi: s.name_vi?.trim() || null,
+      condition_vi: s.condition_vi?.trim() || null,
+      benefit_vi: s.benefit_vi?.trim() || null,
+      duration_vi: s.duration_vi?.trim() || null,
+      notes_vi: s.notes_vi?.trim() || null,
     }))
   );
 
   return (
     <div className="space-y-3">
+      {items.length > 0 ? (
+        <div className="flex flex-wrap items-center justify-between gap-2 rounded-md bg-muted/40 px-3 py-2">
+          <span className="text-xs text-muted-foreground">
+            베트남어 칸은 모집요강 PDF 베트남어판에 쓰입니다. 비어 있으면 그 글은 PDF 에서 빠집니다.
+          </span>
+          <Button type="button" variant="outline" size="sm" onClick={translateEmpty} disabled={translating}>
+            {translating ? <Loader2 className="size-4 animate-spin" /> : <Languages className="size-4" />}
+            {translating ? "번역 중…" : "AI 베트남어 번역 (빈 칸만)"}
+          </Button>
+        </div>
+      ) : null}
       {items.length === 0 ? (
         <div className="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">
           등록된 장학금이 없습니다.
@@ -241,6 +318,24 @@ export function ScholarshipsField({
                   placeholder="추가 안내사항 (선택)"
                 />
               </div>
+
+              {/* 베트남어 — 한국어가 있는 칸만 */}
+              {VI_FIELDS.some((f) => f.src(s).trim()) ? (
+                <div className="mt-3 rounded-md border border-dashed p-2">
+                  <div className="mb-2 text-xs font-medium text-muted-foreground">베트남어 (모집요강 PDF)</div>
+                  <div className="grid grid-cols-1 gap-2 text-sm md:grid-cols-2">
+                    {VI_FIELDS.filter((f) => f.src(s).trim()).map((f) => (
+                      <FieldText
+                        key={f.key}
+                        label={`${f.label} (VI)`}
+                        value={s[f.key] ?? ""}
+                        onChange={(v) => update(idx, f.key, v)}
+                        placeholder={f.src(s)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ) : null}
             </div>
           ))}
         </div>

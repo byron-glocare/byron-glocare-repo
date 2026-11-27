@@ -97,6 +97,11 @@ type Scholarship = {
   tiered_by_topik?: Record<string, number | string> | null;
   duration?: string | null;
   notes?: string | null;
+  name_vi?: string | null;
+  condition_vi?: string | null;
+  benefit_vi?: string | null;
+  duration_vi?: string | null;
+  notes_vi?: string | null;
 };
 type Round = {
   name?: string;
@@ -222,21 +227,26 @@ function tuitionBlocks(sd: SpecDepartment, dormDefault: string | null, text: Bro
   if (rows.length) blocks.push({ type: "rows", title: L.tuitionTitle, rows });
 
   const sch = (sd.scholarships as Scholarship[]).filter((s) => s && (clean(s.name) || clean(s.condition)));
-  if (sch.length) {
-    blocks.push({
-      type: "list",
-      title: L.scholarshipTitle,
-      items: sch.map((s) => {
-        const benefit = text.scholarshipBenefit(s);
+  const schItems = sch
+    .map((s): BrochureListItem => {
+        // 베트남어판: 장학금 베트남어 칸만 쓴다. 비어 있으면 그 글은 뺀다(한국어를 섞지 않는다, KAN-39).
+        //   혜택값이 글이면 베트남어 문장 틀에 끼우지 않고 혜택 설명(benefit_vi)을 쓴다.
+        const vi = text.lang === "vi";
+        const freeBenefit = typeof s.benefit_value === "string" && hasHangul(s.benefit_value);
+        const benefit = vi
+          ? clean(s.benefit_vi) ?? text.scholarshipBenefit(freeBenefit ? { ...s, benefit_value: null } : s)
+          : text.scholarshipBenefit(s);
         const sub = [
-          clean(s.condition),
+          vi ? clean(s.condition_vi) : clean(s.condition),
           s.applies_to ? text.appliesTo[s.applies_to] : null,
-          clean(s.duration),
+          vi ? clean(s.duration_vi) : clean(s.duration),
         ].filter((x): x is string => !!x);
-        return { text: [clean(s.name), benefit].filter(Boolean).join(" — "), sub, note: clean(s.notes) ?? undefined };
-      }),
-    });
-  }
+        const name = vi ? clean(s.name_vi) : clean(s.name);
+        const note = vi ? clean(s.notes_vi) : clean(s.notes);
+        return { text: [name, benefit].filter(Boolean).join(" — "), sub, note: note ?? undefined };
+    })
+    .filter((it) => it.text || (it.sub?.length ?? 0) > 0);
+  if (schItems.length) blocks.push({ type: "list", title: L.scholarshipTitle, items: schItems });
 
   const dorm = clean(copyOf(sd, text).dormitory) ?? dormDefault;
   if (dorm) blocks.push({ type: "text", title: L.dormitoryTitle, text: dorm });
