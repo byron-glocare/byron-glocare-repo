@@ -13,7 +13,10 @@ import { loadBrochure, type BrochureBlock, type BrochurePage } from "@/lib/admis
 import { BROCHURE_FOOTER } from "@/lib/admission/brochure-text";
 import { brochureText, parseBrochureLang, type BrochureText } from "@/lib/admission/brochure-lang";
 
+import { loadBrochureViGaps } from "@/lib/admission/brochure-vi-gaps";
+
 import { BrochureToolbar } from "./brochure-toolbar";
+import { ViGapsPanel } from "./vi-gaps-panel";
 
 export const dynamic = "force-dynamic";
 /** 문서 제목 = "PDF로 저장" 기본 파일 이름 → 고른 언어로 */
@@ -48,6 +51,7 @@ export default async function BrochurePdfPage({
   const model = await loadBrochure(supabase, id, { dept: sp.dept ?? null, term: sp.term ?? null, lang });
   if (!model) notFound();
   const text = brochureText(lang);
+  const viGaps = lang === "vi" ? await loadBrochureViGaps(supabase, id, model.dept) : null;
 
   return (
     <div className="bro-root">
@@ -73,6 +77,7 @@ export default async function BrochurePdfPage({
         termOptions={model.termOptions}
         pageCount={model.pages.length}
       />
+      {viGaps ? <ViGapsPanel specId={id} gaps={viGaps} /> : null}
 
       <div className="bro-canvas">
         {model.pages.length === 0 ? (

@@ -1853,6 +1853,8 @@ export type Database = {
             | "health_certificate"
             | "other";
           name_ko: string;
+          /** 0085 — 모집요강 PDF 베트남어판 양식 이름 */
+          name_vi: string | null;
           file_url: string;
           file_name: string;
           size_bytes: number | null;
@@ -1923,6 +1925,7 @@ export type Database = {
             | "health_certificate"
             | "other";
           name_ko: string;
+          name_vi?: string | null;
           file_url: string;
           file_name: string;
           size_bytes?: number | null;

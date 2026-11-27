@@ -83,9 +83,11 @@ type Tuition = {
   tuition_per_semester?: number | null;
   tuition_per_year?: number | null;
   tuition_by_faculty?: Record<string, number>;
+  /** 계열별 학비 이름의 베트남어 (KAN-40) */
+  tuition_by_faculty_vi?: Record<string, string>;
   dorm_fee?: number | null;
   insurance_per_year?: number | null;
-  other_fees?: Array<{ name?: string; amount?: number; notes?: string }>;
+  other_fees?: Array<{ name?: string; name_vi?: string; amount?: number; notes?: string }>;
   payment_method?: string;
 };
 type Scholarship = {
@@ -210,14 +212,15 @@ function tuitionBlocks(sd: SpecDepartment, dormDefault: string | null, text: Bro
   else if (mainAmount != null) rows.push({ label: mainLabel, value: fmtMoney(mainAmount, cur)! });
   if (!pending && t.unit !== "per_year" && t.tuition_per_year != null) rows.push({ label: text.tuitionUnit.per_year, value: fmtMoney(t.tuition_per_year, cur)! });
   for (const [k, v] of Object.entries(t.tuition_by_faculty ?? {})) {
-    if (typeof v === "number") rows.push({ label: k, value: fmtMoney(v, cur)! });
+    const label = text.lang === "vi" ? clean(t.tuition_by_faculty_vi?.[k]) ?? viOnly(k) : k;
+    if (label && typeof v === "number") rows.push({ label, value: fmtMoney(v, cur)! });
   }
   if (t.application_fee != null) rows.push({ label: text.fee.application_fee, value: t.application_fee === 0 ? L.free : fmtMoney(t.application_fee, cur)! });
   if (t.admission_fee != null) rows.push({ label: text.fee.admission_fee, value: t.admission_fee === 0 ? L.free : fmtMoney(t.admission_fee, cur)! });
   if (t.insurance_per_year != null) rows.push({ label: text.fee.insurance_per_year, value: fmtMoney(t.insurance_per_year, cur)! });
   if (t.dorm_fee != null) rows.push({ label: text.fee.dorm_fee, value: fmtMoney(t.dorm_fee, cur)! });
   for (const f of t.other_fees ?? []) {
-    const name = clean(f.name);
+    const name = text.lang === "vi" ? clean(f.name_vi) ?? viOnly(f.name) : clean(f.name);
     if (name && f.amount != null) rows.push({ label: name, value: fmtMoney(f.amount, cur)! });
   }
   const pay = local(text, t.payment_method);
@@ -319,7 +322,10 @@ function documentBlocks(rows: SpecDocItemRow[], catalog: DocCatalog, forms: Spec
   const blocks: BrochureBlock[] = [];
   if (items.length) blocks.push({ type: "list", items, ordered: true });
   if (forms.length) {
-    blocks.push({ type: "list", items: forms.map((f) => ({ text: `${L.schoolForms}: ${f.name_ko}` })) });
+    const names = forms
+      .map((f) => (t.lang === "vi" ? clean(f.name_vi) ?? viOnly(f.name_ko) : f.name_ko))
+      .filter((x): x is string => !!x);
+    if (names.length) blocks.push({ type: "list", items: names.map((n) => ({ text: `${L.schoolForms}: ${n}` })) });
   }
   return blocks;
 }

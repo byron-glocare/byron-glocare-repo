@@ -96,6 +96,8 @@ export type SpecFormFile = {
   id: string;
   key: string;
   name_ko: string;
+  /** 0085 — 모집요강 PDF 베트남어판 이름 */
+  name_vi: string | null;
   file_name: string;
   file_url: string;
   spec_department_id: string | null;
@@ -177,7 +179,7 @@ export async function loadDocItemRowsByDepartment(supabase: Client, specId: stri
 export async function loadFormFilesByDepartment(supabase: Client, universityId: number): Promise<Map<string, SpecFormFile[]>> {
   const { data } = await supabase
     .from("study_admission_form_files")
-    .select("id, key, name_ko, file_name, file_url, spec_department_id, is_essay, uploaded_at")
+    .select("id, key, name_ko, name_vi, file_name, file_url, spec_department_id, is_essay, uploaded_at")
     .eq("university_id", universityId)
     .eq("is_current", true)
     .order("key");

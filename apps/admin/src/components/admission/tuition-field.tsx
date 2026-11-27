@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 
 export type OtherFee = {
   name: string;
+  /** 모집요강 PDF 베트남어판 이름 (KAN-40) */
+  name_vi?: string;
   amount: number;
   notes?: string;
 };
@@ -29,6 +31,8 @@ export type Tuition = {
   tuition_per_semester?: number | null;
   tuition_per_year?: number | null;
   tuition_by_faculty?: Record<string, number>;
+  /** 계열별 학비 이름의 베트남어 — 키는 tuition_by_faculty 와 같다 (KAN-40) */
+  tuition_by_faculty_vi?: Record<string, string>;
   dorm_fee?: number | null;
   insurance_per_year?: number | null;
   other_fees?: OtherFee[];
@@ -49,7 +53,7 @@ const DISCLOSURE_OPTIONS = [
   { value: "pending_until_acceptance", label: "합격 후 공개" },
 ] as const;
 
-type FacultyRow = { faculty: string; amount: string };
+type FacultyRow = { faculty: string; faculty_vi: string; amount: string };
 
 export function TuitionField({
   name,
@@ -97,6 +101,7 @@ export function TuitionField({
     initial?.tuition_by_faculty
       ? Object.entries(initial.tuition_by_faculty).map(([k, v]) => ({
           faculty: k,
+          faculty_vi: initial.tuition_by_faculty_vi?.[k] ?? "",
           amount: String(v),
         }))
       : []
@@ -119,10 +124,12 @@ export function TuitionField({
   };
 
   const tuitionByFaculty: Record<string, number> = {};
+  const tuitionByFacultyVi: Record<string, string> = {};
   for (const r of byFaculty) {
     if (r.faculty.trim() === "") continue;
     const n = Number(r.amount);
     if (Number.isFinite(n)) tuitionByFaculty[r.faculty.trim()] = n;
+    if (r.faculty_vi.trim()) tuitionByFacultyVi[r.faculty.trim()] = r.faculty_vi.trim();
   }
 
   const refundNorm: RefundPolicy = {};
@@ -148,12 +155,15 @@ export function TuitionField({
     tuition_per_year: toNumOrNull(perYear),
     tuition_by_faculty:
       Object.keys(tuitionByFaculty).length > 0 ? tuitionByFaculty : undefined,
+    tuition_by_faculty_vi:
+      Object.keys(tuitionByFacultyVi).length > 0 ? tuitionByFacultyVi : undefined,
     dorm_fee: toNumOrNull(dorm),
     insurance_per_year: toNumOrNull(ins),
     other_fees:
       otherFees.length > 0
         ? otherFees.map((f) => ({
             name: f.name,
+            name_vi: f.name_vi?.trim() || undefined,
             amount: Number(f.amount) || 0,
             notes: f.notes || undefined,
           }))
@@ -238,7 +248,7 @@ export function TuitionField({
             variant="outline"
             size="sm"
             onClick={() =>
-              setByFaculty([...byFaculty, { faculty: "", amount: "" }])
+              setByFaculty([...byFaculty, { faculty: "", faculty_vi: "", amount: "" }])
             }
           >
             <Plus className="size-4" />
@@ -264,6 +274,19 @@ export function TuitionField({
                     )
                   }
                   placeholder="학과명"
+                  className="flex-1 rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+                />
+                <input
+                  type="text"
+                  value={r.faculty_vi}
+                  onChange={(e) =>
+                    setByFaculty(
+                      byFaculty.map((x, i) =>
+                        i === idx ? { ...x, faculty_vi: e.target.value } : x
+                      )
+                    )
+                  }
+                  placeholder="학과명 (VI)"
                   className="flex-1 rounded-md border border-input bg-background px-2 py-1.5 text-sm"
                 />
                 <input
@@ -331,6 +354,19 @@ export function TuitionField({
                     )
                   }
                   placeholder="명칭 (예: 픽업비)"
+                  className="flex-1 rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+                />
+                <input
+                  type="text"
+                  value={f.name_vi ?? ""}
+                  onChange={(e) =>
+                    setOtherFees(
+                      otherFees.map((x, i) =>
+                        i === idx ? { ...x, name_vi: e.target.value } : x
+                      )
+                    )
+                  }
+                  placeholder="명칭 (VI)"
                   className="flex-1 rounded-md border border-input bg-background px-2 py-1.5 text-sm"
                 />
                 <input
